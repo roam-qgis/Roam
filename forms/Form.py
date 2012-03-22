@@ -13,3 +13,8 @@ class Form:
     @property
     def icon(self):
         return ""
+
+    @property
+    def tool(self):
+        return self.mapTool
+
