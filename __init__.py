@@ -30,7 +30,6 @@ def icon():
 def qgisMinimumVersion():
     return "1.8"
 def classFactory(iface):
-    # load SDRCDataCapture class from file SDRCDataCapture
     from sdrcdatacapture import SDRCDataCapture
     return SDRCDataCapture(iface)
 

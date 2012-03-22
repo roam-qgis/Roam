@@ -23,6 +23,7 @@ from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 from qgis.core import *
 import forms
+import PointTool
 # Initialize Qt resources from file resources.py
 import resources
 # Import the code for the dialog
@@ -35,43 +36,22 @@ class SDRCDataCapture:
         self.iface = iface
 
     def initGui(self):
-        # Create action that will start plugin configuration
-        self.action = QAction(QIcon(":/plugins/sdrcdatacapture/icon.png"), \
-            "Data Collection", self.iface.mainWindow())
-        # connect the action to the run method
-        QObject.connect(self.action, SIGNAL("triggered()"), self.run)
-
-        #Create the toolbar icons.
         self.createFormButtons()
-        
-        # Add toolbar button and menu item
-        self.iface.addToolBarIcon(self.action)
-        self.iface.addPluginToMenu("&Data Collection", self.action)
 
     def createFormButtons(self):
         # TODO Create toolbar buttons based on forms in form folder.
+        toolbar = QToolbar("SDRC Data Capture")
+
         import forms
         userForms = forms.getForms()
         for form in userForms:
             form = forms.loadForm(form)
             action = QAction( form.name(), self.iface.mainWindow() )
-            self.iface.addToolBarIcon(action)
+            toolbar.addAction(action)
+
+        self.iface.addToolBar(toolbar)
             
     def unload(self):
         # Remove the plugin menu item and icon
         self.iface.removePluginMenu("&Data Collection",self.action)
         self.iface.removeToolBarIcon(self.action)
-
-    # run method that performs all the real work
-    def run(self):
-
-        # create and show the dialog
-        dlg = SDRCDataCaptureDialog()
-        # show the dialog
-        dlg.show()
-        result = dlg.exec_()
-        # See if OK was pressed
-        if result == 1:
-            # do something useful (delete the line containing pass and
-            # substitute with your code
-            pass

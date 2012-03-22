@@ -14,7 +14,7 @@ def getForms():
     return modules
 
 def loadForm(form):
-    formmodule = __import__("forms.%s" % form.moduleName, locals(), globals(),["*"], 1)
+    formmodule = __import__("SDRCDataCapture.forms.%s" % form.moduleName, locals(), globals(),["*"], 1)
     return formmodule
 
 if __name__ == "__main__":

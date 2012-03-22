@@ -11,6 +11,9 @@ def init(qgsfeature):
     form = WaterCaptureForm(qgsfeature)
     form.exec_()
 
+def mapToolType():
+    return "POINT"
+
 class WaterCaptureForm(QtGui.QDialog):
     def __init__(self, qgsfeature):
         QtGui.QDialog.__init__(self)
