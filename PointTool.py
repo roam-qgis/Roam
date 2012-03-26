@@ -10,10 +10,9 @@ log = lambda msg: QgsMessageLog.logMessage(msg ,"SDRC")
 class PointTool(QgsMapTool):
     mouseClicked = pyqtSignal(QgsPoint)
 
-    def __init__(self, canvas, form):
+    def __init__(self, canvas):
         QgsMapTool.__init__(self, canvas)
         self.canvas = canvas
-        self.form = form
         self.m1 = None
         self.p1 = QgsPoint()
         self.cursor = QCursor(QPixmap(["16 16 3 1",
@@ -85,7 +84,7 @@ class PointAction(QAction):
         self.canvas = iface.mapCanvas()
         self.form = form
         self.triggered.connect(self.runPointTool)
-        self.tool = PointTool( self.canvas, self.form )
+        self.tool = PointTool( self.canvas )
         self.tool.mouseClicked.connect( self.pointClick )
         self.layer = None
 
@@ -108,10 +107,10 @@ class PointAction(QAction):
         
         binder = FormBinder(self.layer, dialoginstance)
 
-        # Create a new feature.
         feature = QgsFeature()
         feature.setGeometry( QgsGeometry.fromPoint( point ) )
-        
+
+
         for id in fields.keys():
             feature.addAttribute( id, provider.defaultValue( id ) )
 
@@ -126,6 +125,7 @@ class PointAction(QAction):
                 
             self.layer.addFeature( feature )
             self.canvas.refresh()
+            self.layer.commitChanges()
             # TODO Save the value back to the layer.
             
         

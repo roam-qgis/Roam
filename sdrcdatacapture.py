@@ -25,17 +25,19 @@ from PyQt4.QtGui import *
 from qgis.core import *
 import forms
 from PointTool import PointAction
+from EditAction import EditAction
 import resources
 from sdrcdatacapturedialog import SDRCDataCaptureDialog
 
 class SDRCDataCapture:
     def __init__(self, iface):
         self.iface = iface
+        self.layerstoForms = {}
 
     def initGui(self):
         QgsMessageLog.logMessage("initGUI","SDRC")
         self.createFormButtons()
-
+        
     def createFormButtons(self):
         self.toolbar = self.iface.addToolBar("SDRC Data Capture")
         userForms = forms.getForms()
@@ -44,7 +46,11 @@ class SDRCDataCapture:
             form = forms.loadForm(form)
             action = PointAction( form.__formName__, self.iface, form )
             self.toolbar.addAction(action)
+            self.layerstoForms[form.__layerName__] = form
 
+        editAction = EditAction("Edit", self.iface, self.layerstoForms )
+        self.toolbar.addAction(editAction)
+        
     def unload(self):
         del self.toolbar
 

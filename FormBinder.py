@@ -20,6 +20,7 @@ class FormBinder():
             if not control is None:
                 if isinstance(control, QLineEdit):
                     control.setText( value.toString() )
+                    
                 self.fieldtocontrol[id] = control
 
     def unbindFeature(self, qgsfeature):
