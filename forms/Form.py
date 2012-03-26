@@ -11,10 +11,6 @@ class Form:
         return self.modulename
 
     @property
-    def icon(self):
-        return ""
-
-    @property
     def tool(self):
         return self.mapTool
 

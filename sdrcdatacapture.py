@@ -19,45 +19,32 @@
  ***************************************************************************/
 """
 # Import the PyQt and QGIS libraries
+from PointTool import PointAction
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 from qgis.core import *
 import forms
-from PointTool import PointTool
+from PointTool import PointAction
 import resources
 from sdrcdatacapturedialog import SDRCDataCaptureDialog
 
 class SDRCDataCapture:
-    
     def __init__(self, iface):
-        # Save reference to the QGIS interface
         self.iface = iface
-        self.formToAction = {}
 
     def initGui(self):
         QgsMessageLog.logMessage("initGUI","SDRC")
         self.createFormButtons()
 
     def createFormButtons(self):
-        # TODO Create toolbar buttons based on forms in form folder.
         self.toolbar = self.iface.addToolBar("SDRC Data Capture")
-        self.toolbar.actionTriggered.connect( self.runAction )
         userForms = forms.getForms()
         
         for form in userForms:
             form = forms.loadForm(form)
-            action = QAction( form.__formName__, self.iface.mainWindow() )
-            self.formToAction[ form.__formName__,] = PointTool( self.iface.mapCanvas(), form )
+            action = PointAction( form.__formName__, self.iface, form )
             self.toolbar.addAction(action)
 
-    def runTool(self):
-        pass
-
-    def runAction(self, action):
-        name = action.text()
-        maptool = self.formToAction[name]
-        self.iface.mapCanvas().setMapTool(maptool)
-        QgsMessageLog.logMessage("Run Action says %s" % name, "SDRC")
-
     def unload(self):
-        pass
+        del self.toolbar
+

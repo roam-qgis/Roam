@@ -5,20 +5,24 @@ from PyQt4 import QtCore, QtGui
 from ui_waterForm import Ui_WaterForm
 
 __formName__ = "Water Form"
-__layerName__ = "Main"
+__layerName__ = "waterpoint"
 __mapTool__ = None
 __mapToolType__ = "POINT"
 
-def init(qgsfeature):
-    form = WaterCaptureForm(qgsfeature)
-    form.exec_()
+def dialogInstance():
+    return WaterCaptureForm()
+
+def formOpened(formInstance, qgsfeture, layer, iface):
+    """
+    Method called after form is bound.
+    """
+    pass
 
 class WaterCaptureForm(QtGui.QDialog):
-    def __init__(self, qgsfeature):
+    def __init__(self):
         QtGui.QDialog.__init__(self)
         # Set up the user interface from Designer.
         self.ui = Ui_WaterForm()
         self.ui.setupUi(self)
-        self.feature = qgsfeature
 
         # TODO do binding to feature.
