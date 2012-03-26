@@ -1,10 +1,10 @@
-class Form:
+class Form(object):
     """
     Represents a data collection form.  Contains links to the python module for the form.
     """
 
     def __init__(self, moduleName):
-        self.moduleName = moduleName
+        self.modulename = moduleName
         
     @property
     def moduleName(self):

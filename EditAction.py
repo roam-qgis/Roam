@@ -1,9 +1,9 @@
 from PointTool import PointTool, log
 from PyQt4.QtGui import QAction
-from PyQt4.QtCore import QSettings
 from qgis.core import *
 from qgis.gui import *
 from forms.ListFeatureForm import ListFeaturesForm
+from FormBinder import FormBinder
 
 class EditAction(QAction):
     def __init__(self, name, iface, layerstoformmapping ):
@@ -33,8 +33,26 @@ class EditAction(QAction):
             name = layer.name()
             form = self.layerstoformmapping.get(str(name),"Default")
             for feature in layer:
-                featuresToForms[feature] = form
+                featuresToForms[feature] = (form, layer)
 
-        listUi = ListFeaturesForm()
-        listUi.loadFeatueList(featuresToForms)
-        listUi.exec_()
+        if len(featuresToForms) > 0:
+            listUi = ListFeaturesForm()
+            listUi.loadFeatureList(featuresToForms)
+            listUi.openFeatureForm.connect(self.openForm)
+            listUi.exec_()
+    
+    def openForm(self,form,feature,maplayer):
+        maplayer.startEditing()
+        dialog = form.dialogInstance()
+        binder = FormBinder(maplayer, dialog)
+        binder.bindFeature(feature)
+        if dialog.exec_():
+            log("Saving values back")
+            feature = binder.unbindFeature(feature)
+            log("New feature %s" % feature)
+            for value in feature.attributeMap().values():
+                log("New value %s" % value.toString())
+
+            maplayer.updateFeature( feature )
+            self.canvas.refresh()
+            maplayer.commitChanges()

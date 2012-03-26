@@ -1,23 +1,38 @@
 from PyQt4.QtGui import QDialog, QListWidgetItem
+from PyQt4.QtCore import pyqtSignal
+from qgis.core import QgsFeature, QgsMapLayer
+from Form import Form
+
 from ui_listfeatures import Ui_ListFeatueForm
 
 class ListFeaturesForm(QDialog):
+    openFeatureForm = pyqtSignal(object, QgsFeature, QgsMapLayer)
+
     def __init__(self):
         QDialog.__init__(self)
         self.ui = Ui_ListFeatueForm()
         self.ui.setupUi(self)
+        self.ui.featureList.itemClicked.connect(self.openForm)
 
-    def loadFeatueList(self, featureDict):
-        for feature,form in featureDict.items():
-            featureitem = FeatureItem( feature, form )
+    def loadFeatureList(self, featureDict):
+        for feature, formAndLayer in featureDict.items():
+            featureitem = FeatureItem( feature, formAndLayer[0], formAndLayer[1] )
             self.ui.featureList.addItem( featureitem )
 
+    def openForm(self, item):
+        form = item.editForm
+        feature = item.qgsFeature
+        layer = item.layer
+        self.close()
+        self.openFeatureForm.emit(form, feature, layer)
+        
 class FeatureItem(QListWidgetItem):
-    def __init__(self, feature, form):
+    def __init__(self, feature, form, layer):
         QListWidgetItem.__init__(self)
         self.editform = form
         self.feature = feature
-        formname = "Default"
+        self._layer = layer
+        formname = "Default"''
         if not form == "Default":
             formname = form.__formName__
 
@@ -30,3 +45,7 @@ class FeatureItem(QListWidgetItem):
     @property
     def qgsFeature(self):
         return self.feature
+
+    @property
+    def layer(self):
+        return self._layer

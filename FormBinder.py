@@ -9,7 +9,6 @@ class FormBinder():
     def __init__(self, layer, formInstance):
         self.layer = layer
         self.forminstance = formInstance
-        self.provider = self.layer.dataProvider()
         self.fields = self.layer.pendingFields()
         self.fieldtocontrol = {}
 
