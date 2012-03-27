@@ -21,8 +21,6 @@ def formOpened(formInstance, qgsfeture, layer, iface):
 class WaterCaptureForm(QtGui.QDialog):
     def __init__(self):
         QtGui.QDialog.__init__(self)
-        # Set up the user interface from Designer.
         self.ui = Ui_WaterForm()
         self.ui.setupUi(self)
 
-        # TODO do binding to feature.

@@ -13,14 +13,14 @@ class EditAction(QAction):
         self.triggered.connect(self.runPointTool)
         self.tool = PointTool( self.canvas )
         self.tool.mouseClicked.connect( self.findFeatures )
-        self.searchRadius = self.canvas.extent().width() * ( 0.5 / 100.0)
+        
         
     def runPointTool(self):
         self.canvas.setMapTool(self.tool)
 
     def findFeatures(self, point):
+        self.searchRadius = self.canvas.extent().width() * ( 0.5 / 100.0)
         log("Finding Featues at %s with radius of %s" % (point, self.searchRadius))
-        
         rect = QgsRectangle()
         rect.setXMinimum( point.x() - self.searchRadius );
         rect.setXMaximum( point.x() + self.searchRadius );

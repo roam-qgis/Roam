@@ -126,6 +126,5 @@ class PointAction(QAction):
             self.layer.addFeature( feature )
             self.canvas.refresh()
             self.layer.commitChanges()
-            # TODO Save the value back to the layer.
             
         
