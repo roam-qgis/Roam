@@ -2,11 +2,11 @@ from PyQt4.QtGui import QWidget, QLineEdit, QCheckBox, QComboBox, QCalendarWidge
 from PyQt4.QtCore import QDate, Qt, QVariant
 from qgis.core import QgsMessageLog
 from qgis.gui import QgsAttributeEditor
+
 class FormBinder():
     """
     Handles binding of values to and out of the form.
     """
-
     def __init__(self, layer, formInstance):
         self.layer = layer
         self.forminstance = formInstance
@@ -21,8 +21,10 @@ class FormBinder():
                 if isinstance(control, QCalendarWidget):
                     control.setSelectedDate(QDate.fromString( value.toString(), Qt.ISODate ))
                     pass
-                else:
-                    QgsAttributeEditor.createAttributeEditor(self.forminstance, control, self.layer, index, value )
+                if isinstance(control, QLineEdit):
+                    control.setText(value.toString())
+                if isinstance(control, QCheckBox):
+                    control.setChecked(value.toBool())
                     
                 self.fieldtocontrol[id] = control
                 QgsMessageLog.logMessage("Binding %s to %s" % (control.objectName() ,value.toString()) ,"SDRC")
@@ -31,7 +33,8 @@ class FormBinder():
         for index, control in self.fieldtocontrol.items():
                 value = None
                 QgsMessageLog.logMessage(str(index))
-                #QgsAttributeEditor.retrieveValue(control, self.layer )
-                #qgsfeature.changeAttribute( index, value)
+                if isinstance(control, QLineEdit):
+                    value = control.text()
+                QgsMessageLog.logMessage("Setting value %s" % value, "SDRC")
         return qgsfeature
 
