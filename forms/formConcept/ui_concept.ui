@@ -6,14 +6,27 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>418</width>
-    <height>374</height>
+    <width>397</width>
+    <height>421</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Dialog</string>
   </property>
-  <layout class="QFormLayout" name="formLayout">
+  <property name="styleSheet">
+   <string notr="true">font: 75 12pt &quot;Tahoma&quot;;</string>
+  </property>
+  <layout class="QGridLayout" name="gridLayout">
+   <item row="0" column="0">
+    <widget class="QLabel" name="jobNoLabel">
+     <property name="text">
+      <string>ID</string>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="1">
+    <widget class="QLineEdit" name="UniqueID"/>
+   </item>
    <item row="1" column="0">
     <widget class="QLabel" name="descriptionLabel">
      <property name="text">
@@ -24,8 +37,12 @@
    <item row="1" column="1">
     <widget class="QLineEdit" name="TextField"/>
    </item>
-   <item row="0" column="1">
-    <widget class="QLineEdit" name="UniqueID"/>
+   <item row="2" column="0">
+    <widget class="QLabel" name="label">
+     <property name="text">
+      <string>CheckBox</string>
+     </property>
+    </widget>
    </item>
    <item row="2" column="1">
     <widget class="QCheckBox" name="CheckBoxField">
@@ -34,31 +51,72 @@
      </property>
     </widget>
    </item>
+   <item row="3" column="0">
+    <widget class="QLabel" name="label_2">
+     <property name="text">
+      <string>ComboBox</string>
+     </property>
+    </widget>
+   </item>
    <item row="3" column="1">
     <widget class="QComboBox" name="ComboField">
      <property name="frame">
       <bool>true</bool>
      </property>
+     <item>
+      <property name="text">
+       <string/>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Test 1</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Test 2</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Test 3</string>
+      </property>
+     </item>
     </widget>
    </item>
-   <item row="0" column="0">
-    <widget class="QLabel" name="jobNoLabel">
-     <property name="text">
-      <string>ID</string>
-     </property>
-    </widget>
-   </item>
-   <item row="6" column="0">
+   <item row="4" column="0">
     <widget class="QLabel" name="numberLabel">
      <property name="text">
       <string>Number</string>
      </property>
     </widget>
    </item>
-   <item row="6" column="1">
-    <widget class="QLineEdit" name="NumberField"/>
+   <item row="5" column="0">
+    <widget class="QLabel" name="label_3">
+     <property name="text">
+      <string>Decimal</string>
+     </property>
+    </widget>
    </item>
-   <item row="10" column="1">
+   <item row="5" column="1">
+    <widget class="QDoubleSpinBox" name="DecimalField">
+     <property name="styleSheet">
+      <string notr="true"/>
+     </property>
+    </widget>
+   </item>
+   <item row="6" column="0">
+    <widget class="QLabel" name="label_4">
+     <property name="text">
+      <string>Date</string>
+     </property>
+    </widget>
+   </item>
+   <item row="6" column="1">
+    <widget class="QCalendarWidget" name="DateField"/>
+   </item>
+   <item row="7" column="0" colspan="2">
     <widget class="QDialogButtonBox" name="buttonBox">
      <property name="orientation">
       <enum>Qt::Horizontal</enum>
@@ -68,11 +126,12 @@
      </property>
     </widget>
    </item>
-   <item row="8" column="1">
-    <widget class="QDoubleSpinBox" name="DecimalField"/>
-   </item>
-   <item row="9" column="1">
-    <widget class="QCalendarWidget" name="DateField"/>
+   <item row="4" column="1">
+    <widget class="QSpinBox" name="NumberField">
+     <property name="maximum">
+      <number>999999999</number>
+     </property>
+    </widget>
    </item>
   </layout>
  </widget>

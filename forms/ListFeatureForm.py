@@ -36,7 +36,7 @@ class FeatureItem(QListWidgetItem):
         if not form == "Default":
             formname = form.__formName__
 
-        self.setText("Open %s from for %s" % ( formname , str(self.feature.id()) ))
+        self.setText("%s for item no. %s" % ( formname , str(self.feature.id()) ))
         
     @property
     def editForm(self):

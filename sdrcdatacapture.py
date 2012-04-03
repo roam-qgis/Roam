@@ -35,7 +35,7 @@ class SDRCDataCapture:
         self.layerstoForms = {}
 
     def initGui(self):
-        QgsMessageLog.logMessage("initGUI","SDRC")
+        # TODO Set the icon size bigger
         self.createFormButtons()
         
     def createFormButtons(self):
