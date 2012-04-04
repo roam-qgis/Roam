@@ -25,8 +25,11 @@ from qgis.core import *
 import forms
 from EditAction import EditAction
 from AddAction import AddAction
+import syncing
 import resources
 from sdrcdatacapturedialog import SDRCDataCaptureDialog
+
+log = lambda msg: QgsMessageLog.logMessage(msg ,"SDRC")
 
 class SDRCDataCapture:
     def __init__(self, iface):
@@ -49,7 +52,18 @@ class SDRCDataCapture:
 
         editAction = EditAction("Edit", self.iface, self.layerstoForms )
         self.toolbar.addAction(editAction)
+
+        syncAction = QAction("Sync", self.iface.mainWindow() )
+        syncAction.triggered.connect(self.sync)
+        self.toolbar.addAction(syncAction)
         
     def unload(self):
         del self.toolbar
 
+    def sync(self):
+        succes, message = syncing.doSync()
+        if not succes:
+            QMessageBox.critical(self.iface.mainWindow(), "Sync failed", message)
+        else:
+            QMessageBox.information( self.iface.mainWindow(), "Sync Completed", message )
+            

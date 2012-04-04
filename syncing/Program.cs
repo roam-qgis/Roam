@@ -12,11 +12,8 @@
         public const string Scope = "SpatialScope";
 
         /// <summary>The main entry point for the application.</summary>
-        [STAThread]
         static void Main()
         {
-            Application.EnableVisualStyles();
-            Application.SetCompatibleTextRenderingDefault(false);
             using (SqlSyncProvider masterProvider = new SqlSyncProvider { ScopeName = Scope }, slaveProvider = new SqlSyncProvider { ScopeName = Scope })
             {
                 using (SqlConnection master = new SqlConnection(Settings.Default.ServerConnectionString), slave = new SqlConnection(Settings.Default.ClientConnectionString))
@@ -35,11 +32,11 @@
                 try
                 {
                     SyncOperationStatistics stats = orchestrator.Synchronize();
-                    MessageBox.Show(Resources.Program_Main_Changes_Downloaded__ + stats.DownloadChangesTotal + Resources.Program_Main_ + stats.UploadChangesApplied, Resources.Program_Main_Complete,MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    Console.WriteLine(Resources.Program_Main_Changes_Downloaded__ + stats.DownloadChangesTotal + Resources.Program_Main_ + stats.UploadChangesApplied);
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show(ex.Message, Resources.Program_Main_Error, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    Console.Error.WriteLine(ex.Message);
                 }
             }
         }
