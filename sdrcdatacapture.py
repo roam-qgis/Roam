@@ -19,13 +19,12 @@
  ***************************************************************************/
 """
 # Import the PyQt and QGIS libraries
-from PointTool import PointAction
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 from qgis.core import *
 import forms
-from PointTool import PointAction
 from EditAction import EditAction
+from AddAction import AddAction
 import resources
 from sdrcdatacapturedialog import SDRCDataCaptureDialog
 
@@ -44,7 +43,7 @@ class SDRCDataCapture:
         
         for form in userForms:
             form = forms.loadForm(form)
-            action = PointAction( form.__formName__, self.iface, form )
+            action = AddAction( form.__formName__, self.iface, form )
             self.toolbar.addAction(action)
             self.layerstoForms[form.__layerName__] = form
 

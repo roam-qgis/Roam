@@ -78,7 +78,7 @@ class PointTool(QgsMapTool):
         return True
 
 
-class PointAction(QAction):
+class AddAction(QAction):
     def __init__(self, name, iface, form ):
         QAction.__init__(self, name, iface.mainWindow())
         self.canvas = iface.mapCanvas()

@@ -14,6 +14,9 @@ class FormBinder():
         self.fieldtocontrol = {}
 
     def bindFeature(self, qgsfeature):
+        """
+        Binds a features values to the form.
+        """    
         for index, value in qgsfeature.attributeMap().items():
             field = self.fields[index]
             control = self.forminstance.findChild(QWidget, field.name())
@@ -57,7 +60,6 @@ class FormBinder():
             If the parent of the control is a QGroupBox and is disabled, the control is ignored for changing.
         """
         import time
-        start = time.time()
         for index, control in self.fieldtocontrol.items():
                 value = None
                 if isinstance(control, QLineEdit):
@@ -79,6 +81,5 @@ class FormBinder():
                 QgsMessageLog.logMessage("Setting value to %s from %s" % (value, control.objectName()), "SDRC")
 
                 qgsfeature.changeAttribute( index, value)
-        QgsMessageLog.logMessage("It took %s " % str(time.time() - start), "SDRC")
         return qgsfeature
 
