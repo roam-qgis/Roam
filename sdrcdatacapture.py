@@ -18,6 +18,8 @@
  *                                                                         *
  ***************************************************************************/
 """
+from syncing.SyncThread import doSync
+import syncing.ui_sync
 # Import the PyQt and QGIS libraries
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
@@ -25,7 +27,8 @@ from qgis.core import *
 import forms
 from EditAction import EditAction
 from AddAction import AddAction
-import syncing
+from syncing.SyncThread import *
+from syncing.ui_sync import Ui_syncForm
 import resources
 from sdrcdatacapturedialog import SDRCDataCaptureDialog
 
@@ -61,9 +64,24 @@ class SDRCDataCapture:
         del self.toolbar
 
     def sync(self):
-        succes, message = syncing.doSync()
-        if not succes:
+        #self.dlg = QDialog()
+        #dlgui= Ui_syncForm()
+        #dlgui.setupUi(self.dlg)
+        #thread = SyncThread()
+        #thread.syncFinished.connect(self.syncDone)
+        #self.dlg.open()
+        #thread.start()
+        success, message = doSync()
+        
+        if not success:
             QMessageBox.critical(self.iface.mainWindow(), "Sync failed", message)
         else:
             QMessageBox.information( self.iface.mainWindow(), "Sync Completed", message )
-            
+        self.iface.mapCanvas().refresh()
+        
+    def syncDone(self, success, message):
+        self.dlg.close()
+        if not success:
+            QMessageBox.critical(self.iface.mainWindow(), "Sync failed", message)
+        else:
+            QMessageBox.information( self.iface.mainWindow(), "Sync Completed", message )
