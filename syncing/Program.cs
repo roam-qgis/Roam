@@ -1,10 +1,9 @@
 ﻿namespace SyncProofConcept
 {
     using System;
+    using System.Data.SqlClient;
     using Microsoft.Synchronization;
     using Microsoft.Synchronization.Data.SqlServer;
-    using System.Windows.Forms;
-    using System.Data.SqlClient;
     using Properties;
 
     static class Program
@@ -20,23 +19,23 @@
                 {
                     masterProvider.Connection = master;
                     slaveProvider.Connection = slave;
-                }
 
-                SyncOrchestrator orchestrator = new SyncOrchestrator
-                {
-                    LocalProvider = slaveProvider,
-                    RemoteProvider = masterProvider,
-                    Direction = SyncDirectionOrder.UploadAndDownload
-                };
+                    SyncOrchestrator orchestrator = new SyncOrchestrator
+                        {
+                            LocalProvider = slaveProvider,
+                            RemoteProvider = masterProvider,
+                            Direction = SyncDirectionOrder.UploadAndDownload
+                        };
 
-                try
-                {
-                    SyncOperationStatistics stats = orchestrator.Synchronize();
-                    Console.WriteLine(Resources.Program_Main_Changes_Downloaded__ + stats.DownloadChangesTotal + Resources.Program_Main_ + stats.UploadChangesApplied);
-                }
-                catch (Exception ex)
-                {
-                    Console.Error.WriteLine(ex.Message);
+                    try
+                    {
+                        SyncOperationStatistics stats = orchestrator.Synchronize();
+                        Console.WriteLine(Resources.Program_Main_Changes_Downloaded__ + stats.DownloadChangesTotal + Resources.Program_Main_ + stats.UploadChangesApplied);
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.Error.WriteLine(ex.Message);
+                    }
                 }
             }
         }
