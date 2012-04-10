@@ -4,6 +4,11 @@ from qgis.core import *
 from qgis.gui import *
 from forms.ListFeatureForm import ListFeaturesForm
 from FormBinder import FormBinder
+import time
+
+class Timer():
+   def __enter__(self): self.start = time.time()
+   def __exit__(self, *args): log(str(time.time() - self.start))
 
 class EditAction(QAction):
     def __init__(self, name, iface, layerstoformmapping ):
@@ -42,17 +47,20 @@ class EditAction(QAction):
             listUi.exec_()
     
     def openForm(self,form,feature,maplayer):
-        maplayer.startEditing()
-        dialog = form.dialogInstance()
-        binder = FormBinder(maplayer, dialog)
-        binder.bindFeature(feature)
-        if dialog.exec_():
-            log("Saving values back")
-            feature = binder.unbindFeature(feature)
-            log("New feature %s" % feature)
-            for value in feature.attributeMap().values():
-                log("New value %s" % value.toString())
+        with Timer():
+            if not maplayer.isEditable():
+                maplayer.startEditing()
 
-            maplayer.updateFeature( feature )
-            self.canvas.refresh()
-            maplayer.commitChanges()
+            dialog = form.dialogInstance()
+            binder = FormBinder(maplayer, dialog)
+            binder.bindFeature(feature)
+            if dialog.exec_():
+                log("Saving values back")
+                feature = binder.unbindFeature(feature)
+                log("New feature %s" % feature)
+                for value in feature.attributeMap().values():
+                    log("New value %s" % value.toString())
+
+                maplayer.updateFeature( feature )
+                maplayer.commitChanges()
+                self.canvas.refresh()
