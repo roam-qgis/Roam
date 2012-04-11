@@ -17,7 +17,7 @@ class testForms(unittest.TestCase):
 
     def testFormsShouldImportCorrectlyAndGetName(self):
         listofforms = forms.getForms()
-        loaded = forms.loadForm(listofforms[0])
+        loaded = forms.loadFormModule(listofforms[0])
 
         self.assertEqual("Water Form", loaded.name())
         

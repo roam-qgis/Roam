@@ -16,6 +16,7 @@ class ListFeaturesForm(QDialog):
 
     def loadFeatureList(self, featureDict):
         for feature, formAndLayer in featureDict.items():
+
             #TODO We don't handle default forms just yet
             if formAndLayer[0] == "Default":
                 continue

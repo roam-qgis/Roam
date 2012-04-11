@@ -39,6 +39,6 @@ if __name__ == "__main__":
     from PyQt4.QtGui import QApplication
     app = QApplication(sys.argv)
     list = forms.getForms()
-    form = forms.loadForm(list[0])
+    form = forms.loadFormModule(list[0])
     form.init(None)
     sys.exit(app.exec_())

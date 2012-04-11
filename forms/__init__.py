@@ -5,6 +5,11 @@ import os
 from Form import *
 
 def getForms():
+    """ Get all the custom user forms that have been created.
+    Checks for "form" at the start to detect module as custom form
+    
+    @Returns A list of modules that contain user forms.
+    """
     modules = []
     for module in os.listdir(os.path.dirname(__file__)):
         if module[:4] == 'form':
@@ -13,10 +18,11 @@ def getForms():
     print modules
     return modules
 
-def loadForm(form):
+def loadFormModule(form):
+    """ Load the forms module """
     formmodule = __import__("SDRCDataCapture.forms.%s" % form.moduleName, locals(), globals(),["*"], 1)
     return formmodule
 
 if __name__ == "__main__":
     forms = getForms()
-    loadForm(forms[0])
+    loadFormModule(forms[0])

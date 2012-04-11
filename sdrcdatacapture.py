@@ -47,12 +47,15 @@ class SDRCDataCapture:
         self.editAction = EditAction("Edit", self.iface, self.layerstoForms )
         self.toolbar.addAction(self.editAction)
 
-        self.syncAction = QAction(QIcon(":/syncing/syncing/sync.png"), "Sync", self.iface.mainWindow() )
+        self.syncAction = QAction(QIcon(":/syncing/syncing/sync.png"), \
+                                    "Sync", self.iface.mainWindow() )
+                                    
         self.syncAction.triggered.connect(self.sync)
         self.toolbar.addAction(self.syncAction)
         self.toolbar.insertSeparator(self.syncAction)
 
     def setupIcons(self):
+        """ Update toolbars to have text and icons, change icons to new style """
         toolbars = self.iface.mainWindow().findChildren(QToolBar)
         for toolbar in toolbars:
             toolbar.setToolButtonStyle(Qt.ToolButtonTextUnderIcon)
@@ -63,6 +66,7 @@ class SDRCDataCapture:
         self.iface.actionPan().setIcon(QIcon(":/icons/pan"))
 
     def projectOpened(self):
+        """ Create user buttons on project load """
         layers = dict((str(x.name()), x) for x in QgsMapLayerRegistry.instance().mapLayers().values())
         self.createFormButtons(layers)
         
@@ -76,7 +80,7 @@ class SDRCDataCapture:
         userForms = forms.getForms()
         
         for form in userForms:
-            form = forms.loadForm(form)
+            form = forms.loadFormModule(form)
 
             try:
                 layer = layers[form.__layerName__]

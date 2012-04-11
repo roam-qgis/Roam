@@ -13,9 +13,3 @@ def dialogInstance():
     curdir= os.path.dirname(__file__)
     path =os.path.join(curdir,'ui_concept.ui')
     return uic.loadUi(path)
-
-def formOpened(formInstance, qgsfeture, layer, iface):
-    """
-    Method called after form is bound.
-    """
-    pass
