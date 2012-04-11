@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'syncing\ui_sync.ui'
 #
-# Created: Wed Apr 11 09:15:06 2012
+# Created: Wed Apr 11 15:56:07 2012
 #      by: PyQt4 UI code generator 4.8.3
 #
 # WARNING! All changes made in this file will be lost!

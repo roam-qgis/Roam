@@ -18,16 +18,20 @@
  *                                                                         *
  ***************************************************************************/
 """
-import syncing.ui_sync
+import os
+
+from AddAction import AddAction
+from EditAction import EditAction
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
-from qgis.core import *
 import forms
-from EditAction import EditAction
-from AddAction import AddAction
-from syncing.Syncer import SyncDialog, Syncer
+from listmodulesdialog import ListProjectsDialog
+from qgis.core import *
 import resources
 from sdrcdatacapturedialog import SDRCDataCaptureDialog
+from syncing.Syncer import SyncDialog
+from syncing.Syncer import Syncer
+import syncing.ui_sync
 
 log = lambda msg: QgsMessageLog.logMessage(msg ,"SDRC")
 
@@ -37,10 +41,17 @@ class SDRCDataCapture:
         self.layerstoForms = {}
         self.actions = []
         self.iface.projectRead.connect(self.projectOpened)
+        self.settings = QSettings( "settings.ini", QSettings.IniFormat )
         
     def initGui(self):
         self.toolbar = self.iface.addToolBar("SDRC Data Capture")
         self.setupIcons()
+
+#        self.openProjectAction = QAction(QIcon(":/syncing/syncing/sync.png"), \
+#                                    "Open Project", self.iface.mainWindow() )
+#
+#        self.openProjectAction.triggered.connect(self.openProject)
+#        self.toolbar.addAction(self.openProjectAction)
 
         self.editAction = EditAction("Edit", self.iface, self.layerstoForms )
         self.syncAction = QAction(QIcon(":/syncing/syncing/sync.png"), \
@@ -96,7 +107,17 @@ class SDRCDataCapture:
                 log("Couldn't find layer for form %s" % form.__layerName__)
 
         self.toolbar.insertSeparator(self.editAction)
-        
+
+    def openProject(self):
+        self.dialog = ListProjectsDialog()
+        self.dialog.setModal(True)
+        self.dialog.show()
+        #QCoreApplication.processEvents()
+        curdir= os.path.dirname(__file__)
+        path =os.path.join(curdir,'projects/')
+        paths = self.settings.value("/projects/projectLocations", [path]).toList()
+        self.dialog.loadProjectList(paths)
+    
     def unload(self):
         del self.toolbar
 

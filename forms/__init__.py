@@ -15,7 +15,6 @@ def getForms():
         if module[:4] == 'form':
             modules.append(Form(module))
             
-    print modules
     return modules
 
 def loadFormModule(form):
