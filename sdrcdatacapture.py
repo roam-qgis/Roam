@@ -36,7 +36,7 @@ class SDRCDataCapture:
         self.iface = iface
         self.layerstoForms = {}
         self.actions = []
-        self.iface.projectRead.connect(self.createFormButtons)
+        self.iface.projectRead.connect(self.projectOpened)
         
     def initGui(self):
         self.toolbar = self.iface.addToolBar("SDRC Data Capture")
@@ -61,11 +61,15 @@ class SDRCDataCapture:
         self.iface.actionZoomIn().setIcon(QIcon(":/icons/in"))
         self.iface.actionZoomOut().setIcon(QIcon(":/icons/out"))
         self.iface.actionPan().setIcon(QIcon(":/icons/pan"))
-        
-    def createFormButtons(self):
-        """ Create buttons for each form that is definded """
 
-        # Remove all the old toolbars
+    def projectOpened(self):
+        layers = dict((str(x.name()), x) for x in QgsMapLayerRegistry.instance().mapLayers().values())
+        self.createFormButtons(layers)
+        
+    def createFormButtons(self, layers):
+        """ Create buttons for each form that is definded """
+        
+        # Remove all the old buttons
         for action in self.actions:
             self.toolbar.removeAction(action)
 
@@ -73,11 +77,16 @@ class SDRCDataCapture:
         
         for form in userForms:
             form = forms.loadForm(form)
-            action = AddAction( form.__formName__, self.iface, form )
-            self.toolbar.insertAction(self.editAction, action)
-            self.actions.append(action)
-            self.layerstoForms[form.__layerName__] = form
-            
+
+            try:
+                layer = layers[form.__layerName__]
+                action = AddAction( form.__formName__, self.iface, form , layer )
+                self.toolbar.insertAction(self.editAction, action)
+                self.actions.append(action)
+                self.layerstoForms[form.__layerName__] = form
+            except KeyError:
+                log("Couldn't find layer for form %s" % form.__layerName__)
+
         self.toolbar.insertSeparator(self.editAction)
     def unload(self):
         del self.toolbar

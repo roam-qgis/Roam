@@ -7,22 +7,14 @@ from forms.ListFeatureForm import ListFeaturesForm
 from FormBinder import FormBinder
 
 class AddAction(QAction):
-    def __init__(self, name, iface, form ):
+    def __init__(self, name, iface, form, layer ):
         QAction.__init__(self, name, iface.mainWindow())
         self.canvas = iface.mapCanvas()
         self.form = form
         self.triggered.connect(self.runPointTool)
         self.tool = PointTool( self.canvas )
         self.tool.mouseClicked.connect( self.pointClick )
-        self.layer = None
-
-        for layer in QgsMapLayerRegistry.instance().mapLayers().values():
-            if layer.name() == self.form.__layerName__:
-                self.layer = layer
-
-        if self.layer is None:
-            self.setEnabled(False)
-            self.setToolTip("Can't find the layer for the tool")
+        self.layer = layer
 
     def runPointTool(self):
         self.canvas.setMapTool(self.tool)
