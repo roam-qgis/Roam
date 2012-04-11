@@ -2,6 +2,13 @@
   <qresource prefix="/plugins/sdrcdatacapture">
     <file>icon.png</file>
   </qresource>
+  <qresource prefix="icons">
+    <file alias="edit">edit.png</file>
+    <file alias="home">home.png</file>
+    <file alias="in">in.png</file>
+    <file alias="out">out.png</file>
+    <file alias="pan">pan.png</file>
+  </qresource>
   <qresource prefix="syncing">
     <file>syncing/sync.png</file>
   </qresource>

@@ -35,28 +35,50 @@ class SDRCDataCapture:
     def __init__(self, iface):
         self.iface = iface
         self.layerstoForms = {}
-
+        self.actions = []
+        self.iface.projectRead.connect(self.createFormButtons)
+        
     def initGui(self):
-        # TODO Set the icon size bigger
-        self.createFormButtons()
+        self.toolbar = self.iface.addToolBar("SDRC Data Capture")
+        
+        # self.createFormButtons()
+        self.setupIcons()
+
+        self.editAction = EditAction("Edit", self.iface, self.layerstoForms )
+        self.toolbar.addAction(self.editAction)
+
+        self.syncAction = QAction(QIcon(":/syncing/syncing/sync.png"), "Sync", self.iface.mainWindow() )
+        self.syncAction.triggered.connect(self.sync)
+        self.toolbar.addAction(self.syncAction)
+        self.toolbar.insertSeparator(self.syncAction)
+        self.toolbar.insertSeparator(self.editAction)
+
+    def setupIcons(self):
+        toolbars = self.iface.mainWindow().findChildren(QToolBar)
+        for toolbar in toolbars:
+            toolbar.setToolButtonStyle(Qt.ToolButtonTextUnderIcon)
+            #toolbar.setIconSize(QSize(32,32))
+            
+        self.iface.actionZoomIn().setIcon(QIcon(":/icons/in"))
+        self.iface.actionZoomOut().setIcon(QIcon(":/icons/out"))
+        self.iface.actionPan().setIcon(QIcon(":/icons/pan"))
         
     def createFormButtons(self):
-        self.toolbar = self.iface.addToolBar("SDRC Data Capture")
+        """ Create buttons for each form that is definded """
+
+        # Remove all the old toolbars
+        for action in self.actions:
+            self.toolbar.removeAction(action)
+
         userForms = forms.getForms()
         
         for form in userForms:
             form = forms.loadForm(form)
             action = AddAction( form.__formName__, self.iface, form )
             self.toolbar.addAction(action)
+            self.actions.append(action)
             self.layerstoForms[form.__layerName__] = form
-
-        editAction = EditAction("Edit", self.iface, self.layerstoForms )
-        self.toolbar.addAction(editAction)
-
-        syncAction = QAction("Sync", self.iface.mainWindow() )
-        syncAction.triggered.connect(self.sync)
-        self.toolbar.addAction(syncAction)
-        
+            
     def unload(self):
         del self.toolbar
 

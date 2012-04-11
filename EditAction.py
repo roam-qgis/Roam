@@ -1,10 +1,11 @@
 from PointTool import PointTool, log
-from PyQt4.QtGui import QAction
+from PyQt4.QtGui import QAction, QIcon
 from qgis.core import *
 from qgis.gui import *
 from forms.ListFeatureForm import ListFeaturesForm
 from FormBinder import FormBinder
 import time
+import resources
 
 class Timer():
    def __enter__(self): self.start = time.time()
@@ -18,6 +19,7 @@ class EditAction(QAction):
         self.triggered.connect(self.runPointTool)
         self.tool = PointTool( self.canvas )
         self.tool.mouseClicked.connect( self.findFeatures )
+        self.setIcon(QIcon(":/icons/edit"))
         
         
     def runPointTool(self):

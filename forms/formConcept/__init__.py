@@ -19,4 +19,3 @@ def formOpened(formInstance, qgsfeture, layer, iface):
     Method called after form is bound.
     """
     pass
-
