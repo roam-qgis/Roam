@@ -51,7 +51,6 @@ class SDRCDataCapture:
         self.syncAction.triggered.connect(self.sync)
         self.toolbar.addAction(self.syncAction)
         self.toolbar.insertSeparator(self.syncAction)
-        self.toolbar.insertSeparator(self.editAction)
 
     def setupIcons(self):
         toolbars = self.iface.mainWindow().findChildren(QToolBar)
@@ -75,10 +74,11 @@ class SDRCDataCapture:
         for form in userForms:
             form = forms.loadForm(form)
             action = AddAction( form.__formName__, self.iface, form )
-            self.toolbar.addAction(action)
+            self.toolbar.insertAction(self.editAction, action)
             self.actions.append(action)
             self.layerstoForms[form.__layerName__] = form
             
+        self.toolbar.insertSeparator(self.editAction)
     def unload(self):
         del self.toolbar
 
