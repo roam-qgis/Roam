@@ -41,7 +41,12 @@ class SDRCDataCapture:
         self.layerstoForms = {}
         self.actions = []
         self.iface.projectRead.connect(self.projectOpened)
+        self.iface.initializationCompleted.connect(self.setupUI)
         self.settings = QSettings( "settings.ini", QSettings.IniFormat )
+
+    def setupUI(self):
+        self.iface.mainWindow().showFullScreen()
+        self.openProject()
         
     def initGui(self):
         self.toolbar = self.iface.addToolBar("SDRC Data Capture")
@@ -61,9 +66,7 @@ class SDRCDataCapture:
         self.toolbar.addAction(self.editAction)                        
         self.toolbar.addAction(self.syncAction)
         self.toolbar.insertSeparator(self.syncAction)
-
-        self.iface.actionToggleFullScreen().trigger()
-        self.openProject()
+        
 
     def setupIcons(self):
         """
