@@ -40,22 +40,23 @@ class SDRCDataCapture:
         
     def initGui(self):
         self.toolbar = self.iface.addToolBar("SDRC Data Capture")
-        
-        # self.createFormButtons()
         self.setupIcons()
 
         self.editAction = EditAction("Edit", self.iface, self.layerstoForms )
-        self.toolbar.addAction(self.editAction)
-
         self.syncAction = QAction(QIcon(":/syncing/syncing/sync.png"), \
                                     "Sync", self.iface.mainWindow() )
-                                    
         self.syncAction.triggered.connect(self.sync)
+
+        self.toolbar.addAction(self.editAction)                        
         self.toolbar.addAction(self.syncAction)
         self.toolbar.insertSeparator(self.syncAction)
 
+        self.iface.actionToggleFullScreen().trigger()
+
     def setupIcons(self):
-        """ Update toolbars to have text and icons, change icons to new style """
+        """
+            Update toolbars to have text and icons, change icons to new style
+        """
         toolbars = self.iface.mainWindow().findChildren(QToolBar)
         for toolbar in toolbars:
             toolbar.setToolButtonStyle(Qt.ToolButtonTextUnderIcon)
@@ -66,13 +67,16 @@ class SDRCDataCapture:
         self.iface.actionPan().setIcon(QIcon(":/icons/pan"))
 
     def projectOpened(self):
-        """ Create user buttons on project load """
+        """
+            Create user buttons on project load
+        """
         layers = dict((str(x.name()), x) for x in QgsMapLayerRegistry.instance().mapLayers().values())
         self.createFormButtons(layers)
         
     def createFormButtons(self, layers):
-        """ Create buttons for each form that is definded """
-        
+        """
+            Create buttons for each form that is definded
+        """
         # Remove all the old buttons
         for action in self.actions:
             self.toolbar.removeAction(action)
@@ -92,6 +96,7 @@ class SDRCDataCapture:
                 log("Couldn't find layer for form %s" % form.__layerName__)
 
         self.toolbar.insertSeparator(self.editAction)
+        
     def unload(self):
         del self.toolbar
 
@@ -99,5 +104,6 @@ class SDRCDataCapture:
         self.syndlg = SyncDialog()
         self.syndlg.setModal(True)
         self.syndlg.show()
+        # HACK 
         QCoreApplication.processEvents()
         self.syndlg.runSync()
