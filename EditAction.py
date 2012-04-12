@@ -42,7 +42,11 @@ class EditAction(QAction):
             for feature in layer:
                 featuresToForms[feature] = (form, layer)
 
-        if len(featuresToForms) > 0:
+        if len(featuresToForms) == 1:
+            form, layer = featuresToForms.itervalues().next()
+            feature = featuresToForms.iterkeys().next()
+            self.openForm(form, feature, layer)
+        elif len(featuresToForms) > 0:
             listUi = ListFeaturesForm()
             listUi.loadFeatureList(featuresToForms)
             listUi.openFeatureForm.connect(self.openForm)
