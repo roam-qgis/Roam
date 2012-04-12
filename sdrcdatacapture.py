@@ -47,11 +47,11 @@ class SDRCDataCapture:
         self.toolbar = self.iface.addToolBar("SDRC Data Capture")
         self.setupIcons()
 
-#        self.openProjectAction = QAction(QIcon(":/syncing/syncing/sync.png"), \
-#                                    "Open Project", self.iface.mainWindow() )
-#
-#        self.openProjectAction.triggered.connect(self.openProject)
-#        self.toolbar.addAction(self.openProjectAction)
+        self.openProjectAction = QAction(QIcon(":/icons/open"), \
+                                    "Open Project", self.iface.mainWindow() )
+
+        self.openProjectAction.triggered.connect(self.openProject)
+        self.toolbar.addAction(self.openProjectAction)
 
         self.editAction = EditAction("Edit", self.iface, self.layerstoForms )
         self.syncAction = QAction(QIcon(":/syncing/syncing/sync.png"), \
@@ -63,6 +63,7 @@ class SDRCDataCapture:
         self.toolbar.insertSeparator(self.syncAction)
 
         self.iface.actionToggleFullScreen().trigger()
+        self.openProject()
 
     def setupIcons(self):
         """
@@ -110,13 +111,18 @@ class SDRCDataCapture:
 
     def openProject(self):
         self.dialog = ListProjectsDialog()
+        self.dialog.requestOpenProject.connect(self.loadProject)
         self.dialog.setModal(True)
         self.dialog.show()
-        #QCoreApplication.processEvents()
+        QCoreApplication.processEvents()
         curdir= os.path.dirname(__file__)
         path =os.path.join(curdir,'projects/')
-        paths = self.settings.value("/projects/projectLocations", [path]).toList()
-        self.dialog.loadProjectList(paths)
+        #paths = self.settings.value("/projects/projectLocations", [path]).toList()
+        self.dialog.loadProjectList([path])
+
+    def loadProject(self, path):
+        self.dialog.close()
+        self.iface.addProject(path)
     
     def unload(self):
         del self.toolbar
