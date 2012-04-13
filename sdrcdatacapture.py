@@ -47,7 +47,6 @@ class SDRCDataCapture():
         self.settings = QSettings( "settings.ini", QSettings.IniFormat )
 
     def setupUI(self):
-        log("Test")
         self.iface.mainWindow().showFullScreen()
         self.navtoolbar.setMovable(False)
         self.navtoolbar.setAllowedAreas(Qt.TopToolBarArea)
@@ -62,6 +61,11 @@ class SDRCDataCapture():
         spacewidget = QWidget()
         spacewidget.setMinimumWidth(30)
         self.setupIcons()
+
+        self.homeAction = QAction(QIcon(":/icons/home"), \
+                                    "Home View", self.iface.mainWindow() )
+        self.homeAction.triggered.connect(self.zoomToHomeView)
+        self.toolbar.addAction(self.homeAction)
 
         self.openProjectAction = QAction(QIcon(":/icons/open"), \
                                     "Open Project", self.iface.mainWindow() )
@@ -84,6 +88,10 @@ class SDRCDataCapture():
         self.toolbar.addAction(self.editAction)                        
         self.toolbar.addAction(self.syncAction)
         self.toolbar.insertSeparator(self.syncAction)
+
+    def zoomToHomeView(self):
+        self.iface.mapCanvas().setExtent(self.homeextent)
+        self.iface.mapCanvas().refresh()
 
     def toggleRasterLayers(self):
         legend = self.iface.legendInterface()
@@ -111,11 +119,11 @@ class SDRCDataCapture():
 
     def projectOpened(self):
         """
-            Create user buttons on project load
+            Called when a new project is opened in QGIS.
         """
         layers = dict((str(x.name()), x) for x in QgsMapLayerRegistry.instance().mapLayers().values())
         self.createFormButtons(layers)
-        
+        self.homeextent = self.iface.mapCanvas().extent()
         
     def createFormButtons(self, layers):
         """
