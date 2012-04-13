@@ -62,29 +62,23 @@ class SDRCDataCapture():
         spacewidget.setMinimumWidth(30)
         self.setupIcons()
 
-        self.homeAction = QAction(QIcon(":/icons/home"), \
-                                    "Home View", self.iface.mainWindow() )
-        self.homeAction.triggered.connect(self.zoomToHomeView)
-        self.toolbar.addAction(self.homeAction)
-
-        self.openProjectAction = QAction(QIcon(":/icons/open"), \
-                                    "Open Project", self.iface.mainWindow() )
-
-        self.openProjectAction.triggered.connect(self.openProject)
-
-        self.toggleRasterAction = QAction(QIcon(":/icons/photo"), \
-                                        "Toogle Raster", self.iface.mainWindow() )
-        self.toggleRasterAction.triggered.connect(self.toggleRasterLayers)
-        self.toolbar.addAction(self.toggleRasterAction)
-        
-        self.toolbar.addAction(self.openProjectAction)
-        self.toolbar.addWidget(spacewidget)
-
+        self.homeAction = QAction(QIcon(":/icons/home"), "Home View" , self.mainwindow)
+        self.openProjectAction = QAction(QIcon(":/icons/open"),"Open Project" , self.mainwindow)
+        self.toggleRasterAction = QAction(QIcon(":/icons/photo"),"Toogle Raster" , self.mainwindow)
         self.editAction = EditAction("Edit", self.iface, self.layerstoForms )
-        self.syncAction = QAction(QIcon(":/syncing/syncing/sync.png"), \
-                                    "Sync", self.iface.mainWindow() )
-        self.syncAction.triggered.connect(self.sync)
+        self.syncAction = QAction(QIcon(":/syncing/syncing/sync.png"), "Sync", self.mainwindow)
 
+
+        self.homeAction.triggered.connect(self.zoomToHomeView)
+        self.syncAction.triggered.connect(self.sync)
+        self.openProjectAction.triggered.connect(self.openProject)
+        self.toggleRasterAction.triggered.connect(self.toggleRasterLayers)
+
+        self.navtoolbar.insertAction(self.iface.actionPan(),self.homeAction )
+        self.navtoolbar.insertAction(self.homeAction, self.openProjectAction)
+
+        self.navtoolbar.addAction(self.toggleRasterAction)
+        self.navtoolbar.insertWidget(self.homeAction, spacewidget)
         self.toolbar.addAction(self.editAction)                        
         self.toolbar.addAction(self.syncAction)
         self.toolbar.insertSeparator(self.syncAction)
