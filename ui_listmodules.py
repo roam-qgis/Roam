@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'ui_listmodules.ui'
 #
-# Created: Thu Apr 12 14:11:26 2012
+# Created: Fri Apr 13 15:53:22 2012
 #      by: PyQt4 UI code generator 4.8.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -46,12 +46,21 @@ class Ui_ListModules(object):
         self.label.setWordWrap(False)
         self.label.setObjectName(_fromUtf8("label"))
         self.gridLayout.addWidget(self.label, 0, 0, 1, 1)
+        self.pushButton = QtGui.QPushButton(ListModules)
+        font = QtGui.QFont()
+        font.setFamily(_fromUtf8("Tahoma"))
+        font.setPointSize(12)
+        self.pushButton.setFont(font)
+        self.pushButton.setObjectName(_fromUtf8("pushButton"))
+        self.gridLayout.addWidget(self.pushButton, 2, 0, 1, 1)
 
         self.retranslateUi(ListModules)
+        QtCore.QObject.connect(self.pushButton, QtCore.SIGNAL(_fromUtf8("clicked()")), ListModules.close)
         QtCore.QMetaObject.connectSlotsByName(ListModules)
 
     def retranslateUi(self, ListModules):
         ListModules.setWindowTitle(QtGui.QApplication.translate("ListModules", "Select form to open", None, QtGui.QApplication.UnicodeUTF8))
         self.moduleList.setSortingEnabled(False)
         self.label.setText(QtGui.QApplication.translate("ListModules", "Select project to load", None, QtGui.QApplication.UnicodeUTF8))
+        self.pushButton.setText(QtGui.QApplication.translate("ListModules", "Cancel", None, QtGui.QApplication.UnicodeUTF8))
 

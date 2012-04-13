@@ -9,6 +9,7 @@
     <file alias="out">out.png</file>
     <file alias="pan">pan.png</file>
     <file alias="open">open.png</file>
+    <file alias="photo">photo.png</file>
   </qresource>
   <qresource prefix="syncing">
     <file>syncing/sync.png</file>

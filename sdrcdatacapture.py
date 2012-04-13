@@ -49,7 +49,6 @@ class SDRCDataCapture():
     def setupUI(self):
         log("Test")
         self.iface.mainWindow().showFullScreen()
-        #self.mainwindow.removeToolBar(self.navtoolbar)
         self.navtoolbar.setMovable(False)
         self.navtoolbar.setAllowedAreas(Qt.TopToolBarArea)
         self.mainwindow.insertToolBar(self.toolbar, self.navtoolbar)
@@ -68,6 +67,12 @@ class SDRCDataCapture():
                                     "Open Project", self.iface.mainWindow() )
 
         self.openProjectAction.triggered.connect(self.openProject)
+
+        self.toggleRasterAction = QAction(QIcon(":/icons/photo"), \
+                                        "Toogle Raster", self.iface.mainWindow() )
+        self.toggleRasterAction.triggered.connect(self.toggleRasterLayers)
+        self.toolbar.addAction(self.toggleRasterAction)
+        
         self.toolbar.addAction(self.openProjectAction)
         self.toolbar.addWidget(spacewidget)
 
@@ -79,7 +84,18 @@ class SDRCDataCapture():
         self.toolbar.addAction(self.editAction)                        
         self.toolbar.addAction(self.syncAction)
         self.toolbar.insertSeparator(self.syncAction)
-        
+
+    def toggleRasterLayers(self):
+        legend = self.iface.legendInterface()
+        #Freeze the canvas to save on UI refresh
+        self.iface.mapCanvas().freeze()
+        for layer in QgsMapLayerRegistry.instance().mapLayers().values():
+            if layer.type() == QgsMapLayer.RasterLayer:
+                isvisible = legend.isLayerVisible(layer)
+                legend.setLayerVisible(layer, not isvisible )
+        self.iface.mapCanvas().freeze(False)
+        self.iface.mapCanvas().refresh()
+
     def setupIcons(self):
         """
             Update toolbars to have text and icons, change icons to new style
@@ -87,7 +103,7 @@ class SDRCDataCapture():
         toolbars = self.iface.mainWindow().findChildren(QToolBar)
         for toolbar in toolbars:
             toolbar.setToolButtonStyle(Qt.ToolButtonTextUnderIcon)
-            #toolbar.setIconSize(QSize(32,32))
+            toolbar.setIconSize(QSize(32,32))
             
         self.iface.actionZoomIn().setIcon(QIcon(":/icons/in"))
         self.iface.actionZoomOut().setIcon(QIcon(":/icons/out"))
@@ -99,6 +115,7 @@ class SDRCDataCapture():
         """
         layers = dict((str(x.name()), x) for x in QgsMapLayerRegistry.instance().mapLayers().values())
         self.createFormButtons(layers)
+        
         
     def createFormButtons(self, layers):
         """
@@ -147,3 +164,4 @@ class SDRCDataCapture():
         # HACK 
         QCoreApplication.processEvents()
         self.syndlg.runSync()
+        self.iface.mapCanvas().refresh()

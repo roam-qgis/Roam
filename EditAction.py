@@ -36,6 +36,9 @@ class EditAction(QAction):
         
         featuresToForms = {}
         for layer in self.canvas.layers():
+            if layer.type() == QgsMapLayer.RasterLayer:
+                continue
+                
             layer.select( layer.pendingAllAttributesList(), rect, True, True)
             name = layer.name()
             try:

@@ -76,8 +76,38 @@
      </property>
     </widget>
    </item>
+   <item row="2" column="0">
+    <widget class="QPushButton" name="pushButton">
+     <property name="font">
+      <font>
+       <family>Tahoma</family>
+       <pointsize>12</pointsize>
+      </font>
+     </property>
+     <property name="text">
+      <string>Cancel</string>
+     </property>
+    </widget>
+   </item>
   </layout>
  </widget>
  <resources/>
- <connections/>
+ <connections>
+  <connection>
+   <sender>pushButton</sender>
+   <signal>clicked()</signal>
+   <receiver>ListModules</receiver>
+   <slot>close()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>73</x>
+     <y>387</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>2</x>
+     <y>378</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
 </ui>

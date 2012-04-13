@@ -44,14 +44,7 @@ class SyncDialog(QDialog):
 
     def runSync(self):
         self.syncer = Syncer()
-        #self.thread = QThread()
-        #self.syncer.moveToThread(self.thread)
-
-        #self.thread.started.connect(self.syncer.doSync)
         self.syncer.statusUpdate.connect(self.updateStatus)
-        #self.syncer.done.connect(self.thread.quit)
-        
-        #self.thread.start()
         self.syncer.doSync()
 
         
