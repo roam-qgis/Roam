@@ -38,9 +38,12 @@ class EditAction(QAction):
         for layer in self.canvas.layers():
             layer.select( layer.pendingAllAttributesList(), rect, True, True)
             name = layer.name()
-            form = self.layerstoformmapping.get(str(name),"Default")
-            for feature in layer:
-                featuresToForms[feature] = (form, layer)
+            try:
+                form = self.layerstoformmapping[str(name)]
+                for feature in layer:
+                    featuresToForms[feature] = (form, layer)
+            except KeyError:
+                continue
 
         if len(featuresToForms) == 1:
             form, layer = featuresToForms.itervalues().next()

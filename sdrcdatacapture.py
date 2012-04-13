@@ -2,7 +2,7 @@
 /***************************************************************************
  SDRCDataCapture
                                  A QGIS plugin
- Prototype Data collection software for SDRC
+ Data collection software for SDRC
                               -------------------
         begin                : 2012-03-21
         copyright            : (C) 2012 by Nathan Woodrow @ SDRC
@@ -35,21 +35,33 @@ import syncing.ui_sync
 
 log = lambda msg: QgsMessageLog.logMessage(msg ,"SDRC")
 
-class SDRCDataCapture:
+class SDRCDataCapture():
     def __init__(self, iface):
         self.iface = iface
         self.layerstoForms = {}
         self.actions = []
+        self.navtoolbar = self.iface.mapNavToolToolBar()
+        self.mainwindow = iface.mainWindow()
         self.iface.projectRead.connect(self.projectOpened)
         self.iface.initializationCompleted.connect(self.setupUI)
         self.settings = QSettings( "settings.ini", QSettings.IniFormat )
 
     def setupUI(self):
+        log("Test")
         self.iface.mainWindow().showFullScreen()
+        #self.mainwindow.removeToolBar(self.navtoolbar)
+        self.navtoolbar.setMovable(False)
+        self.navtoolbar.setAllowedAreas(Qt.TopToolBarArea)
+        self.mainwindow.insertToolBar(self.toolbar, self.navtoolbar)
         self.openProject()
         
     def initGui(self):
-        self.toolbar = self.iface.addToolBar("SDRC Data Capture")
+        self.toolbar = QToolBar("SDRC Data Capture", self.mainwindow)
+        self.mainwindow.addToolBar(Qt.TopToolBarArea, self.toolbar)
+        self.toolbar.setMovable(False)
+        
+        spacewidget = QWidget()
+        spacewidget.setMinimumWidth(30)
         self.setupIcons()
 
         self.openProjectAction = QAction(QIcon(":/icons/open"), \
@@ -57,6 +69,7 @@ class SDRCDataCapture:
 
         self.openProjectAction.triggered.connect(self.openProject)
         self.toolbar.addAction(self.openProjectAction)
+        self.toolbar.addWidget(spacewidget)
 
         self.editAction = EditAction("Edit", self.iface, self.layerstoForms )
         self.syncAction = QAction(QIcon(":/syncing/syncing/sync.png"), \
@@ -67,7 +80,6 @@ class SDRCDataCapture:
         self.toolbar.addAction(self.syncAction)
         self.toolbar.insertSeparator(self.syncAction)
         
-
     def setupIcons(self):
         """
             Update toolbars to have text and icons, change icons to new style
@@ -109,8 +121,6 @@ class SDRCDataCapture:
                 self.layerstoForms[form.__layerName__] = form
             except KeyError:
                 log("Couldn't find layer for form %s" % form.__layerName__)
-
-        self.toolbar.insertSeparator(self.editAction)
 
     def openProject(self):
         self.dialog = ListProjectsDialog()

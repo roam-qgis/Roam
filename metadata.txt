@@ -9,9 +9,9 @@
 
 
 [general]
-name=Prototype Data collection software for SDRC
+name= SDRC Data Collection
 qgisMinimumVersion=1.8
-description=Prototype Data collection software for SDRC
+description= SDRC Data collection QGIS Plugin
 version=0.1
 
 # end of mandatory metadata
