@@ -1,5 +1,5 @@
 from PointTool import PointTool, log
-from PyQt4.QtGui import QAction
+from PyQt4.QtGui import QAction, QLabel
 from PyQt4.QtCore import QSettings
 from qgis.core import *
 from qgis.gui import *
@@ -12,6 +12,7 @@ class AddAction(QAction):
     def __init__(self, name, iface, form, layer ):
         QAction.__init__(self, name, iface.mainWindow())
         self.canvas = iface.mapCanvas()
+        self.iface = iface
         self.form = form
         self.triggered.connect(self.runPointTool)
         self.tool = PointTool( self.canvas )
@@ -54,6 +55,9 @@ class AddAction(QAction):
         self.emitTool = QgsMapToolEmitPoint(self.canvas)
         self.emitTool.canvasClicked.connect(self.featureSelected)
         self.canvas.setMapTool(self.emitTool)
+        label = QLabel("Please select a single feature on the map")
+        label.setStyleSheet('font: 75 32pt "MS Shell Dlg 2";color: rgb(231, 175, 62);')
+        self.messageitem = self.iface.mapCanvas().scene().addWidget(label)
         self.dialoginstance.hide()
         
     def featureSelected(self, point, button):
@@ -62,13 +66,8 @@ class AddAction(QAction):
         settings = QSettings(path, QSettings.IniFormat)
         layername = settings.value("selectAction/layer").toString()
         column = settings.value("selectAction/column").toString()
-        log(layername)
-        log(column)
-        for layer in self.canvas.layers():
-            log("Looking at %s " % layer.name())
-            if layer.type() == QgsMapLayer.RasterLayer:
-                continue
-                
+        
+        for layer in self.canvas.layers():            
             if layer.name() == layername:
                 searchRadius = self.canvas.extent().width() * ( 0.5 / 100.0)
                 log("Finding Featues at %s with radius of %s" % (point, searchRadius))
@@ -86,7 +85,8 @@ class AddAction(QAction):
                 #HACK Hardcoded
                 self.dialoginstance.TextField.setText(value)
                 break
-        
+                
+        self.iface.mapCanvas().scene().removeItem(self.messageitem)
         self.dialoginstance.show()
         
     def dialogAccept(self):
