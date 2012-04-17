@@ -20,6 +20,9 @@ class EditAction(QAction):
         self.tool = PointTool( self.canvas )
         self.tool.mouseClicked.connect( self.findFeatures )
         self.setIcon(QIcon(":/icons/edit"))
+        self.dialogprovider = DialogProvider(self.canvas)
+        self.dialogprovider.accepted.connect(self.setTool)
+        self.dialogprovider.rejected.connect(self.setTool)
         
     def setTool(self):
         self.canvas.setMapTool(self.tool)
@@ -61,7 +64,6 @@ class EditAction(QAction):
         if not maplayer.isEditable():
             maplayer.startEditing()
 
-        self.dialogprovider = DialogProvider(self.canvas)
-        self.dialogprovider.openDialog( formmodule, feature, maplayer, True )
-        self.dialogprovider.accepted.connect(self.setTool)
-        self.dialogprovider.rejected.connect(self.setTool)
+        with Timer():
+            self.dialogprovider.openDialog( formmodule, feature, maplayer, True )
+            

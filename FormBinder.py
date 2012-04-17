@@ -7,21 +7,20 @@ import os
 import functools
 
 class FormBinder(QObject):
-    beginSelectFeature = pyqtSignal()
+    beginSelectFeature = pyqtSignal(str)
     endSelectFeature = pyqtSignal()
     """
     Handles binding of values to and out of the form.
     """
-    def __init__(self, layer, formInstance, canvas, settingspath):
+    def __init__(self, layer, formInstance, canvas, settings):
         QObject.__init__(self)
         self.layer = layer
         self.canvas = canvas
         self.forminstance = formInstance
         self.fields = self.layer.pendingFields()
         self.fieldtocontrol = {}
-        self.settingspath = settingspath
         self.actionlist = []
-        self.settings = QSettings(self.settingspath, QSettings.IniFormat)
+        self.settings = settings
 
     def bindFeature(self, qgsfeature):
         """
@@ -122,15 +121,15 @@ class FormBinder(QObject):
             control.setIcon(QIcon(":/icons/select"))
 
     def selectFeatureClicked(self, controlName):
-        settings = QSettings(self.settingspath, QSettings.IniFormat)
-        layername = settings.value("%s/layer" % controlName ).toString()
-        column = settings.value("%s/column" % controlName).toString()
-        bindto = settings.value("%s/bindto" % controlName).toString()
-        
+        layername = self.settings.value("%s/layer" % controlName ).toString()
+        column = self.settings.value("%s/column" % controlName).toString()
+        bindto = self.settings.value("%s/bindto" % controlName).toString()
+        message = self.settings.value("%s/message" % controlName, "Please select a feature in the map").toString()
+
         self.tool = SelectFeatureTool(self.canvas, layername, column, bindto)
         self.tool.foundFeature.connect(self.bind)
         self.canvas.setMapTool(self.tool)
-        self.beginSelectFeature.emit()
+        self.beginSelectFeature.emit(message)
 
     def bind(self, feature, value, bindto):
         self.bindByName(bindto, value)

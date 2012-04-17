@@ -1,7 +1,8 @@
 import os
 from FormBinder import FormBinder
 from qgis.core import QgsMessageLog
-from PyQt4.QtCore import pyqtSignal, QObject
+from PyQt4.QtCore import pyqtSignal, QObject, QSettings
+from PyQt4.QtGui import QLabel
 
 log = lambda msg: QgsMessageLog.logMessage(msg ,"SDRC")
 
@@ -21,8 +22,9 @@ class DialogProvider(QObject):
         
         curdir = os.path.dirname(formmodule.__file__)
         settingspath = os.path.join(curdir,'settings.ini')
-
-        self.binder = FormBinder(layer, self.dialog, self.canvas, settingspath)
+        self.settings = QSettings(settingspath, QSettings.IniFormat)
+        
+        self.binder = FormBinder(layer, self.dialog, self.canvas, self.settings)
         self.binder.beginSelectFeature.connect(self.selectingFromMap)
         self.binder.endSelectFeature.connect(self.featureSelected)
         self.binder.bindFeature(self.feature)
@@ -34,10 +36,14 @@ class DialogProvider(QObject):
         self.dialog.setModal(True)
         self.dialog.show()
 
-    def selectingFromMap(self):
+    def selectingFromMap(self, message):
         self.dialog.hide()
+        label = QLabel(message)
+        label.setStyleSheet('font: 75 48pt "MS Shell Dlg 2";color: rgb(231, 175, 62);')
+        self.item = self.canvas.scene().addWidget(label)
 
     def featureSelected(self):
+        self.canvas.scene().removeItem(self.item)
         self.dialog.show()
 
     def dialogAccept(self):
@@ -53,4 +59,3 @@ class DialogProvider(QObject):
             self.layer.addFeature( self.feature )
             
         self.layer.commitChanges()
-        self.canvas.refresh()
