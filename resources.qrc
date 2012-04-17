@@ -10,6 +10,7 @@
     <file alias="pan">pan.png</file>
     <file alias="open">open.png</file>
     <file alias="photo">photo.png</file>
+    <file alias="select">select.png</file>
   </qresource>
   <qresource prefix="syncing">
     <file>syncing/sync.png</file>

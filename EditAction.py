@@ -64,7 +64,7 @@ class EditAction(QAction):
                 maplayer.startEditing()
 
             dialog = form.dialogInstance()
-            binder = FormBinder(maplayer, dialog)
+            binder = FormBinder(maplayer, dialog, self.canvas)
             binder.bindFeature(feature)
             if dialog.exec_():
                 log("Saving values back")

@@ -1,6 +1,5 @@
 from PointTool import PointTool, log
 from PyQt4.QtGui import QAction, QLabel
-from PyQt4.QtCore import QSettings
 from qgis.core import *
 from qgis.gui import *
 import uuid
@@ -8,6 +7,7 @@ from forms.ListFeatureForm import ListFeaturesForm
 from FormBinder import FormBinder
 import time
 import os
+
 class AddAction(QAction):
     def __init__(self, name, iface, form, layer ):
         QAction.__init__(self, name, iface.mainWindow())
@@ -28,7 +28,10 @@ class AddAction(QAction):
         provider = self.layer.dataProvider()
         self.dialoginstance = self.form.dialogInstance()
 
-        self.binder = FormBinder(self.layer, self.dialoginstance)
+        curdir = os.path.dirname(self.form.__file__)
+        settingspath =os.path.join(curdir,'settings.ini')
+        
+        self.binder = FormBinder(self.layer, self.dialoginstance, self.canvas, settingspath)
 
         self.feature = QgsFeature()
         self.feature.setGeometry( QgsGeometry.fromPoint( point ) )
@@ -44,48 +47,20 @@ class AddAction(QAction):
                 self.feature.addAttribute( id, provider.defaultValue( id ) )
 
         self.binder.bindFeature(self.feature)
-        #HACK Hardcoded
-        self.dialoginstance.selectAction.pressed.connect(self.selectSingleFromMap)
+        self.binder.bindSelectButtons()
+        self.binder.beginSelectFeature.connect(self.selectingFromMap)
+        self.binder.endSelectFeature.connect(self.featureSelected)
         self.dialoginstance.accepted.connect(self.dialogAccept)
         self.dialoginstance.setModal(True)
         self.dialoginstance.show()
 
-
-    def selectSingleFromMap(self):
-        self.emitTool = QgsMapToolEmitPoint(self.canvas)
-        self.emitTool.canvasClicked.connect(self.featureSelected)
-        self.canvas.setMapTool(self.emitTool)
+    def selectingFromMap(self):
         label = QLabel("Please select a single feature on the map")
         label.setStyleSheet('font: 75 32pt "MS Shell Dlg 2";color: rgb(231, 175, 62);')
         self.messageitem = self.iface.mapCanvas().scene().addWidget(label)
         self.dialoginstance.hide()
         
-    def featureSelected(self, point, button):
-        curdir = os.path.dirname(self.form.__file__)
-        path =os.path.join(curdir,'settings.ini')
-        settings = QSettings(path, QSettings.IniFormat)
-        layername = settings.value("selectAction/layer").toString()
-        column = settings.value("selectAction/column").toString()
-        
-        for layer in self.canvas.layers():            
-            if layer.name() == layername:
-                searchRadius = self.canvas.extent().width() * ( 0.5 / 100.0)
-                log("Finding Featues at %s with radius of %s" % (point, searchRadius))
-                rect = QgsRectangle()
-                rect.setXMinimum( point.x() - searchRadius );
-                rect.setXMaximum( point.x() + searchRadius );
-                rect.setYMinimum( point.y() - searchRadius );
-                rect.setYMaximum( point.y() + searchRadius );
-
-                layer.select( layer.pendingAllAttributesList(), rect, True, True)
-                feature = QgsFeature()
-                layer.nextFeature(feature)
-                index = layer.fieldNameIndex(column)
-                value = feature.attributeMap()[index].toString()
-                #HACK Hardcoded
-                self.dialoginstance.TextField.setText(value)
-                break
-                
+    def featureSelected(self):     
         self.iface.mapCanvas().scene().removeItem(self.messageitem)
         self.dialoginstance.show()
         
