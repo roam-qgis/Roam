@@ -29,21 +29,28 @@ class FormBinder(QObject):
         """    
         for index, value in qgsfeature.attributeMap().items():
             field = self.fields[index]
-            if self.bindByName(field.name(), value):
+            control = self.forminstance.findChild(QWidget, field.name())
+
+            if control is None:
+                QgsMessageLog.logMessage("Can't find control called %s" % (field.name()), "SDRC")
+                continue
+            
+            success = self.bindValueToControl(control, value)
+            if success:
                 self.fieldtocontrol[index] = control
 
     def bindByName(self, controlname, value):
-        QgsMessageLog.logMessage("Binding by name %s" % (controlname), "SDRC")
         control = self.forminstance.findChild(QWidget, controlname)
 
         if control is None:
-            QgsMessageLog.logMessage("Control is null", "SDRC")
+            QgsMessageLog.logMessage("Can't find control called %s" % (field.name()), "SDRC")
             return False
+        
+        success = self.bindValueToControl(control, value)
+        return success
 
-        return self.bindValueToControl(control, value)
-
-    def bindValueToControl(self,control, value):
-        failedbind = False
+    def bindValueToControl(self, control, value):
+        success = True
         if isinstance(control, QCalendarWidget):
             control.setSelectedDate(QDate.fromString( value.toString(), Qt.ISODate ))
 
@@ -56,21 +63,22 @@ class FormBinder(QObject):
         elif isinstance(control, QComboBox):
             itemindex = control.findText(value.toString())
             if itemindex < 0:
-                failedbind = True
+                success = False
 
             control.setCurrentIndex( itemindex )
+            
         elif isinstance(control, QDoubleSpinBox):
             control.setValue( value.toDouble()[0] )
 
         elif isinstance(control, QSpinBox):
             control.setValue( value.toInt()[0] )
 
-        if not failedbind:
+        if success:
             QgsMessageLog.logMessage("Binding %s to %s" % (control.objectName() , str(value)) ,"SDRC")
         else:
             QgsMessageLog.logMessage("Can't bind %s to %s" % (control.objectName() ,value.toString()) ,"SDRC")
 
-        return failedbind
+        return success
                     
     def unbindFeature(self, qgsfeature):
         """
@@ -79,23 +87,22 @@ class FormBinder(QObject):
         Notes:
             If the parent of the control is a QGroupBox and is disabled, the control is ignored for changing.
         """
-        import time
         for index, control in self.fieldtocontrol.items():
                 value = None
                 if isinstance(control, QLineEdit):
                     value = control.text()
                     
-                if isinstance(control, QCalendarWidget):
+                elif isinstance(control, QCalendarWidget):
                     value = control.selectedDate().toString( Qt.ISODate )
 
-                if isinstance(control, QCheckBox):
+                elif isinstance(control, QCheckBox):
                     value = 0
                     if control.isChecked():
                         value = 1
-                if isinstance(control, QComboBox):
+                elif isinstance(control, QComboBox):
                     value = control.currentText()
 
-                if isinstance(control, QDoubleSpinBox) or isinstance(control, QSpinBox):
+                elif isinstance(control, QDoubleSpinBox) or isinstance(control, QSpinBox):
                     value = control.value()
 
                 QgsMessageLog.logMessage("Setting value to %s from %s" % (value, control.objectName()), "SDRC")
@@ -119,7 +126,7 @@ class FormBinder(QObject):
         layername = settings.value("%s/layer" % controlName ).toString()
         column = settings.value("%s/column" % controlName).toString()
         bindto = settings.value("%s/bindto" % controlName).toString()
-        QgsMessageLog.logMessage("Getting feature for %s %s" % (layername, column), "SDRC")
+        
         self.tool = SelectFeatureTool(self.canvas, layername, column, bindto)
         self.tool.foundFeature.connect(self.bind)
         self.canvas.setMapTool(self.tool)

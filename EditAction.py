@@ -3,9 +3,9 @@ from PyQt4.QtGui import QAction, QIcon
 from qgis.core import *
 from qgis.gui import *
 from forms.ListFeatureForm import ListFeaturesForm
-from FormBinder import FormBinder
 import time
 import resources
+from DialogProvider import DialogProvider
 
 class Timer():
    def __enter__(self): self.start = time.time()
@@ -16,13 +16,12 @@ class EditAction(QAction):
         QAction.__init__(self, name, iface.mainWindow())
         self.canvas = iface.mapCanvas()
         self.layerstoformmapping = layerstoformmapping
-        self.triggered.connect(self.runPointTool)
+        self.triggered.connect(self.setTool)
         self.tool = PointTool( self.canvas )
         self.tool.mouseClicked.connect( self.findFeatures )
         self.setIcon(QIcon(":/icons/edit"))
         
-        
-    def runPointTool(self):
+    def setTool(self):
         self.canvas.setMapTool(self.tool)
 
     def findFeatures(self, point):
@@ -58,21 +57,11 @@ class EditAction(QAction):
             listUi.openFeatureForm.connect(self.openForm)
             listUi.exec_()
     
-    def openForm(self,form,feature,maplayer):
-        with Timer():
-            if not maplayer.isEditable():
-                maplayer.startEditing()
+    def openForm(self,formmodule,feature,maplayer):
+        if not maplayer.isEditable():
+            maplayer.startEditing()
 
-            dialog = form.dialogInstance()
-            binder = FormBinder(maplayer, dialog, self.canvas)
-            binder.bindFeature(feature)
-            if dialog.exec_():
-                log("Saving values back")
-                feature = binder.unbindFeature(feature)
-                log("New feature %s" % feature)
-                for value in feature.attributeMap().values():
-                    log("New value %s" % value.toString())
-
-                maplayer.updateFeature( feature )
-                maplayer.commitChanges()
-                self.canvas.refresh()
+        self.dialogprovider = DialogProvider(self.canvas)
+        self.dialogprovider.openDialog( formmodule, feature, maplayer, True )
+        self.dialogprovider.accepted.connect(self.setTool)
+        self.dialogprovider.rejected.connect(self.setTool)
