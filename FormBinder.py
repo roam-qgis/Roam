@@ -128,7 +128,9 @@ class FormBinder(QObject):
 
         self.tool = SelectFeatureTool(self.canvas, layername, column, bindto)
         self.tool.foundFeature.connect(self.bind)
+        self.tool.setActive()
         self.canvas.setMapTool(self.tool)
+        self.canvas.setCursor(self.tool.cursor)
         self.beginSelectFeature.emit(message)
 
     def bind(self, feature, value, bindto):

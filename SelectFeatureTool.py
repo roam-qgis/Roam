@@ -1,7 +1,7 @@
 from qgis.core import *
 from qgis.gui import QgsMapToolEmitPoint
 from PyQt4.QtCore import pyqtSignal, QVariant
-from PyQt4.QtGui import QAction
+from PyQt4.QtGui import QAction, QCursor, QPixmap
 
 class SelectFeatureTool(QgsMapToolEmitPoint):
     foundFeature = pyqtSignal(QgsFeature, QVariant, str)
@@ -15,6 +15,26 @@ class SelectFeatureTool(QgsMapToolEmitPoint):
         self.bindto = bindto
         self.canvasClicked.connect(self.findFeature)
         self.canvas.setMapTool(self)
+        self.cursor = QCursor(QPixmap(["16 16 3 1",
+            "      c None",
+            ".     c #32CD32",
+            "+     c #32CD32",
+            "                ",
+            "       +.+      ",
+            "      ++.++     ",
+            "     +.....+    ",
+            "    +.     .+   ",
+            "   +.   .   .+  ",
+            "  +.    .    .+ ",
+            " ++.    .    .++",
+            " ... ...+... ...",
+            " ++.    .    .++",
+            "  +.    .    .+ ",
+            "   +.   .   .+  ",
+            "   ++.     .+   ",
+            "    ++.....+    ",
+            "      ++.++     ",
+            "       +.+      "]))
 
     def findFeature(self, point, button):
         for layer in self.canvas.layers():
@@ -40,5 +60,6 @@ class SelectFeatureTool(QgsMapToolEmitPoint):
                 except KeyError:
                     break
 
-
-    
+    def setActive(self):
+        self.canvas.setMapTool(self)
+        self.canvas.setCursor(self.cursor)

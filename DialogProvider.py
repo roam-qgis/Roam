@@ -39,7 +39,7 @@ class DialogProvider(QObject):
     def selectingFromMap(self, message):
         self.dialog.hide()
         label = QLabel(message)
-        label.setStyleSheet('font: 75 48pt "MS Shell Dlg 2";color: rgb(231, 175, 62);')
+        label.setStyleSheet('font: 75 30pt "MS Shell Dlg 2";color: rgb(231, 175, 62);')
         self.item = self.canvas.scene().addWidget(label)
 
     def featureSelected(self):
@@ -57,5 +57,6 @@ class DialogProvider(QObject):
             self.layer.updateFeature( feature )
         else:
             self.layer.addFeature( self.feature )
-            
+
+        self.canvas.refresh()
         self.layer.commitChanges()
