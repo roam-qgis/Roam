@@ -64,7 +64,7 @@ class SDRCDataCapture():
 
         self.homeAction = QAction(QIcon(":/icons/home"), "Home View" , self.mainwindow)
         self.openProjectAction = QAction(QIcon(":/icons/open"),"Open Project" , self.mainwindow)
-        self.toggleRasterAction = QAction(QIcon(":/icons/photo"),"Toogle Raster" , self.mainwindow)
+        self.toggleRasterAction = QAction(QIcon(":/icons/photo"),"Aerial Photos" , self.mainwindow)
         self.editAction = EditAction("Edit", self.iface, self.layerstoForms )
         self.syncAction = QAction(QIcon(":/syncing/syncing/sync.png"), "Sync", self.mainwindow)
 
