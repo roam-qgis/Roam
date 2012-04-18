@@ -1,10 +1,13 @@
 from PyQt4.QtGui import *
-from PyQt4.QtCore import (QDate, Qt, QVariant, pyqtSignal, QSettings, QObject, QString, QSignalMapper)
+from PyQt4.QtCore import (QDate, QTime,
+                        Qt, QVariant, pyqtSignal, QSettings,
+                        QObject, QString, QDateTime)
 from qgis.core import QgsMessageLog
 from qgis.gui import QgsAttributeEditor
 from SelectFeatureTool import SelectFeatureTool
 import os
 import functools
+from datatimerpickerwidget import DateTimePickerDialog
 
 class FormBinder(QObject):
     beginSelectFeature = pyqtSignal(str)
@@ -72,6 +75,17 @@ class FormBinder(QObject):
         elif isinstance(control, QSpinBox):
             control.setValue( value.toInt()[0] )
 
+        elif isinstance(control, QDateTimeEdit):
+            QgsMessageLog.logMessage("DateTime is %s " % ( value.toString()) ,"SDRC")
+            control.setDateTime(QDateTime.fromString( value.toString(), Qt.ISODate ))
+
+            # Wire up the date picker button
+            parent = control.parentWidget()
+            if parent:
+                button = parent.findChild(QPushButton)
+                if button:
+                    button.pressed.connect(functools.partial(self.pickDateTime, control, "DateTime" ))
+
         if success:
             QgsMessageLog.logMessage("Binding %s to %s" % (control.objectName() , str(value)) ,"SDRC")
         else:
@@ -104,11 +118,24 @@ class FormBinder(QObject):
                 elif isinstance(control, QDoubleSpinBox) or isinstance(control, QSpinBox):
                     value = control.value()
 
+                elif isinstance(control, QDateTimeEdit):
+                    value = control.dateTime().toString( Qt.ISODate )
+
                 QgsMessageLog.logMessage("Setting value to %s from %s" % (value, control.objectName()), "SDRC")
 
                 qgsfeature.changeAttribute( index, value)
         return qgsfeature
 
+    def pickDateTime(self, control, mode):
+        dlg = DateTimePickerDialog(mode)
+        dlg.setDateTime(control.dateTime())
+        if dlg.exec_():
+            if hasattr(control, 'setDate'):
+                control.setDate(dlg.getSelectedDate())
+
+            if hasattr(control, 'setTime'):
+                control.setTime(dlg.getSelectedTime())
+            
     def bindSelectButtons(self):
         for group in self.settings.childGroups():
             control = self.forminstance.findChild(QToolButton, group)
