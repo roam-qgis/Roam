@@ -32,8 +32,7 @@ from sdrcdatacapturedialog import SDRCDataCaptureDialog
 from syncing.Syncer import SyncDialog
 from syncing.Syncer import Syncer
 import syncing.ui_sync
-
-log = lambda msg: QgsMessageLog.logMessage(msg ,"SDRC")
+from utils import log
 
 class SDRCDataCapture():
     def __init__(self, iface):
@@ -131,13 +130,12 @@ class SDRCDataCapture():
         
         for form in userForms:
             form = forms.loadFormModule(form)
-
             try:
                 layer = layers[form.__layerName__]
                 action = AddAction( form.__formName__, self.iface, form , layer )
                 self.toolbar.insertAction(self.editAction, action)
                 self.actions.append(action)
-                self.layerstoForms[form.__layerName__] = form
+                self.layerstoForms[layer] = form
             except KeyError:
                 log("Couldn't find layer for form %s" % form.__layerName__)
 

@@ -6,10 +6,7 @@ from forms.ListFeatureForm import ListFeaturesForm
 import time
 import resources
 from DialogProvider import DialogProvider
-
-class Timer():
-   def __enter__(self): self.start = time.time()
-   def __exit__(self, *args): log(str(time.time() - self.start))
+from utils import Timer
 
 class EditAction(QAction):
     def __init__(self, name, iface, layerstoformmapping ):
@@ -37,18 +34,10 @@ class EditAction(QAction):
         rect.setYMaximum( point.y() + self.searchRadius );
         
         featuresToForms = {}
-        for layer in self.canvas.layers():
-            if layer.type() == QgsMapLayer.RasterLayer:
-                continue
-                
+        for layer, form in self.layerstoformmapping.iteritems():
             layer.select( layer.pendingAllAttributesList(), rect, True, True)
-            name = layer.name()
-            try:
-                form = self.layerstoformmapping[str(name)]
-                for feature in layer:
-                    featuresToForms[feature] = (form, layer)
-            except KeyError:
-                continue
+            for feature in layer:
+                featuresToForms[feature] = (form, layer)
 
         if len(featuresToForms) == 1:
             form, layer = featuresToForms.itervalues().next()

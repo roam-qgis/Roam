@@ -4,8 +4,7 @@ from qgis.core import *
 import os
 from ui_listmodules import Ui_ListModules
 import glob
-
-log = lambda msg: QgsMessageLog.logMessage(msg ,"SDRC")
+from SDRCDataCapture.utils import log
 
 # create the dialog for zoom to point
 class ListProjectsDialog(QDialog):

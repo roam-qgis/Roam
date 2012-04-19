@@ -2,7 +2,7 @@ from PyQt4.QtGui import *
 from PyQt4.QtCore import (QDate, QTime,
                         Qt, QVariant, pyqtSignal, QSettings,
                         QObject, QString, QDateTime)
-from qgis.core import QgsMessageLog
+from utils import log, info, warning
 from qgis.gui import QgsAttributeEditor
 from SelectFeatureTool import SelectFeatureTool
 import os
@@ -34,9 +34,9 @@ class FormBinder(QObject):
             control = self.forminstance.findChild(QWidget, field.name())
 
             if control is None:
-                QgsMessageLog.logMessage("Can't find control called %s" % (field.name()), "SDRC")
+                warning("Can't find control called %s" % (field.name()))
                 continue
-            
+
             success = self.bindValueToControl(control, value)
             if success:
                 self.fieldtocontrol[index] = control
@@ -45,7 +45,7 @@ class FormBinder(QObject):
         control = self.forminstance.findChild(QWidget, controlname)
 
         if control is None:
-            QgsMessageLog.logMessage("Can't find control called %s" % (field.name()), "SDRC")
+            warning("Can't find control called %s" % (field.name()))
             return False
         
         success = self.bindValueToControl(control, value)
@@ -76,20 +76,20 @@ class FormBinder(QObject):
             control.setValue( value.toInt()[0] )
 
         elif isinstance(control, QDateTimeEdit):
-            QgsMessageLog.logMessage("DateTime is %s " % ( value.toString()) ,"SDRC")
             control.setDateTime(QDateTime.fromString( value.toString(), Qt.ISODate ))
-
             # Wire up the date picker button
             parent = control.parentWidget()
             if parent:
                 button = parent.findChild(QPushButton)
                 if button:
                     button.pressed.connect(functools.partial(self.pickDateTime, control, "DateTime" ))
+        else:
+            success = False
 
         if success:
-            QgsMessageLog.logMessage("Binding %s to %s" % (control.objectName() , str(value)) ,"SDRC")
+            info("Binding %s to %s" % (control.objectName() , QVariant(value).toString()))
         else:
-            QgsMessageLog.logMessage("Can't bind %s to %s" % (control.objectName() ,value.toString()) ,"SDRC")
+            warning("Can't bind %s to %s" % (control.objectName() ,value.toString()))
 
         return success
                     
@@ -121,7 +121,7 @@ class FormBinder(QObject):
                 elif isinstance(control, QDateTimeEdit):
                     value = control.dateTime().toString( Qt.ISODate )
 
-                QgsMessageLog.logMessage("Setting value to %s from %s" % (value, control.objectName()), "SDRC")
+                info("Setting value to %s from %s" % (value, control.objectName()))
 
                 qgsfeature.changeAttribute( index, value)
         return qgsfeature

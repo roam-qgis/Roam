@@ -2,6 +2,8 @@ from PyQt4.QtGui import QDialog
 from PyQt4.QtCore import QTime, Qt, QDateTime, QString
 from ui_datatimerpicker import Ui_datatimerpicker
 from qgis.core import *
+from utils import log
+
 # create the dialog for zoom to point
 class DateTimePickerDialog(QDialog):
     def __init__(self, mode="DateTime"):
@@ -37,18 +39,18 @@ class DateTimePickerDialog(QDialog):
         minute = time.minute()
         minute = int(round(minute/5.0)*5.0)
         amap = time.toString("AP")
-        QgsMessageLog.logMessage("Hour %s Minute %s" % (hour, minute), "SDRC")
+        log("Hour %s Minute %s" % (hour, minute))
         try:
             houritems = self.ui.hourpicker.findItems(str(hour), Qt.MatchFixedString)
             self.ui.hourpicker.setCurrentItem(houritems[0])
         except IndexError:
-             QgsMessageLog.logMessage("Can't find hour", "SDRC")
+             log("Can't find hour")
         
         try:
             minuteitems = self.ui.minutepicker.findItems(str(minute), Qt.MatchFixedString)
             self.ui.minutepicker.setCurrentItem(minuteitems[0])
         except IndexError:
-            QgsMessageLog.logMessage("Can't find minute", "SDRC")
+            log("Can't find minute")
 
         if amap == "PM":
             self.ui.ampmbutton.setChecked(True)

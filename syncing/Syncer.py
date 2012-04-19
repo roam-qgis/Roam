@@ -4,8 +4,7 @@ from qgis.core import *
 from ui_sync import Ui_syncForm
 import os
 from subprocess import Popen, PIPE
-
-log = lambda msg: QgsMessageLog.logMessage(msg ,"SDRC")
+from SDRCDataCapture.utils import log
 
 class Syncer(QObject):
     statusUpdate = pyqtSignal(bool, str)

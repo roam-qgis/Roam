@@ -2,6 +2,7 @@ from qgis.core import *
 from qgis.gui import QgsMapToolEmitPoint
 from PyQt4.QtCore import pyqtSignal, QVariant
 from PyQt4.QtGui import QAction, QCursor, QPixmap
+from utils import log
 
 class SelectFeatureTool(QgsMapToolEmitPoint):
     foundFeature = pyqtSignal(QgsFeature, QVariant, str)
@@ -38,9 +39,9 @@ class SelectFeatureTool(QgsMapToolEmitPoint):
 
     def findFeature(self, point, button):
         for layer in self.canvas.layers():
-            QgsMessageLog.logMessage("Looking at %s to match %s" % (layer.name(), self.column), "SDRC")
+            log("Looking at %s to match %s" % (layer.name(), self.column))
             if layer.name() == self.layername:
-                QgsMessageLog.logMessage("Found layer", "SDRC")
+                log("Found layer")
 
                 searchRadius = self.canvas.extent().width() * ( 0.5 / 100.0)
                 rect = QgsRectangle()

@@ -3,8 +3,7 @@ from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 from qgis.core import *
 from qgis.gui import *
-
-log = lambda msg: QgsMessageLog.logMessage(msg ,"SDRC")
+from utils import log
 
 # Vertex Finder Tool class
 class PointTool(QgsMapTool):
