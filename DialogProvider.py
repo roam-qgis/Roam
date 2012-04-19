@@ -2,8 +2,7 @@ import os
 from FormBinder import FormBinder
 from PyQt4.QtCore import pyqtSignal, QObject, QSettings
 from PyQt4.QtGui import QLabel
-from utils import Timer, log
-import logging
+from utils import Timer, log, info, warning
 
 class DialogProvider(QObject):
     accepted = pyqtSignal()
@@ -20,25 +19,22 @@ class DialogProvider(QObject):
         self.layer = layer
         self.feature = feature
 
-        with Timer("Creating Settings"):
-            curdir = os.path.dirname(formmodule.__file__)
-            settingspath = os.path.join(curdir,'settings.ini')
-            self.settings = QSettings(settingspath, QSettings.IniFormat)
+        curdir = os.path.dirname(formmodule.__file__)
+        settingspath = os.path.join(curdir,'settings.ini')
+        self.settings = QSettings(settingspath, QSettings.IniFormat)
 
-        with Timer("Binding Form"):
-            self.binder = FormBinder(layer, self.dialog, self.canvas, self.settings)
-            self.binder.beginSelectFeature.connect(self.selectingFromMap)
-            self.binder.endSelectFeature.connect(self.featureSelected)
-            self.binder.bindFeature(self.feature)
-            self.binder.bindSelectButtons()
+        self.binder = FormBinder(layer, self.dialog, self.canvas, self.settings)
+        self.binder.beginSelectFeature.connect(self.selectingFromMap)
+        self.binder.endSelectFeature.connect(self.featureSelected)
+        self.binder.bindFeature(self.feature)
+        self.binder.bindSelectButtons()
 
-        with Timer("Connecting and Showing Dialgo"):
-            self.dialog.accepted.connect(self.dialogAccept)
-            self.dialog.accepted.connect(self.accepted)
-            self.dialog.rejected.connect(self.rejected)
-            self.dialog.rejected.connect(self.deleteDialog)
-            self.dialog.setModal(True)
-            self.dialog.show()
+        self.dialog.accepted.connect(self.dialogAccept)
+        self.dialog.accepted.connect(self.accepted)
+        self.dialog.rejected.connect(self.rejected)
+        self.dialog.rejected.connect(self.deleteDialog)
+        self.dialog.setModal(True)
+        self.dialog.show()
 
     def selectingFromMap(self, message):
         self.dialog.hide()
