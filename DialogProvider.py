@@ -34,6 +34,8 @@ class DialogProvider(QObject):
         self.dialog.rejected.connect(self.rejected)
         self.dialog.rejected.connect(self.deleteDialog)
         self.dialog.setModal(True)
+        if self.settings.value("fullscreen", False).toBool():
+            self.dialog.showFullScreen()
         self.dialog.show()
 
     def selectingFromMap(self, message):
