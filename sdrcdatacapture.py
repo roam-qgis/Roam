@@ -44,6 +44,7 @@ class SDRCDataCapture():
         self.iface.projectRead.connect(self.projectOpened)
         self.iface.initializationCompleted.connect(self.setupUI)
         self.settings = QSettings( "settings.ini", QSettings.IniFormat )
+        self.actionGroup = QActionGroup(self.iface.mainWindow())
 
     def setupUI(self):
         self.iface.mainWindow().showFullScreen()
@@ -59,14 +60,23 @@ class SDRCDataCapture():
         
         spacewidget = QWidget()
         spacewidget.setMinimumWidth(30)
-        self.setupIcons()
+        
 
+        gpsspacewidget = QWidget()
+        gpsspacewidget.setMinimumWidth(30)
+        gpsspacewidget.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
+        
         self.homeAction = QAction(QIcon(":/icons/home"), "Home View" , self.mainwindow)
+        self.gpsAction = QAction(QIcon(":/icons/gps"), "Enable GPS" , self.mainwindow)
         self.openProjectAction = QAction(QIcon(":/icons/open"),"Open Project" , self.mainwindow)
         self.toggleRasterAction = QAction(QIcon(":/icons/photo"),"Aerial Photos" , self.mainwindow)
         self.editAction = EditAction("Edit", self.iface, self.layerstoForms )
         self.syncAction = QAction(QIcon(":/syncing/syncing/sync.png"), "Sync", self.mainwindow)
 
+        self.editAction.setCheckable(True)
+        self.gpsAction.setCheckable(True)
+
+        self.actionGroup.addAction(self.editAction)
 
         self.homeAction.triggered.connect(self.zoomToHomeView)
         self.syncAction.triggered.connect(self.sync)
@@ -81,6 +91,10 @@ class SDRCDataCapture():
         self.toolbar.addAction(self.editAction)                        
         self.toolbar.addAction(self.syncAction)
         self.toolbar.insertSeparator(self.syncAction)
+        self.toolbar.insertWidget(self.gpsAction, gpsspacewidget)
+        self.toolbar.addAction(self.gpsAction)
+
+        self.setupIcons()
 
     def zoomToHomeView(self):
         self.iface.mapCanvas().setExtent(self.homeextent)
@@ -95,7 +109,7 @@ class SDRCDataCapture():
                 isvisible = legend.isLayerVisible(layer)
                 legend.setLayerVisible(layer, not isvisible )
         self.iface.mapCanvas().freeze(False)
-        self.iface.mapCanvas().refresh()
+        #self.iface.mapCanvas().refresh()
 
     def setupIcons(self):
         """
@@ -109,6 +123,10 @@ class SDRCDataCapture():
         self.iface.actionZoomIn().setIcon(QIcon(":/icons/in"))
         self.iface.actionZoomOut().setIcon(QIcon(":/icons/out"))
         self.iface.actionPan().setIcon(QIcon(":/icons/pan"))
+        
+        self.actionGroup.addAction(self.iface.actionZoomIn())
+        self.actionGroup.addAction(self.iface.actionZoomOut())
+        self.actionGroup.addAction(self.iface.actionPan())
 
     def projectOpened(self):
         """
@@ -134,6 +152,7 @@ class SDRCDataCapture():
                 layer = layers[form.__layerName__]
                 action = AddAction( form.__formName__, self.iface, form , layer )
                 self.toolbar.insertAction(self.editAction, action)
+                self.actionGroup.addAction(action)
                 self.actions.append(action)
                 self.layerstoForms[layer] = form
             except KeyError:

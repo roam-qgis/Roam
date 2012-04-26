@@ -1,16 +1,14 @@
 <RCC>
-  <qresource prefix="/plugins/sdrcdatacapture">
-    <file>icon.png</file>
-  </qresource>
   <qresource prefix="icons">
-    <file alias="edit">edit.png</file>
-    <file alias="home">home.png</file>
-    <file alias="in">in.png</file>
-    <file alias="out">out.png</file>
-    <file alias="pan">pan.png</file>
-    <file alias="open">open.png</file>
-    <file alias="photo">photo.png</file>
-    <file alias="select">select.png</file>
+    <file alias="edit">resources/images/edit.png</file>
+    <file alias="home">resources/images/home.png</file>
+    <file alias="in">resources/images/in.png</file>
+    <file alias="out">resources/images/out.png</file>
+    <file alias="pan">resources/images/pan.png</file>
+    <file alias="open">resources/images/open.png</file>
+    <file alias="photo">resources/images/photo.png</file>
+    <file alias="select">resources/images/select.png</file>
+    <file alias="gps">resources/images/gps.png</file>
   </qresource>
   <qresource prefix="syncing">
     <file>syncing/sync.png</file>

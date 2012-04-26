@@ -20,6 +20,7 @@ class AddAction(QAction):
         self.dialogprovider = DialogProvider(self.canvas)
         self.dialogprovider.accepted.connect(self.setTool)
         self.dialogprovider.rejected.connect(self.setTool)
+        self.setCheckable(True)
 
     def setTool(self):
         self.canvas.setMapTool(self.tool)
