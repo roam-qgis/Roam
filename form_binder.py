@@ -4,7 +4,7 @@ from PyQt4.QtCore import (QDate, QTime,
                         QObject, QString, QDateTime)
 from utils import log, info, warning
 from qgis.gui import QgsAttributeEditor
-from SelectFeatureTool import SelectFeatureTool
+from select_feature_tool import SelectFeatureTool
 import os
 import functools
 from datatimerpickerwidget import DateTimePickerDialog

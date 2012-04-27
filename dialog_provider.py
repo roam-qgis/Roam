@@ -1,5 +1,5 @@
 import os
-from FormBinder import FormBinder
+from form_binder import FormBinder
 from PyQt4.QtCore import pyqtSignal, QObject, QSettings
 from PyQt4.QtGui import QLabel
 from utils import Timer, log, info, warning
@@ -12,7 +12,6 @@ class DialogProvider(QObject):
         QObject.__init__(self)
         self.canvas = canvas
 
-        
     def openDialog(self, formmodule, feature, layer, forupdate):
         self.update = forupdate
         self.dialog = formmodule.dialogInstance()

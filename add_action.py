@@ -1,10 +1,10 @@
-from PointTool import PointTool, log
+from point_tool import PointTool, log
 from PyQt4.QtGui import QAction, QLabel
 from qgis.core import *
 from qgis.gui import *
 import uuid
 import os
-from DialogProvider import DialogProvider
+from dialog_provider import DialogProvider
 
 class AddAction(QAction):
     def __init__(self, name, iface, form, layer ):

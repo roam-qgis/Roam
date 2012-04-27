@@ -1,4 +1,4 @@
-from FormBinder import FormBinder
+from form_binder import FormBinder
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 from qgis.core import *

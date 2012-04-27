@@ -4,7 +4,7 @@ from qgis.core import *
 import os
 from ui_listmodules import Ui_ListModules
 import glob
-from SDRCDataCapture.utils import log
+from utils import log
 
 # create the dialog for zoom to point
 class ListProjectsDialog(QDialog):

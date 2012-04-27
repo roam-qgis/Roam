@@ -20,17 +20,16 @@
 """
 import os
 
-from AddAction import AddAction
-from EditAction import EditAction
+from add_action import AddAction
+from edit_action import EditAction
+from gps_action import GPSAction
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 import forms
 from listmodulesdialog import ListProjectsDialog
 from qgis.core import *
 import resources
-from sdrcdatacapturedialog import SDRCDataCaptureDialog
-from syncing.Syncer import SyncDialog
-from syncing.Syncer import Syncer
+from syncing.Syncer import SyncDialog, Syncer
 import syncing.ui_sync
 from utils import log
 
@@ -67,14 +66,13 @@ class SDRCDataCapture():
         gpsspacewidget.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
         
         self.homeAction = QAction(QIcon(":/icons/home"), "Home View" , self.mainwindow)
-        self.gpsAction = QAction(QIcon(":/icons/gps"), "Enable GPS" , self.mainwindow)
+        self.gpsAction = GPSAction(self.iface)
         self.openProjectAction = QAction(QIcon(":/icons/open"),"Open Project" , self.mainwindow)
         self.toggleRasterAction = QAction(QIcon(":/icons/photo"),"Aerial Photos" , self.mainwindow)
         self.editAction = EditAction("Edit", self.iface, self.layerstoForms )
         self.syncAction = QAction(QIcon(":/syncing/syncing/sync.png"), "Sync", self.mainwindow)
 
         self.editAction.setCheckable(True)
-        self.gpsAction.setCheckable(True)
 
         self.actionGroup.addAction(self.editAction)
 

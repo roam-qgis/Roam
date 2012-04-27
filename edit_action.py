@@ -1,11 +1,11 @@
-from PointTool import PointTool, log
+from point_tool import PointTool, log
 from PyQt4.QtGui import QAction, QIcon
 from qgis.core import *
 from qgis.gui import *
 from forms.ListFeatureForm import ListFeaturesForm
 import time
 import resources
-from DialogProvider import DialogProvider
+from dialog_provider import DialogProvider
 from utils import Timer
 
 class EditAction(QAction):
