@@ -13,7 +13,7 @@
     <file alias="gps_on">resources/images/gps_on.png</file>
     <file alias="gps_looking">resources/images/gps_looking.png</file>
     <file alias="gps_marker">resources/images/gps_marker_normal.svg</file>
-
+    <file alias="calender">resources/images/calender2.png</file>
   </qresource>
   <qresource prefix="syncing">
     <file>syncing/sync.png</file>

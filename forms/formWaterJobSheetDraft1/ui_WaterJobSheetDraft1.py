@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'WaterJobSheetDraft1.ui'
 #
-# Created: Mon Apr 30 16:42:15 2012
+# Created: Tue May 01 08:19:53 2012
 #      by: PyQt4 UI code generator 4.8.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -407,6 +407,7 @@ class Ui_WaterForm(object):
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.pushButton_2.sizePolicy().hasHeightForWidth())
         self.pushButton_2.setSizePolicy(sizePolicy)
+        self.pushButton_2.setIconSize(QtCore.QSize(24, 24))
         self.pushButton_2.setObjectName(_fromUtf8("pushButton_2"))
         self.horizontalLayout.addWidget(self.pushButton_2)
         self.gridLayout.addLayout(self.horizontalLayout, 0, 0, 1, 4)

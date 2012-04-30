@@ -1,7 +1,7 @@
 from PyQt4.QtGui import *
 from PyQt4.QtCore import (QDate, QTime,
                         Qt, QVariant, pyqtSignal, QSettings,
-                        QObject, QString, QDateTime)
+                        QObject, QString, QDateTime, QSize)
 from utils import log, info, warning
 from qgis.gui import QgsAttributeEditor
 from select_feature_tool import SelectFeatureTool
@@ -82,6 +82,9 @@ class FormBinder(QObject):
             if parent:
                 button = parent.findChild(QPushButton)
                 if button:
+                    button.setIcon(QIcon(":/icons/calender"))
+                    button.setText("Pick")
+                    button.setIconSize(QSize(24,24))
                     button.pressed.connect(functools.partial(self.pickDateTime, control, "DateTime" ))
         else:
             success = False
