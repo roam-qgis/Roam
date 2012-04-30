@@ -316,7 +316,7 @@ p, li { white-space: pre-wrap; }
      <x>800</x>
      <y>230</y>
      <width>210</width>
-     <height>371</height>
+     <height>391</height>
     </rect>
    </property>
    <property name="title">
@@ -810,7 +810,7 @@ p, li { white-space: pre-wrap; }
      <x>440</x>
      <y>30</y>
      <width>571</width>
-     <height>161</height>
+     <height>171</height>
     </rect>
    </property>
    <property name="title">
@@ -900,7 +900,7 @@ p, li { white-space: pre-wrap; }
        </widget>
       </item>
       <item>
-       <widget class="QDateTimeEdit" name="Respond_time">
+       <widget class="QDateTimeEdit" name="RespondTime">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
           <horstretch>0</horstretch>
@@ -940,7 +940,7 @@ p, li { white-space: pre-wrap; }
        </widget>
       </item>
       <item>
-       <widget class="QDateTimeEdit" name="Completion_Time">
+       <widget class="QDateTimeEdit" name="CompletionTime">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
           <horstretch>0</horstretch>
@@ -1000,7 +1000,7 @@ p, li { white-space: pre-wrap; }
      <x>10</x>
      <y>30</y>
      <width>421</width>
-     <height>161</height>
+     <height>171</height>
     </rect>
    </property>
    <property name="title">
@@ -1010,7 +1010,7 @@ p, li { white-space: pre-wrap; }
     <bool>false</bool>
    </property>
    <layout class="QGridLayout" name="gridLayout">
-    <item row="0" column="0" colspan="5">
+    <item row="0" column="0" colspan="4">
      <layout class="QHBoxLayout" name="horizontalLayout">
       <item>
        <widget class="QLabel" name="label_21">
@@ -1020,7 +1020,7 @@ p, li { white-space: pre-wrap; }
        </widget>
       </item>
       <item>
-       <widget class="QDateTimeEdit" name="Date_Time_Received">
+       <widget class="QDateTimeEdit" name="DateTimeReceived">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
           <horstretch>0</horstretch>
@@ -1030,7 +1030,7 @@ p, li { white-space: pre-wrap; }
        </widget>
       </item>
       <item>
-       <widget class="QPushButton" name="pushButton_2">
+       <widget class="QToolButton" name="toolButton_2">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Minimum" vsizetype="Expanding">
           <horstretch>0</horstretch>
@@ -1038,44 +1038,24 @@ p, li { white-space: pre-wrap; }
          </sizepolicy>
         </property>
         <property name="text">
-         <string>...</string>
+         <string/>
         </property>
-       </widget>
-      </item>
-     </layout>
-    </item>
-    <item row="6" column="0" colspan="5">
-     <layout class="QHBoxLayout" name="horizontalLayout_7">
-      <item>
-       <widget class="QLabel" name="label_25">
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
-        <property name="text">
-         <string> Location Details:</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QTextEdit" name="Additional_Location_Details">
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
-        <property name="maximumSize">
+        <property name="iconSize">
          <size>
-          <width>16777215</width>
-          <height>16777215</height>
+          <width>32</width>
+          <height>16</height>
          </size>
         </property>
        </widget>
       </item>
      </layout>
+    </item>
+    <item row="1" column="0">
+     <widget class="QLabel" name="label_27">
+      <property name="text">
+       <string>Request Type:</string>
+      </property>
+     </widget>
     </item>
     <item row="1" column="1">
      <widget class="QComboBox" name="Request_Type">
@@ -1141,13 +1121,6 @@ p, li { white-space: pre-wrap; }
       </item>
      </widget>
     </item>
-    <item row="1" column="0">
-     <widget class="QLabel" name="label_27">
-      <property name="text">
-       <string>Request Type:</string>
-      </property>
-     </widget>
-    </item>
     <item row="1" column="2">
      <widget class="QLabel" name="label_22">
       <property name="text">
@@ -1187,13 +1160,59 @@ p, li { white-space: pre-wrap; }
       </item>
      </widget>
     </item>
-    <item row="4" column="1">
-     <widget class="QLineEdit" name="Customer_Request_Number"/>
-    </item>
-    <item row="4" column="0">
+    <item row="2" column="0">
      <widget class="QLabel" name="label_2">
       <property name="text">
        <string>CR Number:</string>
+      </property>
+     </widget>
+    </item>
+    <item row="2" column="1">
+     <widget class="QLineEdit" name="Customer_Request_Number"/>
+    </item>
+    <item row="3" column="0">
+     <widget class="QLabel" name="label">
+      <property name="text">
+       <string>Street</string>
+      </property>
+     </widget>
+    </item>
+    <item row="3" column="1" colspan="2">
+     <widget class="QLineEdit" name="Street"/>
+    </item>
+    <item row="4" column="0">
+     <widget class="QLabel" name="label_25">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+      <property name="text">
+       <string> Location Details:</string>
+      </property>
+     </widget>
+    </item>
+    <item row="4" column="1" colspan="3">
+     <widget class="QTextEdit" name="Additional_Location_Details">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+      <property name="maximumSize">
+       <size>
+        <width>16777215</width>
+        <height>16777215</height>
+       </size>
+      </property>
+     </widget>
+    </item>
+    <item row="3" column="3">
+     <widget class="QToolButton" name="selectStreet">
+      <property name="text">
+       <string>...</string>
       </property>
      </widget>
     </item>
