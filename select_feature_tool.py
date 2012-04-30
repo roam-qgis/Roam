@@ -7,13 +7,14 @@ from utils import log
 class SelectFeatureTool(QgsMapToolEmitPoint):
     foundFeature = pyqtSignal(QgsFeature, QVariant, str)
     
-    def __init__(self, canvas, layername, column, bindto ):
+    def __init__(self, canvas, layername, column, bindto, radius ):
         QgsMapToolEmitPoint.__init__(self, canvas)
         self.layername = layername
         self.column = column
         self.bindto = bindto
         self.canvas = canvas
         self.bindto = bindto
+        self.searchradius = radius
         self.canvasClicked.connect(self.findFeature)
         self.canvas.setMapTool(self)
         self.cursor = QCursor(QPixmap(["16 16 3 1",
@@ -43,7 +44,7 @@ class SelectFeatureTool(QgsMapToolEmitPoint):
             if layer.name() == self.layername:
                 log("Found layer")
 
-                searchRadius = self.canvas.extent().width() * ( 0.5 / 100.0)
+                searchRadius = self.canvas.extent().width() * ( self.searchradius / 100.0)
                 rect = QgsRectangle()
                 rect.setXMinimum( point.x() - searchRadius );
                 rect.setXMaximum( point.x() + searchRadius );

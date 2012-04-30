@@ -80,7 +80,7 @@ class FormBinder(QObject):
             # Wire up the date picker button
             parent = control.parentWidget()
             if parent:
-                button = parent.findChild(QPushButton)
+                button = parent.findChild(QPushButton, control.objectName() + "_pick" )
                 if button:
                     button.setIcon(QIcon(":/icons/calender"))
                     button.setText("Pick")
@@ -149,14 +149,16 @@ class FormBinder(QObject):
             name = control.objectName()
             control.clicked.connect(functools.partial(self.selectFeatureClicked, name))
             control.setIcon(QIcon(":/icons/select"))
+            control.setIconSize(QSize(24,24))
 
     def selectFeatureClicked(self, controlName):
         layername = self.settings.value("%s/layer" % controlName ).toString()
         column = self.settings.value("%s/column" % controlName).toString()
         bindto = self.settings.value("%s/bindto" % controlName).toString()
         message = self.settings.value("%s/message" % controlName, "Please select a feature in the map").toString()
+        searchsize = self.settings.value("%s/searchradius" % controlName, 0.5 ).toInt()[0]
 
-        self.tool = SelectFeatureTool(self.canvas, layername, column, bindto)
+        self.tool = SelectFeatureTool(self.canvas, layername, column, bindto, searchsize)
         self.tool.foundFeature.connect(self.bind)
         self.tool.setActive()
         self.canvas.setMapTool(self.tool)
