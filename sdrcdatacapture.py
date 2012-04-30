@@ -107,7 +107,7 @@ class SDRCDataCapture():
                 isvisible = legend.isLayerVisible(layer)
                 legend.setLayerVisible(layer, not isvisible )
         self.iface.mapCanvas().freeze(False)
-        #self.iface.mapCanvas().refresh()
+        self.iface.mapCanvas().refresh()
 
     def setupIcons(self):
         """

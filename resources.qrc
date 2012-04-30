@@ -12,6 +12,8 @@
     <file alias="gps_failed">resources/images/gps_failed.png</file>
     <file alias="gps_on">resources/images/gps_on.png</file>
     <file alias="gps_looking">resources/images/gps_looking.png</file>
+    <file alias="gps_marker">resources/images/gps_marker_normal.svg</file>
+
   </qresource>
   <qresource prefix="syncing">
     <file>syncing/sync.png</file>

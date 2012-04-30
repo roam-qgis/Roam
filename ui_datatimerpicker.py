@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'ui_datatimerpicker.ui'
 #
-# Created: Fri Apr 27 10:38:23 2012
+# Created: Mon Apr 30 11:23:49 2012
 #      by: PyQt4 UI code generator 4.8.3
 #
 # WARNING! All changes made in this file will be lost!
