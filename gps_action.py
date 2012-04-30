@@ -1,18 +1,19 @@
+
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 from PyQt4.QtSvg import QSvgRenderer
 from qgis.core import *
 from qgis.gui import *
 import resources
+import utils
 from utils import log
 
 class GPSAction(QAction):
-    def __init__(self, iface):
-        QAction.__init__(self, QIcon(":/icons/gps"), "Enable GPS", iface.mainWindow())
-        self.canvas = iface.mapCanvas()
+    def __init__(self, icon, canvas, parent):
+        QAction.__init__(self, icon, "Enable GPS", parent)
+        self.canvas = canvas
         self.triggered.connect(self.connectGPS)
         self.gpsConn = None
-        log(QgsGPSDetector.availablePorts())
         self.isConnected = False
         self.NMEA_FIX_BAD = 1
         self.NMEA_FIX_2D = 2
@@ -23,7 +24,9 @@ class GPSAction(QAction):
     def connectGPS(self):
         if not self.isConnected:
             #Enable GPS
-            self.detector = QgsGPSDetector( "\\\\.\\COM1" )
+            portname = utils.settings.value("gps/port").toString()
+            log(portname)
+            self.detector = QgsGPSDetector( portname )
             self.detector.detected.connect(self.connected)
             self.detector.detectionFailed.connect(self.failed)
             self.isConnectFailed = False
@@ -39,6 +42,8 @@ class GPSAction(QAction):
         self.gpsConn.stateChanged.disconnect(self.gpsStateChanged)
         del self.gpsConn
         self.gpsConn = None
+        del self.marker
+        self.market = None
         log("GPS disconnect")
         self.isConnected = False
         
@@ -72,6 +77,10 @@ class GPSAction(QAction):
             self.marker = GPSMarker(self.canvas)
             
         self.marker.setCenter( myPoistion )
+
+    @property
+    def status(self):
+        return self._status
 
 class GPSMarker(QgsMapCanvasItem):
         def __init__(self, canvas):

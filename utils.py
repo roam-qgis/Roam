@@ -1,6 +1,8 @@
 import time
 from qgis.core import QgsMessageLog
 import logging
+import os
+from PyQt4.QtCore import QSettings
 
 LOG_FILENAME = 'main.log'
 logging.basicConfig(filename=LOG_FILENAME,level=logging.NOTSET)
@@ -8,6 +10,10 @@ logging.basicConfig(filename=LOG_FILENAME,level=logging.NOTSET)
 log = lambda msg: logging.debug(msg)
 info = lambda msg: logging.info(msg)
 warning = lambda msg: logging.warning(msg)
+
+curdir = os.path.dirname(__file__)
+settingspath = os.path.join(curdir,'settings.ini')
+settings = QSettings(settingspath, QSettings.IniFormat)
 
 class Timer():
     def __init__(self, message=""):
