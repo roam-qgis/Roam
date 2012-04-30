@@ -66,7 +66,7 @@ class SDRCDataCapture():
         gpsspacewidget.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
         
         self.homeAction = QAction(QIcon(":/icons/home"), "Home View" , self.mainwindow)
-        self.gpsAction = GPSAction(QIcon(":/icons/gps"), self.iface.mapCanvas(), self.mapwindow)
+        self.gpsAction = GPSAction(QIcon(":/icons/gps"), self.iface.mapCanvas(), self.mainwindow)
         self.openProjectAction = QAction(QIcon(":/icons/open"),"Open Project" , self.mainwindow)
         self.toggleRasterAction = QAction(QIcon(":/icons/photo"),"Aerial Photos" , self.mainwindow)
         self.editAction = EditAction("Edit", self.iface, self.layerstoForms )

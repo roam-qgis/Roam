@@ -18,8 +18,10 @@ class GPSAction(QAction):
         self.NMEA_FIX_BAD = 1
         self.NMEA_FIX_2D = 2
         self.NMEA_FIX_3D = 3
-        self.marker = None
+        self.marker = GPSMarker(self.canvas)
+        self.marker.hide()
         self.lastposition = QgsPoint(0.0,0.0)
+        self.wgs84CRS = QgsCoordinateReferenceSystem(4326)
 
     def connectGPS(self):
         if not self.isConnected:
@@ -42,8 +44,7 @@ class GPSAction(QAction):
         self.gpsConn.stateChanged.disconnect(self.gpsStateChanged)
         del self.gpsConn
         self.gpsConn = None
-        del self.marker
-        self.market = None
+        self.marker.hide()
         log("GPS disconnect")
         self.isConnected = False
         
@@ -73,22 +74,33 @@ class GPSAction(QAction):
         if fixed:
             myPoistion = QgsPoint(gpsInfo.longitude, gpsInfo.latitude)
 
-        if self.marker is None:
-            self.marker = GPSMarker(self.canvas)
-            
-        self.marker.setCenter( myPoistion )
+        # Recenter map if we go outside of the 95% of the area
+        transform = QgsCoordinateTransform(self.wgs84CRS, self.canvas.mapRenderer().destinationCrs())
+        try:
+            map_pos = transform.transform(myPoistion)
+        except QgsCsException:
+            return
 
-    @property
-    def status(self):
-        return self._status
+        if not self.lastposition == map_pos:
+            self.lastposition == map_pos
+            rect = QgsRectangle( map_pos, map_pos )
+            extentlimt = QgsRectangle( self.canvas.extent() )
+            extentlimt.scale(0.95)
+
+            if not extentlimt.contains(  map_pos ):
+                self.canvas.setExtent( rect )
+                self.canvas.refresh()
+
+        self.marker.show()
+        self.marker.setCenter( map_pos )
 
 class GPSMarker(QgsMapCanvasItem):
         def __init__(self, canvas):
             QgsMapCanvasItem.__init__(self, canvas)
             self.canvas = canvas
             self.size = 16
+            self.map_pos = QgsPoint(0.0,0.0)
             self.svgrender = QSvgRenderer(":/icons/gps_marker")
-            self.wgs84CRS = QgsCoordinateReferenceSystem(4326)
             
         def setSize( self, size ):
             self.size = size
@@ -104,12 +116,6 @@ class GPSMarker(QgsMapCanvasItem):
             return QRectF( -halfSize, -halfSize, 2.0 * halfSize, 2.0 * halfSize )
 
         def setCenter(self, map_pos):
-            transform = QgsCoordinateTransform(self.wgs84CRS, self.canvas.mapRenderer().destinationCrs())
-            try:
-                map_pos = transform.transform(map_pos)
-            except QgsCsException:
-                return
-            
             self.map_pos = map_pos
             self.setPos(self.toCanvasCoordinates(self.map_pos))
 
