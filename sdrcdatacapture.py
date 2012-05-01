@@ -65,7 +65,7 @@ class SDRCDataCapture():
         gpsspacewidget.setMinimumWidth(30)
         gpsspacewidget.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
         
-        self.homeAction = QAction(QIcon(":/icons/home"), "Home View" , self.mainwindow)
+        self.homeAction = QAction(self.iface.actionZoomFullExtent().icon(), "Default View" , self.mainwindow)
         self.gpsAction = GPSAction(QIcon(":/icons/gps"), self.iface.mapCanvas(), self.mainwindow)
         self.openProjectAction = QAction(QIcon(":/icons/open"),"Open Project" , self.mainwindow)
         self.toggleRasterAction = QAction(QIcon(":/icons/photo"),"Aerial Photos" , self.mainwindow)
@@ -81,11 +81,13 @@ class SDRCDataCapture():
         self.openProjectAction.triggered.connect(self.openProject)
         self.toggleRasterAction.triggered.connect(self.toggleRasterLayers)
 
-        self.navtoolbar.insertAction(self.iface.actionPan(),self.homeAction )
-        self.navtoolbar.insertAction(self.homeAction, self.openProjectAction)
-
+        self.navtoolbar.insertAction(self.iface.actionPan(), self.homeAction )
+        self.navtoolbar.insertAction(self.iface.actionPan(), self.iface.actionZoomFullExtent() )
+        self.navtoolbar.insertAction(self.homeAction, self.iface.actionZoomFullExtent())
+        self.navtoolbar.insertAction(self.iface.actionZoomFullExtent(), self.openProjectAction)
+        
         self.navtoolbar.addAction(self.toggleRasterAction)
-        self.navtoolbar.insertWidget(self.homeAction, spacewidget)
+        self.navtoolbar.insertWidget(self.iface.actionZoomFullExtent(), spacewidget)
         self.toolbar.addAction(self.editAction)                        
         self.toolbar.addAction(self.syncAction)
         self.toolbar.insertSeparator(self.syncAction)
@@ -121,6 +123,8 @@ class SDRCDataCapture():
         self.iface.actionZoomIn().setIcon(QIcon(":/icons/in"))
         self.iface.actionZoomOut().setIcon(QIcon(":/icons/out"))
         self.iface.actionPan().setIcon(QIcon(":/icons/pan"))
+        self.iface.actionZoomFullExtent().setIcon( QIcon(":/icons/home") )
+        self.iface.actionZoomFullExtent().setIconText( "Home View ")
         
         self.actionGroup.addAction(self.iface.actionZoomIn())
         self.actionGroup.addAction(self.iface.actionZoomOut())
