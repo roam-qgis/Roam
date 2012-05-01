@@ -56,9 +56,9 @@ class FormBinder(QObject):
         if isinstance(control, QCalendarWidget):
             control.setSelectedDate(QDate.fromString( value.toString(), Qt.ISODate ))
 
-        elif isinstance(control, QLineEdit):
+        elif isinstance(control, QLineEdit) or isinstance(control, QTextEdit):
             control.setText(value.toString())
-
+            
         elif isinstance(control, QCheckBox):
             control.setChecked(value.toBool())
 

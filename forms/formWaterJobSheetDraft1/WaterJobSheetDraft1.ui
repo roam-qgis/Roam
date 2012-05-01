@@ -87,14 +87,14 @@ p, li { white-space: pre-wrap; }
      </widget>
     </item>
     <item row="1" column="0" colspan="2">
-     <widget class="QCheckBox" name="New_Service">
+     <widget class="QCheckBox" name="NewService">
       <property name="text">
        <string>New Service</string>
       </property>
      </widget>
     </item>
     <item row="4" column="0" colspan="2">
-     <widget class="QCheckBox" name="Meter_Replaced">
+     <widget class="QCheckBox" name="MeterReplaced">
       <property name="text">
        <string>Meter Replaced</string>
       </property>
@@ -108,7 +108,7 @@ p, li { white-space: pre-wrap; }
      </widget>
     </item>
     <item row="8" column="1" colspan="2">
-     <widget class="QLineEdit" name="Existing_Meter_No"/>
+     <widget class="QLineEdit" name="ExistingMeterNumber"/>
     </item>
     <item row="9" column="0">
      <widget class="QLabel" name="label_6">
@@ -123,7 +123,7 @@ p, li { white-space: pre-wrap; }
      </widget>
     </item>
     <item row="9" column="1" colspan="2">
-     <widget class="QLineEdit" name="Existing_Meter_Reading_KL"/>
+     <widget class="QLineEdit" name="ExistingMeterReadingKL"/>
     </item>
     <item row="10" column="0">
      <widget class="QLabel" name="label_7">
@@ -133,7 +133,7 @@ p, li { white-space: pre-wrap; }
      </widget>
     </item>
     <item row="10" column="1" colspan="2">
-     <widget class="QLineEdit" name="New_Meter_Number"/>
+     <widget class="QLineEdit" name="NewMeterNumber"/>
     </item>
     <item row="11" column="0">
      <widget class="QLabel" name="label_8">
@@ -148,41 +148,41 @@ p, li { white-space: pre-wrap; }
      </widget>
     </item>
     <item row="11" column="1" colspan="2">
-     <widget class="QLineEdit" name="New_Meter_Reading_KL"/>
+     <widget class="QLineEdit" name="NewMeterReadingKL"/>
     </item>
     <item row="0" column="2">
-     <widget class="QLineEdit" name="Installation_Sheet_No"/>
+     <widget class="QLineEdit" name="InstallationSheetNumber"/>
     </item>
     <item row="1" column="2">
-     <widget class="QCheckBox" name="Fire_Service">
+     <widget class="QCheckBox" name="FireService">
       <property name="text">
        <string>New Fire Service</string>
       </property>
      </widget>
     </item>
     <item row="4" column="2">
-     <widget class="QCheckBox" name="Relayed_Service">
+     <widget class="QCheckBox" name="RelayedService">
       <property name="text">
        <string>Relayed Service</string>
       </property>
      </widget>
     </item>
     <item row="5" column="2">
-     <widget class="QCheckBox" name="Meter_Removed">
+     <widget class="QCheckBox" name="MeterRemoved">
       <property name="text">
        <string>Meter Removed</string>
       </property>
      </widget>
     </item>
     <item row="5" column="0">
-     <widget class="QCheckBox" name="Disconnect_Service">
+     <widget class="QCheckBox" name="DisconnectService">
       <property name="text">
        <string>Disconnect Service</string>
       </property>
      </widget>
     </item>
     <item row="6" column="0">
-     <widget class="QCheckBox" name="Meter_Read">
+     <widget class="QCheckBox" name="MeterRead">
       <property name="text">
        <string>Meter Read</string>
       </property>
@@ -217,7 +217,7 @@ p, li { white-space: pre-wrap; }
      </widget>
     </item>
     <item row="0" column="1">
-     <widget class="QComboBox" name="Traffic_Control_Plan_Used">
+     <widget class="QComboBox" name="TrafficControlPlanUsed">
       <item>
        <property name="text">
         <string/>
@@ -288,7 +288,7 @@ p, li { white-space: pre-wrap; }
      </widget>
     </item>
     <item row="1" column="1">
-     <widget class="QLineEdit" name="Work_Duration">
+     <widget class="QLineEdit" name="WorkDurationHours">
       <property name="text">
        <string/>
       </property>
@@ -302,7 +302,7 @@ p, li { white-space: pre-wrap; }
      </widget>
     </item>
     <item row="2" column="1">
-     <widget class="QLineEdit" name="Signage_alterations">
+     <widget class="QLineEdit" name="SignageAlterations">
       <property name="text">
        <string/>
       </property>
@@ -330,7 +330,7 @@ p, li { white-space: pre-wrap; }
    </property>
    <layout class="QFormLayout" name="formLayout">
     <item row="1" column="1">
-     <widget class="QComboBox" name="Pipe_Material">
+     <widget class="QComboBox" name="PipeMaterial">
       <item>
        <property name="text">
         <string/>
@@ -384,7 +384,7 @@ p, li { white-space: pre-wrap; }
      </widget>
     </item>
     <item row="3" column="1">
-     <widget class="QComboBox" name="Pipe_Diameter">
+     <widget class="QComboBox" name="PipeDiameter">
       <item>
        <property name="text">
         <string/>
@@ -488,10 +488,10 @@ p, li { white-space: pre-wrap; }
      </widget>
     </item>
     <item row="5" column="1">
-     <widget class="QLineEdit" name="Pipe_depth"/>
+     <widget class="QLineEdit" name="PipeDepth"/>
     </item>
     <item row="7" column="1">
-     <widget class="QComboBox" name="Joint_Type">
+     <widget class="QComboBox" name="JointType">
       <item>
        <property name="text">
         <string/>
@@ -545,10 +545,10 @@ p, li { white-space: pre-wrap; }
      </widget>
     </item>
     <item row="9" column="1">
-     <widget class="QComboBox" name="Ground_conditions"/>
+     <widget class="QComboBox" name="GroundConditions"/>
     </item>
     <item row="11" column="1">
-     <widget class="QComboBox" name="Valve_Type">
+     <widget class="QComboBox" name="ValveType">
       <item>
        <property name="text">
         <string/>
@@ -582,7 +582,7 @@ p, li { white-space: pre-wrap; }
      </widget>
     </item>
     <item row="13" column="1">
-     <widget class="QComboBox" name="Valve_Status">
+     <widget class="QComboBox" name="ValveStatus">
       <item>
        <property name="text">
         <string/>
@@ -616,7 +616,7 @@ p, li { white-space: pre-wrap; }
      </widget>
     </item>
     <item row="15" column="1">
-     <widget class="QComboBox" name="Valve_Closing_Direction">
+     <widget class="QComboBox" name="ValveClosingDirection">
       <item>
        <property name="text">
         <string/>
@@ -855,28 +855,28 @@ p, li { white-space: pre-wrap; }
        <number>10</number>
       </property>
       <item>
-       <widget class="QCheckBox" name="Follow_up_Work_Required">
+       <widget class="QCheckBox" name="FollowUpWorkRequired">
         <property name="text">
          <string>Follow up Work Required</string>
         </property>
        </widget>
       </item>
       <item>
-       <widget class="QCheckBox" name="Contacted_Consumer">
+       <widget class="QCheckBox" name="ConsumerContacted">
         <property name="text">
          <string>Contacted Consumer</string>
         </property>
        </widget>
       </item>
       <item>
-       <widget class="QCheckBox" name="Shutdown_doorknock">
+       <widget class="QCheckBox" name="ShutdownDoorknock">
         <property name="text">
          <string>Shutdown Notification - door knock</string>
         </property>
        </widget>
       </item>
       <item>
-       <widget class="QCheckBox" name="Shutdown_Letter">
+       <widget class="QCheckBox" name="ShutdownLetter">
         <property name="text">
          <string>Shutdown Notification - letter</string>
         </property>
@@ -972,7 +972,7 @@ p, li { white-space: pre-wrap; }
      </widget>
     </item>
     <item row="3" column="1">
-     <widget class="QLineEdit" name="No_Connections_Interupted">
+     <widget class="QLineEdit" name="ConnectionsInterrupted">
       <property name="text">
        <string/>
       </property>
@@ -986,7 +986,7 @@ p, li { white-space: pre-wrap; }
      </widget>
     </item>
     <item row="4" column="1">
-     <widget class="QLineEdit" name="Interuption_Duration">
+     <widget class="QLineEdit" name="InterruptionDurationHours">
       <property name="text">
        <string/>
       </property>
@@ -1061,7 +1061,7 @@ p, li { white-space: pre-wrap; }
      </widget>
     </item>
     <item row="1" column="1">
-     <widget class="QComboBox" name="Request_Type">
+     <widget class="QComboBox" name="RequestType">
       <item>
        <property name="text">
         <string/>
@@ -1132,7 +1132,7 @@ p, li { white-space: pre-wrap; }
      </widget>
     </item>
     <item row="1" column="3">
-     <widget class="QComboBox" name="Requested_by">
+     <widget class="QComboBox" name="RequestedBy">
       <property name="editable">
        <bool>true</bool>
       </property>
@@ -1171,7 +1171,7 @@ p, li { white-space: pre-wrap; }
      </widget>
     </item>
     <item row="2" column="1">
-     <widget class="QLineEdit" name="Customer_Request_Number"/>
+     <widget class="QLineEdit" name="CustomerRequestNumber"/>
     </item>
     <item row="3" column="0">
      <widget class="QLabel" name="label">
@@ -1197,7 +1197,7 @@ p, li { white-space: pre-wrap; }
      </widget>
     </item>
     <item row="4" column="1" colspan="3">
-     <widget class="QTextEdit" name="Additional_Location_Details">
+     <widget class="QTextEdit" name="AdditionalLocationDetails">
       <property name="sizePolicy">
        <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
         <horstretch>0</horstretch>
@@ -1247,49 +1247,49 @@ p, li { white-space: pre-wrap; }
    </property>
    <layout class="QGridLayout" name="gridLayout_9">
     <item row="0" column="0">
-     <widget class="QCheckBox" name="Repaired_Service_clamp">
+     <widget class="QCheckBox" name="RepairedServiceClamp">
       <property name="text">
        <string>Repaired Service - clamp</string>
       </property>
      </widget>
     </item>
     <item row="1" column="0">
-     <widget class="QCheckBox" name="Repaired_Service_replace_section">
+     <widget class="QCheckBox" name="RepairedServiceReplaceSection">
       <property name="text">
        <string>Repaired Service - replace section</string>
       </property>
      </widget>
     </item>
     <item row="2" column="0">
-     <widget class="QCheckBox" name="Replaced_Stop_Cock">
+     <widget class="QCheckBox" name="ReplacedStopCock">
       <property name="text">
        <string>Replaced Stop cock</string>
       </property>
      </widget>
     </item>
     <item row="3" column="0">
-     <widget class="QCheckBox" name="Repaired_Stop_Cock">
+     <widget class="QCheckBox" name="RepairedStopCock">
       <property name="text">
        <string>Repaired Stop cock</string>
       </property>
      </widget>
     </item>
     <item row="4" column="0">
-     <widget class="QCheckBox" name="TPFNR_Repaired">
+     <widget class="QCheckBox" name="TpfnrRepaired">
       <property name="text">
        <string>TPFNR Repaired</string>
       </property>
      </widget>
     </item>
     <item row="5" column="0">
-     <widget class="QCheckBox" name="TPFNR_Replaced">
+     <widget class="QCheckBox" name="TpfnrReplaced">
       <property name="text">
        <string>TPFNR Replaced</string>
       </property>
      </widget>
     </item>
     <item row="6" column="0">
-     <widget class="QCheckBox" name="TPFNR_Capped">
+     <widget class="QCheckBox" name="TpfnrCapped">
       <property name="text">
        <string>TPFNR Capped</string>
       </property>
@@ -1317,14 +1317,14 @@ p, li { white-space: pre-wrap; }
    </property>
    <layout class="QGridLayout" name="gridLayout_8">
     <item row="0" column="0" colspan="2">
-     <widget class="QCheckBox" name="Main_repaired_clamp">
+     <widget class="QCheckBox" name="MainRepairedClamp">
       <property name="text">
        <string>Main Repaired - clamp</string>
       </property>
      </widget>
     </item>
     <item row="1" column="0" colspan="2">
-     <widget class="QCheckBox" name="Main_repaired_replace_section">
+     <widget class="QCheckBox" name="MainRepairedReplacedSection">
       <property name="text">
        <string>Main Repaired - replace section</string>
       </property>
@@ -1344,7 +1344,7 @@ p, li { white-space: pre-wrap; }
      </widget>
     </item>
     <item row="2" column="1">
-     <widget class="QComboBox" name="Failure_type">
+     <widget class="QComboBox" name="FailureType">
       <property name="sizePolicy">
        <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
         <horstretch>0</horstretch>
@@ -1404,56 +1404,56 @@ p, li { white-space: pre-wrap; }
      </widget>
     </item>
     <item row="3" column="0">
-     <widget class="QCheckBox" name="Hydrant_Repair">
+     <widget class="QCheckBox" name="HydrantRepair">
       <property name="text">
        <string>Hydrant Repair</string>
       </property>
      </widget>
     </item>
     <item row="4" column="0" colspan="2">
-     <widget class="QCheckBox" name="Hydrant_Replace">
+     <widget class="QCheckBox" name="HydrantReplace">
       <property name="text">
        <string>Hydrant Replace</string>
       </property>
      </widget>
     </item>
     <item row="5" column="0" colspan="2">
-     <widget class="QCheckBox" name="Hydrant_Clean_and_Mark">
+     <widget class="QCheckBox" name="HydrantCleanAndMark">
       <property name="text">
        <string>Hydrant Clean and Mark</string>
       </property>
      </widget>
     </item>
     <item row="6" column="0" colspan="2">
-     <widget class="QCheckBox" name="Replace_lid_Hydrant">
+     <widget class="QCheckBox" name="HydrantReplaceLid">
       <property name="text">
        <string>Replace Lid - Hydrant</string>
       </property>
      </widget>
     </item>
     <item row="7" column="0">
-     <widget class="QCheckBox" name="Mains_Valve_Repair">
+     <widget class="QCheckBox" name="MainsValveRepair">
       <property name="text">
        <string>Valve Repair</string>
       </property>
      </widget>
     </item>
     <item row="8" column="0">
-     <widget class="QCheckBox" name="Mains_Valve_Replace">
+     <widget class="QCheckBox" name="MainsValveReplace">
       <property name="text">
        <string>Valve Replace</string>
       </property>
      </widget>
     </item>
     <item row="9" column="0" colspan="2">
-     <widget class="QCheckBox" name="Replace_lid_Valve">
+     <widget class="QCheckBox" name="ReplaceLidValve">
       <property name="text">
        <string>Replace Lid - Valve</string>
       </property>
      </widget>
     </item>
     <item row="10" column="0" colspan="2">
-     <widget class="QCheckBox" name="Replace_lid_Valve_2">
+     <widget class="QCheckBox" name="ReplaceMarkers">
       <property name="text">
        <string>Replace Markers</string>
       </property>
@@ -1488,14 +1488,14 @@ p, li { white-space: pre-wrap; }
      </widget>
     </item>
     <item row="1" column="0" colspan="2">
-     <widget class="QCheckBox" name="Consumer_Problem">
+     <widget class="QCheckBox" name="ConsumerProblem">
       <property name="text">
        <string>Consumer Problem</string>
       </property>
      </widget>
     </item>
     <item row="2" column="0" colspan="2">
-     <widget class="QCheckBox" name="Council_Facility">
+     <widget class="QCheckBox" name="CouncilFacility">
       <property name="text">
        <string>Council Facility</string>
       </property>
@@ -1509,7 +1509,7 @@ p, li { white-space: pre-wrap; }
      </widget>
     </item>
     <item row="3" column="1">
-     <widget class="QComboBox" name="Provide_Location">
+     <widget class="QComboBox" name="ProvideLocation">
       <item>
        <property name="text">
         <string/>
@@ -1538,28 +1538,28 @@ p, li { white-space: pre-wrap; }
      </widget>
     </item>
     <item row="4" column="0" colspan="2">
-     <widget class="QCheckBox" name="Backfills_Cleanups">
+     <widget class="QCheckBox" name="BackfillsCleanups">
       <property name="text">
        <string>Backfill/cleanups</string>
       </property>
      </widget>
     </item>
     <item row="5" column="0">
-     <widget class="QCheckBox" name="Water_Sample">
+     <widget class="QCheckBox" name="WaterSample">
       <property name="text">
        <string>Water Sample</string>
       </property>
      </widget>
     </item>
     <item row="6" column="0">
-     <widget class="QCheckBox" name="Mains_Flushed">
+     <widget class="QCheckBox" name="MainsFlushed">
       <property name="text">
        <string>Mains Flushed</string>
       </property>
      </widget>
     </item>
     <item row="7" column="0" colspan="2">
-     <widget class="QCheckBox" name="Meter_Cover">
+     <widget class="QCheckBox" name="MeterCover">
       <property name="text">
        <string>Meter Cover Provided</string>
       </property>
@@ -1597,28 +1597,28 @@ p, li { white-space: pre-wrap; }
    </property>
    <layout class="QGridLayout" name="gridLayout_4">
     <item row="0" column="0" colspan="3">
-     <widget class="QCheckBox" name="Pressure_Test_Service">
+     <widget class="QCheckBox" name="PressureTestService">
       <property name="text">
        <string>Pressure Test Service</string>
       </property>
      </widget>
     </item>
     <item row="4" column="0" colspan="3">
-     <widget class="QCheckBox" name="Hydrant_Flow_Test">
+     <widget class="QCheckBox" name="HydrantFlowTest">
       <property name="text">
        <string>Hydrant Flow Test</string>
       </property>
      </widget>
     </item>
     <item row="1" column="0" colspan="3">
-     <widget class="QCheckBox" name="Pressure_Test_Hydrant">
+     <widget class="QCheckBox" name="PressureTestHydrant">
       <property name="text">
        <string>Pressure Test Hydrant</string>
       </property>
      </widget>
     </item>
     <item row="5" column="0" colspan="3">
-     <widget class="QCheckBox" name="Service_Flow_Test">
+     <widget class="QCheckBox" name="ServiceFlowTest">
       <property name="text">
        <string>Service Flow Test</string>
       </property>
@@ -1632,7 +1632,7 @@ p, li { white-space: pre-wrap; }
      </widget>
     </item>
     <item row="2" column="2">
-     <widget class="QLineEdit" name="Lockup_KPA"/>
+     <widget class="QLineEdit" name="LockupKpa"/>
     </item>
     <item row="6" column="0">
      <widget class="QLabel" name="label_17">
@@ -1642,14 +1642,14 @@ p, li { white-space: pre-wrap; }
      </widget>
     </item>
     <item row="6" column="1" colspan="2">
-     <widget class="QLineEdit" name="L_per_min">
+     <widget class="QLineEdit" name="LitresPerMinute">
       <property name="placeholderText">
        <string/>
       </property>
      </widget>
     </item>
     <item row="3" column="0">
-     <widget class="QCheckBox" name="Test_Sheet_completed">
+     <widget class="QCheckBox" name="TestSheetCompleted">
       <property name="text">
        <string>Test Sheet completed</string>
       </property>
@@ -1686,7 +1686,7 @@ p, li { white-space: pre-wrap; }
      </widget>
     </item>
     <item row="0" column="2">
-     <widget class="QCheckBox" name="Work_method_statement">
+     <widget class="QCheckBox" name="WorkMethodStatement">
       <property name="text">
        <string>Work Method Statement Completed</string>
       </property>
