@@ -1,16 +1,17 @@
 import os
 from form_binder import FormBinder
 from PyQt4.QtCore import pyqtSignal, QObject, QSettings
-from PyQt4.QtGui import QLabel
+from PyQt4.QtGui import QLabel, QToolBar
 from utils import Timer, log, info, warning
 
 class DialogProvider(QObject):
     accepted = pyqtSignal()
     rejected = pyqtSignal()
     
-    def __init__(self, canvas):
+    def __init__(self, canvas, iface):
         QObject.__init__(self)
         self.canvas = canvas
+        self.iface = iface
 
     def openDialog(self, formmodule, feature, layer, forupdate):
         self.update = forupdate
@@ -42,10 +43,12 @@ class DialogProvider(QObject):
         label = QLabel(message)
         label.setStyleSheet('font: 75 30pt "MS Shell Dlg 2";color: rgb(231, 175, 62);')
         self.item = self.canvas.scene().addWidget(label)
+        self.disableToolbars()
 
     def featureSelected(self):
         self.canvas.scene().removeItem(self.item)
         self.dialog.show()
+        self.enableToolbars()
 
     def dialogAccept(self):
         info("Saving values back")
@@ -64,3 +67,13 @@ class DialogProvider(QObject):
 
     def deleteDialog(self):
         del self.dialog
+
+    def disableToolbars(self):
+        toolbars = self.iface.mainWindow().findChildren(QToolBar)
+        for toolbar in toolbars:
+            toolbar.setEnabled(False)
+
+    def enableToolbars(self):
+        toolbars = self.iface.mainWindow().findChildren(QToolBar)
+        for toolbar in toolbars:
+            toolbar.setEnabled(True)

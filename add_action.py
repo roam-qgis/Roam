@@ -17,7 +17,7 @@ class AddAction(QAction):
         self.tool.mouseClicked.connect( self.pointClick )
         self.fields = self.layer.pendingFields()
         self.provider = self.layer.dataProvider()
-        self.dialogprovider = DialogProvider(self.canvas)
+        self.dialogprovider = DialogProvider(self.canvas, iface)
         self.dialogprovider.accepted.connect(self.setTool)
         self.dialogprovider.rejected.connect(self.setTool)
         self.setCheckable(True)

@@ -17,7 +17,7 @@ class EditAction(QAction):
         self.tool = PointTool( self.canvas )
         self.tool.mouseClicked.connect( self.findFeatures )
         self.setIcon(QIcon(":/icons/edit"))
-        self.dialogprovider = DialogProvider(self.canvas)
+        self.dialogprovider = DialogProvider(self.canvas, iface)
         self.dialogprovider.accepted.connect(self.setTool)
         self.dialogprovider.rejected.connect(self.setTool)
         self.setCheckable(True)
