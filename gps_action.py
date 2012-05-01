@@ -98,7 +98,7 @@ class GPSMarker(QgsMapCanvasItem):
         def __init__(self, canvas):
             QgsMapCanvasItem.__init__(self, canvas)
             self.canvas = canvas
-            self.size = 16
+            self.size = 24
             self.map_pos = QgsPoint(0.0,0.0)
             self.svgrender = QSvgRenderer(":/icons/gps_marker")
             
