@@ -1,8 +1,8 @@
 from PyQt4 import QtGui
 from ui_WaterJobSheetDraft1 import Ui_WaterForm
 
-__formName__ = 'Water Job'
-__layerName__ = 'waterjobs'
+__formName__ = 'Add new water job'
+__layerName__ = 'Water Jobs'
 __mapTool__ = None
 __mapToolType__ = 'POINT'
 

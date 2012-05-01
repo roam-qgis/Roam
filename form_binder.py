@@ -53,13 +53,14 @@ class FormBinder(QObject):
 
     def bindValueToControl(self, control, value):
         success = True
+
         if isinstance(control, QCalendarWidget):
             control.setSelectedDate(QDate.fromString( value.toString(), Qt.ISODate ))
-
+                
         elif isinstance(control, QLineEdit) or isinstance(control, QTextEdit):
             control.setText(value.toString())
             
-        elif isinstance(control, QCheckBox):
+        elif isinstance(control, QCheckBox) or isinstance(control, QGroupBox):
             control.setChecked(value.toBool())
 
         elif isinstance(control, QComboBox):
@@ -107,11 +108,14 @@ class FormBinder(QObject):
                 value = None
                 if isinstance(control, QLineEdit):
                     value = control.text()
+
+                elif isinstance(control, QTextEdit):
+                    value = control.toPlainText()
                     
                 elif isinstance(control, QCalendarWidget):
                     value = control.selectedDate().toString( Qt.ISODate )
 
-                elif isinstance(control, QCheckBox):
+                elif isinstance(control, QCheckBox) or isinstance(control, QGroupBox):
                     value = 0
                     if control.isChecked():
                         value = 1

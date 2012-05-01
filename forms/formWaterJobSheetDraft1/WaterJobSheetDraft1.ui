@@ -57,7 +57,7 @@ p, li { white-space: pre-wrap; }
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:14pt; font-weight:600;&quot;&gt;WATER DAILY JOB SHEET&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
    </property>
   </widget>
-  <widget class="QGroupBox" name="groupBox">
+  <widget class="QGroupBox" name="InstallationsAndMeterReadsGroup">
    <property name="geometry">
     <rect>
      <x>500</x>
@@ -310,12 +310,12 @@ p, li { white-space: pre-wrap; }
     </item>
    </layout>
   </widget>
-  <widget class="QGroupBox" name="groupBox_8">
+  <widget class="QGroupBox" name="AssetinformationGroup">
    <property name="geometry">
     <rect>
-     <x>800</x>
+     <x>779</x>
      <y>230</y>
-     <width>210</width>
+     <width>231</width>
      <height>391</height>
     </rect>
    </property>
@@ -545,7 +545,13 @@ p, li { white-space: pre-wrap; }
      </widget>
     </item>
     <item row="9" column="1">
-     <widget class="QComboBox" name="GroundConditions"/>
+     <widget class="QComboBox" name="GroundConditions">
+      <item>
+       <property name="text">
+        <string/>
+       </property>
+      </item>
+     </widget>
     </item>
     <item row="11" column="1">
      <widget class="QComboBox" name="ValveType">
@@ -1227,12 +1233,12 @@ p, li { white-space: pre-wrap; }
     </item>
    </layout>
   </widget>
-  <widget class="QGroupBox" name="groupBox_2">
+  <widget class="QGroupBox" name="ServiceRepairsGroup">
    <property name="geometry">
     <rect>
      <x>10</x>
      <y>530</y>
-     <width>211</width>
+     <width>221</width>
      <height>211</height>
     </rect>
    </property>
@@ -1297,7 +1303,7 @@ p, li { white-space: pre-wrap; }
     </item>
    </layout>
   </widget>
-  <widget class="QGroupBox" name="groupBox_3">
+  <widget class="QGroupBox" name="MainsAndFittingsGroup">
    <property name="geometry">
     <rect>
      <x>10</x>
@@ -1461,7 +1467,7 @@ p, li { white-space: pre-wrap; }
     </item>
    </layout>
   </widget>
-  <widget class="QGroupBox" name="groupBox_5">
+  <widget class="QGroupBox" name="OtherGroup">
    <property name="geometry">
     <rect>
      <x>248</x>
@@ -1577,7 +1583,7 @@ p, li { white-space: pre-wrap; }
     </item>
    </layout>
   </widget>
-  <widget class="QGroupBox" name="groupBox_4">
+  <widget class="QGroupBox" name="PressureAndFlowGroup">
    <property name="geometry">
     <rect>
      <x>248</x>
@@ -1699,6 +1705,13 @@ p, li { white-space: pre-wrap; }
         <horstretch>0</horstretch>
         <verstretch>0</verstretch>
        </sizepolicy>
+      </property>
+      <property name="html">
+       <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
       </property>
      </widget>
     </item>
