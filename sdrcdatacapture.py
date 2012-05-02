@@ -116,6 +116,7 @@ class SDRCDataCapture():
             if layer.type() == QgsMapLayer.RasterLayer:
                 return True
         return False
+    
     def setupIcons(self):
         """
             Update toolbars to have text and icons, change icons to new style
@@ -159,7 +160,8 @@ class SDRCDataCapture():
             form = forms.loadFormModule(form)
             try:
                 layer = layers[form.__layerName__]
-                action = AddAction( form.__formName__, self.iface, form , layer )
+                icon = QIcon(os.path.join(os.path.dirname(form.__file__),'icon.png'))
+                action = AddAction( form.__formName__, self.iface, form , layer, icon )
                 self.toolbar.insertAction(self.editAction, action)
                 self.actionGroup.addAction(action)
                 self.actions.append(action)

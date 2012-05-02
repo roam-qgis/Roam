@@ -7,8 +7,8 @@ import os
 from dialog_provider import DialogProvider
 
 class AddAction(QAction):
-    def __init__(self, name, iface, form, layer ):
-        QAction.__init__(self, name, iface.mainWindow())
+    def __init__(self, name, iface, form, layer, icon ):
+        QAction.__init__(self, icon, name, iface.mainWindow())
         self.canvas = iface.mapCanvas()
         self.form = form
         self.layer = layer

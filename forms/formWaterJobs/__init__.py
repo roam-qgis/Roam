@@ -3,8 +3,6 @@ from ui_WaterJobSheetDraft1 import Ui_WaterForm
 
 __formName__ = 'Add new water job'
 __layerName__ = 'WaterJobs'
-__mapTool__ = None
-__mapToolType__ = 'POINT'
 
 def dialogInstance():
     return WaterFormDialog()
