@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>513</width>
-    <height>218</height>
+    <width>549</width>
+    <height>246</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -52,7 +52,11 @@
       <string notr="true"/>
      </property>
      <property name="text">
-      <string>Uploading to mothership...</string>
+      <string>Syncing with server
+Please wait</string>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignCenter</set>
      </property>
      <property name="wordWrap">
       <bool>true</bool>
@@ -80,7 +84,8 @@
  </widget>
  <resources>
   <include location="../resources.qrc"/>
-  <include location="resources.qrc"/>
+  <include location="../resources.qrc"/>
+  <include location="../resources.qrc"/>
  </resources>
  <connections>
   <connection>

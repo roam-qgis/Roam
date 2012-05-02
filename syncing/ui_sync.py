@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'syncing\ui_sync.ui'
 #
-# Created: Wed Apr 11 15:56:07 2012
+# Created: Wed May 02 14:39:48 2012
 #      by: PyQt4 UI code generator 4.8.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -17,7 +17,7 @@ except AttributeError:
 class Ui_syncForm(object):
     def setupUi(self, syncForm):
         syncForm.setObjectName(_fromUtf8("syncForm"))
-        syncForm.resize(513, 218)
+        syncForm.resize(549, 246)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Preferred, QtGui.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -39,6 +39,7 @@ class Ui_syncForm(object):
         font.setBold(True)
         self.statusLabel.setFont(font)
         self.statusLabel.setStyleSheet(_fromUtf8(""))
+        self.statusLabel.setAlignment(QtCore.Qt.AlignCenter)
         self.statusLabel.setWordWrap(True)
         self.statusLabel.setObjectName(_fromUtf8("statusLabel"))
         self.gridLayout.addWidget(self.statusLabel, 0, 1, 1, 1)
@@ -59,4 +60,5 @@ class Ui_syncForm(object):
 
     def retranslateUi(self, syncForm):
         syncForm.setWindowTitle(QtGui.QApplication.translate("syncForm", "Form", None, QtGui.QApplication.UnicodeUTF8))
-        self.statusLabel.setText(QtGui.QApplication.translate("syncForm", "Uploading to mothership...", None, QtGui.QApplication.UnicodeUTF8))
+        self.statusLabel.setText(QtGui.QApplication.translate("syncForm", "Syncing with server\n"
+"Please wait", None, QtGui.QApplication.UnicodeUTF8))
