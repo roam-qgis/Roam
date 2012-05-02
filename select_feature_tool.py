@@ -20,6 +20,7 @@ class SelectFeatureTool(QgsMapToolEmitPoint):
         self.band = QgsRubberBand(self.canvas)
         self.band.setColor(Qt.blue)
         self.band.setWidth(3)
+        self.rect = QgsRectangle()
         self.cursor = QCursor(QPixmap(["16 16 3 1",
             "      c None",
             ".     c #32CD32",
@@ -44,14 +45,15 @@ class SelectFeatureTool(QgsMapToolEmitPoint):
             
 
     def findFeature(self, point, button):
-        searchRadius = self.canvas.extent().width() * ( self.searchradius / 100.0)
-        rect = QgsRectangle()
-        rect.setXMinimum( point.x() - searchRadius );
-        rect.setXMaximum( point.x() + searchRadius );
-        rect.setYMinimum( point.y() - searchRadius );
-        rect.setYMaximum( point.y() + searchRadius );
+        searchRadius = QgsTolerance.toleranceInMapUnits( self.searchradius, self.layer, \
+                                                         self.canvas.mapRenderer(), QgsTolerance.Pixels)
+                                                         
+        self.rect.setXMinimum( point.x() - searchRadius );
+        self.rect.setXMaximum( point.x() + searchRadius );
+        self.rect.setYMinimum( point.y() - searchRadius );
+        self.rect.setYMaximum( point.y() + searchRadius );
 
-        self.layer.select( self.layer.pendingAllAttributesList(), rect, True, True)
+        self.layer.select( self.layer.pendingAllAttributesList(), self.rect, True, True)
         feature = QgsFeature()
         self.layer.nextFeature(feature)
         try:
@@ -63,14 +65,15 @@ class SelectFeatureTool(QgsMapToolEmitPoint):
     
     def canvasMoveEvent(self, event):
         point = self.toMapCoordinates( event.pos() )
-        searchRadius = self.canvas.extent().width() * ( self.searchradius / 100.0)
-        rect = QgsRectangle()
-        rect.setXMinimum( point.x() - searchRadius );
-        rect.setXMaximum( point.x() + searchRadius );
-        rect.setYMinimum( point.y() - searchRadius );
-        rect.setYMaximum( point.y() + searchRadius );
+        searchRadius = QgsTolerance.toleranceInMapUnits( self.searchradius, self.layer, \
+                                                         self.canvas.mapRenderer(), QgsTolerance.Pixels)
+        
+        self.rect.setXMinimum( point.x() - searchRadius );
+        self.rect.setXMaximum( point.x() + searchRadius );
+        self.rect.setYMinimum( point.y() - searchRadius );
+        self.rect.setYMaximum( point.y() + searchRadius );
 
-        self.layer.select( self.layer.pendingAllAttributesList(), rect, True, True)
+        self.layer.select( [], self.rect, True, True)
         feature = QgsFeature()
         self.layer.nextFeature(feature)
 
@@ -79,8 +82,7 @@ class SelectFeatureTool(QgsMapToolEmitPoint):
             return
         
         self.band.setToGeometry(feature.geometry(), None)
-
-
+        
     def setActive(self):
         self.canvas.setMapTool(self)
         self.canvas.setCursor(self.cursor)

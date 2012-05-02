@@ -111,6 +111,11 @@ class SDRCDataCapture():
         self.iface.mapCanvas().freeze(False)
         self.iface.mapCanvas().refresh()
 
+    def hasRasterLayers(self):
+        for layer in QgsMapLayerRegistry.instance().mapLayers().values():
+            if layer.type() == QgsMapLayer.RasterLayer:
+                return True
+        return False
     def setupIcons(self):
         """
             Update toolbars to have text and icons, change icons to new style
@@ -137,6 +142,8 @@ class SDRCDataCapture():
         layers = dict((str(x.name()), x) for x in QgsMapLayerRegistry.instance().mapLayers().values())
         self.createFormButtons(layers)
         self.homeextent = self.iface.mapCanvas().extent()
+        # Enable the raster layers button only if the project contains a raster layer.
+        self.toggleRasterAction.setEnabled( self.hasRasterLayers() )
         
     def createFormButtons(self, layers):
         """
@@ -168,7 +175,6 @@ class SDRCDataCapture():
         QCoreApplication.processEvents()
         curdir= os.path.dirname(__file__)
         path =os.path.join(curdir,'projects/')
-        #paths = self.settings.value("/projects/projectLocations", [path]).toList()
         self.dialog.loadProjectList([path])
 
     def loadProject(self, path):

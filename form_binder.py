@@ -160,7 +160,7 @@ class FormBinder(QObject):
         column = self.settings.value("%s/column" % controlName).toString()
         bindto = self.settings.value("%s/bindto" % controlName).toString()
         message = self.settings.value("%s/message" % controlName, "Please select a feature in the map").toString()
-        searchsize = self.settings.value("%s/searchradius" % controlName, 0.5 ).toInt()[0]
+        searchsize = self.settings.value("%s/searchradius" % controlName, 5 ).toInt()[0]
 
         layer = None
         for l in self.canvas.layers():
@@ -168,6 +168,9 @@ class FormBinder(QObject):
                 layer = l
                 break
 
+        if layer is None:
+            return 
+        
         self.tool = SelectFeatureTool(self.canvas, layer, column, bindto, searchsize)
         self.tool.foundFeature.connect(self.bind)
         self.tool.setActive()
