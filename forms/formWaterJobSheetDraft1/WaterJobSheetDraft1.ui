@@ -1182,12 +1182,12 @@ p, li { white-space: pre-wrap; }
     <item row="3" column="0">
      <widget class="QLabel" name="label">
       <property name="text">
-       <string>Street</string>
+       <string>Lot and Plan</string>
       </property>
      </widget>
     </item>
     <item row="3" column="1" colspan="2">
-     <widget class="QLineEdit" name="Street"/>
+     <widget class="QLineEdit" name="LotPlan"/>
     </item>
     <item row="4" column="0">
      <widget class="QLabel" name="label_25">
@@ -1219,7 +1219,7 @@ p, li { white-space: pre-wrap; }
      </widget>
     </item>
     <item row="3" column="3">
-     <widget class="QToolButton" name="selectStreet">
+     <widget class="QToolButton" name="selectLotPlan">
       <property name="text">
        <string>...</string>
       </property>

@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'WaterJobSheetDraft1.ui'
 #
-# Created: Tue May 01 16:18:20 2012
+# Created: Wed May 02 10:52:32 2012
 #      by: PyQt4 UI code generator 4.8.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -455,9 +455,9 @@ class Ui_WaterForm(object):
         self.label = QtGui.QLabel(self.groupBox_10)
         self.label.setObjectName(_fromUtf8("label"))
         self.gridLayout.addWidget(self.label, 3, 0, 1, 1)
-        self.Street = QtGui.QLineEdit(self.groupBox_10)
-        self.Street.setObjectName(_fromUtf8("Street"))
-        self.gridLayout.addWidget(self.Street, 3, 1, 1, 2)
+        self.LotPlan = QtGui.QLineEdit(self.groupBox_10)
+        self.LotPlan.setObjectName(_fromUtf8("LotPlan"))
+        self.gridLayout.addWidget(self.LotPlan, 3, 1, 1, 2)
         self.label_25 = QtGui.QLabel(self.groupBox_10)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Preferred, QtGui.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
@@ -475,10 +475,10 @@ class Ui_WaterForm(object):
         self.AdditionalLocationDetails.setMaximumSize(QtCore.QSize(16777215, 16777215))
         self.AdditionalLocationDetails.setObjectName(_fromUtf8("AdditionalLocationDetails"))
         self.gridLayout.addWidget(self.AdditionalLocationDetails, 4, 1, 1, 3)
-        self.selectStreet = QtGui.QToolButton(self.groupBox_10)
-        self.selectStreet.setIconSize(QtCore.QSize(24, 24))
-        self.selectStreet.setObjectName(_fromUtf8("selectStreet"))
-        self.gridLayout.addWidget(self.selectStreet, 3, 3, 1, 1)
+        self.selectLotPlan = QtGui.QToolButton(self.groupBox_10)
+        self.selectLotPlan.setIconSize(QtCore.QSize(24, 24))
+        self.selectLotPlan.setObjectName(_fromUtf8("selectLotPlan"))
+        self.gridLayout.addWidget(self.selectLotPlan, 3, 3, 1, 1)
         self.ServiceRepairsGroup = QtGui.QGroupBox(WaterForm)
         self.ServiceRepairsGroup.setGeometry(QtCore.QRect(10, 530, 221, 211))
         self.ServiceRepairsGroup.setCheckable(True)
@@ -836,9 +836,9 @@ class Ui_WaterForm(object):
         self.RequestedBy.setItemText(3, QtGui.QApplication.translate("WaterForm", "Office", None, QtGui.QApplication.UnicodeUTF8))
         self.RequestedBy.setItemText(4, QtGui.QApplication.translate("WaterForm", "Call Centre", None, QtGui.QApplication.UnicodeUTF8))
         self.label_2.setText(QtGui.QApplication.translate("WaterForm", "CR Number:", None, QtGui.QApplication.UnicodeUTF8))
-        self.label.setText(QtGui.QApplication.translate("WaterForm", "Street", None, QtGui.QApplication.UnicodeUTF8))
+        self.label.setText(QtGui.QApplication.translate("WaterForm", "Lot and Plan", None, QtGui.QApplication.UnicodeUTF8))
         self.label_25.setText(QtGui.QApplication.translate("WaterForm", " Location Details:", None, QtGui.QApplication.UnicodeUTF8))
-        self.selectStreet.setText(QtGui.QApplication.translate("WaterForm", "...", None, QtGui.QApplication.UnicodeUTF8))
+        self.selectLotPlan.setText(QtGui.QApplication.translate("WaterForm", "...", None, QtGui.QApplication.UnicodeUTF8))
         self.ServiceRepairsGroup.setTitle(QtGui.QApplication.translate("WaterForm", "Service Repairs", None, QtGui.QApplication.UnicodeUTF8))
         self.RepairedServiceClamp.setText(QtGui.QApplication.translate("WaterForm", "Repaired Service - clamp", None, QtGui.QApplication.UnicodeUTF8))
         self.RepairedServiceReplaceSection.setText(QtGui.QApplication.translate("WaterForm", "Repaired Service - replace section", None, QtGui.QApplication.UnicodeUTF8))
