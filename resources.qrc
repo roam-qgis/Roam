@@ -1,5 +1,7 @@
 <RCC>
   <qresource prefix="icons">
+    <file alias="tick">resources/images/tick.png</file>
+    <file alias="cancel">resources/images/cancel.png</file>
     <file alias="edit">resources/images/edit.png</file>
     <file alias="home">resources/images/home.png</file>
     <file alias="in">resources/images/in.png</file>
@@ -14,6 +16,10 @@
     <file alias="gps_looking">resources/images/gps_looking.png</file>
     <file alias="gps_marker">resources/images/gps_marker_normal.svg</file>
     <file alias="calender">resources/images/calender2.png</file>
+    <file alias="clearimage">resources/images/clearimage.png</file>
+    <file alias="redpen">resources/images/redpen.png</file>
+    <file alias="blackpen">resources/images/blackpen.png</file>
+    <file alias="bluepen">resources/images/bluepen.png</file>
   </qresource>
   <qresource prefix="syncing">
     <file alias="sync">resources/images/sync.png</file>

@@ -8,6 +8,7 @@ from select_feature_tool import SelectFeatureTool
 import os
 import functools
 from datatimerpickerwidget import DateTimePickerDialog
+from drawingpad import DrawingPad
 
 class FormBinder(QObject):
     beginSelectFeature = pyqtSignal(str)
@@ -87,6 +88,10 @@ class FormBinder(QObject):
                     button.setText("Pick")
                     button.setIconSize(QSize(24,24))
                     button.pressed.connect(functools.partial(self.pickDateTime, control, "DateTime" ))
+        elif isinstance(control, QPushButton):
+            if control.text() == "Drawing":
+                control.pressed.connect(functools.partial(self.loadDrawingTool, control, None))
+                
         else:
             success = False
 
@@ -96,6 +101,12 @@ class FormBinder(QObject):
             warning("Can't bind %s to %s" % (control.objectName() ,value.toString()))
 
         return success
+
+    def loadDrawingTool(self, control, image):
+        window = DrawingPad()
+        window.showFullScreen()
+        window.activateWindow()
+        
                     
     def unbindFeature(self, qgsfeature):
         """

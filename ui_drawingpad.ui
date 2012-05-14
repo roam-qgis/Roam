@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>DrawingWindow</class>
+ <widget class="QMainWindow" name="DrawingWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>829</width>
+    <height>608</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>MainWindow</string>
+  </property>
+  <property name="toolButtonStyle">
+   <enum>Qt::ToolButtonTextUnderIcon</enum>
+  </property>
+  <property name="tabShape">
+   <enum>QTabWidget::Rounded</enum>
+  </property>
+  <property name="unifiedTitleAndToolBarOnMac">
+   <bool>false</bool>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <layout class="QGridLayout" name="gridLayout">
+    <property name="horizontalSpacing">
+     <number>0</number>
+    </property>
+    <property name="margin">
+     <number>0</number>
+    </property>
+   </layout>
+  </widget>
+  <widget class="QToolBar" name="toolBar">
+   <property name="windowTitle">
+    <string>toolBar</string>
+   </property>
+   <property name="movable">
+    <bool>false</bool>
+   </property>
+   <property name="allowedAreas">
+    <set>Qt::NoToolBarArea</set>
+   </property>
+   <property name="iconSize">
+    <size>
+     <width>32</width>
+     <height>32</height>
+    </size>
+   </property>
+   <attribute name="toolBarArea">
+    <enum>TopToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak">
+    <bool>true</bool>
+   </attribute>
+   <addaction name="actionClearDrawing"/>
+   <addaction name="actionRedPen"/>
+   <addaction name="actionBluePen"/>
+   <addaction name="actionBlackPen"/>
+   <addaction name="actionSave"/>
+   <addaction name="actionCancel"/>
+  </widget>
+  <action name="actionClearDrawing">
+   <property name="icon">
+    <iconset resource="resources.qrc">
+     <normaloff>:/icons/clearimage</normaloff>:/icons/clearimage</iconset>
+   </property>
+   <property name="text">
+    <string>Clear Drawing</string>
+   </property>
+   <property name="toolTip">
+    <string>Clear the current drawing</string>
+   </property>
+  </action>
+  <action name="actionRedPen">
+   <property name="icon">
+    <iconset resource="resources.qrc">
+     <normaloff>:/icons/redpen</normaloff>:/icons/redpen</iconset>
+   </property>
+   <property name="text">
+    <string>Red Pen</string>
+   </property>
+   <property name="toolTip">
+    <string>Change pen colour to red</string>
+   </property>
+  </action>
+  <action name="actionBluePen">
+   <property name="icon">
+    <iconset resource="resources.qrc">
+     <normaloff>:/icons/bluepen</normaloff>:/icons/bluepen</iconset>
+   </property>
+   <property name="text">
+    <string>Blue Pen</string>
+   </property>
+   <property name="toolTip">
+    <string>Change pen colour to blue</string>
+   </property>
+  </action>
+  <action name="actionBlackPen">
+   <property name="icon">
+    <iconset resource="resources.qrc">
+     <normaloff>:/icons/blackpen</normaloff>:/icons/blackpen</iconset>
+   </property>
+   <property name="text">
+    <string>Black Pen</string>
+   </property>
+   <property name="toolTip">
+    <string>Change pen colour to black</string>
+   </property>
+  </action>
+  <action name="actionSave">
+   <property name="icon">
+    <iconset resource="resources.qrc">
+     <normaloff>:/icons/tick</normaloff>:/icons/tick</iconset>
+   </property>
+   <property name="text">
+    <string>Save</string>
+   </property>
+   <property name="toolTip">
+    <string>Save the current image</string>
+   </property>
+  </action>
+  <action name="actionCancel">
+   <property name="icon">
+    <iconset resource="resources.qrc">
+     <normaloff>:/icons/cancel</normaloff>:/icons/cancel</iconset>
+   </property>
+   <property name="text">
+    <string>Cancel</string>
+   </property>
+   <property name="toolTip">
+    <string>Cancel the current image</string>
+   </property>
+  </action>
+ </widget>
+ <resources>
+  <include location="resources.qrc"/>
+ </resources>
+ <connections/>
+</ui>

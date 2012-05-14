@@ -70,7 +70,6 @@ class SDRCDataCapture():
         self.toggleRasterAction = QAction(QIcon(":/icons/photo"),"Aerial Photos" , self.mainwindow)
         self.editAction = EditAction("Edit", self.iface, self.layerstoForms )
         self.syncAction = QAction(QIcon(":/syncing/sync"), "Sync", self.mainwindow)
-
         self.editAction.setCheckable(True)
 
         self.actionGroup.addAction(self.editAction)
