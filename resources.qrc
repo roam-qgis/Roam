@@ -20,6 +20,7 @@
     <file alias="redpen">resources/images/redpen.png</file>
     <file alias="blackpen">resources/images/blackpen.png</file>
     <file alias="bluepen">resources/images/bluepen.png</file>
+    <file alias="draw">resources/images/draw.png</file>
   </qresource>
   <qresource prefix="syncing">
     <file alias="sync">resources/images/sync.png</file>

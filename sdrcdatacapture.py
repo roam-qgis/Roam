@@ -32,6 +32,8 @@ import resources_rc
 from syncing.syncer import Syncer, SyncDialog
 from utils import log
 
+currentproject = ""
+
 class SDRCDataCapture():
     def __init__(self, iface):
         self.iface = iface
@@ -181,6 +183,10 @@ class SDRCDataCapture():
     def loadProject(self, path):
         self.dialog.close()
         self.iface.addProject(path)
+        #HACK This is a little bit nasty.  Should we really use global variables
+        global currentproject
+        currentproject = str(path)
+        log(currentproject)
     
     def unload(self):
         del self.toolbar

@@ -1,3 +1,6 @@
+import tempfile
+import uuid
+import os.path
 from PyQt4.QtGui import *
 from PyQt4.QtCore import (QDate, QTime,
                         Qt, QVariant, pyqtSignal, QSettings,
@@ -9,6 +12,8 @@ import os
 import functools
 from datatimerpickerwidget import DateTimePickerDialog
 from drawingpad import DrawingPad
+import sdrcdatacapture
+import tarfile
 
 class FormBinder(QObject):
     beginSelectFeature = pyqtSignal(str)
@@ -90,6 +95,8 @@ class FormBinder(QObject):
                     button.pressed.connect(functools.partial(self.pickDateTime, control, "DateTime" ))
         elif isinstance(control, QPushButton):
             if control.text() == "Drawing":
+                control.setIcon(QIcon(":/icons/draw"))
+                control.setIconSize(QSize(24,24))
                 control.pressed.connect(functools.partial(self.loadDrawingTool, control, None))
                 
         else:
@@ -103,10 +110,32 @@ class FormBinder(QObject):
         return success
 
     def loadDrawingTool(self, control, image):
-        window = DrawingPad()
-        window.showFullScreen()
-        window.activateWindow()
-        
+        self.forminstance.hide()
+        self.drawingpad = DrawingPad()
+        self.drawingpad.rejected.connect(self.drawingPadReject)
+        self.drawingpad.accepted.connect(self.drawingPadAccept)
+        self.drawingpad.ui.actionMapSnapshot.triggered.connect(self.drawingPadMapSnapshot)
+        self.drawingpad.showFullScreen()
+        self.drawingpad.raise_()
+        self.drawingpad.activateWindow()
+
+    def drawingPadReject(self):
+        self.forminstance.show()
+
+    def drawingPadAccept(self):
+        self.forminstance.show()
+        #TODO Use a custom field for the image name
+        image = os.path.join(sdrcdatacapture.currentproject[:-4] + "_images", str(uuid.uuid1()))
+        log("Image name " + image)
+        self.drawingpad.saveImage(image)
+
+    def drawingPadMapSnapshot(self):
+        #TODO Refactor me!!
+        image = QPixmap.fromImage(self.drawingpad.scribbleArea.image)
+        tempimage = os.path.join(tempfile.gettempdir(), "mapcanvascapture.png")
+        self.canvas.saveAsImage(tempimage, image)
+        log(tempimage)
+        self.drawingpad.openImage(tempimage)
                     
     def unbindFeature(self, qgsfeature):
         """

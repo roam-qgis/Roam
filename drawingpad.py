@@ -1,6 +1,8 @@
+import os.path
 from ui_drawingpad import Ui_DrawingWindow
 from PyQt4 import QtCore, QtGui
 import functools
+from utils import log
 
 class ScribbleArea(QtGui.QWidget):
     def __init__(self, parent=None):
@@ -12,18 +14,14 @@ class ScribbleArea(QtGui.QWidget):
         self.myPenWidth = 1
         self.myPenColor = QtCore.Qt.blue
         imageSize = QtCore.QSize(500, 500)
-        self.image = QtGui.QImage(imageSize, QtGui.QImage.Format_RGB32)
+        self.image = QtGui.QImage(imageSize, QtGui.QImage.Format_RGB16)
         self.lastPoint = QtCore.QPoint()
 
     def openImage(self, fileName):
         loadedImage = QtGui.QImage()
         if not loadedImage.load(fileName):
             return False
-
-        w = loadedImage.width()
-        h = loadedImage.height()
-        self.mainWindow.resize(w, h)
-
+        
         self.image = loadedImage
         self.modified = False
         self.update()
@@ -33,10 +31,17 @@ class ScribbleArea(QtGui.QWidget):
         visibleImage = self.image
         self.resizeImage(visibleImage, self.size())
 
+        path = os.path.dirname(fileName)
+
+        if not os.path.exists(path):
+            os.makedirs(path)
+            
         if visibleImage.save(fileName, fileFormat):
             self.modified = False
+            log("Saved")
             return True
         else:
+            log("Didn't save")
             return False
 
     def setPenColor(self, newColor):
@@ -69,7 +74,6 @@ class ScribbleArea(QtGui.QWidget):
         painter.drawImage(event.rect(), self.image)
 
     def resizeEvent(self, event):
-        print "Resize"
         self.resizeImage(self.image, event.size())
         super(ScribbleArea, self).resizeEvent(event)
 
@@ -94,19 +98,6 @@ class ScribbleArea(QtGui.QWidget):
 
         self.image = newImage
 
-    def print_(self):
-        printer = QtGui.QPrinter(QtGui.QPrinter.HighResolution)
-        printDialog = QtGui.QPrintDialog(printer, self)
-        if printDialog.exec_() == QtGui.QDialog.Accepted:
-            painter = QtGui.QPainter(printer)
-            rect = painter.viewport()
-            size = self.image.size()
-            size.scale(rect.size(), QtCore.Qt.KeepAspectRatio)
-            painter.setViewport(rect.x(), rect.y(), size.width(), size.height())
-            painter.setWindow(self.image.rect())
-            painter.drawImage(0, 0, self.image)
-            painter.end()
-
     def isModified(self):
         return self.modified
 
@@ -116,66 +107,62 @@ class ScribbleArea(QtGui.QWidget):
     def penWidth(self):
         return self.myPenWidth
 
-class DrawingPad(QtGui.QMainWindow):
+class DrawingPad(QtGui.QDialog):
     def __init__(self):
-        QtGui.QMainWindow.__init__(self)
+        QtGui.QDialog.__init__(self)
         self.saveAsActs = []
         
         self.ui = Ui_DrawingWindow()
         self.ui.setupUi(self)
 
-        self.scribbleArea = ScribbleArea(self)
+        #.grid = QtGui.QGridLayout(self.ui.frame)
+        #self.ui.frame.setLayout(self.grid)
+
+        self.scribbleArea = ScribbleArea()
         self.scribbleArea.clearImage()
-        self.scribbleArea.mainWindow = self
-        self.setCentralWidget(self.scribbleArea)
+        #self.setCentralWidget(self.scribbleArea)
         
         self.scribbleArea.setPenWidth(3)
-
+        self.ui.frame.layout().addWidget(self.scribbleArea)
         self.createActions()
 
         self.setWindowTitle("Scribble")
         self.resize(500, 500)
 
-    def save(self):
-        action = self.sender()
-        fileFormat = action.data()
-        self.saveFile(fileFormat)
+    def saveImage(self, filename):
+        filename = filename + ".jpg"
+        log(filename)
+        return self.scribbleArea.saveImage(filename, "jpg")
 
     def setPenColor(self, color):
         self.scribbleArea.setPenColor(color)
 
     def createActions(self):
-        spacewidget = QtGui.QWidget()
-        spacewidget.setMinimumWidth(30)
-        spacewidget.setSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Expanding)
-        
-        autospacewidget = QtGui.QWidget()
-        autospacewidget.setMinimumWidth(30)
-        autospacewidget.setSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Expanding)
-
         self.ui.actionClearDrawing.triggered.connect(self.scribbleArea.clearImage)
+        self.ui.toolClear.setDefaultAction(self.ui.actionClearDrawing)
         self.ui.actionRedPen.triggered.connect(functools.partial(self.scribbleArea.setPenColor, QtCore.Qt.red))
+        self.ui.toolRedPen.setDefaultAction(self.ui.actionRedPen)
         self.ui.actionBluePen.triggered.connect(functools.partial(self.scribbleArea.setPenColor, QtCore.Qt.blue))
+        self.ui.toolBluePen.setDefaultAction(self.ui.actionBluePen)
         self.ui.actionBlackPen.triggered.connect(functools.partial(self.scribbleArea.setPenColor, QtCore.Qt.black))
+        self.ui.toolBlackPen.setDefaultAction(self.ui.actionBlackPen)
 
-        self.ui.toolBar.insertWidget(self.ui.actionRedPen, spacewidget)
-        self.ui.toolBar.insertWidget(self.ui.actionSave, autospacewidget)
+        self.ui.toolMapSnapshot.setDefaultAction(self.ui.actionMapSnapshot)
 
-    def saveFile(self, fileFormat):
-        initialPath = QtCore.QDir.currentPath() + '/untitled.' + fileFormat
+        self.ui.toolSave.setDefaultAction(self.ui.actionSave)
+        self.ui.toolCancel.setDefaultAction(self.ui.actionCancel)
 
-        fileName = QtGui.QFileDialog.getSaveFileName(self, "Save As",
-            initialPath,
-            "%s Files (*.%s);;All Files (*)" % (fileFormat.upper(), fileFormat))
-        if fileName:
-            return self.scribbleArea.saveImage(fileName, fileFormat)
+        self.ui.actionRedPen.setCheckable(True)
+        self.ui.actionBluePen.setCheckable(True)
+        self.ui.actionBlackPen.setCheckable(True)
 
-        return False
-
+    def openImage(self,image):
+        self.scribbleArea.openImage(image)
+        
 if __name__ == "__main__":
     import sys
 
     app = QtGui.QApplication(sys.argv)
     window = DrawingPad()
-    window.showFullScreen()
+    window.show()
     sys.exit(app.exec_())
