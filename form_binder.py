@@ -30,11 +30,13 @@ class FormBinder(QObject):
         self.fieldtocontrol = {}
         self.actionlist = []
         self.settings = settings
+        self.images = []
 
     def bindFeature(self, qgsfeature):
         """
         Binds a features values to the form.
-        """    
+        """
+        self.feature = qgsfeature
         for index, value in qgsfeature.attributeMap().items():
             field = self.fields[index]
             control = self.forminstance.findChild(QWidget, field.name())
@@ -111,9 +113,17 @@ class FormBinder(QObject):
 
     def loadDrawingTool(self, control, image):
         self.forminstance.hide()
-        self.drawingpad = DrawingPad()
+        curdir = os.path.dirname(__file__)
+        id = self.feature.attributeMap()[self.layer.fieldNameIndex("UniqueID")].toString()
+        name = str(id) + "_" + str(control.objectName()) + ".jpg"
+        imagename = os.path.join(curdir, "data", str(self.layer.name()), "images", \
+                                name)
+
+        log("Looking for " + imagename)
+        
+        self.drawingpad = DrawingPad(imagename)
         self.drawingpad.rejected.connect(self.drawingPadReject)
-        self.drawingpad.accepted.connect(self.drawingPadAccept)
+        self.drawingpad.accepted.connect(functools.partial(self.drawingPadAccept, control))
         self.drawingpad.ui.actionMapSnapshot.triggered.connect(self.drawingPadMapSnapshot)
         self.drawingpad.showFullScreen()
         self.drawingpad.raise_()
@@ -122,13 +132,12 @@ class FormBinder(QObject):
     def drawingPadReject(self):
         self.forminstance.show()
 
-    def drawingPadAccept(self):
+    def drawingPadAccept(self, control):
         self.forminstance.show()
-        #TODO Use a custom field for the image name
-        # Images are saved under data/{layername}/images/
-        image = os.path.join(sdrcdatacapture.currentproject[:-4] + "_images", str(uuid.uuid1()))
-        log("Image name " + image)
-        self.drawingpad.saveImage(image)
+        name = "drawingFor_" + str(control.objectName())
+        tempimage = os.path.join(tempfile.gettempdir(), name)
+        self.images.append(tempimage + ".jpg")
+        self.drawingpad.saveImage(tempimage)
 
     def drawingPadMapSnapshot(self):
         #TODO Refactor me!!

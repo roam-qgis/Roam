@@ -108,19 +108,15 @@ class ScribbleArea(QtGui.QWidget):
         return self.myPenWidth
 
 class DrawingPad(QtGui.QDialog):
-    def __init__(self):
+    def __init__(self, startimage=None):
         QtGui.QDialog.__init__(self)
         self.saveAsActs = []
         
         self.ui = Ui_DrawingWindow()
         self.ui.setupUi(self)
 
-        #.grid = QtGui.QGridLayout(self.ui.frame)
-        #self.ui.frame.setLayout(self.grid)
-
         self.scribbleArea = ScribbleArea()
         self.scribbleArea.clearImage()
-        #self.setCentralWidget(self.scribbleArea)
         
         self.scribbleArea.setPenWidth(3)
         self.ui.frame.layout().addWidget(self.scribbleArea)
@@ -128,6 +124,9 @@ class DrawingPad(QtGui.QDialog):
 
         self.setWindowTitle("Scribble")
         self.resize(500, 500)
+
+        if not startimage is None and os.path.exists(startimage):
+            self.openImage(startimage)
 
     def saveImage(self, filename):
         filename = filename + ".jpg"

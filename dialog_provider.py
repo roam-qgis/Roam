@@ -1,8 +1,10 @@
+import os.path
 import os
 from form_binder import FormBinder
 from PyQt4.QtCore import pyqtSignal, QObject, QSettings
 from PyQt4.QtGui import QLabel, QToolBar
 from utils import Timer, log, info, warning
+import tempfile
 
 class DialogProvider(QObject):
     accepted = pyqtSignal()
@@ -61,9 +63,38 @@ class DialogProvider(QObject):
         else:
             self.layer.addFeature( self.feature )
 
-        self.canvas.refresh()
+        
         self.layer.commitChanges()
+        self.canvas.refresh()
+        
+        if not self.binder.images:
+            return
 
+        # After we commit we have to move the drawing into the correct path.
+        # TODO Use a custom field for the id name
+        # Images are saved under data/{layername}/images/{id}_{fieldname}
+        for image in self.binder.images:
+            curdir = os.path.dirname(__file__)
+            id = self.feature.attributeMap()[self.layer.fieldNameIndex("UniqueID")].toString().toUpper()
+            log(id)
+            name = image.replace("drawingFor_", id + "_" )
+            imagename = os.path.join(curdir, "data", str(self.layer.name()), "images", \
+                                     os.path.basename(name))
+
+            
+            path = os.path.dirname(imagename)
+            
+            if not os.path.exists(path):
+                os.makedirs(path)
+            
+            log(image)
+            log(imagename)
+            try:
+                os.rename(image, imagename)
+            except WindowsError, err:
+                os.remove(imagename)
+                os.rename(image, imagename)
+            
     def deleteDialog(self):
         del self.dialog
 
