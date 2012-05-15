@@ -125,6 +125,7 @@ class FormBinder(QObject):
     def drawingPadAccept(self):
         self.forminstance.show()
         #TODO Use a custom field for the image name
+        # Images are saved under data/{layername}/images/
         image = os.path.join(sdrcdatacapture.currentproject[:-4] + "_images", str(uuid.uuid1()))
         log("Image name " + image)
         self.drawingpad.saveImage(image)
@@ -134,7 +135,6 @@ class FormBinder(QObject):
         image = QPixmap.fromImage(self.drawingpad.scribbleArea.image)
         tempimage = os.path.join(tempfile.gettempdir(), "mapcanvascapture.png")
         self.canvas.saveAsImage(tempimage, image)
-        log(tempimage)
         self.drawingpad.openImage(tempimage)
                     
     def unbindFeature(self, qgsfeature):
