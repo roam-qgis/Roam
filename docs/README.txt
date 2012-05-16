@@ -13,9 +13,15 @@
 
 
 The |name| is a simple to use, simple to configure, data collection
+<<<<<<< HEAD
 program built by Southern Downs Regional Council that uses QGIS and its Python
 plugin model as a base.  |name| is a QGIS Python plugin that removes most of the
 interface and replaces it with a simple to use interface for data collection.
+=======
+program built by Southern Downs Regional Council that uses QGIS.  |name| is a QGIS
+Python plugin that removes most of the interface and replacing it with a simple
+to use interface for data collection.
+>>>>>>> Add some install notes
 
 As |name| is just a Python plugin you can use your normal QGIS project files (.qgs)
 in order to create mapping projects.
