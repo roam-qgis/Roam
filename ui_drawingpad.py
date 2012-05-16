@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'ui_drawingpad.ui'
 #
-# Created: Tue May 15 11:38:05 2012
+# Created: Wed May 16 15:52:22 2012
 #      by: PyQt4 UI code generator 4.8.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -37,6 +37,9 @@ class Ui_DrawingWindow(object):
         spacerItem = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
         self.horizontalLayout_2.addItem(spacerItem)
         self.toolMapSnapshot = QtGui.QToolButton(DrawingWindow)
+        self.toolMapSnapshot.setIconSize(QtCore.QSize(32, 32))
+        self.toolMapSnapshot.setToolButtonStyle(QtCore.Qt.ToolButtonTextUnderIcon)
+        self.toolMapSnapshot.setAutoRaise(True)
         self.toolMapSnapshot.setObjectName(_fromUtf8("toolMapSnapshot"))
         self.horizontalLayout_2.addWidget(self.toolMapSnapshot)
         self.toolRedPen = QtGui.QToolButton(DrawingWindow)
@@ -119,6 +122,9 @@ class Ui_DrawingWindow(object):
         self.actionCancel.setIcon(icon5)
         self.actionCancel.setObjectName(_fromUtf8("actionCancel"))
         self.actionMapSnapshot = QtGui.QAction(DrawingWindow)
+        icon6 = QtGui.QIcon()
+        icon6.addPixmap(QtGui.QPixmap(_fromUtf8(":/icons/map")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        self.actionMapSnapshot.setIcon(icon6)
         self.actionMapSnapshot.setObjectName(_fromUtf8("actionMapSnapshot"))
 
         self.retranslateUi(DrawingWindow)

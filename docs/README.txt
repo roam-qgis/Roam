@@ -9,8 +9,6 @@
 :Version: 1.0
 
 .. |name| replace:: QGIS Data Collector
-.. contents::
-.. sectnum::
 
 
 
@@ -61,6 +59,10 @@ You can run build.py using Python:
 The version number used is {year}.{month}.{day}.{commitid} and the version in
 metadata.txt is the version number for all the files and related binaries in the
 project.
+
+.. contents::
+.. sectnum::
+
 
 Installing
 ----------
@@ -122,9 +124,14 @@ Form Conventions
       convention.
     - Label the button with "Drawing"
 
+  .. figure:: DrawingBound.png
+
+     Result of correct drawing button binding
+
   .. note:: The image is stored on the filesystem not in the layer. So no value is
            ever stored in the database. See `Program Conventions`_ for details on
            image convention.
+
 
 Program Conventions
 +++++++++++++++++++
