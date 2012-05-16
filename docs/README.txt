@@ -1,5 +1,5 @@
 ====================
-QGIS Data Collection
+QGIS Data Collector
 ====================
 
 .. contents::
@@ -10,18 +10,77 @@ Installing
 
 Conventions
 -----------
-QGIS Data collection follows a convention over configuration style.
 
-Layer field names map to object names in Qt form (.ui)
+QGIS Data Collector follows a convention over configuration style in order to
+make setup consistant and easy. At times we still will need to configure things
+but this will be kept to a minimum.
 
-Images saved from drawing pad are stored in data\{layername}\images.
-Images have the following convention:
+Form Conventions
+++++++++++++++++
 
-    {id}_{fieldname}.jpg
+- Layer field names map to object names in Qt form (.ui)
 
-Temp images that are saved before commit have the following convention:
+  The form binder searchs the form for a widget named the same as the field and
+  will bind and unbind the value from the database to the form.  The widget type
+  defines how the object is bound e.g. a char column named *MyColumn* will bind
+  to the QLineEdit::text() property correctly of the widget with the same name.
 
-    drawingFor_{fieldname}.jpg
+  .. warning:: There is very little error handling with the form binding.
+               Binding a char column with the value "Hello World" to a QCheckBox
+               might do strange things.
 
-drawingFor\_ is replaced with {id} when commited and moved into the images folder.
+- In order to create the correct date picker dialog we first look for a DateTimePicker
+  then we get its parent - which will be a layout - then look for a PushButton that
+  we can use to open the dialog with.
 
+  .. figure:: DateTimePickerExample.png
+
+     Example of what the correct widget layout in order to get a date time picker.
+
+  .. figure:: DateTimePickerExampleLayout.png
+
+     Layout for date time picker
+
+- To correctly create a drawing pad binding do the following:
+    - Create a field in the datebase
+    - Name a QPushButton with the field name - following the "fieldnames = object name"
+      convention.
+    - Label the button with "Drawing"
+
+  .. note:: The image is stored on the filesystem not in the layer. So no value is
+           ever stored in the database.
+
+Program Conventions
++++++++++++++++++++
+
+- Images saved from drawing pad are stored in data\\{layername}\\images.
+  Images have the following naming convention:
+
+        {id}_{fieldname}.jpg
+
+  Example:
+
+        D896C1C0-9E4B-11E1-AB3F-002564CC69E0_Drawing.jpg
+
+- Temp images that are saved before commit have the following convention and are
+  saved in the user temp directory:
+
+        drawingFor_{fieldname}.jpg
+
+  *drawingFor\_* is replaced with *{id}* when the record is commited into the layer
+  The image is then moved into the images folder.
+
+- Projects are stored in the projects\\ directory.  The name of the .qgs file will
+  be used in the open project dialog box.  The project directory is **not** recursive
+
+SQL Table Conventions
++++++++++++++++++++++
+In order for syncing to be correctly setup the table must contain the following
+columns:
+
+    UniqueID as uniqueidentifier
+
+    Primary Key column **must** be Int
+
+Creating a new form
+-------------------
