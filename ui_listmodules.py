@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'ui_listmodules.ui'
 #
-# Created: Wed Apr 18 11:47:11 2012
+# Created: Wed May 16 14:28:19 2012
 #      by: PyQt4 UI code generator 4.8.3
 #
 # WARNING! All changes made in this file will be lost!

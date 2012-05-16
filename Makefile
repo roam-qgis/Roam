@@ -21,40 +21,38 @@
 
 PLUGINNAME = sdrcdatacapture
 
-PY_FILES = sdrcdatacapture.py sdrcdatacapturedialog.py __init__.py
+PY_FILES = sdrcdatacapture.py __init__.py
 
 EXTRAS = icon.png 
 
-UI_FILES = ui_sdrcdatacapture.py
+UI_FILES = ui_listmodules.py
 
 RESOURCE_FILES = resources.py
 
-default: compile
+compile:	$(UI_FILES)	$(RESOURCE_FILES)
 
-compile: $(UI_FILES) $(RESOURCE_FILES)
+%.py:	%.qrc
+	pyrcc4 -o $@ $<
 
-%.py : %.qrc
-	pyrcc4 -o $@  $<
-
-%.py : %.ui
-	cmd /c pyuic4 -o $@ $<
+%.py:	%.ui
+	@C:\OSGeo4w\bin\python.exe C:\OSGeo4w\apps\Python27\Lib\site-packages\PyQt4\uic\pyuic.py -o $@ $<
 
 # The deploy  target only works on unix like operating system where
 # the Python plugin directory is located at:
 # $HOME/.qgis/python/plugins
 deploy: compile
-	mkdir -p $(HOME)/.qgis/python/plugins/$(PLUGINNAME)
-	cp -vf $(PY_FILES) $(HOME)/.qgis/python/plugins/$(PLUGINNAME)
-	cp -vf $(UI_FILES) $(HOME)/.qgis/python/plugins/$(PLUGINNAME)
-	cp -vf $(RESOURCE_FILES) $(HOME)/.qgis/python/plugins/$(PLUGINNAME)
-	cp -vf $(EXTRAS) $(HOME)/.qgis/python/plugins/$(PLUGINNAME)
+	@mkdir -p deply/app/
+# cp -vf $(PY_FILES) $(HOME)/.qgis/python/plugins/$(PLUGINNAME)
+# cp -vf $(UI_FILES) $(HOME)/.qgis/python/plugins/$(PLUGINNAME)
+# cp -vf $(RESOURCE_FILES) $(HOME)/.qgis/python/plugins/$(PLUGINNAME)
+# cp -vf $(EXTRAS) $(HOME)/.qgis/python/plugins/$(PLUGINNAME)
 
 # Create a zip package of the plugin named $(PLUGINNAME).zip. 
 # This requires use of git (your plugin development directory must be a 
 # git repository).
 # To use, pass a valid commit or tag as follows:
 #   make package VERSION=Version_0.3.2
-package: compile
-		rm -f $(PLUGINNAME).zip
-		git archive --prefix=$(PLUGINNAME)/ -o $(PLUGINNAME).zip $(VERSION)
-		echo "Created package: $(PLUGINNAME).zip"
+# package:  compile
+	# rm -f $(PLUGINNAME).zip
+	# git archive --prefix=$(PLUGINNAME)/ -o $(PLUGINNAME).zip $(VERSION)
+	# echo "Created package: $(PLUGINNAME).zip"
