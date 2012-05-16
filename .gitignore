@@ -5,3 +5,4 @@ syncing/bin/*.pdb
 syncing/bin/*.vshost.exe
 syncing/bin/*.vshost.exe.config
 syncing/obj/
+docs/*.html
