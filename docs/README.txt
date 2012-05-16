@@ -1,9 +1,18 @@
 ====================
-QGIS Data Collector
+|name|
 ====================
 
+.. |name| replace:: QGIS Data Collector
 .. contents::
 .. sectnum::
+
+The |name| is a simple to use, simple to configure, data collection
+program built by Southern Downs Regional Council that uses QGIS and its Python
+plugin model.  |name| is a QGIS Python plugin that removes most of the interface
+and replacing it with a simple to use interface for data collection.
+
+As |name| is just a Python plugin you can use your normal QGIS project files (.qgs)
+in order to create mapping projects.
 
 Installing
 ----------
@@ -11,7 +20,7 @@ Installing
 Conventions
 -----------
 
-QGIS Data Collector follows a convention over configuration style in order to
+|name| follows a convention over configuration style in order to
 make setup consistant and easy. At times we still will need to configure things
 but this will be kept to a minimum.
 
@@ -41,14 +50,22 @@ Form Conventions
 
      Layout for date time picker
 
-- To correctly create a drawing pad binding do the following:
+  A correctly bound date time picker button has a the word "Pick" and a icon when
+  opening the dialog.
+
+  .. figure:: DateTimePickerBound.png
+
+     Result of correct binding
+
+- To correctly create a drawing pad button binding do the following:
     - Create a field in the datebase
     - Name a QPushButton with the field name - following the "fieldnames = object name"
       convention.
     - Label the button with "Drawing"
 
   .. note:: The image is stored on the filesystem not in the layer. So no value is
-           ever stored in the database.
+           ever stored in the database. See `Program Conventions`_ for details on
+           image convention.
 
 Program Conventions
 +++++++++++++++++++
