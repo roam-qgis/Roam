@@ -157,17 +157,16 @@ class SDRCDataCapture():
         userForms = forms.getForms()
         
         for form in userForms:
-            form = forms.loadFormModule(form)
             try:
-                layer = layers[form.__layerName__]
-                icon = QIcon(os.path.join(os.path.dirname(form.__file__),'icon.png'))
-                action = AddAction( form.__formName__, self.iface, form , layer, icon )
+                layer = layers[form.layerName()]
+                icon = form.icon()
+                action = AddAction( form.formName, self.iface, form , layer, icon )
                 self.toolbar.insertAction(self.editAction, action)
                 self.actionGroup.addAction(action)
                 self.actions.append(action)
                 self.layerstoForms[layer] = form
             except KeyError:
-                log("Couldn't find layer for form %s" % form.__layerName__)
+                log("Couldn't find layer for form %s" % form.layerName)
 
     def openProject(self):
         self.dialog = ListProjectsDialog()

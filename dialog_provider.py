@@ -15,13 +15,11 @@ class DialogProvider(QObject):
 
     def openDialog(self, formmodule, feature, layer, forupdate):
         self.update = forupdate
-        self.dialog = formmodule.dialogInstance()
+        self.dialog = formmodule.formInstance()
         self.layer = layer
         self.feature = feature
 
-        curdir = os.path.dirname(formmodule.__file__)
-        settingspath = os.path.join(curdir,'settings.ini')
-        self.settings = QSettings(settingspath, QSettings.IniFormat)
+        self.settings = formmodule.settings()
 
         self.binder = FormBinder(layer, self.dialog, self.canvas, self.settings)
         self.binder.beginSelectFeature.connect(self.selectingFromMap)
@@ -34,6 +32,7 @@ class DialogProvider(QObject):
         self.dialog.rejected.connect(self.rejected)
         self.dialog.rejected.connect(self.deleteDialog)
         self.dialog.setModal(True)
+        
         if self.settings.value("fullscreen", False).toBool():
             self.dialog.showFullScreen()
         self.dialog.show()

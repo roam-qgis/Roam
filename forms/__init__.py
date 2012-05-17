@@ -2,7 +2,7 @@ __author__="WOODROWN"
 __date__ ="$21/03/2012 11:45:33 AM$"
 
 import os
-from Form import *
+from Form import Form
 
 def getForms():
     """ Get all the custom user forms that have been created.
@@ -13,15 +13,16 @@ def getForms():
     modules = []
     for module in os.listdir(os.path.dirname(__file__)):
         if module[:4] == 'form':
-            modules.append(Form(module))
+            instance = loadFormModule(module)
+            modules.append(Form(instance))
             
     return modules
 
-def loadFormModule(form):
+def loadFormModule(module):
     """ Load the forms module """
-    formmodule = __import__("SDRCDataCapture.forms.%s" % form.moduleName, locals(), globals(),["*"], 1)
+    formmodule = __import__("SDRCDataCapture.forms.%s" % module, locals(), globals(),["*"], 1)
     return formmodule
 
 if __name__ == "__main__":
     forms = getForms()
-    loadFormModule(forms[0])
+    # loadFormModule(forms[0])
