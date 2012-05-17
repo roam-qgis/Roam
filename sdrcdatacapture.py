@@ -160,13 +160,15 @@ class SDRCDataCapture():
             try:
                 layer = layers[form.layerName()]
                 icon = form.icon()
-                action = AddAction( form.formName, self.iface, form , layer, icon )
+                action = AddAction( form.formName(), self.iface, form , layer, icon )
                 self.toolbar.insertAction(self.editAction, action)
                 self.actionGroup.addAction(action)
                 self.actions.append(action)
                 self.layerstoForms[layer] = form
             except KeyError:
-                log("Couldn't find layer for form %s" % form.layerName)
+                log("Couldn't find layer for form %s" % form.layerName())
+                log("We have")
+                log(layers)
 
     def openProject(self):
         self.dialog = ListProjectsDialog()
