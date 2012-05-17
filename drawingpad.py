@@ -11,8 +11,6 @@ class ScribbleArea(QtGui.QWidget):
         self.setAttribute(QtCore.Qt.WA_StaticContents)
         self.modified = False
         self.scribbling = False
-        self.myPenWidth = 1
-        self.myPenColor = QtCore.Qt.blue
         imageSize = QtCore.QSize(500, 500)
         self.image = QtGui.QImage(imageSize, QtGui.QImage.Format_RGB16)
         self.lastPoint = QtCore.QPoint()
@@ -117,10 +115,11 @@ class DrawingPad(QtGui.QDialog):
 
         self.scribbleArea = ScribbleArea()
         self.scribbleArea.clearImage()
-        
-        self.scribbleArea.setPenWidth(3)
+    
         self.ui.frame.layout().addWidget(self.scribbleArea)
         self.createActions()
+
+        self.ui.actionRedPen.trigger()
 
         self.setWindowTitle("Scribble")
         self.resize(500, 500)
@@ -133,27 +132,30 @@ class DrawingPad(QtGui.QDialog):
         log(filename)
         return self.scribbleArea.saveImage(filename, "jpg")
 
-    def setPenColor(self, color):
+    def setPen(self, color, size=3):
+        self.scribbleArea.setPenWidth(size)
         self.scribbleArea.setPenColor(color)
 
     def createActions(self):
         self.ui.actionClearDrawing.triggered.connect(self.scribbleArea.clearImage)
         self.ui.toolClear.setDefaultAction(self.ui.actionClearDrawing)
-        self.ui.actionRedPen.triggered.connect(functools.partial(self.scribbleArea.setPenColor, QtCore.Qt.red))
+        
+        self.ui.actionRedPen.triggered.connect(functools.partial(self.setPen, QtCore.Qt.red, 3))
         self.ui.toolRedPen.setDefaultAction(self.ui.actionRedPen)
-        self.ui.actionBluePen.triggered.connect(functools.partial(self.scribbleArea.setPenColor, QtCore.Qt.blue))
+
+        self.ui.actionBluePen.triggered.connect(functools.partial(self.setPen, QtCore.Qt.blue, 3))
         self.ui.toolBluePen.setDefaultAction(self.ui.actionBluePen)
-        self.ui.actionBlackPen.triggered.connect(functools.partial(self.scribbleArea.setPenColor, QtCore.Qt.black))
+
+        self.ui.actionBlackPen.triggered.connect(functools.partial(self.setPen, QtCore.Qt.black, 3))
         self.ui.toolBlackPen.setDefaultAction(self.ui.actionBlackPen)
+
+        self.ui.actionEraser.triggered.connect(functools.partial(self.setPen, QtCore.Qt.white, 9))
+        self.ui.toolEraser.setDefaultAction(self.ui.actionEraser)
 
         self.ui.toolMapSnapshot.setDefaultAction(self.ui.actionMapSnapshot)
 
         self.ui.toolSave.setDefaultAction(self.ui.actionSave)
         self.ui.toolCancel.setDefaultAction(self.ui.actionCancel)
-
-        self.ui.actionRedPen.setCheckable(True)
-        self.ui.actionBluePen.setCheckable(True)
-        self.ui.actionBlackPen.setCheckable(True)
 
     def openImage(self,image):
         self.scribbleArea.openImage(image)

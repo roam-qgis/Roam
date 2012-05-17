@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'ui_drawingpad.ui'
 #
-# Created: Wed May 16 15:52:22 2012
+# Created: Thu May 17 16:47:34 2012
 #      by: PyQt4 UI code generator 4.8.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -68,6 +68,13 @@ class Ui_DrawingWindow(object):
         self.toolBlackPen.setObjectName(_fromUtf8("toolBlackPen"))
         self.buttonGroup.addButton(self.toolBlackPen)
         self.horizontalLayout_2.addWidget(self.toolBlackPen)
+        self.toolEraser = QtGui.QToolButton(DrawingWindow)
+        self.toolEraser.setIconSize(QtCore.QSize(32, 32))
+        self.toolEraser.setToolButtonStyle(QtCore.Qt.ToolButtonTextUnderIcon)
+        self.toolEraser.setAutoRaise(True)
+        self.toolEraser.setObjectName(_fromUtf8("toolEraser"))
+        self.buttonGroup.addButton(self.toolEraser)
+        self.horizontalLayout_2.addWidget(self.toolEraser)
         spacerItem1 = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
         self.horizontalLayout_2.addItem(spacerItem1)
         self.toolSave = QtGui.QToolButton(DrawingWindow)
@@ -97,16 +104,19 @@ class Ui_DrawingWindow(object):
         self.actionClearDrawing.setIcon(icon)
         self.actionClearDrawing.setObjectName(_fromUtf8("actionClearDrawing"))
         self.actionRedPen = QtGui.QAction(DrawingWindow)
+        self.actionRedPen.setCheckable(True)
         icon1 = QtGui.QIcon()
         icon1.addPixmap(QtGui.QPixmap(_fromUtf8(":/icons/redpen")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.actionRedPen.setIcon(icon1)
         self.actionRedPen.setObjectName(_fromUtf8("actionRedPen"))
         self.actionBluePen = QtGui.QAction(DrawingWindow)
+        self.actionBluePen.setCheckable(True)
         icon2 = QtGui.QIcon()
         icon2.addPixmap(QtGui.QPixmap(_fromUtf8(":/icons/bluepen")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.actionBluePen.setIcon(icon2)
         self.actionBluePen.setObjectName(_fromUtf8("actionBluePen"))
         self.actionBlackPen = QtGui.QAction(DrawingWindow)
+        self.actionBlackPen.setCheckable(True)
         icon3 = QtGui.QIcon()
         icon3.addPixmap(QtGui.QPixmap(_fromUtf8(":/icons/blackpen")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.actionBlackPen.setIcon(icon3)
@@ -126,6 +136,12 @@ class Ui_DrawingWindow(object):
         icon6.addPixmap(QtGui.QPixmap(_fromUtf8(":/icons/map")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.actionMapSnapshot.setIcon(icon6)
         self.actionMapSnapshot.setObjectName(_fromUtf8("actionMapSnapshot"))
+        self.actionEraser = QtGui.QAction(DrawingWindow)
+        self.actionEraser.setCheckable(True)
+        icon7 = QtGui.QIcon()
+        icon7.addPixmap(QtGui.QPixmap(_fromUtf8(":/icons/eraser")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        self.actionEraser.setIcon(icon7)
+        self.actionEraser.setObjectName(_fromUtf8("actionEraser"))
 
         self.retranslateUi(DrawingWindow)
         QtCore.QObject.connect(self.toolSave, QtCore.SIGNAL(_fromUtf8("pressed()")), DrawingWindow.accept)
@@ -139,6 +155,7 @@ class Ui_DrawingWindow(object):
         self.toolRedPen.setText(QtGui.QApplication.translate("DrawingWindow", "Red", None, QtGui.QApplication.UnicodeUTF8))
         self.toolBluePen.setText(QtGui.QApplication.translate("DrawingWindow", "Blue", None, QtGui.QApplication.UnicodeUTF8))
         self.toolBlackPen.setText(QtGui.QApplication.translate("DrawingWindow", "Black", None, QtGui.QApplication.UnicodeUTF8))
+        self.toolEraser.setText(QtGui.QApplication.translate("DrawingWindow", "...", None, QtGui.QApplication.UnicodeUTF8))
         self.toolSave.setText(QtGui.QApplication.translate("DrawingWindow", "Save", None, QtGui.QApplication.UnicodeUTF8))
         self.toolCancel.setText(QtGui.QApplication.translate("DrawingWindow", "Cancel", None, QtGui.QApplication.UnicodeUTF8))
         self.actionClearDrawing.setText(QtGui.QApplication.translate("DrawingWindow", "Clear Drawing", None, QtGui.QApplication.UnicodeUTF8))
@@ -154,5 +171,6 @@ class Ui_DrawingWindow(object):
         self.actionCancel.setText(QtGui.QApplication.translate("DrawingWindow", "Cancel", None, QtGui.QApplication.UnicodeUTF8))
         self.actionCancel.setToolTip(QtGui.QApplication.translate("DrawingWindow", "Cancel the current image", None, QtGui.QApplication.UnicodeUTF8))
         self.actionMapSnapshot.setText(QtGui.QApplication.translate("DrawingWindow", "Take Map Snapshot", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionEraser.setText(QtGui.QApplication.translate("DrawingWindow", "Eraser", None, QtGui.QApplication.UnicodeUTF8))
 
 import resources_rc
