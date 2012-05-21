@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'syncing\ui_sync.ui'
+# Form implementation generated from reading ui file 'syncing/ui_sync.ui'
 #
-# Created: Wed May 02 14:39:48 2012
+# Created: Mon May 21 16:53:49 2012
 #      by: PyQt4 UI code generator 4.8.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -62,3 +62,7 @@ class Ui_syncForm(object):
         syncForm.setWindowTitle(QtGui.QApplication.translate("syncForm", "Form", None, QtGui.QApplication.UnicodeUTF8))
         self.statusLabel.setText(QtGui.QApplication.translate("syncForm", "Syncing with server\n"
 "Please wait", None, QtGui.QApplication.UnicodeUTF8))
+
+import resources_rc
+import resources_rc
+import resources_rc
