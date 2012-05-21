@@ -30,7 +30,8 @@ class FormBinder(QObject):
         self.fieldtocontrol = {}
         self.actionlist = []
         self.settings = settings
-        self.images = []
+        self.images = {}
+        
 
     def bindFeature(self, qgsfeature):
         """
@@ -99,7 +100,7 @@ class FormBinder(QObject):
             if control.text() == "Drawing":
                 control.setIcon(QIcon(":/icons/draw"))
                 control.setIconSize(QSize(24,24))
-                control.pressed.connect(functools.partial(self.loadDrawingTool, control, None))
+                control.pressed.connect(functools.partial(self.loadDrawingTool, control))
                 
         else:
             success = False
@@ -111,40 +112,38 @@ class FormBinder(QObject):
 
         return success
 
-    def loadDrawingTool(self, control, image):
+    def loadDrawingTool(self, control):
+        controlname = str(control.objectName())
         self.forminstance.hide()
         curdir = os.path.dirname(__file__)
         id = self.feature.attributeMap()[self.layer.fieldNameIndex("UniqueID")].toString()
-        name = str(id) + "_" + str(control.objectName()) + ".jpg"
+        name = str(id) + "_" + controlname + ".jpg"
         imagename = os.path.join(curdir, "data", str(self.layer.name()), "images", \
                                 name)
 
-        log("Looking for " + imagename)
-        
-        self.drawingpad = DrawingPad(imagename)
-        self.drawingpad.rejected.connect(self.drawingPadReject)
-        self.drawingpad.accepted.connect(functools.partial(self.drawingPadAccept, control))
-        self.drawingpad.ui.actionMapSnapshot.triggered.connect(self.drawingPadMapSnapshot)
-        self.drawingpad.showFullScreen()
-        self.drawingpad.raise_()
-        self.drawingpad.activateWindow()
-
-    def drawingPadReject(self):
-        self.forminstance.show()
-
-    def drawingPadAccept(self, control):
-        self.forminstance.show()
-        name = "drawingFor_" + str(control.objectName())
+        name = "drawingFor_{0}".format(controlname)
         tempimage = os.path.join(tempfile.gettempdir(), name)
-        self.images.append(tempimage + ".jpg")
-        self.drawingpad.saveImage(tempimage)
+        
+        log("Looking for {0} or {1}".format(imagename, tempimage))
+        imagetoload = self.images.get(controlname, imagename)
 
-    def drawingPadMapSnapshot(self):
+        drawingpad = DrawingPad(imagetoload)
+        drawingpad.setWindowState(Qt.WindowFullScreen | Qt.WindowActive)
+        drawingpad.ui.actionMapSnapshot.triggered.connect(functools.partial(self.drawingPadMapSnapshot,drawingpad))
+        if drawingpad.exec_():
+            #Save the image to a temporay location until commit.
+            self.images[controlname] = tempimage + ".jpg"
+            drawingpad.saveImage(tempimage)
+            self.forminstance.show()
+        else:
+            self.forminstance.show()
+
+    def drawingPadMapSnapshot(self, pad):
         #TODO Refactor me!!
-        image = QPixmap.fromImage(self.drawingpad.scribbleArea.image)
+        image = QPixmap.fromImage(pad.scribbleArea.image)
         tempimage = os.path.join(tempfile.gettempdir(), "mapcanvascapture.png")
         self.canvas.saveAsImage(tempimage, image)
-        self.drawingpad.openImage(tempimage)
+        pad.openImage(tempimage)
                     
     def unbindFeature(self, qgsfeature):
         """

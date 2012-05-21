@@ -73,7 +73,7 @@ class DialogProvider(QObject):
         # After we commit we have to move the drawing into the correct path.
         # TODO Use a custom field for the id name
         # Images are saved under data/{layername}/images/{id}_{fieldname}
-        for image in self.binder.images:
+        for image in self.binder.images.itervalues():
             curdir = os.path.dirname(__file__)
             id = self.feature.attributeMap()[self.layer.fieldNameIndex("UniqueID")].toString().toUpper()
             log(id)

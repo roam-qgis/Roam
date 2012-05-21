@@ -124,8 +124,7 @@ class DrawingPad(QtGui.QDialog):
         self.setWindowTitle("Scribble")
         self.resize(500, 500)
 
-        if not startimage is None and os.path.exists(startimage):
-            self.openImage(startimage)
+        self.openImage(startimage)
 
     def saveImage(self, filename):
         filename = filename + ".jpg"
@@ -158,7 +157,9 @@ class DrawingPad(QtGui.QDialog):
         self.ui.toolCancel.setDefaultAction(self.ui.actionCancel)
 
     def openImage(self,image):
-        self.scribbleArea.openImage(image)
+        if not image is None and os.path.exists(image):
+            self.scribbleArea.openImage(image)
+        
         
 if __name__ == "__main__":
     import sys
