@@ -3,10 +3,8 @@ from PyQt4.QtGui import QAction, QIcon
 from qgis.core import *
 from qgis.gui import *
 from forms.ListFeatureForm import ListFeaturesForm
-import time
 import resources_rc
 from dialog_provider import DialogProvider
-from utils import Timer
 
 class EditAction(QAction):
     def __init__(self, name, iface ):
@@ -26,7 +24,6 @@ class EditAction(QAction):
         self.canvas.setMapTool(self.tool)
 
     def findFeatures(self, point):
-        log(self.layerstoformmapping)
         self.searchRadius = self.canvas.extent().width() * ( 0.5 / 100.0)
         log("Finding Featues at %s with radius of %s" % (point, self.searchRadius))
         rect = QgsRectangle()
@@ -36,13 +33,9 @@ class EditAction(QAction):
         rect.setYMaximum( point.y() + self.searchRadius );
         
         featuresToForms = {}
-        log("looping layers and forms")
         for layer, form in self.layerstoformmapping.iteritems():
-            log("looking at layer {0}".format(layer))
             layer.select( layer.pendingAllAttributesList(), rect, True, True)
-            log("after select")
             for feature in layer:
-                log("loading feature to forms map")
                 featuresToForms[feature] = (form, layer)
 
         if len(featuresToForms) == 1:
