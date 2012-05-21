@@ -9,10 +9,10 @@ from dialog_provider import DialogProvider
 from utils import Timer
 
 class EditAction(QAction):
-    def __init__(self, name, iface, layerstoformmapping ):
+    def __init__(self, name, iface ):
         QAction.__init__(self, name, iface.mainWindow())
         self.canvas = iface.mapCanvas()
-        self.layerstoformmapping = layerstoformmapping
+        self.layerstoformmapping = {}
         self.triggered.connect(self.setTool)
         self.tool = PointTool( self.canvas )
         self.tool.mouseClicked.connect( self.findFeatures )
@@ -26,6 +26,7 @@ class EditAction(QAction):
         self.canvas.setMapTool(self.tool)
 
     def findFeatures(self, point):
+        log(self.layerstoformmapping)
         self.searchRadius = self.canvas.extent().width() * ( 0.5 / 100.0)
         log("Finding Featues at %s with radius of %s" % (point, self.searchRadius))
         rect = QgsRectangle()
@@ -35,9 +36,13 @@ class EditAction(QAction):
         rect.setYMaximum( point.y() + self.searchRadius );
         
         featuresToForms = {}
+        log("looping layers and forms")
         for layer, form in self.layerstoformmapping.iteritems():
+            log("looking at layer {0}".format(layer))
             layer.select( layer.pendingAllAttributesList(), rect, True, True)
+            log("after select")
             for feature in layer:
+                log("loading feature to forms map")
                 featuresToForms[feature] = (form, layer)
 
         if len(featuresToForms) == 1:
@@ -49,11 +54,13 @@ class EditAction(QAction):
             listUi.loadFeatureList(featuresToForms)
             listUi.openFeatureForm.connect(self.openForm)
             listUi.exec_()
+
+    def setLayersForms(self,layerforms):
+        self.layerstoformmapping = layerforms
     
     def openForm(self,formmodule,feature,maplayer):
         if not maplayer.isEditable():
             maplayer.startEditing()
 
-        with Timer():
-            self.dialogprovider.openDialog( formmodule, feature, maplayer, True )
+        self.dialogprovider.openDialog( formmodule, feature, maplayer, True )
             

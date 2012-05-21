@@ -70,7 +70,7 @@ class SDRCDataCapture():
         self.gpsAction = GPSAction(QIcon(":/icons/gps"), self.iface.mapCanvas(), self.mainwindow)
         self.openProjectAction = QAction(QIcon(":/icons/open"),"Open Project" , self.mainwindow)
         self.toggleRasterAction = QAction(QIcon(":/icons/photo"),"Aerial Photos" , self.mainwindow)
-        self.editAction = EditAction("Edit", self.iface, self.layerstoForms )
+        self.editAction = EditAction("Edit", self.iface )
         self.syncAction = QAction(QIcon(":/syncing/sync"), "Sync", self.mainwindow)
         self.editAction.setCheckable(True)
 
@@ -150,6 +150,8 @@ class SDRCDataCapture():
         """
             Create buttons for each form that is definded
         """
+        layerstoForms = {}
+
         # Remove all the old buttons
         for action in self.actions:
             self.toolbar.removeAction(action)
@@ -164,11 +166,13 @@ class SDRCDataCapture():
                 self.toolbar.insertAction(self.editAction, action)
                 self.actionGroup.addAction(action)
                 self.actions.append(action)
-                self.layerstoForms[layer] = form
+                layerstoForms[layer] = form
             except KeyError:
                 log("Couldn't find layer for form %s" % form.layerName())
                 log("We have")
                 log(layers)
+                
+        self.editAction.setLayersForms(layerstoForms)
 
     def openProject(self):
         self.dialog = ListProjectsDialog()
