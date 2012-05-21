@@ -24,13 +24,22 @@ class EditAction(QAction):
         self.canvas.setMapTool(self.tool)
 
     def findFeatures(self, point):
-        self.searchRadius = self.canvas.extent().width() * ( 0.5 / 100.0)
-        log("Finding Featues at %s with radius of %s" % (point, self.searchRadius))
-        rect = QgsRectangle()
-        rect.setXMinimum( point.x() - self.searchRadius );
-        rect.setXMaximum( point.x() + self.searchRadius );
-        rect.setYMinimum( point.y() - self.searchRadius );
-        rect.setYMaximum( point.y() + self.searchRadius );
+        #If we don't have a any layers to forms mappings yet just exit.
+        if not self.layerstoformmapping:
+            return
+
+        layer = self.layerstoformmapping.iterkeys().next()
+
+        searchRadius = QgsTolerance.toleranceInMapUnits( 5, layer, \
+                                                         self.canvas.mapRenderer(), QgsTolerance.Pixels)
+
+        rect = QgsRectangle()                                                 
+        rect.setXMinimum( point.x() - searchRadius );
+        rect.setXMaximum( point.x() + searchRadius );
+        rect.setYMinimum( point.y() - searchRadius );
+        rect.setYMaximum( point.y() + searchRadius );
+
+        log("Finding Featues at %s with radius of %s" % (point, searchRadius))
         
         featuresToForms = {}
         for layer, form in self.layerstoformmapping.iteritems():
