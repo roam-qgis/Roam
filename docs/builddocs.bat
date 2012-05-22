@@ -1,1 +1,1 @@
-python rst2html.py README.txt README.html
+python build.py docs

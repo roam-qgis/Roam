@@ -14,8 +14,22 @@ interface and replacing it with a simple to use interface for data collection.
 As |name| is just a Python plugin you can use your normal QGIS project files (.qgs)
 in order to create mapping projects.
 
+Building
+----------
+
+For building we use fabricate_ which is a build tool written in Python because
+frankly GNUMake is a pain to use, the syntax is just plain strange, and it sucks
+at error reporting.
+
+.. _fabricate: http://code.google.com/p/fabricate/
+
+To build just run
+
 Installing
 ----------
+
+.. note:: If you haven't done so already please see Building_ before
+          installing
 
 Conventions
 -----------
