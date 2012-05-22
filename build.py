@@ -1,7 +1,5 @@
 #! /usr/bin/python
-
-''' Build file that complies all the needed resources'''
-import os.path
+''' Build file that compiles all the needed resources'''
 
 from fabricate import *
 import os
@@ -9,18 +7,30 @@ from shutil import copytree, ignore_patterns, rmtree
 
 ui_sources = ['ui_datatimerpicker', 'ui_listmodules',
               'syncing/ui_sync', 'forms/ui_listfeatures']
-              
+
+# Add the path to MSBuild to PATH so that subprocess can find it.
+env = os.environ.copy()
+env['PATH'] += ";c:\\WINDOWS\\Microsoft.NET\Framework\\v3.5"
+
 def build():
     compile()
     
 def compile():
+    print " - building UI files..."
     for source in ui_sources:
         run('pyuic4.bat', '-o', source+'.py', source+'.ui' )
 
+    print " - building resource files..."
     run('pyrcc4', '-o', 'resources.py', 'resources.qrc')
+    print " - building sync app..."
+    run('MSBuild','/property:Configuration=Release', '/verbosity:m', \
+        'syncing/SyncProofConcept.csproj', shell=True, env=env)
 
 def clean():
     autoclean()
+
+def test():
+    pass
 
 def deploy():
     print "Building..."
