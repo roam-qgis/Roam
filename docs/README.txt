@@ -2,17 +2,32 @@
 |name|
 ====================
 
+:Authors:
+    Nathan Woodrow,
+    Damien Smith
+
+:Version: 1.0
+
 .. |name| replace:: QGIS Data Collector
 .. contents::
 .. sectnum::
 
+
+
 The |name| is a simple to use, simple to configure, data collection
 program built by Southern Downs Regional Council that uses QGIS and its Python
 plugin model as a base.  |name| is a QGIS Python plugin that removes most of the
-interface and replacing it with a simple to use interface for data collection.
+interface and replaces it with a simple to use interface for data collection.
 
 As |name| is just a Python plugin you can use your normal QGIS project files (.qgs)
 in order to create mapping projects.
+
+Requirements
+-------------
+- Latest QGIS Version > 1.8
+- MS SQL Server 2008 (express or greater)
+- Qt Designer (for form building)
+- Something to install this on (some kind of fancy tablet PC)
 
 Building
 ----------
@@ -23,10 +38,15 @@ at error reporting.
 
 .. _fabricate: http://code.google.com/p/fabricate/
 
-To build just run
+To build just run *make_win.bat* in the main root folder.  build.py will generate
+all the needed files and deploy them into the build directory.
+
+The QGIS plugin location is /build/app/python/plugins
 
 Installing
 ----------
+
+- Install
 
 .. note:: If you haven't done so already please see Building_ before
           installing
@@ -93,12 +113,12 @@ Program Conventions
 
         D896C1C0-9E4B-11E1-AB3F-002564CC69E0_Drawing.jpg
 
-- Temp images that are saved before commit have the following convention and are
+  Temp images that are saved before commit have the following convention and are
   saved in the user temp directory:
 
         drawingFor_{fieldname}.jpg
 
-  *drawingFor\_* is replaced with *{id}* when the record is commited into the layer
+  *drawingFor\_* is replaced with *{id}* when the record is commited into the layer.
   The image is then moved into the images folder.
 
 - Projects are stored in the projects\\ directory.  The name of the .qgs file will
