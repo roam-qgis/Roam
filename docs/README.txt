@@ -26,27 +26,45 @@ Requirements
 -------------
 - Latest QGIS Version > 1.8
 - MS SQL Server 2008 (express or greater)
+- .NET 3.5 (or greater)
+- Microsoft Sync Framework
 - Qt Designer (for form building)
 - Something to install this on (some kind of fancy tablet PC)
 
 Building
 ----------
 
-For building we use fabricate_ which is a build tool written in Python because
-frankly GNUMake is a pain to use, the syntax is just plain strange, and it sucks
-at error reporting.
+For building we use fabricate_ which is a build tool written in pure Python,
+because frankly GNUMake is a pain to use, the syntax is just plain strange,
+and it sucks at error reporting.
 
 .. _fabricate: http://code.google.com/p/fabricate/
 
-To build just run *make_win.bat* in the main root folder.  build.py will generate
+To build just run **make_win.bat** from the main root folder.  build.py will generate
 all the needed files and deploy them into the build directory.
 
 The QGIS plugin location is /build/app/python/plugins
+
+You can run build.py using Python:
+
+.. code-block:: console
+
+    #Clean build files
+    python build.py clean
+
+    #Build only docs
+    python build.py docs
+     
+    #Build only
+    python build.py build
 
 Installing
 ----------
 
 - Install
+    - MS SQL Server 2008
+    - .NET 3.5
+    - Microsoft Sync Framework
 
 .. note:: If you haven't done so already please see Building_ before
           installing
