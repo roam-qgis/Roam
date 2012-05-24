@@ -61,13 +61,15 @@ You can run build.py using Python:
 Installing
 ----------
 
+.. note:: If you haven't done so already please see Building_ before
+          installing
+
 - Install
     - MS SQL Server 2008
     - .NET 3.5
     - Microsoft Sync Framework
 
-.. note:: If you haven't done so already please see Building_ before
-          installing
+
 
 Conventions
 -----------
