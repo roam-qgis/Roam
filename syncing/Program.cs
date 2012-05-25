@@ -13,9 +13,11 @@
         /// <summary>The main entry point for the application.</summary>
         static void Main()
         {
-            using (SqlSyncProvider masterProvider = new SqlSyncProvider { ScopeName = Scope }, slaveProvider = new SqlSyncProvider { ScopeName = Scope })
+            using (SqlSyncProvider masterProvider = new SqlSyncProvider { ScopeName = Scope },
+                   slaveProvider = new SqlSyncProvider { ScopeName = Scope })
             {
-                using (SqlConnection master = new SqlConnection(Settings.Default.ServerConnectionString), slave = new SqlConnection(Settings.Default.ClientConnectionString))
+                using (SqlConnection master = new SqlConnection(Settings.Default.ServerConnectionString),
+                                     slave = new SqlConnection(Settings.Default.ClientConnectionString))
                 {
                     masterProvider.Connection = master;
                     slaveProvider.Connection = slave;
@@ -30,7 +32,10 @@
                     try
                     {
                         SyncOperationStatistics stats = orchestrator.Synchronize();
-                        Console.WriteLine(Resources.Program_Main_Changes_Downloaded__ + stats.DownloadChangesTotal + Resources.Program_Main_ + stats.UploadChangesApplied);
+                        Console.WriteLine(Resources.Program_Main_Changes_Downloaded__
+                                          + stats.DownloadChangesTotal
+                                          + Resources.Program_Main_
+                                          + stats.UploadChangesApplied);
                     }
                     catch (Exception ex)
                     {
