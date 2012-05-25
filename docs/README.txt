@@ -58,6 +58,10 @@ You can run build.py using Python:
     #Build only
     python build.py build
 
+The version number used is {year}.{month}.{day}.{commitid} and the version in
+metadata.txt is the version number for all the files and related binaries in the
+project.
+
 Installing
 ----------
 
@@ -68,8 +72,9 @@ Installing
     - MS SQL Server 2008
     - .NET 3.5
     - Microsoft Sync Framework
+    - QGIS
 
-
+Copy the build folder into the
 
 Conventions
 -----------

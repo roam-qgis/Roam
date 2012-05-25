@@ -12,6 +12,10 @@ ui_sources = ['ui_datatimerpicker', 'ui_listmodules',
 
 doc_sources = ['docs/README']
 
+ignore = ['*.pyc', 'build', '.git', '.deps', 'nbproject', 'obj',
+          'Properties', '*.csproj', '*.sln', '*.suo', 'app.config',
+          '*.vshost.*', '*.cs']
+
 # Add the path to MSBuild to PATH so that subprocess can find it.
 env = os.environ.copy()
 env['PATH'] += ";c:\\WINDOWS\\Microsoft.NET\Framework\\v3.5"
@@ -68,8 +72,7 @@ def deploy():
     
     # Copy all the files to the ouput directory
     print "Copying new files..."
-    copytree(curpath, buildpath, ignore=ignore_patterns('*.pyc', 'build', \
-                                                        '.git', '.deps', 'nbproject'))
+    copytree(curpath, buildpath, ignore=ignore_patterns(*ignore))
 
     # Replace version numbers
     version = getVersion()
