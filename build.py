@@ -1,9 +1,11 @@
 #! /usr/bin/python
 ''' Build file that compiles all the needed resources'''
+import os.path
 
 from fabricate import *
 import os
 from shutil import copytree, ignore_patterns, rmtree
+import datetime
 
 ui_sources = ['ui_datatimerpicker', 'ui_listmodules',
               'syncing/ui_sync', 'forms/ui_listfeatures']
@@ -39,6 +41,17 @@ def docs():
 def clean():
     autoclean()
 
+def getVersion():
+    """
+        Returns the version number for the plugin
+    """
+    now = datetime.datetime.now()
+    year = now.year
+    month = now.month
+    day = now.day
+    commit = shell('git', 'log', '-1', '--pretty=%h').strip()
+    return "{0}.{1}.{2}.{3}".format(year, month, day, commit )
+
 def test():
     pass
 
@@ -58,6 +71,11 @@ def deploy():
     copytree(curpath, buildpath, ignore=ignore_patterns('*.pyc', 'build', \
                                                         '.git', '.deps', 'nbproject'))
 
+    # Replace version numbers
+    version = getVersion()
+    run("sed", '-n','s/version=0.1/version={0}/'.format(version), \
+        os.path.join(buildpath, 'metadata.txt'))
+        
     print "Deploy compelete into {0}".format(buildpath)
 
 if __name__ == "__main__":
