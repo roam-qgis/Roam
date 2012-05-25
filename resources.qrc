@@ -16,6 +16,6 @@
     <file alias="calender">resources/images/calender2.png</file>
   </qresource>
   <qresource prefix="syncing">
-    <file>syncing/sync.png</file>
+    <file>resources/images/sync.png</file>
   </qresource>
 </RCC>

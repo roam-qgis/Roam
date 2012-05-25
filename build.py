@@ -12,9 +12,12 @@ ui_sources = ['ui_datatimerpicker', 'ui_listmodules',
 
 doc_sources = ['docs/README']
 
+path = os.path.dirname(__file__)
+
 ignore = ['*.pyc', 'build', '.git', '.deps', 'nbproject', 'obj',
           'Properties', '*.csproj', '*.sln', '*.suo', 'app.config',
-          '*.vshost.*', '*.cs']
+          '*.vshost.*', '*.cs', 'make_win.bat', 'resources', '.gitignore',
+          'rst*.py', 'builddocs.bat']
 
 # Add the path to MSBuild to PATH so that subprocess can find it.
 env = os.environ.copy()
@@ -29,7 +32,7 @@ def compile():
         run('pyuic4.bat', '-o', source+'.py', source+'.ui' )
 
     print " - building resource files..."
-    run('pyrcc4', '-o', 'resources.py', 'resources.qrc')
+    run('pyrcc4', '-o', 'resources_rc.py', 'resources.qrc')
     
     print " - building sync app..."
     run('MSBuild','/property:Configuration=Release', '/verbosity:m', \
