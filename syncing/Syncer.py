@@ -11,7 +11,7 @@ class Syncer(QObject):
     
     def doSync(self):
         curdir = os.path.dirname(__file__)
-        cmdpath =os.path.join(curdir,'bin\SyncProofConcept.exe')
+        cmdpath = os.path.join(curdir,'bin\SyncProofConcept.exe')
         print cmdpath
         p = Popen(cmdpath, stdout=PIPE, stderr=PIPE, stdin=PIPE, shell = True)
         stdout, stderr = p.communicate()

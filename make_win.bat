@@ -1,3 +1,2 @@
-@ECHO OFF
+@echo OFF
 python build.py
-pause
