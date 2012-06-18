@@ -3,22 +3,29 @@ from PyQt4.QtGui import *
 from qgis.core import *
 from ui_sync import Ui_syncForm
 import os
+import sys
 from subprocess import Popen, PIPE
+
+#This feels a bit hacky
+pardir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
+sys.path.append(pardir)
+
+from utils import log
 
 class Syncer(QObject):
     statusUpdate = pyqtSignal(bool, str)
     done = pyqtSignal()
     
     def doSync(self):
-        curdir = os.path.dirname(__file__)
+        curdir = os.path.abspath(os.path.dirname(__file__))
         cmdpath = os.path.join(curdir,'bin\SyncProofConcept.exe')
-        print cmdpath
         p = Popen(cmdpath, stdout=PIPE, stderr=PIPE, stdin=PIPE, shell = True)
         stdout, stderr = p.communicate()
-        print stdout, stderr
         if not stdout == "":
+            log(stdout)
             self.statusUpdate.emit(True, stdout)
         else:
+            log(stderr)
             self.statusUpdate.emit(False, stderr)
 
 class SyncDialog(QDialog):

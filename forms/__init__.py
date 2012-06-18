@@ -5,7 +5,6 @@ import os
 import sys
 from Form import Form
 
-# Add PARENT directory to path to make test aware of other modules
 pardir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..'))
 sys.path.append(pardir)
 
