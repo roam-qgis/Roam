@@ -28,7 +28,7 @@ from PyQt4.QtGui import *
 import forms
 from listmodulesdialog import ListProjectsDialog
 from qgis.core import *
-import resources
+import resources_rc
 from syncing.syncer import Syncer, SyncDialog
 from utils import log
 
@@ -69,7 +69,7 @@ class SDRCDataCapture():
         self.openProjectAction = QAction(QIcon(":/icons/open"),"Open Project" , self.mainwindow)
         self.toggleRasterAction = QAction(QIcon(":/icons/photo"),"Aerial Photos" , self.mainwindow)
         self.editAction = EditAction("Edit", self.iface, self.layerstoForms )
-        self.syncAction = QAction(QIcon(":/syncing/syncing/sync.png"), "Sync", self.mainwindow)
+        self.syncAction = QAction(QIcon(":/syncing/sync"), "Sync", self.mainwindow)
 
         self.editAction.setCheckable(True)
 

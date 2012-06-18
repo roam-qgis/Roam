@@ -4,7 +4,7 @@ from qgis.core import *
 from qgis.gui import *
 from forms.ListFeatureForm import ListFeaturesForm
 import time
-import resources
+import resources_rc
 from dialog_provider import DialogProvider
 from utils import Timer
 

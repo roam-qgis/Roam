@@ -4,18 +4,18 @@ from qgis.core import *
 from ui_sync import Ui_syncForm
 import os
 from subprocess import Popen, PIPE
-from SDRCDataCapture.utils import log
 
 class Syncer(QObject):
     statusUpdate = pyqtSignal(bool, str)
     done = pyqtSignal()
     
     def doSync(self):
-        curdir= os.path.dirname(__file__)
-        cmdpath =os.path.join(curdir,'bin\SyncProofConcept.exe')    
+        curdir = os.path.dirname(__file__)
+        cmdpath =os.path.join(curdir,'bin\SyncProofConcept.exe')
+        print cmdpath
         p = Popen(cmdpath, stdout=PIPE, stderr=PIPE, stdin=PIPE, shell = True)
         stdout, stderr = p.communicate()
-        
+        print stdout, stderr
         if not stdout == "":
             self.statusUpdate.emit(True, stdout)
         else:
@@ -35,7 +35,6 @@ class SyncDialog(QDialog):
     def updateStatus(self, state, text):
         if not state:
             self.ui.statusLabel.setStyleSheet("color: rgba(222, 13, 6);")
-        log("Update Status %s " % text )
         self.ui.statusLabel.setText(text)
         self.ui.buttonBox.show()
 
@@ -44,4 +43,6 @@ class SyncDialog(QDialog):
         self.syncer.statusUpdate.connect(self.updateStatus)
         self.syncer.doSync()
 
-        
+if __name__ == "__main__":
+    sync = Syncer()
+    sync.doSync()
