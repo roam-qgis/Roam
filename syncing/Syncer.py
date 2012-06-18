@@ -21,8 +21,6 @@ class Syncer(QObject):
         else:
             self.statusUpdate.emit(False, stderr)
 
-        
-
 class SyncDialog(QDialog):
     def __init__(self):
         QDialog.__init__(self)

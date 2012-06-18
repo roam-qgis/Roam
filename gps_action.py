@@ -42,8 +42,7 @@ class GPSAction(QAction):
                 
     def disconnectGPS(self):
         self.gpsConn.stateChanged.disconnect(self.gpsStateChanged)
-        del self.gpsConn
-        self.gpsConn = None
+        self.gpsConn.close()
         self.marker.hide()
         log("GPS disconnect")
         self.isConnected = False

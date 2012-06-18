@@ -29,8 +29,7 @@ import forms
 from listmodulesdialog import ListProjectsDialog
 from qgis.core import *
 import resources
-from syncing.Syncer import SyncDialog, Syncer
-import syncing.ui_sync
+from syncing.syncer import Syncer, SyncDialog
 from utils import log
 
 class SDRCDataCapture():
