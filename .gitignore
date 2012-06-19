@@ -6,3 +6,4 @@ syncing/bin/*
 syncing/bin/*
 syncing/obj/*
 docs/*.html
+resources_rc.py
