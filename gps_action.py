@@ -7,6 +7,7 @@ from qgis.gui import *
 import resources_rc
 import utils
 from utils import log
+import power
 
 class GPSAction(QAction):
     def __init__(self, icon, canvas, parent):
@@ -27,7 +28,7 @@ class GPSAction(QAction):
         if not self.isConnected:
             #Enable GPS
             portname = utils.settings.value("gps/port").toString()
-            log(portname)
+            log("Connecting to:" + portname)
             self.detector = QgsGPSDetector( portname )
             self.detector.detected.connect(self.connected)
             self.detector.detectionFailed.connect(self.failed)
@@ -51,6 +52,9 @@ class GPSAction(QAction):
         self.setIcon(QIcon(':/icons/gps_looking'))
         self.setIconText("Searching")
         self.gpsConn = gpsConnection
+        self.power = power.PowerState(self.canvas)
+        self.power.poweroff.connect(self.disconnectGPS)
+        self.power.poweron.connect(self.connectGPS)
         self.gpsConn.stateChanged.connect(self.gpsStateChanged)
         self.isConnected = True
         
