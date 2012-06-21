@@ -13,9 +13,8 @@ sys.path.append(pardir)
 from utils import log
 
 class Syncer(QObject):
-    statusPass = pyqtSignal(str)
+    syncPass = pyqtSignal(str)
     syncFailed = pyqtSignal(str)
-    done = pyqtSignal()
     
     def doSync(self):
         curdir = os.path.abspath(os.path.dirname(__file__))
@@ -24,10 +23,29 @@ class Syncer(QObject):
         stdout, stderr = p.communicate()
         if not stdout == "":
             log(stdout)
-            self.statusPass.emit(stdout)
+            self.syncPass.emit(stdout)
         else:
             log(stderr)
             self.syncFailed.emit(stderr)
+
+class ImageSyncer(QObject):
+    syncPass = pyqtSignal(str)
+    syncFailed = pyqtSignal(str)
+    
+    def doSync(self):
+        images = os.path.join(pardir, "data")
+        server = "\\\\SD0302\\C$\\synctest\\"
+        if not os.path.exists(images):
+            return
+        
+        cmd = 'xcopy "%s" "%s" /Q /D /S /E /K /C /H /R /Y' % (images, server)
+        print cmd
+        p = Popen(cmd, stdout=PIPE, stderr=PIPE, stdin=PIPE, shell = True)
+        stdout, stderr = p.communicate()
+        if not stderr == "":
+            self.syncFailed.emit(stderr)
+        else:
+            self.syncPass.emit(stdout)
 
 class SyncDialog(QDialog):
     def __init__(self):
@@ -39,6 +57,7 @@ class SyncDialog(QDialog):
         self.setWindowFlags(Qt.FramelessWindowHint)
         scr = QApplication.desktop().screenGeometry(0)
         self.move( scr.center() - self.rect().center() )
+        self.failed = False
 
     def updateStatus(self, text):
         self.ui.statusLabel.setText(text)
@@ -53,13 +72,29 @@ class SyncDialog(QDialog):
         self.ui.label.setPixmap(QPixmap(":/syncing/sad"))
         log("SYNC ERROR:" + text)
         self.ui.buttonBox.show()
+        self.failed = True
 
     def runSync(self):
+        self.ui.statusLabel.setText("Sycning with server. \n Please Wait")
+        message = self.ui.statusLabel.text()
         self.syncer = Syncer()
-        self.syncer.statusPass.connect(self.updateStatus)
+        self.syncer.syncPass.connect(self.updateStatus)
         self.syncer.syncFailed.connect(self.updateFailedStatus)
+        datamessage = message + "\n Syncing map data..."
+        self.ui.statusLabel.setText(datamessage)
         self.syncer.doSync()
 
+        if self.failed:
+            return
+        
+        self.syncer = ImageSyncer()
+        self.syncer.syncPass.connect(self.updateStatus)
+        self.syncer.syncFailed.connect(self.updateFailedStatus)
+        datamessage = message + "\n Syncing images..."
+        self.ui.statusLabel.setText(datamessage)
+        self.syncer.doSync()
+
+
 if __name__ == "__main__":
-    sync = Syncer()
+    sync = ImageSyncer()
     sync.doSync()
