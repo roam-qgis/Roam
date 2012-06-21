@@ -8,6 +8,7 @@ from utils import log
 # Vertex Finder Tool class
 class PointTool(QgsMapTool):
     mouseClicked = pyqtSignal(QgsPoint)
+    mouseMove = pyqtSignal(QgsPoint)
 
     def __init__(self, canvas):
         QgsMapTool.__init__(self, canvas)
@@ -45,7 +46,12 @@ class PointTool(QgsMapTool):
         self.canvas.setMapTool(self)
 
     def canvasMoveEvent(self, event):
-        pass
+        x = event.pos().x()
+        y = event.pos().y()
+
+        point = self.canvas.getCoordinateTransform().toMapCoordinates(x, y)
+
+        self.mouseMove.emit(point)
 
     def canvasReleaseEvent(self, event):
         #Get the click
