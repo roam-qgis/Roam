@@ -23,22 +23,24 @@ class GPSAction(QAction):
         self.marker.hide()
         self.lastposition = QgsPoint(0.0,0.0)
         self.wgs84CRS = QgsCoordinateReferenceSystem(4326)
+        self.power = power.PowerState(self.parent())
+        self.power.poweroff.connect(self.disconnectGPS)
 
     def connectGPS(self):
         if not self.isConnected:
             #Enable GPS
+            self.setIcon(QIcon(":/icons/gps"))
+            self.setIconText("Connecting")
+            self.setEnabled(False)
+            
             portname = utils.settings.value("gps/port").toString()
             log("Connecting to:" + portname)
             self.detector = QgsGPSDetector( portname )
             self.detector.detected.connect(self.connected)
             self.detector.detectionFailed.connect(self.failed)
             self.isConnectFailed = False
-            self.setIcon(QIcon(":/icons/gps"))
-            self.setIconText("Connecting")
             self.detector.advance()
         else:
-            self.setIcon(QIcon(":/icons/gps"))
-            self.setIconText("Enable GPS")
             self.disconnectGPS()
                 
     def disconnectGPS(self):
@@ -47,6 +49,9 @@ class GPSAction(QAction):
         self.marker.hide()
         log("GPS disconnect")
         self.isConnected = False
+        self.setIcon(QIcon(":/icons/gps"))
+        self.setIconText("Enable GPS")
+        self.setEnabled(True)
         
     def connected(self, gpsConnection):
         self.setIcon(QIcon(':/icons/gps_looking'))
@@ -57,8 +62,10 @@ class GPSAction(QAction):
         self.power.poweron.connect(self.connectGPS)
         self.gpsConn.stateChanged.connect(self.gpsStateChanged)
         self.isConnected = True
+        self.setEnabled(True)
         
     def failed(self):
+        self.setEnabled(True)
         log("GPS Failed to connect")
         self.setIcon(QIcon(':/icons/gps_failed'))
         self.setIconText("GPS Failed. Click to retry")
