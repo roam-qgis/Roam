@@ -80,7 +80,7 @@ def deploy():
 
     # Replace version numbers
     version = getVersion()
-    run("sed", '-n','s/version=0.1/version={0}/'.format(version), \
+    run("sed", '-i','s/version=0.1/version={0}/'.format(version), \
         os.path.join(buildpath, 'metadata.txt'))
         
     print "Deploy compelete into {0}".format(buildpath)
