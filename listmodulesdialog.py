@@ -16,6 +16,7 @@ class ListProjectsDialog(QDialog):
         self.ui.setupUi(self)
         self.ui.moduleList.itemClicked.connect(self.openProject)
         self.setWindowFlags(Qt.FramelessWindowHint)
+        self.ui.pushButton.clicked.connect(self.reject)
         scr = QApplication.desktop().screenGeometry(0)
         self.move( scr.center() - self.rect().center() )
 

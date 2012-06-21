@@ -32,8 +32,6 @@ import resources_rc
 from syncing.syncer import Syncer, SyncDialog
 from utils import log
 
-currentproject = ""
-
 class SDRCDataCapture():
     def __init__(self, iface):
         self.iface = iface
@@ -174,9 +172,23 @@ class SDRCDataCapture():
                 
         self.editAction.setLayersForms(layerstoForms)
 
+    def rejectProjectDialog(self):
+        if QgsProject.instance().fileName() is None:
+            self.setUIState(False)
+            self.openProjectAction.setEnabled(True)
+        else:
+            self.setUIState(True)
+
+    def setUIState(self, enabled):
+        toolbars = self.iface.mainWindow().findChildren(QToolBar)
+        for toolbar in toolbars:
+            toolbar.setEnabled(enabled)
+            
     def openProject(self):
+        self.setUIState(False)
         self.dialog = ListProjectsDialog()
         self.dialog.requestOpenProject.connect(self.loadProject)
+        self.dialog.rejected.connect(self.rejectProjectDialog)
         self.dialog.setModal(True)
         self.dialog.show()
         QCoreApplication.processEvents()
@@ -187,10 +199,7 @@ class SDRCDataCapture():
     def loadProject(self, path):
         self.dialog.close()
         self.iface.addProject(path)
-        #HACK This is a little bit nasty.  Should we really use global variables
-        global currentproject
-        currentproject = str(path)
-        log(currentproject)
+        self.setUIState(True)
     
     def unload(self):
         del self.toolbar

@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'ui_listmodules.ui'
 #
-# Created: Thu Jun 21 15:40:00 2012
+# Created: Thu Jun 21 17:04:09 2012
 #      by: PyQt4 UI code generator 4.8.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -65,7 +65,6 @@ class Ui_ListModules(object):
         self.gridLayout.addWidget(self.pushButton, 2, 0, 1, 1)
 
         self.retranslateUi(ListModules)
-        QtCore.QObject.connect(self.pushButton, QtCore.SIGNAL(_fromUtf8("clicked()")), ListModules.close)
         QtCore.QMetaObject.connectSlotsByName(ListModules)
 
     def retranslateUi(self, ListModules):
