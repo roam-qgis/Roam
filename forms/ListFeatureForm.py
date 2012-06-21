@@ -1,5 +1,5 @@
-from PyQt4.QtGui import QDialog, QListWidgetItem
-from PyQt4.QtCore import pyqtSignal
+from PyQt4.QtGui import QDialog, QListWidgetItem, QApplication
+from PyQt4.QtCore import pyqtSignal, Qt
 from qgis.core import QgsFeature, QgsMapLayer
 from Form import Form
 
@@ -13,6 +13,9 @@ class ListFeaturesForm(QDialog):
         self.ui = Ui_ListFeatueForm()
         self.ui.setupUi(self)
         self.ui.featureList.itemClicked.connect(self.openForm)
+        self.setWindowFlags(Qt.FramelessWindowHint)
+        scr = QApplication.desktop().screenGeometry(0)
+        self.move( scr.center() - self.rect().center() )
 
     def loadFeatureList(self, featureDict):
         for feature, formAndLayer in featureDict.items():

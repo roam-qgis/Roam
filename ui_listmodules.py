@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'ui_listmodules.ui'
 #
-# Created: Tue May 22 10:54:13 2012
+# Created: Thu Jun 21 15:40:00 2012
 #      by: PyQt4 UI code generator 4.8.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -18,19 +18,28 @@ class Ui_ListModules(object):
     def setupUi(self, ListModules):
         ListModules.setObjectName(_fromUtf8("ListModules"))
         ListModules.setWindowModality(QtCore.Qt.NonModal)
-        ListModules.resize(376, 404)
+        ListModules.resize(376, 428)
         ListModules.setWindowOpacity(1.0)
+        ListModules.setAutoFillBackground(False)
         self.gridLayout = QtGui.QGridLayout(ListModules)
         self.gridLayout.setMargin(3)
         self.gridLayout.setSpacing(0)
         self.gridLayout.setObjectName(_fromUtf8("gridLayout"))
         self.moduleList = QtGui.QListWidget(ListModules)
-        self.moduleList.setStyleSheet(_fromUtf8("font: 14pt \"MS Shell Dlg 2\";"))
-        self.moduleList.setFrameShape(QtGui.QFrame.StyledPanel)
-        self.moduleList.setFrameShadow(QtGui.QFrame.Raised)
+        font = QtGui.QFont()
+        font.setPointSize(14)
+        self.moduleList.setFont(font)
+        self.moduleList.setStyleSheet(_fromUtf8("background-color: rgba(255, 255, 255, 0);"))
+        self.moduleList.setFrameShape(QtGui.QFrame.NoFrame)
+        self.moduleList.setFrameShadow(QtGui.QFrame.Plain)
         self.moduleList.setEditTriggers(QtGui.QAbstractItemView.NoEditTriggers)
+        self.moduleList.setProperty(_fromUtf8("showDropIndicator"), False)
         self.moduleList.setProperty(_fromUtf8("isWrapping"), False)
+        self.moduleList.setResizeMode(QtGui.QListView.Adjust)
         self.moduleList.setLayoutMode(QtGui.QListView.SinglePass)
+        self.moduleList.setSpacing(3)
+        self.moduleList.setWordWrap(True)
+        self.moduleList.setSelectionRectVisible(False)
         self.moduleList.setObjectName(_fromUtf8("moduleList"))
         self.gridLayout.addWidget(self.moduleList, 1, 0, 1, 1)
         self.label = QtGui.QLabel(ListModules)
@@ -44,12 +53,13 @@ class Ui_ListModules(object):
         self.label.setScaledContents(True)
         self.label.setAlignment(QtCore.Qt.AlignCenter)
         self.label.setWordWrap(False)
+        self.label.setMargin(5)
         self.label.setObjectName(_fromUtf8("label"))
         self.gridLayout.addWidget(self.label, 0, 0, 1, 1)
         self.pushButton = QtGui.QPushButton(ListModules)
         font = QtGui.QFont()
         font.setFamily(_fromUtf8("Tahoma"))
-        font.setPointSize(12)
+        font.setPointSize(20)
         self.pushButton.setFont(font)
         self.pushButton.setObjectName(_fromUtf8("pushButton"))
         self.gridLayout.addWidget(self.pushButton, 2, 0, 1, 1)

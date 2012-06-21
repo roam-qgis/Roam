@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'syncing/ui_sync.ui'
 #
-# Created: Thu Jun 21 13:44:17 2012
+# Created: Thu Jun 21 15:40:00 2012
 #      by: PyQt4 UI code generator 4.8.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -50,7 +50,7 @@ class Ui_syncForm(object):
         sizePolicy.setHeightForWidth(self.buttonBox.sizePolicy().hasHeightForWidth())
         self.buttonBox.setSizePolicy(sizePolicy)
         font = QtGui.QFont()
-        font.setPointSize(19)
+        font.setPointSize(20)
         font.setWeight(50)
         font.setBold(False)
         self.buttonBox.setFont(font)
