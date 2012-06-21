@@ -1,0 +1,5 @@
+<RCC>
+  <qresource prefix="syncing">
+    <file alias="sync">sync.png</file>
+  </qresource>
+</RCC>

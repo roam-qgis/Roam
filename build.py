@@ -17,7 +17,7 @@ path = os.path.dirname(__file__)
 ignore = ['*.pyc', 'build', '.git', '.deps', 'nbproject', 'obj',
           'Properties', '*.csproj', '*.sln', '*.suo', 'app.config',
           '*.vshost.*', '*.cs', 'make_win.bat', 'resources', '.gitignore',
-          'rst*.py', 'builddocs.bat']
+          'rst*.py', 'builddocs.bat', '*.qrc', '*.log', '*.orig']
 
 # Add the path to MSBuild to PATH so that subprocess can find it.
 env = os.environ.copy()
@@ -33,6 +33,7 @@ def compile():
 
     print " - building resource files..."
     run('pyrcc4', '-o', 'resources_rc.py', 'resources.qrc')
+    run('pyrcc4', '-o', 'syncing/resources_rc.py', 'syncing/resources.qrc')
     
     print " - building sync app..."
     run('MSBuild','/property:Configuration=Release', '/verbosity:m', \

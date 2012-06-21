@@ -32,7 +32,7 @@
       <string/>
      </property>
      <property name="pixmap">
-      <pixmap>sync.png</pixmap>
+      <pixmap resource="resources.qrc">:/syncing/sync</pixmap>
      </property>
      <property name="scaledContents">
       <bool>true</bool>
@@ -82,7 +82,9 @@ Please wait</string>
    </item>
   </layout>
  </widget>
- <resources/>
+ <resources>
+  <include location="resources.qrc"/>
+ </resources>
  <connections>
   <connection>
    <sender>buttonBox</sender>

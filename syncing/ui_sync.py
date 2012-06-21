@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'syncing/ui_sync.ui'
 #
-# Created: Tue Jun 19 09:07:20 2012
+# Created: Thu Jun 21 13:17:15 2012
 #      by: PyQt4 UI code generator 4.8.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -28,7 +28,7 @@ class Ui_syncForm(object):
         self.label = QtGui.QLabel(syncForm)
         self.label.setMaximumSize(QtCore.QSize(200, 200))
         self.label.setText(_fromUtf8(""))
-        self.label.setPixmap(QtGui.QPixmap(_fromUtf8("sync.png")))
+        self.label.setPixmap(QtGui.QPixmap(_fromUtf8(":/syncing/sync")))
         self.label.setScaledContents(True)
         self.label.setObjectName(_fromUtf8("label"))
         self.gridLayout.addWidget(self.label, 0, 0, 2, 1)
@@ -63,3 +63,4 @@ class Ui_syncForm(object):
         self.statusLabel.setText(QtGui.QApplication.translate("syncForm", "Syncing with server\n"
 "Please wait", None, QtGui.QApplication.UnicodeUTF8))
 
+import resources_rc
