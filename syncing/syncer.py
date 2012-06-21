@@ -13,7 +13,8 @@ sys.path.append(pardir)
 from utils import log
 
 class Syncer(QObject):
-    statusUpdate = pyqtSignal(bool, str)
+    statusPass = pyqtSignal(str)
+    syncFailed = pyqtSignal(str)
     done = pyqtSignal()
     
     def doSync(self):
@@ -23,10 +24,10 @@ class Syncer(QObject):
         stdout, stderr = p.communicate()
         if not stdout == "":
             log(stdout)
-            self.statusUpdate.emit(True, stdout)
+            self.statusPass.emit(stdout)
         else:
             log(stderr)
-            self.statusUpdate.emit(False, stderr)
+            self.syncFailed.emit(stderr)
 
 class SyncDialog(QDialog):
     def __init__(self):
@@ -39,15 +40,24 @@ class SyncDialog(QDialog):
         scr = QApplication.desktop().screenGeometry(0)
         self.move( scr.center() - self.rect().center() )
 
-    def updateStatus(self, state, text):
-        if not state:
-            self.ui.statusLabel.setStyleSheet("color: rgba(222, 13, 6);")
+    def updateStatus(self, text):
         self.ui.statusLabel.setText(text)
+        self.ui.buttonBox.show()
+
+    def updateFailedStatus(self, text):
+        self.ui.statusLabel.setStyleSheet("color: rgba(222, 13, 6);")
+        self.ui.statusLabel.setText("Something went wrong. \n You might not "
+                                    "have a internet connection \n\n We have logged it "
+                                    "so we can take a look.")
+                                    
+        self.ui.label.setPixmap(QPixmap(":/syncing/sad"))
+        log("SYNC ERROR:" + text)
         self.ui.buttonBox.show()
 
     def runSync(self):
         self.syncer = Syncer()
-        self.syncer.statusUpdate.connect(self.updateStatus)
+        self.syncer.statusPass.connect(self.updateStatus)
+        self.syncer.syncFailed.connect(self.updateFailedStatus)
         self.syncer.doSync()
 
 if __name__ == "__main__":

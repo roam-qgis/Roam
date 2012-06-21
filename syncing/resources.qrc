@@ -1,5 +1,6 @@
 <RCC>
   <qresource prefix="syncing">
     <file alias="sync">sync.png</file>
+    <file alias="sad">sad.png</file>
   </qresource>
 </RCC>

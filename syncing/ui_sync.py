@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'syncing/ui_sync.ui'
 #
-# Created: Thu Jun 21 13:17:15 2012
+# Created: Thu Jun 21 13:44:17 2012
 #      by: PyQt4 UI code generator 4.8.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -44,6 +44,11 @@ class Ui_syncForm(object):
         self.statusLabel.setObjectName(_fromUtf8("statusLabel"))
         self.gridLayout.addWidget(self.statusLabel, 0, 1, 1, 1)
         self.buttonBox = QtGui.QDialogButtonBox(syncForm)
+        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Fixed)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.buttonBox.sizePolicy().hasHeightForWidth())
+        self.buttonBox.setSizePolicy(sizePolicy)
         font = QtGui.QFont()
         font.setPointSize(19)
         font.setWeight(50)
@@ -51,6 +56,7 @@ class Ui_syncForm(object):
         self.buttonBox.setFont(font)
         self.buttonBox.setOrientation(QtCore.Qt.Horizontal)
         self.buttonBox.setStandardButtons(QtGui.QDialogButtonBox.Ok)
+        self.buttonBox.setCenterButtons(True)
         self.buttonBox.setObjectName(_fromUtf8("buttonBox"))
         self.gridLayout.addWidget(self.buttonBox, 1, 1, 1, 1)
 
