@@ -92,14 +92,15 @@ def deploy():
     print "Local depoly compelete into {0}".format(buildpath)
 
 def deploy_to(client, rebuild=True):
-    print "Remote depolying to %s" % client
     if rebuild:
         deploy()
-        
-    buildpath = os.path.join(curpath, "build", "app")
-    run('xcopy',buildpath, client, '/Q', '/D', '/S', '/E', '/K', '/C', '/H', \
-                                   '/R', '/Y' )
 
+    print "Remote depolying to %s" % client
+    
+    buildpath = os.path.join(curpath, "build", "app")
+    msg = shell('xcopy',buildpath, client, '/D', '/S', '/E', '/K', '/C', '/H', \
+                                   '/R', '/Y',silent=False)
+   
     print "Remote depoly compelete"
 
 if __name__ == "__main__":

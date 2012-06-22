@@ -13,9 +13,6 @@ sys.path.append(pardir)
 from utils import log
 
 class Syncer(QObject):
-    syncPass = pyqtSignal(str)
-    syncFailed = pyqtSignal(str)
-    
     def doSync(self):
         curdir = os.path.abspath(os.path.dirname(__file__))
         cmdpath = os.path.join(curdir,'bin\SyncProofConcept.exe')
@@ -23,15 +20,12 @@ class Syncer(QObject):
         stdout, stderr = p.communicate()
         if not stdout == "":
             log(stdout)
-            self.syncPass.emit(stdout)
+            return ('Pass', stdout)
         else:
             log(stderr)
-            self.syncFailed.emit(stderr)
+            return ('Fail', stderr)
 
-class ImageSyncer(QObject):
-    syncPass = pyqtSignal(str)
-    syncFailed = pyqtSignal(str)
-    
+class ImageSyncer(QObject):    
     def doSync(self):
         images = os.path.join(pardir, "data")
         server = "\\\\SD0302\\C$\\synctest\\"
@@ -42,9 +36,9 @@ class ImageSyncer(QObject):
         p = Popen(cmd, stdout=PIPE, stderr=PIPE, stdin=PIPE, shell = True)
         stdout, stderr = p.communicate()
         if not stderr == "":
-            self.syncFailed.emit(stderr)
+            return ('Fail', stderr)
         else:
-            self.syncPass.emit(stdout)
+            return ('Pass', stdout)
 
 class SyncDialog(QDialog):
     def __init__(self):
@@ -76,23 +70,28 @@ class SyncDialog(QDialog):
     def runSync(self):
         self.ui.statusLabel.setText("Sycning with server. \n Please Wait")
         message = self.ui.statusLabel.text()
-        self.syncer = Syncer()
-        self.syncer.syncPass.connect(self.updateStatus)
-        self.syncer.syncFailed.connect(self.updateFailedStatus)
-        datamessage = message + "\n Syncing map data..."
-        self.ui.statusLabel.setText(datamessage)
-        self.syncer.doSync()
-
-        if self.failed:
-            return
+        self.ui.statusLabel.setText(message + "\n\n Syncing map data...")
+        QCoreApplication.processEvents()
         
-        self.syncer = ImageSyncer()
-        self.syncer.syncPass.connect(self.updateStatus)
-        self.syncer.syncFailed.connect(self.updateFailedStatus)
-        datamessage = message + "\n Syncing images..."
-        self.ui.statusLabel.setText(datamessage)
-        self.syncer.doSync()
+        syncer = Syncer()
+        state, sqlmsg = syncer.doSync()
 
+        if state == 'Fail':
+            self.updateFailedStatus(msg)
+            return
+
+        log(sqlmsg)
+
+        self.ui.statusLabel.setText(message + "\n\n Syncing images...")
+        QCoreApplication.processEvents()
+        syncer = ImageSyncer()    
+        state, msg = syncer.doSync()
+
+        if state == 'Fail':
+            self.updateFailedStatus(msg)
+            return
+
+        self.updateStatus("%s \n %s" % (sqlmsg, msg))
 
 if __name__ == "__main__":
     sync = ImageSyncer()
