@@ -39,7 +39,6 @@ class ImageSyncer(QObject):
             return
         
         cmd = 'xcopy "%s" "%s" /Q /D /S /E /K /C /H /R /Y' % (images, server)
-        print cmd
         p = Popen(cmd, stdout=PIPE, stderr=PIPE, stdin=PIPE, shell = True)
         stdout, stderr = p.communicate()
         if not stderr == "":

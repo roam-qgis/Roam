@@ -4,8 +4,10 @@ import os.path
 
 from fabricate import *
 import os
+import sys
 from shutil import copytree, ignore_patterns, rmtree
 import datetime
+from subprocess import Popen, PIPE
 
 ui_sources = ['ui_datatimerpicker', 'ui_listmodules',
               'syncing/ui_sync', 'ui_listfeatures']
@@ -25,6 +27,10 @@ ignore = ['*.pyc', 'build', '.git', '.deps', 'nbproject', 'obj',
 env = os.environ.copy()
 env['PATH'] += ";c:\\WINDOWS\\Microsoft.NET\Framework\\v3.5"
 
+curpath = os.path.dirname(os.path.abspath(__file__))
+buildpath = os.path.join(curpath, "build", "app", "python", "plugins", \
+                            "SDRCDataCollection" )
+                            
 def build():
     compile()
     
@@ -69,9 +75,7 @@ def deploy():
     print "Deploy started"
     print "Building..."
     compile()
-    curpath = os.path.dirname(os.path.abspath(__file__))
-    buildpath = os.path.join(curpath, "build", "app", "python", "plugins", \
-                            "SDRCDataCollection" )
+    
     if os.path.exists(buildpath):
         print "Removing old depoly directory..."
         rmtree(buildpath)
@@ -85,8 +89,19 @@ def deploy():
     run("sed", '-i','s/version=0.1/version={0}/'.format(version), \
         os.path.join(buildpath, 'metadata.txt'))
         
-    print "Deploy compelete into {0}".format(buildpath)
+    print "Local depoly compelete into {0}".format(buildpath)
+
+def deploy_to(client, rebuild=True):
+    print "Remote depolying to %s" % client
+    if rebuild:
+        deploy()
+        
+    buildpath = os.path.join(curpath, "build", "app")
+    run('xcopy',buildpath, client, '/Q', '/D', '/S', '/E', '/K', '/C', '/H', \
+                                   '/R', '/Y' )
+
+    print "Remote depoly compelete"
 
 if __name__ == "__main__":
-    deploy()
+    deploy_to("\\\\sd0469\\C$\\Users\\woodrown\\Desktop\\build\\app")
     
