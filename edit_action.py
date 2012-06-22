@@ -3,7 +3,7 @@ from PyQt4.QtGui import QAction, QIcon
 from PyQt4.QtCore import Qt
 from qgis.core import *
 from qgis.gui import *
-from forms.ListFeatureForm import ListFeaturesForm
+from listfeatureform import ListFeaturesForm
 import resources_rc
 from dialog_provider import DialogProvider
 

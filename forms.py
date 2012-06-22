@@ -3,6 +3,28 @@ from PyQt4.QtCore import QSettings,QString
 from PyQt4.QtGui import QIcon
 from PyQt4.uic import loadUi
 import os
+import imp
+
+def getForms():
+    """ Get all the custom user forms that have been created.
+    Checks for "form" at the start to detect module as custom form
+
+    @Returns A list of modules that contain user forms.
+    """
+    modules = []
+    curdir = os.path.abspath(os.path.dirname(__file__))
+    formspath = os.path.join(curdir,'entry_forms')
+    for module in os.listdir(formspath):
+        if module[:4] == 'form':
+            instance = loadFormModule(module)
+            modules.append(Form(instance))
+
+    return modules
+
+def loadFormModule(module):
+    """ Load the forms module """
+    formmodule = __import__("entry_forms.%s" % module, locals(), globals(),["*"], 1)
+    return formmodule
 
 class Form(object):
     """

@@ -8,7 +8,7 @@ from shutil import copytree, ignore_patterns, rmtree
 import datetime
 
 ui_sources = ['ui_datatimerpicker', 'ui_listmodules',
-              'syncing/ui_sync', 'forms/ui_listfeatures']
+              'syncing/ui_sync', 'ui_listfeatures']
 
 doc_sources = ['docs/README']
 
@@ -17,7 +17,9 @@ path = os.path.dirname(__file__)
 ignore = ['*.pyc', 'build', '.git', '.deps', 'nbproject', 'obj',
           'Properties', '*.csproj', '*.sln', '*.suo', 'app.config',
           '*.vshost.*', '*.cs', 'make_win.bat', 'resources', '.gitignore',
-          'rst*.py', 'builddocs.bat', '*.qrc', '*.log', '*.orig']
+          'rst*.py', 'builddocs.bat', '*.qrc', '*.log', '*.orig',
+          'ui_datatimerpicker.ui', 'ui_drawingpad.ui', 'ui_listfeatures.ui',
+          'ui_listmodules.ui']
 
 # Add the path to MSBuild to PATH so that subprocess can find it.
 env = os.environ.copy()
