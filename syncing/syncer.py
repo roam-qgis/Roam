@@ -77,7 +77,7 @@ class SyncDialog(QDialog):
         state, sqlmsg = syncer.doSync()
 
         if state == 'Fail':
-            self.updateFailedStatus(msg)
+            self.updateFailedStatus(sqlmsg)
             return
 
         log(sqlmsg)
