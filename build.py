@@ -16,19 +16,19 @@ doc_sources = ['docs/README']
 
 path = os.path.dirname(__file__)
 
-ignore = ['*.pyc', 'build', '.git', '.deps', 'nbproject', 'obj',
+ignore = ['*.pyc', 'boot', '.git', '.deps', 'nbproject', 'obj',
           'Properties', '*.csproj', '*.sln', '*.suo', 'app.config',
           '*.vshost.*', '*.cs', 'make_win.bat', 'resources', '.gitignore',
           'rst*.py', 'builddocs.bat', '*.qrc', '*.log', '*.orig',
           'ui_datatimerpicker.ui', 'ui_drawingpad.ui', 'ui_listfeatures.ui',
-          'ui_listmodules.ui']
+          'ui_listmodules.ui', 'SDRCDataCollection']
 
 # Add the path to MSBuild to PATH so that subprocess can find it.
 env = os.environ.copy()
 env['PATH'] += ";c:\\WINDOWS\\Microsoft.NET\Framework\\v3.5"
 
 curpath = os.path.dirname(os.path.abspath(__file__))
-buildpath = os.path.join(curpath, "build", "app", "python", "plugins", \
+buildpath = os.path.join(curpath, "SDRCDataCollection", "app", "python", "plugins", \
                             "SDRCDataCollection" )
                             
 def build():
@@ -82,7 +82,13 @@ def deploy():
     
     # Copy all the files to the ouput directory
     print "Copying new files..."
+    print buildpath
+    print curpath
     copytree(curpath, buildpath, ignore=ignore_patterns(*ignore))
+    deploypath = os.path.join(curpath, "SDRCDataCollection")
+    bootpath = os.path.join(curpath, "boot")
+    msg = shell('xcopy',bootpath, deploypath, '/D', '/S', '/E', '/K', '/C', '/H', \
+                                   '/R', '/Y',silent=False)
 
     # Replace version numbers
     version = getVersion()
@@ -97,12 +103,12 @@ def deploy_to(client, rebuild=True):
 
     print "Remote depolying to %s" % client
     
-    buildpath = os.path.join(curpath, "build", "app")
-    msg = shell('xcopy',buildpath, client, '/D', '/S', '/E', '/K', '/C', '/H', \
+    deploypath = os.path.join(curpath, "SDRCDataCollection")
+    msg = shell('xcopy',deploypath, client, '/D', '/S', '/E', '/K', '/C', '/H', \
                                    '/R', '/Y',silent=False)
    
     print "Remote depoly compelete"
 
 if __name__ == "__main__":
-    deploy_to("\\\\sd0469\\C$\\Users\\woodrown\\Desktop\\build\\app")
+    deploy_to("\\\\sd0469\\C$\\Users\\woodrown\\Desktop\\SDRCDataCollection\\")
     
