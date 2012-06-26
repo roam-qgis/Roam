@@ -110,5 +110,6 @@ def deploy_to(client, rebuild=True):
     print "Remote depoly compelete"
 
 if __name__ == "__main__":
-    deploy_to("\\\\sd0469\\C$\\Users\\woodrown\\Desktop\\SDRCDataCollection\\")
+    deploy()
+    #deploy_to("\\\\sd0469\\C$\\Users\\woodrown\\Desktop\\SDRCDataCollection\\")
     

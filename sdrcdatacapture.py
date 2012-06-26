@@ -19,7 +19,6 @@
  ***************************************************************************/
 """
 import os
-
 from add_action import AddAction
 from edit_action import EditAction
 from gps_action import GPSAction
@@ -28,10 +27,18 @@ from PyQt4.QtGui import *
 import forms
 from listmodulesdialog import ListProjectsDialog
 from qgis.core import *
+from qgis.gui import QgsMapToolZoom, QgsMapTool
 import resources_rc
 from syncing.syncer import Syncer, SyncDialog
 from utils import log
+import functools
 
+# TODO Needs QGIS patch
+class ZoomTool(QgsMapToolZoom):
+    def __init__(self, canvas, zoomOout):
+        QgsMapToolZoom.__init__(self, canvas, zoomOout)
+        self.mRubberBand.setColor(Qt.blue)
+        
 class SDRCDataCapture():
     def __init__(self, iface):
         self.iface = iface
@@ -42,16 +49,36 @@ class SDRCDataCapture():
         self.iface.projectRead.connect(self.projectOpened)
         self.iface.initializationCompleted.connect(self.setupUI)
         self.settings = QSettings( "settings.ini", QSettings.IniFormat )
-        self.actionGroup = QActionGroup(self.iface.mainWindow())
+        self.iface.mapCanvas().grabGesture(Qt.PinchGesture)
+        self.iface.mapCanvas().viewport().setAttribute(Qt.WA_AcceptTouchEvents)
+        # TODO Needs QGIS patch
+#        self.zoomin = ZoomTool(self.iface.mapCanvas(), False)
+#        self.zoomout = ZoomTool(self.iface.mapCanvas(), True)
 
     def setupUI(self):
+        """
+        Set up the main QGIS interface items.  Called after QGIS has loaded
+        the plugin.
+        """
         self.iface.mainWindow().showFullScreen()
         self.navtoolbar.setMovable(False)
         self.navtoolbar.setAllowedAreas(Qt.TopToolBarArea)
         self.mainwindow.insertToolBar(self.toolbar, self.navtoolbar)
-        self.openProject()
+        self.showOpenProjectDialog()
+
+    def setMapTool(self, tool):
+        """
+        Set the current map canvsa tool
+
+        tool -- The QgsMapTool to set
+        """
+        self.iface.mapCanvas().setMapTool(tool)
         
     def initGui(self):
+        """
+        Create all the icons and setup the tool bars.  Called by QGIS when
+        loading. This is called before setupUI.
+        """
         self.toolbar = QToolBar("SDRC Data Capture", self.mainwindow)
         self.mainwindow.addToolBar(Qt.TopToolBarArea, self.toolbar)
         self.toolbar.setMovable(False)
@@ -72,11 +99,18 @@ class SDRCDataCapture():
         self.syncAction = QAction(QIcon(":/syncing/sync"), "Sync", self.mainwindow)
         self.editAction.setCheckable(True)
 
+        # TODO Needs QGIS sip patch for zoom tool
+#        self.iface.actionZoomIn().triggered.disconnect()
+#        self.iface.actionZoomOut().triggered.disconnect()
+#
+#        self.iface.actionZoomIn().triggered.connect(functools.partial(self.setMapTool, self.zoomin))
+#        self.iface.actionZoomOut().triggered.connect(functools.partial(self.setMapTool, self.zoomout))
+
         self.actionGroup.addAction(self.editAction)
 
-        self.homeAction.triggered.connect(self.zoomToHomeView)
+        self.homeAction.triggered.connect(self.zoomToDefaultView)
         self.syncAction.triggered.connect(self.sync)
-        self.openProjectAction.triggered.connect(self.openProject)
+        self.openProjectAction.triggered.connect(self.showOpenProjectDialog)
         self.toggleRasterAction.triggered.connect(self.toggleRasterLayers)
 
         self.navtoolbar.insertAction(self.iface.actionPan(), self.homeAction )
@@ -94,11 +128,18 @@ class SDRCDataCapture():
 
         self.setupIcons()
 
-    def zoomToHomeView(self):
-        self.iface.mapCanvas().setExtent(self.homeextent)
+    def zoomToDefaultView(self):
+        """
+        Zoom the map canvas to the extents the project was opened at i.e. the
+        default extent.
+        """
+        self.iface.mapCanvas().setExtent(self.defaultextent)
         self.iface.mapCanvas().refresh()
 
     def toggleRasterLayers(self):
+        """
+        Toggle all raster layers on or off.
+        """
         legend = self.iface.legendInterface()
         #Freeze the canvas to save on UI refresh
         self.iface.mapCanvas().freeze()
@@ -110,6 +151,11 @@ class SDRCDataCapture():
         self.iface.mapCanvas().refresh()
 
     def hasRasterLayers(self):
+        """
+        Check if the project has any raster layers.
+
+        Returns: True if there is a raster layer, else False.
+        """
         for layer in QgsMapLayerRegistry.instance().mapLayers().values():
             if layer.type() == QgsMapLayer.RasterLayer:
                 return True
@@ -117,7 +163,8 @@ class SDRCDataCapture():
     
     def setupIcons(self):
         """
-            Update toolbars to have text and icons, change icons to new style
+        Update toolbars to have text and icons, change normal QGIS
+        icons to new style
         """
         toolbars = self.iface.mainWindow().findChildren(QToolBar)
         for toolbar in toolbars:
@@ -140,7 +187,7 @@ class SDRCDataCapture():
         """
         layers = dict((str(x.name()), x) for x in QgsMapLayerRegistry.instance().mapLayers().values())
         self.createFormButtons(layers)
-        self.homeextent = self.iface.mapCanvas().extent()
+        self.defaultextent = self.iface.mapCanvas().extent()
         # Enable the raster layers button only if the project contains a raster layer.
         self.toggleRasterAction.setEnabled( self.hasRasterLayers() )
         
@@ -173,6 +220,9 @@ class SDRCDataCapture():
         self.editAction.setLayersForms(layerstoForms)
 
     def rejectProjectDialog(self):
+        """
+        Handler for rejected open project dialog.
+        """
         if QgsProject.instance().fileName() is None:
             self.setUIState(False)
             self.openProjectAction.setEnabled(True)
@@ -180,14 +230,23 @@ class SDRCDataCapture():
             self.setUIState(True)
 
     def setUIState(self, enabled):
+        """
+        Enable or disable the toolbar.
+
+        enabled -- True to enable all the toolbar icons.
+        """
         toolbars = self.iface.mainWindow().findChildren(QToolBar)
         for toolbar in toolbars:
             toolbar.setEnabled(enabled)
             
-    def openProject(self):
+    def showOpenProjectDialog(self):
+        """
+        Show the project selection dialog.
+        """
         self.setUIState(False)
         self.dialog = ListProjectsDialog()
         self.dialog.requestOpenProject.connect(self.loadProject)
+        self.dialog.requestOpenProject.connect(self.dialog.close)
         self.dialog.rejected.connect(self.rejectProjectDialog)
         self.dialog.setModal(True)
         self.dialog.show()
@@ -197,7 +256,11 @@ class SDRCDataCapture():
         self.dialog.loadProjectList([path])
 
     def loadProject(self, path):
-        self.dialog.close()
+        """
+        Load a project into QGIS.
+
+        path -- The path to the .qgs project file.
+        """
         self.iface.addProject(path)
         self.setUIState(True)
     
@@ -205,6 +268,9 @@ class SDRCDataCapture():
         del self.toolbar
 
     def sync(self):
+        """
+        Open and run the sync.  Shows the sync dialog.
+        """
         self.syndlg = SyncDialog()
         self.syndlg.setModal(True)
         self.syndlg.show()
