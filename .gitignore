@@ -1,8 +1,9 @@
 *.pyc
 nbproject/private/private.xml
-syncing/*.suo
-syncing/bin/*
-syncing/obj/*
+/*.suo
+bin/
+obj/
+/*.user
 docs/*.html
 resources_rc.py
 syncing/SqlSyncProvisioner/_ReSharper.SqlSyncProvisioner/*
