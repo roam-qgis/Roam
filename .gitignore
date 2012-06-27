@@ -12,3 +12,6 @@ syncing/SqlSyncProvisioner/SqlSyncProvisioner/bin/*
 syncing/SqlSyncProvisioner/SqlSyncProvisioner/obj/*
 syncing/SqlSyncProvisioner/*.suo
 
+# This is the plugin build folder. We don't ever need to version this.
+SDRCDataCollection/
+
