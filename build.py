@@ -43,9 +43,14 @@ def compile():
     run('pyrcc4', '-o', 'resources_rc.py', 'resources.qrc')
     run('pyrcc4', '-o', 'syncing/resources_rc.py', 'syncing/resources.qrc')
     
-    print " - building sync app..."
+    print " - building MSSQLSyncer app..."
     run('MSBuild','/property:Configuration=Release', '/verbosity:m', \
         'syncing/MSSQLSyncer/MSSQLSyncer.csproj', shell=True, env=env)
+
+    print " - building Provisioning app..."
+    run('MSBuild','/property:Configuration=Release', '/verbosity:m', \
+        'syncing/SqlSyncProvisioner/SqlSyncProvisioner/SqlSyncProvisioner.csproj', \
+        shell=True, env=env)
 
     print " - building docs..."
     docs()
