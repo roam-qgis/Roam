@@ -49,8 +49,9 @@ class SDRCDataCapture():
         self.iface.projectRead.connect(self.projectOpened)
         self.iface.initializationCompleted.connect(self.setupUI)
         self.settings = QSettings( "settings.ini", QSettings.IniFormat )
+        self.actionGroup = QActionGroup(self.iface.mainWindow())
         self.iface.mapCanvas().grabGesture(Qt.PinchGesture)
-        self.iface.mapCanvas().viewport().setAttribute(Qt.WA_AcceptTouchEvents)
+        self.iface.mapCanvas().viewport().setAttribute(Qt.WA_AcceptTouchEvents) 
         # TODO Needs QGIS patch
 #        self.zoomin = ZoomTool(self.iface.mapCanvas(), False)
 #        self.zoomout = ZoomTool(self.iface.mapCanvas(), True)
@@ -270,6 +271,10 @@ class SDRCDataCapture():
     def sync(self):
         """
         Open and run the sync.  Shows the sync dialog.
+
+        notes: Blocking the user while we wait for syncing is not very nice.
+               Maybe we can do it in the background and show the dialog as non
+               model and report pass/fail.
         """
         self.syndlg = SyncDialog()
         self.syndlg.setModal(True)

@@ -1,0 +1,1756 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>WaterForm</class>
+ <widget class="QDialog" name="WaterForm">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>1023</width>
+    <height>768</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Dialog</string>
+  </property>
+  <property name="styleSheet">
+   <string notr="true">QGroupBox
+{
+    font-weight: bold;
+}</string>
+  </property>
+  <widget class="QDialogButtonBox" name="buttonBox">
+   <property name="geometry">
+    <rect>
+     <x>500</x>
+     <y>730</y>
+     <width>511</width>
+     <height>32</height>
+    </rect>
+   </property>
+   <property name="orientation">
+    <enum>Qt::Horizontal</enum>
+   </property>
+   <property name="standardButtons">
+    <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label_3">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>0</y>
+     <width>251</width>
+     <height>20</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>4</pointsize>
+    </font>
+   </property>
+   <property name="text">
+    <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:14pt; font-weight:600;&quot;&gt;WATER DAILY JOB SHEET&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+   </property>
+  </widget>
+  <widget class="QGroupBox" name="InstallationsAndMeterReadsGroup">
+   <property name="geometry">
+    <rect>
+     <x>500</x>
+     <y>230</y>
+     <width>261</width>
+     <height>271</height>
+    </rect>
+   </property>
+   <property name="styleSheet">
+    <string notr="true"/>
+   </property>
+   <property name="title">
+    <string>Service Installations and Meter Reads</string>
+   </property>
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>false</bool>
+   </property>
+   <layout class="QGridLayout" name="gridLayout_5">
+    <item row="0" column="0" colspan="2">
+     <widget class="QLabel" name="label_9">
+      <property name="text">
+       <string>Installation Sheet No:</string>
+      </property>
+     </widget>
+    </item>
+    <item row="1" column="0" colspan="2">
+     <widget class="QCheckBox" name="NewService">
+      <property name="text">
+       <string>New Service</string>
+      </property>
+     </widget>
+    </item>
+    <item row="4" column="0" colspan="2">
+     <widget class="QCheckBox" name="MeterReplaced">
+      <property name="text">
+       <string>Meter Replaced</string>
+      </property>
+     </widget>
+    </item>
+    <item row="8" column="0">
+     <widget class="QLabel" name="label_5">
+      <property name="text">
+       <string>Existing Meter No:</string>
+      </property>
+     </widget>
+    </item>
+    <item row="8" column="1" colspan="2">
+     <widget class="QLineEdit" name="ExistingMeterNumber"/>
+    </item>
+    <item row="9" column="0">
+     <widget class="QLabel" name="label_6">
+      <property name="text">
+       <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;Existing Meter&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;Reading (KL):&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+      </property>
+     </widget>
+    </item>
+    <item row="9" column="1" colspan="2">
+     <widget class="QLineEdit" name="ExistingMeterReadingKL"/>
+    </item>
+    <item row="10" column="0">
+     <widget class="QLabel" name="label_7">
+      <property name="text">
+       <string>New Meter No:</string>
+      </property>
+     </widget>
+    </item>
+    <item row="10" column="1" colspan="2">
+     <widget class="QLineEdit" name="NewMeterNumber"/>
+    </item>
+    <item row="11" column="0">
+     <widget class="QLabel" name="label_8">
+      <property name="text">
+       <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;New Meter&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;Reading (KL):&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+      </property>
+     </widget>
+    </item>
+    <item row="11" column="1" colspan="2">
+     <widget class="QLineEdit" name="NewMeterReadingKL"/>
+    </item>
+    <item row="0" column="2">
+     <widget class="QLineEdit" name="InstallationSheetNumber"/>
+    </item>
+    <item row="1" column="2">
+     <widget class="QCheckBox" name="FireService">
+      <property name="text">
+       <string>New Fire Service</string>
+      </property>
+     </widget>
+    </item>
+    <item row="4" column="2">
+     <widget class="QCheckBox" name="RelayedService">
+      <property name="text">
+       <string>Relayed Service</string>
+      </property>
+     </widget>
+    </item>
+    <item row="5" column="2">
+     <widget class="QCheckBox" name="MeterRemoved">
+      <property name="text">
+       <string>Meter Removed</string>
+      </property>
+     </widget>
+    </item>
+    <item row="5" column="0">
+     <widget class="QCheckBox" name="DisconnectService">
+      <property name="text">
+       <string>Disconnect Service</string>
+      </property>
+     </widget>
+    </item>
+    <item row="6" column="0">
+     <widget class="QCheckBox" name="MeterRead">
+      <property name="text">
+       <string>Meter Read</string>
+      </property>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QGroupBox" name="groupBox_7">
+   <property name="geometry">
+    <rect>
+     <x>501</x>
+     <y>519</y>
+     <width>261</width>
+     <height>105</height>
+    </rect>
+   </property>
+   <property name="title">
+    <string>Traffic Control</string>
+   </property>
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>false</bool>
+   </property>
+   <layout class="QGridLayout" name="gridLayout_3">
+    <item row="0" column="0">
+     <widget class="QLabel" name="label_20">
+      <property name="text">
+       <string>Traffic Control Plan:</string>
+      </property>
+     </widget>
+    </item>
+    <item row="0" column="1">
+     <widget class="QComboBox" name="TrafficControlPlanUsed">
+      <item>
+       <property name="text">
+        <string/>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>Diagram 1</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>Diagram 2</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>Diagram 3</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>Diagram 4</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>Diagram 5</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>Diagram 5a</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>Diagram 6</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>Diagram 7</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>Diagram 39</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>Diagram 43</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>Other</string>
+       </property>
+      </item>
+     </widget>
+    </item>
+    <item row="1" column="0">
+     <widget class="QLabel" name="label_37">
+      <property name="text">
+       <string>Work  Duration (hrs)</string>
+      </property>
+     </widget>
+    </item>
+    <item row="1" column="1">
+     <widget class="QLineEdit" name="WorkDurationHours">
+      <property name="text">
+       <string/>
+      </property>
+     </widget>
+    </item>
+    <item row="2" column="0">
+     <widget class="QLabel" name="label_41">
+      <property name="text">
+       <string>Signage Alterations:</string>
+      </property>
+     </widget>
+    </item>
+    <item row="2" column="1">
+     <widget class="QLineEdit" name="SignageAlterations">
+      <property name="text">
+       <string/>
+      </property>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QGroupBox" name="AssetinformationGroup">
+   <property name="geometry">
+    <rect>
+     <x>779</x>
+     <y>230</y>
+     <width>231</width>
+     <height>391</height>
+    </rect>
+   </property>
+   <property name="title">
+    <string>Asset Information</string>
+   </property>
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>false</bool>
+   </property>
+   <layout class="QFormLayout" name="formLayout">
+    <item row="1" column="1">
+     <widget class="QComboBox" name="PipeMaterial">
+      <item>
+       <property name="text">
+        <string/>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>PVC</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>AC</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>CI</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>CICL</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>DICL</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>Steel</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>GI</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>PE</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>Unknown</string>
+       </property>
+      </item>
+     </widget>
+    </item>
+    <item row="3" column="1">
+     <widget class="QComboBox" name="PipeDiameter">
+      <item>
+       <property name="text">
+        <string/>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>20</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>25</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>32</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>40</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>50</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>63</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>75</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>80</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>100</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>110</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>150</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>200</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>225</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>250</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>300</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>375</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>450</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>525</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>600</string>
+       </property>
+      </item>
+     </widget>
+    </item>
+    <item row="5" column="1">
+     <widget class="QLineEdit" name="PipeDepth"/>
+    </item>
+    <item row="7" column="1">
+     <widget class="QComboBox" name="JointType">
+      <item>
+       <property name="text">
+        <string/>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>Rubber Ring</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>Flanged</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>Gibault</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>Welded</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>Solvent Welded</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>Flanged</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>Lead</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>Not Seen</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>Other </string>
+       </property>
+      </item>
+     </widget>
+    </item>
+    <item row="9" column="1">
+     <widget class="QComboBox" name="GroundConditions">
+      <item>
+       <property name="text">
+        <string/>
+       </property>
+      </item>
+     </widget>
+    </item>
+    <item row="11" column="1">
+     <widget class="QComboBox" name="ValveType">
+      <item>
+       <property name="text">
+        <string/>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>Sluice</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>Butterfly</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>Scour</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>PRV</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>Reflux</string>
+       </property>
+      </item>
+     </widget>
+    </item>
+    <item row="13" column="1">
+     <widget class="QComboBox" name="ValveStatus">
+      <item>
+       <property name="text">
+        <string/>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>Open</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>Closed</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>Zone</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>Failed-Open</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>Failed_Closed</string>
+       </property>
+      </item>
+     </widget>
+    </item>
+    <item row="15" column="1">
+     <widget class="QComboBox" name="ValveClosingDirection">
+      <item>
+       <property name="text">
+        <string/>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>Clockwise</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>Anti-clockwise</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>Unknown</string>
+       </property>
+      </item>
+     </widget>
+    </item>
+    <item row="17" column="1">
+     <widget class="QComboBox" name="Designation">
+      <item>
+       <property name="text">
+        <string/>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>Raw Water</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>Distribution</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>Reticulation</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>Constant Pressure</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>Pressure System</string>
+       </property>
+      </item>
+     </widget>
+    </item>
+    <item row="18" column="0">
+     <widget class="QLabel" name="label_28">
+      <property name="text">
+       <string>Scheme:</string>
+      </property>
+     </widget>
+    </item>
+    <item row="18" column="1">
+     <widget class="QComboBox" name="Scheme">
+      <item>
+       <property name="text">
+        <string/>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>Warwick</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>Yangan</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>Stanthorpe</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>Killarney</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>Wallangarra</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>Allora</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>Dalveen</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>Pratten</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>Leyburn</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>Karara</string>
+       </property>
+      </item>
+     </widget>
+    </item>
+    <item row="1" column="0">
+     <widget class="QLabel" name="label_14">
+      <property name="text">
+       <string>Pipe Material</string>
+      </property>
+     </widget>
+    </item>
+    <item row="3" column="0">
+     <widget class="QLabel" name="label_15">
+      <property name="text">
+       <string>Pipe Diameter (mm)</string>
+      </property>
+     </widget>
+    </item>
+    <item row="5" column="0">
+     <widget class="QLabel" name="label_36">
+      <property name="text">
+       <string>Pipe depth (mm)</string>
+      </property>
+     </widget>
+    </item>
+    <item row="7" column="0">
+     <widget class="QLabel" name="label_34">
+      <property name="text">
+       <string>Joint Type</string>
+      </property>
+     </widget>
+    </item>
+    <item row="9" column="0">
+     <widget class="QLabel" name="label_39">
+      <property name="text">
+       <string>Ground Conditions:</string>
+      </property>
+     </widget>
+    </item>
+    <item row="11" column="0">
+     <widget class="QLabel" name="label_10">
+      <property name="text">
+       <string>Valve Type</string>
+      </property>
+     </widget>
+    </item>
+    <item row="13" column="0">
+     <widget class="QLabel" name="label_11">
+      <property name="text">
+       <string>Valve Status</string>
+      </property>
+     </widget>
+    </item>
+    <item row="15" column="0">
+     <widget class="QLabel" name="label_12">
+      <property name="text">
+       <string>Valve closing direction</string>
+      </property>
+     </widget>
+    </item>
+    <item row="17" column="0">
+     <widget class="QLabel" name="label_40">
+      <property name="text">
+       <string>Designation:</string>
+      </property>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QGroupBox" name="groupBox_6">
+   <property name="geometry">
+    <rect>
+     <x>440</x>
+     <y>30</y>
+     <width>571</width>
+     <height>171</height>
+    </rect>
+   </property>
+   <property name="title">
+    <string>Response</string>
+   </property>
+   <property name="checkable">
+    <bool>false</bool>
+   </property>
+   <layout class="QGridLayout" name="gridLayout_2">
+    <item row="0" column="0">
+     <widget class="QLabel" name="label_4">
+      <property name="text">
+       <string>Name:</string>
+      </property>
+     </widget>
+    </item>
+    <item row="0" column="1">
+     <widget class="QComboBox" name="Operators">
+      <property name="editable">
+       <bool>true</bool>
+      </property>
+      <item>
+       <property name="text">
+        <string/>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string/>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>Kim</string>
+       </property>
+      </item>
+     </widget>
+    </item>
+    <item row="0" column="2" rowspan="5">
+     <layout class="QVBoxLayout" name="verticalLayout">
+      <property name="leftMargin">
+       <number>10</number>
+      </property>
+      <item>
+       <widget class="QCheckBox" name="FollowUpWorkRequired">
+        <property name="text">
+         <string>Follow up Work Required</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QCheckBox" name="ConsumerContacted">
+        <property name="text">
+         <string>Contacted Consumer</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QCheckBox" name="ShutdownDoorknock">
+        <property name="text">
+         <string>Shutdown Notification - door knock</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QCheckBox" name="ShutdownLetter">
+        <property name="text">
+         <string>Shutdown Notification - letter</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </item>
+    <item row="1" column="0" colspan="2">
+     <layout class="QHBoxLayout" name="horizontalLayout_2">
+      <item>
+       <widget class="QLabel" name="label_29">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="text">
+         <string>Respond Time:</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QDateTimeEdit" name="RespondTime">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="RespondTime_pick">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="text">
+         <string>...</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </item>
+    <item row="2" column="0" colspan="2">
+     <layout class="QHBoxLayout" name="horizontalLayout_3">
+      <item>
+       <widget class="QLabel" name="label_30">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="text">
+         <string>Completion Time:</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QDateTimeEdit" name="CompletionTime">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="CompletionTime_pick">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="text">
+         <string>...</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </item>
+    <item row="3" column="0">
+     <widget class="QLabel" name="label_31">
+      <property name="text">
+       <string>Conections Interupted</string>
+      </property>
+     </widget>
+    </item>
+    <item row="3" column="1">
+     <widget class="QLineEdit" name="ConnectionsInterrupted">
+      <property name="text">
+       <string/>
+      </property>
+     </widget>
+    </item>
+    <item row="4" column="0">
+     <widget class="QLabel" name="label_32">
+      <property name="text">
+       <string>Interuption Duration (hrs)</string>
+      </property>
+     </widget>
+    </item>
+    <item row="4" column="1">
+     <widget class="QLineEdit" name="InterruptionDurationHours">
+      <property name="text">
+       <string/>
+      </property>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QGroupBox" name="groupBox_10">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>30</y>
+     <width>421</width>
+     <height>171</height>
+    </rect>
+   </property>
+   <property name="title">
+    <string>Request Details</string>
+   </property>
+   <property name="checkable">
+    <bool>false</bool>
+   </property>
+   <layout class="QGridLayout" name="gridLayout">
+    <item row="0" column="0" colspan="4">
+     <layout class="QHBoxLayout" name="horizontalLayout">
+      <item>
+       <widget class="QLabel" name="label_21">
+        <property name="text">
+         <string>Received:</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QDateTimeEdit" name="DateTimeReceived">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="DateTimeReceived_pick">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Minimum" vsizetype="Expanding">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="text">
+         <string>...</string>
+        </property>
+        <property name="iconSize">
+         <size>
+          <width>16</width>
+          <height>16</height>
+         </size>
+        </property>
+        <property name="flat">
+         <bool>false</bool>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </item>
+    <item row="1" column="0">
+     <widget class="QLabel" name="label_27">
+      <property name="text">
+       <string>Request Type:</string>
+      </property>
+     </widget>
+    </item>
+    <item row="1" column="1">
+     <widget class="QComboBox" name="RequestType">
+      <item>
+       <property name="text">
+        <string/>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>Water leak</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>Leaking service</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>Leaking meter</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>Meter Won't turn off</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>Valve</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>Hydrant</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>Water Quality</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>Low Water Pressure</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>High Water Pressure</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>Installation</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>Programmed Maintenance</string>
+       </property>
+      </item>
+     </widget>
+    </item>
+    <item row="1" column="2">
+     <widget class="QLabel" name="label_22">
+      <property name="text">
+       <string>Requested By:</string>
+      </property>
+     </widget>
+    </item>
+    <item row="1" column="3">
+     <widget class="QComboBox" name="RequestedBy">
+      <property name="editable">
+       <bool>true</bool>
+      </property>
+      <item>
+       <property name="text">
+        <string/>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>Louis Van Slobbe</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>Les Palmer</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>Office</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>Call Centre</string>
+       </property>
+      </item>
+     </widget>
+    </item>
+    <item row="2" column="0">
+     <widget class="QLabel" name="label_2">
+      <property name="text">
+       <string>CR Number:</string>
+      </property>
+     </widget>
+    </item>
+    <item row="2" column="1">
+     <widget class="QLineEdit" name="CustomerRequestNumber"/>
+    </item>
+    <item row="3" column="0">
+     <widget class="QLabel" name="label">
+      <property name="text">
+       <string>Lot and Plan</string>
+      </property>
+     </widget>
+    </item>
+    <item row="3" column="1" colspan="2">
+     <widget class="QLineEdit" name="LotPlan"/>
+    </item>
+    <item row="4" column="0">
+     <widget class="QLabel" name="label_25">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+      <property name="text">
+       <string> Location Details:</string>
+      </property>
+     </widget>
+    </item>
+    <item row="4" column="1" colspan="3">
+     <widget class="QTextEdit" name="AdditionalLocationDetails">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+      <property name="maximumSize">
+       <size>
+        <width>16777215</width>
+        <height>16777215</height>
+       </size>
+      </property>
+     </widget>
+    </item>
+    <item row="3" column="3">
+     <widget class="QToolButton" name="selectLotPlan">
+      <property name="text">
+       <string>...</string>
+      </property>
+      <property name="iconSize">
+       <size>
+        <width>24</width>
+        <height>24</height>
+       </size>
+      </property>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QGroupBox" name="ServiceRepairsGroup">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>530</y>
+     <width>221</width>
+     <height>211</height>
+    </rect>
+   </property>
+   <property name="title">
+    <string>Service Repairs</string>
+   </property>
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>false</bool>
+   </property>
+   <layout class="QGridLayout" name="gridLayout_9">
+    <item row="0" column="0">
+     <widget class="QCheckBox" name="RepairedServiceClamp">
+      <property name="text">
+       <string>Repaired Service - clamp</string>
+      </property>
+     </widget>
+    </item>
+    <item row="1" column="0">
+     <widget class="QCheckBox" name="RepairedServiceReplaceSection">
+      <property name="text">
+       <string>Repaired Service - replace section</string>
+      </property>
+     </widget>
+    </item>
+    <item row="2" column="0">
+     <widget class="QCheckBox" name="ReplacedStopCock">
+      <property name="text">
+       <string>Replaced Stop cock</string>
+      </property>
+     </widget>
+    </item>
+    <item row="3" column="0">
+     <widget class="QCheckBox" name="RepairedStopCock">
+      <property name="text">
+       <string>Repaired Stop cock</string>
+      </property>
+     </widget>
+    </item>
+    <item row="4" column="0">
+     <widget class="QCheckBox" name="TpfnrRepaired">
+      <property name="text">
+       <string>TPFNR Repaired</string>
+      </property>
+     </widget>
+    </item>
+    <item row="5" column="0">
+     <widget class="QCheckBox" name="TpfnrReplaced">
+      <property name="text">
+       <string>TPFNR Replaced</string>
+      </property>
+     </widget>
+    </item>
+    <item row="6" column="0">
+     <widget class="QCheckBox" name="TpfnrCapped">
+      <property name="text">
+       <string>TPFNR Capped</string>
+      </property>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QGroupBox" name="MainsAndFittingsGroup">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>230</y>
+     <width>221</width>
+     <height>281</height>
+    </rect>
+   </property>
+   <property name="title">
+    <string>Mains and Fittings</string>
+   </property>
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>false</bool>
+   </property>
+   <layout class="QGridLayout" name="gridLayout_8">
+    <item row="0" column="0" colspan="2">
+     <widget class="QCheckBox" name="MainRepairedClamp">
+      <property name="text">
+       <string>Main Repaired - clamp</string>
+      </property>
+     </widget>
+    </item>
+    <item row="1" column="0" colspan="2">
+     <widget class="QCheckBox" name="MainRepairedReplacedSection">
+      <property name="text">
+       <string>Main Repaired - replace section</string>
+      </property>
+     </widget>
+    </item>
+    <item row="2" column="0">
+     <widget class="QLabel" name="label_38">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+      <property name="text">
+       <string>Failure Type</string>
+      </property>
+     </widget>
+    </item>
+    <item row="2" column="1">
+     <widget class="QComboBox" name="FailureType">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+      <item>
+       <property name="text">
+        <string/>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>Circular Fracture</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>Longitudinal fracture</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>Pipewall softening</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>Pin hole</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>Large Hole</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>Joint</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>Tapping</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>Other Party Damage</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>other</string>
+       </property>
+      </item>
+     </widget>
+    </item>
+    <item row="3" column="0">
+     <widget class="QCheckBox" name="HydrantRepair">
+      <property name="text">
+       <string>Hydrant Repair</string>
+      </property>
+     </widget>
+    </item>
+    <item row="4" column="0" colspan="2">
+     <widget class="QCheckBox" name="HydrantReplace">
+      <property name="text">
+       <string>Hydrant Replace</string>
+      </property>
+     </widget>
+    </item>
+    <item row="5" column="0" colspan="2">
+     <widget class="QCheckBox" name="HydrantCleanAndMark">
+      <property name="text">
+       <string>Hydrant Clean and Mark</string>
+      </property>
+     </widget>
+    </item>
+    <item row="6" column="0" colspan="2">
+     <widget class="QCheckBox" name="HydrantReplaceLid">
+      <property name="text">
+       <string>Replace Lid - Hydrant</string>
+      </property>
+     </widget>
+    </item>
+    <item row="7" column="0">
+     <widget class="QCheckBox" name="MainsValveRepair">
+      <property name="text">
+       <string>Valve Repair</string>
+      </property>
+     </widget>
+    </item>
+    <item row="8" column="0">
+     <widget class="QCheckBox" name="MainsValveReplace">
+      <property name="text">
+       <string>Valve Replace</string>
+      </property>
+     </widget>
+    </item>
+    <item row="9" column="0" colspan="2">
+     <widget class="QCheckBox" name="ReplaceLidValve">
+      <property name="text">
+       <string>Replace Lid - Valve</string>
+      </property>
+     </widget>
+    </item>
+    <item row="10" column="0" colspan="2">
+     <widget class="QCheckBox" name="ReplaceMarkers">
+      <property name="text">
+       <string>Replace Markers</string>
+      </property>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QGroupBox" name="OtherGroup">
+   <property name="geometry">
+    <rect>
+     <x>248</x>
+     <y>440</y>
+     <width>231</width>
+     <height>301</height>
+    </rect>
+   </property>
+   <property name="title">
+    <string>Other</string>
+   </property>
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>false</bool>
+   </property>
+   <layout class="QGridLayout" name="gridLayout_6">
+    <item row="0" column="0">
+     <widget class="QCheckBox" name="Investigate">
+      <property name="text">
+       <string>Investigation</string>
+      </property>
+     </widget>
+    </item>
+    <item row="1" column="0" colspan="2">
+     <widget class="QCheckBox" name="ConsumerProblem">
+      <property name="text">
+       <string>Consumer Problem</string>
+      </property>
+     </widget>
+    </item>
+    <item row="2" column="0" colspan="2">
+     <widget class="QCheckBox" name="CouncilFacility">
+      <property name="text">
+       <string>Council Facility</string>
+      </property>
+     </widget>
+    </item>
+    <item row="3" column="0">
+     <widget class="QLabel" name="lab">
+      <property name="text">
+       <string>Provide Location:</string>
+      </property>
+     </widget>
+    </item>
+    <item row="3" column="1">
+     <widget class="QComboBox" name="ProvideLocation">
+      <item>
+       <property name="text">
+        <string/>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>External Customer</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>Parks</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>Buildings</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>Other</string>
+       </property>
+      </item>
+     </widget>
+    </item>
+    <item row="4" column="0" colspan="2">
+     <widget class="QCheckBox" name="BackfillsCleanups">
+      <property name="text">
+       <string>Backfill/cleanups</string>
+      </property>
+     </widget>
+    </item>
+    <item row="5" column="0">
+     <widget class="QCheckBox" name="WaterSample">
+      <property name="text">
+       <string>Water Sample</string>
+      </property>
+     </widget>
+    </item>
+    <item row="6" column="0">
+     <widget class="QCheckBox" name="MainsFlushed">
+      <property name="text">
+       <string>Mains Flushed</string>
+      </property>
+     </widget>
+    </item>
+    <item row="7" column="0" colspan="2">
+     <widget class="QCheckBox" name="MeterCover">
+      <property name="text">
+       <string>Meter Cover Provided</string>
+      </property>
+     </widget>
+    </item>
+    <item row="8" column="0">
+     <widget class="QLabel" name="label_18">
+      <property name="text">
+       <string>Other:</string>
+      </property>
+     </widget>
+    </item>
+    <item row="9" column="0" colspan="2">
+     <widget class="QLineEdit" name="Other"/>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QGroupBox" name="PressureAndFlowGroup">
+   <property name="geometry">
+    <rect>
+     <x>248</x>
+     <y>230</y>
+     <width>231</width>
+     <height>203</height>
+    </rect>
+   </property>
+   <property name="title">
+    <string>Pressure and Flow</string>
+   </property>
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>false</bool>
+   </property>
+   <layout class="QGridLayout" name="gridLayout_4">
+    <item row="0" column="0" colspan="3">
+     <widget class="QCheckBox" name="PressureTestService">
+      <property name="text">
+       <string>Pressure Test Service</string>
+      </property>
+     </widget>
+    </item>
+    <item row="4" column="0" colspan="3">
+     <widget class="QCheckBox" name="HydrantFlowTest">
+      <property name="text">
+       <string>Hydrant Flow Test</string>
+      </property>
+     </widget>
+    </item>
+    <item row="1" column="0" colspan="3">
+     <widget class="QCheckBox" name="PressureTestHydrant">
+      <property name="text">
+       <string>Pressure Test Hydrant</string>
+      </property>
+     </widget>
+    </item>
+    <item row="5" column="0" colspan="3">
+     <widget class="QCheckBox" name="ServiceFlowTest">
+      <property name="text">
+       <string>Service Flow Test</string>
+      </property>
+     </widget>
+    </item>
+    <item row="2" column="0" colspan="2">
+     <widget class="QLabel" name="label_16">
+      <property name="text">
+       <string>Lockup (KPA):</string>
+      </property>
+     </widget>
+    </item>
+    <item row="2" column="2">
+     <widget class="QLineEdit" name="LockupKpa"/>
+    </item>
+    <item row="6" column="0">
+     <widget class="QLabel" name="label_17">
+      <property name="text">
+       <string>(L/min):</string>
+      </property>
+     </widget>
+    </item>
+    <item row="6" column="1" colspan="2">
+     <widget class="QLineEdit" name="LitresPerMinute">
+      <property name="placeholderText">
+       <string/>
+      </property>
+     </widget>
+    </item>
+    <item row="3" column="0">
+     <widget class="QCheckBox" name="TestSheetCompleted">
+      <property name="text">
+       <string>Test Sheet completed</string>
+      </property>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QWidget" name="layoutWidget">
+   <property name="geometry">
+    <rect>
+     <x>500</x>
+     <y>640</y>
+     <width>511</width>
+     <height>93</height>
+    </rect>
+   </property>
+   <layout class="QGridLayout" name="gridLayout_7">
+    <item row="0" column="0">
+     <widget class="QLabel" name="label_33">
+      <property name="text">
+       <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:10pt; font-weight:600;&quot;&gt;Notes:&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+      </property>
+     </widget>
+    </item>
+    <item row="0" column="2">
+     <widget class="QCheckBox" name="WorkMethodStatement">
+      <property name="text">
+       <string>Work Method Statement Completed</string>
+      </property>
+     </widget>
+    </item>
+    <item row="1" column="0" colspan="3">
+     <widget class="QTextEdit" name="Notes">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+      <property name="html">
+       <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;&quot;&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+      </property>
+     </widget>
+    </item>
+    <item row="0" column="1">
+     <widget class="QPushButton" name="Drawing">
+      <property name="text">
+       <string>Drawing</string>
+      </property>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+ </widget>
+ <resources/>
+ <connections>
+  <connection>
+   <sender>buttonBox</sender>
+   <signal>accepted()</signal>
+   <receiver>WaterForm</receiver>
+   <slot>accept()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>850</x>
+     <y>730</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>157</x>
+     <y>274</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>buttonBox</sender>
+   <signal>rejected()</signal>
+   <receiver>WaterForm</receiver>
+   <slot>reject()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>850</x>
+     <y>730</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>286</x>
+     <y>274</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+</ui>

@@ -10,10 +10,20 @@ from subprocess import Popen, PIPE
 pardir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
 sys.path.append(pardir)
 
-from utils import log
+from utils import log, settings
 
 class Syncer(QObject):
+    """
+    MS SQL syncer.  Calls the .NET MSSQLSyncer app to syncing
+    the two databases.
+    """
     def doSync(self):
+        """
+        Run the sync
+
+        returns -- Returns a tuple of (state, message). state can be 'Pass' or
+                   'Fail'
+        """
         curdir = os.path.abspath(os.path.dirname(__file__))
         cmdpath = os.path.join(curdir,'bin\MSSQLSyncer.exe')
         p = Popen(cmdpath, stdout=PIPE, stderr=PIPE, stdin=PIPE, shell = True)
@@ -25,11 +35,24 @@ class Syncer(QObject):
             log(stderr)
             return ('Fail', stderr)
 
-class ImageSyncer(QObject):    
+class ImageSyncer(QObject):
+    """
+    Sync logic for syncing images from the device to the server.
+    """
     def doSync(self):
+        """
+        Run the sync
+
+        returns -- Returns a tuple of (state, message). state can be 'Pass' or
+                   'Fail'
+        """
         images = os.path.join(pardir, "data")
-        server = "\\\\SD0302\\C$\\synctest\\"
+        server = settings.value("syncing/server_image_location").toString()
+        if server.isEmpty():
+            return ('Fail', "No server image location found in settings.ini")
+        
         if not os.path.exists(images):
+            # Don't return a fail if there is no data directory
             return
         
         cmd = 'xcopy "%s" "%s" /Q /D /S /E /K /C /H /R /Y' % (images, server)
@@ -68,6 +91,9 @@ class SyncDialog(QDialog):
         self.failed = True
 
     def runSync(self):
+        """
+        Shows the sync dialog and runs the sync commands.
+        """
         self.ui.statusLabel.setText("Sycning with server. \n Please Wait")
         message = self.ui.statusLabel.text()
         self.ui.statusLabel.setText(message + "\n\n Syncing map data...")
