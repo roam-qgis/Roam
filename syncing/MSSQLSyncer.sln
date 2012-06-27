@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 10.00
 # Visual Studio 2008
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SyncProofConcept", "SyncProofConcept.csproj", "{662F3DE9-9824-4C40-AF20-88EF9CC85649}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MSSQLSyncer", "MSSQLSyncer.csproj", "{662F3DE9-9824-4C40-AF20-88EF9CC85649}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

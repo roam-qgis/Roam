@@ -1,4 +1,4 @@
-﻿namespace SyncProofConcept
+namespace MSSQLSyncer
 {
     using System;
     using System.Data.SqlClient;

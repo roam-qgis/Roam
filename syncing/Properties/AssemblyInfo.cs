@@ -5,11 +5,11 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("SyncProofConcept")]
+[assembly: AssemblyTitle("MSSQLSyncer")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("SDRC")]
-[assembly: AssemblyProduct("SyncProofConcept")]
+[assembly: AssemblyProduct("MSSQLSyncer")]
 [assembly: AssemblyCopyright("Copyright © SDRC 2012")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]

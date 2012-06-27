@@ -15,7 +15,7 @@ from utils import log
 class Syncer(QObject):
     def doSync(self):
         curdir = os.path.abspath(os.path.dirname(__file__))
-        cmdpath = os.path.join(curdir,'bin\SyncProofConcept.exe')
+        cmdpath = os.path.join(curdir,'bin\MSSQLSyncer.exe')
         p = Popen(cmdpath, stdout=PIPE, stderr=PIPE, stdin=PIPE, shell = True)
         stdout, stderr = p.communicate()
         if not stdout == "":

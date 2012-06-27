@@ -45,7 +45,7 @@ def compile():
     
     print " - building sync app..."
     run('MSBuild','/property:Configuration=Release', '/verbosity:m', \
-        'syncing/SyncProofConcept.csproj', shell=True, env=env)
+        'syncing/MSSQLSyncer.csproj', shell=True, env=env)
 
     print " - building docs..."
     docs()

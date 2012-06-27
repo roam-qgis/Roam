@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace SyncProofConcept.Properties {
+namespace MSSQLSyncer.Properties {
     using System;
     
     

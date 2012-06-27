@@ -8,8 +8,8 @@
     <ProjectGuid>{662F3DE9-9824-4C40-AF20-88EF9CC85649}</ProjectGuid>
     <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>SyncProofConcept</RootNamespace>
-    <AssemblyName>SyncProofConcept</AssemblyName>
+    <RootNamespace>MSSQLSyncer</RootNamespace>
+    <AssemblyName>MSSQLSyncer</AssemblyName>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <StartupObject>
@@ -44,7 +44,7 @@
     <Reference Include="System.Windows.Forms" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Program.cs" />
+    <Compile Include="MSSQLSyncer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
