@@ -1,0 +1,12 @@
+﻿<?xml version='1.0' encoding='utf-8'?>
+<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="SqlSyncProvisioner.Properties" GeneratedClassName="Settings">
+  <Profiles />
+  <Settings>
+    <Setting Name="MasterConnectionString" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">Data Source=SD0302;Initial Catalog=ProvTest;Integrated Security=SSPI;</Value>
+    </Setting>
+    <Setting Name="SlaveConnectionString" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">Data Source=SD0302;Initial Catalog=ProvTest;Integrated Security=SSPI;</Value>
+    </Setting>
+  </Settings>
+</SettingsFile>

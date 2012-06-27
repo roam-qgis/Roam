@@ -21,7 +21,7 @@ ignore = ['*.pyc', 'boot', '.git', '.deps', 'nbproject', 'obj',
           '*.vshost.*', '*.cs', 'make_win.bat', 'resources', '.gitignore',
           'rst*.py', 'builddocs.bat', '*.qrc', '*.log', '*.orig',
           'ui_datatimerpicker.ui', 'ui_drawingpad.ui', 'ui_listfeatures.ui',
-          'ui_listmodules.ui', 'SDRCDataCollection']
+          'ui_listmodules.ui', 'SDRCDataCollection', 'SqlSyncProvisioner']
 
 # Add the path to MSBuild to PATH so that subprocess can find it.
 env = os.environ.copy()
