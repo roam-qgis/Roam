@@ -42,13 +42,7 @@ class MandatoryGroup(QObject):
             sig(widget, self.changed)
         except KeyError:
             pass
-#        if isinstance(widget, QLineEdit) or isinstance(widget, QTextEdit):
-#            widget.textChanged.connect(self.changed)
-#
-#        if isinstance(widget, QCheckBox):
-#            widget.stateChanged.connect(self.changed)
             
-
     def changed(self):
         for widget in self.widgets:
             failed = self.mapping[type(widget)](widget)

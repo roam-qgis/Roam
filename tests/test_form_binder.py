@@ -25,7 +25,7 @@ class testMandatoryGroups(TestCase):
         group.addWidget(w)
         assert w in group.widgets
 
-    def test_fail_if_lineedit_empty(self):
+    def test_pass_if_lineedit_empty(self):
         self.called = False
         def enable():
             self.called = True
@@ -38,7 +38,7 @@ class testMandatoryGroups(TestCase):
         assert self.called == True
 
 
-    def test_fail_if_textedit_empty(self):
+    def test_pass_if_textedit_empty(self):
         self.called = False
         def enable():
             self.called = True
@@ -50,7 +50,7 @@ class testMandatoryGroups(TestCase):
         w.setText("1")
         assert self.called == True
 
-    def test_fail_if_checkbox_changed(self):
+    def test_pass_if_checkbox_changed(self):
         self.called = False
         def enable():
             self.called = True
@@ -63,7 +63,7 @@ class testMandatoryGroups(TestCase):
         assert self.called == True
 
 
-    def test_fail_if_combobox_changed(self):
+    def test_pass_if_combobox_changed(self):
         self.called = False
         def enable():
             self.called = True
