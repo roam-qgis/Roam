@@ -6,37 +6,6 @@ from PyQt4.QtGui import QLabel, QToolBar
 from utils import Timer, log, info, warning
 import tempfile
 
-class MandatoryGroup(QObject):
-    enable = pyqtSignal()
-    #http://doc.qt.nokia.com/qq/qq11-mandatoryfields.html
-    def __init__(self):
-        self.widgets = []
-        self.mapping = { QComboBox : lambda w: w.currentText().isEmpty(),
-                         QLineEdit : lambda w: w.text().isEmpty()
-                         QCheckBox : lambda w: w.state() == QButton.NoChange,
-                       }
-
-    def addWidget(self, widget):
-        if widget in self.widget:
-            return
-
-        self.widgets.append(widget)
-        if isinstance(widget, QLineEdit) or isinstance(widget, QTextEdit):
-            widget.textChanged.connect(functools.partial(self.changed, widget))
-
-    def changed(self):
-        for widget in self.widgets:
-            canenable = mapping[type(widget)](widget)
-
-            if not canenable:
-                return
-
-        # If we get here then we are right to let the user continue.
-        enable.emit()
-        
-    def remove(self, widget):
-        pass
-
 class DialogProvider(QObject):
     accepted = pyqtSignal()
     rejected = pyqtSignal()

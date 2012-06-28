@@ -2,9 +2,7 @@ import tempfile
 import uuid
 import os.path
 from PyQt4.QtGui import *
-from PyQt4.QtCore import (QDate, QTime,
-                        Qt, QVariant, pyqtSignal, QSettings,
-                        QObject, QString, QDateTime, QSize)
+from PyQt4.QtCore import *
 from utils import log, info, warning
 from qgis.gui import QgsAttributeEditor
 from select_feature_tool import SelectFeatureTool
@@ -12,8 +10,57 @@ import os
 import functools
 from datatimerpickerwidget import DateTimePickerDialog
 from drawingpad import DrawingPad
-import sdrcdatacapture
-import tarfile
+
+class MandatoryGroup(QObject):
+    enable = pyqtSignal()
+    #http://doc.qt.nokia.com/qq/qq11-mandatoryfields.html
+    def __init__(self):
+        QObject.__init__(self)
+        self.widgets = []
+        # Mapping of widget type to condition to check.  Condition should return
+        # false if value has been completed.
+        self.mapping = { QComboBox : lambda w: w.currentText().isEmpty(),
+                         QCheckBox : lambda w: w.checkState() == Qt.Unchecked,
+                         QLineEdit : lambda w: w.text().isEmpty(),
+                         QTextEdit : lambda w: w.toPlainText().isEmpty(),
+                       }
+
+        self.signals = {
+                         QComboBox : lambda w,m: w.currentIndexChanged.connect(m),
+                         QCheckBox : lambda w,m: w.stateChanged.connect(m),
+                         QLineEdit : lambda w,m: w.textChanged.connect(m),
+                         QTextEdit : lambda w,m: w.textChanged.connect(m),
+                        }
+
+    def addWidget(self, widget):
+        if widget in self.widgets:
+            return
+
+        self.widgets.append(widget)
+        try:
+            sig = self.signals[type(widget)]
+            sig(widget, self.changed)
+        except KeyError:
+            pass
+#        if isinstance(widget, QLineEdit) or isinstance(widget, QTextEdit):
+#            widget.textChanged.connect(self.changed)
+#
+#        if isinstance(widget, QCheckBox):
+#            widget.stateChanged.connect(self.changed)
+            
+
+    def changed(self):
+        for widget in self.widgets:
+            failed = self.mapping[type(widget)](widget)
+            if failed:
+                return
+
+        # If we get here then we are right to let the user continue.
+        self.enable.emit()
+
+    def remove(self, widget):
+        pass
+
 
 class FormBinder(QObject):
     beginSelectFeature = pyqtSignal(str)
