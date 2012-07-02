@@ -114,8 +114,9 @@ class SDRCDataCapture():
         self.openProjectAction.triggered.connect(self.showOpenProjectDialog)
         self.toggleRasterAction.triggered.connect(self.toggleRasterLayers)
 
-        self.navtoolbar.insertAction(self.iface.actionPan(), self.homeAction )
-        self.navtoolbar.insertAction(self.iface.actionPan(), self.iface.actionZoomFullExtent() )
+        self.navtoolbar.insertAction(self.iface.actionZoomIn(), self.iface.actionTouch() )
+        self.navtoolbar.insertAction(self.iface.actionTouch(), self.homeAction )
+        self.navtoolbar.insertAction(self.iface.actionTouch(), self.iface.actionZoomFullExtent() )
         self.navtoolbar.insertAction(self.homeAction, self.iface.actionZoomFullExtent())
         self.navtoolbar.insertAction(self.iface.actionZoomFullExtent(), self.openProjectAction)
         
@@ -171,7 +172,9 @@ class SDRCDataCapture():
         for toolbar in toolbars:
             toolbar.setToolButtonStyle(Qt.ToolButtonTextUnderIcon)
             toolbar.setIconSize(QSize(32,32))
-            
+
+        self.iface.actionTouch().setIconText("Pan")
+        self.iface.actionTouch().setIcon(QIcon(":/icons/pan"))
         self.iface.actionZoomIn().setIcon(QIcon(":/icons/in"))
         self.iface.actionZoomOut().setIcon(QIcon(":/icons/out"))
         self.iface.actionPan().setIcon(QIcon(":/icons/pan"))
