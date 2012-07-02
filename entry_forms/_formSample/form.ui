@@ -84,6 +84,9 @@ p, li { white-space: pre-wrap; }
       <property name="text">
        <string>Installation Sheet No:</string>
       </property>
+      <property name="buddy">
+       <cstring>InstallationSheetNumber</cstring>
+      </property>
      </widget>
     </item>
     <item row="1" column="0" colspan="2">
@@ -105,6 +108,9 @@ p, li { white-space: pre-wrap; }
       <property name="text">
        <string>Existing Meter No:</string>
       </property>
+      <property name="buddy">
+       <cstring>ExistingMeterNumber</cstring>
+      </property>
      </widget>
     </item>
     <item row="8" column="1" colspan="2">
@@ -120,6 +126,9 @@ p, li { white-space: pre-wrap; }
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;Existing Meter&lt;/span&gt;&lt;/p&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;Reading (KL):&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
       </property>
+      <property name="buddy">
+       <cstring>ExistingMeterReadingKL</cstring>
+      </property>
      </widget>
     </item>
     <item row="9" column="1" colspan="2">
@@ -129,6 +138,9 @@ p, li { white-space: pre-wrap; }
      <widget class="QLabel" name="label_7">
       <property name="text">
        <string>New Meter No:</string>
+      </property>
+      <property name="buddy">
+       <cstring>NewMeterNumber</cstring>
       </property>
      </widget>
     </item>
@@ -144,6 +156,9 @@ p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;New Meter&lt;/span&gt;&lt;/p&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;Reading (KL):&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+      </property>
+      <property name="buddy">
+       <cstring>NewMeterReadingKL</cstring>
       </property>
      </widget>
     </item>
@@ -213,6 +228,9 @@ p, li { white-space: pre-wrap; }
      <widget class="QLabel" name="label_20">
       <property name="text">
        <string>Traffic Control Plan:</string>
+      </property>
+      <property name="buddy">
+       <cstring>TrafficControlPlanUsed</cstring>
       </property>
      </widget>
     </item>
@@ -285,6 +303,9 @@ p, li { white-space: pre-wrap; }
       <property name="text">
        <string>Work  Duration (hrs)</string>
       </property>
+      <property name="buddy">
+       <cstring>WorkDurationHours</cstring>
+      </property>
      </widget>
     </item>
     <item row="1" column="1">
@@ -298,6 +319,9 @@ p, li { white-space: pre-wrap; }
      <widget class="QLabel" name="label_41">
       <property name="text">
        <string>Signage Alterations:</string>
+      </property>
+      <property name="buddy">
+       <cstring>SignageAlterations</cstring>
       </property>
      </widget>
     </item>
@@ -684,6 +708,9 @@ p, li { white-space: pre-wrap; }
       <property name="text">
        <string>Scheme:</string>
       </property>
+      <property name="buddy">
+       <cstring>Scheme</cstring>
+      </property>
      </widget>
     </item>
     <item row="18" column="1">
@@ -750,12 +777,18 @@ p, li { white-space: pre-wrap; }
       <property name="text">
        <string>Pipe Material</string>
       </property>
+      <property name="buddy">
+       <cstring>PipeMaterial</cstring>
+      </property>
      </widget>
     </item>
     <item row="3" column="0">
      <widget class="QLabel" name="label_15">
       <property name="text">
        <string>Pipe Diameter (mm)</string>
+      </property>
+      <property name="buddy">
+       <cstring>PipeDiameter</cstring>
       </property>
      </widget>
     </item>
@@ -764,12 +797,18 @@ p, li { white-space: pre-wrap; }
       <property name="text">
        <string>Pipe depth (mm)</string>
       </property>
+      <property name="buddy">
+       <cstring>PipeDepth</cstring>
+      </property>
      </widget>
     </item>
     <item row="7" column="0">
      <widget class="QLabel" name="label_34">
       <property name="text">
        <string>Joint Type</string>
+      </property>
+      <property name="buddy">
+       <cstring>JointType</cstring>
       </property>
      </widget>
     </item>
@@ -778,12 +817,18 @@ p, li { white-space: pre-wrap; }
       <property name="text">
        <string>Ground Conditions:</string>
       </property>
+      <property name="buddy">
+       <cstring>GroundConditions</cstring>
+      </property>
      </widget>
     </item>
     <item row="11" column="0">
      <widget class="QLabel" name="label_10">
       <property name="text">
        <string>Valve Type</string>
+      </property>
+      <property name="buddy">
+       <cstring>ValveType</cstring>
       </property>
      </widget>
     </item>
@@ -792,6 +837,9 @@ p, li { white-space: pre-wrap; }
       <property name="text">
        <string>Valve Status</string>
       </property>
+      <property name="buddy">
+       <cstring>ValveStatus</cstring>
+      </property>
      </widget>
     </item>
     <item row="15" column="0">
@@ -799,12 +847,18 @@ p, li { white-space: pre-wrap; }
       <property name="text">
        <string>Valve closing direction</string>
       </property>
+      <property name="buddy">
+       <cstring>ValveClosingDirection</cstring>
+      </property>
      </widget>
     </item>
     <item row="17" column="0">
      <widget class="QLabel" name="label_40">
       <property name="text">
        <string>Designation:</string>
+      </property>
+      <property name="buddy">
+       <cstring>Designation</cstring>
       </property>
      </widget>
     </item>
@@ -830,6 +884,9 @@ p, li { white-space: pre-wrap; }
      <widget class="QLabel" name="label_4">
       <property name="text">
        <string>Name:</string>
+      </property>
+      <property name="buddy">
+       <cstring>Operators</cstring>
       </property>
      </widget>
     </item>
@@ -903,6 +960,9 @@ p, li { white-space: pre-wrap; }
         <property name="text">
          <string>Respond Time:</string>
         </property>
+        <property name="buddy">
+         <cstring>RespondTime</cstring>
+        </property>
        </widget>
       </item>
       <item>
@@ -943,6 +1003,9 @@ p, li { white-space: pre-wrap; }
         <property name="text">
          <string>Completion Time:</string>
         </property>
+        <property name="buddy">
+         <cstring>CompletionTime</cstring>
+        </property>
        </widget>
       </item>
       <item>
@@ -975,6 +1038,9 @@ p, li { white-space: pre-wrap; }
       <property name="text">
        <string>Conections Interupted</string>
       </property>
+      <property name="buddy">
+       <cstring>ConnectionsInterrupted</cstring>
+      </property>
      </widget>
     </item>
     <item row="3" column="1">
@@ -988,6 +1054,9 @@ p, li { white-space: pre-wrap; }
      <widget class="QLabel" name="label_32">
       <property name="text">
        <string>Interuption Duration (hrs)</string>
+      </property>
+      <property name="buddy">
+       <cstring>InterruptionDurationHours</cstring>
       </property>
      </widget>
     </item>
@@ -1022,6 +1091,9 @@ p, li { white-space: pre-wrap; }
        <widget class="QLabel" name="label_21">
         <property name="text">
          <string>Received:</string>
+        </property>
+        <property name="buddy">
+         <cstring>DateTimeReceived</cstring>
         </property>
        </widget>
       </item>
@@ -1063,6 +1135,9 @@ p, li { white-space: pre-wrap; }
      <widget class="QLabel" name="label_27">
       <property name="text">
        <string>Request Type:</string>
+      </property>
+      <property name="buddy">
+       <cstring>RequestType</cstring>
       </property>
      </widget>
     </item>
@@ -1174,6 +1249,9 @@ p, li { white-space: pre-wrap; }
       <property name="text">
        <string>CR Number:</string>
       </property>
+      <property name="buddy">
+       <cstring>CustomerRequestNumber</cstring>
+      </property>
      </widget>
     </item>
     <item row="2" column="1">
@@ -1183,6 +1261,9 @@ p, li { white-space: pre-wrap; }
      <widget class="QLabel" name="label">
       <property name="text">
        <string>Lot and Plan</string>
+      </property>
+      <property name="buddy">
+       <cstring>LotPlan</cstring>
       </property>
      </widget>
     </item>
@@ -1199,6 +1280,9 @@ p, li { white-space: pre-wrap; }
       </property>
       <property name="text">
        <string> Location Details:</string>
+      </property>
+      <property name="buddy">
+       <cstring>AdditionalLocationDetails</cstring>
       </property>
      </widget>
     </item>
@@ -1512,6 +1596,9 @@ p, li { white-space: pre-wrap; }
       <property name="text">
        <string>Provide Location:</string>
       </property>
+      <property name="buddy">
+       <cstring>ProvideLocation</cstring>
+      </property>
      </widget>
     </item>
     <item row="3" column="1">
@@ -1576,6 +1663,9 @@ p, li { white-space: pre-wrap; }
       <property name="text">
        <string>Other:</string>
       </property>
+      <property name="buddy">
+       <cstring>Other</cstring>
+      </property>
      </widget>
     </item>
     <item row="9" column="0" colspan="2">
@@ -1635,6 +1725,9 @@ p, li { white-space: pre-wrap; }
       <property name="text">
        <string>Lockup (KPA):</string>
       </property>
+      <property name="buddy">
+       <cstring>LockupKpa</cstring>
+      </property>
      </widget>
     </item>
     <item row="2" column="2">
@@ -1644,6 +1737,9 @@ p, li { white-space: pre-wrap; }
      <widget class="QLabel" name="label_17">
       <property name="text">
        <string>(L/min):</string>
+      </property>
+      <property name="buddy">
+       <cstring>LitresPerMinute</cstring>
       </property>
      </widget>
     </item>

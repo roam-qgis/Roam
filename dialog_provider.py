@@ -2,7 +2,7 @@ import os.path
 import os
 from form_binder import FormBinder
 from PyQt4.QtCore import pyqtSignal, QObject, QSettings
-from PyQt4.QtGui import QLabel, QToolBar
+from PyQt4.QtGui import QLabel, QToolBar, QDialog
 from utils import Timer, log, info, warning
 import tempfile
 
@@ -15,7 +15,7 @@ class DialogProvider(QObject):
         self.canvas = canvas
         self.iface = iface
 
-    def openDialog(self, formmodule, feature, layer, forupdate):
+    def openDialog(self, formmodule, feature, layer, forupdate,mandatory_fields=True):
         self.update = forupdate
         self.dialog = formmodule.formInstance()
         self.layer = layer
@@ -26,11 +26,15 @@ class DialogProvider(QObject):
         self.binder = FormBinder(layer, self.dialog, self.canvas, self.settings)
         self.binder.beginSelectFeature.connect(self.selectingFromMap)
         self.binder.endSelectFeature.connect(self.featureSelected)
-        self.binder.bindFeature(self.feature)
+        self.binder.bindFeature(self.feature, mandatory_fields)
         self.binder.bindSelectButtons()
 
-        self.dialog.accepted.connect(self.dialogAccept)
-        self.dialog.accepted.connect(self.accepted)
+        if mandatory_fields:
+            self.dialog.accepted.connect(self.validateForm)
+        else:
+            self.dialog.accepted.connect(self.dialogAccept)
+            self.dialog.accepted.connect(self.accepted)
+            
         self.dialog.rejected.connect(self.rejected)
         self.dialog.rejected.connect(self.deleteDialog)
         self.dialog.setModal(True)
@@ -50,6 +54,28 @@ class DialogProvider(QObject):
         self.canvas.scene().removeItem(self.item)
         self.dialog.show()
         self.enableToolbars()
+
+    def validateForm(self):
+        controls = self.binder.mandatory_group.unchanged()
+        log(controls)
+        d = QDialog()
+        unchanged = []
+        for control in controls:
+            label = self.forminstance.findChild(QLabel, control.objectName() + "_label")
+            if not label is None:
+                unchanged.append(label.text())
+            elif isinstance(control, QCheckBox):
+                unchanged.append(control.text())
+            elif isinstance(control, QGroupBox):
+                unchanged.append(control.title())
+
+        log(unchanged)
+        if len(unchanged) > 0:
+            d.exec_()
+        else:
+            self.dialogAccept()
+            self.accepted.emit()
+
 
     def dialogAccept(self):
         info("Saving values back")

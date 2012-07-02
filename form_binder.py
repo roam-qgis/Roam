@@ -87,7 +87,7 @@ class FormBinder(QObject):
         self.images = {}
         
 
-    def bindFeature(self, qgsfeature,mandatory=True):
+    def bindFeature(self, qgsfeature, mandatory_fields=True):
         """
         Binds a features values to the form.
         """
@@ -95,10 +95,25 @@ class FormBinder(QObject):
         for index, value in qgsfeature.attributeMap().items():
             field = self.fields[index]
             control = self.forminstance.findChild(QWidget, field.name())
-
+            
             if control is None:
                 warning("Can't find control called %s" % (field.name()))
                 continue
+
+            if mandatory_fields:
+                self.mandatory_group = MandatoryGroup()
+                mandatory = control.property("mandatory").toBool()
+                if mandatory:
+                    label = self.forminstance.findChild(QLabel, field.name() + "_label")
+                    if not label is None:
+                        label.setProperty("mandatory",True)
+                    self.mandatory_group.addWidget(control)
+
+                self.forminstance.setStyleSheet("QLabel[mandatory=true],QCheckBox[mandatory=true], " \
+                                                "QGroupBox::title[mandatory=true] {background-color: " \
+                                                "rgba(255, 221, 48, 150);}" \
+                                                "QLabel[ok=true],QCheckBox[ok=true], QGroupBox::title[ok=true]" \
+                                                "{ background-color: rgba(200, 255, 197, 150); }")
 
             success = self.bindValueToControl(control, value)
             if success:
