@@ -23,6 +23,8 @@ class MandatoryGroup(QObject):
                          QCheckBox : lambda w: w.checkState() == Qt.Unchecked,
                          QLineEdit : lambda w: w.text().isEmpty(),
                          QTextEdit : lambda w: w.toPlainText().isEmpty(),
+                         QDateTimeEdit : lambda w: w.dateTime() == \
+                                         QDateTime(2000,1,1,00,00,00,0),
                        }
 
         self.signals = {
@@ -30,6 +32,7 @@ class MandatoryGroup(QObject):
                          QCheckBox : lambda w,m: w.stateChanged.connect(m),
                          QLineEdit : lambda w,m: w.textChanged.connect(m),
                          QTextEdit : lambda w,m: w.textChanged.connect(m),
+                         QDateTimeEdit : lambda w,m: w.dateTimeChanged.connect(m),
                         }
 
     def addWidget(self, widget):
@@ -51,6 +54,16 @@ class MandatoryGroup(QObject):
 
         # If we get here then we are right to let the user continue.
         self.enable.emit()
+
+
+    def unchanged(self):
+        unchanged = []
+        for widget in self.widgets:
+            failed = self.mapping[type(widget)](widget)
+            if failed:
+                unchanged.append(widget)
+
+        return unchanged
 
     def remove(self, widget):
         pass
@@ -74,7 +87,7 @@ class FormBinder(QObject):
         self.images = {}
         
 
-    def bindFeature(self, qgsfeature):
+    def bindFeature(self, qgsfeature,mandatory=True):
         """
         Binds a features values to the form.
         """
