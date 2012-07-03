@@ -10,7 +10,7 @@ import datetime
 from subprocess import Popen, PIPE
 
 ui_sources = ['ui_datatimerpicker', 'ui_listmodules',
-              'syncing/ui_sync', 'ui_listfeatures']
+              'syncing/ui_sync', 'ui_listfeatures', 'ui_errorlist']
 
 doc_sources = ['docs/README']
 

@@ -1,10 +1,11 @@
 import os.path
 import os
 from form_binder import FormBinder
-from PyQt4.QtCore import pyqtSignal, QObject, QSettings
-from PyQt4.QtGui import QLabel, QToolBar, QDialog
+from PyQt4.QtCore import *
+from PyQt4.QtGui import *
 from utils import Timer, log, info, warning
 import tempfile
+from ui_errorlist import Ui_Dialog
 
 class DialogProvider(QObject):
     accepted = pyqtSignal()
@@ -29,14 +30,18 @@ class DialogProvider(QObject):
         self.binder.bindFeature(self.feature, mandatory_fields)
         self.binder.bindSelectButtons()
 
+        buttonbox = self.dialog.findChild(QDialogButtonBox)
+
         if mandatory_fields:
-            self.dialog.accepted.connect(self.validateForm)
+            buttonbox.accepted.connect(self.validateForm)
         else:
-            self.dialog.accepted.connect(self.dialogAccept)
-            self.dialog.accepted.connect(self.accepted)
+            buttonbox.accepted.connect(self.dialogAccept)
+            buttonbox.accepted.connect(self.accepted)
             
-        self.dialog.rejected.connect(self.rejected)
-        self.dialog.rejected.connect(self.deleteDialog)
+        buttonbox.rejected.connect(self.rejected)
+        buttonbox.rejected.connect(self.dialog.reject)
+        buttonbox.rejected.connect(self.deleteDialog)
+
         self.dialog.setModal(True)
         
         if self.settings.value("fullscreen", False).toBool():
@@ -57,26 +62,28 @@ class DialogProvider(QObject):
 
     def validateForm(self):
         controls = self.binder.mandatory_group.unchanged()
-        log(controls)
-        d = QDialog()
-        unchanged = []
-        for control in controls:
-            label = self.forminstance.findChild(QLabel, control.objectName() + "_label")
-            if not label is None:
-                unchanged.append(label.text())
-            elif isinstance(control, QCheckBox):
-                unchanged.append(control.text())
-            elif isinstance(control, QGroupBox):
-                unchanged.append(control.title())
+        haserrors = len(controls) > 0
+        
+        if haserrors:
+            dlg = QDialog()
+            dlg.setWindowFlags( Qt.Dialog | Qt.WindowTitleHint )
+            ui = Ui_Dialog()
+            ui.setupUi(dlg)
+            for control in controls:
+                label = self.dialog.findChild(QLabel, control.objectName() + "_label")
+                if not label is None:
+                    name = label.text()
+                elif isinstance(control, QCheckBox):
+                    name = control.text()
+                elif isinstance(control, QGroupBox):
+                    name = control.title()
 
-        log(unchanged)
-        if len(unchanged) > 0:
-            d.exec_()
+                name += " is mandatory"
+                ui.errorList.addItem(name)
+            dlg.exec_()
         else:
             self.dialogAccept()
-            self.accepted.emit()
-
-
+            
     def dialogAccept(self):
         info("Saving values back")
         feature = self.binder.unbindFeature(self.feature)
@@ -92,9 +99,6 @@ class DialogProvider(QObject):
         
         self.layer.commitChanges()
         self.canvas.refresh()
-        
-        if not self.binder.images:
-            return
 
         # After we commit we have to move the drawing into the correct path.
         # TODO Use a custom field for the id name
@@ -120,6 +124,9 @@ class DialogProvider(QObject):
             except WindowsError, err:
                 os.remove(imagename)
                 os.rename(image, imagename)
+
+        self.dialog.accept()
+        self.accepted.emit()
             
     def deleteDialog(self):
         del self.dialog

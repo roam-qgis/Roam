@@ -10,6 +10,7 @@ import os
 import functools
 from datatimerpickerwidget import DateTimePickerDialog
 from drawingpad import DrawingPad
+from utils import log
 
 class MandatoryGroup(QObject):
     enable = pyqtSignal()
@@ -26,6 +27,21 @@ class MandatoryGroup(QObject):
                          QDateTimeEdit : lambda w: w.dateTime() == \
                                          QDateTime(2000,1,1,00,00,00,0),
                        }
+        self.stylesheets = {
+                                QGroupBox : "QGroupBox::title[mandatory=true]" \
+                                            "{background-color: rgba(255, 221, 48,150);}" \
+                                            "QGroupBox::title[ok=true]" \
+                                            "{ background-color: rgba(200, 255, 197, 150); }",
+                                QLabel : "QLabel[mandatory=true]" \
+                                            "{background-color: rgba(255, 221, 48,150);}" \
+                                            "QLabel[ok=true]" \
+                                            "{ background-color: rgba(200, 255, 197, 150); }",
+                                QCheckBox : "QCheckBox[mandatory=true]" \
+                                            "{background-color: rgba(255, 221, 48,150);}" \
+                                            "QCheckBox[ok=true]" \
+                                            "{ background-color: rgba(200, 255, 197, 150); }",
+
+                           }
 
         self.signals = {
                          QComboBox : lambda w,m: w.currentIndexChanged.connect(m),
@@ -35,30 +51,49 @@ class MandatoryGroup(QObject):
                          QDateTimeEdit : lambda w,m: w.dateTimeChanged.connect(m),
                         }
 
-    def addWidget(self, widget):
+    def addWidget(self, widget, buddy):
         if widget in self.widgets:
             return
 
-        self.widgets.append(widget)
+        buddy.setProperty("mandatory",True)
+        self.widgets.append((widget, buddy))
+        
         try:
             sig = self.signals[type(widget)]
             sig(widget, self.changed)
         except KeyError:
+            log("CAN'T FIND WIDGET")
+
+        try:
+            style = self.stylesheets[type(buddy)]
+            buddy.setStyleSheet(style)
+        except KeyError:
             pass
-            
+        
     def changed(self):
-        for widget in self.widgets:
+        anyfailed = False
+        for widget, buddy in self.widgets:
             failed = self.mapping[type(widget)](widget)
             if failed:
-                return
+                buddy.setProperty("ok",False)
+                log(buddy.objectName())
+                log("WIDGET FAILED")
+                anyfailed = True
+            else:
+                log("WIDGET OK")
+                buddy.setProperty("ok",True)
 
-        # If we get here then we are right to let the user continue.
-        self.enable.emit()
+            buddy.style().unpolish(buddy)
+            buddy.style().polish(buddy)
+
+        if not anyfailed:
+            # If we get here then we are right to let the user continue.
+            self.enable.emit()
 
 
     def unchanged(self):
         unchanged = []
-        for widget in self.widgets:
+        for widget,buddy in self.widgets:
             failed = self.mapping[type(widget)](widget)
             if failed:
                 unchanged.append(widget)
@@ -85,6 +120,7 @@ class FormBinder(QObject):
         self.actionlist = []
         self.settings = settings
         self.images = {}
+        self.mandatory_group = MandatoryGroup()
         
 
     def bindFeature(self, qgsfeature, mandatory_fields=True):
@@ -101,13 +137,11 @@ class FormBinder(QObject):
                 continue
 
             if mandatory_fields:
-                self.mandatory_group = MandatoryGroup()
                 mandatory = control.property("mandatory").toBool()
                 if mandatory:
                     label = self.forminstance.findChild(QLabel, field.name() + "_label")
-                    if not label is None:
-                        label.setProperty("mandatory",True)
-                    self.mandatory_group.addWidget(control)
+                    buddy = label or control
+                    self.mandatory_group.addWidget(control, buddy)
 
             success = self.bindValueToControl(control, value)
             if success:
