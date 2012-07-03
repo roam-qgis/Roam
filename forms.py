@@ -39,10 +39,11 @@ class Form(object):
     def module(self):
         return self._module
 
-    def formInstance(self):
+    def formInstance(self, parent=None):
         path = os.path.dirname(self.module.__file__)
         uiFile = os.path.join(path, "form.ui")
-        return loadUi(uiFile)
+        instance = loadUi(uiFile)
+        return instance
 
     def settings(self):
         if self._settings is None:

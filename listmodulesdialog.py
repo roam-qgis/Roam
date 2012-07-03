@@ -10,7 +10,7 @@ from utils import log
 class ListProjectsDialog(QDialog):
     requestOpenProject = pyqtSignal(str)
     def __init__(self):
-        QDialog.__init__(self)
+        QDialog.__init__(self )
         # Set up the user interface from Designer.
         self.ui = Ui_ListModules()
         self.ui.setupUi(self)

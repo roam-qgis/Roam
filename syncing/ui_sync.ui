@@ -19,6 +19,11 @@
   <property name="windowTitle">
    <string>Form</string>
   </property>
+  <property name="styleSheet">
+   <string notr="true">* {font: 75 23pt &quot;Tahoma&quot;;}
+QPushButton { font: 75 20pt &quot;Tahoma&quot;; }
+</string>
+  </property>
   <layout class="QGridLayout" name="gridLayout">
    <item row="0" column="0" rowspan="2">
     <widget class="QLabel" name="label">
@@ -43,9 +48,11 @@
     <widget class="QLabel" name="statusLabel">
      <property name="font">
       <font>
-       <pointsize>16</pointsize>
-       <weight>75</weight>
-       <bold>true</bold>
+       <family>Tahoma</family>
+       <pointsize>23</pointsize>
+       <weight>9</weight>
+       <italic>false</italic>
+       <bold>false</bold>
       </font>
      </property>
      <property name="styleSheet">
@@ -73,10 +80,15 @@ Please wait</string>
      </property>
      <property name="font">
       <font>
-       <pointsize>20</pointsize>
-       <weight>50</weight>
+       <family>Tahoma</family>
+       <pointsize>23</pointsize>
+       <weight>9</weight>
+       <italic>false</italic>
        <bold>false</bold>
       </font>
+     </property>
+     <property name="styleSheet">
+      <string notr="true"/>
      </property>
      <property name="orientation">
       <enum>Qt::Horizontal</enum>

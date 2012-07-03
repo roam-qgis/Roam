@@ -62,6 +62,11 @@ class SDRCDataCapture():
         the plugin.
         """
         self.iface.mainWindow().showFullScreen()
+        QCoreApplication.instance().setStyleSheet("QLabel[mandatory=true],QCheckBox[mandatory=true], " \
+                                                "QGroupBox::title[mandatory=true] {background-color: " \
+                                                "rgba(255, 221, 48,150);}" \
+                                                "QLabel[ok=true],QCheckBox[ok=true], QGroupBox::title[ok=true]" \
+                                                "{ background-color: rgba(200, 255, 197, 150); }")
         self.navtoolbar.setMovable(False)
         self.navtoolbar.setAllowedAreas(Qt.TopToolBarArea)
         self.mainwindow.insertToolBar(self.toolbar, self.navtoolbar)

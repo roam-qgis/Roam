@@ -109,12 +109,6 @@ class FormBinder(QObject):
                         label.setProperty("mandatory",True)
                     self.mandatory_group.addWidget(control)
 
-                self.forminstance.setStyleSheet("QLabel[mandatory=true],QCheckBox[mandatory=true], " \
-                                                "QGroupBox::title[mandatory=true] {background-color: " \
-                                                "rgba(255, 221, 48, 150);}" \
-                                                "QLabel[ok=true],QCheckBox[ok=true], QGroupBox::title[ok=true]" \
-                                                "{ background-color: rgba(200, 255, 197, 150); }")
-
             success = self.bindValueToControl(control, value)
             if success:
                 self.fieldtocontrol[index] = control

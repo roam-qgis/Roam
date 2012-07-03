@@ -17,7 +17,7 @@ class DialogProvider(QObject):
 
     def openDialog(self, formmodule, feature, layer, forupdate,mandatory_fields=True):
         self.update = forupdate
-        self.dialog = formmodule.formInstance()
+        self.dialog = formmodule.formInstance(self.iface.mainWindow())
         self.layer = layer
         self.feature = feature
 
