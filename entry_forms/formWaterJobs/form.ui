@@ -827,7 +827,7 @@ p, li { white-space: pre-wrap; }
    </property>
    <layout class="QGridLayout" name="gridLayout_2">
     <item row="0" column="0">
-     <widget class="QLabel" name="label_4">
+     <widget class="QLabel" name="Operators_label">
       <property name="text">
        <string>Name:</string>
       </property>
@@ -836,6 +836,9 @@ p, li { white-space: pre-wrap; }
     <item row="0" column="1">
      <widget class="QComboBox" name="Operators">
       <property name="editable">
+       <bool>true</bool>
+      </property>
+      <property name="mandatory" stdset="0">
        <bool>true</bool>
       </property>
       <item>
