@@ -79,7 +79,9 @@ class DialogProvider(QObject):
                     name = control.title()
 
                 name += " is mandatory"
-                ui.errorList.addItem(name)
+                item = QListWidgetItem(name)
+                item.setBackground(QBrush(QColor.fromRgb(255,221,48,150)))
+                ui.errorList.addItem(item)
             dlg.exec_()
         else:
             self.dialogAccept()
