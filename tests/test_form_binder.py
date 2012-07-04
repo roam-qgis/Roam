@@ -6,7 +6,7 @@ __date__ ='$28/06/2012 8:17:17 AM$'
 import os
 import unittest
 import sys
-from mock import Mock
+from mock import Mock, patch
 from unittest import TestCase
 from PyQt4.QtGui import *
 from PyQt4.QtCore import *
@@ -295,6 +295,46 @@ class testFormBinder(TestCase):
         self.assertNotEqual(w.dateTime(), expected)
         self.binder.bindValueToControl(w, value)
         self.assertEqual(w.dateTime(), expected)
+
+    @patch.object(FormBinder, 'pickDateTime')
+    def test_bind_datetimeedit_picker(self, mock_method):
+        widget = QWidget()
+        l = QGridLayout(widget)
+        b = QPushButton()
+        w = QDateTimeEdit()
+        b.setObjectName('testdatetime_pick')
+        w.setObjectName('testdatetime')
+        l.addWidget(b)
+        l.addWidget(w)
+        self.binder.bindValueToControl(w, QVariant())
+        b.click()
+        self.assertTrue(mock_method.called_with(w))
+
+    @patch.object(FormBinder, 'pickDateTime')
+    def test_bind_more_then_one_datetimeedit_picker(self, mock_method):
+        widget = QWidget()
+        l = QGridLayout(widget)
+        b = QPushButton()
+        w = QDateTimeEdit()
+        b.setObjectName('testdatetime_pick')
+        w.setObjectName('testdatetime')
+        l.addWidget(b)
+        l.addWidget(w)
+        widget2 = QWidget()
+        l2 = QGridLayout(widget2)
+        b2 = QPushButton()
+        w2 = QDateTimeEdit()
+        b2.setObjectName('testdatetime2_pick')
+        w2.setObjectName('testdatetime2')
+        l2.addWidget(b2)
+        l2.addWidget(w2)
+        self.binder.bindValueToControl(w, QVariant())
+        self.binder.bindValueToControl(w2, QVariant())
+        b.click()
+        mock_method.assert_called_with(w,"DateTime")
+        b2.click()
+        mock_method.assert_called_with(w2,"DateTime")
+            
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
