@@ -29,17 +29,17 @@ class MandatoryGroup(QObject):
                        }
         self.stylesheets = {
                                 QGroupBox : "QGroupBox::title[mandatory=true]" \
-                                            "{background-color: rgba(255, 221, 48,150);}" \
+                                            "{border-radius: 5px; background-color: rgba(255, 221, 48,150);}" \
                                             "QGroupBox::title[ok=true]" \
-                                            "{ background-color: rgba(200, 255, 197, 150); }",
+                                            "{ border-radius: 5px; background-color: rgba(200, 255, 197, 150); }",
                                 QLabel : "QLabel[mandatory=true]" \
-                                            "{background-color: rgba(255, 221, 48,150);}" \
+                                            "{border-radius: 5px; background-color: rgba(255, 221, 48,150);}" \
                                             "QLabel[ok=true]" \
-                                            "{ background-color: rgba(200, 255, 197, 150); }",
+                                            "{ border-radius: 5px; background-color: rgba(200, 255, 197, 150); }",
                                 QCheckBox : "QCheckBox[mandatory=true]" \
-                                            "{background-color: rgba(255, 221, 48,150);}" \
+                                            "{border-radius: 5px; background-color: rgba(255, 221, 48,150);}" \
                                             "QCheckBox[ok=true]" \
-                                            "{ background-color: rgba(200, 255, 197, 150); }",
+                                            "{border-radius: 5px; background-color: rgba(200, 255, 197, 150); }",
 
                            }
 
@@ -55,9 +55,6 @@ class MandatoryGroup(QObject):
         if widget in self.widgets:
             return
 
-        buddy.setProperty("mandatory",True)
-        self.widgets.append((widget, buddy))
-        
         try:
             sig = self.signals[type(widget)]
             sig(widget, self.changed)
@@ -69,6 +66,9 @@ class MandatoryGroup(QObject):
             buddy.setStyleSheet(style)
         except KeyError:
             pass
+
+        buddy.setProperty("mandatory",True)
+        self.widgets.append((widget, buddy))
         
     def changed(self):
         anyfailed = False
@@ -76,11 +76,8 @@ class MandatoryGroup(QObject):
             failed = self.mapping[type(widget)](widget)
             if failed:
                 buddy.setProperty("ok",False)
-                log(buddy.objectName())
-                log("WIDGET FAILED")
                 anyfailed = True
             else:
-                log("WIDGET OK")
                 buddy.setProperty("ok",True)
 
             buddy.style().unpolish(buddy)
@@ -171,16 +168,21 @@ class FormBinder(QObject):
 
         elif isinstance(control, QComboBox):
             itemindex = control.findText(value.toString())
-            if itemindex < 0:
-                success = False
-
-            control.setCurrentIndex( itemindex )
+            success = itemindex > 0
+            if success:
+                control.setCurrentIndex( itemindex )
             
         elif isinstance(control, QDoubleSpinBox):
-            control.setValue( value.toDouble()[0] )
+            double, passed = value.toDouble()
+            success = passed
+            if passed:
+                control.setValue( double )
 
         elif isinstance(control, QSpinBox):
-            control.setValue( value.toInt()[0] )
+            int, passed = value.toInt()
+            success = passed
+            if passed:
+                control.setValue( int )
 
         elif isinstance(control, QDateTimeEdit):
             control.setDateTime(QDateTime.fromString( value.toString(), Qt.ISODate ))
@@ -198,7 +200,6 @@ class FormBinder(QObject):
                 control.setIcon(QIcon(":/icons/draw"))
                 control.setIconSize(QSize(24,24))
                 control.pressed.connect(functools.partial(self.loadDrawingTool, control))
-                
         else:
             success = False
 
