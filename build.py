@@ -84,7 +84,7 @@ def deploy():
     passed = test()
     if not passed:
         print "Tests Failed!!"
-        return
+        return False
     
     if os.path.exists(buildpath):
         print "Removing old depoly directory..."
@@ -106,10 +106,11 @@ def deploy():
         os.path.join(buildpath, 'metadata.txt'))
         
     print "Local depoly compelete into {0}".format(buildpath)
+    return True
 
 def deploy_to(client, rebuild=True):
     if rebuild:
-        deploy()
+        if not deploy(): return
 
     print "Remote depolying to %s" % client
     
@@ -120,6 +121,6 @@ def deploy_to(client, rebuild=True):
     print "Remote depoly compelete"
 
 if __name__ == "__main__":
-    deploy()
-    #deploy_to("\\\\sd0469\\C$\\Users\\woodrown\\Desktop\\SDRCDataCollection\\")
+    #deploy()
+    deploy_to("\\\\sd0469\\C$\\Users\\woodrown\\Desktop\\SDRCDataCollection\\")
     

@@ -10,7 +10,7 @@ from PyQt4.QtGui import QApplication
 def main():
     app = QApplication(sys.argv)
     suite = unittest.TestLoader().discover('.')
-    results = unittest.TextTestRunner(verbosity=0).run(suite)
+    results = unittest.TextTestRunner(verbosity=1).run(suite)
     return results.wasSuccessful()
 
 if __name__ == "__main__":
