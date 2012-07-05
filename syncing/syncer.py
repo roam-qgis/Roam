@@ -94,7 +94,7 @@ class SyncDialog(QDialog):
         """
         Shows the sync dialog and runs the sync commands.
         """
-        self.ui.statusLabel.setText("Sycning with server. \n Please Wait")
+        self.ui.statusLabel.setText("Syncing with server. \n Please Wait")
         message = self.ui.statusLabel.text()
         self.ui.statusLabel.setText(message + "\n\n Syncing map data...")
         QCoreApplication.processEvents()

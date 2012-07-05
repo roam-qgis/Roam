@@ -66,7 +66,7 @@ class DialogProvider(QObject):
         
         if haserrors:
             dlg = QDialog()
-            dlg.setWindowFlags( Qt.Dialog | Qt.WindowTitleHint )
+            dlg.setWindowFlags( Qt.Tool | Qt.WindowTitleHint )
             ui = Ui_Dialog()
             ui.setupUi(dlg)
             for control in controls:
