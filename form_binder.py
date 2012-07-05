@@ -147,8 +147,7 @@ class FormBinder(QObject):
             if mandatory_fields:
                 mandatory = control.property("mandatory").toBool()
                 if mandatory:
-                    label = self.forminstance.findChild(QLabel, field.name() + "_label")
-                    buddy = label or control
+                    buddy = self.getBuddy(control)
                     self.mandatory_group.addWidget(control, buddy)
 
             info("Binding %s to %s" % (control.objectName() , value.toString()))
@@ -159,6 +158,10 @@ class FormBinder(QObject):
                 warning(err.reason)
                 
             self.fieldtocontrol[index] = control
+
+    def getBuddy(self, control):
+        label = self.forminstance.findChild(QLabel, control.objectName() + "_label")
+        return label or control
 
     def bindByName(self, controlname, value):
         """

@@ -1,3 +1,4 @@
+import logging
 #! /usr/bin/python
 
 __author__='WOODROWN'
@@ -6,7 +7,7 @@ __date__ ='$28/06/2012 8:17:17 AM$'
 import os
 import unittest
 import sys
-from mock import Mock, patch
+from mock import Mock, patch, create_autospec, call
 from unittest import TestCase
 from PyQt4.QtGui import *
 from PyQt4.QtCore import *
@@ -175,11 +176,13 @@ class testMandatoryGroups(TestCase):
         self.assertTrue(w in group.unchanged())
         self.assertFalse(w2 in group.unchanged())
 
-class testFormBinder(TestCase):
+class testFormBinderBinding(TestCase):
     def setUp(self):
+        self.parent = QWidget()
+        self.parent.setLayout(QGridLayout())
         self.layer = Mock()
         self.layer.pendingFields.return_value = []
-        self.binder = FormBinder(self.layer,None,None,None)
+        self.binder = FormBinder(self.layer,self.parent,None,None)
 
     def test_bind_calender_widget(self):
         w = QCalendarWidget()
@@ -344,8 +347,145 @@ class testFormBinder(TestCase):
         self.assertRaises(BindingError,
                          self.binder.bindValueToControl, w, QVariant())
 
-
+    def test_getBuddy_returns_label(self):
+        w = QLineEdit()
+        w.setObjectName('test')
+        l = QLabel()
+        l.setObjectName('test_label')
+        self.parent.layout().addWidget(w)
+        self.parent.layout().addWidget(l)
         
+        buddy = self.binder.getBuddy(w)
+        self.assertEqual(buddy, l)
+
+    def test_getBuddy_returns_widget_if_label_not_found(self):
+        w = QLineEdit()
+        w.setObjectName('test')
+        self.parent.layout().addWidget(w)
+        buddy = self.binder.getBuddy(w)
+        self.assertEqual(buddy, w)
+        
+    def test_mandatory_fields_should_be_added_to_mandatory_group(self):
+        w = QLineEdit()
+        w.setObjectName("lineedit")
+        w.setProperty("mandatory",True)
+        self.parent.layout().addWidget(w)
+        mock_feature = Mock()
+        field = Mock()
+        field.name.return_value = "lineedit"
+        mock_feature.attributeMap.return_value = {0:QVariant('Hello')}
+        self.binder.fields = [field]
+
+        buddy = self.binder.bindFeature(mock_feature)
+        self.assertTrue((w,w) in self.binder.mandatory_group.widgets)
+
+    def test_nonmandatory_fields_should_not_be_added_to_mandatory_group(self):
+        w = QLineEdit()
+        w.setObjectName("lineedit")
+        w.setProperty("mandatory",False)
+        self.parent.layout().addWidget(w)
+        mock_feature = Mock()
+        field = Mock()
+        field.name.return_value = "lineedit"
+        mock_feature.attributeMap.return_value = {0:QVariant('Hello')}
+        self.binder.fields = [field]
+
+        buddy = self.binder.bindFeature(mock_feature)
+        self.assertTrue(not (w,w) in self.binder.mandatory_group.widgets)
+
+
+class testFormBinderUnBinding(TestCase):
+    def setUp(self):
+        self.layer = Mock()
+        self.layer.pendingFields.return_value = []
+        self.binder = FormBinder(self.layer,None,None,None)
+        
+    def test_unbind_lineedit(self):
+        w = QLineEdit()
+        w.setText("lineedit")
+        self.binder.fieldtocontrol = {0:w}
+        mock_feature = Mock()
+        self.binder.unbindFeature(mock_feature)
+        mock_feature.changeAttribute.assert_called_once_with(0, "lineedit" )
+
+    def test_unbind_textedit(self):
+        w = QTextEdit()
+        w.setText("textedit")
+        self.binder.fieldtocontrol = {0:w}
+        mock_feature = Mock()
+        self.binder.unbindFeature(mock_feature)
+        mock_feature.changeAttribute.assert_called_once_with(0, "textedit" )
+        
+    def test_unbind_calendar(self):
+        w = QCalendarWidget()
+        w.setSelectedDate(QDate.fromString("2012-06-12", Qt.ISODate ))
+        self.binder.fieldtocontrol = {0:w}
+        mock_feature = Mock()
+        self.binder.unbindFeature(mock_feature)
+        mock_feature.changeAttribute.assert_called_once_with(0, "2012-06-12" )
+
+    def test_unbind_combobox(self):
+        w = QComboBox()
+        w.addItems(['', 'Hello World', 'Hello', 'World'])
+        w.setCurrentIndex(1)
+        self.binder.fieldtocontrol = {0:w}
+        mock_feature = Mock()
+        self.binder.unbindFeature(mock_feature)
+        mock_feature.changeAttribute.assert_called_once_with(0, "Hello World" )
+
+    def test_unbind_doublespin(self):
+        w = QDoubleSpinBox()
+        w.setValue(2.12)
+        self.binder.fieldtocontrol = {0:w}
+        mock_feature = Mock()
+        self.binder.unbindFeature(mock_feature)
+        mock_feature.changeAttribute.assert_called_once_with(0, 2.12 )
+
+    def test_unbind_singlespin(self):
+        w = QSpinBox()
+        w.setValue(2)
+        self.binder.fieldtocontrol = {0:w}
+        mock_feature = Mock()
+        self.binder.unbindFeature(mock_feature)
+        mock_feature.changeAttribute.assert_called_once_with(0, 2 )
+
+    def test_unbind_datetimeedit(self):
+        w = QDateTimeEdit()
+        w.setDateTime(QDateTime(2012,06,12,0,1,0,0))
+        self.binder.fieldtocontrol = {0:w}
+        mock_feature = Mock()
+        self.binder.unbindFeature(mock_feature)
+        mock_feature.changeAttribute.assert_called_once_with(0, "2012-06-12T00:01:00" )
+
+    def test_unbind_checkbox(self):
+        w = QCheckBox()
+        w2 = QCheckBox()
+        w.setChecked(True)
+        w2.setChecked(False)
+        self.binder.fieldtocontrol = {0:w, 1:w2}
+        mock_feature = Mock()
+        self.binder.unbindFeature(mock_feature)
+        calls = [call(0,1), call(1,0)]
+        mock_feature.changeAttribute.assert_has_calls(calls,any_order=True)
+
+    def test_unbind_groupbox(self):
+        w = QGroupBox()
+        w2 = QGroupBox()
+        w.setCheckable(True)
+        w2.setCheckable(True)
+        w.setChecked(True)
+        w2.setChecked(False)
+        self.binder.fieldtocontrol = {0:w, 1:w2}
+        mock_feature = Mock()
+        self.binder.unbindFeature(mock_feature)
+        calls = [call(0,1), call(1,0)]
+        mock_feature.changeAttribute.assert_has_calls(calls,any_order=True)
+
+
 if __name__ == '__main__':
-    import nose
-    nose.run()
+    #import nose
+    #nose.run()
+    logger = logging.getLogger()
+    logger.disable = True
+    app = QApplication(sys.argv)
+    unittest.main()
