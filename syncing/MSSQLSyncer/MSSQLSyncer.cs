@@ -42,7 +42,10 @@ namespace MSSQLSyncer
                         RemoteProvider = masterProvider,
                         Direction = order
                     };
-
+                    if (scope == "OneWay")
+                    {
+                        slaveProvider.ApplyChangeFailed += new EventHandler<Microsoft.Synchronization.Data.DbApplyChangeFailedEventArgs>(slaveProvider_ApplyChangeFailed);
+                    }
                     try
                     {
                         SyncOperationStatistics stats = orchestrator.Synchronize();
@@ -54,6 +57,30 @@ namespace MSSQLSyncer
                         return null;
                     }
                 }
+            }
+        }
+
+        static void slaveProvider_ApplyChangeFailed(object sender, Microsoft.Synchronization.Data.DbApplyChangeFailedEventArgs e)
+        {
+            switch (e.Conflict.Type)
+            {
+                case Microsoft.Synchronization.Data.DbConflictType.ErrorsOccurred:
+                    break;
+                case Microsoft.Synchronization.Data.DbConflictType.LocalCleanedupDeleteRemoteUpdate:
+                    break;
+                case Microsoft.Synchronization.Data.DbConflictType.LocalDeleteRemoteDelete:
+                    break;
+                case Microsoft.Synchronization.Data.DbConflictType.LocalDeleteRemoteUpdate:
+                    break;
+                case Microsoft.Synchronization.Data.DbConflictType.LocalInsertRemoteInsert:
+                    break;
+                case Microsoft.Synchronization.Data.DbConflictType.LocalUpdateRemoteDelete:
+                    break;
+                case Microsoft.Synchronization.Data.DbConflictType.LocalUpdateRemoteUpdate:
+                    e.Action = Microsoft.Synchronization.Data.ApplyAction.RetryWithForceWrite;
+                    break;
+                default:
+                    break;
             }
         }
     }

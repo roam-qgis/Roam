@@ -13,7 +13,7 @@ from drawingpad import DrawingPad
 from utils import log
 
 class BindingError(Exception):
-    def __init__(self, control, value,reason=''):
+    def __init__(self, control, value, reason=''):
         self.control = control
         self.value = value
         self.message = "Couldn't bind %s to %s" % ( control.objectName(), value)
@@ -129,7 +129,11 @@ class FormBinder(QObject):
 
     def bindFeature(self, qgsfeature, mandatory_fields=True):
         """
-        Binds a features values to the form.
+        Binds a features values to the form. If the control has the mandatory
+        property set then it will be added to the mandatory group.
+
+        qgsfeature - A QgsFeature to bind the values from
+        mandatory_fields - True if mandatory fields should be respected (default)
         """
         self.feature = qgsfeature
         for index, value in qgsfeature.attributeMap().items():
@@ -152,21 +156,36 @@ class FormBinder(QObject):
             try:
                 self.bindValueToControl(control, value)
             except BindingError as er:
-                warning("Can't bind %s to %s" % (control.objectName() ,value.toString()))
-
+                warning(err.reason)
+                
             self.fieldtocontrol[index] = control
 
     def bindByName(self, controlname, value):
+        """
+        Binds a value to a control based on the control name.
+
+        controlname - Name of the control to bind
+        value - QVariant holding the value.
+        """
         control = self.forminstance.findChild(QWidget, controlname)
 
         if control is None:
             warning("Can't find control called %s" % (field.name()))
             return False
         
-        success = self.bindValueToControl(control, value)
-        return success
+        try:
+            self.bindValueToControl(control, value)
+        except BindingError as er:
+            warning(err.reason)
 
     def bindValueToControl(self, control, value):
+        """
+        Binds a control to the supplied value.
+        Raises BindingError() if control is not supported.
+
+        control - QWidget based control that takes the new value
+        value - A QVariant holding the value
+        """
         if isinstance(control, QCalendarWidget):
             control.setSelectedDate(QDate.fromString( value.toString(), Qt.ISODate ))
                 
@@ -205,9 +224,15 @@ class FormBinder(QObject):
                 control.setIconSize(QSize(24,24))
                 control.pressed.connect(functools.partial(self.loadDrawingTool, control))
         else:
-            raise BindingError(control, value.toString())
+            raise BindingError(control, value.toString(), "Unsupported widget %s" % control)
 
     def loadDrawingTool(self, control):
+        """
+        Load the drawing tool.
+
+        control - The control (QWidget) who owns this drawing.  Its name is used
+                  in the naming of the final image.
+        """
         controlname = str(control.objectName())
         self.forminstance.hide()
         curdir = os.path.dirname(__file__)
@@ -234,6 +259,12 @@ class FormBinder(QObject):
             self.forminstance.show()
 
     def drawingPadMapSnapshot(self, pad):
+        """
+        Saves the current view of the map canvas to a image and it into the
+        drawing pad.
+
+        pad - The drawing pad that will take the final image.
+        """
         #TODO Refactor me!!
         image = QPixmap.fromImage(pad.scribbleArea.image)
         tempimage = os.path.join(tempfile.gettempdir(), "mapcanvascapture.png")
@@ -277,6 +308,11 @@ class FormBinder(QObject):
         return qgsfeature
 
     def pickDateTime(self, control, mode):
+        """
+        Open the date time picker dialog
+
+        control - The control that will recive the user set date time.
+        """
         dlg = DateTimePickerDialog(mode)
         dlg.setDateTime(control.dateTime())
         if dlg.exec_():
@@ -287,6 +323,9 @@ class FormBinder(QObject):
                 control.setTime(dlg.getSelectedTime())
             
     def bindSelectButtons(self):
+        """
+        Binds all the buttons on the form that need a select from map action.
+        """
         for group in self.settings.childGroups():
             control = self.forminstance.findChild(QToolButton, group)
 
@@ -299,6 +338,13 @@ class FormBinder(QObject):
             control.setIconSize(QSize(24,24))
 
     def selectFeatureClicked(self, controlName):
+        """
+        Loads the select from map action tool. Switchs to the map to allow the
+        user to select a feature.
+
+        controlname - The control name when looking up in the settings for the
+                      button config.
+        """
         layername = self.settings.value("%s/layer" % controlName ).toString()
         column = self.settings.value("%s/column" % controlName).toString()
         bindto = self.settings.value("%s/bindto" % controlName).toString()
@@ -322,5 +368,8 @@ class FormBinder(QObject):
         self.beginSelectFeature.emit(message)
 
     def bindHighlightedFeature(self, feature, value, bindto):
+        """
+        Binds the selected features value to a control.
+        """
         self.bindByName(bindto, value)
         self.endSelectFeature.emit()
