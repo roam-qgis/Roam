@@ -92,8 +92,6 @@ def deploy():
     
     # Copy all the files to the ouput directory
     print "Copying new files..."
-    print buildpath
-    print curpath
     copytree(curpath, buildpath, ignore=ignore_patterns(*ignore))
     deploypath = os.path.join(curpath, "SDRCDataCollection")
     bootpath = os.path.join(curpath, "boot")

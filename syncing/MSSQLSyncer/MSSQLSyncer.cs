@@ -16,10 +16,13 @@ namespace MSSQLSyncer
             if (stats == null || stats2 == null)
                 return;
 
+            int total_down = stats.DownloadChangesTotal + stats2.DownloadChangesTotal;
+            int total_up = stats.UploadChangesApplied + stats2.UploadChangesTotal;
+
             Console.WriteLine(Resources.Program_Main_Changes_Downloaded__
-                  + stats.DownloadChangesTotal + stats2.DownloadChangesTotal
+                  + total_down
                   + Resources.Program_Main_
-                  + stats.UploadChangesApplied + stats2.UploadChangesTotal);
+                  + total_up);
         }
 
         static SyncOperationStatistics sync(string scope, SyncDirectionOrder order)
