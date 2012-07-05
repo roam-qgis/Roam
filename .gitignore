@@ -1,3 +1,9 @@
+.coverage
+.deps
+.noseids
+boot/app/
+cover/
+*.log
 *.pyc
 nbproject/private/private.xml
 *.suo

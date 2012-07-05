@@ -8,7 +8,10 @@ import sys
 from shutil import copytree, ignore_patterns, rmtree
 import datetime
 from subprocess import Popen, PIPE
-import tests
+from PyQt4.QtGui import QApplication
+
+import nose
+from nose.plugins.cover import Coverage
 
 ui_sources = ['ui_datatimerpicker', 'ui_listmodules',
               'syncing/ui_sync', 'ui_listfeatures', 'ui_errorlist']
@@ -22,7 +25,8 @@ ignore = ['*.pyc', 'boot', '.git', '.deps', 'nbproject', 'obj',
           '*.vshost.*', '*.cs', 'make_win.bat', 'resources', '.gitignore',
           'rst*.py', 'builddocs.bat', '*.qrc', '*.log', '*.orig',
           'ui_datatimerpicker.ui', 'ui_drawingpad.ui', 'ui_listfeatures.ui',
-          'ui_listmodules.ui', 'SDRCDataCollection', 'SqlSyncProvisioner']
+          'ui_listmodules.ui', 'SDRCDataCollection', 'SqlSyncProvisioner',
+          'cover','.*']
 
 # Add the path to MSBuild to PATH so that subprocess can find it.
 env = os.environ.copy()
@@ -75,7 +79,8 @@ def getVersion():
     return "{0}.{1}.{2}.{3}".format(year, month, day, commit )
 
 def test():
-    return tests.main()
+    import nose
+    return nose.run()
 
 def deploy():
     print "Deploy started"

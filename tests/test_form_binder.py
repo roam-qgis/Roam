@@ -10,11 +10,7 @@ from mock import Mock, patch
 from unittest import TestCase
 from PyQt4.QtGui import *
 from PyQt4.QtCore import *
-
-pardir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
-sys.path.append(pardir)
-
-from form_binder import MandatoryGroup, FormBinder
+from form_binder import MandatoryGroup, FormBinder, BindingError
 
 class testMandatoryGroups(TestCase):
     def setUp(self):
@@ -260,28 +256,28 @@ class testFormBinder(TestCase):
         self.binder.bindValueToControl(w, value)
         self.assertEqual(w.currentText(), '')
 
-    def test_bind_double_widget(self):
+    def test_bind_doublespin_widget(self):
         w = QDoubleSpinBox()
         value = QVariant('2.13')
         self.assertNotEqual(w.value(), 2.13)
         self.binder.bindValueToControl(w, value)
         self.assertEqual(w.value(), 2.13)
 
-    def test_fail_bind_double_widget(self):
+    def test_fail_bind_doubledouble_widget(self):
         w = QDoubleSpinBox()
         value = QVariant('blah')
         self.assertEqual(w.value(), 0.00)
         self.binder.bindValueToControl(w, value)
         self.assertEqual(w.value(), 0.00)
 
-    def test_bind_double_widget(self):
+    def test_bind_singlespin_widget(self):
         w = QSpinBox()
         value = QVariant('2')
         self.assertNotEqual(w.value(), 2)
         self.binder.bindValueToControl(w, value)
         self.assertEqual(w.value(), 2)
 
-    def test_fail_bind_double_widget(self):
+    def test_fail_bind_singlespin_widget(self):
         w = QSpinBox()
         value = QVariant('blah')
         self.assertEqual(w.value(), 0.00)
@@ -334,8 +330,22 @@ class testFormBinder(TestCase):
         mock_method.assert_called_with(w,"DateTime")
         b2.click()
         mock_method.assert_called_with(w2,"DateTime")
-            
 
+    @patch.object(FormBinder, 'loadDrawingTool')
+    def test_bind_drawing_tool(self, mock_loadDrawingTool):
+        button = QPushButton()
+        button.setText("Drawing")
+        self.binder.bindValueToControl(button, QVariant())
+        button.click()
+        self.assertTrue(mock_loadDrawingTool.called)
+
+    def test_bindValueToControl_raises_exception_on_fail(self):
+        w = QWidget()
+        self.assertRaises(BindingError,
+                         self.binder.bindValueToControl, w, QVariant())
+
+
+        
 if __name__ == '__main__':
-    app = QApplication(sys.argv)
-    unittest.main()
+    import nose
+    nose.run()

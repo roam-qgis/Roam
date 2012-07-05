@@ -12,6 +12,13 @@ from datatimerpickerwidget import DateTimePickerDialog
 from drawingpad import DrawingPad
 from utils import log
 
+class BindingError(Exception):
+    def __init__(self, control, value,reason=''):
+        self.control = control
+        self.value = value
+        self.message = "Couldn't bind %s to %s" % ( control.objectName(), value)
+        self.reason = reason
+        
 class MandatoryGroup(QObject):
     enable = pyqtSignal()
     #http://doc.qt.nokia.com/qq/qq11-mandatoryfields.html
@@ -140,9 +147,14 @@ class FormBinder(QObject):
                     buddy = label or control
                     self.mandatory_group.addWidget(control, buddy)
 
-            success = self.bindValueToControl(control, value)
-            if success:
-                self.fieldtocontrol[index] = control
+            info("Binding %s to %s" % (control.objectName() , value.toString()))
+            
+            try:
+                self.bindValueToControl(control, value)
+            except BindingError as er:
+                warning("Can't bind %s to %s" % (control.objectName() ,value.toString()))
+
+            self.fieldtocontrol[index] = control
 
     def bindByName(self, controlname, value):
         control = self.forminstance.findChild(QWidget, controlname)
@@ -155,8 +167,6 @@ class FormBinder(QObject):
         return success
 
     def bindValueToControl(self, control, value):
-        success = True
-
         if isinstance(control, QCalendarWidget):
             control.setSelectedDate(QDate.fromString( value.toString(), Qt.ISODate ))
                 
@@ -195,14 +205,7 @@ class FormBinder(QObject):
                 control.setIconSize(QSize(24,24))
                 control.pressed.connect(functools.partial(self.loadDrawingTool, control))
         else:
-            success = False
-
-        if success:
-            info("Binding %s to %s" % (control.objectName() , QVariant(value).toString()))
-        else:
-            warning("Can't bind %s to %s" % (control.objectName() ,value.toString()))
-
-        return success
+            raise BindingError(control, value.toString())
 
     def loadDrawingTool(self, control):
         controlname = str(control.objectName())
