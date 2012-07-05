@@ -11,11 +11,18 @@ namespace MSSQLSyncer
         /// <summary>The main entry point for the application.</summary>
         static void Main()
         {
-            sync("OneWay", SyncDirectionOrder.Download);
-            sync("TwoWay", SyncDirectionOrder.DownloadAndUpload);
+            SyncOperationStatistics stats = sync("OneWay", SyncDirectionOrder.Download);
+            SyncOperationStatistics stats2 = sync("TwoWay", SyncDirectionOrder.DownloadAndUpload);
+            if (stats == null || stats2 == null)
+                return;
+
+            Console.WriteLine(Resources.Program_Main_Changes_Downloaded__
+                  + stats.DownloadChangesTotal + stats2.DownloadChangesTotal
+                  + Resources.Program_Main_
+                  + stats.UploadChangesApplied + stats2.UploadChangesTotal);
         }
 
-        static void sync(string scope, SyncDirectionOrder order)
+        static SyncOperationStatistics sync(string scope, SyncDirectionOrder order)
         {
             using (SqlSyncProvider masterProvider = new SqlSyncProvider { ScopeName = scope },
                      slaveProvider = new SqlSyncProvider { ScopeName = scope })
@@ -36,14 +43,12 @@ namespace MSSQLSyncer
                     try
                     {
                         SyncOperationStatistics stats = orchestrator.Synchronize();
-                        Console.WriteLine(Resources.Program_Main_Changes_Downloaded__
-                                          + stats.DownloadChangesTotal
-                                          + Resources.Program_Main_
-                                          + stats.UploadChangesApplied);
+                        return stats;
                     }
                     catch (Exception ex)
                     {
                         Console.Error.WriteLine(ex.Message);
+                        return null;
                     }
                 }
             }
