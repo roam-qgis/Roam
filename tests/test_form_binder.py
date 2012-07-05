@@ -246,7 +246,7 @@ class testFormBinder(TestCase):
 
     def test_bind_combox_widget(self):
         w = QComboBox()
-        w.addItems(['Hello World', 'Hello', 'World'])
+        w.addItems([QString('Hello World'), QString('Hello'), QString('World')])
         value = QVariant('Hello')
         self.assertNotEqual(w.currentText(), value.toString())
         self.binder.bindValueToControl(w, value)

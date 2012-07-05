@@ -168,21 +168,15 @@ class FormBinder(QObject):
 
         elif isinstance(control, QComboBox):
             itemindex = control.findText(value.toString())
-            success = itemindex > 0
-            if success:
-                control.setCurrentIndex( itemindex )
+            control.setCurrentIndex( itemindex )
             
         elif isinstance(control, QDoubleSpinBox):
             double, passed = value.toDouble()
-            success = passed
-            if passed:
-                control.setValue( double )
+            control.setValue( double )
 
         elif isinstance(control, QSpinBox):
             int, passed = value.toInt()
-            success = passed
-            if passed:
-                control.setValue( int )
+            control.setValue( int )
 
         elif isinstance(control, QDateTimeEdit):
             control.setDateTime(QDateTime.fromString( value.toString(), Qt.ISODate ))
