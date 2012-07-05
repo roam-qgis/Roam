@@ -8,12 +8,17 @@ namespace MSSQLSyncer
 
     static class Program
     {
-        public const string Scope = "SpatialScope";
         /// <summary>The main entry point for the application.</summary>
         static void Main()
         {
-            using (SqlSyncProvider masterProvider = new SqlSyncProvider { ScopeName = Scope },
-                   slaveProvider = new SqlSyncProvider { ScopeName = Scope })
+            sync("OneWay", SyncDirectionOrder.Download);
+            sync("TwoWay", SyncDirectionOrder.DownloadAndUpload);
+        }
+
+        static void sync(string scope, SyncDirectionOrder order)
+        {
+            using (SqlSyncProvider masterProvider = new SqlSyncProvider { ScopeName = scope },
+                     slaveProvider = new SqlSyncProvider { ScopeName = scope })
             {
                 using (SqlConnection master = new SqlConnection(Settings.Default.ServerConnectionString),
                                      slave = new SqlConnection(Settings.Default.ClientConnectionString))
@@ -22,11 +27,11 @@ namespace MSSQLSyncer
                     slaveProvider.Connection = slave;
 
                     SyncOrchestrator orchestrator = new SyncOrchestrator
-                        {
-                            LocalProvider = slaveProvider,
-                            RemoteProvider = masterProvider,
-                            Direction = SyncDirectionOrder.UploadAndDownload
-                        };
+                    {
+                        LocalProvider = slaveProvider,
+                        RemoteProvider = masterProvider,
+                        Direction = order
+                    };
 
                     try
                     {
