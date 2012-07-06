@@ -10,7 +10,7 @@ import os
 import functools
 from datatimerpickerwidget import DateTimePickerDialog
 from drawingpad import DrawingPad
-from utils import log
+from utils import log, warning
 
 class BindingError(Exception):
     def __init__(self, control, value, reason=''):
@@ -187,7 +187,7 @@ class FormBinder(QObject):
         controlname - Name of the control to bind
         value - QVariant holding the value.
         """
-        control = control = self.getControl(controlname)
+        control = self.getControl(controlname)
         
         try:
             self.bindValueToControl(control, value)
@@ -343,25 +343,31 @@ class FormBinder(QObject):
         Binds all the buttons on the form that need a select from map action.
         """
         tools = self.forminstance.findChildren(QToolButton, QRegExp('.*_mapselect'))
-        layers = { l.name() : l for l in self.canvas.layers()}
+        log(tools)
+        layers = { QString(l.name()) : l for l in self.canvas.layers()}
+        log(layers)
         for tool in tools:
             try:
                 control = self.getControl(tool.objectName()[:-10])
-            except ControlNotFound:
+            except ControlNotFound as ex:
+                warning(ex.message)
                 tool.setEnabled(False)
                 continue
                 
             settings = tool.dynamicPropertyNames()
             if not 'from_layer' in settings or not 'using_column' in settings:
+                warning('from_layer or using_column not found')
                 tool.setEnabled(False)
                 continue
 
             layer_name = tool.property('from_layer').toString()
             column_name = tool.property('using_column').toString()
 
+            layer = None
             try:
-                layer = layers[str(layer_name)]
+                layer = layers[QString(layer_name)]
             except KeyError:
+                warning('layer not found in list')
                 tool.setEnabled(False)
                 continue
 
@@ -374,14 +380,15 @@ class FormBinder(QObject):
                 radius = 5
 
             tool.pressed.connect(functools.partial(self.selectFeatureClicked,
-                                                      layer_name,
+                                                      layer,
                                                       column_name,
                                                       message,
-                                                      radius))
+                                                      radius,
+                                                      control.objectName()))
             tool.setIcon(QIcon(":/icons/select"))
             tool.setIconSize(QSize(24,24))
 
-    def selectFeatureClicked(self, layer_name, column_name, radius, message):
+    def selectFeatureClicked(self, layer, column, message, searchsize, bindto):
         """
         Loads the select from map action tool. Switchs to the map to allow the
         user to select a feature.

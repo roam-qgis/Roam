@@ -179,16 +179,17 @@ class testMandatoryGroups(TestCase):
 class testFormBinderBinding(TestCase):
 
     def getCavnasWithFakeLayers(self):
-        layer = Mock()
-        layer.name.return_value = 'layer1'
-        layer2 = Mock()
-        layer2.name.return_value = 'layer2'
-        layer3 = Mock()
-        layer3.name.return_value = 'layer3'
-        layer4 = Mock()
-        layer4.name.return_value = 'layer4'
+        self.layer1 = Mock()
+        self.layer1.name.return_value = 'layer1'
+        self.layer2 = Mock()
+        self.layer2.name.return_value = 'layer2'
+        self.layer3 = Mock()
+        self.layer3.name.return_value = 'layer3'
+        self.layer4 = Mock()
+        self.layer4.name.return_value = 'layer4'
         canvas = Mock()
-        canvas.layers.return_value = [layer,layer2, layer3, layer4]
+        canvas.layers.return_value = [self.layer1,self.layer2,
+                                      self.layer3, self.layer4]
         return canvas
     
     def setUp(self):
@@ -538,7 +539,8 @@ class testFormBinderBinding(TestCase):
         self.parent.layout().addWidget(l)
         self.binder.bindSelectButtons()
         tool.click()
-        mock_method.assert_called_with('layer1','column1','test message',10)
+        mock_method.assert_called_with(self.layer1,'column1','test message',10,\
+                                       'field')
 
     @patch.object(FormBinder, 'selectFeatureClicked')
     def test_map_select_tool_called_with_correct_args_defaults(self, mock_method):
@@ -552,8 +554,9 @@ class testFormBinderBinding(TestCase):
         self.parent.layout().addWidget(l)
         self.binder.bindSelectButtons()
         tool.click()
-        mock_method.assert_called_with('layer1','column1', \
-                                       'Please select a feature in the map', 5)
+        mock_method.assert_called_with(self.layer1,'column1', \
+                                       'Please select a feature in the map', 5, \
+                                       'field')
 
 class testFormBinderUnBinding(TestCase):
     def setUp(self):

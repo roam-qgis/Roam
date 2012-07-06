@@ -50,12 +50,14 @@ class DialogProvider(QObject):
 
     def selectingFromMap(self, message):
         self.dialog.hide()
-        label = QLabel(message)
+        label = QLabel()
+        label.setText(QString(message))
         label.setStyleSheet('font: 75 30pt "MS Shell Dlg 2";color: rgb(231, 175, 62);')
         self.item = self.canvas.scene().addWidget(label)
         self.disableToolbars()
 
     def featureSelected(self):
+        log('Feature selected')
         self.canvas.scene().removeItem(self.item)
         self.dialog.show()
         self.enableToolbars()
