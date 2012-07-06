@@ -379,6 +379,23 @@ class testFormBinderBinding(TestCase):
         buddy = self.binder.bindFeature(mock_feature)
         self.assertTrue((w,w) in self.binder.mandatory_group.widgets)
 
+    def test_mandatory_fields_should_be_added_to_mandatory_group_with_buddy(self):
+        w = QLineEdit()
+        w.setObjectName('lineedit')
+        w.setProperty("mandatory",True)
+        l = QLabel()
+        l.setObjectName('lineedit_label')
+        self.parent.layout().addWidget(w)
+        self.parent.layout().addWidget(l)
+        mock_feature = Mock()
+        field = Mock()
+        field.name.return_value = "lineedit"
+        mock_feature.attributeMap.return_value = {0:QVariant('Hello')}
+        self.binder.fields = [field]
+
+        buddy = self.binder.bindFeature(mock_feature)
+        self.assertTrue((w,l) in self.binder.mandatory_group.widgets)
+
     def test_nonmandatory_fields_should_not_be_added_to_mandatory_group(self):
         w = QLineEdit()
         w.setObjectName("lineedit")
@@ -393,6 +410,12 @@ class testFormBinderBinding(TestCase):
         buddy = self.binder.bindFeature(mock_feature)
         self.assertTrue(not (w,w) in self.binder.mandatory_group.widgets)
 
+    def test_bindByName_binds_by_name(self):
+        w = QLineEdit()
+        w.setObjectName("lineedit")
+        self.parent.layout().addWidget(w)
+        self.binder.bindByName("lineedit", QVariant("Hello"))
+        self.assertEqual(w.text(),"Hello")
 
 class testFormBinderUnBinding(TestCase):
     def setUp(self):
