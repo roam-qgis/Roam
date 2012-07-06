@@ -14,10 +14,16 @@ from utils import log
 
 class BindingError(Exception):
     def __init__(self, control, value, reason=''):
+        Exception.__init__(self)
         self.control = control
         self.value = value
         self.message = "Couldn't bind %s to %s" % ( control.objectName(), value)
         self.reason = reason
+
+class ControlNotFound(Exception):
+    def __init__(self, control_name):
+        Exception.__init__(self)
+        self.message = "Can't find control called %s" % (control_name)
         
 class MandatoryGroup(QObject):
     enable = pyqtSignal()
@@ -138,10 +144,11 @@ class FormBinder(QObject):
         self.feature = qgsfeature
         for index, value in qgsfeature.attributeMap().items():
             field = self.fields[index]
-            control = self.forminstance.findChild(QWidget, field.name())
-            
-            if control is None:
-                warning("Can't find control called %s" % (field.name()))
+
+            try:
+                control = self.getControl(field.name())
+            except ControlNotFound as ex:
+                warning(ex.message)
                 continue
 
             if mandatory_fields:
@@ -160,8 +167,18 @@ class FormBinder(QObject):
             self.fieldtocontrol[index] = control
 
     def getBuddy(self, control):
-        label = self.forminstance.findChild(QLabel, control.objectName() + "_label")
-        return label or control
+        try:
+            label = self.getControl(control.objectName() + "_label",type=QLabel)
+            return label
+        except ControlNotFound:
+            return control
+        
+    def getControl(self, name, type=QWidget):
+        control = self.forminstance.findChild(type, name)
+        if not control:
+            raise ControlNotFound(name)
+
+        return control
 
     def bindByName(self, controlname, value):
         """
@@ -170,11 +187,7 @@ class FormBinder(QObject):
         controlname - Name of the control to bind
         value - QVariant holding the value.
         """
-        control = self.forminstance.findChild(QWidget, controlname)
-
-        if control is None:
-            warning("Can't find control called %s" % (field.name()))
-            return False
+        control = control = self.getControl(controlname)
         
         try:
             self.bindValueToControl(control, value)

@@ -11,7 +11,7 @@ from mock import Mock, patch, create_autospec, call
 from unittest import TestCase
 from PyQt4.QtGui import *
 from PyQt4.QtCore import *
-from form_binder import MandatoryGroup, FormBinder, BindingError
+from form_binder import MandatoryGroup, FormBinder, BindingError, ControlNotFound
 
 class testMandatoryGroups(TestCase):
     def setUp(self):
@@ -416,6 +416,31 @@ class testFormBinderBinding(TestCase):
         self.parent.layout().addWidget(w)
         self.binder.bindByName("lineedit", QVariant("Hello"))
         self.assertEqual(w.text(),"Hello")
+
+    def test_bindByName_throws_error_on_no_control_found(self):
+        w = QLineEdit()
+        w.setObjectName("lineedit")
+        self.parent.layout().addWidget(w)
+        self.assertRaises(ControlNotFound, self.binder.bindByName, \
+                          "balh", QVariant("Hello") )
+
+    def test_getControl_raise_ControlNotFound_on_missing_control(self):
+        self.assertRaises(ControlNotFound, self.binder.getControl, \
+                          "balh")
+
+    def test_getControl_returns_control(self):
+        w = QLineEdit()
+        w.setObjectName("lineedit")
+        self.parent.layout().addWidget(w)
+        self.assertEqual(self.binder.getControl("lineedit"), w)
+
+    def test_getControl_returns_control_of_correct_type(self):
+        w = QLabel()
+        w.setObjectName("lineedit")
+        self.parent.layout().addWidget(w)
+        control = self.binder.getControl("lineedit",type=QLabel)
+        self.assertEqual(control, w)
+        self.assertTrue(type(control) is QLabel)
 
 class testFormBinderUnBinding(TestCase):
     def setUp(self):
