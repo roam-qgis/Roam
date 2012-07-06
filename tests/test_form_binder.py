@@ -504,7 +504,7 @@ class testFormBinderBinding(TestCase):
         tool = QToolButton()
         tool.setObjectName('field_mapselect')
         tool.setProperty('from_layer','layer1')
-        tool.setProperty('using_column','layer1')
+        tool.setProperty('using_column','')
         l = QLineEdit()
         l.setObjectName('field')
         self.parent.layout().addWidget(tool)
@@ -523,7 +523,37 @@ class testFormBinderBinding(TestCase):
         self.parent.layout().addWidget(l)
         self.binder.bindSelectButtons()
         self.assertFalse(tool.isEnabled())
+        
+    @patch.object(FormBinder, 'selectFeatureClicked')
+    def test_map_select_tool_called_with_correct_args(self, mock_method):
+        tool = QToolButton()
+        tool.setObjectName('field_mapselect')
+        tool.setProperty('from_layer','layer1')
+        tool.setProperty('using_column','column1')
+        tool.setProperty('message','test message')
+        tool.setProperty('radius', 10)
+        l = QLineEdit()
+        l.setObjectName('field')
+        self.parent.layout().addWidget(tool)
+        self.parent.layout().addWidget(l)
+        self.binder.bindSelectButtons()
+        tool.click()
+        mock_method.assert_called_with('layer1','column1','test message',10)
 
+    @patch.object(FormBinder, 'selectFeatureClicked')
+    def test_map_select_tool_called_with_correct_args_defaults(self, mock_method):
+        tool = QToolButton()
+        tool.setObjectName('field_mapselect')
+        tool.setProperty('from_layer','layer1')
+        tool.setProperty('using_column','column1')
+        l = QLineEdit()
+        l.setObjectName('field')
+        self.parent.layout().addWidget(tool)
+        self.parent.layout().addWidget(l)
+        self.binder.bindSelectButtons()
+        tool.click()
+        mock_method.assert_called_with('layer1','column1', \
+                                       'Please select a feature in the map', 5)
 
 class testFormBinderUnBinding(TestCase):
     def setUp(self):
