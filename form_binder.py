@@ -343,7 +343,7 @@ class FormBinder(QObject):
         Binds all the buttons on the form that need a select from map action.
         """
         tools = self.forminstance.findChildren(QToolButton, QRegExp('.*_mapselect'))
-        layers = dict((l.name(),l) for l in self.canvas.layers())
+        layers = { l.name() : l for l in self.canvas.layers()}
         for tool in tools:
             try:
                 control = self.getControl(tool.objectName()[:-10])
