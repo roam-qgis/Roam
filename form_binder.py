@@ -342,16 +342,35 @@ class FormBinder(QObject):
         """
         Binds all the buttons on the form that need a select from map action.
         """
-        for group in self.settings.childGroups():
-            control = self.forminstance.findChild(QToolButton, group)
-
-            if control is None:
+        tools = self.forminstance.findChildren(QToolButton, QRegExp('.*_mapselect'))
+        layers = dict((l.name(),l) for l in self.canvas.layers())
+        for tool in tools:
+            try:
+                control = self.getControl(tool.objectName()[:-10])
+            except ControlNotFound:
+                tool.setEnabled(False)
                 continue
-            
-            name = control.objectName()
-            control.clicked.connect(functools.partial(self.selectFeatureClicked, name))
-            control.setIcon(QIcon(":/icons/select"))
-            control.setIconSize(QSize(24,24))
+                
+            settings = tool.dynamicPropertyNames()
+            if not 'from_layer' in settings or not 'using_column' in settings:
+                tool.setEnabled(False)
+                continue
+
+            layer_name = tool.property('from_layer').toString()
+            if not layer_name in layers.iterkeys():
+                tool.setEnabled(False)
+                continue
+                
+#        for group in self.settings.childGroups():
+#            control = self.forminstance.findChild(QToolButton, group)
+#
+#            if control is None:
+#                continue
+#
+#            name = control.objectName()
+#            control.clicked.connect(functools.partial(self.selectFeatureClicked, name))
+#            control.setIcon(QIcon(":/icons/select"))
+#            control.setIconSize(QSize(24,24))
 
     def selectFeatureClicked(self, controlName):
         """
