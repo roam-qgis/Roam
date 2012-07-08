@@ -183,7 +183,7 @@ class SDRCDataCapture():
         
         self.actionGroup.addAction(self.iface.actionZoomIn())
         self.actionGroup.addAction(self.iface.actionZoomOut())
-        self.actionGroup.addAction(self.iface.actionPan())
+        self.actionGroup.addAction(self.iface.actionTouch())
 
     def projectOpened(self):
         """
