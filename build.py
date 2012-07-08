@@ -89,7 +89,7 @@ def deploy():
     passed = test()
     if not passed:
         print "Tests Failed!!"
-        return False
+        return Falses
     
     if os.path.exists(buildpath):
         print "Removing old depoly directory..."
@@ -126,4 +126,6 @@ def deploy_to(client, rebuild=True):
 if __name__ == "__main__":
     #deploy()
     deploy_to("\\\\sd0469\\C$\\Users\\woodrown\\Desktop\\SDRCDataCollection\\")
+    # Touch
+    #deploy_to("\\\\sd0496\\C$\\Users\\woodrown\\Desktop\\SDRCDataCollection\\")
     

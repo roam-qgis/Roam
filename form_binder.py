@@ -10,7 +10,7 @@ import os
 import functools
 from datatimerpickerwidget import DateTimePickerDialog
 from drawingpad import DrawingPad
-from utils import log
+from utils import log, warning
 
 class BindingError(Exception):
     def __init__(self, control, value, reason=''):
@@ -187,7 +187,7 @@ class FormBinder(QObject):
         controlname - Name of the control to bind
         value - QVariant holding the value.
         """
-        control = control = self.getControl(controlname)
+        control = self.getControl(controlname)
         
         try:
             self.bindValueToControl(control, value)
@@ -342,45 +342,63 @@ class FormBinder(QObject):
         """
         Binds all the buttons on the form that need a select from map action.
         """
-        for group in self.settings.childGroups():
-            control = self.forminstance.findChild(QToolButton, group)
-
-            if control is None:
+        tools = self.forminstance.findChildren(QToolButton, QRegExp('.*_mapselect'))
+        log(tools)
+        layers = { QString(l.name()) : l for l in self.canvas.layers()}
+        log(layers)
+        for tool in tools:
+            try:
+                control = self.getControl(tool.objectName()[:-10])
+            except ControlNotFound as ex:
+                warning(ex.message)
+                tool.setEnabled(False)
                 continue
-            
-            name = control.objectName()
-            control.clicked.connect(functools.partial(self.selectFeatureClicked, name))
-            control.setIcon(QIcon(":/icons/select"))
-            control.setIconSize(QSize(24,24))
+                
+            settings = tool.dynamicPropertyNames()
+            if not 'from_layer' in settings or not 'using_column' in settings:
+                warning('from_layer or using_column not found')
+                tool.setEnabled(False)
+                continue
 
-    def selectFeatureClicked(self, controlName):
+            layer_name = tool.property('from_layer').toString()
+            column_name = tool.property('using_column').toString()
+
+            layer = None
+            try:
+                layer = layers[QString(layer_name)]
+            except KeyError:
+                warning('layer not found in list')
+                tool.setEnabled(False)
+                continue
+
+            message = tool.property('message').toString()
+            if message.isEmpty():
+                message = "Please select a feature in the map"
+
+            radius, valid = tool.property('radius').toInt()
+            if not valid:
+                radius = 5
+
+            tool.pressed.connect(functools.partial(self.selectFeatureClicked,
+                                                      layer,
+                                                      column_name,
+                                                      message,
+                                                      radius,
+                                                      control.objectName()))
+            tool.setIcon(QIcon(":/icons/select"))
+            tool.setIconSize(QSize(24,24))
+
+    def selectFeatureClicked(self, layer, column, message, searchsize, bindto):
         """
         Loads the select from map action tool. Switchs to the map to allow the
         user to select a feature.
 
         controlname - The control name when looking up in the settings for the
                       button config.
-        """
-        layername = self.settings.value("%s/layer" % controlName ).toString()
-        column = self.settings.value("%s/column" % controlName).toString()
-        bindto = self.settings.value("%s/bindto" % controlName).toString()
-        message = self.settings.value("%s/message" % controlName, "Please select a feature in the map").toString()
-        searchsize = self.settings.value("%s/searchradius" % controlName, 5 ).toInt()[0]
-
-        layer = None
-        for l in self.canvas.layers():
-            if l.name() == layername:
-                layer = l
-                break
-
-        if layer is None:
-            return 
-        
+        """        
         self.tool = SelectFeatureTool(self.canvas, layer, column, bindto, searchsize)
         self.tool.foundFeature.connect(self.bindHighlightedFeature)
         self.tool.setActive()
-        self.canvas.setMapTool(self.tool)
-        self.canvas.setCursor(self.tool.cursor)
         self.beginSelectFeature.emit(message)
 
     def bindHighlightedFeature(self, feature, value, bindto):

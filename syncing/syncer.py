@@ -81,9 +81,11 @@ class SyncDialog(QDialog):
 
     def updateFailedStatus(self, text):
         self.ui.statusLabel.setStyleSheet("color: rgba(222, 13, 6);")
-        self.ui.statusLabel.setText("Something went wrong. \n You might not "
-                                    "have a internet connection \n\n We have logged it "
-                                    "so we can take a look.")
+        self.ui.statusLabel.setText("We couldn't sync for some reason. \n "\
+                                    "Dont' worry you might just not have an " \
+                                    "internet connection at this time" \
+                                    "\n\n We have logged it "
+                                    "so we can take a look. Just in case.")
                                     
         self.ui.label.setPixmap(QPixmap(":/syncing/sad"))
         log("SYNC ERROR:" + text)
