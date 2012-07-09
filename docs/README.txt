@@ -11,17 +11,14 @@
 .. |name| replace:: QGIS Data Collector
 
 
+.. contents::
+.. sectnum::
+
 
 The |name| is a simple to use, simple to configure, data collection
-<<<<<<< HEAD
-program built by Southern Downs Regional Council that uses QGIS and its Python
-plugin model as a base.  |name| is a QGIS Python plugin that removes most of the
-interface and replaces it with a simple to use interface for data collection.
-=======
 program built by Southern Downs Regional Council that uses QGIS.  |name| is a QGIS
 Python plugin that removes most of the interface and replacing it with a simple
 to use interface for data collection.
->>>>>>> Add some install notes
 
 As |name| is just a Python plugin you can use your normal QGIS project files (.qgs)
 in order to create mapping projects.
@@ -29,11 +26,12 @@ in order to create mapping projects.
 Requirements
 -------------
 - Latest QGIS Version > 1.8
+- nose and mock (for Python tests)
 - MS SQL Server 2008 (express or greater)
 - .NET 3.5 (or greater)
 - Microsoft Sync Framework
 - Qt Designer (for form building)
-- Something to install this on (some kind of fancy tablet PC)
+- Something to install it on (some kind of fancy tablet PC)
 
 Building
 ----------
@@ -47,7 +45,7 @@ and it sucks at error reporting.
 To build just run **make_win.bat** from the main root folder.  build.py will generate
 all the needed files and deploy them into the build directory.
 
-The QGIS plugin location is /build/app/python/plugins
+The QGIS plugin location is /SDRCDataCollection/app/python/plugins
 
 You can run build.py using Python:
 
@@ -66,23 +64,32 @@ The version number used is {year}.{month}.{day}.{commitid} and the version in
 metadata.txt is the version number for all the files and related binaries in the
 project.
 
-.. contents::
-.. sectnum::
-
-
 Installing
 ----------
 
 .. note:: If you haven't done so already please see Building_ before
           installing
 
-- Install
+Install the following software onto the client
+
     - MS SQL Server 2008
     - .NET 3.5
     - Microsoft Sync Framework
     - QGIS
 
-Copy the build folder into the
+Running the build.py file will compile and deploy the plugin to the list of
+clients.
+
+.. code-block:: console
+
+    python build.py
+
+The list of clients can be found in the function deploy_to_clients() inside
+build.py.  Edit this list to add/remove clients.
+
+.. note:: The build script will run the unit tests.  If any tests fail the
+          build script will error and exit.  This is to prevent deploying a
+          version that breaks already working code.
 
 Conventions
 -----------
@@ -97,28 +104,27 @@ Form Conventions
 - Layer field names map to object names in Qt form (.ui)
 
   The form binder searchs the form for a widget named the same as the field and
-  will bind and unbind the value from the database to the form.  The widget type
-  defines how the object is bound e.g. a char column named *MyColumn* will bind
-  to the QLineEdit::text() property correctly of the widget with the same name.
+  will bind and unbind the value from the layer to the form.  The widget type
+  defines how the object is bound e.g. a column named *MyColumn* will bind
+  to the QLineEdit::text() property of the widget with the same name.
 
   .. warning:: There is very little error handling with the form binding.
                Binding a char column with the value "Hello World" to a QCheckBox
                might do strange things.
 
-- In order to create the correct date picker dialog we first look for a DateTimePicker
-  then we get its parent - which will be a layout - then look for a PushButton that
-  we can use to open the dialog with.
+- Date and time pickers can be created by placeing a button on the form with
+  the same name as the DateTimeEdit control but with the *_pick* added to the name.
 
   .. figure:: DateTimePickerExample.png
 
-     Example of what the correct widget layout in order to get a date time picker.
 
   .. figure:: DateTimePickerExampleLayout.png
 
-     Layout for date time picker
+  Note the name of the QDateTimeEdit and the QPushButton.
+  The QPushButton can live anywhere on the form, the only constraint is that it
+  uses the {name}_pick convention.
 
-  A correctly bound date time picker button has a the word "Pick" and a icon when
-  opening the dialog.
+  A correctly bound date time picker button has the word "Pick" and an icon.
 
   .. figure:: DateTimePickerBound.png
 
@@ -138,6 +144,47 @@ Form Conventions
            ever stored in the database. See `Program Conventions`_ for details on
            image convention.
 
+- Adding a map picker button.  A tool that can be used to select a feature from
+  the map can be added by adding a QToolButton to the form with the object name
+  as {name}_mapselect where {name} is the name of the control the result will be
+  bound to.
+
+  .. figure:: MapSelectBound.png
+
+     Control with QToolButton with the same name.
+
+  In the above example the result of the map select will bind the result to the
+  LotPlan control which is a QLineEdit.
+
+  Two custom properties also need to be added to the buttom in order to define
+  where the picked value comes from.
+
+  The two properties are *from_layer* and *using_column*.
+
+  .. figure:: MapSelectProperties.png
+
+     Custom properties on QToolButton
+
+  If any of the above properties are missing, or the layer supplied is not found,
+  the map select button will be disabled.
+
+  Adding custom properties will be explained in `Creating a new form`_
+
+- Adding mandatroy fields. Fields that are mandatory will be highlighted, and
+  if not filled in, will stop the user from leaving the form.
+
+  To include a control as mandatory just add a "mandatory" bool custom property
+  to the control that should be mandatory.
+
+  .. figure:: MandatroyProperties.png
+
+     Custom property to set mandatory flag.
+
+  In order for the program to correctly handle highlighting the field as mandatory
+  you also have to name the label for the control with {name}_label.  When the
+  edit control is marked as mandatory its label will be highlighted.
+
+  .. figure:: MandatoryLabelExample.png
 
 Program Conventions
 +++++++++++++++++++

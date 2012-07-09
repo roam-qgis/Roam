@@ -1,2 +1,2 @@
 @echo OFF
-python build.py
+python build.py deploy

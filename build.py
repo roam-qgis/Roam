@@ -37,7 +37,7 @@ buildpath = os.path.join(curpath, "SDRCDataCollection", "app", "python", "plugin
                             "SDRCDataCollection" )
                             
 def build():
-    compile()
+    deploy_to_clients()
     
 def compile():
     print " - building UI files..."
@@ -89,7 +89,7 @@ def deploy():
     passed = test()
     if not passed:
         print "Tests Failed!!"
-        return Falses
+        return False
     
     if os.path.exists(buildpath):
         print "Removing old depoly directory..."
@@ -123,9 +123,14 @@ def deploy_to(client, rebuild=True):
    
     print "Remote depoly compelete"
 
-if __name__ == "__main__":
-    #deploy()
-    deploy_to("\\\\sd0469\\C$\\Users\\woodrown\\Desktop\\SDRCDataCollection\\")
-    # Touch
-    #deploy_to("\\\\sd0496\\C$\\Users\\woodrown\\Desktop\\SDRCDataCollection\\")
-    
+def deploy_to_clients():
+    clients = [#'\\\\sd0469\\C$\\Users\\woodrown\\Desktop\\SDRCDataCollection\\',]
+               '\\\\sd0496\\C$\\Users\\woodrown\\Desktop\\SDRCDataCollection\\']
+
+    rebuild = True
+    for client in clients:
+        deploy_to(client, rebuild)
+        # Turn rebuild off so we only do it once.
+        rebuild = False
+
+main()
