@@ -47,7 +47,7 @@ all the needed files and deploy them into the build directory.
 
 The QGIS plugin location is /SDRCDataCollection/app/python/plugins
 
-You can run build.py using Python:
+You can run build.py using Python with other arguments:
 
 .. code-block:: console
 
@@ -60,15 +60,14 @@ You can run build.py using Python:
     #Build only
     python build.py build
 
-The version number used is {year}.{month}.{day}.{commitid} and the version in
-metadata.txt is the version number for all the files and related binaries in the
-project.
+The version number used is {year}.{month}.{day}.{commitid} and inserted into
+metadata.txt.  The version in metadata.txt is the version number for all the
+files and related binaries in the project; ignore all other version numbers.
 
 Installing
 ----------
 
-.. note:: If you haven't done so already please see Building_ before
-          installing
+.. note:: If you haven't done so already please read Building_
 
 Install the following software onto the client
 
@@ -95,7 +94,7 @@ Conventions
 -----------
 
 |name| follows a convention over configuration style in order to
-make setup consistant and easy. At times we still will need to configure things
+make setup consistant and easy. At times we may need to configure things
 but this will be kept to a minimum.
 
 Form Conventions
@@ -186,6 +185,25 @@ Form Conventions
 
   .. figure:: MandatoryLabelExample.png
 
+  Adding custom properties will be explained in `Creating a new form`_
+
+Form Conventions Summary
+!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  - {control name} is {field name}
+            Maps field value to control.
+
+  - {control name}_label (Only QLabel)
+            Pairs label with control (for Mandatroy highlighting)
+
+  - {control name}_pick (Only QPushButton)
+            Open date and time picker and bind result value to the control with
+            the name {control name}
+
+  - {control name}_mapselect (Only QToolButton)
+            Binds the result of a map select to the control
+            with the name {control name}
+
 Program Conventions
 +++++++++++++++++++
 
@@ -219,4 +237,71 @@ columns:
     Primary Key column **must** be Int
 
 Creating a new form
--------------------
+-----------------------
+
+Save as template (once only)
+++++++++++++++++++++++++++++
+
+Open Qt Designer and open the template form called template_motionf5v.ui stored in
+entry_forms/.
+Select File -> Save as Template... and save it as Motion F5V
+
+Making a new user form
+++++++++++++++++++++++
+
+Given a layer in QGIS which will need a custom form:
+
+.. figure:: DataTable.png
+
+Select File -> New.. and select Motion F5V from the user forms section
+
+.. figure:: Template.png
+
+Select File -> Save and save the form in a new folder called formWaterFittings
+with the name **form.ui**
+
+.. note:: |name| uses a convention for detecting user forms.  The folder must
+          start with *form*.
+
+We are going to do the following in order to create a custom form:
+
+    - Create a read only box for assetid
+    - Create a mandatory dropdown box for fittingtype
+    - Create a mandatory dropdown box for diameter
+    - A date time picker for dateinstalled
+    - A checkbox for replacedexisting
+
+The other information we will leave out of for now.
+
+First drag and QLabel and QLineEdit onto the form for assetid and set the objectName
+property for the label to 'assetid_label' and the text property to something
+like "Asset ID".  Set the objectName property of the QLineEdit to just 'assetid'
+and set the readonly to True.
+
+.. figure:: assetid.png
+
+Create a label and groupbox control for fittingtype and diameter. Name and label
+them both following the naming rules.
+
+Right click, or press F2, on the fittingtype combobox and select Edit Items....
+Fill in the list with values that will be used on the form. Always leave an
+empty entry at the top to allow the binder to handle an empty value selection.
+
+.. figure:: FittingTypesCombo.png
+
+Do the same for diameter
+
+.. figure:: DiameterCombo.png
+
+As fittingtype and diameter are mandatory we are going to add a custom property
+to both in order to say that they are.  Hold Ctrl and select both the fittingtype
+and diameter combo box. Click on the green plus button the Property Edit panel and
+changing the Property Name to "mandatory" and the Property Type to Bool
+
+.. figure:: MandatroyProperty.png
+
+Scoll to the bottom of the properties list and enable the mandatory flag
+
+.. figure:: MandatroyEnabled.png
+
+
