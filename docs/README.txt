@@ -1,5 +1,5 @@
 ====================
-|name|
+|name| - README
 ====================
 
 :Authors:
@@ -24,6 +24,18 @@ to use interface for data collection.
 As |name| is just a Python plugin you can use your normal QGIS project files (.qgs)
 in order to create mapping projects.
 
+Zen
+---
+
+| Don't reinvent the wheel -- unless for good reason.
+| Magic is cool.
+| Although not cool enough if it makes things confusing.
+| Datebases are handy things.
+| Although plain text files are normally easier to manage.
+| Convention over Configuration is cool idea -- lets do more of that!
+| Unless it starts to look like magic.
+
+
 Requirements
 -------------
 - Latest QGIS Version > 1.8
@@ -46,7 +58,7 @@ and it sucks at error reporting.
 To build just run **make_win.bat** from the main root folder.  build.py will generate
 all the needed files and deploy them into the build directory.
 
-The QGIS plugin location is /SDRCDataCollection/app/python/plugins
+The QGIS plugin location is |f| ``/SDRCDataCollection/app/python/plugins``
 
 You can run build.py using Python with other arguments:
 
@@ -57,7 +69,7 @@ You can run build.py using Python with other arguments:
 
     #Build only docs
     python build.py docs
-     
+
     #Build only
     python build.py build
 
@@ -233,12 +245,17 @@ Program Conventions
 
 SQL Table Conventions
 +++++++++++++++++++++
-In order for syncing to be correctly setup the table must contain the following
+In order for MS SQL syncing to be correctly used the table must contain the following
 columns:
 
     UniqueID as uniqueidentifier
 
     Primary Key column **must** be Int
+
+Tables must also be provisioned for syncing using the provision tool before syncing
+will work.  More information can be found in `Client Setup`_
+
+.. _Client Setup: ClientSetup.html
 
 Creating a new entry form
 --------------------------

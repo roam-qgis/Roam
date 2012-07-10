@@ -1,0 +1,21 @@
+======================
+|name| - Client Setup
+======================
+
+.. |name| replace:: QGIS Data Collector
+.. |f| image:: folder.png
+
+.. contents::
+.. sectnum::
+
+Installing QGIS
+=======================
+
+Installing MS SQL
+=======================
+
+Installing |name|
+=======================
+
+Provisioning MS SQL Tables
+==========================

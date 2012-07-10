@@ -16,7 +16,7 @@ from nose.plugins.cover import Coverage
 ui_sources = ['ui_datatimerpicker', 'ui_listmodules',
               'syncing/ui_sync', 'ui_listfeatures', 'ui_errorlist']
 
-doc_sources = ['docs/README']
+doc_sources = ['docs/README', 'docs/ClientSetup']
 
 path = os.path.dirname(__file__)
 
