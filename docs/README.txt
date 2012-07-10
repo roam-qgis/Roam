@@ -9,6 +9,7 @@
 :Version: 1.0
 
 .. |name| replace:: QGIS Data Collector
+.. |f| image:: folder.png
 
 
 .. contents::
@@ -36,7 +37,7 @@ Requirements
 Building
 ----------
 
-For building we use fabricate_ which is a build tool written in pure Python,
+For building we use fabricate_, a build tool written in pure Python,
 because frankly GNUMake is a pain to use, the syntax is just plain strange,
 and it sucks at error reporting.
 
@@ -111,11 +112,13 @@ Form Conventions
                Binding a char column with the value "Hello World" to a QCheckBox
                might do strange things.
 
-- Date and time pickers can be created by placeing a button on the form with
-  the same name as the DateTimeEdit control but with the *_pick* added to the name.
+- Date and time pickers can be created by placing a button on the form with
+  the same name as the DateTimeEdit control but with the *_pick* added to the names
+  end.
 
   .. figure:: DateTimePickerExample.png
 
+     Layout of QDateTimeEdit and QPushButton
 
   .. figure:: DateTimePickerExampleLayout.png
 
@@ -167,7 +170,7 @@ Form Conventions
   If any of the above properties are missing, or the layer supplied is not found,
   the map select button will be disabled.
 
-  Adding custom properties will be explained in `Creating a new form`_
+  Adding custom properties will be explained in `Creating a new entry form`_
 
 - Adding mandatroy fields. Fields that are mandatory will be highlighted, and
   if not filled in, will stop the user from leaving the form.
@@ -185,7 +188,7 @@ Form Conventions
 
   .. figure:: MandatoryLabelExample.png
 
-  Adding custom properties will be explained in `Creating a new form`_
+  Adding custom properties will be explained in `Creating a new entry form`_
 
 Form Conventions Summary
 !!!!!!!!!!!!!!!!!!!!!!!!!
@@ -207,7 +210,7 @@ Form Conventions Summary
 Program Conventions
 +++++++++++++++++++
 
-- Images saved from drawing pad are stored in data\\{layername}\\images.
+- Images saved from drawing pad are stored in |f| ``data/{layername}/images``.
   Images have the following naming convention:
 
         {id}_{fieldname}.jpg
@@ -222,9 +225,10 @@ Program Conventions
         drawingFor_{fieldname}.jpg
 
   *drawingFor\_* is replaced with *{id}* when the record is commited into the layer.
-  The image is then moved into the images folder.
+  The image is then moved into the |f| ``data/{layer name}/images`` folder
+  where ``{layer name}`` is the name of the layer for the form.
 
-- Projects are stored in the projects\\ directory.  The name of the .qgs file will
+- Projects are stored in the |f| ``projects/`` directory.  The name of the .qgs file will
   be used in the open project dialog box.  The project directory is **not** recursive
 
 SQL Table Conventions
@@ -236,42 +240,77 @@ columns:
 
     Primary Key column **must** be Int
 
-Creating a new form
------------------------
+Creating a new entry form
+--------------------------
+
+Creating a new form involves five items:
+
+     - A folder that holds the form (must start will 'form' e.g. formMyWaterForm)
+     - A form.ui file (The UI that is shown to the user)
+     - A settings.ini file
+     - __init__.py empty text file that is used to import the form.
+     - icon.png (optional toolbar icon)
+
+A sample form, and files, can be found in |f| ``entry_forms/_formSample``
 
 Save as template (once only)
 ++++++++++++++++++++++++++++
 
 Open Qt Designer and open the template form called template_motionf5v.ui stored in
 entry_forms/.
-Select File -> Save as Template... and save it as Motion F5V
+Select ``File -> Save as Template...`` and save it as Motion F5V
 
-Making a new user form
-++++++++++++++++++++++
+Making a new entry form
+++++++++++++++++++++++++
 
 Given a layer in QGIS which will need a custom form:
 
 .. figure:: DataTable.png
 
-Select File -> New.. and select Motion F5V from the user forms section
+We are going to do the following in order to create a custom form:
+
+    - Create the __init__.py file
+    - Create a settings.ini file
+    - Create a new form in Qt Desinger and;
+    - Add a read only box for assetid
+    - Add a mandatory dropdown box for fittingtype
+    - Add a mandatory dropdown box for diameter
+    - Add a date time picker for dateinstalled
+    - Add a checkbox for replacedexisting
+
+Create a new folder in |f| ``entry_forms\`` called |f| ``formWaterFittings``
+
+.. note:: |name| uses a convention for detecting user forms and their folders.
+          The folder must start with the word *form*.
+
+Inside |f| ``formWaterFittings`` folder create a empty text file called __init__.py and
+settings.ini, and copy the icon.png from the _fromSample folder.
+
+Copy the following information into settings.ini
+
+.. code-block:: console
+
+   form_name = Add water fitting
+   layer_name = WaterFittings
+   fullscreen=False
+
+*form_name* is the name shown on the toolbar when adding a new map object;
+*layer_name* is the name of the layer the form is associated with, one layer can
+have many forms. Set *fullscreen* to True if you want the form to be shown in
+full screen mode.
+
+The file structure should look like the following so far:
+
+.. figure:: folderlayout.png
+
+The form.ui file will be created in the next step.
+
+Select ``File -> New..`` and select Motion F5V from the user forms section
 
 .. figure:: Template.png
 
-Select File -> Save and save the form in a new folder called formWaterFittings
-with the name **form.ui**
-
-.. note:: |name| uses a convention for detecting user forms.  The folder must
-          start with *form*.
-
-We are going to do the following in order to create a custom form:
-
-    - Create a read only box for assetid
-    - Create a mandatory dropdown box for fittingtype
-    - Create a mandatory dropdown box for diameter
-    - A date time picker for dateinstalled
-    - A checkbox for replacedexisting
-
-The other information we will leave out of for now.
+Select ``File -> Save`` and save it with the name **form.ui** into the new
+|f| ``formWaterFittings`` folder.
 
 First drag and QLabel and QLineEdit onto the form for assetid and set the objectName
 property for the label to 'assetid_label' and the text property to something
@@ -303,5 +342,59 @@ changing the Property Name to "mandatory" and the Property Type to Bool
 Scoll to the bottom of the properties list and enable the mandatory flag
 
 .. figure:: MandatroyEnabled.png
+
+Adding the mandatory flag on the combo box will highlight the label that is assigned
+to the control using the {control name}_label convention.
+
+Next we will add a QLabel, QDateTimeEdit, QPushButton, in order to add a date time
+picker. Name the QDateTimeEdit as dateinstalled, the QLabel as dateinstalled_label,
+and the QPushButton as dateinstalled_pick
+
+Hold ctrl and select all three controls
+
+.. figure:: DateSelected.png
+
+and select the Horizonal Layout button on the toolbar.  The controls will
+be aligned and grouped together.  The red box highlights the controls as inside
+the one layout. 
+
+.. figure:: HorizonalLayout.png
+
+Ignore the text on the QPushButton as it will be replaced with a icon and the text Pick
+when the program runs.
+
+Finally add a checkbox control onto the form and name it replacedexisting, change
+the text to anything.
+
+The form is also too big just for a few controls so resize it to a acceptable size.
+Select the main root item in the Object Inspector pannel and click grid layout.
+
+.. figure:: GridForm.png
+
+Clicking the grid layout will auto size all the controls to fit the remaining
+space in the form.  Depending on the needs of form this may or may not be a good
+idea.
+
+.. figure:: GridFormLayout.png
+
+Save the form.
+
+Adding a project
+-----------------------
+Projects are stored as QGIS project files and live in the |f| ``projects/`` folder. When
+the application is run the |f| ``projects/`` folder is scanned for .qgs files and they
+are loading into the list of projects.  **Only** the top level is scanned.
+
+Adding a new project is simple.
+
+    - Create a new project in QGIS
+    - Add the layers that you need
+    - Save the project (.qgs) file into the |f| ``project/`` folder
+
+Entry Forms are matched on layer names, not file names, so if you can have a file
+called myWaterFittings.shp in order for |name| to match the form to the layer we can
+just name it in QGIS as WaterFittings wihtout changing the file name
+
+.. figure:: NamingLayer.png
 
 
