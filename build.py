@@ -50,7 +50,7 @@ def compile():
 
     print " - building Provisioning app..."
     run('MSBuild','/property:Configuration=Release', '/verbosity:m', \
-        'src/syncing/SqlSyncProvisioner/SqlSyncProvisioner/SqlSyncProvisioner.csproj', \
+        'provisioner/SqlSyncProvisioner/SqlSyncProvisioner.csproj', \
         shell=True, env=env)
 
     print " - building docs..."
