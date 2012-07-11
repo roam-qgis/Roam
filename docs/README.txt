@@ -380,8 +380,15 @@ the one layout.
 Ignore the text on the QPushButton as it will be replaced with a icon and the text Pick
 when the program runs.
 
-Finally add a checkbox control onto the form and name it replacedexisting, change
-the text to anything.
+Add a checkbox control onto the form changing its name to replacedexisting.
+
+**Important step**
+
+The last step is to add a QButtonBox that has a OK and Cancel button.
+
+.. warning:: |name| expects there to be a QButtonBox on the form with the name
+          ``buttonbox``. The form will not work correctly and you will get errors
+          if the button box is missing.
 
 The form is also too big just for a few controls so resize it to a acceptable size.
 Select the main root item in the Object Inspector pannel and click grid layout.
@@ -413,5 +420,3 @@ called myWaterFittings.shp in order for |name| to match the form to the layer we
 just name it in QGIS as WaterFittings wihtout changing the file name
 
 .. figure:: NamingLayer.png
-
-
