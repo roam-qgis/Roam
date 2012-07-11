@@ -20,22 +20,18 @@ doc_sources = ['docs/README', 'docs/ClientSetup']
 
 path = os.path.dirname(__file__)
 
-ignore = ['*.pyc', 'boot', '.git', '.deps', 'nbproject', 'obj',
-          'Properties', '*.csproj', '*.sln', '*.suo', 'app.config',
-          '*.vshost.*', '*.cs', 'make_win.bat', 'resources', '.gitignore',
-          'rst*.py', 'builddocs.bat', '*.qrc', '*.log', '*.orig',
-          'ui_datatimerpicker.ui', 'ui_drawingpad.ui', 'ui_listfeatures.ui',
-          'ui_listmodules.ui', 'SDRCDataCollection', 'SqlSyncProvisioner',
-          'cover','.*']
-
 # Add the path to MSBuild to PATH so that subprocess can find it.
 env = os.environ.copy()
 env['PATH'] += ";c:\\WINDOWS\\Microsoft.NET\Framework\\v3.5"
 
 curpath = os.path.dirname(os.path.abspath(__file__))
+srcpath = os.path.join(curpath, "src")
 buildpath = os.path.join(curpath, "SDRCDataCollection", "app", "python", "plugins", \
                             "SDRCDataCollection" )
                             
+deploypath = os.path.join(curpath, "SDRCDataCollection")
+bootpath = os.path.join('src', "boot") 
+
 def build():
     deploy_to_clients()
     
@@ -91,16 +87,12 @@ def deploy():
     if not passed:
         print "Tests Failed!!"
         return False
-    
-    if os.path.exists(buildpath):
-        print "Removing old depoly directory..."
-        rmtree(buildpath)
-    
+   
     # Copy all the files to the ouput directory
     print "Copying new files..."
-    copytree(curpath, buildpath, ignore=ignore_patterns(*ignore))
-    deploypath = os.path.join(curpath, "SDRCDataCollection")
-    bootpath = os.path.join('src', "boot")
+    msg = shell('xcopy',srcpath, buildpath, '/D', '/S', '/E', '/K', '/C', '/H', \
+                                   '/R', '/Y','/EXCLUDE:excludes.txt',silent=False)                         
+                                   
     msg = shell('xcopy',bootpath, deploypath, '/D', '/S', '/E', '/K', '/C', '/H', \
                                    '/R', '/Y',silent=False)
 

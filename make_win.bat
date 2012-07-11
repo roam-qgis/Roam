@@ -1,3 +1,3 @@
 @echo OFF
-python src/build.py
+python build.py
 pause

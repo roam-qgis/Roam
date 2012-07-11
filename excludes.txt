@@ -1,0 +1,30 @@
+*.pyc
+boot
+.git
+.deps
+nbproject
+obj
+ Properties
+*.csproj
+*.sln
+*.suo
+app.config
+ *.vshost.*
+*.cs
+make_win.bat
+resources
+.gitignore
+rst*.py
+builddocs.bat
+*.qrc
+*.log
+*.orig
+ui_datatimerpicker.ui
+ui_drawingpad.ui
+ui_listfeatures.ui
+ui_listmodules.ui
+ui_errorlist.ui
+SDRCDataCollection
+SqlSyncProvisioner
+cover.*
+MSSQLSyncer
