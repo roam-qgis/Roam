@@ -12,7 +12,7 @@ app.config
  *.vshost.*
 *.cs
 make_win.bat
-resources
+resources\
 .gitignore
 rst*.py
 builddocs.bat
