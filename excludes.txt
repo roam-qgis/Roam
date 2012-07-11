@@ -27,4 +27,4 @@ ui_errorlist.ui
 SDRCDataCollection
 SqlSyncProvisioner
 cover.*
-MSSQLSyncer
+MSSQLSyncer\
