@@ -12,56 +12,48 @@ sys.path.append(pardir)
 
 from utils import log, settings
 
-class Syncer(QObject):
+def syncMSSQL():
     """
-    MS SQL syncer.  Calls the .NET MSSQLSyncer app to syncing
-    the two databases.
-    """
-    def doSync(self):
-        """
-        Run the sync
+    Run the sync for MS SQL.
 
-        returns -- Returns a tuple of (state, message). state can be 'Pass' or
-                   'Fail'
-        """
-        curdir = os.path.abspath(os.path.dirname(__file__))
-        cmdpath = os.path.join(curdir,'bin\MSSQLSyncer.exe')
-        p = Popen(cmdpath, stdout=PIPE, stderr=PIPE, stdin=PIPE, shell = True)
-        stdout, stderr = p.communicate()
-        if not stdout == "":
-            log(stdout)
-            return ('Pass', stdout)
-        else:
-            log(stderr)
-            return ('Fail', stderr)
-
-class ImageSyncer(QObject):
+    returns -- Returns a tuple of (state, message). state can be 'Pass' or
+               'Fail'
     """
-    Sync logic for syncing images from the device to the server.
-    """
-    def doSync(self):
-        """
-        Run the sync
+    curdir = os.path.abspath(os.path.dirname(__file__))
+    cmdpath = os.path.join(curdir,'bin\MSSQLSyncer.exe')
+    p = Popen(cmdpath, stdout=PIPE, stderr=PIPE, stdin=PIPE, shell = True)
+    stdout, stderr = p.communicate()
+    if not stdout == "":
+        log(stdout)
+        return ('Pass', stdout)
+    else:
+        log(stderr)
+        return ('Fail', stderr)
 
-        returns -- Returns a tuple of (state, message). state can be 'Pass' or
-                   'Fail'
-        """
-        images = os.path.join(pardir, "data")
-        server = settings.value("syncing/server_image_location").toString()
-        if server.isEmpty():
-            return ('Fail', "No server image location found in settings.ini")
-        
-        if not os.path.exists(images):
-            # Don't return a fail if there is no data directory
-            return
-        
-        cmd = 'xcopy "%s" "%s" /Q /D /S /E /K /C /H /R /Y' % (images, server)
-        p = Popen(cmd, stdout=PIPE, stderr=PIPE, stdin=PIPE, shell = True)
-        stdout, stderr = p.communicate()
-        if not stderr == "":
-            return ('Fail', stderr)
-        else:
-            return ('Pass', stdout)
+def syncImages():
+    """
+    Run the sync over the images
+
+    returns -- Returns a tuple of (state, message). state can be 'Pass' or
+               'Fail'
+    """
+    images = os.path.join(pardir, "data")
+    server = settings.value("syncing/server_image_location").toString()
+    if server.isEmpty():
+        return ('Fail', "No server image location found in settings.ini")
+
+    if not os.path.exists(images):
+        # Don't return a fail if there is no data directory
+        return ('Pass', 'Images updloaded: ' % str(0))
+
+    cmd = 'xcopy "%s" "%s" /Q /D /S /E /K /C /H /R /Y' % (images, server)
+    p = Popen(cmd, stdout=PIPE, stderr=PIPE, stdin=PIPE, shell = True)
+    stdout, stderr = p.communicate()
+    if not stderr == "":
+        return ('Fail', stderr)
+    else:
+        return ('Pass', stdout)
+       
 
 class SyncDialog(QDialog):
     def __init__(self):
@@ -101,8 +93,7 @@ class SyncDialog(QDialog):
         self.ui.statusLabel.setText(message + "\n\n Syncing map data...")
         QCoreApplication.processEvents()
         
-        syncer = Syncer()
-        state, sqlmsg = syncer.doSync()
+        state, sqlmsg = syncMSSQL()
 
         if state == 'Fail':
             self.updateFailedStatus(sqlmsg)
@@ -112,15 +103,11 @@ class SyncDialog(QDialog):
 
         self.ui.statusLabel.setText(message + "\n\n Syncing images...")
         QCoreApplication.processEvents()
-        syncer = ImageSyncer()    
-        state, msg = syncer.doSync()
+        
+        state, msg = syncImages()
 
         if state == 'Fail':
             self.updateFailedStatus(msg)
             return
 
         self.updateStatus("%s \n %s" % (sqlmsg, msg))
-
-if __name__ == "__main__":
-    sync = ImageSyncer()
-    sync.doSync()

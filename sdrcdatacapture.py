@@ -29,7 +29,7 @@ from listmodulesdialog import ListProjectsDialog
 from qgis.core import *
 from qgis.gui import QgsMapToolZoom, QgsMapTool
 import resources_rc
-from syncing.syncer import Syncer, SyncDialog
+from syncing.syncer import SyncDialog
 from utils import log
 import functools
 
