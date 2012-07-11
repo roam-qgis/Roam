@@ -16,7 +16,7 @@ from nose.plugins.cover import Coverage
 ui_sources = ['ui_datatimerpicker', 'ui_listmodules',
               'syncing/ui_sync', 'ui_listfeatures', 'ui_errorlist']
 
-doc_sources = ['docs/README', 'docs/ClientSetup']
+doc_sources = ['..\\docs\\README', '..\\docs\\ClientSetup']
 
 path = os.path.dirname(__file__)
 
@@ -61,8 +61,9 @@ def compile():
     docs()
     
 def docs():
+    print "Generating docs"
     for doc in doc_sources:
-        run('python', 'docs/rst2html.py', doc+'.txt', doc+'.html')
+        run('python', '..\\docs\\rst2html.py', doc+'.txt', doc+'.html')
 
 def clean():
     autoclean()

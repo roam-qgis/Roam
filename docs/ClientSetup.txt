@@ -3,7 +3,7 @@
 ======================
 
 .. |name| replace:: QGIS Data Collector
-.. |f| image:: folder.png
+.. |f| image:: images/folder.png
 
 .. contents::
 .. sectnum::

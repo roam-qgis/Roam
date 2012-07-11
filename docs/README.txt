@@ -9,7 +9,7 @@
 :Version: 1.0
 
 .. |name| replace:: QGIS Data Collector
-.. |f| image:: folder.png
+.. |f| image:: images/folder.png
 
 
 .. contents::
@@ -128,11 +128,11 @@ Form Conventions
   the same name as the DateTimeEdit control but with the *_pick* added to the names
   end.
 
-  .. figure:: DateTimePickerExample.png
+  .. figure:: images/DateTimePickerExample.png
 
      Layout of QDateTimeEdit and QPushButton
 
-  .. figure:: DateTimePickerExampleLayout.png
+  .. figure:: images/DateTimePickerExampleLayout.png
 
   Note the name of the QDateTimeEdit and the QPushButton.
   The QPushButton can live anywhere on the form, the only constraint is that it
@@ -140,7 +140,7 @@ Form Conventions
 
   A correctly bound date time picker button has the word "Pick" and an icon.
 
-  .. figure:: DateTimePickerBound.png
+  .. figure:: images/DateTimePickerBound.png
 
      Result of correct binding
 
@@ -150,7 +150,7 @@ Form Conventions
       convention.
     - Label the button with "Drawing"
 
-  .. figure:: DrawingBound.png
+  .. figure:: images/DrawingBound.png
 
      Result of correct drawing button binding
 
@@ -163,7 +163,7 @@ Form Conventions
   as {name}_mapselect where {name} is the name of the control the result will be
   bound to.
 
-  .. figure:: MapSelectBound.png
+  .. figure:: images/MapSelectBound.png
 
      Control with QToolButton with the same name.
 
@@ -175,7 +175,7 @@ Form Conventions
 
   The two properties are *from_layer* and *using_column*.
 
-  .. figure:: MapSelectProperties.png
+  .. figure:: images/MapSelectProperties.png
 
      Custom properties on QToolButton
 
@@ -190,7 +190,7 @@ Form Conventions
   To include a control as mandatory just add a "mandatory" bool custom property
   to the control that should be mandatory.
 
-  .. figure:: MandatroyProperties.png
+  .. figure:: images/MandatroyProperties.png
 
      Custom property to set mandatory flag.
 
@@ -282,7 +282,7 @@ Making a new entry form
 
 Given a layer in QGIS which will need a custom form:
 
-.. figure:: DataTable.png
+.. figure:: images/DataTable.png
 
 We are going to do the following in order to create a custom form:
 
@@ -318,13 +318,13 @@ full screen mode.
 
 The file structure should look like the following so far:
 
-.. figure:: folderlayout.png
+.. figure:: images/folderlayout.png
 
 The form.ui file will be created in the next step.
 
 Select ``File -> New..`` and select Motion F5V from the user forms section
 
-.. figure:: Template.png
+.. figure:: images/Template.png
 
 Select ``File -> Save`` and save it with the name **form.ui** into the new
 |f| ``formWaterFittings`` folder.
@@ -334,7 +334,7 @@ property for the label to 'assetid_label' and the text property to something
 like "Asset ID".  Set the objectName property of the QLineEdit to just 'assetid'
 and set the readonly to True.
 
-.. figure:: assetid.png
+.. figure:: images/assetid.png
 
 Create a label and groupbox control for fittingtype and diameter. Name and label
 them both following the naming rules.
@@ -343,22 +343,22 @@ Right click, or press F2, on the fittingtype combobox and select Edit Items....
 Fill in the list with values that will be used on the form. Always leave an
 empty entry at the top to allow the binder to handle an empty value selection.
 
-.. figure:: FittingTypesCombo.png
+.. figure:: images/FittingTypesCombo.png
 
 Do the same for diameter
 
-.. figure:: DiameterCombo.png
+.. figure:: images/DiameterCombo.png
 
 As fittingtype and diameter are mandatory we are going to add a custom property
 to both in order to say that they are.  Hold Ctrl and select both the fittingtype
 and diameter combo box. Click on the green plus button the Property Edit panel and
 changing the Property Name to "mandatory" and the Property Type to Bool
 
-.. figure:: MandatroyProperty.png
+.. figure:: images/MandatroyProperty.png
 
 Scoll to the bottom of the properties list and enable the mandatory flag
 
-.. figure:: MandatroyEnabled.png
+.. figure:: images/MandatroyEnabled.png
 
 Adding the mandatory flag on the combo box will highlight the label that is assigned
 to the control using the {control name}_label convention.
@@ -369,13 +369,13 @@ and the QPushButton as dateinstalled_pick
 
 Hold ctrl and select all three controls
 
-.. figure:: DateSelected.png
+.. figure:: images/DateSelected.png
 
 and select the Horizonal Layout button on the toolbar.  The controls will
 be aligned and grouped together.  The red box highlights the controls as inside
 the one layout. 
 
-.. figure:: HorizonalLayout.png
+.. figure:: images/HorizonalLayout.png
 
 Ignore the text on the QPushButton as it will be replaced with a icon and the text Pick
 when the program runs.
@@ -393,13 +393,13 @@ The last step is to add a QButtonBox that has a OK and Cancel button.
 The form is also too big just for a few controls so resize it to a acceptable size.
 Select the main root item in the Object Inspector pannel and click grid layout.
 
-.. figure:: GridForm.png
+.. figure:: images/GridForm.png
 
 Clicking the grid layout will auto size all the controls to fit the remaining
 space in the form.  Depending on the needs of form this may or may not be a good
 idea.
 
-.. figure:: GridFormLayout.png
+.. figure:: images/GridFormLayout.png
 
 Save the form.
 
@@ -419,4 +419,4 @@ Entry Forms are matched on layer names, not file names, so if you can have a fil
 called myWaterFittings.shp in order for |name| to match the form to the layer we can
 just name it in QGIS as WaterFittings wihtout changing the file name
 
-.. figure:: NamingLayer.png
+.. figure:: images/NamingLayer.png
