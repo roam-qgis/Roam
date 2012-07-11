@@ -1,2 +1,3 @@
 @echo OFF
-python src/build.py deploy
+python src/build.py
+pause

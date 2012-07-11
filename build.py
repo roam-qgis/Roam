@@ -13,10 +13,10 @@ from PyQt4.QtGui import QApplication
 import nose
 from nose.plugins.cover import Coverage
 
-ui_sources = ['ui_datatimerpicker', 'ui_listmodules',
-              'syncing/ui_sync', 'ui_listfeatures', 'ui_errorlist']
+ui_sources = ['src/ui_datatimerpicker', 'src/ui_listmodules',
+              'src/syncing/ui_sync', 'src/ui_listfeatures', 'src/ui_errorlist']
 
-doc_sources = ['..\\docs\\README', '..\\docs\\ClientSetup']
+doc_sources = ['docs/README', 'docs/ClientSetup']
 
 path = os.path.dirname(__file__)
 
@@ -45,16 +45,16 @@ def compile():
         run('pyuic4.bat', '-o', source+'.py', source+'.ui' )
 
     print " - building resource files..."
-    run('pyrcc4', '-o', 'resources_rc.py', 'resources.qrc')
-    run('pyrcc4', '-o', 'syncing/resources_rc.py', 'syncing/resources.qrc')
+    run('pyrcc4', '-o', 'src/resources_rc.py', 'src/resources.qrc')
+    run('pyrcc4', '-o', 'src/syncing/resources_rc.py', 'src/syncing/resources.qrc')
     
     print " - building MSSQLSyncer app..."
     run('MSBuild','/property:Configuration=Release', '/verbosity:m', \
-        'syncing/MSSQLSyncer/MSSQLSyncer.csproj', shell=True, env=env)
+        'src/syncing/MSSQLSyncer/MSSQLSyncer.csproj', shell=True, env=env)
 
     print " - building Provisioning app..."
     run('MSBuild','/property:Configuration=Release', '/verbosity:m', \
-        'syncing/SqlSyncProvisioner/SqlSyncProvisioner/SqlSyncProvisioner.csproj', \
+        'src/syncing/SqlSyncProvisioner/SqlSyncProvisioner/SqlSyncProvisioner.csproj', \
         shell=True, env=env)
 
     print " - building docs..."
@@ -63,7 +63,7 @@ def compile():
 def docs():
     print "Generating docs"
     for doc in doc_sources:
-        run('python', '..\\docs\\rst2html.py', doc+'.txt', doc+'.html')
+        run('python', 'docs/rst2html.py', doc+'.txt', doc+'.html')
 
 def clean():
     autoclean()
@@ -100,7 +100,7 @@ def deploy():
     print "Copying new files..."
     copytree(curpath, buildpath, ignore=ignore_patterns(*ignore))
     deploypath = os.path.join(curpath, "SDRCDataCollection")
-    bootpath = os.path.join(curpath, "boot")
+    bootpath = os.path.join('src', "boot")
     msg = shell('xcopy',bootpath, deploypath, '/D', '/S', '/E', '/K', '/C', '/H', \
                                    '/R', '/Y',silent=False)
 
