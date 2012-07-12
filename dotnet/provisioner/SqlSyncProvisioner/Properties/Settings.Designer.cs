@@ -25,19 +25,19 @@ namespace SqlSyncProvisioner.Properties {
         
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("Data Source=SD0407;Initial Catalog=FieldData;Integrated Security=SSPI;")]
-        public string MasterConnectionString {
+        [global::System.Configuration.DefaultSettingValueAttribute("Data Source=SD0469;Initial Catalog=FieldData;Integrated Security=SSPI;")]
+        public string SlaveConnectionString {
             get {
-                return ((string)(this["MasterConnectionString"]));
+                return ((string)(this["SlaveConnectionString"]));
             }
         }
         
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("Data Source=SD0469;Initial Catalog=FieldData;Integrated Security=SSPI;")]
-        public string SlaveConnectionString {
+        [global::System.Configuration.DefaultSettingValueAttribute("Data Source=SD0407;Initial Catalog=SpatialDataIntegrated Security=SSPI;")]
+        public string MasterConnectionString {
             get {
-                return ((string)(this["SlaveConnectionString"]));
+                return ((string)(this["MasterConnectionString"]));
             }
         }
     }
