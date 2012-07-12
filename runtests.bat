@@ -1,2 +1,2 @@
-nosetests tests --with-coverage --cover-html --cover-package=form_binder
+nosetests tests --with-coverage --cover-html --cover-package=form_binder,syncing
 pause

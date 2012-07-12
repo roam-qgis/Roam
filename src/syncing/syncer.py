@@ -44,7 +44,7 @@ def syncImages():
 
     if not os.path.exists(images):
         # Don't return a fail if there is no data directory
-        return ('Pass', 'Images updloaded: ' % str(0))
+        return ('Pass', 'Images uploaded: %s' % str(0))
 
     cmd = 'xcopy "%s" "%s" /Q /D /S /E /K /C /H /R /Y' % (images, server)
     p = Popen(cmd, stdout=PIPE, stderr=PIPE, stdin=PIPE, shell = True)
