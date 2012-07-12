@@ -22,23 +22,46 @@ namespace SqlSyncProvisioner
                 return;
             }
 
-            var splitargs = new Dictionary<string, List<string>>();
-
+            
+            string connectionstring = "Data Source={0};Initial Catalog={1};Integrated Security=SSPI;";
+            SqlConnection server = new SqlConnection();
+            SqlConnection client = new SqlConnection();
+            List<String> scopes;
+            bool provison_server;
+            bool provison_client;
+            bool deprovison_server;
+            bool deprovison_client;
             foreach (var arg in args)
             {
                 var pairs = arg.Split('=');
                 var name = pairs[0];
-                var parms = pairs[1].Split('|');
-                splitargs.Add(name, parms.ToList());
+                string[] parms = pairs[1].Split('|');
+                string conn = "";
+                switch (name)
+	            {
+                    case "--server":
+                        conn = String.Format(connectionstring, parms[0], parms[1]);
+                        server.ConnectionString = conn;
+                        break;
+                    case "--client":
+                        conn = String.Format(connectionstring, parms[0], parms[1]);
+                        client.ConnectionString = conn;
+                        break;
+                    case "--scopes":
+                        scopes = parms.ToList();
+                        break;
+                    case "--provision":
+                        provison_server = parms.Contains("server");
+                        provison_client = parms.Contains("client");
+                        break;
+                    case "--deprovision":
+                        deprovison_server = parms.Contains("server");
+                        deprovison_client = parms.Contains("client");
+                        break;
+		            default:
+                        break;
+	            }
             }
-
-            switch (splitargs.Keys)
-	{
-		default:
- break;
-	}
-
-            string connectionstring = String.Format("Data Source=SD0469;Initial Catalog=FieldData;Integrated Security=SSPI;");
 
             Console.WriteLine(args);
         }
