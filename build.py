@@ -117,8 +117,8 @@ def deploy_to(client, rebuild=True):
     print "Remote depoly compelete"
 
 def deploy_to_clients():
-    clients = [#'\\\\sd0469\\C$\\Users\\woodrown\\Desktop\\SDRCDataCollection\\',]
-               '\\\\sd0496\\C$\\Users\\woodrown\\Desktop\\SDRCDataCollection\\']
+    clients = ['\\\\sd0469\\C$\\Users\\woodrown\\Desktop\\SDRCDataCollection\\',]
+               #'\\\\sd0496\\C$\\Users\\woodrown\\Desktop\\SDRCDataCollection\\']
 
     rebuild = True
     for client in clients:
