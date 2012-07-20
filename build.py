@@ -2,15 +2,15 @@
 ''' Build file that compiles all the needed resources'''
 import os.path
 
-from fabricate import *
 import os
 import sys
-from shutil import copytree, ignore_patterns, rmtree
+import nose
 import datetime
+from shutil import copytree, ignore_patterns, rmtree
+from fabricate import *
 from subprocess import Popen, PIPE
 from PyQt4.QtGui import QApplication
-
-import nose
+from ConfigParser import ConfigParser, NoSectionError, NoOptionError
 from nose.plugins.cover import Coverage
 
 ui_sources = ['src/ui_datatimerpicker', 'src/ui_listmodules',
@@ -28,6 +28,7 @@ curpath = os.path.dirname(os.path.abspath(__file__))
 srcpath = os.path.join(curpath, "src")
 buildpath = os.path.join(curpath, "SDRCDataCollection", "app", "python", "plugins", \
                             "SDRCDataCollection" )
+targetspath = os.path.join(curpath,'targets.ini')
                             
 deploypath = os.path.join(curpath, "SDRCDataCollection")
 bootpath = os.path.join('src', "boot") 
@@ -104,26 +105,53 @@ def deploy():
     print "Local depoly compelete into {0}".format(buildpath)
     return True
 
-def deploy_to(client, rebuild=True):
+def deploy_to(target, config, rebuild=True):
     if rebuild:
         if not deploy(): return
 
-    print "Remote depolying to %s" % client
-    
-    deploypath = os.path.join(curpath, "SDRCDataCollection")
-    msg = shell('xcopy',deploypath, client, '/D', '/S', '/E', '/K', '/C', '/H', \
+    print "Remote depolying to %s" % target
+
+    if 'All' in config['projects'] and 'All' in config['forms']:
+        deploypath = os.path.join(curpath, "SDRCDataCollection")
+        clientpath = os.path.normpath(config['client'])
+        print "Deploying everything to %s" % config['client']
+        msg = shell('xcopy',deploypath, clientpath, '/D', '/S', '/E', '/K', '/C', '/H', \
                                    '/R', '/Y',silent=False)
-   
+    
+
     print "Remote depoly compelete"
 
 def deploy_to_clients():
-    clients = ['\\\\sd0469\\C$\\Users\\woodrown\\Desktop\\SDRCDataCollection\\',]
-               #'\\\\sd0496\\C$\\Users\\woodrown\\Desktop\\SDRCDataCollection\\']
+    config = ConfigParser()
+    config.read(targetspath)
+    targets = {}
+    try:
+        clients = config.get('All','client').split(',')
+    except NoSectionError:
+        print "No All section defined in targets.ini"
+    except NoOptionError as ex:
+        print ex.message
+
+    for name in clients:
+        name = name.strip()
+        try:
+            client = config.get(name,'client')
+            projects = config.get(name,'projects').split(',')
+            forms = config.get(name,'forms').split(',')
+            targets[name] = {'client': client, 'projects' : projects, \
+                             'forms' : forms }
+        except NoSectionError:
+            print ex.message
+        except NoOptionError as ex:
+            print ex.message
 
     rebuild = True
-    for client in clients:
-        deploy_to(client, rebuild)
+    for target, items in targets.iteritems():
+        deploy_to(target, items, rebuild)
         # Turn rebuild off so we only do it once.
         rebuild = False
 
-main()
+#main()
+
+if __name__ == "__main__":
+    deploy_to_clients()
