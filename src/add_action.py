@@ -33,13 +33,6 @@ class AddAction(QAction):
         feature.setGeometry( QgsGeometry.fromPoint( point ) )
 
         for id, field in self.fields.items():
-            log(field.name())
-            if field.name() == "UniqueID":
-                # HACK At the moment we can't rely on the the MS SQL Driver to use correct default values
-                # so we must create our own UUID at the moment.  Checks for a column call UniqueID and gives it a UUID
-                uuidstring = str(uuid.uuid1())
-                feature.addAttribute( id, uuidstring )
-            else:
-                feature.addAttribute( id, self.provider.defaultValue( id ) )
+            feature.addAttribute( id, self.provider.defaultValue( id ) )
 
         self.dialogprovider.openDialog( self.form, feature, self.layer, False )

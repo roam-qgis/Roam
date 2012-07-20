@@ -32,12 +32,6 @@ import resources_rc
 from syncing.syncer import SyncDialog
 from utils import log
 import functools
-
-# TODO Needs QGIS patch
-class ZoomTool(QgsMapToolZoom):
-    def __init__(self, canvas, zoomOout):
-        QgsMapToolZoom.__init__(self, canvas, zoomOout)
-        self.mRubberBand.setColor(Qt.blue)
         
 class SDRCDataCapture():
     def __init__(self, iface):
@@ -52,9 +46,6 @@ class SDRCDataCapture():
         self.actionGroup = QActionGroup(self.iface.mainWindow())
         self.iface.mapCanvas().grabGesture(Qt.PinchGesture)
         self.iface.mapCanvas().viewport().setAttribute(Qt.WA_AcceptTouchEvents) 
-        # TODO Needs QGIS patch
-#        self.zoomin = ZoomTool(self.iface.mapCanvas(), False)
-#        self.zoomout = ZoomTool(self.iface.mapCanvas(), True)
 
     def setupUI(self):
         """
@@ -69,7 +60,7 @@ class SDRCDataCapture():
 
     def setMapTool(self, tool):
         """
-        Set the current map canvsa tool
+        Set the current map canvas tool
 
         tool -- The QgsMapTool to set
         """
@@ -99,13 +90,6 @@ class SDRCDataCapture():
         self.editAction = EditAction("Edit", self.iface )
         self.syncAction = QAction(QIcon(":/syncing/sync"), "Sync", self.mainwindow)
         self.editAction.setCheckable(True)
-
-        # TODO Needs QGIS sip patch for zoom tool
-#        self.iface.actionZoomIn().triggered.disconnect()
-#        self.iface.actionZoomOut().triggered.disconnect()
-#
-#        self.iface.actionZoomIn().triggered.connect(functools.partial(self.setMapTool, self.zoomin))
-#        self.iface.actionZoomOut().triggered.connect(functools.partial(self.setMapTool, self.zoomout))
 
         self.actionGroup.addAction(self.editAction)
 
@@ -218,8 +202,6 @@ class SDRCDataCapture():
                 layerstoForms[layer] = form
             except KeyError:
                 log("Couldn't find layer for form %s" % form.layerName())
-                log("We have")
-                log(layers)
                 
         self.editAction.setLayersForms(layerstoForms)
 
