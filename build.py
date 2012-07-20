@@ -111,17 +111,26 @@ def deploy_to(target, config, rebuild=True):
 
     print "Remote depolying to %s" % target
 
-    if 'All' in config['projects'] and 'All' in config['forms']:
-        deploypath = os.path.join(curpath, "SDRCDataCollection")
-        clientpath = os.path.normpath(config['client'])
+    projects = config['projects']
+    forms = config['forms']
+    deploypath = os.path.join(curpath, "SDRCDataCollection")
+    clientpath = os.path.normpath(config['client'])
+    args = [deploypath, clientpath, '/D', '/S', '/E', '/K', '/C', '/H', \
+                                   '/R', '/Y']
+    if 'All' in projects and 'All' in forms:
         print "Deploying everything to %s" % config['client']
+        msg = shell('xcopy', args, silent=False)
+    else:
+        # TODO Handle deploying only some projects and some forms.
         msg = shell('xcopy',deploypath, clientpath, '/D', '/S', '/E', '/K', '/C', '/H', \
-                                   '/R', '/Y',silent=False)
+                                   '/R', '/Y','/EXCLUDE:excludes.txt',silent=False)
+        
+
     
 
     print "Remote depoly compelete"
 
-def deploy_to_clients():
+def deployAll():
     config = ConfigParser()
     config.read(targetspath)
     targets = {}
@@ -154,4 +163,4 @@ def deploy_to_clients():
 #main()
 
 if __name__ == "__main__":
-    deploy_to_clients()
+    deployAll()
