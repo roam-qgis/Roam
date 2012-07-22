@@ -48,6 +48,7 @@ namespace SqlSyncProvisioner
             onewaytableList.Add(new SpatialColumnInfo { TableName = "Cadastre" });
             onewaytableList.Add(new SpatialColumnInfo { TableName = "AddressNumbers" });
             onewaytableList.Add(new SpatialColumnInfo { TableName = "Towns" });
+            onewaytableList.Add(new SpatialColumnInfo { TableName = "LocalityBoundaries" });
 
             if (isSlave)
             {
