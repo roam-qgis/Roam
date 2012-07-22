@@ -558,6 +558,15 @@ class testFormBinderBinding(TestCase):
                                        'Please select a feature in the map', 5, \
                                        'field')
 
+    def test_editing_combobox_adds_value_if_not_exists(self):
+        w = QComboBox()
+        w.addItems(['a', 'b', 'c'])
+        newitem = 'Hello World'
+        expected = [newitem,'a', 'b', 'c']
+        self.binder.comboEdit(newitem, w)
+        items = [w.itemText(i) for i in range(w.count())]
+        self.assertListEqual(expected, items)
+
 class testFormBinderUnBinding(TestCase):
     def setUp(self):
         self.layer = Mock()

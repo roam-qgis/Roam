@@ -7,7 +7,7 @@ from utils import log, info, warning
 from qgis.gui import QgsAttributeEditor
 from select_feature_tool import SelectFeatureTool
 import os
-import functools
+from functools import partial
 from datatimerpickerwidget import DateTimePickerDialog
 from drawingpad import DrawingPad
 from utils import log, warning
@@ -194,6 +194,11 @@ class FormBinder(QObject):
         except BindingError as er:
             warning(err.reason)
 
+    def comboEdit(self, text, combobox ):
+        items = [combobox.itemText(i) for i in range(combobox.count())]
+        if not text in items:
+            combobox.insertItem(0,text)
+            
     def bindValueToControl(self, control, value):
         """
         Binds a control to the supplied value.
@@ -214,7 +219,8 @@ class FormBinder(QObject):
         elif isinstance(control, QComboBox):
             itemindex = control.findText(value.toString())
             control.setCurrentIndex( itemindex )
-            
+            control.editTextChanged.connect(partial(self.comboEdit, control ))
+
         elif isinstance(control, QDoubleSpinBox):
             double, passed = value.toDouble()
             control.setValue( double )
@@ -233,12 +239,12 @@ class FormBinder(QObject):
                     button.setIcon(QIcon(":/icons/calender"))
                     button.setText("Pick")
                     button.setIconSize(QSize(24,24))
-                    button.pressed.connect(functools.partial(self.pickDateTime, control, "DateTime" ))
+                    button.pressed.connect(partial(self.pickDateTime, control, "DateTime" ))
         elif isinstance(control, QPushButton):
             if control.text() == "Drawing":
                 control.setIcon(QIcon(":/icons/draw"))
                 control.setIconSize(QSize(24,24))
-                control.pressed.connect(functools.partial(self.loadDrawingTool, control))
+                control.pressed.connect(partial(self.loadDrawingTool, control))
         else:
             raise BindingError(control, value.toString(), "Unsupported widget %s" % control)
 
@@ -265,7 +271,7 @@ class FormBinder(QObject):
 
         drawingpad = DrawingPad(imagetoload)
         drawingpad.setWindowState(Qt.WindowFullScreen | Qt.WindowActive)
-        drawingpad.ui.actionMapSnapshot.triggered.connect(functools.partial(self.drawingPadMapSnapshot,drawingpad))
+        drawingpad.ui.actionMapSnapshot.triggered.connect(partial(self.drawingPadMapSnapshot,drawingpad))
         if drawingpad.exec_():
             #Save the image to a temporay location until commit.
             self.images[controlname] = tempimage + ".jpg"
@@ -379,7 +385,7 @@ class FormBinder(QObject):
             if not valid:
                 radius = 5
 
-            tool.pressed.connect(functools.partial(self.selectFeatureClicked,
+            tool.pressed.connect(partial(self.selectFeatureClicked,
                                                       layer,
                                                       column_name,
                                                       message,
