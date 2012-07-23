@@ -231,6 +231,12 @@ class FormBinder(QObject):
             control.setChecked(value.toBool())
 
         elif isinstance(control, QComboBox):
+            self.settings.beginGroup('ComboBoxItems')
+            items = self.settings.value('%s' % control.objectName()).toString() \
+                                                                    .split(',')
+            for item in items:
+                control.addItem(item)
+            self.settings.endGroup()
             itemindex = control.findText(value.toString())
             control.setCurrentIndex( itemindex )
 

@@ -277,6 +277,7 @@ class testFormBinderBinding(TestCase):
         self.assertFalse(w.isChecked())
 
     def test_bind_combox_widget(self):
+        self.mocksettings.value.return_value = QVariant()
         w = QComboBox()
         w.addItems([QString('Hello World'), QString('Hello'), QString('World')])
         value = QVariant('Hello')
@@ -284,7 +285,16 @@ class testFormBinderBinding(TestCase):
         self.binder.bindValueToControl(w, value)
         self.assertEqual(w.currentText(), value.toString())
 
+    def test_bind_combox_widget_from_settings(self):
+        self.mocksettings.value.return_value = QVariant("Hello,World,Test")
+        w = QComboBox()
+        value = QVariant('Hello')
+        self.assertNotEqual(w.currentText(), value.toString())
+        self.binder.bindValueToControl(w, value)
+        self.assertEqual(w.currentText(), value.toString())
+
     def test_fail_bind_combox_widget(self):
+        self.mocksettings.value.return_value = QVariant()
         w = QComboBox()
         w.addItems(['', 'Hello World', 'Hello', 'World'])
         value = QVariant('balh')
