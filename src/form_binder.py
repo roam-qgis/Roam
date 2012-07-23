@@ -7,7 +7,7 @@ from utils import log, info, warning
 from qgis.gui import QgsAttributeEditor
 from select_feature_tool import SelectFeatureTool
 import os
-import functools
+from functools import partial
 from datatimerpickerwidget import DateTimePickerDialog
 from drawingpad import DrawingPad
 from utils import log, warning
@@ -55,15 +55,19 @@ class MandatoryGroup(QObject):
                                             "{border-radius: 5px; background-color: rgba(200, 255, 197, 150); }",
 
                            }
+        def comboxboxchanges(w, m):
+            if w.isEditable():
+                w.editTextChanged.connect(m)
+                
+            w.currentIndexChanged.connect(m)
 
         self.signals = {
-                         QComboBox : lambda w,m: w.currentIndexChanged.connect(m),
+                         QComboBox : lambda w,m: comboxboxchanges(w,m),
                          QCheckBox : lambda w,m: w.stateChanged.connect(m),
                          QLineEdit : lambda w,m: w.textChanged.connect(m),
                          QTextEdit : lambda w,m: w.textChanged.connect(m),
                          QDateTimeEdit : lambda w,m: w.dateTimeChanged.connect(m),
                         }
-
     def addWidget(self, widget, buddy):
         if widget in self.widgets:
             return
@@ -194,6 +198,21 @@ class FormBinder(QObject):
         except BindingError as er:
             warning(err.reason)
 
+    def comboEdit(self, combobox, text ):
+        comboitems = [combobox.itemText(i) for i in range(combobox.count())]
+        name = combobox.objectName()
+        self.settings.beginGroup('ComboBoxItems')
+        items = self.settings.value('%s' % name).toString().split(',')
+        settingslist = [str(s) for s in items]
+
+        if not text in comboitems and not text in settingslist:
+            settingslist.append(str(text))
+            newlist = ",".join(settingslist)
+            self.settings.setValue('%s' % name, newlist)
+
+        self.settings.endGroup()
+        self.settings.sync()
+        
     def bindValueToControl(self, control, value):
         """
         Binds a control to the supplied value.
@@ -212,9 +231,15 @@ class FormBinder(QObject):
             control.setChecked(value.toBool())
 
         elif isinstance(control, QComboBox):
+            self.settings.beginGroup('ComboBoxItems')
+            items = self.settings.value('%s' % control.objectName()).toString() \
+                                                                    .split(',')
+            for item in items:
+                control.addItem(item)
+            self.settings.endGroup()
             itemindex = control.findText(value.toString())
             control.setCurrentIndex( itemindex )
-            
+
         elif isinstance(control, QDoubleSpinBox):
             double, passed = value.toDouble()
             control.setValue( double )
@@ -233,12 +258,12 @@ class FormBinder(QObject):
                     button.setIcon(QIcon(":/icons/calender"))
                     button.setText("Pick")
                     button.setIconSize(QSize(24,24))
-                    button.pressed.connect(functools.partial(self.pickDateTime, control, "DateTime" ))
+                    button.pressed.connect(partial(self.pickDateTime, control, "DateTime" ))
         elif isinstance(control, QPushButton):
             if control.text() == "Drawing":
                 control.setIcon(QIcon(":/icons/draw"))
                 control.setIconSize(QSize(24,24))
-                control.pressed.connect(functools.partial(self.loadDrawingTool, control))
+                control.pressed.connect(partial(self.loadDrawingTool, control))
         else:
             raise BindingError(control, value.toString(), "Unsupported widget %s" % control)
 
@@ -265,7 +290,7 @@ class FormBinder(QObject):
 
         drawingpad = DrawingPad(imagetoload)
         drawingpad.setWindowState(Qt.WindowFullScreen | Qt.WindowActive)
-        drawingpad.ui.actionMapSnapshot.triggered.connect(functools.partial(self.drawingPadMapSnapshot,drawingpad))
+        drawingpad.ui.actionMapSnapshot.triggered.connect(partial(self.drawingPadMapSnapshot,drawingpad))
         if drawingpad.exec_():
             #Save the image to a temporay location until commit.
             self.images[controlname] = tempimage + ".jpg"
@@ -311,6 +336,8 @@ class FormBinder(QObject):
                         value = 1
                 elif isinstance(control, QComboBox):
                     value = control.currentText()
+                    if control.isEditable():
+                        self.comboEdit( control, value )
 
                 elif isinstance(control, QDoubleSpinBox) or isinstance(control, QSpinBox):
                     value = control.value()
@@ -379,7 +406,7 @@ class FormBinder(QObject):
             if not valid:
                 radius = 5
 
-            tool.pressed.connect(functools.partial(self.selectFeatureClicked,
+            tool.pressed.connect(partial(self.selectFeatureClicked,
                                                       layer,
                                                       column_name,
                                                       message,

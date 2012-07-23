@@ -118,6 +118,21 @@ class testMandatoryGroups(TestCase):
         w.setCurrentIndex(2)
         self.assertTrue(self.called)
 
+    def test_pass_if_combobox_changed_using_editext(self):
+        self.called = False
+        def enable():
+            self.called = True
+
+        w = QComboBox()
+        w.setEditable(True)
+        w.addItems(['1','2','3'])
+        
+        group = MandatoryGroup()
+        group.addWidget(w, w)
+        group.enable.connect( enable )
+        w.setEditText("Hello World")
+        self.assertTrue(self.called)
+
     def test_pass_if_datetimedit_changed(self):
         self.called = False
         def enable():
@@ -198,7 +213,9 @@ class testFormBinderBinding(TestCase):
         self.layer = Mock()
         self.layer.pendingFields.return_value = []
         self.canvas = self.getCavnasWithFakeLayers()
-        self.binder = FormBinder(self.layer,self.parent,self.canvas,None)
+        self.mocksettings = Mock()
+        self.binder = FormBinder(self.layer,self.parent, \
+                                 self.canvas, self.mocksettings)
 
     def test_bind_calender_widget(self):
         w = QCalendarWidget()
@@ -260,6 +277,7 @@ class testFormBinderBinding(TestCase):
         self.assertFalse(w.isChecked())
 
     def test_bind_combox_widget(self):
+        self.mocksettings.value.return_value = QVariant()
         w = QComboBox()
         w.addItems([QString('Hello World'), QString('Hello'), QString('World')])
         value = QVariant('Hello')
@@ -267,7 +285,16 @@ class testFormBinderBinding(TestCase):
         self.binder.bindValueToControl(w, value)
         self.assertEqual(w.currentText(), value.toString())
 
+    def test_bind_combox_widget_from_settings(self):
+        self.mocksettings.value.return_value = QVariant("Hello,World,Test")
+        w = QComboBox()
+        value = QVariant('Hello')
+        self.assertNotEqual(w.currentText(), value.toString())
+        self.binder.bindValueToControl(w, value)
+        self.assertEqual(w.currentText(), value.toString())
+
     def test_fail_bind_combox_widget(self):
+        self.mocksettings.value.return_value = QVariant()
         w = QComboBox()
         w.addItems(['', 'Hello World', 'Hello', 'World'])
         value = QVariant('balh')
@@ -557,6 +584,26 @@ class testFormBinderBinding(TestCase):
         mock_method.assert_called_with(self.layer1,'column1', \
                                        'Please select a feature in the map', 5, \
                                        'field')
+
+    def test_combobox_add_value_if_not_exists_in_settings_and_combo(self):
+        self.mocksettings.value.return_value = QVariant("1,2,3,4,5")
+        w = QComboBox()
+        w.setObjectName('comboname')
+        w.setEditable( True )
+        w.addItems(['b', 'c', 'd'])
+        newitem = 'Hello World'
+        self.binder.comboEdit(w, newitem)
+        self.mocksettings.setValue.assert_called_with("comboname",'1,2,3,4,5,Hello World')
+
+    def test_combobox_dont_add_value_if_exists_in_settings_or_combo(self):
+        self.mocksettings.value.return_value = QVariant("1,2,3,4,5")
+        w = QComboBox()
+        w.setObjectName('comboname')
+        w.setEditable( True )
+        w.addItems(['b', 'c', 'd'])
+        newitem = 'b'
+        self.binder.comboEdit(w, newitem)
+        self.assertFalse(self.mocksettings.setValue.called)
 
 class testFormBinderUnBinding(TestCase):
     def setUp(self):
