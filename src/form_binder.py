@@ -55,15 +55,19 @@ class MandatoryGroup(QObject):
                                             "{border-radius: 5px; background-color: rgba(200, 255, 197, 150); }",
 
                            }
+        def comboxboxchanges(w, m):
+            if w.isEditable():
+                w.editTextChanged.connect(m)
+                
+            w.currentIndexChanged.connect(m)
 
         self.signals = {
-                         QComboBox : lambda w,m: w.currentIndexChanged.connect(m),
+                         QComboBox : lambda w,m: comboxboxchanges(w,m),
                          QCheckBox : lambda w,m: w.stateChanged.connect(m),
                          QLineEdit : lambda w,m: w.textChanged.connect(m),
                          QTextEdit : lambda w,m: w.textChanged.connect(m),
                          QDateTimeEdit : lambda w,m: w.dateTimeChanged.connect(m),
                         }
-
     def addWidget(self, widget, buddy):
         if widget in self.widgets:
             return
@@ -194,7 +198,7 @@ class FormBinder(QObject):
         except BindingError as er:
             warning(err.reason)
 
-    def comboEdit(self, text, combobox ):
+    def comboEdit(self, combobox, text ):
         items = [combobox.itemText(i) for i in range(combobox.count())]
         if not text in items:
             combobox.insertItem(0,text)
@@ -219,7 +223,9 @@ class FormBinder(QObject):
         elif isinstance(control, QComboBox):
             itemindex = control.findText(value.toString())
             control.setCurrentIndex( itemindex )
-            control.editTextChanged.connect(partial(self.comboEdit, control ))
+            if control.isEditable():
+                control.lineEdit().editingFinished.connect(partial( \
+                                   self.comboEdit, control, control.currentText()))
 
         elif isinstance(control, QDoubleSpinBox):
             double, passed = value.toDouble()

@@ -118,6 +118,21 @@ class testMandatoryGroups(TestCase):
         w.setCurrentIndex(2)
         self.assertTrue(self.called)
 
+    def test_pass_if_combobox_changed_using_editext(self):
+        self.called = False
+        def enable():
+            self.called = True
+
+        w = QComboBox()
+        w.setEditable(True)
+        w.addItems(['1','2','3'])
+        
+        group = MandatoryGroup()
+        group.addWidget(w, w)
+        group.enable.connect( enable )
+        w.setEditText("Hello World")
+        self.assertTrue(self.called)
+
     def test_pass_if_datetimedit_changed(self):
         self.called = False
         def enable():
@@ -560,10 +575,11 @@ class testFormBinderBinding(TestCase):
 
     def test_editing_combobox_adds_value_if_not_exists(self):
         w = QComboBox()
+        w.setEditable( True )
         w.addItems(['a', 'b', 'c'])
         newitem = 'Hello World'
         expected = [newitem,'a', 'b', 'c']
-        self.binder.comboEdit(newitem, w)
+        self.binder.comboEdit(w, newitem)
         items = [w.itemText(i) for i in range(w.count())]
         self.assertListEqual(expected, items)
 
