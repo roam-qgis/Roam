@@ -30,7 +30,6 @@ class Form(object):
     """
     Represents a data collection form.  Contains links to the python module for the form.
     """
-
     def __init__(self, module):
         self._module = module
         self._settings = None

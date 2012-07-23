@@ -26,8 +26,9 @@ env['PATH'] += ";c:\\WINDOWS\\Microsoft.NET\Framework\\v3.5"
 
 curpath = os.path.dirname(os.path.abspath(__file__))
 srcpath = os.path.join(curpath, "src")
-buildpath = os.path.join(curpath, "SDRCDataCollection", "app", "python", "plugins", \
-                            "SDRCDataCollection" )
+pluginpath = os.path.join("SDRCDataCollection", "app", "python", "plugins", \
+                            "SDRCDataCollection")
+buildpath = os.path.join(curpath, pluginpath )
 targetspath = os.path.join(curpath,'targets.ini')
                             
 deploypath = os.path.join(curpath, "SDRCDataCollection")
@@ -115,19 +116,41 @@ def deploy_to(target, config, rebuild=True):
     forms = config['forms']
     deploypath = os.path.join(curpath, "SDRCDataCollection")
     clientpath = os.path.normpath(config['client'])
-    args = [deploypath, clientpath, '/D', '/S', '/E', '/K', '/C', '/H', \
-                                   '/R', '/Y']
-    if 'All' in projects and 'All' in forms:
-        print "Deploying everything to %s" % config['client']
-        msg = shell('xcopy', args, silent=False)
-    else:
-        # TODO Handle deploying only some projects and some forms.
-        msg = shell('xcopy',deploypath, clientpath, '/D', '/S', '/E', '/K', '/C', '/H', \
-                                   '/R', '/Y','/EXCLUDE:excludes.txt',silent=False)
-        
 
+    args = ['/D', '/S', '/E', '/K', '/C', '/H', \
+                                   '/R', '/Y', '/I']
+    print "Deploying application to %s" % config['client']
+    msg = shell('xcopy', deploypath, clientpath, args \
+                ,'/EXCLUDE:depoly_excludes.txt',silent=False)
+                
+    projectpath = os.path.join(buildpath,'projects')
+    clientpojectpath = os.path.join(clientpath,pluginpath,'projects')
+    formpath = os.path.join(buildpath,'entry_forms')
+    clientformpath = os.path.join(clientpath,pluginpath,'entry_forms')
     
+    if 'All' in projects:
+        print "Loading all projects"
+        msg = shell('xcopy', projectpath, clientpojectpath, args ,silent=False)
+    else:
+        for project in projects:
+            if project or project[-4] == ".qgs":
+                print "Loading project %s" % project
+                path = os.path.join(projectpath, project)
+                msg = shell('xcopy', path, clientpojectpath, args ,silent=False)
 
+    if 'All' in forms:
+        print "Loading all forms"
+        msg = shell('xcopy', formpath, clientformpath, args ,silent=False)
+    else:
+        for form in forms:
+            if form:
+                print "Loading form %s" % form
+                path = os.path.join(formpath, form)
+                newpath = os.path.join(clientformpath, form)
+                print path
+                print newpath
+                msg = shell('xcopy', path, newpath, args ,silent=False)
+        
     print "Remote depoly compelete"
 
 def deployAll():
