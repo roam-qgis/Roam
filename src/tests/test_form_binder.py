@@ -213,7 +213,9 @@ class testFormBinderBinding(TestCase):
         self.layer = Mock()
         self.layer.pendingFields.return_value = []
         self.canvas = self.getCavnasWithFakeLayers()
-        self.binder = FormBinder(self.layer,self.parent,self.canvas,None)
+        self.mocksettings = Mock()
+        self.binder = FormBinder(self.layer,self.parent, \
+                                 self.canvas, self.mocksettings)
 
     def test_bind_calender_widget(self):
         w = QCalendarWidget()
@@ -573,15 +575,25 @@ class testFormBinderBinding(TestCase):
                                        'Please select a feature in the map', 5, \
                                        'field')
 
-    def test_editing_combobox_adds_value_if_not_exists(self):
+    def test_combobox_add_value_if_not_exists_in_settings_and_combo(self):
+        self.mocksettings.value.return_value = QVariant("1,2,3,4,5")
         w = QComboBox()
+        w.setObjectName('comboname')
         w.setEditable( True )
-        w.addItems(['a', 'b', 'c'])
+        w.addItems(['b', 'c', 'd'])
         newitem = 'Hello World'
-        expected = [newitem,'a', 'b', 'c']
         self.binder.comboEdit(w, newitem)
-        items = [w.itemText(i) for i in range(w.count())]
-        self.assertListEqual(expected, items)
+        self.mocksettings.setValue.assert_called_with("comboname",'1,2,3,4,5,Hello World')
+
+    def test_combobox_dont_add_value_if_exists_in_settings_or_combo(self):
+        self.mocksettings.value.return_value = QVariant("1,2,3,4,5")
+        w = QComboBox()
+        w.setObjectName('comboname')
+        w.setEditable( True )
+        w.addItems(['b', 'c', 'd'])
+        newitem = 'b'
+        self.binder.comboEdit(w, newitem)
+        self.assertFalse(self.mocksettings.setValue.called)
 
 class testFormBinderUnBinding(TestCase):
     def setUp(self):

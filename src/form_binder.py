@@ -199,10 +199,20 @@ class FormBinder(QObject):
             warning(err.reason)
 
     def comboEdit(self, combobox, text ):
-        items = [combobox.itemText(i) for i in range(combobox.count())]
-        if not text in items:
-            combobox.insertItem(0,text)
-            
+        comboitems = [combobox.itemText(i) for i in range(combobox.count())]
+        name = combobox.objectName()
+        self.settings.beginGroup('ComboBoxItems')
+        items = self.settings.value('%s' % name).toString().split(',')
+        settingslist = [str(s) for s in items]
+
+        if not text in comboitems and not text in settingslist:
+            settingslist.append(str(text))
+            newlist = ",".join(settingslist)
+            self.settings.setValue('%s' % name, newlist)
+
+        self.settings.endGroup()
+        self.settings.sync()
+        
     def bindValueToControl(self, control, value):
         """
         Binds a control to the supplied value.
@@ -223,9 +233,6 @@ class FormBinder(QObject):
         elif isinstance(control, QComboBox):
             itemindex = control.findText(value.toString())
             control.setCurrentIndex( itemindex )
-            if control.isEditable():
-                control.lineEdit().editingFinished.connect(partial( \
-                                   self.comboEdit, control, control.currentText()))
 
         elif isinstance(control, QDoubleSpinBox):
             double, passed = value.toDouble()
@@ -323,6 +330,8 @@ class FormBinder(QObject):
                         value = 1
                 elif isinstance(control, QComboBox):
                     value = control.currentText()
+                    if control.isEditable():
+                        self.comboEdit( control, value )
 
                 elif isinstance(control, QDoubleSpinBox) or isinstance(control, QSpinBox):
                     value = control.value()
