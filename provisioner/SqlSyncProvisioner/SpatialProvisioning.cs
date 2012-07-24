@@ -35,6 +35,7 @@ namespace SqlSyncProvisioner
             // TODO: Retrieve actual sync tables
             IList<SpatialColumnInfo> twowaytableList = new List<SpatialColumnInfo>();
             twowaytableList.Add(new SpatialColumnInfo { TableName = "WaterJobs" });
+            twowaytableList.Add(new SpatialColumnInfo { TableName = "SewerJobs" });
 
             // TODO: Retrieve actual sync tables
             IList<SpatialColumnInfo> onewaytableList = new List<SpatialColumnInfo>();

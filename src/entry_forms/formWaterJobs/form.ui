@@ -787,13 +787,6 @@ p, li { white-space: pre-wrap; }
       </property>
      </widget>
     </item>
-    <item row="13" column="0">
-     <widget class="QLabel" name="label_11">
-      <property name="text">
-       <string>Valve Status</string>
-      </property>
-     </widget>
-    </item>
     <item row="15" column="0">
      <widget class="QLabel" name="label_12">
       <property name="text">
@@ -805,6 +798,13 @@ p, li { white-space: pre-wrap; }
      <widget class="QLabel" name="label_40">
       <property name="text">
        <string>Designation:</string>
+      </property>
+     </widget>
+    </item>
+    <item row="13" column="0">
+     <widget class="QLabel" name="label_11">
+      <property name="text">
+       <string>Valve Status</string>
       </property>
      </widget>
     </item>
@@ -1198,9 +1198,9 @@ p, li { white-space: pre-wrap; }
      <widget class="QLineEdit" name="CustomerRequestNumber"/>
     </item>
     <item row="3" column="0">
-     <widget class="QLabel" name="label">
+     <widget class="QLabel" name="LotPlan_label">
       <property name="text">
-       <string>Lot and Plan</string>
+       <string>Request property</string>
       </property>
      </widget>
     </item>
