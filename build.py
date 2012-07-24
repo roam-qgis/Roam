@@ -2,15 +2,15 @@
 ''' Build file that compiles all the needed resources'''
 import os.path
 
-from fabricate import *
 import os
 import sys
-from shutil import copytree, ignore_patterns, rmtree
+import nose
 import datetime
+from shutil import copytree, ignore_patterns, rmtree
+from fabricate import *
 from subprocess import Popen, PIPE
 from PyQt4.QtGui import QApplication
-
-import nose
+from ConfigParser import ConfigParser, NoSectionError, NoOptionError
 from nose.plugins.cover import Coverage
 
 ui_sources = ['src/ui_datatimerpicker', 'src/ui_listmodules',
@@ -24,13 +24,20 @@ path = os.path.dirname(__file__)
 env = os.environ.copy()
 env['PATH'] += ";c:\\WINDOWS\\Microsoft.NET\Framework\\v3.5"
 
+APPNAME = "SDRCDataCollection"
+EXCLUDES = '/EXCLUDE:excludes.txt'
+
 curpath = os.path.dirname(os.path.abspath(__file__))
 srcpath = os.path.join(curpath, "src")
-buildpath = os.path.join(curpath, "SDRCDataCollection", "app", "python", "plugins", \
-                            "SDRCDataCollection" )
+pluginpath = os.path.join(APPNAME, "app", "python", "plugins", \
+                            APPNAME)
+buildpath = os.path.join(curpath, pluginpath )
+targetspath = os.path.join(curpath,'targets.ini')
                             
-deploypath = os.path.join(curpath, "SDRCDataCollection")
-bootpath = os.path.join('src', "boot") 
+deploypath = os.path.join(curpath, APPNAME)
+bootpath = os.path.join('src', "boot")
+
+args = ['/D', '/S', '/E', '/K', '/C', '/H', '/R', '/Y', '/I']
 
 def build():
     deploy_to_clients()
@@ -79,7 +86,7 @@ def test():
     import nose
     return nose.run()
 
-def deploy():
+def deploy_local():
     print "Deploy started"
     print "Building..."
     compile()
@@ -90,11 +97,9 @@ def deploy():
    
     # Copy all the files to the ouput directory
     print "Copying new files..."
-    msg = shell('xcopy',srcpath, buildpath, '/D', '/S', '/E', '/K', '/C', '/H', \
-                                   '/R', '/Y','/EXCLUDE:excludes.txt',silent=False)                         
+    msg = shell('xcopy',srcpath, buildpath, args, EXCLUDES ,silent=False)
                                    
-    msg = shell('xcopy',bootpath, deploypath, '/D', '/S', '/E', '/K', '/C', '/H', \
-                                   '/R', '/Y',silent=False)
+    msg = shell('xcopy',bootpath, deploypath, args ,silent=False)
 
     # Replace version numbers
     version = getVersion()
@@ -104,26 +109,84 @@ def deploy():
     print "Local depoly compelete into {0}".format(buildpath)
     return True
 
-def deploy_to(client, rebuild=True):
-    if rebuild:
-        if not deploy(): return
+def deploy_to(target, config):
+    print "Remote depolying to %s" % target
 
-    print "Remote depolying to %s" % client
+    projects = config['projects']
+    forms = config['forms']
+    clientpath = os.path.normpath(config['client'])
+
     
-    deploypath = os.path.join(curpath, "SDRCDataCollection")
-    msg = shell('xcopy',deploypath, client, '/D', '/S', '/E', '/K', '/C', '/H', \
-                                   '/R', '/Y',silent=False)
-   
+    print "Deploying application to %s" % config['client']
+    clientapppath = os.path.join(clientpath, APPNAME)
+    msg = shell('xcopy', deploypath, clientapppath, args \
+                ,'/EXCLUDE:depoly_excludes.txt',silent=False)
+                
+    projectpath = os.path.join(buildpath,'projects')
+    clientpojectpath = os.path.join(clientpath,pluginpath,'projects')
+    formpath = os.path.join(buildpath,'entry_forms')
+    clientformpath = os.path.join(clientpath,pluginpath,'entry_forms')
+
+    msg = shell('xcopy', projectpath, clientpojectpath, '/T','/E','/I','/Y' ,silent=False)
+    msg = shell('xcopy', formpath, clientformpath,'/I','/Y' ,silent=False)
+    
+    if 'All' in projects:
+        print "Loading all projects"
+        msg = shell('xcopy', projectpath, clientpojectpath, args ,silent=False)
+    else:
+        for project in projects:
+            if project and project[-4:] == ".qgs":
+                print "Loading project %s" % project
+                path = os.path.join(projectpath, project)
+                newpath = os.path.join(clientpojectpath, project)
+                msg = shell('copy',path, newpath, '/Y', silent=False, shell=True)
+
+    if 'All' in forms:
+        print "Loading all forms"
+        msg = shell('xcopy', formpath, clientformpath, args ,silent=False)
+    else:
+        for form in forms:
+            if form:
+                print "Loading form %s" % form
+                path = os.path.join(formpath, form)
+                newpath = os.path.join(clientformpath, form)
+                msg = shell('xcopy', path, newpath, args ,silent=False)
+        
     print "Remote depoly compelete"
 
-def deploy_to_clients():
-    clients = ['\\\\sd0469\\C$\\Users\\woodrown\\Desktop\\SDRCDataCollection\\',]
-               #'\\\\sd0496\\C$\\Users\\woodrown\\Desktop\\SDRCDataCollection\\']
+def deploy_target(targetname, config):
+    print targetname
+    targets = {}
+    try:
+        clients = config.get(targetname,'client').split(',')
+        for client in clients:
+            client = client.strip()
+            if client == targetname:
+                print "Can't include a section as a deploy target of itself"
+                continue
+                
+            if client in config.sections():
+                deploy_target(client, config)
+            else:
+                print 'Client -> %s' % client
+                projects = config.get(targetname,'projects').split(',')
+                forms = config.get(targetname,'forms').split(',')
+                targets[targetname] = {'client': client, 'projects' : projects, \
+                                 'forms' : forms }
+            
+            for target, items in targets.iteritems():
+                deploy_to(target, items)
+                
+    except NoSectionError as ex:
+        print ex.message
+    except NoOptionError as ex:
+        print ex.message
 
-    rebuild = True
-    for client in clients:
-        deploy_to(client, rebuild)
-        # Turn rebuild off so we only do it once.
-        rebuild = False
-
-main()
+if __name__ == "__main__":
+    from mock import patch
+    with patch('build.deploy_to') as mock:
+        config = ConfigParser()
+        config.read(targetspath)
+        deploy_local()
+        deploy_target('All', config)
+    sys.exit()

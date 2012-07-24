@@ -1,2 +1,3 @@
-python src/build.py docs 
+@ECHO OFF
+python build.py docs 
 pause

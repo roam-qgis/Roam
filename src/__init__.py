@@ -33,12 +33,3 @@ def classFactory(iface):
     from sdrcdatacapture import SDRCDataCapture
     return SDRCDataCapture(iface)
 
-if __name__ == "__main__":
-    import forms
-    import sys
-    from PyQt4.QtGui import QApplication
-    app = QApplication(sys.argv)
-    list = forms.getForms()
-    form = forms.loadFormModule(list[0])
-    form.init(None)
-    sys.exit(app.exec_())
