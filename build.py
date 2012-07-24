@@ -24,15 +24,20 @@ path = os.path.dirname(__file__)
 env = os.environ.copy()
 env['PATH'] += ";c:\\WINDOWS\\Microsoft.NET\Framework\\v3.5"
 
+APPNAME = "SDRCDataCollection"
+EXCLUDES = '/EXCLUDE:excludes.txt'
+
 curpath = os.path.dirname(os.path.abspath(__file__))
 srcpath = os.path.join(curpath, "src")
-pluginpath = os.path.join("SDRCDataCollection", "app", "python", "plugins", \
-                            "SDRCDataCollection")
+pluginpath = os.path.join(APPNAME, "app", "python", "plugins", \
+                            APPNAME)
 buildpath = os.path.join(curpath, pluginpath )
 targetspath = os.path.join(curpath,'targets.ini')
                             
-deploypath = os.path.join(curpath, "SDRCDataCollection")
-bootpath = os.path.join('src', "boot") 
+deploypath = os.path.join(curpath, APPNAME)
+bootpath = os.path.join('src', "boot")
+
+args = ['/D', '/S', '/E', '/K', '/C', '/H', '/R', '/Y', '/I']
 
 def build():
     deploy_to_clients()
@@ -92,11 +97,9 @@ def deploy_local():
    
     # Copy all the files to the ouput directory
     print "Copying new files..."
-    msg = shell('xcopy',srcpath, buildpath, '/D', '/S', '/E', '/K', '/C', '/H', \
-                                   '/R', '/Y', '/EXCLUDE:excludes.txt',silent=False)
+    msg = shell('xcopy',srcpath, buildpath, args, EXCLUDES ,silent=False)
                                    
-    msg = shell('xcopy',bootpath, deploypath, '/D', '/S', '/E', '/K', '/C', '/H', \
-                                   '/R', '/Y' ,silent=False)
+    msg = shell('xcopy',bootpath, deploypath, args ,silent=False)
 
     # Replace version numbers
     version = getVersion()
@@ -113,29 +116,30 @@ def deploy_to(target, config):
     forms = config['forms']
     clientpath = os.path.normpath(config['client'])
 
-    args = ['/D', '/S', '/E', '/K', '/C', '/H', '/R', '/Y', '/I']
+    
     print "Deploying application to %s" % config['client']
-    print deploypath
-    print clientpath
-    msg = shell('xcopy', deploypath, clientpath, args \
+    clientapppath = os.path.join(clientpath, APPNAME)
+    msg = shell('xcopy', deploypath, clientapppath, args \
                 ,'/EXCLUDE:depoly_excludes.txt',silent=False)
                 
     projectpath = os.path.join(buildpath,'projects')
     clientpojectpath = os.path.join(clientpath,pluginpath,'projects')
     formpath = os.path.join(buildpath,'entry_forms')
     clientformpath = os.path.join(clientpath,pluginpath,'entry_forms')
-    print projects
+
+    msg = shell('xcopy', projectpath, clientpojectpath, '/T','/E','/I','/Y' ,silent=False)
+    msg = shell('xcopy', formpath, clientformpath,'/I','/Y' ,silent=False)
     
     if 'All' in projects:
         print "Loading all projects"
         msg = shell('xcopy', projectpath, clientpojectpath, args ,silent=False)
     else:
         for project in projects:
-            if project or project[-4] == ".qgs":
+            if project and project[-4:] == ".qgs":
                 print "Loading project %s" % project
                 path = os.path.join(projectpath, project)
-                print path
-                msg = shell('xcopy', path, clientpojectpath, args ,silent=False)
+                newpath = os.path.join(clientpojectpath, project)
+                msg = shell('copy',path, newpath, '/Y', silent=False, shell=True)
 
     if 'All' in forms:
         print "Loading all forms"
@@ -146,8 +150,6 @@ def deploy_to(target, config):
                 print "Loading form %s" % form
                 path = os.path.join(formpath, form)
                 newpath = os.path.join(clientformpath, form)
-                print path
-                print newpath
                 msg = shell('xcopy', path, newpath, args ,silent=False)
         
     print "Remote depoly compelete"
