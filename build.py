@@ -81,7 +81,7 @@ def test():
     import nose
     return nose.run()
 
-def deploy():
+def deploy_local():
     print "Deploy started"
     print "Building..."
     compile()
@@ -93,10 +93,10 @@ def deploy():
     # Copy all the files to the ouput directory
     print "Copying new files..."
     msg = shell('xcopy',srcpath, buildpath, '/D', '/S', '/E', '/K', '/C', '/H', \
-                                   '/R', '/Y','/EXCLUDE:excludes.txt',silent=False)                         
+                                   '/R', '/Y', '/EXCLUDE:excludes.txt',silent=False)
                                    
     msg = shell('xcopy',bootpath, deploypath, '/D', '/S', '/E', '/K', '/C', '/H', \
-                                   '/R', '/Y',silent=False)
+                                   '/R', '/Y' ,silent=False)
 
     # Replace version numbers
     version = getVersion()
@@ -106,20 +106,17 @@ def deploy():
     print "Local depoly compelete into {0}".format(buildpath)
     return True
 
-def deploy_to(target, config, rebuild=True):
-    if rebuild:
-        if not deploy(): return
-
+def deploy_to(target, config):
     print "Remote depolying to %s" % target
 
     projects = config['projects']
     forms = config['forms']
-    deploypath = os.path.join(curpath, "SDRCDataCollection")
     clientpath = os.path.normpath(config['client'])
 
-    args = ['/D', '/S', '/E', '/K', '/C', '/H', \
-                                   '/R', '/Y', '/I']
+    args = ['/D', '/S', '/E', '/K', '/C', '/H', '/R', '/Y', '/I']
     print "Deploying application to %s" % config['client']
+    print deploypath
+    print clientpath
     msg = shell('xcopy', deploypath, clientpath, args \
                 ,'/EXCLUDE:depoly_excludes.txt',silent=False)
                 
@@ -127,6 +124,7 @@ def deploy_to(target, config, rebuild=True):
     clientpojectpath = os.path.join(clientpath,pluginpath,'projects')
     formpath = os.path.join(buildpath,'entry_forms')
     clientformpath = os.path.join(clientpath,pluginpath,'entry_forms')
+    print projects
     
     if 'All' in projects:
         print "Loading all projects"
@@ -136,6 +134,7 @@ def deploy_to(target, config, rebuild=True):
             if project or project[-4] == ".qgs":
                 print "Loading project %s" % project
                 path = os.path.join(projectpath, project)
+                print path
                 msg = shell('xcopy', path, clientpojectpath, args ,silent=False)
 
     if 'All' in forms:
@@ -153,37 +152,39 @@ def deploy_to(target, config, rebuild=True):
         
     print "Remote depoly compelete"
 
-def deployAll():
-    config = ConfigParser()
-    config.read(targetspath)
+def deploy_target(targetname, config):
+    print targetname
     targets = {}
     try:
-        clients = config.get('All','client').split(',')
-    except NoSectionError:
-        print "No All section defined in targets.ini"
+        clients = config.get(targetname,'client').split(',')
+        for client in clients:
+            client = client.strip()
+            if client == targetname:
+                print "Can't include a section as a deploy target of itself"
+                continue
+                
+            if client in config.sections():
+                deploy_target(client, config)
+            else:
+                print 'Client -> %s' % client
+                projects = config.get(targetname,'projects').split(',')
+                forms = config.get(targetname,'forms').split(',')
+                targets[targetname] = {'client': client, 'projects' : projects, \
+                                 'forms' : forms }
+            
+            for target, items in targets.iteritems():
+                deploy_to(target, items)
+                
+    except NoSectionError as ex:
+        print ex.message
     except NoOptionError as ex:
         print ex.message
 
-    for name in clients:
-        name = name.strip()
-        try:
-            client = config.get(name,'client')
-            projects = config.get(name,'projects').split(',')
-            forms = config.get(name,'forms').split(',')
-            targets[name] = {'client': client, 'projects' : projects, \
-                             'forms' : forms }
-        except NoSectionError:
-            print ex.message
-        except NoOptionError as ex:
-            print ex.message
-
-    rebuild = True
-    for target, items in targets.iteritems():
-        deploy_to(target, items, rebuild)
-        # Turn rebuild off so we only do it once.
-        rebuild = False
-
-#main()
-
 if __name__ == "__main__":
-    deployAll()
+    from mock import patch
+    with patch('build.deploy_to') as mock:
+        config = ConfigParser()
+        config.read(targetspath)
+        deploy_local()
+        deploy_target('All', config)
+    sys.exit()
