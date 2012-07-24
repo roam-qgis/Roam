@@ -128,7 +128,7 @@ def deploy_to(target, config):
     clientformpath = os.path.join(clientpath,pluginpath,'entry_forms')
 
     msg = shell('xcopy', projectpath, clientpojectpath, '/T','/E','/I','/Y' ,silent=False)
-    msg = shell('xcopy', formpath, clientformpath,'/I','/Y' ,silent=False)
+    msg = shell('xcopy', formpath, clientformpath,'/I','/Y', '/D' ,silent=False)
     
     if 'All' in projects:
         print "Loading all projects"
