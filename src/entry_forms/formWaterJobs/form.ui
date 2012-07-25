@@ -827,38 +827,42 @@ p, li { white-space: pre-wrap; }
    </property>
    <layout class="QGridLayout" name="gridLayout_2">
     <item row="0" column="0">
-     <widget class="QLabel" name="Operators_label">
-      <property name="text">
-       <string>Name:</string>
-      </property>
-     </widget>
+     <layout class="QHBoxLayout" name="horizontalLayout_4">
+      <item>
+       <widget class="QLabel" name="Operators_label">
+        <property name="text">
+         <string>Name:</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QComboBox" name="Operators">
+        <property name="editable">
+         <bool>true</bool>
+        </property>
+        <property name="mandatory" stdset="0">
+         <bool>true</bool>
+        </property>
+        <item>
+         <property name="text">
+          <string/>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string/>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Kim</string>
+         </property>
+        </item>
+       </widget>
+      </item>
+     </layout>
     </item>
-    <item row="0" column="1">
-     <widget class="QComboBox" name="Operators">
-      <property name="editable">
-       <bool>true</bool>
-      </property>
-      <property name="mandatory" stdset="0">
-       <bool>true</bool>
-      </property>
-      <item>
-       <property name="text">
-        <string/>
-       </property>
-      </item>
-      <item>
-       <property name="text">
-        <string/>
-       </property>
-      </item>
-      <item>
-       <property name="text">
-        <string>Kim</string>
-       </property>
-      </item>
-     </widget>
-    </item>
-    <item row="0" column="2" rowspan="5">
+    <item row="0" column="1" rowspan="4">
      <layout class="QVBoxLayout" name="verticalLayout">
       <property name="leftMargin">
        <number>10</number>
@@ -893,7 +897,7 @@ p, li { white-space: pre-wrap; }
       </item>
      </layout>
     </item>
-    <item row="1" column="0" colspan="2">
+    <item row="1" column="0">
      <layout class="QHBoxLayout" name="horizontalLayout_2">
       <item>
        <widget class="QLabel" name="RespondTime_label">
@@ -936,7 +940,7 @@ p, li { white-space: pre-wrap; }
       </item>
      </layout>
     </item>
-    <item row="2" column="0" colspan="2">
+    <item row="2" column="0">
      <layout class="QHBoxLayout" name="horizontalLayout_3">
       <item>
        <widget class="QLabel" name="CompletionTime_label">
@@ -980,32 +984,36 @@ p, li { white-space: pre-wrap; }
      </layout>
     </item>
     <item row="3" column="0">
-     <widget class="QLabel" name="label_31">
-      <property name="text">
-       <string>Conections Interupted</string>
-      </property>
-     </widget>
-    </item>
-    <item row="3" column="1">
-     <widget class="QLineEdit" name="ConnectionsInterrupted">
-      <property name="text">
-       <string/>
-      </property>
-     </widget>
-    </item>
-    <item row="4" column="0">
-     <widget class="QLabel" name="label_32">
-      <property name="text">
-       <string>Interuption Duration (hrs)</string>
-      </property>
-     </widget>
-    </item>
-    <item row="4" column="1">
-     <widget class="QLineEdit" name="InterruptionDurationHours">
-      <property name="text">
-       <string/>
-      </property>
-     </widget>
+     <layout class="QHBoxLayout" name="horizontalLayout_5">
+      <item>
+       <widget class="QLabel" name="label_49">
+        <property name="text">
+         <string>Interuption Duration (hrs)</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLineEdit" name="ConnectionsInterrupted">
+        <property name="text">
+         <string/>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLabel" name="label_32">
+        <property name="text">
+         <string>Conections Interupted</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLineEdit" name="InterruptionDurationHours">
+        <property name="text">
+         <string/>
+        </property>
+       </widget>
+      </item>
+     </layout>
     </item>
    </layout>
   </widget>
@@ -1206,35 +1214,6 @@ p, li { white-space: pre-wrap; }
     </item>
     <item row="3" column="1" colspan="2">
      <widget class="QLineEdit" name="LotPlan"/>
-    </item>
-    <item row="4" column="0">
-     <widget class="QLabel" name="label_25">
-      <property name="sizePolicy">
-       <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-        <horstretch>0</horstretch>
-        <verstretch>0</verstretch>
-       </sizepolicy>
-      </property>
-      <property name="text">
-       <string> Location Details:</string>
-      </property>
-     </widget>
-    </item>
-    <item row="4" column="1" colspan="3">
-     <widget class="QTextEdit" name="AdditionalLocationDetails">
-      <property name="sizePolicy">
-       <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
-        <horstretch>0</horstretch>
-        <verstretch>0</verstretch>
-       </sizepolicy>
-      </property>
-      <property name="maximumSize">
-       <size>
-        <width>16777215</width>
-        <height>16777215</height>
-       </size>
-      </property>
-     </widget>
     </item>
     <item row="3" column="3">
      <widget class="QToolButton" name="LotPlan_mapselect">
