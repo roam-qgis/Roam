@@ -22,7 +22,7 @@ class PowerState(QObject):
         if msg == win32con.WM_DESTROY:
             win32api.SetWindowLong(self.widget.winId(),
                                     win32con.GWL_WNDPROC,
-                                    self.oldWndProc)
+                                    self.__oldProc)
                                     
         if msg == win32con.WM_POWERBROADCAST:
             if wParam == win32con.PBT_APMSUSPEND:

@@ -1,3 +1,4 @@
+from distutils.errors import CCompilerError
 import tempfile
 import uuid
 import os.path
@@ -176,6 +177,16 @@ class FormBinder(QObject):
             return label
         except ControlNotFound:
             return control
+
+    def getStackWidgetFor(self, control):
+        """
+            Returns the stack widget that is assigned to the current control
+            using the {controlname}_pages example
+        """
+        name = control.objectName() + "_pages"
+        print name
+        stack = self.getControl('listwidget_pages')
+        return stack
         
     def getControl(self, name, type=QWidget):
         control = self.forminstance.findChild(type, name)
@@ -212,7 +223,7 @@ class FormBinder(QObject):
 
         self.settings.endGroup()
         self.settings.sync()
-        
+
     def bindValueToControl(self, control, value):
         """
         Binds a control to the supplied value.
@@ -223,7 +234,16 @@ class FormBinder(QObject):
         """
         if isinstance(control, QCalendarWidget):
             control.setSelectedDate(QDate.fromString( value.toString(), Qt.ISODate ))
-                
+           
+        elif isinstance(control, QListWidget):
+            pass
+            try:
+                stack = self.getStackWidgetFor(control)
+                control.currentRowChanged.connect(stack.setCurrentIndex)
+            except ControlNotFound:
+                pass
+            
+
         elif isinstance(control, QLineEdit) or isinstance(control, QTextEdit):
             control.setText(value.toString())
             
