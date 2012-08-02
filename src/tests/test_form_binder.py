@@ -217,6 +217,22 @@ class testFormBinderBinding(TestCase):
         self.binder = FormBinder(self.layer,self.parent, \
                                  self.canvas, self.mocksettings)
 
+    def test_bind_list_widget(self):
+        w = QListWidget()
+        w.addItems([QString('Hello World'), QString('Hello'), QString('World')])
+        value = QVariant('Hello')
+        self.assertEqual(w.currentItem(), None)
+        self.binder.bindValueToControl(w, value)
+        self.assertEqual(w.currentItem().text(), value.toString())
+
+    def test_fail_bind_list_widget(self):
+        w = QListWidget()
+        w.addItems([QString('Hello World')])
+        value = QVariant('Hello')
+        self.assertEqual(w.currentItem(), None)
+        self.binder.bindValueToControl(w, value)
+        self.assertEqual(w.currentItem(), None)
+
     def test_bind_calender_widget(self):
         w = QCalendarWidget()
         # Set the date to something other then today which is the default

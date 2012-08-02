@@ -177,16 +177,6 @@ class FormBinder(QObject):
             return label
         except ControlNotFound:
             return control
-
-    def getStackWidgetFor(self, control):
-        """
-            Returns the stack widget that is assigned to the current control
-            using the {controlname}_pages example
-        """
-        name = control.objectName() + "_pages"
-        print name
-        stack = self.getControl('listwidget_pages')
-        return stack
         
     def getControl(self, name, type=QWidget):
         control = self.forminstance.findChild(type, name)
@@ -236,13 +226,11 @@ class FormBinder(QObject):
             control.setSelectedDate(QDate.fromString( value.toString(), Qt.ISODate ))
            
         elif isinstance(control, QListWidget):
-            pass
+            items = control.findItems(value.toString(), Qt.MatchExactly)
             try:
-                stack = self.getStackWidgetFor(control)
-                control.currentRowChanged.connect(stack.setCurrentIndex)
-            except ControlNotFound:
+                control.setCurrentItem(items[0])
+            except IndexError:
                 pass
-            
 
         elif isinstance(control, QLineEdit) or isinstance(control, QTextEdit):
             control.setText(value.toString())
