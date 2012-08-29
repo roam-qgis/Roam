@@ -21,11 +21,6 @@ class PowerState(QObject):
                                                 self.__WndProc)
 
     def __WndProc(self, hWnd, msg, wParam, lParam):
-        if msg == win32con.WM_DESTROY:
-            win32api.SetWindowLong(self.widget.winId(),
-                                    win32con.GWL_WNDPROC,
-                                    self.__oldProc)
-
         if msg == win32con.WM_POWERBROADCAST:
             if wParam == win32con.PBT_APMSUSPEND:
                 log("Power off")
@@ -33,6 +28,10 @@ class PowerState(QObject):
             elif wParam == win32con.PBT_APMRESUMESUSPEND:
                 log("Power ON")
                 self.poweron.emit()
+        else:
+            win32api.SetWindowLong(self.widget.winId(),
+                                    win32con.GWL_WNDPROC,
+                                    self.__oldProc)
 
         return win32gui.CallWindowProc(self.__oldProc, hWnd, msg, wParam, lParam)
 

@@ -497,7 +497,7 @@ class testFormBinderBinding(TestCase):
         w = QLabel()
         w.setObjectName("lineedit")
         self.parent.layout().addWidget(w)
-        control = self.binder.getControl("lineedit",type=QLabel)
+        control = self.binder.getControl("lineedit",control_type=QLabel)
         self.assertEqual(control, w)
         self.assertTrue(type(control) is QLabel)
 
@@ -608,7 +608,7 @@ class testFormBinderBinding(TestCase):
         w.setEditable( True )
         w.addItems(['b', 'c', 'd'])
         newitem = 'Hello World'
-        self.binder.comboEdit(w, newitem)
+        self.binder.saveComboValues(w, newitem)
         self.mocksettings.setValue.assert_called_with("comboname",'1,2,3,4,5,Hello World')
 
     def test_combobox_dont_add_value_if_exists_in_settings_or_combo(self):
@@ -618,7 +618,7 @@ class testFormBinderBinding(TestCase):
         w.setEditable( True )
         w.addItems(['b', 'c', 'd'])
         newitem = 'b'
-        self.binder.comboEdit(w, newitem)
+        self.binder.saveComboValues(w, newitem)
         self.assertFalse(self.mocksettings.setValue.called)
 
 class testFormBinderUnBinding(TestCase):

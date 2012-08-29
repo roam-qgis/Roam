@@ -171,7 +171,7 @@ class FormBinder(QObject):
             try:
                 self.bindValueToControl(control, value)
             except BindingError as er:
-                warning(err.reason)
+                warning(er.reason)
 
             self.fieldtocontrol[index] = control
 
@@ -201,7 +201,7 @@ class FormBinder(QObject):
         try:
             self.bindValueToControl(control, value)
         except BindingError as er:
-            warning(err.reason)
+            warning(er.reason)
 
     def saveComboValues(self, combobox, text):
         """
