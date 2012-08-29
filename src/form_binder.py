@@ -199,7 +199,11 @@ class FormBinder(QObject):
         except BindingError as er:
             warning(err.reason)
 
-    def comboEdit(self, combobox, text ):
+    def saveComboValues(self, combobox, text):
+        """
+        Save the value of the combo box into the form settings values.
+        Only saves new values.
+        """
         comboitems = [combobox.itemText(i) for i in range(combobox.count())]
         name = combobox.objectName()
         self.settings.beginGroup('ComboBoxItems')
@@ -223,8 +227,8 @@ class FormBinder(QObject):
         value - A QVariant holding the value
         """
         if isinstance(control, QCalendarWidget):
-            control.setSelectedDate(QDate.fromString( value.toString(), Qt.ISODate ))
-           
+            control.setSelectedDate(QDate.fromString(value.toString(), Qt.ISODate))
+
         elif isinstance(control, QListWidget):
             items = control.findItems(value.toString(), Qt.MatchExactly)
             try:
@@ -234,7 +238,7 @@ class FormBinder(QObject):
 
         elif isinstance(control, QLineEdit) or isinstance(control, QTextEdit):
             control.setText(value.toString())
-            
+
         elif isinstance(control, QCheckBox) or isinstance(control, QGroupBox):
             control.setChecked(value.toBool())
 
@@ -345,7 +349,7 @@ class FormBinder(QObject):
                 elif isinstance(control, QComboBox):
                     value = control.currentText()
                     if control.isEditable():
-                        self.comboEdit( control, value )
+                        self.saveComboValues(control, value)
 
                 elif isinstance(control, QDoubleSpinBox) or isinstance(control, QSpinBox):
                     value = control.value()
