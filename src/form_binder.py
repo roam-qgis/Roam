@@ -13,62 +13,68 @@ from datatimerpickerwidget import DateTimePickerDialog
 from drawingpad import DrawingPad
 from utils import log, warning
 
+
 class BindingError(Exception):
     def __init__(self, control, value, reason=''):
         Exception.__init__(self)
         self.control = control
         self.value = value
-        self.message = "Couldn't bind %s to %s" % ( control.objectName(), value)
+        self.message = "Couldn't bind %s to %s" % (control.objectName(), value)
         self.reason = reason
+
 
 class ControlNotFound(Exception):
     def __init__(self, control_name):
         Exception.__init__(self)
         self.message = "Can't find control called %s" % (control_name)
-        
+
+
 class MandatoryGroup(QObject):
     enable = pyqtSignal()
     #http://doc.qt.nokia.com/qq/qq11-mandatoryfields.html
+
     def __init__(self):
         QObject.__init__(self)
         self.widgets = []
         # Mapping of widget type to condition to check.  Condition should return
         # false if value has been completed.
-        self.mapping = { QComboBox : lambda w: w.currentText().isEmpty(),
-                         QCheckBox : lambda w: w.checkState() == Qt.Unchecked,
-                         QLineEdit : lambda w: w.text().isEmpty(),
-                         QTextEdit : lambda w: w.toPlainText().isEmpty(),
-                         QDateTimeEdit : lambda w: w.dateTime() == \
-                                         QDateTime(2000,1,1,00,00,00,0),
+        self.mapping = {QComboBox: lambda w: w.currentText().isEmpty(),
+                        QCheckBox: lambda w: w.checkState() == Qt.Unchecked,
+                        QLineEdit: lambda w: w.text().isEmpty(),
+                        QTextEdit: lambda w: w.toPlainText().isEmpty(),
+                        QDateTimeEdit: lambda w: w.dateTime() == \
+                                         QDateTime(2000, 1, 1, 00, 00, 00, 0),
                        }
         self.stylesheets = {
-                                QGroupBox : "QGroupBox::title[mandatory=true]" \
+                                QGroupBox: "QGroupBox::title[mandatory=true]" \
                                             "{border-radius: 5px; background-color: rgba(255, 221, 48,150);}" \
                                             "QGroupBox::title[ok=true]" \
                                             "{ border-radius: 5px; background-color: rgba(200, 255, 197, 150); }",
-                                QLabel : "QLabel[mandatory=true]" \
+                                QLabel: "QLabel[mandatory=true]" \
                                             "{border-radius: 5px; background-color: rgba(255, 221, 48,150);}" \
                                             "QLabel[ok=true]" \
                                             "{ border-radius: 5px; background-color: rgba(200, 255, 197, 150); }",
-                                QCheckBox : "QCheckBox[mandatory=true]" \
+                                QCheckBox: "QCheckBox[mandatory=true]" \
                                             "{border-radius: 5px; background-color: rgba(255, 221, 48,150);}" \
                                             "QCheckBox[ok=true]" \
                                             "{border-radius: 5px; background-color: rgba(200, 255, 197, 150); }",
 
                            }
+
         def comboxboxchanges(w, m):
             if w.isEditable():
                 w.editTextChanged.connect(m)
-                
+
             w.currentIndexChanged.connect(m)
 
         self.signals = {
-                         QComboBox : lambda w,m: comboxboxchanges(w,m),
-                         QCheckBox : lambda w,m: w.stateChanged.connect(m),
-                         QLineEdit : lambda w,m: w.textChanged.connect(m),
-                         QTextEdit : lambda w,m: w.textChanged.connect(m),
-                         QDateTimeEdit : lambda w,m: w.dateTimeChanged.connect(m),
+                         QComboBox: lambda w, m: comboxboxchanges(w, m),
+                         QCheckBox: lambda w, m: w.stateChanged.connect(m),
+                         QLineEdit: lambda w, m: w.textChanged.connect(m),
+                         QTextEdit: lambda w, m: w.textChanged.connect(m),
+                         QDateTimeEdit: lambda w, m: w.dateTimeChanged.connect(m),
                         }
+
     def addWidget(self, widget, buddy):
         if widget in self.widgets:
             return
@@ -85,18 +91,18 @@ class MandatoryGroup(QObject):
         except KeyError:
             pass
 
-        buddy.setProperty("mandatory",True)
+        buddy.setProperty("mandatory", True)
         self.widgets.append((widget, buddy))
-        
+
     def changed(self):
         anyfailed = False
         for widget, buddy in self.widgets:
             failed = self.mapping[type(widget)](widget)
             if failed:
-                buddy.setProperty("ok",False)
+                buddy.setProperty("ok", False)
                 anyfailed = True
             else:
-                buddy.setProperty("ok",True)
+                buddy.setProperty("ok", True)
 
             buddy.style().unpolish(buddy)
             buddy.style().polish(buddy)
@@ -105,10 +111,9 @@ class MandatoryGroup(QObject):
             # If we get here then we are right to let the user continue.
             self.enable.emit()
 
-
     def unchanged(self):
         unchanged = []
-        for widget,buddy in self.widgets:
+        for widget, buddy in self.widgets:
             failed = self.mapping[type(widget)](widget)
             if failed:
                 unchanged.append(widget)
@@ -136,7 +141,6 @@ class FormBinder(QObject):
         self.settings = settings
         self.images = {}
         self.mandatory_group = MandatoryGroup()
-        
 
     def bindFeature(self, qgsfeature, mandatory_fields=True):
         """
@@ -162,24 +166,24 @@ class FormBinder(QObject):
                     buddy = self.getBuddy(control)
                     self.mandatory_group.addWidget(control, buddy)
 
-            info("Binding %s to %s" % (control.objectName() , value.toString()))
-            
+            info("Binding %s to %s" % (control.objectName(), value.toString()))
+
             try:
                 self.bindValueToControl(control, value)
             except BindingError as er:
                 warning(err.reason)
-                
+
             self.fieldtocontrol[index] = control
 
     def getBuddy(self, control):
         try:
-            label = self.getControl(control.objectName() + "_label",type=QLabel)
+            label = self.getControl(control.objectName() + "_label", control_type=QLabel)
             return label
         except ControlNotFound:
             return control
-        
-    def getControl(self, name, type=QWidget):
-        control = self.forminstance.findChild(type, name)
+
+    def getControl(self, name, control_type=QWidget):
+        control = self.forminstance.findChild(control_type, name)
         if not control:
             raise ControlNotFound(name)
 
@@ -193,7 +197,7 @@ class FormBinder(QObject):
         value - QVariant holding the value.
         """
         control = self.getControl(controlname)
-        
+
         try:
             self.bindValueToControl(control, value)
         except BindingError as er:
@@ -250,18 +254,18 @@ class FormBinder(QObject):
                 control.addItem(item)
             self.settings.endGroup()
             itemindex = control.findText(value.toString())
-            control.setCurrentIndex( itemindex )
+            control.setCurrentIndex(itemindex)
 
         elif isinstance(control, QDoubleSpinBox):
             double, passed = value.toDouble()
-            control.setValue( double )
+            control.setValue(double)
 
         elif isinstance(control, QSpinBox):
-            int, passed = value.toInt()
-            control.setValue( int )
+            integer, passed = value.toInt()
+            control.setValue(integer)
 
         elif isinstance(control, QDateTimeEdit):
-            control.setDateTime(QDateTime.fromString( value.toString(), Qt.ISODate ))
+            control.setDateTime(QDateTime.fromString(value.toString(), Qt.ISODate))
             # Wire up the date picker button
             parent = control.parentWidget()
             if parent:
@@ -296,7 +300,7 @@ class FormBinder(QObject):
 
         name = "drawingFor_{0}".format(controlname)
         tempimage = os.path.join(tempfile.gettempdir(), name)
-        
+
         log("Looking for {0} or {1}".format(imagename, tempimage))
         imagetoload = self.images.get(controlname, imagename)
 
@@ -323,13 +327,13 @@ class FormBinder(QObject):
         tempimage = os.path.join(tempfile.gettempdir(), "mapcanvascapture.png")
         self.canvas.saveAsImage(tempimage, image)
         pad.openImage(tempimage)
-                    
+
     def unbindFeature(self, qgsfeature):
         """
         Unbinds the feature from the form saving the values back to the QgsFeature.
 
-        Notes:
-            If the parent of the control is a QGroupBox and is disabled, the control is ignored for changing.
+        qgsfeature -- A QgsFeature that will store the new values.
+        TODO: If the parent of the control is a QGroupBox and is disabled, the control is ignored for changing.
         """
         for index, control in self.fieldtocontrol.items():
                 value = None
@@ -338,9 +342,9 @@ class FormBinder(QObject):
 
                 elif isinstance(control, QTextEdit):
                     value = control.toPlainText()
-                    
+
                 elif isinstance(control, QCalendarWidget):
-                    value = control.selectedDate().toString( Qt.ISODate )
+                    value = control.selectedDate().toString(Qt.ISODate)
 
                 elif isinstance(control, QCheckBox) or isinstance(control, QGroupBox):
                     value = 0
@@ -355,11 +359,11 @@ class FormBinder(QObject):
                     value = control.value()
 
                 elif isinstance(control, QDateTimeEdit):
-                    value = control.dateTime().toString( Qt.ISODate )
+                    value = control.dateTime().toString(Qt.ISODate)
 
                 info("Setting value to %s from %s" % (value, control.objectName()))
 
-                qgsfeature.changeAttribute( index, value)
+                qgsfeature.changeAttribute(index, value)
         return qgsfeature
 
     def pickDateTime(self, control, mode):
@@ -376,14 +380,14 @@ class FormBinder(QObject):
 
             if hasattr(control, 'setTime'):
                 control.setTime(dlg.getSelectedTime())
-            
+
     def bindSelectButtons(self):
         """
         Binds all the buttons on the form that need a select from map action.
         """
         tools = self.forminstance.findChildren(QToolButton, QRegExp('.*_mapselect'))
         log(tools)
-        layers = { QString(l.name()) : l for l in self.canvas.layers()}
+        layers = {QString(l.name()): l for l in self.canvas.layers()}
         log(layers)
         for tool in tools:
             try:
@@ -392,7 +396,7 @@ class FormBinder(QObject):
                 warning(ex.message)
                 tool.setEnabled(False)
                 continue
-                
+
             settings = tool.dynamicPropertyNames()
             if not 'from_layer' in settings or not 'using_column' in settings:
                 warning('from_layer or using_column not found')
@@ -425,7 +429,7 @@ class FormBinder(QObject):
                                                       radius,
                                                       control.objectName()))
             tool.setIcon(QIcon(":/icons/select"))
-            tool.setIconSize(QSize(24,24))
+            tool.setIconSize(QSize(24, 24))
 
     def selectFeatureClicked(self, layer, column, message, searchsize, bindto):
         """
@@ -434,7 +438,7 @@ class FormBinder(QObject):
 
         controlname - The control name when looking up in the settings for the
                       button config.
-        """        
+        """
         self.tool = SelectFeatureTool(self.canvas, layer, column, bindto, searchsize)
         self.tool.foundFeature.connect(self.bindHighlightedFeature)
         self.tool.setActive()
