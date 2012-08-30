@@ -357,6 +357,7 @@ class FormBinder(QObject):
         control - The control that will recive the user set date time.
         """
         dlg = DateTimePickerDialog(mode)
+        dlg.setWindowTitle("Select a date")
         dlg.setDateTime(control.dateTime())
         if dlg.exec_():
             if hasattr(control, 'setDate'):
