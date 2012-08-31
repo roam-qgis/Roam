@@ -24,7 +24,7 @@ path = os.path.dirname(__file__)
 env = os.environ.copy()
 env['PATH'] += ";c:\\WINDOWS\\Microsoft.NET\Framework\\v3.5"
 
-APPNAME = "SDRCDataCollection"
+APPNAME = "QMap"
 EXCLUDES = '/EXCLUDE:excludes.txt'
 
 curpath = os.path.dirname(os.path.abspath(__file__))
