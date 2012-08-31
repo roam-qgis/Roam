@@ -1,0 +1,2948 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>Dialog</class>
+ <widget class="QDialog" name="Dialog">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>1023</width>
+    <height>768</height>
+   </rect>
+  </property>
+  <property name="sizePolicy">
+   <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+    <horstretch>0</horstretch>
+    <verstretch>0</verstretch>
+   </sizepolicy>
+  </property>
+  <property name="windowTitle">
+   <string>Dialog</string>
+  </property>
+  <property name="layoutDirection">
+   <enum>Qt::LeftToRight</enum>
+  </property>
+  <property name="styleSheet">
+   <string notr="true">QGroupBox
+{
+    font-weight: bold;
+}</string>
+  </property>
+  <widget class="QGroupBox" name="groupBox_10">
+   <property name="geometry">
+    <rect>
+     <x>9</x>
+     <y>9</y>
+     <width>661</width>
+     <height>83</height>
+    </rect>
+   </property>
+   <property name="sizePolicy">
+    <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+     <horstretch>0</horstretch>
+     <verstretch>0</verstretch>
+    </sizepolicy>
+   </property>
+   <property name="title">
+    <string>Inspection Details</string>
+   </property>
+   <property name="checkable">
+    <bool>false</bool>
+   </property>
+   <layout class="QGridLayout" name="gridLayout">
+    <item row="0" column="0">
+     <layout class="QFormLayout" name="formLayout_6">
+      <property name="fieldGrowthPolicy">
+       <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
+      </property>
+      <item row="0" column="0">
+       <widget class="QLabel" name="label_27">
+        <property name="text">
+         <string>Park Name</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1">
+       <widget class="QComboBox" name="Park_Name">
+        <property name="editable">
+         <bool>true</bool>
+        </property>
+        <item>
+         <property name="text">
+          <string/>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Leslie Park</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Weeroona Park</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Rotary Park / Info Centre</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Warwick CBD and Gardens</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Stanthorpe CBD and Piazza</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Browns Falls Park</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Queens Park</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>St Marks Park</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>CF White Oval</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>CF White Cricket</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Crisp Oval</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Sullivan Oval</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Sheahan Oval</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Morgan Park</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Jackie Howe Park</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Storm King Dam</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Australiana Park</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Kidspace - Kilpa St Park</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Rotary Park</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Victoria Park</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Federation Park</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Lions Park</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Apex Park</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>River Reach Park</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Mt Marlay Lookout</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Jim Mitchell Park</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Dalrymple Creek Park</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Leyburn Sports Ground</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Cunningham Memorial</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Heritage Park</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Lions Park</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Fred Rogers Memorial Park</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Gleeson Park</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Marion Park </string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Canning Park</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Mile End Park</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Liberator Park</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Boston Park</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Wallangarra Memorial Park</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Barnes Park</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Slade Park</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Bony Mountain Sports Ground</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Rocklands Reserve</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Farm Creek Park</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Pioneer Park </string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Bicentennial Park</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Stuart Henry Park</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Cooks Park</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Lions Park</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Industrial Estate Park</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Maryvale Park</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Pratten Park</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Mel Gibson Park</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Karara Hall Grounds</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>McGregor Park</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Tannymorel War Memorial Park</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Killarney War Memorial Park</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Gillam Park</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Chase Estate Park</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Lomandra Court Park</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Henry Joppich Park</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Ellen Backhouse Park</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Millar Vale Park</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Emu Vale Park</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Jubilee Plots</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Killarney Showgrounds</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Killarney Polocross Ground</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Allora Showgrounds</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Dalveen Hall grounds</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Leslie Reserve</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Sunnyside Reserve</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Daggs Falls Park </string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Brock Park </string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Verri Park</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Warwick Green Belt </string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Melaleuca Crt Park</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Tierney Park</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Soliders Memorial</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Goomburra Park</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Connelly Dam</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Ballandean School Garden</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Carrs Lookout</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Drill Hall Park</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Dalveen Park</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Meadowbank Park</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Mountain View Estate Park</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Pennant Park</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Tullock Park</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Condavale Parklands</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Arcoola Park</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Shilliday Park</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Victory Park</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Willi St Park</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Guide Park</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Stan Walsh Park</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Tyrell St Park</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Hermay Crt Park</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Mulberry Ridge Park</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Memorial Park </string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Lyndhurst Lane Park</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Willow St Gardens</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Applethorpe Park </string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Mt Tabour Park</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Donnellys Castle Rd</string>
+         </property>
+        </item>
+       </widget>
+      </item>
+      <item row="1" column="0">
+       <widget class="QLabel" name="label_22">
+        <property name="text">
+         <string>Inspected By</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="1">
+       <widget class="QComboBox" name="Inspected_By">
+        <property name="editable">
+         <bool>true</bool>
+        </property>
+        <item>
+         <property name="text">
+          <string>John Newley</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string/>
+         </property>
+        </item>
+       </widget>
+      </item>
+     </layout>
+    </item>
+    <item row="0" column="1">
+     <widget class="QLabel" name="label">
+      <property name="text">
+       <string>Location Details</string>
+      </property>
+     </widget>
+    </item>
+    <item row="0" column="2">
+     <widget class="QPlainTextEdit" name="plainTextEdit">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+      <property name="maximumSize">
+       <size>
+        <width>16777215</width>
+        <height>50</height>
+       </size>
+      </property>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QStackedWidget" name="AssetGroup_pages">
+   <property name="geometry">
+    <rect>
+     <x>340</x>
+     <y>100</y>
+     <width>331</width>
+     <height>671</height>
+    </rect>
+   </property>
+   <property name="autoFillBackground">
+    <bool>false</bool>
+   </property>
+   <property name="lineWidth">
+    <number>0</number>
+   </property>
+   <property name="currentIndex">
+    <number>0</number>
+   </property>
+   <widget class="QWidget" name="Play_Equipment_and_Softfall_page">
+    <layout class="QGridLayout" name="gridLayout_2">
+     <property name="margin">
+      <number>0</number>
+     </property>
+     <property name="spacing">
+      <number>0</number>
+     </property>
+     <item row="0" column="0">
+      <widget class="QGroupBox" name="Play_Equipment_Group">
+       <property name="enabled">
+        <bool>true</bool>
+       </property>
+       <property name="title">
+        <string>Play Equipment and Softfall</string>
+       </property>
+       <property name="flat">
+        <bool>true</bool>
+       </property>
+       <property name="checkable">
+        <bool>false</bool>
+       </property>
+       <property name="checked">
+        <bool>false</bool>
+       </property>
+       <layout class="QFormLayout" name="formLayout">
+        <property name="fieldGrowthPolicy">
+         <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
+        </property>
+        <item row="0" column="0">
+         <widget class="QLabel" name="label_38">
+          <property name="text">
+           <string>Playground Name</string>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="1">
+         <widget class="QLineEdit" name="Playground_Name"/>
+        </item>
+        <item row="1" column="0">
+         <widget class="QLabel" name="label_53">
+          <property name="text">
+           <string>Asset Type</string>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="1">
+         <widget class="QComboBox" name="PE_Asset_Type">
+          <property name="editable">
+           <bool>true</bool>
+          </property>
+          <item>
+           <property name="text">
+            <string/>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Combination Unit</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Swings</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Rocker</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Climbing Frame</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Flying Fox</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>tunnels</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Exercise Equipment</string>
+           </property>
+          </item>
+         </widget>
+        </item>
+        <item row="2" column="0">
+         <widget class="QLabel" name="label_56">
+          <property name="text">
+           <string>Asset Sub Type</string>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="1">
+         <widget class="QComboBox" name="PE_Asset_Sub_Type">
+          <property name="editable">
+           <bool>true</bool>
+          </property>
+          <item>
+           <property name="text">
+            <string/>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Large</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Medium</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Small</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Chain Swing - Double</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Chain Swing - Single</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Chain Swing - Four</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Leslie Park Boat Swings</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Birdnest Swing</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>climbing net - Leslie</string>
+           </property>
+          </item>
+         </widget>
+        </item>
+        <item row="3" column="0">
+         <widget class="QLabel" name="label_91">
+          <property name="text">
+           <string>Surface Condition</string>
+          </property>
+         </widget>
+        </item>
+        <item row="3" column="1">
+         <widget class="QComboBox" name="PE_Surface_Condition">
+          <property name="editable">
+           <bool>true</bool>
+          </property>
+          <item>
+           <property name="text">
+            <string/>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>1</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>2</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>3</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>4</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>5</string>
+           </property>
+          </item>
+         </widget>
+        </item>
+        <item row="4" column="0">
+         <widget class="QLabel" name="label_92">
+          <property name="text">
+           <string>Structural Condition</string>
+          </property>
+         </widget>
+        </item>
+        <item row="4" column="1">
+         <widget class="QComboBox" name="PE_Structural_Condition">
+          <property name="editable">
+           <bool>true</bool>
+          </property>
+          <item>
+           <property name="text">
+            <string/>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>1</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>2</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>3</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>4</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>5</string>
+           </property>
+          </item>
+         </widget>
+        </item>
+        <item row="5" column="0">
+         <widget class="QLabel" name="label_2">
+          <property name="text">
+           <string>Structure Non Compliant</string>
+          </property>
+          <property name="buddy">
+           <cstring>PE_Structural_Compliance</cstring>
+          </property>
+         </widget>
+        </item>
+        <item row="5" column="1">
+         <widget class="QCheckBox" name="PE_Structural_Compliance">
+          <property name="layoutDirection">
+           <enum>Qt::LeftToRight</enum>
+          </property>
+          <property name="text">
+           <string/>
+          </property>
+         </widget>
+        </item>
+        <item row="6" column="0">
+         <widget class="QLabel" name="label_55">
+          <property name="text">
+           <string>Softfall Type</string>
+          </property>
+         </widget>
+        </item>
+        <item row="6" column="1">
+         <widget class="QComboBox" name="Softfall_Type">
+          <property name="editable">
+           <bool>true</bool>
+          </property>
+          <item>
+           <property name="text">
+            <string/>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>rubber</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>artificial grass</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Softfall bark</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Sand</string>
+           </property>
+          </item>
+         </widget>
+        </item>
+        <item row="7" column="0">
+         <widget class="QLabel" name="label_71">
+          <property name="text">
+           <string>Softfall Condition</string>
+          </property>
+         </widget>
+        </item>
+        <item row="7" column="1">
+         <widget class="QComboBox" name="Softfall_Surface_Condition">
+          <property name="editable">
+           <bool>true</bool>
+          </property>
+          <item>
+           <property name="text">
+            <string/>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>1</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>2</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>3</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>4</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>5</string>
+           </property>
+          </item>
+         </widget>
+        </item>
+        <item row="8" column="0">
+         <widget class="QLabel" name="label_4">
+          <property name="text">
+           <string>Softfall Non Compliant</string>
+          </property>
+         </widget>
+        </item>
+        <item row="8" column="1">
+         <widget class="QCheckBox" name="Softfall_Compliance">
+          <property name="text">
+           <string/>
+          </property>
+         </widget>
+        </item>
+        <item row="9" column="0">
+         <widget class="QLabel" name="label_66">
+          <property name="text">
+           <string>Playground Condition</string>
+          </property>
+         </widget>
+        </item>
+        <item row="9" column="1">
+         <widget class="QComboBox" name="Overall_Playground_Condition">
+          <property name="editable">
+           <bool>true</bool>
+          </property>
+          <item>
+           <property name="text">
+            <string/>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>1</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>2</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>3</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>4</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>5</string>
+           </property>
+          </item>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+     </item>
+    </layout>
+   </widget>
+   <widget class="QWidget" name="Open_Space_Furniture_page">
+    <layout class="QGridLayout" name="gridLayout_4">
+     <property name="margin">
+      <number>0</number>
+     </property>
+     <item row="0" column="0">
+      <widget class="QGroupBox" name="Open_Space_Furniture_Group">
+       <property name="enabled">
+        <bool>true</bool>
+       </property>
+       <property name="title">
+        <string>Open Space Furniture</string>
+       </property>
+       <property name="flat">
+        <bool>true</bool>
+       </property>
+       <property name="checkable">
+        <bool>false</bool>
+       </property>
+       <property name="checked">
+        <bool>false</bool>
+       </property>
+       <layout class="QFormLayout" name="formLayout_3">
+        <item row="0" column="0">
+         <widget class="QLabel" name="label_59">
+          <property name="text">
+           <string>Asset Type</string>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="1">
+         <widget class="QComboBox" name="OS_Asset_Type">
+          <property name="editable">
+           <bool>true</bool>
+          </property>
+          <item>
+           <property name="text">
+            <string/>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Arch</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Bike Rack</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>BBQ</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Bollard</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Drinking Fountain</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Fence</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Flag Pole</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Picnic Table</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Picnic Table / Shelter Combo</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Seat</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Shade Sail</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Litter Bin</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Shelter (not building)</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Sports goal</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Tree Guard</string>
+           </property>
+          </item>
+         </widget>
+        </item>
+        <item row="1" column="0">
+         <widget class="QLabel" name="label_60">
+          <property name="text">
+           <string>Asset Sub Type</string>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="1">
+         <widget class="QComboBox" name="OS_Asset_Sub_Type">
+          <property name="editable">
+           <bool>true</bool>
+          </property>
+          <item>
+           <property name="text">
+            <string/>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Hard roof</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Shade Cloth</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Wood Steel combo</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>All steel</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>aluminium</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>wood no back</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>wood steel no back</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>wood steel with back</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>aluminium with back</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Electric - no shelter</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Electric - shelter</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Gas - no shelter</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Gas - shelter</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Wood - no shelter</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Wood - shelter</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>240L wheelie bin</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>60L Heritage bin</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Fire proof bin cover</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>60L Street Bins</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>collapsing</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Netball</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Basketball</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Soccer</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Football</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Hockey</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>decorative steel</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>weld mesh steel</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>pool fencing</string>
+           </property>
+          </item>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+     </item>
+    </layout>
+   </widget>
+   <widget class="QWidget" name="Monuments_Memoria_Public_Art_page">
+    <layout class="QGridLayout" name="gridLayout_5">
+     <property name="margin">
+      <number>0</number>
+     </property>
+     <item row="0" column="0">
+      <widget class="QGroupBox" name="Monuments_Group">
+       <property name="enabled">
+        <bool>true</bool>
+       </property>
+       <property name="title">
+        <string>Monuments, memorials, public art</string>
+       </property>
+       <property name="flat">
+        <bool>true</bool>
+       </property>
+       <property name="checkable">
+        <bool>false</bool>
+       </property>
+       <property name="checked">
+        <bool>false</bool>
+       </property>
+       <layout class="QFormLayout" name="formLayout_5">
+        <item row="0" column="0">
+         <widget class="QLabel" name="label_50">
+          <property name="text">
+           <string>Asset Name</string>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="1">
+         <widget class="QLineEdit" name="M_Asset_Name"/>
+        </item>
+        <item row="1" column="0">
+         <widget class="QLabel" name="label_63">
+          <property name="text">
+           <string>Asset Type</string>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="1">
+         <widget class="QComboBox" name="M_Asset_Type">
+          <property name="editable">
+           <bool>true</bool>
+          </property>
+          <item>
+           <property name="text">
+            <string/>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Monument</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Sculpture</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Art board</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Memorial</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Memorial Plaque</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>War Memorial</string>
+           </property>
+          </item>
+         </widget>
+        </item>
+        <item row="2" column="0">
+         <widget class="QLabel" name="label_64">
+          <property name="text">
+           <string>Asset Sub Type</string>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="1">
+         <widget class="QComboBox" name="M_Asset_Sub_Type">
+          <property name="editable">
+           <bool>true</bool>
+          </property>
+          <item>
+           <property name="text">
+            <string/>
+           </property>
+          </item>
+         </widget>
+        </item>
+        <item row="3" column="0">
+         <widget class="QLabel" name="label_49">
+          <property name="text">
+           <string>Artist</string>
+          </property>
+         </widget>
+        </item>
+        <item row="3" column="1">
+         <widget class="QLineEdit" name="M_Artist"/>
+        </item>
+       </layout>
+      </widget>
+     </item>
+    </layout>
+   </widget>
+   <widget class="QWidget" name="Lighting_page">
+    <layout class="QGridLayout" name="gridLayout_3">
+     <property name="margin">
+      <number>0</number>
+     </property>
+     <item row="0" column="0">
+      <widget class="QGroupBox" name="Lighting_Group">
+       <property name="enabled">
+        <bool>true</bool>
+       </property>
+       <property name="title">
+        <string>Lighting</string>
+       </property>
+       <property name="flat">
+        <bool>true</bool>
+       </property>
+       <property name="checkable">
+        <bool>false</bool>
+       </property>
+       <property name="checked">
+        <bool>false</bool>
+       </property>
+       <layout class="QFormLayout" name="formLayout_4">
+        <item row="1" column="1">
+         <widget class="QComboBox" name="L_Asset_Type">
+          <property name="editable">
+           <bool>true</bool>
+          </property>
+          <item>
+           <property name="text">
+            <string/>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Park</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Safety</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Sporting</string>
+           </property>
+          </item>
+         </widget>
+        </item>
+        <item row="3" column="1">
+         <widget class="QComboBox" name="L_Asset_Sub_Type">
+          <property name="editable">
+           <bool>true</bool>
+          </property>
+          <item>
+           <property name="text">
+            <string/>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Sodium (orange)- single</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Sodium (orange)- double</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Metal Hallide (white)-single</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Metal Hallide (white)-double</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>LED-single-mains</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>LED-single-solar</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>LED-double-mains</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>LED-double-solar</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>LED-triple-mains</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>LED-triple-solar</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Flood lighting - decorative</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Flood lighting - sporting</string>
+           </property>
+          </item>
+         </widget>
+        </item>
+        <item row="4" column="0">
+         <widget class="QLabel" name="label_54">
+          <property name="text">
+           <string>Pole No</string>
+          </property>
+         </widget>
+        </item>
+        <item row="4" column="1">
+         <widget class="QLineEdit" name="Pole_No"/>
+        </item>
+        <item row="3" column="0">
+         <widget class="QLabel" name="label_62">
+          <property name="text">
+           <string>Asset Sub Type</string>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="0">
+         <widget class="QLabel" name="label_61">
+          <property name="text">
+           <string>Asset Type</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+     </item>
+    </layout>
+   </widget>
+   <widget class="QWidget" name="Suface">
+    <layout class="QGridLayout" name="gridLayout_6">
+     <property name="margin">
+      <number>0</number>
+     </property>
+     <item row="0" column="0">
+      <widget class="QGroupBox" name="Surface_Group">
+       <property name="enabled">
+        <bool>true</bool>
+       </property>
+       <property name="title">
+        <string>Surface</string>
+       </property>
+       <property name="flat">
+        <bool>true</bool>
+       </property>
+       <property name="checkable">
+        <bool>false</bool>
+       </property>
+       <property name="checked">
+        <bool>false</bool>
+       </property>
+       <layout class="QFormLayout" name="formLayout_11">
+        <item row="0" column="0">
+         <widget class="QLabel" name="label_72">
+          <property name="text">
+           <string>Asset Type</string>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="1">
+         <widget class="QComboBox" name="S_Asset_Type">
+          <property name="editable">
+           <bool>true</bool>
+          </property>
+          <item>
+           <property name="text">
+            <string/>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Playing Surface</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Passive Surface</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Hard Surface</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Cricket Pitch</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Netball Court</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Basket Ball Court</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Tennis Court</string>
+           </property>
+          </item>
+         </widget>
+        </item>
+        <item row="1" column="0">
+         <widget class="QLabel" name="label_73">
+          <property name="text">
+           <string>Asset Sub Type</string>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="1">
+         <widget class="QComboBox" name="S_Asset_Sub_Type">
+          <property name="editable">
+           <bool>true</bool>
+          </property>
+          <item>
+           <property name="text">
+            <string/>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Grass</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Turf</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Sythetic Surface</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Clay</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Concrete</string>
+           </property>
+          </item>
+         </widget>
+        </item>
+        <item row="2" column="1">
+         <widget class="QLineEdit" name="Mown_Area"/>
+        </item>
+        <item row="2" column="0">
+         <widget class="QLabel" name="label_44">
+          <property name="text">
+           <string>Mown Area (sqm):</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+     </item>
+    </layout>
+   </widget>
+   <widget class="QWidget" name="page_4">
+    <layout class="QGridLayout" name="gridLayout_8">
+     <property name="margin">
+      <number>0</number>
+     </property>
+     <item row="0" column="0">
+      <widget class="QGroupBox" name="Electrical_Group">
+       <property name="enabled">
+        <bool>true</bool>
+       </property>
+       <property name="title">
+        <string>Electrical</string>
+       </property>
+       <property name="flat">
+        <bool>true</bool>
+       </property>
+       <property name="checkable">
+        <bool>false</bool>
+       </property>
+       <property name="checked">
+        <bool>false</bool>
+       </property>
+       <layout class="QFormLayout" name="formLayout_8">
+        <item row="0" column="0">
+         <widget class="QLabel" name="label_82">
+          <property name="text">
+           <string>Asset Type</string>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="1">
+         <widget class="QComboBox" name="E_Asset_Type">
+          <property name="editable">
+           <bool>true</bool>
+          </property>
+          <item>
+           <property name="text">
+            <string/>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Electrical Cable</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Control Panel</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Supply Point</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Power Box</string>
+           </property>
+          </item>
+         </widget>
+        </item>
+        <item row="1" column="0">
+         <widget class="QLabel" name="label_84">
+          <property name="text">
+           <string>Asset Sub Type</string>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="1">
+         <widget class="QComboBox" name="E_Asset_Sub_Type">
+          <property name="editable">
+           <bool>true</bool>
+          </property>
+          <item>
+           <property name="text">
+            <string/>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Single Phase</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Three Phase</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Mobility Recharge</string>
+           </property>
+          </item>
+         </widget>
+        </item>
+        <item row="2" column="0">
+         <widget class="QLabel" name="label_87">
+          <property name="text">
+           <string>Meter number</string>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="1">
+         <widget class="QLineEdit" name="E_Meter_number"/>
+        </item>
+       </layout>
+      </widget>
+     </item>
+    </layout>
+   </widget>
+   <widget class="QWidget" name="page_5">
+    <layout class="QGridLayout" name="gridLayout_9">
+     <property name="margin">
+      <number>0</number>
+     </property>
+     <item row="0" column="0">
+      <widget class="QGroupBox" name="Signs_Group">
+       <property name="enabled">
+        <bool>true</bool>
+       </property>
+       <property name="title">
+        <string>Signs</string>
+       </property>
+       <property name="flat">
+        <bool>true</bool>
+       </property>
+       <property name="checkable">
+        <bool>false</bool>
+       </property>
+       <property name="checked">
+        <bool>false</bool>
+       </property>
+       <layout class="QFormLayout" name="formLayout_9">
+        <item row="0" column="0">
+         <widget class="QLabel" name="label_77">
+          <property name="text">
+           <string>Asset Type</string>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="1">
+         <widget class="QComboBox" name="Sign_Asset_Type">
+          <property name="editable">
+           <bool>true</bool>
+          </property>
+          <item>
+           <property name="text">
+            <string/>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Information</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Name</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Use</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Tree Stage</string>
+           </property>
+          </item>
+         </widget>
+        </item>
+        <item row="1" column="0">
+         <widget class="QLabel" name="label_80">
+          <property name="text">
+           <string>Asset Sub Type</string>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="1">
+         <widget class="QComboBox" name="Sign_Asset_Sub_Type">
+          <property name="editable">
+           <bool>true</bool>
+          </property>
+          <item>
+           <property name="text">
+            <string/>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Billboard</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Small information</string>
+           </property>
+          </item>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+     </item>
+    </layout>
+   </widget>
+   <widget class="QWidget" name="page_6">
+    <layout class="QGridLayout" name="gridLayout_10">
+     <property name="margin">
+      <number>0</number>
+     </property>
+     <item row="0" column="0">
+      <widget class="QGroupBox" name="Garden_Group">
+       <property name="enabled">
+        <bool>true</bool>
+       </property>
+       <property name="title">
+        <string>Garden</string>
+       </property>
+       <property name="flat">
+        <bool>true</bool>
+       </property>
+       <property name="checkable">
+        <bool>false</bool>
+       </property>
+       <property name="checked">
+        <bool>false</bool>
+       </property>
+       <layout class="QFormLayout" name="formLayout_13">
+        <item row="0" column="0">
+         <widget class="QLabel" name="label_69">
+          <property name="text">
+           <string>Asset Type</string>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="1">
+         <widget class="QComboBox" name="G_Asset_Type">
+          <property name="editable">
+           <bool>true</bool>
+          </property>
+          <item>
+           <property name="text">
+            <string/>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Garden Bed</string>
+           </property>
+          </item>
+         </widget>
+        </item>
+        <item row="1" column="0">
+         <widget class="QLabel" name="label_70">
+          <property name="text">
+           <string>Asset Sub Type</string>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="1">
+         <widget class="QComboBox" name="G_Asset_Sub_Type">
+          <property name="editable">
+           <bool>true</bool>
+          </property>
+          <item>
+           <property name="text">
+            <string/>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Rose Garden</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Annual Planting</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Native Garden</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Permanent Planting</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Hedging</string>
+           </property>
+          </item>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+     </item>
+    </layout>
+   </widget>
+   <widget class="QWidget" name="page_7">
+    <layout class="QGridLayout" name="gridLayout_11">
+     <property name="margin">
+      <number>0</number>
+     </property>
+     <item row="0" column="0" colspan="2">
+      <widget class="QGroupBox" name="Trees_Group">
+       <property name="enabled">
+        <bool>true</bool>
+       </property>
+       <property name="title">
+        <string>Tree</string>
+       </property>
+       <property name="flat">
+        <bool>true</bool>
+       </property>
+       <property name="checkable">
+        <bool>false</bool>
+       </property>
+       <property name="checked">
+        <bool>false</bool>
+       </property>
+       <layout class="QFormLayout" name="formLayout_10">
+        <property name="fieldGrowthPolicy">
+         <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
+        </property>
+        <property name="horizontalSpacing">
+         <number>0</number>
+        </property>
+        <property name="topMargin">
+         <number>0</number>
+        </property>
+        <property name="rightMargin">
+         <number>0</number>
+        </property>
+        <property name="bottomMargin">
+         <number>0</number>
+        </property>
+        <item row="0" column="0">
+         <widget class="QLabel" name="label_65">
+          <property name="text">
+           <string>Asset Type</string>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="1">
+         <widget class="QComboBox" name="T_Asset_Type">
+          <property name="editable">
+           <bool>true</bool>
+          </property>
+          <item>
+           <property name="text">
+            <string/>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Streetscape</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Street Tree</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Road Reserve</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Active Park</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Passive Park</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Open Space</string>
+           </property>
+          </item>
+         </widget>
+        </item>
+        <item row="1" column="0">
+         <widget class="QLabel" name="label_67">
+          <property name="text">
+           <string>Asset Sub Type</string>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="1">
+         <widget class="QComboBox" name="T_Asset_Sub_Type">
+          <property name="editable">
+           <bool>true</bool>
+          </property>
+          <item>
+           <property name="text">
+            <string/>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Significant</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Heritage</string>
+           </property>
+          </item>
+         </widget>
+        </item>
+        <item row="2" column="0">
+         <widget class="QLabel" name="label_68">
+          <property name="text">
+           <string>Species</string>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="1">
+         <widget class="QComboBox" name="T_Species">
+          <property name="editable">
+           <bool>true</bool>
+          </property>
+          <item>
+           <property name="text">
+            <string/>
+           </property>
+          </item>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+     </item>
+    </layout>
+   </widget>
+  </widget>
+  <widget class="QGroupBox" name="groupBox_8">
+   <property name="geometry">
+    <rect>
+     <x>683</x>
+     <y>98</y>
+     <width>321</width>
+     <height>235</height>
+    </rect>
+   </property>
+   <property name="title">
+    <string>Dimensions</string>
+   </property>
+   <property name="checkable">
+    <bool>false</bool>
+   </property>
+   <layout class="QFormLayout" name="formLayout_12">
+    <property name="fieldGrowthPolicy">
+     <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
+    </property>
+    <item row="0" column="0">
+     <widget class="QLabel" name="label_52">
+      <property name="text">
+       <string>Quantity</string>
+      </property>
+     </widget>
+    </item>
+    <item row="0" column="1">
+     <widget class="QLineEdit" name="Quantity"/>
+    </item>
+    <item row="1" column="0">
+     <widget class="QLabel" name="label_90">
+      <property name="text">
+       <string>Length (mm)</string>
+      </property>
+     </widget>
+    </item>
+    <item row="1" column="1">
+     <widget class="QLineEdit" name="Length_2"/>
+    </item>
+    <item row="2" column="0">
+     <widget class="QLabel" name="label_107">
+      <property name="text">
+       <string>Width  (mm)</string>
+      </property>
+     </widget>
+    </item>
+    <item row="2" column="1">
+     <widget class="QLineEdit" name="Width_2"/>
+    </item>
+    <item row="3" column="0">
+     <widget class="QLabel" name="label_108">
+      <property name="text">
+       <string>Height (mm)</string>
+      </property>
+     </widget>
+    </item>
+    <item row="3" column="1">
+     <widget class="QLineEdit" name="Height">
+      <property name="text">
+       <string/>
+      </property>
+     </widget>
+    </item>
+    <item row="4" column="0">
+     <widget class="QLabel" name="label_109">
+      <property name="text">
+       <string>Diameter (mm)</string>
+      </property>
+     </widget>
+    </item>
+    <item row="4" column="1">
+     <widget class="QLineEdit" name="Diameter">
+      <property name="text">
+       <string/>
+      </property>
+     </widget>
+    </item>
+    <item row="5" column="0">
+     <widget class="QLabel" name="label_57">
+      <property name="text">
+       <string>Depth (mm)</string>
+      </property>
+     </widget>
+    </item>
+    <item row="5" column="1">
+     <widget class="QLineEdit" name="Depth"/>
+    </item>
+    <item row="6" column="0">
+     <widget class="QLabel" name="label_110">
+      <property name="text">
+       <string>Capacity</string>
+      </property>
+     </widget>
+    </item>
+    <item row="7" column="0">
+     <widget class="QLabel" name="label_43">
+      <property name="text">
+       <string>Area (sqm):</string>
+      </property>
+     </widget>
+    </item>
+    <item row="7" column="1">
+     <widget class="QLineEdit" name="Area"/>
+    </item>
+    <item row="6" column="1">
+     <widget class="QLineEdit" name="Capacity">
+      <property name="text">
+       <string/>
+      </property>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QGroupBox" name="groupBox_11">
+   <property name="geometry">
+    <rect>
+     <x>683</x>
+     <y>339</y>
+     <width>324</width>
+     <height>214</height>
+    </rect>
+   </property>
+   <property name="title">
+    <string>Attributes</string>
+   </property>
+   <property name="checkable">
+    <bool>false</bool>
+   </property>
+   <layout class="QFormLayout" name="formLayout_7">
+    <item row="0" column="0">
+     <widget class="QLabel" name="label_94">
+      <property name="text">
+       <string>Material</string>
+      </property>
+     </widget>
+    </item>
+    <item row="0" column="1">
+     <widget class="QComboBox" name="Material">
+      <property name="editable">
+       <bool>true</bool>
+      </property>
+      <item>
+       <property name="text">
+        <string/>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>Timber </string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>Concrete</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>Steel</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>Aluminium</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>Sandstone</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>Granite</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>Marble</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>Cast Iron</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>Wrought Iron</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>Plastic</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>Stone</string>
+       </property>
+      </item>
+     </widget>
+    </item>
+    <item row="1" column="0">
+     <widget class="QLabel" name="label_102">
+      <property name="text">
+       <string>Colour</string>
+      </property>
+     </widget>
+    </item>
+    <item row="1" column="1">
+     <widget class="QComboBox" name="Colour">
+      <property name="editable">
+       <bool>true</bool>
+      </property>
+      <item>
+       <property name="text">
+        <string/>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>Heritage Green</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>Heritage Red</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>White</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>Cream</string>
+       </property>
+      </item>
+     </widget>
+    </item>
+    <item row="2" column="0">
+     <widget class="QLabel" name="label_95">
+      <property name="text">
+       <string>Surface Finish</string>
+      </property>
+     </widget>
+    </item>
+    <item row="2" column="1">
+     <widget class="QComboBox" name="Surface_Finish">
+      <property name="editable">
+       <bool>true</bool>
+      </property>
+      <item>
+       <property name="text">
+        <string/>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>Painted</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>Powder Coated</string>
+       </property>
+      </item>
+     </widget>
+    </item>
+    <item row="3" column="0">
+     <widget class="QLabel" name="label_78">
+      <property name="text">
+       <string>Manufacturer</string>
+      </property>
+     </widget>
+    </item>
+    <item row="3" column="1">
+     <widget class="QLineEdit" name="Manufacturer_2"/>
+    </item>
+    <item row="4" column="0">
+     <widget class="QLabel" name="label_83">
+      <property name="text">
+       <string>Model</string>
+      </property>
+     </widget>
+    </item>
+    <item row="4" column="1">
+     <widget class="QLineEdit" name="Model"/>
+    </item>
+    <item row="5" column="0">
+     <widget class="QLabel" name="label_79">
+      <property name="text">
+       <string>Model number</string>
+      </property>
+     </widget>
+    </item>
+    <item row="5" column="1">
+     <widget class="QLineEdit" name="Model_number"/>
+    </item>
+    <item row="6" column="0">
+     <widget class="QLabel" name="Inspection_Date_11">
+      <property name="text">
+       <string>Date Installed</string>
+      </property>
+     </widget>
+    </item>
+    <item row="6" column="1">
+     <layout class="QHBoxLayout" name="horizontalLayout">
+      <item>
+       <widget class="QDateTimeEdit" name="Date_Installed"/>
+      </item>
+      <item>
+       <widget class="QPushButton" name="Date_Installed_pick">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="text">
+         <string>...</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QGroupBox" name="groupBox_9">
+   <property name="geometry">
+    <rect>
+     <x>683</x>
+     <y>559</y>
+     <width>321</width>
+     <height>207</height>
+    </rect>
+   </property>
+   <property name="title">
+    <string>Condition</string>
+   </property>
+   <property name="checkable">
+    <bool>false</bool>
+   </property>
+   <layout class="QFormLayout" name="formLayout_2">
+    <item row="0" column="0">
+     <widget class="QLabel" name="label_101">
+      <property name="text">
+       <string>Condition</string>
+      </property>
+     </widget>
+    </item>
+    <item row="0" column="1">
+     <widget class="QComboBox" name="Condition">
+      <property name="editable">
+       <bool>true</bool>
+      </property>
+      <item>
+       <property name="text">
+        <string/>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>1</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>2</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>3</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>4</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>5</string>
+       </property>
+      </item>
+     </widget>
+    </item>
+    <item row="2" column="1">
+     <widget class="QComboBox" name="Recommended_Action">
+      <property name="editable">
+       <bool>true</bool>
+      </property>
+      <item>
+       <property name="text">
+        <string/>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>Immediate Repair</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>Programmed Repair</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>Immediate Replacement</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>Programmed Replacement</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>Take Out of Service</string>
+       </property>
+      </item>
+     </widget>
+    </item>
+    <item row="5" column="1">
+     <widget class="QComboBox" name="Functionality">
+      <property name="editable">
+       <bool>true</bool>
+      </property>
+      <item>
+       <property name="text">
+        <string/>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>1</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>2</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>3</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>4</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>5</string>
+       </property>
+      </item>
+     </widget>
+    </item>
+    <item row="7" column="1">
+     <widget class="QComboBox" name="Aesthetics">
+      <property name="editable">
+       <bool>true</bool>
+      </property>
+      <item>
+       <property name="text">
+        <string/>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>1</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>2</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>3</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>4</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>5</string>
+       </property>
+      </item>
+     </widget>
+    </item>
+    <item row="9" column="0">
+     <widget class="QLabel" name="label_106">
+      <property name="text">
+       <string>Vandalism</string>
+      </property>
+     </widget>
+    </item>
+    <item row="9" column="1">
+     <widget class="QComboBox" name="Vandalism">
+      <property name="editable">
+       <bool>true</bool>
+      </property>
+      <item>
+       <property name="text">
+        <string/>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>1</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>2</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>3</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>4</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>5</string>
+       </property>
+      </item>
+     </widget>
+    </item>
+    <item row="2" column="0">
+     <widget class="QLabel" name="label_74">
+      <property name="text">
+       <string>Recommended Action</string>
+      </property>
+     </widget>
+    </item>
+    <item row="5" column="0">
+     <widget class="QLabel" name="label_104">
+      <property name="text">
+       <string>Functionality</string>
+      </property>
+     </widget>
+    </item>
+    <item row="7" column="0">
+     <widget class="QLabel" name="label_105">
+      <property name="text">
+       <string>Aesthetics</string>
+      </property>
+     </widget>
+    </item>
+    <item row="4" column="1">
+     <widget class="QComboBox" name="Utilisation">
+      <property name="editable">
+       <bool>true</bool>
+      </property>
+      <item>
+       <property name="text">
+        <string/>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>1</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>2</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>3</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>4</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>5</string>
+       </property>
+      </item>
+     </widget>
+    </item>
+    <item row="4" column="0">
+     <widget class="QLabel" name="label_103">
+      <property name="text">
+       <string>Utilisation</string>
+      </property>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QDialogButtonBox" name="buttonBox">
+   <property name="geometry">
+    <rect>
+     <x>630</x>
+     <y>10</y>
+     <width>371</width>
+     <height>81</height>
+    </rect>
+   </property>
+   <property name="layoutDirection">
+    <enum>Qt::LeftToRight</enum>
+   </property>
+   <property name="autoFillBackground">
+    <bool>false</bool>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">font: 75 20pt;</string>
+   </property>
+   <property name="orientation">
+    <enum>Qt::Horizontal</enum>
+   </property>
+   <property name="standardButtons">
+    <set>QDialogButtonBox::Cancel|QDialogButtonBox::Save</set>
+   </property>
+   <property name="centerButtons">
+    <bool>false</bool>
+   </property>
+  </widget>
+  <widget class="QListWidget" name="AssetGroup">
+   <property name="geometry">
+    <rect>
+     <x>9</x>
+     <y>108</y>
+     <width>321</width>
+     <height>651</height>
+    </rect>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">font: 75 14pt &quot;MS Shell Dlg 2&quot;;</string>
+   </property>
+   <property name="movement">
+    <enum>QListView::Static</enum>
+   </property>
+   <property name="resizeMode">
+    <enum>QListView::Adjust</enum>
+   </property>
+   <property name="layoutMode">
+    <enum>QListView::SinglePass</enum>
+   </property>
+   <property name="spacing">
+    <number>4</number>
+   </property>
+   <property name="wordWrap">
+    <bool>true</bool>
+   </property>
+   <item>
+    <property name="text">
+     <string>Play Equipment and Softfall</string>
+    </property>
+   </item>
+   <item>
+    <property name="text">
+     <string>Open Space Furniture</string>
+    </property>
+   </item>
+   <item>
+    <property name="text">
+     <string>Monuments, Memorials, Public art</string>
+    </property>
+   </item>
+   <item>
+    <property name="text">
+     <string>Lighting</string>
+    </property>
+   </item>
+   <item>
+    <property name="text">
+     <string>Surface</string>
+    </property>
+   </item>
+   <item>
+    <property name="text">
+     <string>Electrical</string>
+    </property>
+   </item>
+   <item>
+    <property name="text">
+     <string>Signs</string>
+    </property>
+   </item>
+   <item>
+    <property name="text">
+     <string>Garden</string>
+    </property>
+   </item>
+   <item>
+    <property name="text">
+     <string>Tree</string>
+    </property>
+   </item>
+   <item>
+    <property name="text">
+     <string>Other assets</string>
+    </property>
+   </item>
+   <item>
+    <property name="text">
+     <string>Irrigation</string>
+    </property>
+   </item>
+  </widget>
+ </widget>
+ <resources/>
+ <connections>
+  <connection>
+   <sender>AssetGroup</sender>
+   <signal>currentRowChanged(int)</signal>
+   <receiver>AssetGroup_pages</receiver>
+   <slot>setCurrentIndex(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>230</x>
+     <y>131</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>450</x>
+     <y>106</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+</ui>

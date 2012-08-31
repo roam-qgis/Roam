@@ -32,7 +32,8 @@ import resources_rc
 from syncing.syncer import SyncDialog
 from utils import log
 import functools
-        
+
+
 class SDRCDataCapture():
     def __init__(self, iface):
         self.iface = iface
@@ -42,7 +43,7 @@ class SDRCDataCapture():
         self.mainwindow = iface.mainWindow()
         self.iface.projectRead.connect(self.projectOpened)
         self.iface.initializationCompleted.connect(self.setupUI)
-        self.settings = QSettings( "settings.ini", QSettings.IniFormat )
+        self.settings = QSettings("settings.ini", QSettings.IniFormat)
         self.actionGroup = QActionGroup(self.iface.mainWindow())
         self.iface.mapCanvas().grabGesture(Qt.PinchGesture)
         self.iface.mapCanvas().viewport().setAttribute(Qt.WA_AcceptTouchEvents) 
@@ -65,7 +66,7 @@ class SDRCDataCapture():
         tool -- The QgsMapTool to set
         """
         self.iface.mapCanvas().setMapTool(tool)
-        
+
     def initGui(self):
         """
         Create all the icons and setup the tool bars.  Called by QGIS when
@@ -74,20 +75,23 @@ class SDRCDataCapture():
         self.toolbar = QToolBar("SDRC Data Capture", self.mainwindow)
         self.mainwindow.addToolBar(Qt.TopToolBarArea, self.toolbar)
         self.toolbar.setMovable(False)
-        
+
         spacewidget = QWidget()
         spacewidget.setMinimumWidth(30)
-        
 
         gpsspacewidget = QWidget()
         gpsspacewidget.setMinimumWidth(30)
         gpsspacewidget.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
-        
-        self.homeAction = QAction(self.iface.actionZoomFullExtent().icon(), "Default View" , self.mainwindow)
-        self.gpsAction = GPSAction(QIcon(":/icons/gps"), self.iface.mapCanvas(), self.mainwindow)
-        self.openProjectAction = QAction(QIcon(":/icons/open"),"Open Project" , self.mainwindow)
-        self.toggleRasterAction = QAction(QIcon(":/icons/photo"),"Aerial Photos" , self.mainwindow)
-        self.editAction = EditAction("Edit", self.iface )
+
+        self.homeAction = QAction(self.iface.actionZoomFullExtent().icon(), \
+                                  "Default View", self.mainwindow)
+        self.gpsAction = GPSAction(QIcon(":/icons/gps"), self.iface.mapCanvas(), \
+                                   self.mainwindow)
+        self.openProjectAction = QAction(QIcon(":/icons/open"), "Open Project", \
+                                         self.mainwindow)
+        self.toggleRasterAction = QAction(QIcon(":/icons/photo"), "Aerial Photos",\
+                                          self.mainwindow)
+        self.editAction = EditAction("Edit", self.iface)
         self.syncAction = QAction(QIcon(":/syncing/sync"), "Sync", self.mainwindow)
         self.editAction.setCheckable(True)
 
@@ -98,15 +102,15 @@ class SDRCDataCapture():
         self.openProjectAction.triggered.connect(self.showOpenProjectDialog)
         self.toggleRasterAction.triggered.connect(self.toggleRasterLayers)
 
-        self.navtoolbar.insertAction(self.iface.actionZoomIn(), self.iface.actionTouch() )
-        self.navtoolbar.insertAction(self.iface.actionTouch(), self.homeAction )
-        self.navtoolbar.insertAction(self.iface.actionTouch(), self.iface.actionZoomFullExtent() )
+        self.navtoolbar.insertAction(self.iface.actionZoomIn(), self.iface.actionTouch())
+        self.navtoolbar.insertAction(self.iface.actionTouch(), self.homeAction)
+        self.navtoolbar.insertAction(self.iface.actionTouch(), self.iface.actionZoomFullExtent())
         self.navtoolbar.insertAction(self.homeAction, self.iface.actionZoomFullExtent())
         self.navtoolbar.insertAction(self.iface.actionZoomFullExtent(), self.openProjectAction)
-        
+
         self.navtoolbar.addAction(self.toggleRasterAction)
         self.navtoolbar.insertWidget(self.iface.actionZoomFullExtent(), spacewidget)
-        self.toolbar.addAction(self.editAction)                        
+        self.toolbar.addAction(self.editAction)
         self.toolbar.addAction(self.syncAction)
         self.toolbar.insertSeparator(self.syncAction)
         self.toolbar.insertWidget(self.gpsAction, gpsspacewidget)
@@ -132,7 +136,7 @@ class SDRCDataCapture():
         for layer in QgsMapLayerRegistry.instance().mapLayers().values():
             if layer.type() == QgsMapLayer.RasterLayer:
                 isvisible = legend.isLayerVisible(layer)
-                legend.setLayerVisible(layer, not isvisible )
+                legend.setLayerVisible(layer, not isvisible)
         self.iface.mapCanvas().freeze(False)
         self.iface.mapCanvas().refresh()
 
@@ -146,7 +150,7 @@ class SDRCDataCapture():
             if layer.type() == QgsMapLayer.RasterLayer:
                 return True
         return False
-    
+
     def setupIcons(self):
         """
         Update toolbars to have text and icons, change normal QGIS
@@ -155,16 +159,16 @@ class SDRCDataCapture():
         toolbars = self.iface.mainWindow().findChildren(QToolBar)
         for toolbar in toolbars:
             toolbar.setToolButtonStyle(Qt.ToolButtonTextUnderIcon)
-            toolbar.setIconSize(QSize(32,32))
+            toolbar.setIconSize(QSize(32, 32))
 
         self.iface.actionTouch().setIconText("Pan")
         self.iface.actionTouch().setIcon(QIcon(":/icons/pan"))
         self.iface.actionZoomIn().setIcon(QIcon(":/icons/in"))
         self.iface.actionZoomOut().setIcon(QIcon(":/icons/out"))
         self.iface.actionPan().setIcon(QIcon(":/icons/pan"))
-        self.iface.actionZoomFullExtent().setIcon( QIcon(":/icons/home") )
-        self.iface.actionZoomFullExtent().setIconText( "Home View ")
-        
+        self.iface.actionZoomFullExtent().setIcon(QIcon(":/icons/home"))
+        self.iface.actionZoomFullExtent().setIconText("Home View")
+
         self.actionGroup.addAction(self.iface.actionZoomIn())
         self.actionGroup.addAction(self.iface.actionZoomOut())
         self.actionGroup.addAction(self.iface.actionTouch())
@@ -177,8 +181,8 @@ class SDRCDataCapture():
         self.createFormButtons(layers)
         self.defaultextent = self.iface.mapCanvas().extent()
         # Enable the raster layers button only if the project contains a raster layer.
-        self.toggleRasterAction.setEnabled( self.hasRasterLayers() )
-        
+        self.toggleRasterAction.setEnabled(self.hasRasterLayers())
+
     def createFormButtons(self, layers):
         """
             Create buttons for each form that is definded
@@ -190,19 +194,20 @@ class SDRCDataCapture():
             self.toolbar.removeAction(action)
 
         userForms = forms.getForms()
-        
+
         for form in userForms:
             try:
                 layer = layers[form.layerName()]
                 icon = form.icon()
-                action = AddAction( form.formName(), self.iface, form , layer, icon )
+                action = AddAction(form.formName(), self.iface, \
+                                   form, layer, icon)
                 self.toolbar.insertAction(self.editAction, action)
                 self.actionGroup.addAction(action)
                 self.actions.append(action)
                 layerstoForms[layer] = form
             except KeyError:
                 log("Couldn't find layer for form %s" % form.layerName())
-                
+
         self.editAction.setLayersForms(layerstoForms)
 
     def rejectProjectDialog(self):
@@ -224,7 +229,7 @@ class SDRCDataCapture():
         toolbars = self.iface.mainWindow().findChildren(QToolBar)
         for toolbar in toolbars:
             toolbar.setEnabled(enabled)
-            
+
     def showOpenProjectDialog(self):
         """
         Show the project selection dialog.
@@ -237,8 +242,8 @@ class SDRCDataCapture():
         self.dialog.setModal(True)
         self.dialog.show()
         QCoreApplication.processEvents()
-        curdir= os.path.dirname(__file__)
-        path =os.path.join(curdir,'projects/')
+        curdir = os.path.dirname(__file__)
+        path = os.path.join(curdir, 'projects/')
         self.dialog.loadProjectList([path])
 
     def loadProject(self, path):
@@ -249,7 +254,7 @@ class SDRCDataCapture():
         """
         self.iface.addProject(path)
         self.setUIState(True)
-    
+
     def unload(self):
         del self.toolbar
 
@@ -264,7 +269,7 @@ class SDRCDataCapture():
         self.syndlg = SyncDialog()
         self.syndlg.setModal(True)
         self.syndlg.show()
-        # HACK 
+        # HACK
         QCoreApplication.processEvents()
         self.syndlg.runSync()
         self.iface.mapCanvas().refresh()

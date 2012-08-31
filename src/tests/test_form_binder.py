@@ -217,6 +217,22 @@ class testFormBinderBinding(TestCase):
         self.binder = FormBinder(self.layer,self.parent, \
                                  self.canvas, self.mocksettings)
 
+    def test_bind_list_widget(self):
+        w = QListWidget()
+        w.addItems([QString('Hello World'), QString('Hello'), QString('World')])
+        value = QVariant('Hello')
+        self.assertEqual(w.currentItem(), None)
+        self.binder.bindValueToControl(w, value)
+        self.assertEqual(w.currentItem().text(), value.toString())
+
+    def test_fail_bind_list_widget(self):
+        w = QListWidget()
+        w.addItems([QString('Hello World')])
+        value = QVariant('Hello')
+        self.assertEqual(w.currentItem(), None)
+        self.binder.bindValueToControl(w, value)
+        self.assertEqual(w.currentItem(), None)
+
     def test_bind_calender_widget(self):
         w = QCalendarWidget()
         # Set the date to something other then today which is the default
@@ -481,7 +497,7 @@ class testFormBinderBinding(TestCase):
         w = QLabel()
         w.setObjectName("lineedit")
         self.parent.layout().addWidget(w)
-        control = self.binder.getControl("lineedit",type=QLabel)
+        control = self.binder.getControl("lineedit",control_type=QLabel)
         self.assertEqual(control, w)
         self.assertTrue(type(control) is QLabel)
 
@@ -592,7 +608,7 @@ class testFormBinderBinding(TestCase):
         w.setEditable( True )
         w.addItems(['b', 'c', 'd'])
         newitem = 'Hello World'
-        self.binder.comboEdit(w, newitem)
+        self.binder.saveComboValues(w, newitem)
         self.mocksettings.setValue.assert_called_with("comboname",'1,2,3,4,5,Hello World')
 
     def test_combobox_dont_add_value_if_exists_in_settings_or_combo(self):
@@ -602,7 +618,7 @@ class testFormBinderBinding(TestCase):
         w.setEditable( True )
         w.addItems(['b', 'c', 'd'])
         newitem = 'b'
-        self.binder.comboEdit(w, newitem)
+        self.binder.saveComboValues(w, newitem)
         self.assertFalse(self.mocksettings.setValue.called)
 
 class testFormBinderUnBinding(TestCase):
