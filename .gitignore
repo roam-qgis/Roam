@@ -14,5 +14,5 @@ docs/*.html
 resources_rc.py
 
 # This is the plugin build folder. We don't ever need to version this.
-SDRCDataCollection/
+QMap/
 
