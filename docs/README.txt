@@ -8,7 +8,7 @@
 
 :Version: 1.0
 
-.. |name| replace:: QGIS Data Collector
+.. |name| replace:: QMap
 .. |f| image:: images/folder.png
 
 
@@ -58,7 +58,7 @@ and it sucks at error reporting.
 To build just run **make_win.bat** from the main root folder.  build.py will generate
 all the needed files and deploy them into the build directory.
 
-The QGIS plugin location is |f| ``/SDRCDataCollection/app/python/plugins``
+The QGIS plugin location is |f| ``/QMap/app/python/plugins``
 
 You can run build.py using Python with other arguments:
 
