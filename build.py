@@ -66,7 +66,7 @@ def compile():
 def docs():
     print "Generating docs"
     for doc in doc_sources:
-        run('python', 'docs/rst2html.py', doc+'.txt', doc+'.html')
+        run('python', 'docs/rst2html.py', doc+'.rst', doc+'.html')
 
 def clean():
     autoclean()
