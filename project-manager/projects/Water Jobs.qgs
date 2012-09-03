@@ -1,0 +1,2670 @@
+<!DOCTYPE qgis PUBLIC 'http://mrcc.com/qgis.dtd' 'SYSTEM'>
+<qgis projectname="" version="1.9.0-Master">
+    <title></title>
+    <mapcanvas>
+        <units>meters</units>
+        <extent>
+            <xmin>404776.686002</xmin>
+            <ymin>6877453.071023</ymin>
+            <xmax>406330.021426</xmax>
+            <ymax>6878853.519102</ymax>
+        </extent>
+        <projections>0</projections>
+        <destinationsrs>
+            <spatialrefsys>
+                <proj4>+proj=utm +zone=56 +south +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs</proj4>
+                <srsid>2450</srsid>
+                <srid>28356</srid>
+                <authid>EPSG:28356</authid>
+                <description>GDA94 / MGA zone 56</description>
+                <projectionacronym>utm</projectionacronym>
+                <ellipsoidacronym>GRS80</ellipsoidacronym>
+                <geographicflag>false</geographicflag>
+            </spatialrefsys>
+        </destinationsrs>
+    </mapcanvas>
+    <legend updateDrawingOrder="true">
+        <legendlayer drawingOrder="-1" open="false" checked="Qt::Checked" name="WaterJobs" showFeatureCount="0">
+            <filegroup open="false" hidden="false">
+                <legendlayerfile isInOverview="0" layerid="WaterJobs20120424123239799" visible="1"/>
+            </filegroup>
+        </legendlayer>
+        <legendlayer drawingOrder="5" open="false" checked="Qt::Checked" name="Towns" showFeatureCount="0">
+            <filegroup open="false" hidden="false">
+                <legendlayerfile isInOverview="0" layerid="Towns20120413134736579" visible="1"/>
+            </filegroup>
+        </legendlayer>
+        <legendlayer drawingOrder="0" open="false" checked="Qt::Checked" name="Address Numbers" showFeatureCount="0">
+            <filegroup open="false" hidden="false">
+                <legendlayerfile isInOverview="0" layerid="AddressNumbers20120413142315498" visible="1"/>
+            </filegroup>
+        </legendlayer>
+        <legendlayer drawingOrder="-1" open="false" checked="Qt::Checked" name="Sewer Nodes" showFeatureCount="0">
+            <filegroup open="false" hidden="false">
+                <legendlayerfile isInOverview="0" layerid="SewerNodes20120417120902965" visible="1"/>
+            </filegroup>
+        </legendlayer>
+        <legendlayer drawingOrder="1" open="false" checked="Qt::Checked" name="Water Fittings" showFeatureCount="0">
+            <filegroup open="false" hidden="false">
+                <legendlayerfile isInOverview="0" layerid="WaterFittings20120413114045709" visible="1"/>
+            </filegroup>
+        </legendlayer>
+        <legendlayer drawingOrder="-1" open="false" checked="Qt::Checked" name="WaterMeters" showFeatureCount="0">
+            <filegroup open="false" hidden="false">
+                <legendlayerfile isInOverview="0" layerid="WaterMeters20120424122404922" visible="1"/>
+            </filegroup>
+        </legendlayer>
+        <legendlayer drawingOrder="2" open="false" checked="Qt::Checked" name="Sewer Pipes" showFeatureCount="0">
+            <filegroup open="false" hidden="false">
+                <legendlayerfile isInOverview="0" layerid="SewerPipes20120413110348873" visible="1"/>
+            </filegroup>
+        </legendlayer>
+        <legendlayer drawingOrder="3" open="false" checked="Qt::Checked" name="Water Mains" showFeatureCount="0">
+            <filegroup open="false" hidden="false">
+                <legendlayerfile isInOverview="0" layerid="WaterMains20120413105554344" visible="1"/>
+            </filegroup>
+        </legendlayer>
+        <legendlayer drawingOrder="4" open="false" checked="Qt::Checked" name="Water Services" showFeatureCount="0">
+            <filegroup open="false" hidden="false">
+                <legendlayerfile isInOverview="0" layerid="WaterServices20120413133920989" visible="1"/>
+            </filegroup>
+        </legendlayer>
+        <legendlayer drawingOrder="7" open="false" checked="Qt::Checked" name="Road Labels" showFeatureCount="0">
+            <filegroup open="false" hidden="false">
+                <legendlayerfile isInOverview="0" layerid="RoadLabels20120413120001233" visible="1"/>
+            </filegroup>
+        </legendlayer>
+        <legendlayer drawingOrder="-1" open="false" checked="Qt::Checked" name="Road Labels Centrelines" showFeatureCount="0">
+            <filegroup open="false" hidden="false">
+                <legendlayerfile isInOverview="0" layerid="RoadLabels20120417112027552" visible="1"/>
+            </filegroup>
+        </legendlayer>
+        <legendlayer drawingOrder="8" open="false" checked="Qt::Checked" name="Cadastre (Close)" showFeatureCount="0">
+            <filegroup open="false" hidden="false">
+                <legendlayerfile isInOverview="0" layerid="Cadastre20120417081307269" visible="1"/>
+            </filegroup>
+        </legendlayer>
+        <legendlayer drawingOrder="9" open="false" checked="Qt::Checked" name="Cadastre (Far)" showFeatureCount="0">
+            <filegroup open="false" hidden="false">
+                <legendlayerfile isInOverview="0" layerid="Cadastre20120413105557330" visible="1"/>
+            </filegroup>
+        </legendlayer>
+        <legendgroup open="false" checked="Qt::Unchecked" name="Aerial Photos">
+            <legendlayer drawingOrder="10" open="false" checked="Qt::Unchecked" name="Yangan" showFeatureCount="0">
+                <filegroup open="false" hidden="false">
+                    <legendlayerfile isInOverview="0" layerid="Yangan20120417082244127" visible="0"/>
+                </filegroup>
+            </legendlayer>
+            <legendlayer drawingOrder="11" open="false" checked="Qt::Unchecked" name="Warwick" showFeatureCount="0">
+                <filegroup open="false" hidden="false">
+                    <legendlayerfile isInOverview="0" layerid="Warwick20120417082244080" visible="0"/>
+                </filegroup>
+            </legendlayer>
+            <legendlayer drawingOrder="12" open="false" checked="Qt::Unchecked" name="Wallangarra" showFeatureCount="0">
+                <filegroup open="false" hidden="false">
+                    <legendlayerfile isInOverview="0" layerid="Wallangarra20120417082244017" visible="0"/>
+                </filegroup>
+            </legendlayer>
+            <legendlayer drawingOrder="13" open="false" checked="Qt::Unchecked" name="Thulimbah" showFeatureCount="0">
+                <filegroup open="false" hidden="false">
+                    <legendlayerfile isInOverview="0" layerid="Thulimbah20120417082243955" visible="0"/>
+                </filegroup>
+            </legendlayer>
+            <legendlayer drawingOrder="14" open="false" checked="Qt::Unchecked" name="TheSummit" showFeatureCount="0">
+                <filegroup open="false" hidden="false">
+                    <legendlayerfile isInOverview="0" layerid="TheSummit20120417082243908" visible="0"/>
+                </filegroup>
+            </legendlayer>
+            <legendlayer drawingOrder="15" open="false" checked="Qt::Unchecked" name="Tannymorel" showFeatureCount="0">
+                <filegroup open="false" hidden="false">
+                    <legendlayerfile isInOverview="0" layerid="Tannymorel20120417082243846" visible="0"/>
+                </filegroup>
+            </legendlayer>
+            <legendlayer drawingOrder="16" open="false" checked="Qt::Unchecked" name="Stanthorpe" showFeatureCount="0">
+                <filegroup open="false" hidden="false">
+                    <legendlayerfile isInOverview="0" layerid="Stanthorpe20120417082243799" visible="0"/>
+                </filegroup>
+            </legendlayer>
+            <legendlayer drawingOrder="17" open="false" checked="Qt::Unchecked" name="Pratten" showFeatureCount="0">
+                <filegroup open="false" hidden="false">
+                    <legendlayerfile isInOverview="0" layerid="Pratten20120417082243736" visible="0"/>
+                </filegroup>
+            </legendlayer>
+            <legendlayer drawingOrder="18" open="false" checked="Qt::Unchecked" name="MtMarshall" showFeatureCount="0">
+                <filegroup open="false" hidden="false">
+                    <legendlayerfile isInOverview="0" layerid="MtMarshall20120417082243689" visible="0"/>
+                </filegroup>
+            </legendlayer>
+            <legendlayer drawingOrder="19" open="false" checked="Qt::Unchecked" name="Maryvale" showFeatureCount="0">
+                <filegroup open="false" hidden="false">
+                    <legendlayerfile isInOverview="0" layerid="Maryvale20120417082243642" visible="0"/>
+                </filegroup>
+            </legendlayer>
+            <legendlayer drawingOrder="20" open="false" checked="Qt::Unchecked" name="Leyburn" showFeatureCount="0">
+                <filegroup open="false" hidden="false">
+                    <legendlayerfile isInOverview="0" layerid="Leyburn20120417082243580" visible="0"/>
+                </filegroup>
+            </legendlayer>
+            <legendlayer drawingOrder="21" open="false" checked="Qt::Unchecked" name="Killarney" showFeatureCount="0">
+                <filegroup open="false" hidden="false">
+                    <legendlayerfile isInOverview="0" layerid="Killarney20120417082243533" visible="0"/>
+                </filegroup>
+            </legendlayer>
+            <legendlayer drawingOrder="22" open="false" checked="Qt::Unchecked" name="Karara" showFeatureCount="0">
+                <filegroup open="false" hidden="false">
+                    <legendlayerfile isInOverview="0" layerid="Karara20120417082243486" visible="0"/>
+                </filegroup>
+            </legendlayer>
+            <legendlayer drawingOrder="23" open="false" checked="Qt::Unchecked" name="Hendon" showFeatureCount="0">
+                <filegroup open="false" hidden="false">
+                    <legendlayerfile isInOverview="0" layerid="Hendon20120417082243439" visible="0"/>
+                </filegroup>
+            </legendlayer>
+            <legendlayer drawingOrder="24" open="false" checked="Qt::Unchecked" name="GlenAplin" showFeatureCount="0">
+                <filegroup open="false" hidden="false">
+                    <legendlayerfile isInOverview="0" layerid="GlenAplin20120417082243392" visible="0"/>
+                </filegroup>
+            </legendlayer>
+            <legendlayer drawingOrder="25" open="false" checked="Qt::Unchecked" name="EmuVale" showFeatureCount="0">
+                <filegroup open="false" hidden="false">
+                    <legendlayerfile isInOverview="0" layerid="EmuVale20120417082243346" visible="0"/>
+                </filegroup>
+            </legendlayer>
+            <legendlayer drawingOrder="26" open="false" checked="Qt::Unchecked" name="Dalveen" showFeatureCount="0">
+                <filegroup open="false" hidden="false">
+                    <legendlayerfile isInOverview="0" layerid="Dalveen20120417082243299" visible="0"/>
+                </filegroup>
+            </legendlayer>
+            <legendlayer drawingOrder="27" open="false" checked="Qt::Unchecked" name="Cottonvale" showFeatureCount="0">
+                <filegroup open="false" hidden="false">
+                    <legendlayerfile isInOverview="0" layerid="Cottonvale20120417082243252" visible="0"/>
+                </filegroup>
+            </legendlayer>
+            <legendlayer drawingOrder="28" open="false" checked="Qt::Unchecked" name="Ballandean" showFeatureCount="0">
+                <filegroup open="false" hidden="false">
+                    <legendlayerfile isInOverview="0" layerid="Ballandean20120417082243205" visible="0"/>
+                </filegroup>
+            </legendlayer>
+            <legendlayer drawingOrder="29" open="false" checked="Qt::Unchecked" name="Allora" showFeatureCount="0">
+                <filegroup open="false" hidden="false">
+                    <legendlayerfile isInOverview="0" layerid="Allora20120417082117436" visible="0"/>
+                </filegroup>
+            </legendlayer>
+            <legendlayer drawingOrder="30" open="false" checked="Qt::Unchecked" name="Amiens" showFeatureCount="0">
+                <filegroup open="false" hidden="false">
+                    <legendlayerfile isInOverview="0" layerid="Amiens20120417082156891" visible="0"/>
+                </filegroup>
+            </legendlayer>
+            <legendlayer drawingOrder="31" open="false" checked="Qt::Unchecked" name="Applethorpe" showFeatureCount="0">
+                <filegroup open="false" hidden="false">
+                    <legendlayerfile isInOverview="0" layerid="Applethorpe20120417082156844" visible="0"/>
+                </filegroup>
+            </legendlayer>
+        </legendgroup>
+    </legend>
+    <projectlayers layercount="35">
+        <maplayer minimumScale="0" maximumScale="1e+08" geometry="Point" type="vector" hasScaleBasedVisibilityFlag="0">
+            <id>AddressNumbers20120413142315498</id>
+            <datasource>dbname='FieldData' service='FieldData' srid=28356 type=POINT table="dbo"."AddressNumbers" (ogr_geometry) sql=</datasource>
+            <title></title>
+            <abstract></abstract>
+            <layername>Address Numbers</layername>
+            <srs>
+                <spatialrefsys>
+                    <proj4>+proj=utm +zone=56 +south +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs</proj4>
+                    <srsid>2450</srsid>
+                    <srid>28356</srid>
+                    <authid>EPSG:28356</authid>
+                    <description>GDA94 / MGA zone 56</description>
+                    <projectionacronym>utm</projectionacronym>
+                    <ellipsoidacronym>GRS80</ellipsoidacronym>
+                    <geographicflag>false</geographicflag>
+                </spatialrefsys>
+            </srs>
+            <transparencyLevelInt>255</transparencyLevelInt>
+            <provider encoding="System">mssql</provider>
+            <vectorjoins/>
+            <renderer-v2 symbollevels="0" type="singleSymbol">
+                <symbols>
+                    <symbol outputUnit="MM" alpha="1" type="marker" name="0">
+                        <layer pass="0" class="SimpleMarker" locked="0">
+                            <prop k="angle" v="0"/>
+                            <prop k="color" v="164,91,153,255"/>
+                            <prop k="color_border" v="0,0,0,255"/>
+                            <prop k="name" v="filled_arrowhead"/>
+                            <prop k="offset" v="0,0"/>
+                            <prop k="size" v="0"/>
+                        </layer>
+                    </symbol>
+                </symbols>
+                <rotation field=""/>
+                <sizescale field=""/>
+            </renderer-v2>
+            <customproperties>
+                <property key="labeling" value="pal"/>
+                <property key="labeling/addDirectionSymbol" value="false"/>
+                <property key="labeling/bufferColorB" value="245"/>
+                <property key="labeling/bufferColorG" value="245"/>
+                <property key="labeling/bufferColorR" value="245"/>
+                <property key="labeling/bufferSize" value="0.6"/>
+                <property key="labeling/dataDefinedProperty0" value=""/>
+                <property key="labeling/dataDefinedProperty1" value=""/>
+                <property key="labeling/dataDefinedProperty10" value=""/>
+                <property key="labeling/dataDefinedProperty11" value=""/>
+                <property key="labeling/dataDefinedProperty12" value=""/>
+                <property key="labeling/dataDefinedProperty13" value=""/>
+                <property key="labeling/dataDefinedProperty14" value=""/>
+                <property key="labeling/dataDefinedProperty2" value=""/>
+                <property key="labeling/dataDefinedProperty3" value=""/>
+                <property key="labeling/dataDefinedProperty4" value=""/>
+                <property key="labeling/dataDefinedProperty5" value=""/>
+                <property key="labeling/dataDefinedProperty6" value=""/>
+                <property key="labeling/dataDefinedProperty7" value=""/>
+                <property key="labeling/dataDefinedProperty8" value=""/>
+                <property key="labeling/dataDefinedProperty9" value=""/>
+                <property key="labeling/decimals" value="0"/>
+                <property key="labeling/dist" value="0"/>
+                <property key="labeling/distInMapUnits" value="false"/>
+                <property key="labeling/enabled" value="true"/>
+                <property key="labeling/fieldName" value="number"/>
+                <property key="labeling/fontFamily" value="Arial"/>
+                <property key="labeling/fontItalic" value="false"/>
+                <property key="labeling/fontSize" value="8"/>
+                <property key="labeling/fontSizeInMapUnits" value="false"/>
+                <property key="labeling/fontStrikeout" value="false"/>
+                <property key="labeling/fontUnderline" value="false"/>
+                <property key="labeling/fontWeight" value="75"/>
+                <property key="labeling/formatNumbers" value="false"/>
+                <property key="labeling/isExpression" value="false"/>
+                <property key="labeling/labelPerPart" value="false"/>
+                <property key="labeling/mergeLines" value="false"/>
+                <property key="labeling/minFeatureSize" value="0"/>
+                <property key="labeling/obstacle" value="true"/>
+                <property key="labeling/placement" value="1"/>
+                <property key="labeling/placementFlags" value="0"/>
+                <property key="labeling/plussign" value="true"/>
+                <property key="labeling/priority" value="5"/>
+                <property key="labeling/scaleMax" value="2000"/>
+                <property key="labeling/scaleMin" value="1"/>
+                <property key="labeling/textColorB" value="99"/>
+                <property key="labeling/textColorG" value="78"/>
+                <property key="labeling/textColorR" value="234"/>
+                <property key="labeling/wrapChar" value=""/>
+            </customproperties>
+            <displayfield>ogr_fid</displayfield>
+            <label>0</label>
+            <labelattributes>
+                <label fieldname="" text="Label"/>
+                <family fieldname="" name="MS Shell Dlg 2"/>
+                <size fieldname="" units="pt" value="12"/>
+                <bold fieldname="" on="0"/>
+                <italic fieldname="" on="0"/>
+                <underline fieldname="" on="0"/>
+                <strikeout fieldname="" on="0"/>
+                <color fieldname="" red="0" blue="0" green="0"/>
+                <x fieldname=""/>
+                <y fieldname=""/>
+                <offset x="0" y="0" units="pt" yfieldname="" xfieldname=""/>
+                <angle fieldname="" value="0" auto="0"/>
+                <alignment fieldname="" value="center"/>
+                <buffercolor fieldname="" red="255" blue="255" green="255"/>
+                <buffersize fieldname="" units="pt" value="1"/>
+                <bufferenabled fieldname="" on=""/>
+                <multilineenabled fieldname="" on=""/>
+                <selectedonly on=""/>
+            </labelattributes>
+            <edittypes>
+                <edittype type="0" name="id"/>
+                <edittype type="0" name="isurban"/>
+                <edittype type="0" name="number"/>
+                <edittype type="0" name="ogr_fid"/>
+                <edittype type="0" name="street"/>
+            </edittypes>
+            <editform>.</editform>
+            <editforminit></editforminit>
+            <annotationform>.</annotationform>
+            <attributeactions/>
+        </maplayer>
+        <maplayer minimumScale="0" maximumScale="1e+08" type="raster" hasScaleBasedVisibilityFlag="0">
+            <id>Allora20120417082117436</id>
+            <datasource>../../../../../../maps/Allora.ecw</datasource>
+            <title></title>
+            <abstract></abstract>
+            <layername>Allora</layername>
+            <srs>
+                <spatialrefsys>
+                    <proj4>+proj=longlat +datum=WGS84 +no_defs</proj4>
+                    <srsid>3452</srsid>
+                    <srid>4326</srid>
+                    <authid>EPSG:4326</authid>
+                    <description>WGS 84</description>
+                    <projectionacronym>longlat</projectionacronym>
+                    <ellipsoidacronym>WGS84</ellipsoidacronym>
+                    <geographicflag>true</geographicflag>
+                </spatialrefsys>
+            </srs>
+            <transparencyLevelInt>152</transparencyLevelInt>
+            <customproperties/>
+            <provider>gdal</provider>
+            <rasterrenderer opacity="0.596078" alphaBand="-1" maxOversampling="2" blueBand="3" greenBand="2" type="multibandcolor" invertColor="0" redBand="1">
+                <rasterTransparency/>
+            </rasterrenderer>
+        </maplayer>
+        <maplayer minimumScale="0" maximumScale="1e+08" type="raster" hasScaleBasedVisibilityFlag="0">
+            <id>Amiens20120417082156891</id>
+            <datasource>../../../../../../maps/Amiens.ecw</datasource>
+            <title></title>
+            <abstract></abstract>
+            <layername>Amiens</layername>
+            <srs>
+                <spatialrefsys>
+                    <proj4>+proj=longlat +datum=WGS84 +no_defs</proj4>
+                    <srsid>3452</srsid>
+                    <srid>4326</srid>
+                    <authid>EPSG:4326</authid>
+                    <description>WGS 84</description>
+                    <projectionacronym>longlat</projectionacronym>
+                    <ellipsoidacronym>WGS84</ellipsoidacronym>
+                    <geographicflag>true</geographicflag>
+                </spatialrefsys>
+            </srs>
+            <transparencyLevelInt>151</transparencyLevelInt>
+            <customproperties/>
+            <provider>gdal</provider>
+            <rasterrenderer opacity="0.596078" alphaBand="-1" maxOversampling="2" blueBand="3" greenBand="2" type="multibandcolor" invertColor="0" redBand="1">
+                <rasterTransparency/>
+            </rasterrenderer>
+        </maplayer>
+        <maplayer minimumScale="0" maximumScale="1e+08" type="raster" hasScaleBasedVisibilityFlag="0">
+            <id>Applethorpe20120417082156844</id>
+            <datasource>../../../../../../maps/Applethorpe.ecw</datasource>
+            <title></title>
+            <abstract></abstract>
+            <layername>Applethorpe</layername>
+            <srs>
+                <spatialrefsys>
+                    <proj4>+proj=longlat +datum=WGS84 +no_defs</proj4>
+                    <srsid>3452</srsid>
+                    <srid>4326</srid>
+                    <authid>EPSG:4326</authid>
+                    <description>WGS 84</description>
+                    <projectionacronym>longlat</projectionacronym>
+                    <ellipsoidacronym>WGS84</ellipsoidacronym>
+                    <geographicflag>true</geographicflag>
+                </spatialrefsys>
+            </srs>
+            <transparencyLevelInt>151</transparencyLevelInt>
+            <customproperties/>
+            <provider>gdal</provider>
+            <rasterrenderer opacity="0.596078" alphaBand="-1" maxOversampling="2" blueBand="3" greenBand="2" type="multibandcolor" invertColor="0" redBand="1">
+                <rasterTransparency/>
+            </rasterrenderer>
+        </maplayer>
+        <maplayer minimumScale="0" maximumScale="1e+08" type="raster" hasScaleBasedVisibilityFlag="0">
+            <id>Ballandean20120417082243205</id>
+            <datasource>../../../../../../maps/Ballandean.ecw</datasource>
+            <title></title>
+            <abstract></abstract>
+            <layername>Ballandean</layername>
+            <srs>
+                <spatialrefsys>
+                    <proj4>+proj=longlat +datum=WGS84 +no_defs</proj4>
+                    <srsid>3452</srsid>
+                    <srid>4326</srid>
+                    <authid>EPSG:4326</authid>
+                    <description>WGS 84</description>
+                    <projectionacronym>longlat</projectionacronym>
+                    <ellipsoidacronym>WGS84</ellipsoidacronym>
+                    <geographicflag>true</geographicflag>
+                </spatialrefsys>
+            </srs>
+            <transparencyLevelInt>151</transparencyLevelInt>
+            <customproperties/>
+            <provider>gdal</provider>
+            <rasterrenderer opacity="0.596078" alphaBand="-1" maxOversampling="2" blueBand="3" greenBand="2" type="multibandcolor" invertColor="0" redBand="1">
+                <rasterTransparency/>
+            </rasterrenderer>
+        </maplayer>
+        <maplayer minimumScale="300" maximumScale="60000" geometry="Polygon" type="vector" hasScaleBasedVisibilityFlag="1">
+            <id>Cadastre20120413105557330</id>
+            <datasource>dbname='FieldData' service='FieldData' estimatedmetadata=true srid=28356 type=POLYGON table="dbo"."Cadastre" (ogr_geometry) sql=</datasource>
+            <title></title>
+            <abstract></abstract>
+            <layername>Cadastre (Far)</layername>
+            <srs>
+                <spatialrefsys>
+                    <proj4>+proj=utm +zone=56 +south +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs</proj4>
+                    <srsid>2450</srsid>
+                    <srid>28356</srid>
+                    <authid>EPSG:28356</authid>
+                    <description>GDA94 / MGA zone 56</description>
+                    <projectionacronym>utm</projectionacronym>
+                    <ellipsoidacronym>GRS80</ellipsoidacronym>
+                    <geographicflag>false</geographicflag>
+                </spatialrefsys>
+            </srs>
+            <transparencyLevelInt>255</transparencyLevelInt>
+            <provider encoding="System">mssql</provider>
+            <vectorjoins/>
+            <renderer-v2 symbollevels="0" type="singleSymbol">
+                <symbols>
+                    <symbol outputUnit="MM" alpha="1" type="fill" name="0">
+                        <layer pass="0" class="SimpleFill" locked="0">
+                            <prop k="color" v="203,151,131,255"/>
+                            <prop k="color_border" v="202,202,202,255"/>
+                            <prop k="offset" v="0,0"/>
+                            <prop k="style" v="no"/>
+                            <prop k="style_border" v="solid"/>
+                            <prop k="width_border" v="0.16"/>
+                        </layer>
+                    </symbol>
+                </symbols>
+                <rotation field=""/>
+                <sizescale field=""/>
+            </renderer-v2>
+            <customproperties/>
+            <displayfield>ogr_fid</displayfield>
+            <label>0</label>
+            <labelattributes>
+                <label fieldname="" text="Label"/>
+                <family fieldname="" name="MS Shell Dlg 2"/>
+                <size fieldname="" units="pt" value="12"/>
+                <bold fieldname="" on="0"/>
+                <italic fieldname="" on="0"/>
+                <underline fieldname="" on="0"/>
+                <strikeout fieldname="" on="0"/>
+                <color fieldname="" red="0" blue="0" green="0"/>
+                <x fieldname=""/>
+                <y fieldname=""/>
+                <offset x="0" y="0" units="pt" yfieldname="" xfieldname=""/>
+                <angle fieldname="" value="0" auto="0"/>
+                <alignment fieldname="" value="center"/>
+                <buffercolor fieldname="" red="255" blue="255" green="255"/>
+                <buffersize fieldname="" units="pt" value="1"/>
+                <bufferenabled fieldname="" on=""/>
+                <multilineenabled fieldname="" on=""/>
+                <selectedonly on=""/>
+            </labelattributes>
+            <edittypes>
+                <edittype type="0" name="area_ha"/>
+                <edittype type="0" name="calc_area"/>
+                <edittype type="0" name="lot_num"/>
+                <edittype type="0" name="ogr_fid"/>
+                <edittype type="0" name="plan_num"/>
+                <edittype type="0" name="tenure"/>
+            </edittypes>
+            <editform>.</editform>
+            <editforminit></editforminit>
+            <annotationform>.</annotationform>
+            <attributeactions/>
+        </maplayer>
+        <maplayer minimumScale="0" maximumScale="300" geometry="Polygon" type="vector" hasScaleBasedVisibilityFlag="1">
+            <id>Cadastre20120417081307269</id>
+            <datasource>dbname='FieldData' service='FieldData' estimatedmetadata=true srid=28356 type=POLYGON table="dbo"."Cadastre" (ogr_geometry) sql=</datasource>
+            <title></title>
+            <abstract></abstract>
+            <layername>Cadastre (Close)</layername>
+            <srs>
+                <spatialrefsys>
+                    <proj4>+proj=utm +zone=56 +south +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs</proj4>
+                    <srsid>2450</srsid>
+                    <srid>28356</srid>
+                    <authid>EPSG:28356</authid>
+                    <description>GDA94 / MGA zone 56</description>
+                    <projectionacronym>utm</projectionacronym>
+                    <ellipsoidacronym>GRS80</ellipsoidacronym>
+                    <geographicflag>false</geographicflag>
+                </spatialrefsys>
+            </srs>
+            <transparencyLevelInt>255</transparencyLevelInt>
+            <provider encoding="System">mssql</provider>
+            <vectorjoins/>
+            <renderer-v2 symbollevels="0" type="singleSymbol">
+                <symbols>
+                    <symbol outputUnit="MM" alpha="1" type="fill" name="0">
+                        <layer pass="0" class="SimpleFill" locked="0">
+                            <prop k="color" v="164,91,153,255"/>
+                            <prop k="color_border" v="202,202,202,255"/>
+                            <prop k="offset" v="0,0"/>
+                            <prop k="style" v="no"/>
+                            <prop k="style_border" v="solid"/>
+                            <prop k="width_border" v="0.5"/>
+                        </layer>
+                    </symbol>
+                </symbols>
+                <rotation field=""/>
+                <sizescale field=""/>
+            </renderer-v2>
+            <customproperties/>
+            <displayfield>ogr_fid</displayfield>
+            <label>0</label>
+            <labelattributes>
+                <label fieldname="" text="Label"/>
+                <family fieldname="" name="MS Shell Dlg 2"/>
+                <size fieldname="" units="pt" value="12"/>
+                <bold fieldname="" on="0"/>
+                <italic fieldname="" on="0"/>
+                <underline fieldname="" on="0"/>
+                <strikeout fieldname="" on="0"/>
+                <color fieldname="" red="0" blue="0" green="0"/>
+                <x fieldname=""/>
+                <y fieldname=""/>
+                <offset x="0" y="0" units="pt" yfieldname="" xfieldname=""/>
+                <angle fieldname="" value="0" auto="0"/>
+                <alignment fieldname="" value="center"/>
+                <buffercolor fieldname="" red="255" blue="255" green="255"/>
+                <buffersize fieldname="" units="pt" value="1"/>
+                <bufferenabled fieldname="" on=""/>
+                <multilineenabled fieldname="" on=""/>
+                <selectedonly on=""/>
+            </labelattributes>
+            <edittypes>
+                <edittype type="0" name="area_ha"/>
+                <edittype type="0" name="calc_area"/>
+                <edittype type="0" name="lot_num"/>
+                <edittype type="0" name="ogr_fid"/>
+                <edittype type="0" name="plan_num"/>
+                <edittype type="0" name="tenure"/>
+            </edittypes>
+            <editform>.</editform>
+            <editforminit></editforminit>
+            <annotationform>.</annotationform>
+            <attributeactions/>
+        </maplayer>
+        <maplayer minimumScale="0" maximumScale="1e+08" type="raster" hasScaleBasedVisibilityFlag="0">
+            <id>Cottonvale20120417082243252</id>
+            <datasource>../../../../../../maps/Cottonvale.ecw</datasource>
+            <title></title>
+            <abstract></abstract>
+            <layername>Cottonvale</layername>
+            <srs>
+                <spatialrefsys>
+                    <proj4>+proj=longlat +datum=WGS84 +no_defs</proj4>
+                    <srsid>3452</srsid>
+                    <srid>4326</srid>
+                    <authid>EPSG:4326</authid>
+                    <description>WGS 84</description>
+                    <projectionacronym>longlat</projectionacronym>
+                    <ellipsoidacronym>WGS84</ellipsoidacronym>
+                    <geographicflag>true</geographicflag>
+                </spatialrefsys>
+            </srs>
+            <transparencyLevelInt>151</transparencyLevelInt>
+            <customproperties/>
+            <provider>gdal</provider>
+            <rasterrenderer opacity="0.596078" alphaBand="-1" maxOversampling="2" blueBand="3" greenBand="2" type="multibandcolor" invertColor="0" redBand="1">
+                <rasterTransparency/>
+            </rasterrenderer>
+        </maplayer>
+        <maplayer minimumScale="0" maximumScale="1e+08" type="raster" hasScaleBasedVisibilityFlag="0">
+            <id>Dalveen20120417082243299</id>
+            <datasource>../../../../../../maps/Dalveen.ecw</datasource>
+            <title></title>
+            <abstract></abstract>
+            <layername>Dalveen</layername>
+            <srs>
+                <spatialrefsys>
+                    <proj4>+proj=longlat +datum=WGS84 +no_defs</proj4>
+                    <srsid>3452</srsid>
+                    <srid>4326</srid>
+                    <authid>EPSG:4326</authid>
+                    <description>WGS 84</description>
+                    <projectionacronym>longlat</projectionacronym>
+                    <ellipsoidacronym>WGS84</ellipsoidacronym>
+                    <geographicflag>true</geographicflag>
+                </spatialrefsys>
+            </srs>
+            <transparencyLevelInt>153</transparencyLevelInt>
+            <customproperties/>
+            <provider>gdal</provider>
+            <rasterrenderer opacity="0.6" alphaBand="-1" maxOversampling="2" blueBand="3" greenBand="2" type="multibandcolor" invertColor="0" redBand="1">
+                <rasterTransparency/>
+            </rasterrenderer>
+        </maplayer>
+        <maplayer minimumScale="0" maximumScale="1e+08" type="raster" hasScaleBasedVisibilityFlag="0">
+            <id>EmuVale20120417082243346</id>
+            <datasource>../../../../../../maps/EmuVale.ecw</datasource>
+            <title></title>
+            <abstract></abstract>
+            <layername>EmuVale</layername>
+            <srs>
+                <spatialrefsys>
+                    <proj4>+proj=longlat +datum=WGS84 +no_defs</proj4>
+                    <srsid>3452</srsid>
+                    <srid>4326</srid>
+                    <authid>EPSG:4326</authid>
+                    <description>WGS 84</description>
+                    <projectionacronym>longlat</projectionacronym>
+                    <ellipsoidacronym>WGS84</ellipsoidacronym>
+                    <geographicflag>true</geographicflag>
+                </spatialrefsys>
+            </srs>
+            <transparencyLevelInt>151</transparencyLevelInt>
+            <customproperties/>
+            <provider>gdal</provider>
+            <rasterrenderer opacity="0.596078" alphaBand="-1" maxOversampling="2" blueBand="3" greenBand="2" type="multibandcolor" invertColor="0" redBand="1">
+                <rasterTransparency/>
+            </rasterrenderer>
+        </maplayer>
+        <maplayer minimumScale="0" maximumScale="1e+08" type="raster" hasScaleBasedVisibilityFlag="0">
+            <id>GlenAplin20120417082243392</id>
+            <datasource>../../../../../../maps/GlenAplin.ecw</datasource>
+            <title></title>
+            <abstract></abstract>
+            <layername>GlenAplin</layername>
+            <srs>
+                <spatialrefsys>
+                    <proj4>+proj=longlat +datum=WGS84 +no_defs</proj4>
+                    <srsid>3452</srsid>
+                    <srid>4326</srid>
+                    <authid>EPSG:4326</authid>
+                    <description>WGS 84</description>
+                    <projectionacronym>longlat</projectionacronym>
+                    <ellipsoidacronym>WGS84</ellipsoidacronym>
+                    <geographicflag>true</geographicflag>
+                </spatialrefsys>
+            </srs>
+            <transparencyLevelInt>151</transparencyLevelInt>
+            <customproperties/>
+            <provider>gdal</provider>
+            <rasterrenderer opacity="0.596078" alphaBand="-1" maxOversampling="2" blueBand="3" greenBand="2" type="multibandcolor" invertColor="0" redBand="1">
+                <rasterTransparency/>
+            </rasterrenderer>
+        </maplayer>
+        <maplayer minimumScale="0" maximumScale="1e+08" type="raster" hasScaleBasedVisibilityFlag="0">
+            <id>Hendon20120417082243439</id>
+            <datasource>../../../../../../maps/Hendon.ecw</datasource>
+            <title></title>
+            <abstract></abstract>
+            <layername>Hendon</layername>
+            <srs>
+                <spatialrefsys>
+                    <proj4>+proj=longlat +datum=WGS84 +no_defs</proj4>
+                    <srsid>3452</srsid>
+                    <srid>4326</srid>
+                    <authid>EPSG:4326</authid>
+                    <description>WGS 84</description>
+                    <projectionacronym>longlat</projectionacronym>
+                    <ellipsoidacronym>WGS84</ellipsoidacronym>
+                    <geographicflag>true</geographicflag>
+                </spatialrefsys>
+            </srs>
+            <transparencyLevelInt>153</transparencyLevelInt>
+            <customproperties/>
+            <provider>gdal</provider>
+            <rasterrenderer opacity="0.6" alphaBand="-1" maxOversampling="2" blueBand="3" greenBand="2" type="multibandcolor" invertColor="0" redBand="1">
+                <rasterTransparency/>
+            </rasterrenderer>
+        </maplayer>
+        <maplayer minimumScale="0" maximumScale="1e+08" type="raster" hasScaleBasedVisibilityFlag="0">
+            <id>Karara20120417082243486</id>
+            <datasource>../../../../../../maps/Karara.ecw</datasource>
+            <title></title>
+            <abstract></abstract>
+            <layername>Karara</layername>
+            <srs>
+                <spatialrefsys>
+                    <proj4>+proj=longlat +datum=WGS84 +no_defs</proj4>
+                    <srsid>3452</srsid>
+                    <srid>4326</srid>
+                    <authid>EPSG:4326</authid>
+                    <description>WGS 84</description>
+                    <projectionacronym>longlat</projectionacronym>
+                    <ellipsoidacronym>WGS84</ellipsoidacronym>
+                    <geographicflag>true</geographicflag>
+                </spatialrefsys>
+            </srs>
+            <transparencyLevelInt>153</transparencyLevelInt>
+            <customproperties/>
+            <provider>gdal</provider>
+            <rasterrenderer opacity="0.6" alphaBand="-1" maxOversampling="2" blueBand="3" greenBand="2" type="multibandcolor" invertColor="0" redBand="1">
+                <rasterTransparency/>
+            </rasterrenderer>
+        </maplayer>
+        <maplayer minimumScale="0" maximumScale="1e+08" type="raster" hasScaleBasedVisibilityFlag="0">
+            <id>Killarney20120417082243533</id>
+            <datasource>../../../../../../maps/Killarney.ecw</datasource>
+            <title></title>
+            <abstract></abstract>
+            <layername>Killarney</layername>
+            <srs>
+                <spatialrefsys>
+                    <proj4>+proj=longlat +datum=WGS84 +no_defs</proj4>
+                    <srsid>3452</srsid>
+                    <srid>4326</srid>
+                    <authid>EPSG:4326</authid>
+                    <description>WGS 84</description>
+                    <projectionacronym>longlat</projectionacronym>
+                    <ellipsoidacronym>WGS84</ellipsoidacronym>
+                    <geographicflag>true</geographicflag>
+                </spatialrefsys>
+            </srs>
+            <transparencyLevelInt>153</transparencyLevelInt>
+            <customproperties/>
+            <provider>gdal</provider>
+            <rasterrenderer opacity="0.6" alphaBand="-1" maxOversampling="2" blueBand="3" greenBand="2" type="multibandcolor" invertColor="0" redBand="1">
+                <rasterTransparency/>
+            </rasterrenderer>
+        </maplayer>
+        <maplayer minimumScale="0" maximumScale="1e+08" type="raster" hasScaleBasedVisibilityFlag="0">
+            <id>Leyburn20120417082243580</id>
+            <datasource>../../../../../../maps/Leyburn.ecw</datasource>
+            <title></title>
+            <abstract></abstract>
+            <layername>Leyburn</layername>
+            <srs>
+                <spatialrefsys>
+                    <proj4>+proj=longlat +datum=WGS84 +no_defs</proj4>
+                    <srsid>3452</srsid>
+                    <srid>4326</srid>
+                    <authid>EPSG:4326</authid>
+                    <description>WGS 84</description>
+                    <projectionacronym>longlat</projectionacronym>
+                    <ellipsoidacronym>WGS84</ellipsoidacronym>
+                    <geographicflag>true</geographicflag>
+                </spatialrefsys>
+            </srs>
+            <transparencyLevelInt>153</transparencyLevelInt>
+            <customproperties/>
+            <provider>gdal</provider>
+            <rasterrenderer opacity="0.6" alphaBand="-1" maxOversampling="2" blueBand="3" greenBand="2" type="multibandcolor" invertColor="0" redBand="1">
+                <rasterTransparency/>
+            </rasterrenderer>
+        </maplayer>
+        <maplayer minimumScale="0" maximumScale="1e+08" type="raster" hasScaleBasedVisibilityFlag="0">
+            <id>Maryvale20120417082243642</id>
+            <datasource>../../../../../../maps/Maryvale.ecw</datasource>
+            <title></title>
+            <abstract></abstract>
+            <layername>Maryvale</layername>
+            <srs>
+                <spatialrefsys>
+                    <proj4>+proj=longlat +datum=WGS84 +no_defs</proj4>
+                    <srsid>3452</srsid>
+                    <srid>4326</srid>
+                    <authid>EPSG:4326</authid>
+                    <description>WGS 84</description>
+                    <projectionacronym>longlat</projectionacronym>
+                    <ellipsoidacronym>WGS84</ellipsoidacronym>
+                    <geographicflag>true</geographicflag>
+                </spatialrefsys>
+            </srs>
+            <transparencyLevelInt>151</transparencyLevelInt>
+            <customproperties/>
+            <provider>gdal</provider>
+            <rasterrenderer opacity="0.596078" alphaBand="-1" maxOversampling="2" blueBand="3" greenBand="2" type="multibandcolor" invertColor="0" redBand="1">
+                <rasterTransparency/>
+            </rasterrenderer>
+        </maplayer>
+        <maplayer minimumScale="0" maximumScale="1e+08" type="raster" hasScaleBasedVisibilityFlag="0">
+            <id>MtMarshall20120417082243689</id>
+            <datasource>../../../../../../maps/MtMarshall.ecw</datasource>
+            <title></title>
+            <abstract></abstract>
+            <layername>MtMarshall</layername>
+            <srs>
+                <spatialrefsys>
+                    <proj4>+proj=longlat +datum=WGS84 +no_defs</proj4>
+                    <srsid>3452</srsid>
+                    <srid>4326</srid>
+                    <authid>EPSG:4326</authid>
+                    <description>WGS 84</description>
+                    <projectionacronym>longlat</projectionacronym>
+                    <ellipsoidacronym>WGS84</ellipsoidacronym>
+                    <geographicflag>true</geographicflag>
+                </spatialrefsys>
+            </srs>
+            <transparencyLevelInt>153</transparencyLevelInt>
+            <customproperties/>
+            <provider>gdal</provider>
+            <rasterrenderer opacity="0.6" alphaBand="-1" maxOversampling="2" blueBand="3" greenBand="2" type="multibandcolor" invertColor="0" redBand="1">
+                <rasterTransparency/>
+            </rasterrenderer>
+        </maplayer>
+        <maplayer minimumScale="0" maximumScale="1e+08" type="raster" hasScaleBasedVisibilityFlag="0">
+            <id>Pratten20120417082243736</id>
+            <datasource>../../../../../../maps/Pratten.ecw</datasource>
+            <title></title>
+            <abstract></abstract>
+            <layername>Pratten</layername>
+            <srs>
+                <spatialrefsys>
+                    <proj4>+proj=longlat +datum=WGS84 +no_defs</proj4>
+                    <srsid>3452</srsid>
+                    <srid>4326</srid>
+                    <authid>EPSG:4326</authid>
+                    <description>WGS 84</description>
+                    <projectionacronym>longlat</projectionacronym>
+                    <ellipsoidacronym>WGS84</ellipsoidacronym>
+                    <geographicflag>true</geographicflag>
+                </spatialrefsys>
+            </srs>
+            <transparencyLevelInt>153</transparencyLevelInt>
+            <customproperties/>
+            <provider>gdal</provider>
+            <rasterrenderer opacity="0.6" alphaBand="-1" maxOversampling="2" blueBand="3" greenBand="2" type="multibandcolor" invertColor="0" redBand="1">
+                <rasterTransparency/>
+            </rasterrenderer>
+        </maplayer>
+        <maplayer minimumScale="60000" maximumScale="1e+08" geometry="Line" type="vector" hasScaleBasedVisibilityFlag="0">
+            <id>RoadLabels20120413120001233</id>
+            <datasource>dbname='FieldData' service='FieldData' estimatedmetadata=true srid=28356 type=LINESTRING table="dbo"."RoadLabels" (ogr_geometry) sql=</datasource>
+            <title></title>
+            <abstract></abstract>
+            <layername>Road Labels</layername>
+            <srs>
+                <spatialrefsys>
+                    <proj4>+proj=utm +zone=56 +south +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs</proj4>
+                    <srsid>2450</srsid>
+                    <srid>28356</srid>
+                    <authid>EPSG:28356</authid>
+                    <description>GDA94 / MGA zone 56</description>
+                    <projectionacronym>utm</projectionacronym>
+                    <ellipsoidacronym>GRS80</ellipsoidacronym>
+                    <geographicflag>false</geographicflag>
+                </spatialrefsys>
+            </srs>
+            <transparencyLevelInt>255</transparencyLevelInt>
+            <provider encoding="System">mssql</provider>
+            <vectorjoins/>
+            <renderer-v2 symbollevels="0" type="singleSymbol">
+                <symbols>
+                    <symbol outputUnit="MM" alpha="1" type="line" name="0">
+                        <layer pass="1" class="SimpleLine" locked="0">
+                            <prop k="capstyle" v="square"/>
+                            <prop k="color" v="185,185,185,255"/>
+                            <prop k="customdash" v="5;2"/>
+                            <prop k="joinstyle" v="bevel"/>
+                            <prop k="offset" v="0"/>
+                            <prop k="penstyle" v="no"/>
+                            <prop k="use_custom_dash" v="0"/>
+                            <prop k="width" v="0.26"/>
+                        </layer>
+                    </symbol>
+                </symbols>
+                <rotation field=""/>
+                <sizescale field=""/>
+            </renderer-v2>
+            <customproperties>
+                <property key="labeling" value="pal"/>
+                <property key="labeling/addDirectionSymbol" value="false"/>
+                <property key="labeling/bufferColorB" value="245"/>
+                <property key="labeling/bufferColorG" value="245"/>
+                <property key="labeling/bufferColorR" value="245"/>
+                <property key="labeling/bufferSize" value="0.8"/>
+                <property key="labeling/dataDefinedProperty0" value=""/>
+                <property key="labeling/dataDefinedProperty1" value=""/>
+                <property key="labeling/dataDefinedProperty10" value=""/>
+                <property key="labeling/dataDefinedProperty11" value=""/>
+                <property key="labeling/dataDefinedProperty12" value=""/>
+                <property key="labeling/dataDefinedProperty13" value=""/>
+                <property key="labeling/dataDefinedProperty14" value=""/>
+                <property key="labeling/dataDefinedProperty2" value=""/>
+                <property key="labeling/dataDefinedProperty3" value=""/>
+                <property key="labeling/dataDefinedProperty4" value=""/>
+                <property key="labeling/dataDefinedProperty5" value=""/>
+                <property key="labeling/dataDefinedProperty6" value=""/>
+                <property key="labeling/dataDefinedProperty7" value=""/>
+                <property key="labeling/dataDefinedProperty8" value=""/>
+                <property key="labeling/dataDefinedProperty9" value=""/>
+                <property key="labeling/decimals" value="0"/>
+                <property key="labeling/dist" value="0"/>
+                <property key="labeling/distInMapUnits" value="false"/>
+                <property key="labeling/enabled" value="true"/>
+                <property key="labeling/fieldName" value="roadlabel"/>
+                <property key="labeling/fontFamily" value="Arial"/>
+                <property key="labeling/fontItalic" value="false"/>
+                <property key="labeling/fontSize" value="8"/>
+                <property key="labeling/fontSizeInMapUnits" value="false"/>
+                <property key="labeling/fontStrikeout" value="false"/>
+                <property key="labeling/fontUnderline" value="false"/>
+                <property key="labeling/fontWeight" value="50"/>
+                <property key="labeling/formatNumbers" value="false"/>
+                <property key="labeling/isExpression" value="false"/>
+                <property key="labeling/labelPerPart" value="false"/>
+                <property key="labeling/mergeLines" value="false"/>
+                <property key="labeling/minFeatureSize" value="3"/>
+                <property key="labeling/obstacle" value="true"/>
+                <property key="labeling/placement" value="3"/>
+                <property key="labeling/placementFlags" value="9"/>
+                <property key="labeling/plussign" value="true"/>
+                <property key="labeling/priority" value="5"/>
+                <property key="labeling/scaleMax" value="25000"/>
+                <property key="labeling/scaleMin" value="1"/>
+                <property key="labeling/textColorB" value="62"/>
+                <property key="labeling/textColorG" value="62"/>
+                <property key="labeling/textColorR" value="62"/>
+                <property key="labeling/wrapChar" value=""/>
+            </customproperties>
+            <displayfield>ogr_fid</displayfield>
+            <label>0</label>
+            <labelattributes>
+                <label fieldname="" text="Label"/>
+                <family fieldname="" name="MS Shell Dlg 2"/>
+                <size fieldname="" units="pt" value="12"/>
+                <bold fieldname="" on="0"/>
+                <italic fieldname="" on="0"/>
+                <underline fieldname="" on="0"/>
+                <strikeout fieldname="" on="0"/>
+                <color fieldname="" red="0" blue="0" green="0"/>
+                <x fieldname=""/>
+                <y fieldname=""/>
+                <offset x="0" y="0" units="pt" yfieldname="" xfieldname=""/>
+                <angle fieldname="" value="0" auto="0"/>
+                <alignment fieldname="" value="center"/>
+                <buffercolor fieldname="" red="255" blue="255" green="255"/>
+                <buffersize fieldname="" units="pt" value="1"/>
+                <bufferenabled fieldname="" on=""/>
+                <multilineenabled fieldname="" on=""/>
+                <selectedonly on=""/>
+            </labelattributes>
+            <edittypes>
+                <edittype type="0" name="constructiontype"/>
+                <edittype type="0" name="ogr_fid"/>
+                <edittype type="0" name="roadlabel"/>
+                <edittype type="0" name="roadnumber"/>
+            </edittypes>
+            <editform>.</editform>
+            <editforminit></editforminit>
+            <annotationform>.</annotationform>
+            <attributeactions/>
+        </maplayer>
+        <maplayer minimumScale="60000" maximumScale="1e+08" geometry="Line" type="vector" hasScaleBasedVisibilityFlag="1">
+            <id>RoadLabels20120417112027552</id>
+            <datasource>dbname='FieldData' service='FieldData' estimatedmetadata=true srid=28356 type=LINESTRING table="dbo"."RoadLabels" (ogr_geometry) sql=</datasource>
+            <title></title>
+            <abstract></abstract>
+            <layername>Road Labels Centrelines</layername>
+            <srs>
+                <spatialrefsys>
+                    <proj4>+proj=utm +zone=56 +south +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs</proj4>
+                    <srsid>2450</srsid>
+                    <srid>28356</srid>
+                    <authid>EPSG:28356</authid>
+                    <description>GDA94 / MGA zone 56</description>
+                    <projectionacronym>utm</projectionacronym>
+                    <ellipsoidacronym>GRS80</ellipsoidacronym>
+                    <geographicflag>false</geographicflag>
+                </spatialrefsys>
+            </srs>
+            <transparencyLevelInt>255</transparencyLevelInt>
+            <provider encoding="System">mssql</provider>
+            <vectorjoins/>
+            <renderer-v2 symbollevels="0" type="singleSymbol">
+                <symbols>
+                    <symbol outputUnit="MM" alpha="1" type="line" name="0">
+                        <layer pass="0" class="SimpleLine" locked="0">
+                            <prop k="capstyle" v="square"/>
+                            <prop k="color" v="198,198,198,255"/>
+                            <prop k="customdash" v="5;2"/>
+                            <prop k="joinstyle" v="bevel"/>
+                            <prop k="offset" v="0"/>
+                            <prop k="penstyle" v="solid"/>
+                            <prop k="use_custom_dash" v="0"/>
+                            <prop k="width" v="0.26"/>
+                        </layer>
+                    </symbol>
+                </symbols>
+                <rotation field=""/>
+                <sizescale field=""/>
+            </renderer-v2>
+            <customproperties/>
+            <displayfield>ogr_fid</displayfield>
+            <label>0</label>
+            <labelattributes>
+                <label fieldname="" text="Label"/>
+                <family fieldname="" name="MS Shell Dlg 2"/>
+                <size fieldname="" units="pt" value="12"/>
+                <bold fieldname="" on="0"/>
+                <italic fieldname="" on="0"/>
+                <underline fieldname="" on="0"/>
+                <strikeout fieldname="" on="0"/>
+                <color fieldname="" red="0" blue="0" green="0"/>
+                <x fieldname=""/>
+                <y fieldname=""/>
+                <offset x="0" y="0" units="pt" yfieldname="" xfieldname=""/>
+                <angle fieldname="" value="0" auto="0"/>
+                <alignment fieldname="" value="center"/>
+                <buffercolor fieldname="" red="255" blue="255" green="255"/>
+                <buffersize fieldname="" units="pt" value="1"/>
+                <bufferenabled fieldname="" on=""/>
+                <multilineenabled fieldname="" on=""/>
+                <selectedonly on=""/>
+            </labelattributes>
+            <edittypes>
+                <edittype type="0" name="constructiontype"/>
+                <edittype type="0" name="ogr_fid"/>
+                <edittype type="0" name="roadlabel"/>
+                <edittype type="0" name="roadnumber"/>
+            </edittypes>
+            <editform>.</editform>
+            <editforminit></editforminit>
+            <annotationform>.</annotationform>
+            <attributeactions/>
+        </maplayer>
+        <maplayer minimumScale="0" maximumScale="3000" geometry="Point" type="vector" hasScaleBasedVisibilityFlag="1">
+            <id>SewerNodes20120417120902965</id>
+            <datasource>dbname='FieldData' service='FieldData' estimatedmetadata=true srid=28356 type=POINT table="dbo"."SewerNodes" (ogr_geometry) sql=</datasource>
+            <title></title>
+            <abstract></abstract>
+            <layername>Sewer Nodes</layername>
+            <srs>
+                <spatialrefsys>
+                    <proj4>+proj=utm +zone=56 +south +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs</proj4>
+                    <srsid>2450</srsid>
+                    <srid>28356</srid>
+                    <authid>EPSG:28356</authid>
+                    <description>GDA94 / MGA zone 56</description>
+                    <projectionacronym>utm</projectionacronym>
+                    <ellipsoidacronym>GRS80</ellipsoidacronym>
+                    <geographicflag>false</geographicflag>
+                </spatialrefsys>
+            </srs>
+            <transparencyLevelInt>255</transparencyLevelInt>
+            <provider encoding="System">mssql</provider>
+            <vectorjoins/>
+            <renderer-v2 attr="nodetype" symbollevels="0" type="categorizedSymbol">
+                <categories>
+                    <category symbol="0" value="Air Valve - Recycled Water" label="Air Valve - Recycled Water"/>
+                    <category symbol="1" value="Inspection Opening" label="Inspection Opening"/>
+                    <category symbol="2" value="Maintenance Shaft" label="Maintenance Shaft"/>
+                    <category symbol="3" value="Manhole" label="Manhole"/>
+                    <category symbol="4" value="Manhole (Rectangular)" label="Manhole (Rectangular)"/>
+                    <category symbol="5" value="Pump Station (Valued Separately)" label="Pump Station (Valued Separately)"/>
+                    <category symbol="6" value="Scour Valve - Recycled Water" label="Scour Valve - Recycled Water"/>
+                    <category symbol="7" value="Sluice Valve - Recycled Water" label="Sluice Valve - Recycled Water"/>
+                    <category symbol="8" value="Stop Valve" label="Stop Valve"/>
+                    <category symbol="9" value="Supply Point - Recycled Water" label="Supply Point - Recycled Water"/>
+                </categories>
+                <symbols>
+                    <symbol outputUnit="MM" alpha="1" type="marker" name="0">
+                        <layer pass="0" class="FontMarker" locked="0">
+                            <prop k="angle" v="0"/>
+                            <prop k="chr" v="¡"/>
+                            <prop k="color" v="255,170,0,255"/>
+                            <prop k="font" v="Wingdings"/>
+                            <prop k="offset" v="0,0"/>
+                            <prop k="size" v="3.23"/>
+                        </layer>
+                        <layer pass="0" class="SimpleMarker" locked="0">
+                            <prop k="angle" v="0"/>
+                            <prop k="color" v="255,0,0,255"/>
+                            <prop k="color_border" v="145,145,145,255"/>
+                            <prop k="name" v="cross2"/>
+                            <prop k="offset" v="0,0"/>
+                            <prop k="size" v="2"/>
+                        </layer>
+                    </symbol>
+                    <symbol outputUnit="MM" alpha="1" type="marker" name="1">
+                        <layer pass="0" class="SimpleMarker" locked="0">
+                            <prop k="angle" v="0"/>
+                            <prop k="color" v="189,215,231,255"/>
+                            <prop k="color_border" v="0,0,0,255"/>
+                            <prop k="name" v="regular_star"/>
+                            <prop k="offset" v="0,0"/>
+                            <prop k="size" v="2"/>
+                        </layer>
+                    </symbol>
+                    <symbol outputUnit="MM" alpha="1" type="marker" name="2">
+                        <layer pass="0" class="SimpleMarker" locked="0">
+                            <prop k="angle" v="0"/>
+                            <prop k="color" v="189,215,231,255"/>
+                            <prop k="color_border" v="0,0,0,255"/>
+                            <prop k="name" v="circle"/>
+                            <prop k="offset" v="0,0"/>
+                            <prop k="size" v="2"/>
+                        </layer>
+                    </symbol>
+                    <symbol outputUnit="MM" alpha="1" type="marker" name="3">
+                        <layer pass="0" class="SimpleMarker" locked="0">
+                            <prop k="angle" v="0"/>
+                            <prop k="color" v="210,126,231,255"/>
+                            <prop k="color_border" v="0,0,0,255"/>
+                            <prop k="name" v="circle"/>
+                            <prop k="offset" v="0,0"/>
+                            <prop k="size" v="2"/>
+                        </layer>
+                    </symbol>
+                    <symbol outputUnit="MM" alpha="1" type="marker" name="4">
+                        <layer pass="0" class="SimpleMarker" locked="0">
+                            <prop k="angle" v="0"/>
+                            <prop k="color" v="210,126,231,255"/>
+                            <prop k="color_border" v="0,0,0,255"/>
+                            <prop k="name" v="square"/>
+                            <prop k="offset" v="0,0"/>
+                            <prop k="size" v="1.7"/>
+                        </layer>
+                    </symbol>
+                    <symbol outputUnit="MM" alpha="1" type="marker" name="5">
+                        <layer pass="0" class="FontMarker" locked="0">
+                            <prop k="angle" v="0"/>
+                            <prop k="chr" v="G"/>
+                            <prop k="color" v="70,70,70,255"/>
+                            <prop k="font" v="Webdings"/>
+                            <prop k="offset" v="0,0"/>
+                            <prop k="size" v="4.23"/>
+                        </layer>
+                    </symbol>
+                    <symbol outputUnit="MM" alpha="1" type="marker" name="6">
+                        <layer pass="0" class="FontMarker" locked="0">
+                            <prop k="angle" v="0"/>
+                            <prop k="chr" v="¡"/>
+                            <prop k="color" v="255,0,0,255"/>
+                            <prop k="font" v="Wingdings"/>
+                            <prop k="offset" v="0,0"/>
+                            <prop k="size" v="3.23"/>
+                        </layer>
+                        <layer pass="0" class="SimpleMarker" locked="0">
+                            <prop k="angle" v="0"/>
+                            <prop k="color" v="255,0,0,255"/>
+                            <prop k="color_border" v="145,145,145,255"/>
+                            <prop k="name" v="cross2"/>
+                            <prop k="offset" v="0,0"/>
+                            <prop k="size" v="2"/>
+                        </layer>
+                    </symbol>
+                    <symbol outputUnit="MM" alpha="1" type="marker" name="7">
+                        <layer pass="0" class="FontMarker" locked="0">
+                            <prop k="angle" v="90"/>
+                            <prop k="chr" v="ê"/>
+                            <prop k="color" v="0,0,0,255"/>
+                            <prop k="font" v="Webdings"/>
+                            <prop k="offset" v="0,0.5"/>
+                            <prop k="size" v="2.1"/>
+                        </layer>
+                        <layer pass="0" class="FontMarker" locked="0">
+                            <prop k="angle" v="270"/>
+                            <prop k="chr" v="ê"/>
+                            <prop k="color" v="0,0,0,255"/>
+                            <prop k="font" v="Webdings"/>
+                            <prop k="offset" v="-0.3,0.5"/>
+                            <prop k="size" v="2.1"/>
+                        </layer>
+                    </symbol>
+                    <symbol outputUnit="MM" alpha="1" type="marker" name="8">
+                        <layer pass="0" class="FontMarker" locked="0">
+                            <prop k="angle" v="90"/>
+                            <prop k="chr" v="ê"/>
+                            <prop k="color" v="0,0,0,255"/>
+                            <prop k="font" v="Webdings"/>
+                            <prop k="offset" v="0.2,0.3"/>
+                            <prop k="size" v="2.5"/>
+                        </layer>
+                        <layer pass="0" class="FontMarker" locked="0">
+                            <prop k="angle" v="270"/>
+                            <prop k="chr" v="ê"/>
+                            <prop k="color" v="0,0,0,255"/>
+                            <prop k="font" v="Webdings"/>
+                            <prop k="offset" v="-0.4,0.3"/>
+                            <prop k="size" v="2.5"/>
+                        </layer>
+                    </symbol>
+                    <symbol outputUnit="MM" alpha="1" type="marker" name="9">
+                        <layer pass="0" class="SimpleMarker" locked="0">
+                            <prop k="angle" v="0"/>
+                            <prop k="color" v="8,81,156,255"/>
+                            <prop k="color_border" v="0,0,0,255"/>
+                            <prop k="name" v="circle"/>
+                            <prop k="offset" v="0,0"/>
+                            <prop k="size" v="2"/>
+                        </layer>
+                    </symbol>
+                </symbols>
+                <source-symbol>
+                    <symbol outputUnit="MM" alpha="1" type="marker" name="0">
+                        <layer pass="0" class="SimpleMarker" locked="0">
+                            <prop k="angle" v="0"/>
+                            <prop k="color" v="184,238,112,255"/>
+                            <prop k="color_border" v="0,0,0,255"/>
+                            <prop k="name" v="circle"/>
+                            <prop k="offset" v="0,0"/>
+                            <prop k="size" v="2"/>
+                        </layer>
+                    </symbol>
+                </source-symbol>
+                <colorramp type="colorbrewer" name="[source]">
+                    <prop k="colors" v="5"/>
+                    <prop k="schemeName" v="Blues"/>
+                </colorramp>
+                <rotation field=""/>
+                <sizescale field=""/>
+            </renderer-v2>
+            <customproperties>
+                <property key="labeling" value="pal"/>
+                <property key="labeling/addDirectionSymbol" value="false"/>
+                <property key="labeling/bufferColorB" value="245"/>
+                <property key="labeling/bufferColorG" value="245"/>
+                <property key="labeling/bufferColorR" value="245"/>
+                <property key="labeling/bufferSize" value="0.8"/>
+                <property key="labeling/dataDefinedProperty0" value=""/>
+                <property key="labeling/dataDefinedProperty1" value=""/>
+                <property key="labeling/dataDefinedProperty10" value=""/>
+                <property key="labeling/dataDefinedProperty11" value=""/>
+                <property key="labeling/dataDefinedProperty12" value=""/>
+                <property key="labeling/dataDefinedProperty13" value=""/>
+                <property key="labeling/dataDefinedProperty14" value=""/>
+                <property key="labeling/dataDefinedProperty2" value=""/>
+                <property key="labeling/dataDefinedProperty3" value=""/>
+                <property key="labeling/dataDefinedProperty4" value=""/>
+                <property key="labeling/dataDefinedProperty5" value=""/>
+                <property key="labeling/dataDefinedProperty6" value=""/>
+                <property key="labeling/dataDefinedProperty7" value=""/>
+                <property key="labeling/dataDefinedProperty8" value=""/>
+                <property key="labeling/dataDefinedProperty9" value=""/>
+                <property key="labeling/decimals" value="0"/>
+                <property key="labeling/dist" value="2"/>
+                <property key="labeling/distInMapUnits" value="false"/>
+                <property key="labeling/enabled" value="true"/>
+                <property key="labeling/fieldName" value="assetid"/>
+                <property key="labeling/fontFamily" value="Arial"/>
+                <property key="labeling/fontItalic" value="false"/>
+                <property key="labeling/fontSize" value="7"/>
+                <property key="labeling/fontSizeInMapUnits" value="false"/>
+                <property key="labeling/fontStrikeout" value="false"/>
+                <property key="labeling/fontUnderline" value="false"/>
+                <property key="labeling/fontWeight" value="50"/>
+                <property key="labeling/formatNumbers" value="false"/>
+                <property key="labeling/isExpression" value="false"/>
+                <property key="labeling/labelPerPart" value="false"/>
+                <property key="labeling/mergeLines" value="false"/>
+                <property key="labeling/minFeatureSize" value="0"/>
+                <property key="labeling/obstacle" value="true"/>
+                <property key="labeling/placement" value="0"/>
+                <property key="labeling/placementFlags" value="0"/>
+                <property key="labeling/plussign" value="true"/>
+                <property key="labeling/priority" value="5"/>
+                <property key="labeling/scaleMax" value="400"/>
+                <property key="labeling/scaleMin" value="1"/>
+                <property key="labeling/textColorB" value="112"/>
+                <property key="labeling/textColorG" value="68"/>
+                <property key="labeling/textColorR" value="177"/>
+                <property key="labeling/wrapChar" value=""/>
+            </customproperties>
+            <displayfield>depthcategorydescription</displayfield>
+            <label>0</label>
+            <labelattributes>
+                <label fieldname="" text="Label"/>
+                <family fieldname="" name="MS Shell Dlg 2"/>
+                <size fieldname="" units="pt" value="12"/>
+                <bold fieldname="" on="0"/>
+                <italic fieldname="" on="0"/>
+                <underline fieldname="" on="0"/>
+                <strikeout fieldname="" on="0"/>
+                <color fieldname="" red="0" blue="0" green="0"/>
+                <x fieldname=""/>
+                <y fieldname=""/>
+                <offset x="0" y="0" units="pt" yfieldname="" xfieldname=""/>
+                <angle fieldname="" value="0" auto="0"/>
+                <alignment fieldname="" value="center"/>
+                <buffercolor fieldname="" red="255" blue="255" green="255"/>
+                <buffersize fieldname="" units="pt" value="1"/>
+                <bufferenabled fieldname="" on=""/>
+                <multilineenabled fieldname="" on=""/>
+                <selectedonly on=""/>
+            </labelattributes>
+            <edittypes>
+                <edittype type="0" name="assetid"/>
+                <edittype type="0" name="benchcondition"/>
+                <edittype type="0" name="coverlevel"/>
+                <edittype type="0" name="deprecatedid"/>
+                <edittype type="0" name="depthcategorydescription"/>
+                <edittype type="0" name="lidcondition"/>
+                <edittype type="0" name="manholecondition"/>
+                <edittype type="0" name="nodetype"/>
+                <edittype type="0" name="overallcondition"/>
+            </edittypes>
+            <editform>.</editform>
+            <editforminit></editforminit>
+            <annotationform>.</annotationform>
+            <attributeactions/>
+        </maplayer>
+        <maplayer minimumScale="0" maximumScale="20000" geometry="Line" type="vector" hasScaleBasedVisibilityFlag="1">
+            <id>SewerPipes20120413110348873</id>
+            <datasource>dbname='FieldData' service='FieldData' estimatedmetadata=true srid=28356 type=LINESTRING table="dbo"."SewerPipes" (ogr_geometry) sql=</datasource>
+            <title></title>
+            <abstract></abstract>
+            <layername>Sewer Pipes</layername>
+            <srs>
+                <spatialrefsys>
+                    <proj4>+proj=utm +zone=56 +south +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs</proj4>
+                    <srsid>2450</srsid>
+                    <srid>28356</srid>
+                    <authid>EPSG:28356</authid>
+                    <description>GDA94 / MGA zone 56</description>
+                    <projectionacronym>utm</projectionacronym>
+                    <ellipsoidacronym>GRS80</ellipsoidacronym>
+                    <geographicflag>false</geographicflag>
+                </spatialrefsys>
+            </srs>
+            <transparencyLevelInt>255</transparencyLevelInt>
+            <provider encoding="System">mssql</provider>
+            <vectorjoins/>
+            <renderer-v2 attr="pipetype" symbollevels="0" type="categorizedSymbol">
+                <categories>
+                    <category symbol="0" value="CED" label="CED"/>
+                    <category symbol="1" value="Combined Drain" label="Combined Drain"/>
+                    <category symbol="2" value="Effluent Reuse" label="Effluent Reuse"/>
+                    <category symbol="3" value="House Connection" label="House Connection"/>
+                    <category symbol="4" value="Licensed Overflow" label="Licensed Overflow"/>
+                    <category symbol="5" value="Rising Main" label="Rising Main"/>
+                    <category symbol="6" value="Sewer Main" label="Sewer Main"/>
+                </categories>
+                <symbols>
+                    <symbol outputUnit="MM" alpha="1" type="line" name="0">
+                        <layer pass="0" class="SimpleLine" locked="0">
+                            <prop k="capstyle" v="square"/>
+                            <prop k="color" v="216,216,216,255"/>
+                            <prop k="customdash" v="5;2"/>
+                            <prop k="joinstyle" v="bevel"/>
+                            <prop k="offset" v="0"/>
+                            <prop k="penstyle" v="solid"/>
+                            <prop k="use_custom_dash" v="0"/>
+                            <prop k="width" v="0.2"/>
+                        </layer>
+                        <layer pass="0" class="SimpleLine" locked="0">
+                            <prop k="capstyle" v="square"/>
+                            <prop k="color" v="187,119,255,255"/>
+                            <prop k="customdash" v="1.2;1"/>
+                            <prop k="joinstyle" v="bevel"/>
+                            <prop k="offset" v="0"/>
+                            <prop k="penstyle" v="solid"/>
+                            <prop k="use_custom_dash" v="1"/>
+                            <prop k="width" v="0.2"/>
+                        </layer>
+                    </symbol>
+                    <symbol outputUnit="MM" alpha="1" type="line" name="1">
+                        <layer pass="0" class="SimpleLine" locked="0">
+                            <prop k="capstyle" v="square"/>
+                            <prop k="color" v="197,138,255,255"/>
+                            <prop k="customdash" v="4;2"/>
+                            <prop k="joinstyle" v="bevel"/>
+                            <prop k="offset" v="0"/>
+                            <prop k="penstyle" v="solid"/>
+                            <prop k="use_custom_dash" v="1"/>
+                            <prop k="width" v="0.26"/>
+                        </layer>
+                    </symbol>
+                    <symbol outputUnit="MM" alpha="1" type="line" name="2">
+                        <layer pass="0" class="SimpleLine" locked="0">
+                            <prop k="capstyle" v="square"/>
+                            <prop k="color" v="213,170,255,255"/>
+                            <prop k="customdash" v="5;2"/>
+                            <prop k="joinstyle" v="bevel"/>
+                            <prop k="offset" v="0"/>
+                            <prop k="penstyle" v="dash dot"/>
+                            <prop k="use_custom_dash" v="0"/>
+                            <prop k="width" v="0.7"/>
+                        </layer>
+                    </symbol>
+                    <symbol outputUnit="MM" alpha="1" type="line" name="3">
+                        <layer pass="0" class="SimpleLine" locked="0">
+                            <prop k="capstyle" v="square"/>
+                            <prop k="color" v="107,174,214,255"/>
+                            <prop k="customdash" v="5;2"/>
+                            <prop k="joinstyle" v="bevel"/>
+                            <prop k="offset" v="0"/>
+                            <prop k="penstyle" v="solid"/>
+                            <prop k="use_custom_dash" v="0"/>
+                            <prop k="width" v="0.26"/>
+                        </layer>
+                    </symbol>
+                    <symbol outputUnit="MM" alpha="1" type="line" name="4">
+                        <layer pass="0" class="SimpleLine" locked="0">
+                            <prop k="capstyle" v="square"/>
+                            <prop k="color" v="255,190,125,255"/>
+                            <prop k="customdash" v="7;2"/>
+                            <prop k="joinstyle" v="bevel"/>
+                            <prop k="offset" v="0"/>
+                            <prop k="penstyle" v="solid"/>
+                            <prop k="use_custom_dash" v="1"/>
+                            <prop k="width" v="0.45"/>
+                        </layer>
+                    </symbol>
+                    <symbol outputUnit="MM" alpha="1" type="line" name="5">
+                        <layer pass="0" class="SimpleLine" locked="0">
+                            <prop k="capstyle" v="square"/>
+                            <prop k="color" v="128,0,255,255"/>
+                            <prop k="customdash" v="5;3"/>
+                            <prop k="joinstyle" v="bevel"/>
+                            <prop k="offset" v="0"/>
+                            <prop k="penstyle" v="solid"/>
+                            <prop k="use_custom_dash" v="1"/>
+                            <prop k="width" v="0.6"/>
+                        </layer>
+                    </symbol>
+                    <symbol outputUnit="MM" alpha="1" type="line" name="6">
+                        <layer pass="0" class="SimpleLine" locked="0">
+                            <prop k="capstyle" v="square"/>
+                            <prop k="color" v="216,216,216,255"/>
+                            <prop k="customdash" v="5;2"/>
+                            <prop k="joinstyle" v="bevel"/>
+                            <prop k="offset" v="0"/>
+                            <prop k="penstyle" v="solid"/>
+                            <prop k="use_custom_dash" v="0"/>
+                            <prop k="width" v="0.4"/>
+                        </layer>
+                        <layer pass="0" class="SimpleLine" locked="0">
+                            <prop k="capstyle" v="square"/>
+                            <prop k="color" v="187,119,255,255"/>
+                            <prop k="customdash" v="3;3"/>
+                            <prop k="joinstyle" v="bevel"/>
+                            <prop k="offset" v="0"/>
+                            <prop k="penstyle" v="dash"/>
+                            <prop k="use_custom_dash" v="1"/>
+                            <prop k="width" v="0.4"/>
+                        </layer>
+                    </symbol>
+                </symbols>
+                <source-symbol>
+                    <symbol outputUnit="MM" alpha="1" type="line" name="0">
+                        <layer pass="0" class="SimpleLine" locked="0">
+                            <prop k="capstyle" v="square"/>
+                            <prop k="color" v="203,151,131,255"/>
+                            <prop k="customdash" v="5;2"/>
+                            <prop k="joinstyle" v="bevel"/>
+                            <prop k="offset" v="0"/>
+                            <prop k="penstyle" v="solid"/>
+                            <prop k="use_custom_dash" v="0"/>
+                            <prop k="width" v="0.26"/>
+                        </layer>
+                    </symbol>
+                </source-symbol>
+                <colorramp type="colorbrewer" name="[source]">
+                    <prop k="colors" v="5"/>
+                    <prop k="schemeName" v="Blues"/>
+                </colorramp>
+                <rotation field=""/>
+                <sizescale field=""/>
+            </renderer-v2>
+            <customproperties>
+                <property key="labeling" value="pal"/>
+                <property key="labeling/addDirectionSymbol" value="false"/>
+                <property key="labeling/bufferColorB" value="245"/>
+                <property key="labeling/bufferColorG" value="245"/>
+                <property key="labeling/bufferColorR" value="245"/>
+                <property key="labeling/bufferSize" value="0.8"/>
+                <property key="labeling/dataDefinedProperty0" value=""/>
+                <property key="labeling/dataDefinedProperty1" value=""/>
+                <property key="labeling/dataDefinedProperty10" value=""/>
+                <property key="labeling/dataDefinedProperty11" value=""/>
+                <property key="labeling/dataDefinedProperty12" value=""/>
+                <property key="labeling/dataDefinedProperty13" value=""/>
+                <property key="labeling/dataDefinedProperty14" value=""/>
+                <property key="labeling/dataDefinedProperty2" value=""/>
+                <property key="labeling/dataDefinedProperty3" value=""/>
+                <property key="labeling/dataDefinedProperty4" value=""/>
+                <property key="labeling/dataDefinedProperty5" value=""/>
+                <property key="labeling/dataDefinedProperty6" value=""/>
+                <property key="labeling/dataDefinedProperty7" value=""/>
+                <property key="labeling/dataDefinedProperty8" value=""/>
+                <property key="labeling/dataDefinedProperty9" value=""/>
+                <property key="labeling/decimals" value="0"/>
+                <property key="labeling/dist" value="1"/>
+                <property key="labeling/distInMapUnits" value="false"/>
+                <property key="labeling/enabled" value="true"/>
+                <property key="labeling/fieldName" value=" &quot;diameter&quot;  ||  ' ' ||  &quot;materialcode&quot; "/>
+                <property key="labeling/fontFamily" value="Arial"/>
+                <property key="labeling/fontItalic" value="false"/>
+                <property key="labeling/fontSize" value="7"/>
+                <property key="labeling/fontSizeInMapUnits" value="false"/>
+                <property key="labeling/fontStrikeout" value="false"/>
+                <property key="labeling/fontUnderline" value="false"/>
+                <property key="labeling/fontWeight" value="50"/>
+                <property key="labeling/formatNumbers" value="false"/>
+                <property key="labeling/isExpression" value="true"/>
+                <property key="labeling/labelPerPart" value="false"/>
+                <property key="labeling/mergeLines" value="false"/>
+                <property key="labeling/minFeatureSize" value="0"/>
+                <property key="labeling/obstacle" value="true"/>
+                <property key="labeling/placement" value="2"/>
+                <property key="labeling/placementFlags" value="10"/>
+                <property key="labeling/plussign" value="true"/>
+                <property key="labeling/priority" value="5"/>
+                <property key="labeling/scaleMax" value="1000"/>
+                <property key="labeling/scaleMin" value="1"/>
+                <property key="labeling/textColorB" value="184"/>
+                <property key="labeling/textColorG" value="96"/>
+                <property key="labeling/textColorR" value="150"/>
+                <property key="labeling/wrapChar" value=""/>
+            </customproperties>
+            <displayfield>ogr_fid</displayfield>
+            <label>0</label>
+            <labelattributes>
+                <label fieldname="" text="Label"/>
+                <family fieldname="" name="MS Shell Dlg 2"/>
+                <size fieldname="" units="pt" value="12"/>
+                <bold fieldname="" on="0"/>
+                <italic fieldname="" on="0"/>
+                <underline fieldname="" on="0"/>
+                <strikeout fieldname="" on="0"/>
+                <color fieldname="" red="0" blue="0" green="0"/>
+                <x fieldname=""/>
+                <y fieldname=""/>
+                <offset x="0" y="0" units="pt" yfieldname="" xfieldname=""/>
+                <angle fieldname="" value="0" auto="0"/>
+                <alignment fieldname="" value="center"/>
+                <buffercolor fieldname="" red="255" blue="255" green="255"/>
+                <buffersize fieldname="" units="pt" value="1"/>
+                <bufferenabled fieldname="" on=""/>
+                <multilineenabled fieldname="" on=""/>
+                <selectedonly on=""/>
+            </labelattributes>
+            <edittypes>
+                <edittype type="0" name="assetid"/>
+                <edittype type="0" name="deprecatedid"/>
+                <edittype type="0" name="diameter"/>
+                <edittype type="0" name="downstreaminvert"/>
+                <edittype type="0" name="materialcode"/>
+                <edittype type="0" name="ogr_fid"/>
+                <edittype type="0" name="pipetype"/>
+                <edittype type="0" name="upstreaminvert"/>
+            </edittypes>
+            <editform>.</editform>
+            <editforminit></editforminit>
+            <annotationform>.</annotationform>
+            <attributeactions/>
+        </maplayer>
+        <maplayer minimumScale="0" maximumScale="1e+08" type="raster" hasScaleBasedVisibilityFlag="0">
+            <id>Stanthorpe20120417082243799</id>
+            <datasource>../../../../../../maps/Stanthorpe.ecw</datasource>
+            <title></title>
+            <abstract></abstract>
+            <layername>Stanthorpe</layername>
+            <srs>
+                <spatialrefsys>
+                    <proj4>+proj=longlat +datum=WGS84 +no_defs</proj4>
+                    <srsid>3452</srsid>
+                    <srid>4326</srid>
+                    <authid>EPSG:4326</authid>
+                    <description>WGS 84</description>
+                    <projectionacronym>longlat</projectionacronym>
+                    <ellipsoidacronym>WGS84</ellipsoidacronym>
+                    <geographicflag>true</geographicflag>
+                </spatialrefsys>
+            </srs>
+            <transparencyLevelInt>153</transparencyLevelInt>
+            <customproperties/>
+            <provider>gdal</provider>
+            <rasterrenderer opacity="0.6" alphaBand="-1" maxOversampling="2" blueBand="3" greenBand="2" type="multibandcolor" invertColor="0" redBand="1">
+                <rasterTransparency/>
+            </rasterrenderer>
+        </maplayer>
+        <maplayer minimumScale="0" maximumScale="1e+08" type="raster" hasScaleBasedVisibilityFlag="0">
+            <id>Tannymorel20120417082243846</id>
+            <datasource>../../../../../../maps/Tannymorel.ecw</datasource>
+            <title></title>
+            <abstract></abstract>
+            <layername>Tannymorel</layername>
+            <srs>
+                <spatialrefsys>
+                    <proj4>+proj=longlat +datum=WGS84 +no_defs</proj4>
+                    <srsid>3452</srsid>
+                    <srid>4326</srid>
+                    <authid>EPSG:4326</authid>
+                    <description>WGS 84</description>
+                    <projectionacronym>longlat</projectionacronym>
+                    <ellipsoidacronym>WGS84</ellipsoidacronym>
+                    <geographicflag>true</geographicflag>
+                </spatialrefsys>
+            </srs>
+            <transparencyLevelInt>153</transparencyLevelInt>
+            <customproperties/>
+            <provider>gdal</provider>
+            <rasterrenderer opacity="0.6" alphaBand="-1" maxOversampling="2" blueBand="3" greenBand="2" type="multibandcolor" invertColor="0" redBand="1">
+                <rasterTransparency/>
+            </rasterrenderer>
+        </maplayer>
+        <maplayer minimumScale="0" maximumScale="1e+08" type="raster" hasScaleBasedVisibilityFlag="0">
+            <id>TheSummit20120417082243908</id>
+            <datasource>../../../../../../maps/TheSummit.ecw</datasource>
+            <title></title>
+            <abstract></abstract>
+            <layername>TheSummit</layername>
+            <srs>
+                <spatialrefsys>
+                    <proj4>+proj=longlat +datum=WGS84 +no_defs</proj4>
+                    <srsid>3452</srsid>
+                    <srid>4326</srid>
+                    <authid>EPSG:4326</authid>
+                    <description>WGS 84</description>
+                    <projectionacronym>longlat</projectionacronym>
+                    <ellipsoidacronym>WGS84</ellipsoidacronym>
+                    <geographicflag>true</geographicflag>
+                </spatialrefsys>
+            </srs>
+            <transparencyLevelInt>152</transparencyLevelInt>
+            <customproperties/>
+            <provider>gdal</provider>
+            <rasterrenderer opacity="0.596078" alphaBand="-1" maxOversampling="2" blueBand="3" greenBand="2" type="multibandcolor" invertColor="0" redBand="1">
+                <rasterTransparency/>
+            </rasterrenderer>
+        </maplayer>
+        <maplayer minimumScale="0" maximumScale="1e+08" type="raster" hasScaleBasedVisibilityFlag="0">
+            <id>Thulimbah20120417082243955</id>
+            <datasource>../../../../../../maps/Thulimbah.ecw</datasource>
+            <title></title>
+            <abstract></abstract>
+            <layername>Thulimbah</layername>
+            <srs>
+                <spatialrefsys>
+                    <proj4>+proj=longlat +datum=WGS84 +no_defs</proj4>
+                    <srsid>3452</srsid>
+                    <srid>4326</srid>
+                    <authid>EPSG:4326</authid>
+                    <description>WGS 84</description>
+                    <projectionacronym>longlat</projectionacronym>
+                    <ellipsoidacronym>WGS84</ellipsoidacronym>
+                    <geographicflag>true</geographicflag>
+                </spatialrefsys>
+            </srs>
+            <transparencyLevelInt>151</transparencyLevelInt>
+            <customproperties/>
+            <provider>gdal</provider>
+            <rasterrenderer opacity="0.596078" alphaBand="-1" maxOversampling="2" blueBand="3" greenBand="2" type="multibandcolor" invertColor="0" redBand="1">
+                <rasterTransparency/>
+            </rasterrenderer>
+        </maplayer>
+        <maplayer minimumScale="2000" maximumScale="1e+08" geometry="Point" type="vector" hasScaleBasedVisibilityFlag="1">
+            <id>Towns20120413134736579</id>
+            <datasource>dbname='FieldData' service='FieldData' srid=28356 type=POINT table="dbo"."Towns" (ogr_geometry) sql=</datasource>
+            <title></title>
+            <abstract></abstract>
+            <layername>Towns</layername>
+            <srs>
+                <spatialrefsys>
+                    <proj4>+proj=utm +zone=56 +south +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs</proj4>
+                    <srsid>2450</srsid>
+                    <srid>28356</srid>
+                    <authid>EPSG:28356</authid>
+                    <description>GDA94 / MGA zone 56</description>
+                    <projectionacronym>utm</projectionacronym>
+                    <ellipsoidacronym>GRS80</ellipsoidacronym>
+                    <geographicflag>false</geographicflag>
+                </spatialrefsys>
+            </srs>
+            <transparencyLevelInt>255</transparencyLevelInt>
+            <provider encoding="System">mssql</provider>
+            <vectorjoins/>
+            <renderer-v2 symbollevels="0" type="singleSymbol">
+                <symbols>
+                    <symbol outputUnit="MM" alpha="1" type="marker" name="0">
+                        <layer pass="0" class="SimpleMarker" locked="0">
+                            <prop k="angle" v="0"/>
+                            <prop k="color" v="255,0,0,255"/>
+                            <prop k="color_border" v="0,0,0,255"/>
+                            <prop k="name" v="circle"/>
+                            <prop k="offset" v="0,0"/>
+                            <prop k="size" v="1"/>
+                        </layer>
+                    </symbol>
+                </symbols>
+                <rotation field=""/>
+                <sizescale field=""/>
+            </renderer-v2>
+            <customproperties>
+                <property key="labeling" value="pal"/>
+                <property key="labeling/addDirectionSymbol" value="false"/>
+                <property key="labeling/bufferColorB" value="245"/>
+                <property key="labeling/bufferColorG" value="245"/>
+                <property key="labeling/bufferColorR" value="245"/>
+                <property key="labeling/bufferSize" value="0.6"/>
+                <property key="labeling/dataDefinedProperty0" value=""/>
+                <property key="labeling/dataDefinedProperty1" value=""/>
+                <property key="labeling/dataDefinedProperty10" value=""/>
+                <property key="labeling/dataDefinedProperty11" value=""/>
+                <property key="labeling/dataDefinedProperty12" value=""/>
+                <property key="labeling/dataDefinedProperty13" value=""/>
+                <property key="labeling/dataDefinedProperty14" value=""/>
+                <property key="labeling/dataDefinedProperty2" value=""/>
+                <property key="labeling/dataDefinedProperty3" value=""/>
+                <property key="labeling/dataDefinedProperty4" value=""/>
+                <property key="labeling/dataDefinedProperty5" value=""/>
+                <property key="labeling/dataDefinedProperty6" value=""/>
+                <property key="labeling/dataDefinedProperty7" value=""/>
+                <property key="labeling/dataDefinedProperty8" value=""/>
+                <property key="labeling/dataDefinedProperty9" value=""/>
+                <property key="labeling/decimals" value="0"/>
+                <property key="labeling/dist" value="2"/>
+                <property key="labeling/distInMapUnits" value="false"/>
+                <property key="labeling/enabled" value="true"/>
+                <property key="labeling/fieldName" value="townname"/>
+                <property key="labeling/fontFamily" value="Arial"/>
+                <property key="labeling/fontItalic" value="false"/>
+                <property key="labeling/fontSize" value="9"/>
+                <property key="labeling/fontSizeInMapUnits" value="false"/>
+                <property key="labeling/fontStrikeout" value="false"/>
+                <property key="labeling/fontUnderline" value="false"/>
+                <property key="labeling/fontWeight" value="75"/>
+                <property key="labeling/formatNumbers" value="false"/>
+                <property key="labeling/isExpression" value="false"/>
+                <property key="labeling/labelPerPart" value="false"/>
+                <property key="labeling/mergeLines" value="false"/>
+                <property key="labeling/minFeatureSize" value="0"/>
+                <property key="labeling/obstacle" value="true"/>
+                <property key="labeling/placement" value="0"/>
+                <property key="labeling/placementFlags" value="0"/>
+                <property key="labeling/plussign" value="true"/>
+                <property key="labeling/priority" value="5"/>
+                <property key="labeling/scaleMax" value="10000000"/>
+                <property key="labeling/scaleMin" value="2000"/>
+                <property key="labeling/textColorB" value="67"/>
+                <property key="labeling/textColorG" value="67"/>
+                <property key="labeling/textColorR" value="67"/>
+                <property key="labeling/wrapChar" value=""/>
+            </customproperties>
+            <displayfield>townname</displayfield>
+            <label>0</label>
+            <labelfield>townname</labelfield>
+            <labelattributes>
+                <label fieldname="townname" text="Label"/>
+                <family fieldname="" name="Arial"/>
+                <size fieldname="" units="pt" value="10"/>
+                <bold fieldname="" on="1"/>
+                <italic fieldname="" on="0"/>
+                <underline fieldname="" on="0"/>
+                <strikeout fieldname="" on="0"/>
+                <color fieldname="" red="0" blue="0" green="0"/>
+                <x fieldname=""/>
+                <y fieldname=""/>
+                <offset x="0" y="0" units="pt" yfieldname="" xfieldname=""/>
+                <angle fieldname="" value="0" auto="0"/>
+                <alignment fieldname="" value="aboveright"/>
+                <buffercolor fieldname="" red="245" blue="245" green="245"/>
+                <buffersize fieldname="" units="pt" value="0.6"/>
+                <bufferenabled fieldname="" on="1"/>
+                <multilineenabled fieldname="" on=""/>
+                <selectedonly on=""/>
+            </labelattributes>
+            <edittypes>
+                <edittype type="0" name="labelpriority"/>
+                <edittype type="0" name="ogr_fid"/>
+                <edittype type="0" name="townname"/>
+            </edittypes>
+            <editform>.</editform>
+            <editforminit></editforminit>
+            <annotationform>.</annotationform>
+            <attributeactions/>
+        </maplayer>
+        <maplayer minimumScale="0" maximumScale="1e+08" type="raster" hasScaleBasedVisibilityFlag="0">
+            <id>Wallangarra20120417082244017</id>
+            <datasource>../../../../../../maps/Wallangarra.ecw</datasource>
+            <title></title>
+            <abstract></abstract>
+            <layername>Wallangarra</layername>
+            <srs>
+                <spatialrefsys>
+                    <proj4>+proj=longlat +datum=WGS84 +no_defs</proj4>
+                    <srsid>3452</srsid>
+                    <srid>4326</srid>
+                    <authid>EPSG:4326</authid>
+                    <description>WGS 84</description>
+                    <projectionacronym>longlat</projectionacronym>
+                    <ellipsoidacronym>WGS84</ellipsoidacronym>
+                    <geographicflag>true</geographicflag>
+                </spatialrefsys>
+            </srs>
+            <transparencyLevelInt>153</transparencyLevelInt>
+            <customproperties/>
+            <provider>gdal</provider>
+            <rasterrenderer opacity="0.6" alphaBand="-1" maxOversampling="2" blueBand="3" greenBand="2" type="multibandcolor" invertColor="0" redBand="1">
+                <rasterTransparency/>
+            </rasterrenderer>
+        </maplayer>
+        <maplayer minimumScale="0" maximumScale="1e+08" type="raster" hasScaleBasedVisibilityFlag="0">
+            <id>Warwick20120417082244080</id>
+            <datasource>../../../../../../maps/Warwick.ecw</datasource>
+            <title></title>
+            <abstract></abstract>
+            <layername>Warwick</layername>
+            <srs>
+                <spatialrefsys>
+                    <proj4>+proj=longlat +datum=WGS84 +no_defs</proj4>
+                    <srsid>3452</srsid>
+                    <srid>4326</srid>
+                    <authid>EPSG:4326</authid>
+                    <description>WGS 84</description>
+                    <projectionacronym>longlat</projectionacronym>
+                    <ellipsoidacronym>WGS84</ellipsoidacronym>
+                    <geographicflag>true</geographicflag>
+                </spatialrefsys>
+            </srs>
+            <transparencyLevelInt>151</transparencyLevelInt>
+            <customproperties/>
+            <provider>gdal</provider>
+            <rasterrenderer opacity="0.596078" alphaBand="-1" maxOversampling="2" blueBand="3" greenBand="2" type="multibandcolor" invertColor="0" redBand="1">
+                <rasterTransparency/>
+            </rasterrenderer>
+        </maplayer>
+        <maplayer minimumScale="0" maximumScale="3000" geometry="Point" type="vector" hasScaleBasedVisibilityFlag="1">
+            <id>WaterFittings20120413114045709</id>
+            <datasource>dbname='FieldData' service='FieldData' srid=28356 type=POINT table="dbo"."WaterFittings" (ogr_geometry) sql=</datasource>
+            <title></title>
+            <abstract></abstract>
+            <layername>Water Fittings</layername>
+            <srs>
+                <spatialrefsys>
+                    <proj4>+proj=utm +zone=56 +south +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs</proj4>
+                    <srsid>2450</srsid>
+                    <srid>28356</srid>
+                    <authid>EPSG:28356</authid>
+                    <description>GDA94 / MGA zone 56</description>
+                    <projectionacronym>utm</projectionacronym>
+                    <ellipsoidacronym>GRS80</ellipsoidacronym>
+                    <geographicflag>false</geographicflag>
+                </spatialrefsys>
+            </srs>
+            <transparencyLevelInt>255</transparencyLevelInt>
+            <provider encoding="System">mssql</provider>
+            <vectorjoins/>
+            <renderer-v2 attr="fittingtype" symbollevels="0" type="categorizedSymbol">
+                <categories>
+                    <category symbol="0" value="Actuated Valve" label="Actuated Valve"/>
+                    <category symbol="1" value="Air Valve" label="Air Valve"/>
+                    <category symbol="2" value="Flow Meter" label="Flow Meter"/>
+                    <category symbol="3" value="Gate Valve" label="Gate Valve"/>
+                    <category symbol="4" value="Hydrant" label="Hydrant"/>
+                    <category symbol="5" value="Non Return Valve" label="Non Return Valve"/>
+                    <category symbol="6" value="Scour Valve" label="Scour Valve"/>
+                    <category symbol="7" value="Sluice Valve" label="Sluice Valve"/>
+                </categories>
+                <symbols>
+                    <symbol outputUnit="MM" alpha="1" type="marker" name="0">
+                        <layer pass="0" class="FontMarker" locked="0">
+                            <prop k="angle" v="0"/>
+                            <prop k="chr" v="¡"/>
+                            <prop k="color" v="26,210,210,255"/>
+                            <prop k="font" v="Wingdings"/>
+                            <prop k="offset" v="0,0"/>
+                            <prop k="size" v="3.23"/>
+                        </layer>
+                        <layer pass="0" class="SimpleMarker" locked="0">
+                            <prop k="angle" v="0"/>
+                            <prop k="color" v="26,210,210,255"/>
+                            <prop k="color_border" v="145,145,145,255"/>
+                            <prop k="name" v="cross2"/>
+                            <prop k="offset" v="0,0"/>
+                            <prop k="size" v="2"/>
+                        </layer>
+                    </symbol>
+                    <symbol outputUnit="MM" alpha="1" type="marker" name="1">
+                        <layer pass="0" class="FontMarker" locked="0">
+                            <prop k="angle" v="0"/>
+                            <prop k="chr" v="¡"/>
+                            <prop k="color" v="255,170,0,255"/>
+                            <prop k="font" v="Wingdings"/>
+                            <prop k="offset" v="0,0"/>
+                            <prop k="size" v="3.23"/>
+                        </layer>
+                        <layer pass="0" class="SimpleMarker" locked="0">
+                            <prop k="angle" v="0"/>
+                            <prop k="color" v="255,0,0,255"/>
+                            <prop k="color_border" v="145,145,145,255"/>
+                            <prop k="name" v="cross2"/>
+                            <prop k="offset" v="0,0"/>
+                            <prop k="size" v="2"/>
+                        </layer>
+                    </symbol>
+                    <symbol outputUnit="MM" alpha="1" type="marker" name="2">
+                        <layer pass="0" class="SimpleMarker" locked="0">
+                            <prop k="angle" v="0"/>
+                            <prop k="color" v="189,215,231,255"/>
+                            <prop k="color_border" v="0,0,0,255"/>
+                            <prop k="name" v="circle"/>
+                            <prop k="offset" v="0,0"/>
+                            <prop k="size" v="2"/>
+                        </layer>
+                    </symbol>
+                    <symbol outputUnit="MM" alpha="1" type="marker" name="3">
+                        <layer pass="0" class="FontMarker" locked="0">
+                            <prop k="angle" v="0"/>
+                            <prop k="chr" v="l"/>
+                            <prop k="color" v="83,172,130,255"/>
+                            <prop k="font" v="Wingdings"/>
+                            <prop k="offset" v="0,0"/>
+                            <prop k="size" v="3.23"/>
+                        </layer>
+                        <layer pass="0" class="SimpleMarker" locked="0">
+                            <prop k="angle" v="90"/>
+                            <prop k="color" v="83,172,130,255"/>
+                            <prop k="color_border" v="83,172,130,255"/>
+                            <prop k="name" v="line"/>
+                            <prop k="offset" v="0,0"/>
+                            <prop k="size" v="3.05197"/>
+                        </layer>
+                    </symbol>
+                    <symbol outputUnit="MM" alpha="1" type="marker" name="4">
+                        <layer pass="0" class="FontMarker" locked="0">
+                            <prop k="angle" v="0"/>
+                            <prop k="chr" v="g"/>
+                            <prop k="color" v="57,57,57,255"/>
+                            <prop k="font" v="Webdings"/>
+                            <prop k="offset" v="0,0"/>
+                            <prop k="size" v="1.5"/>
+                        </layer>
+                    </symbol>
+                    <symbol outputUnit="MM" alpha="1" type="marker" name="5">
+                        <layer pass="0" class="FontMarker" locked="0">
+                            <prop k="angle" v="0"/>
+                            <prop k="chr" v="¡"/>
+                            <prop k="color" v="128,128,255,255"/>
+                            <prop k="font" v="Wingdings"/>
+                            <prop k="offset" v="0,0"/>
+                            <prop k="size" v="3.23"/>
+                        </layer>
+                        <layer pass="0" class="SimpleMarker" locked="0">
+                            <prop k="angle" v="0"/>
+                            <prop k="color" v="128,128,255,255"/>
+                            <prop k="color_border" v="145,145,145,255"/>
+                            <prop k="name" v="cross2"/>
+                            <prop k="offset" v="0,0"/>
+                            <prop k="size" v="2"/>
+                        </layer>
+                    </symbol>
+                    <symbol outputUnit="MM" alpha="1" type="marker" name="6">
+                        <layer pass="0" class="FontMarker" locked="0">
+                            <prop k="angle" v="0"/>
+                            <prop k="chr" v="¡"/>
+                            <prop k="color" v="255,0,0,255"/>
+                            <prop k="font" v="Wingdings"/>
+                            <prop k="offset" v="0,0"/>
+                            <prop k="size" v="3.23"/>
+                        </layer>
+                        <layer pass="0" class="SimpleMarker" locked="0">
+                            <prop k="angle" v="0"/>
+                            <prop k="color" v="255,0,0,255"/>
+                            <prop k="color_border" v="145,145,145,255"/>
+                            <prop k="name" v="cross2"/>
+                            <prop k="offset" v="0,0"/>
+                            <prop k="size" v="2"/>
+                        </layer>
+                    </symbol>
+                    <symbol outputUnit="MM" alpha="1" type="marker" name="7">
+                        <layer pass="0" class="FontMarker" locked="0">
+                            <prop k="angle" v="90"/>
+                            <prop k="chr" v="ê"/>
+                            <prop k="color" v="0,0,0,255"/>
+                            <prop k="font" v="Webdings"/>
+                            <prop k="offset" v="0,0.5"/>
+                            <prop k="size" v="2.1"/>
+                        </layer>
+                        <layer pass="0" class="FontMarker" locked="0">
+                            <prop k="angle" v="270"/>
+                            <prop k="chr" v="ê"/>
+                            <prop k="color" v="0,0,0,255"/>
+                            <prop k="font" v="Webdings"/>
+                            <prop k="offset" v="-0.3,0.5"/>
+                            <prop k="size" v="2.1"/>
+                        </layer>
+                    </symbol>
+                </symbols>
+                <source-symbol>
+                    <symbol outputUnit="MM" alpha="1" type="marker" name="0">
+                        <layer pass="0" class="SimpleMarker" locked="0">
+                            <prop k="angle" v="0"/>
+                            <prop k="color" v="180,7,76,255"/>
+                            <prop k="color_border" v="0,0,0,255"/>
+                            <prop k="name" v="circle"/>
+                            <prop k="offset" v="0,0"/>
+                            <prop k="size" v="2"/>
+                        </layer>
+                    </symbol>
+                </source-symbol>
+                <colorramp type="colorbrewer" name="[source]">
+                    <prop k="colors" v="5"/>
+                    <prop k="schemeName" v="Blues"/>
+                </colorramp>
+                <rotation field=""/>
+                <sizescale field=""/>
+            </renderer-v2>
+            <customproperties/>
+            <displayfield>assetid</displayfield>
+            <label>0</label>
+            <labelattributes>
+                <label fieldname="" text="Label"/>
+                <family fieldname="" name="MS Shell Dlg 2"/>
+                <size fieldname="" units="pt" value="12"/>
+                <bold fieldname="" on="0"/>
+                <italic fieldname="" on="0"/>
+                <underline fieldname="" on="0"/>
+                <strikeout fieldname="" on="0"/>
+                <color fieldname="" red="0" blue="0" green="0"/>
+                <x fieldname=""/>
+                <y fieldname=""/>
+                <offset x="0" y="0" units="pt" yfieldname="" xfieldname=""/>
+                <angle fieldname="" value="0" auto="0"/>
+                <alignment fieldname="" value="center"/>
+                <buffercolor fieldname="" red="255" blue="255" green="255"/>
+                <buffersize fieldname="" units="pt" value="1"/>
+                <bufferenabled fieldname="" on=""/>
+                <multilineenabled fieldname="" on=""/>
+                <selectedonly on=""/>
+            </labelattributes>
+            <edittypes>
+                <edittype type="0" name="assetid"/>
+                <edittype type="0" name="assetstatus"/>
+                <edittype type="0" name="comments"/>
+                <edittype type="0" name="conditionrating"/>
+                <edittype type="0" name="dateinstalled"/>
+                <edittype type="0" name="daterecognized"/>
+                <edittype type="0" name="deprecatedid"/>
+                <edittype type="0" name="diameter"/>
+                <edittype type="0" name="fittingtype"/>
+                <edittype type="0" name="jobno"/>
+                <edittype type="0" name="lasteditedby"/>
+                <edittype type="0" name="lh"/>
+                <edittype type="0" name="locality"/>
+                <edittype type="0" name="ogr_fid"/>
+                <edittype type="0" name="replacedexisting"/>
+                <edittype type="0" name="spatialaccuracy"/>
+                <edittype type="0" name="surfacelevelahd"/>
+                <edittype type="0" name="valveon"/>
+            </edittypes>
+            <editform>.</editform>
+            <editforminit></editforminit>
+            <annotationform>.</annotationform>
+            <attributeactions/>
+        </maplayer>
+        <maplayer minimumScale="0" maximumScale="60000" geometry="Point" type="vector" hasScaleBasedVisibilityFlag="1">
+            <id>WaterJobs20120424123239799</id>
+            <datasource>dbname='FieldData' service='FieldData' estimatedmetadata=true srid=28356 type=POINT table="dbo"."WaterJobs" (ogr_geometry) sql=</datasource>
+            <title></title>
+            <abstract></abstract>
+            <layername>WaterJobs</layername>
+            <srs>
+                <spatialrefsys>
+                    <proj4>+proj=utm +zone=56 +south +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs</proj4>
+                    <srsid>2450</srsid>
+                    <srid>28356</srid>
+                    <authid>EPSG:28356</authid>
+                    <description>GDA94 / MGA zone 56</description>
+                    <projectionacronym>utm</projectionacronym>
+                    <ellipsoidacronym>GRS80</ellipsoidacronym>
+                    <geographicflag>false</geographicflag>
+                </spatialrefsys>
+            </srs>
+            <transparencyLevelInt>255</transparencyLevelInt>
+            <provider encoding="System">mssql</provider>
+            <vectorjoins/>
+            <renderer-v2 symbollevels="0" type="singleSymbol">
+                <symbols>
+                    <symbol outputUnit="MM" alpha="1" type="marker" name="0">
+                        <layer pass="0" class="FontMarker" locked="0">
+                            <prop k="angle" v="0"/>
+                            <prop k="chr" v="@"/>
+                            <prop k="color" v="245,245,245,255"/>
+                            <prop k="font" v="Webdings"/>
+                            <prop k="offset" v="0.3,0.3"/>
+                            <prop k="size" v="6"/>
+                        </layer>
+                        <layer pass="0" class="FontMarker" locked="0">
+                            <prop k="angle" v="0"/>
+                            <prop k="chr" v="@"/>
+                            <prop k="color" v="0,0,255,255"/>
+                            <prop k="font" v="Webdings"/>
+                            <prop k="offset" v="0,0"/>
+                            <prop k="size" v="6"/>
+                        </layer>
+                    </symbol>
+                </symbols>
+                <rotation field=""/>
+                <sizescale field=""/>
+            </renderer-v2>
+            <customproperties>
+                <property key="labeling" value="pal"/>
+                <property key="labeling/addDirectionSymbol" value="false"/>
+                <property key="labeling/bufferColorB" value="245"/>
+                <property key="labeling/bufferColorG" value="245"/>
+                <property key="labeling/bufferColorR" value="245"/>
+                <property key="labeling/bufferSize" value="1.2"/>
+                <property key="labeling/dataDefinedProperty0" value=""/>
+                <property key="labeling/dataDefinedProperty1" value=""/>
+                <property key="labeling/dataDefinedProperty10" value=""/>
+                <property key="labeling/dataDefinedProperty11" value=""/>
+                <property key="labeling/dataDefinedProperty12" value=""/>
+                <property key="labeling/dataDefinedProperty13" value=""/>
+                <property key="labeling/dataDefinedProperty14" value=""/>
+                <property key="labeling/dataDefinedProperty2" value=""/>
+                <property key="labeling/dataDefinedProperty3" value=""/>
+                <property key="labeling/dataDefinedProperty4" value=""/>
+                <property key="labeling/dataDefinedProperty5" value=""/>
+                <property key="labeling/dataDefinedProperty6" value=""/>
+                <property key="labeling/dataDefinedProperty7" value=""/>
+                <property key="labeling/dataDefinedProperty8" value=""/>
+                <property key="labeling/dataDefinedProperty9" value=""/>
+                <property key="labeling/decimals" value="0"/>
+                <property key="labeling/dist" value="3"/>
+                <property key="labeling/distInMapUnits" value="false"/>
+                <property key="labeling/enabled" value="true"/>
+                <property key="labeling/fieldName" value=" &quot;Operators&quot;  || '&#xa;' || substr(&quot;CompletionTime&quot;, 9 ,2)  || '/' || substr(&quot;CompletionTime&quot;, 6 ,2) || '/' || substr(&quot;CompletionTime&quot;, 1 ,4)"/>
+                <property key="labeling/fontFamily" value="Arial"/>
+                <property key="labeling/fontItalic" value="false"/>
+                <property key="labeling/fontSize" value="8"/>
+                <property key="labeling/fontSizeInMapUnits" value="false"/>
+                <property key="labeling/fontStrikeout" value="false"/>
+                <property key="labeling/fontUnderline" value="false"/>
+                <property key="labeling/fontWeight" value="50"/>
+                <property key="labeling/formatNumbers" value="false"/>
+                <property key="labeling/isExpression" value="true"/>
+                <property key="labeling/labelPerPart" value="false"/>
+                <property key="labeling/mergeLines" value="false"/>
+                <property key="labeling/minFeatureSize" value="0"/>
+                <property key="labeling/obstacle" value="true"/>
+                <property key="labeling/placement" value="0"/>
+                <property key="labeling/placementFlags" value="0"/>
+                <property key="labeling/plussign" value="true"/>
+                <property key="labeling/priority" value="5"/>
+                <property key="labeling/scaleMax" value="500"/>
+                <property key="labeling/scaleMin" value="1"/>
+                <property key="labeling/textColorB" value="255"/>
+                <property key="labeling/textColorG" value="85"/>
+                <property key="labeling/textColorR" value="0"/>
+                <property key="labeling/wrapChar" value=""/>
+            </customproperties>
+            <displayfield>HydrantReplaceLid</displayfield>
+            <label>0</label>
+            <labelattributes>
+                <label fieldname="" text="Label"/>
+                <family fieldname="" name="MS Shell Dlg 2"/>
+                <size fieldname="" units="pt" value="12"/>
+                <bold fieldname="" on="0"/>
+                <italic fieldname="" on="0"/>
+                <underline fieldname="" on="0"/>
+                <strikeout fieldname="" on="0"/>
+                <color fieldname="" red="0" blue="0" green="0"/>
+                <x fieldname=""/>
+                <y fieldname=""/>
+                <offset x="0" y="0" units="pt" yfieldname="" xfieldname=""/>
+                <angle fieldname="" value="0" auto="0"/>
+                <alignment fieldname="" value="center"/>
+                <buffercolor fieldname="" red="255" blue="255" green="255"/>
+                <buffersize fieldname="" units="pt" value="1"/>
+                <bufferenabled fieldname="" on=""/>
+                <multilineenabled fieldname="" on=""/>
+                <selectedonly on=""/>
+            </labelattributes>
+            <edittypes>
+                <edittype type="0" name="AdditionalLocationDetails"/>
+                <edittype type="0" name="BackfillsCleanups"/>
+                <edittype type="0" name="CompletionTime"/>
+                <edittype type="0" name="ConnectionsInterrupted"/>
+                <edittype type="0" name="ConsumerContacted"/>
+                <edittype type="0" name="ConsumerProblem"/>
+                <edittype type="0" name="CouncilFacility"/>
+                <edittype type="0" name="CustomerRequestNumber"/>
+                <edittype type="0" name="DateTimeReceived"/>
+                <edittype type="0" name="Designation"/>
+                <edittype type="0" name="DisconnectService"/>
+                <edittype type="0" name="Drawing"/>
+                <edittype type="0" name="ExistingMeterNumber"/>
+                <edittype type="0" name="ExistingMeterReadingKL"/>
+                <edittype type="0" name="FailureType"/>
+                <edittype type="0" name="FireService"/>
+                <edittype type="0" name="FollowUpWorkRequired"/>
+                <edittype type="0" name="GroundConditions"/>
+                <edittype type="0" name="HydrantCleanAndMark"/>
+                <edittype type="0" name="HydrantFlowTest"/>
+                <edittype type="0" name="HydrantRepair"/>
+                <edittype type="0" name="HydrantReplace"/>
+                <edittype type="0" name="HydrantReplaceLid"/>
+                <edittype type="0" name="InstallationSheetNumber"/>
+                <edittype type="0" name="InterruptionDurationHours"/>
+                <edittype type="0" name="Investigate"/>
+                <edittype type="0" name="JobID"/>
+                <edittype type="0" name="JointType"/>
+                <edittype type="0" name="LitresPerMinute"/>
+                <edittype type="0" name="LockupKpa"/>
+                <edittype type="0" name="MainRepairedClamp"/>
+                <edittype type="0" name="MainRepairedReplacedSection"/>
+                <edittype type="0" name="MainsFlushed"/>
+                <edittype type="0" name="MainsValveRepair"/>
+                <edittype type="0" name="MainsValveReplace"/>
+                <edittype type="0" name="MeterCover"/>
+                <edittype type="0" name="MeterRead"/>
+                <edittype type="0" name="MeterRemoved"/>
+                <edittype type="0" name="MeterReplaced"/>
+                <edittype type="0" name="NewMeterNumber"/>
+                <edittype type="0" name="NewMeterReadingKL"/>
+                <edittype type="0" name="NewService"/>
+                <edittype type="0" name="Notes"/>
+                <edittype type="0" name="Operators"/>
+                <edittype type="0" name="Other"/>
+                <edittype type="0" name="PipeDepth"/>
+                <edittype type="0" name="PipeDiameter"/>
+                <edittype type="0" name="PipeMaterial"/>
+                <edittype type="0" name="PressureTestHydrant"/>
+                <edittype type="0" name="PressureTestService"/>
+                <edittype type="0" name="ProvideLocation"/>
+                <edittype type="0" name="RelayedService"/>
+                <edittype type="0" name="RepairedServiceClamp"/>
+                <edittype type="0" name="RepairedServiceReplaceSection"/>
+                <edittype type="0" name="RepairedStopCock"/>
+                <edittype type="0" name="ReplaceLidValve"/>
+                <edittype type="0" name="ReplaceMarkers"/>
+                <edittype type="0" name="ReplacedStopCock"/>
+                <edittype type="0" name="RequestType"/>
+                <edittype type="0" name="RequestedBy"/>
+                <edittype type="0" name="RespondTime"/>
+                <edittype type="0" name="Scheme"/>
+                <edittype type="0" name="ServiceFlowTest"/>
+                <edittype type="0" name="ShutdownDoorknock"/>
+                <edittype type="0" name="ShutdownLetter"/>
+                <edittype type="0" name="SignageAlterations"/>
+                <edittype type="0" name="Street"/>
+                <edittype type="0" name="StreetNumber"/>
+                <edittype type="0" name="TestSheetCompleted"/>
+                <edittype type="0" name="TpfnrCapped"/>
+                <edittype type="0" name="TpfnrRepaired"/>
+                <edittype type="0" name="TpfnrReplaced"/>
+                <edittype type="0" name="TrafficControlPlanUsed"/>
+                <edittype type="0" name="UniqueID"/>
+                <edittype type="0" name="ValveClosingDirection"/>
+                <edittype type="0" name="ValveStatus"/>
+                <edittype type="0" name="ValveType"/>
+                <edittype type="0" name="WaterSample"/>
+                <edittype type="0" name="WorkDurationHours"/>
+                <edittype type="0" name="WorkMethodStatement"/>
+            </edittypes>
+            <editform>.</editform>
+            <editforminit></editforminit>
+            <annotationform>.</annotationform>
+            <attributeactions/>
+        </maplayer>
+        <maplayer minimumScale="0" maximumScale="20000" geometry="Line" type="vector" hasScaleBasedVisibilityFlag="1">
+            <id>WaterMains20120413105554344</id>
+            <datasource>dbname='FieldData' service='FieldData' estimatedmetadata=true srid=28356 type=LINESTRING table="dbo"."WaterMains" (ogr_geometry) sql=</datasource>
+            <title></title>
+            <abstract></abstract>
+            <layername>Water Mains</layername>
+            <srs>
+                <spatialrefsys>
+                    <proj4>+proj=utm +zone=56 +south +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs</proj4>
+                    <srsid>2450</srsid>
+                    <srid>28356</srid>
+                    <authid>EPSG:28356</authid>
+                    <description>GDA94 / MGA zone 56</description>
+                    <projectionacronym>utm</projectionacronym>
+                    <ellipsoidacronym>GRS80</ellipsoidacronym>
+                    <geographicflag>false</geographicflag>
+                </spatialrefsys>
+            </srs>
+            <transparencyLevelInt>255</transparencyLevelInt>
+            <provider encoding="System">mssql</provider>
+            <vectorjoins/>
+            <renderer-v2 attr="description" symbollevels="0" type="categorizedSymbol">
+                <categories>
+                    <category symbol="0" value="Raw Water" label="Raw Water"/>
+                    <category symbol="1" value="Water Main" label="Water Main"/>
+                </categories>
+                <symbols>
+                    <symbol outputUnit="MM" alpha="1" type="line" name="0">
+                        <layer pass="0" class="SimpleLine" locked="0">
+                            <prop k="capstyle" v="round"/>
+                            <prop k="color" v="85,127,255,255"/>
+                            <prop k="customdash" v="5;2"/>
+                            <prop k="joinstyle" v="round"/>
+                            <prop k="offset" v="0"/>
+                            <prop k="penstyle" v="solid"/>
+                            <prop k="use_custom_dash" v="0"/>
+                            <prop k="width" v="1.5"/>
+                        </layer>
+                        <layer pass="0" class="SimpleLine" locked="0">
+                            <prop k="capstyle" v="round"/>
+                            <prop k="color" v="255,255,255,255"/>
+                            <prop k="customdash" v="5;2"/>
+                            <prop k="joinstyle" v="round"/>
+                            <prop k="offset" v="0"/>
+                            <prop k="penstyle" v="solid"/>
+                            <prop k="use_custom_dash" v="0"/>
+                            <prop k="width" v="1"/>
+                        </layer>
+                    </symbol>
+                    <symbol outputUnit="MM" alpha="1" type="line" name="1">
+                        <layer pass="0" class="SimpleLine" locked="0">
+                            <prop k="capstyle" v="square"/>
+                            <prop k="color" v="119,142,243,255"/>
+                            <prop k="customdash" v="5;2"/>
+                            <prop k="joinstyle" v="bevel"/>
+                            <prop k="offset" v="0"/>
+                            <prop k="penstyle" v="solid"/>
+                            <prop k="use_custom_dash" v="0"/>
+                            <prop k="width" v="0.4"/>
+                        </layer>
+                    </symbol>
+                </symbols>
+                <source-symbol>
+                    <symbol outputUnit="MM" alpha="1" type="line" name="0">
+                        <layer pass="0" class="SimpleLine" locked="0">
+                            <prop k="capstyle" v="square"/>
+                            <prop k="color" v="184,238,112,255"/>
+                            <prop k="customdash" v="5;2"/>
+                            <prop k="joinstyle" v="bevel"/>
+                            <prop k="offset" v="0"/>
+                            <prop k="penstyle" v="solid"/>
+                            <prop k="use_custom_dash" v="0"/>
+                            <prop k="width" v="0.26"/>
+                        </layer>
+                    </symbol>
+                </source-symbol>
+                <colorramp type="colorbrewer" name="[source]">
+                    <prop k="colors" v="5"/>
+                    <prop k="schemeName" v="Blues"/>
+                </colorramp>
+                <rotation field=""/>
+                <sizescale field=""/>
+            </renderer-v2>
+            <customproperties>
+                <property key="labeling" value="pal"/>
+                <property key="labeling/addDirectionSymbol" value="false"/>
+                <property key="labeling/bufferColorB" value="245"/>
+                <property key="labeling/bufferColorG" value="245"/>
+                <property key="labeling/bufferColorR" value="245"/>
+                <property key="labeling/bufferSize" value="0.8"/>
+                <property key="labeling/dataDefinedProperty0" value=""/>
+                <property key="labeling/dataDefinedProperty1" value=""/>
+                <property key="labeling/dataDefinedProperty10" value=""/>
+                <property key="labeling/dataDefinedProperty11" value=""/>
+                <property key="labeling/dataDefinedProperty12" value=""/>
+                <property key="labeling/dataDefinedProperty13" value=""/>
+                <property key="labeling/dataDefinedProperty14" value=""/>
+                <property key="labeling/dataDefinedProperty2" value=""/>
+                <property key="labeling/dataDefinedProperty3" value=""/>
+                <property key="labeling/dataDefinedProperty4" value=""/>
+                <property key="labeling/dataDefinedProperty5" value=""/>
+                <property key="labeling/dataDefinedProperty6" value=""/>
+                <property key="labeling/dataDefinedProperty7" value=""/>
+                <property key="labeling/dataDefinedProperty8" value=""/>
+                <property key="labeling/dataDefinedProperty9" value=""/>
+                <property key="labeling/decimals" value="0"/>
+                <property key="labeling/dist" value="1"/>
+                <property key="labeling/distInMapUnits" value="false"/>
+                <property key="labeling/enabled" value="true"/>
+                <property key="labeling/fieldName" value=" &quot;diameter&quot;  || ' ' ||  &quot;pipematerial&quot; "/>
+                <property key="labeling/fontFamily" value="Arial"/>
+                <property key="labeling/fontItalic" value="false"/>
+                <property key="labeling/fontSize" value="7"/>
+                <property key="labeling/fontSizeInMapUnits" value="false"/>
+                <property key="labeling/fontStrikeout" value="false"/>
+                <property key="labeling/fontUnderline" value="false"/>
+                <property key="labeling/fontWeight" value="50"/>
+                <property key="labeling/formatNumbers" value="false"/>
+                <property key="labeling/isExpression" value="true"/>
+                <property key="labeling/labelPerPart" value="false"/>
+                <property key="labeling/mergeLines" value="false"/>
+                <property key="labeling/minFeatureSize" value="0"/>
+                <property key="labeling/obstacle" value="true"/>
+                <property key="labeling/placement" value="2"/>
+                <property key="labeling/placementFlags" value="10"/>
+                <property key="labeling/plussign" value="true"/>
+                <property key="labeling/priority" value="5"/>
+                <property key="labeling/scaleMax" value="1000"/>
+                <property key="labeling/scaleMin" value="1"/>
+                <property key="labeling/textColorB" value="207"/>
+                <property key="labeling/textColorG" value="109"/>
+                <property key="labeling/textColorR" value="63"/>
+                <property key="labeling/wrapChar" value=""/>
+            </customproperties>
+            <displayfield>description</displayfield>
+            <label>0</label>
+            <labelattributes>
+                <label fieldname="" text="Label"/>
+                <family fieldname="" name="MS Shell Dlg 2"/>
+                <size fieldname="" units="pt" value="12"/>
+                <bold fieldname="" on="0"/>
+                <italic fieldname="" on="0"/>
+                <underline fieldname="" on="0"/>
+                <strikeout fieldname="" on="0"/>
+                <color fieldname="" red="0" blue="0" green="0"/>
+                <x fieldname=""/>
+                <y fieldname=""/>
+                <offset x="0" y="0" units="pt" yfieldname="" xfieldname=""/>
+                <angle fieldname="" value="0" auto="0"/>
+                <alignment fieldname="" value="center"/>
+                <buffercolor fieldname="" red="255" blue="255" green="255"/>
+                <buffersize fieldname="" units="pt" value="1"/>
+                <bufferenabled fieldname="" on=""/>
+                <multilineenabled fieldname="" on=""/>
+                <selectedonly on=""/>
+            </labelattributes>
+            <edittypes>
+                <edittype type="0" name="assetid"/>
+                <edittype type="0" name="assetstatus"/>
+                <edittype type="0" name="comments"/>
+                <edittype type="0" name="conditionrating"/>
+                <edittype type="0" name="dateinstalled"/>
+                <edittype type="0" name="daterecognized"/>
+                <edittype type="0" name="deprecatedid"/>
+                <edittype type="0" name="description"/>
+                <edittype type="0" name="diameter"/>
+                <edittype type="0" name="jobno"/>
+                <edittype type="0" name="lasteditedby"/>
+                <edittype type="0" name="length"/>
+                <edittype type="0" name="locality"/>
+                <edittype type="0" name="ogr_fid"/>
+                <edittype type="0" name="pipeclass"/>
+                <edittype type="0" name="pipematerial"/>
+                <edittype type="0" name="replacedexisting"/>
+                <edittype type="0" name="spatialaccuracy"/>
+            </edittypes>
+            <editform>.</editform>
+            <editforminit></editforminit>
+            <annotationform>.</annotationform>
+            <attributeactions/>
+        </maplayer>
+        <maplayer minimumScale="0" maximumScale="1500" geometry="Point" type="vector" hasScaleBasedVisibilityFlag="1">
+            <id>WaterMeters20120424122404922</id>
+            <datasource>dbname='FieldData' service='FieldData' srid=28356 type=POINT table="dbo"."WaterMeters" (ogr_geometry) sql=</datasource>
+            <title></title>
+            <abstract></abstract>
+            <layername>WaterMeters</layername>
+            <srs>
+                <spatialrefsys>
+                    <proj4>+proj=utm +zone=56 +south +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs</proj4>
+                    <srsid>2450</srsid>
+                    <srid>28356</srid>
+                    <authid>EPSG:28356</authid>
+                    <description>GDA94 / MGA zone 56</description>
+                    <projectionacronym>utm</projectionacronym>
+                    <ellipsoidacronym>GRS80</ellipsoidacronym>
+                    <geographicflag>false</geographicflag>
+                </spatialrefsys>
+            </srs>
+            <transparencyLevelInt>255</transparencyLevelInt>
+            <provider encoding="System">mssql</provider>
+            <vectorjoins/>
+            <renderer-v2 symbollevels="0" type="singleSymbol">
+                <symbols>
+                    <symbol outputUnit="MM" alpha="1" type="marker" name="0">
+                        <layer pass="0" class="EllipseMarker" locked="0">
+                            <prop k="angle" v="0"/>
+                            <prop k="fill_color" v="255,255,255,255"/>
+                            <prop k="fill_color_field" v=""/>
+                            <prop k="height_field" v=""/>
+                            <prop k="outline_color" v="139,139,139,255"/>
+                            <prop k="outline_color_field" v=""/>
+                            <prop k="outline_width" v="0.4"/>
+                            <prop k="outline_width_field" v=""/>
+                            <prop k="rotation_field" v=""/>
+                            <prop k="symbol_height" v="1"/>
+                            <prop k="symbol_name" v="rectangle"/>
+                            <prop k="symbol_name_field" v=""/>
+                            <prop k="symbol_width" v="2"/>
+                            <prop k="width_field" v=""/>
+                        </layer>
+                    </symbol>
+                </symbols>
+                <rotation field=""/>
+                <sizescale field=""/>
+            </renderer-v2>
+            <customproperties/>
+            <displayfield>ogr_fid</displayfield>
+            <label>0</label>
+            <labelattributes>
+                <label fieldname="" text="Label"/>
+                <family fieldname="" name="MS Shell Dlg 2"/>
+                <size fieldname="" units="pt" value="12"/>
+                <bold fieldname="" on="0"/>
+                <italic fieldname="" on="0"/>
+                <underline fieldname="" on="0"/>
+                <strikeout fieldname="" on="0"/>
+                <color fieldname="" red="0" blue="0" green="0"/>
+                <x fieldname=""/>
+                <y fieldname=""/>
+                <offset x="0" y="0" units="pt" yfieldname="" xfieldname=""/>
+                <angle fieldname="" value="0" auto="0"/>
+                <alignment fieldname="" value="center"/>
+                <buffercolor fieldname="" red="255" blue="255" green="255"/>
+                <buffersize fieldname="" units="pt" value="1"/>
+                <bufferenabled fieldname="" on=""/>
+                <multilineenabled fieldname="" on=""/>
+                <selectedonly on=""/>
+            </labelattributes>
+            <edittypes>
+                <edittype type="0" name="assetstatus"/>
+                <edittype type="0" name="comments"/>
+                <edittype type="0" name="dateinstalled"/>
+                <edittype type="0" name="daterecorded"/>
+                <edittype type="0" name="jobno"/>
+                <edittype type="0" name="lasteditedby"/>
+                <edittype type="0" name="meterid"/>
+                <edittype type="0" name="meterno"/>
+                <edittype type="0" name="ogr_fid"/>
+                <edittype type="0" name="replacedexisting"/>
+                <edittype type="0" name="spatialaccuracy"/>
+                <edittype type="0" name="surfacelevelahd"/>
+            </edittypes>
+            <editform>.</editform>
+            <editforminit></editforminit>
+            <annotationform>.</annotationform>
+            <attributeactions/>
+        </maplayer>
+        <maplayer minimumScale="0" maximumScale="2000" geometry="Line" type="vector" hasScaleBasedVisibilityFlag="1">
+            <id>WaterServices20120413133920989</id>
+            <datasource>dbname='FieldData' service='FieldData' srid=28356 type=LINESTRING table="dbo"."WaterServices" (ogr_geometry) sql=</datasource>
+            <title></title>
+            <abstract></abstract>
+            <layername>Water Services</layername>
+            <srs>
+                <spatialrefsys>
+                    <proj4>+proj=utm +zone=56 +south +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs</proj4>
+                    <srsid>2450</srsid>
+                    <srid>28356</srid>
+                    <authid>EPSG:28356</authid>
+                    <description>GDA94 / MGA zone 56</description>
+                    <projectionacronym>utm</projectionacronym>
+                    <ellipsoidacronym>GRS80</ellipsoidacronym>
+                    <geographicflag>false</geographicflag>
+                </spatialrefsys>
+            </srs>
+            <transparencyLevelInt>255</transparencyLevelInt>
+            <provider encoding="System">mssql</provider>
+            <vectorjoins/>
+            <renderer-v2 symbollevels="0" type="singleSymbol">
+                <symbols>
+                    <symbol outputUnit="MM" alpha="1" type="line" name="0">
+                        <layer pass="0" class="SimpleLine" locked="0">
+                            <prop k="capstyle" v="square"/>
+                            <prop k="color" v="85,127,255,255"/>
+                            <prop k="customdash" v="1;0.5"/>
+                            <prop k="joinstyle" v="bevel"/>
+                            <prop k="offset" v="0"/>
+                            <prop k="penstyle" v="dot"/>
+                            <prop k="use_custom_dash" v="1"/>
+                            <prop k="width" v="0.15"/>
+                        </layer>
+                    </symbol>
+                </symbols>
+                <rotation field=""/>
+                <sizescale field=""/>
+            </renderer-v2>
+            <customproperties/>
+            <displayfield>ogr_fid</displayfield>
+            <label>0</label>
+            <labelattributes>
+                <label fieldname="" text="Label"/>
+                <family fieldname="" name="MS Shell Dlg 2"/>
+                <size fieldname="" units="pt" value="12"/>
+                <bold fieldname="" on="0"/>
+                <italic fieldname="" on="0"/>
+                <underline fieldname="" on="0"/>
+                <strikeout fieldname="" on="0"/>
+                <color fieldname="" red="0" blue="0" green="0"/>
+                <x fieldname=""/>
+                <y fieldname=""/>
+                <offset x="0" y="0" units="pt" yfieldname="" xfieldname=""/>
+                <angle fieldname="" value="0" auto="0"/>
+                <alignment fieldname="" value="center"/>
+                <buffercolor fieldname="" red="255" blue="255" green="255"/>
+                <buffersize fieldname="" units="pt" value="1"/>
+                <bufferenabled fieldname="" on=""/>
+                <multilineenabled fieldname="" on=""/>
+                <selectedonly on=""/>
+            </labelattributes>
+            <edittypes>
+                <edittype type="0" name="assetstatus"/>
+                <edittype type="0" name="comments"/>
+                <edittype type="0" name="dateinstalled"/>
+                <edittype type="0" name="daterecorded"/>
+                <edittype type="0" name="depthmetres"/>
+                <edittype type="0" name="jobno"/>
+                <edittype type="0" name="lasteditedby"/>
+                <edittype type="0" name="ogr_fid"/>
+                <edittype type="0" name="pipediameter"/>
+                <edittype type="0" name="pipematerial"/>
+                <edittype type="0" name="replacedexisting"/>
+                <edittype type="0" name="serviceid"/>
+                <edittype type="0" name="spatialaccuracy"/>
+            </edittypes>
+            <editform>.</editform>
+            <editforminit></editforminit>
+            <annotationform>.</annotationform>
+            <attributeactions/>
+        </maplayer>
+        <maplayer minimumScale="0" maximumScale="1e+08" type="raster" hasScaleBasedVisibilityFlag="0">
+            <id>Yangan20120417082244127</id>
+            <datasource>../../../../../../maps/Yangan.ecw</datasource>
+            <title></title>
+            <abstract></abstract>
+            <layername>Yangan</layername>
+            <srs>
+                <spatialrefsys>
+                    <proj4>+proj=longlat +datum=WGS84 +no_defs</proj4>
+                    <srsid>3452</srsid>
+                    <srid>4326</srid>
+                    <authid>EPSG:4326</authid>
+                    <description>WGS 84</description>
+                    <projectionacronym>longlat</projectionacronym>
+                    <ellipsoidacronym>WGS84</ellipsoidacronym>
+                    <geographicflag>true</geographicflag>
+                </spatialrefsys>
+            </srs>
+            <transparencyLevelInt>151</transparencyLevelInt>
+            <customproperties/>
+            <provider>gdal</provider>
+            <rasterrenderer opacity="0.596078" alphaBand="-1" maxOversampling="2" blueBand="3" greenBand="2" type="multibandcolor" invertColor="0" redBand="1">
+                <rasterTransparency/>
+            </rasterrenderer>
+        </maplayer>
+    </projectlayers>
+    <properties>
+        <SpatialRefSys>
+            <ProjectCrs type="QString">EPSG:28356</ProjectCrs>
+            <ProjectCRSID type="int">2450</ProjectCRSID>
+        </SpatialRefSys>
+        <Paths>
+            <Absolute type="bool">false</Absolute>
+        </Paths>
+        <Gui>
+            <SelectionColorBluePart type="int">0</SelectionColorBluePart>
+            <CanvasColorGreenPart type="int">255</CanvasColorGreenPart>
+            <CanvasColorRedPart type="int">255</CanvasColorRedPart>
+            <SelectionColorRedPart type="int">85</SelectionColorRedPart>
+            <SelectionColorAlphaPart type="int">255</SelectionColorAlphaPart>
+            <SelectionColorGreenPart type="int">255</SelectionColorGreenPart>
+            <CanvasColorBluePart type="int">255</CanvasColorBluePart>
+        </Gui>
+        <PositionPrecision>
+            <DecimalPlaces type="int">2</DecimalPlaces>
+            <Automatic type="bool">true</Automatic>
+        </PositionPrecision>
+    </properties>
+</qgis>

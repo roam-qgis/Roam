@@ -116,20 +116,24 @@ def deploy_to(target, config):
     forms = config['forms']
     clientpath = os.path.normpath(config['client'])
 
-    
     print "Deploying application to %s" % config['client']
     clientapppath = os.path.join(clientpath, APPNAME)
     msg = shell('xcopy', deploypath, clientapppath, args \
-                ,'/EXCLUDE:depoly_excludes.txt',silent=False)
-                
-    projectpath = os.path.join(buildpath,'projects')
-    clientpojectpath = os.path.join(clientpath,pluginpath,'projects')
-    formpath = os.path.join(buildpath,'entry_forms')
-    clientformpath = os.path.join(clientpath,pluginpath,'entry_forms')
+                , silent=False)
+
+    projectpath = os.path.join(curpath, 'project-manager', 'projects')
+    clientpojectpath = os.path.join(clientpath, pluginpath, 'projects')
+
+    print projectpath
+
+    formpath = os.path.join(curpath, 'project-manager', 'entry_forms')
+    clientformpath = os.path.join(clientpath, pluginpath,'entry_forms')
+
+    print formpath
 
     msg = shell('xcopy', projectpath, clientpojectpath, '/T','/E','/I','/Y' ,silent=False)
     msg = shell('xcopy', formpath, clientformpath,'/I','/Y', '/D' ,silent=False)
-    
+
     if 'All' in projects:
         print "Loading all projects"
         msg = shell('xcopy', projectpath, clientpojectpath, args ,silent=False)
