@@ -40,7 +40,10 @@ bootpath = os.path.join('src', "boot")
 args = ['/D', '/S', '/E', '/K', '/C', '/H', '/R', '/Y', '/I']
 
 def build():
-    deploy_to_clients()
+    config = ConfigParser()
+    config.read(targetspath)
+    deploy_local()
+    deploy_target('All', config)
     
 def compile():
     print " - building UI files..."
@@ -186,11 +189,4 @@ def deploy_target(targetname, config):
     except NoOptionError as ex:
         print ex.message
 
-if __name__ == "__main__":
-    from mock import patch
-    with patch('build.deploy_to') as mock:
-        config = ConfigParser()
-        config.read(targetspath)
-        deploy_local()
-        deploy_target('All', config)
-    sys.exit()
+main()
