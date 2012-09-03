@@ -11,9 +11,7 @@
 .. |name| replace:: QMap
 .. |f| image:: images/folder.png
 
-
 .. contents::
-.. sectnum::
 
 |name| is a simple to use, simple to configure, data collection
 program built by Southern Downs Regional Council that uses QGIS.  |name| is a QGIS
@@ -26,7 +24,9 @@ at Windows, however it wouldn't take much to change it into a standalone
 QGIS program and run on any platform.
 
 As |name| is just a QGIS you can use your normal QGIS project files (.qgs)
-in order to create mapping projects.
+in order to create mapping projects. Forms in the project are loaded baseed 
+on the naming of layers in the project.  A form can be bound to the layer "Sewer Main"
+and will be useable in any project that includes the lyaer "Sewer Main".
 
 Requirements
 -------------
