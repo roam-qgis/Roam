@@ -27,13 +27,13 @@ in order to create mapping projects.
 Zen
 ---
 
-| Don't reinvent the wheel -- unless for good reason.
-| Magic is cool.
-| Although not cool enough if it makes things confusing.
-| Datebases are handy things.
-| Although plain text files are normally easier to manage.
-| Convention over Configuration is cool idea -- lets do more of that!
-| Unless it starts to look like magic.
+- Don't reinvent the wheel -- unless for good reason.
+- Magic is cool.
+- Although not cool enough if it makes things confusing.
+- Datebases are handy things.
+- Although plain text files are normally easier to manage.
+- Convention over Configuration is cool idea -- lets do more of that!
+- Unless it starts to look like magic.
 
 
 Requirements
@@ -87,7 +87,7 @@ Install the following software onto the client
     - MS SQL Server 2008
     - .NET 3.5
     - Microsoft Sync Framework
-    - QGIS
+    - QGIS (Lastest version)
 
 Running the build.py file will compile and deploy the plugin to the list of
 clients.
@@ -96,8 +96,16 @@ clients.
 
     python build.py
 
-The list of clients can be found in the function deploy_to_clients() inside
-build.py.  Edit this list to add/remove clients.
+A list of targets that will be deployed can be found in targets.ini. An example
+of a target is:
+
+.. code-block:: console
+
+    [Touch]
+    client : \\computername\path\to\desktop
+    projects : All
+    forms : All
+    
 
 .. note:: The build script will run the unit tests.  If any tests fail the
           build script will error and exit.  This is to prevent deploying a
