@@ -1,7 +1,6 @@
 #! /usr/bin/python
 ''' Build file that compiles all the needed resources'''
 import os.path
-
 import os
 import sys
 import nose
@@ -12,6 +11,8 @@ from subprocess import Popen, PIPE
 from PyQt4.QtGui import QApplication
 from ConfigParser import ConfigParser, NoSectionError, NoOptionError
 from nose.plugins.cover import Coverage
+import optparse
+import nose
 
 ui_sources = ['src/ui_datatimerpicker', 'src/ui_listmodules',
               'src/syncing/ui_sync', 'src/ui_listfeatures', 'src/ui_errorlist']
@@ -29,19 +30,22 @@ EXCLUDES = '/EXCLUDE:excludes.txt'
 
 curpath = os.path.dirname(os.path.abspath(__file__))
 srcpath = os.path.join(curpath, "src")
-pluginpath = os.path.join(APPNAME, "app", "python", "plugins", APPNAME)
+pluginpath = os.path.join("build", APPNAME, "app", "python", "plugins", APPNAME)
 buildpath = os.path.join(curpath, pluginpath)
 targetspath = os.path.join(curpath, 'targets.ini')
-deploypath = os.path.join(curpath, APPNAME)
+deploypath = os.path.join(curpath, "build", APPNAME)
 bootpath = os.path.join('src', "boot")
 
 args = ['/D', '/S', '/E', '/K', '/C', '/H', '/R', '/Y', '/I']
 
 
 def build():
+    """
+    Build the project and deploy to all targets
+    """
     config = ConfigParser()
     config.read(targetspath)
-    deploy_local()
+    build_plugin()
     deploy_target('All', config)
 
 
@@ -90,18 +94,25 @@ def getVersion():
 
 
 def test():
-    import nose
-    return nose.run()
+    """
+        Run the tests in the project
+    """
+    print "Running tests..."
+    nose.run()
 
 
-def deploy_local():
+def build_plugin():
+    """
+        Builds the QGIS plugin and sends the output into the build directory.
+    """
     print "Deploy started"
     print "Building..."
     compile()
-    passed = test()
-    if not passed:
-        print "Tests Failed!!"
-        return False
+    if main.options.with_tests == True:
+        passed = test()
+        if not passed:
+            print "Tests Failed!!"
+            sys.exit()
 
     # Copy all the files to the ouput directory
     print "Copying new files..."
@@ -115,7 +126,18 @@ def deploy_local():
         os.path.join(buildpath, 'metadata.txt'))
 
     print "Local depoly compelete into {0}".format(buildpath)
-    return True
+
+
+def deploy():
+    targetname = main.options.target
+    if targetname is None:
+        print "No target name given depolying All target"
+        targetname = 'All'
+
+    config = ConfigParser()
+    config.read(targetspath)
+    build_plugin()
+    deploy_target(targetname, config)
 
 
 def deploy_to(target, config):
@@ -196,4 +218,11 @@ def deploy_target(targetname, config):
     except NoOptionError as ex:
         print ex.message
 
-main()
+if __name__ == "__main__":
+    options = [
+        optparse.make_option('-o', '--target', dest='target', help='Target to deploy'),
+        optparse.make_option('--with-tests', action='store', help='Enable tests!', \
+                             default=True)
+    ]
+
+    main(extra_options=options)
