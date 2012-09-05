@@ -111,21 +111,19 @@ of a target is:
     projects : Water.qgs
     forms : formWater
     
-- ``[Touch]`` is the name of the target: This can be any valid string
-- ``client`` : is the path to the client a QMap folder will be created on the client
-under this path. Can also be a name of another target.
-- ``project``: A comma seperated list of QGIS project files to deploy to the client.
-Projects mush live in the ``/project-manager/`` folder.
-- ``forms`` : A comma seperated list of forms to depoly. 
-Form names are the names of the folder that contains the ui files.
+- ``[Touch]`` is the name of the target.
+- ``client``  is the path to the client a QMap folder will be created on the client under this path. Can also be a name of another target.
+- ``project`` A comma seperated list of QGIS project files to deploy to the client. Projects mush live in the ``/project-manager/`` folder.
+- ``forms`` A comma seperated list of forms to depoly. Form names are the names of the folder that contains the ui files.
 
 An example of a ``[All]`` target:
 
 .. code-block:: console
+
     [All]
     client : Client1,Client2,Client3
     
-``Client1``,``Client2``,``Client3`` are then targets with the path to the real client
+``Client1``, ``Client2``, ``Client3`` are then targets with the path to the real client
 like the ``[Touch]`` example above.
 
 .. note:: The build script will run the unit tests.  If any tests fail the
