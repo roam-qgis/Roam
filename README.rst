@@ -30,9 +30,11 @@ away from the normal QGIS install. This is to provide a controlled QGIS
 environment with a minimal interface
 
 As |name| is just QGIS you can use your normal QGIS project files (.qgs)
-in order to create mapping projects. Forms in the project are loaded baseed 
-on the naming of layers in the project.  A form can be bound to the layer "Sewer Main"
-and will be useable in any project that includes the lyaer "Sewer Main".
+in order to create mapping projects. Forms are loaded based 
+on the naming of layers in the project.  E.g. A form can be bound to the 
+layer "Sewer Main" and will be useable in any project that includes 
+a layer with the name "Sewer Main". Note QGIS allows you rename layers without
+renaming the underlying file name.
 
 Requirements
 -------------
