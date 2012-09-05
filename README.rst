@@ -142,7 +142,7 @@ the data using relative paths.  Provided of course that your project file is sav
 in QGIS with relative paths.
 
 License
-=======
+--------------
 
 |name| is free software: you can redistribute it and/or modify it
 under the terms of the GNU General Public License version 2 (GPLv2) as
@@ -153,7 +153,7 @@ http://www.gnu.org/licenses/gpl.html
 
 
 Disclaimer of Warranty (GPLv2)
-==============================
+--------------
 
 There is no warranty for the program, to the extent permitted by
 applicable law. Except when otherwise stated in writing the copyright
@@ -166,7 +166,7 @@ all necessary servicing, repair or correction.
 
 
 Limitation of Liability (GPLv2)
-===============================
+--------------
 
 In no event unless required by applicable law or agreed to in writing
 will any copyright holder, or any other party who modifies and/or conveys
