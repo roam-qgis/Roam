@@ -98,7 +98,7 @@ def test():
         Run the tests in the project
     """
     print "Running tests..."
-    nose.run()
+    return nose.run()
 
 
 def build_plugin():
