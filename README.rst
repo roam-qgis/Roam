@@ -104,6 +104,9 @@ targets.ini to depoly different forms and projects to different clients by runni
 With ``Client1``, ``Client2``, ``Client4` being different devices with different
 forms and projects.
 
+Client Manager and Data
++++++++++++++++++++++++
+
 |name| takes a hands off approach to data management in that it will not manage, 
 copy, move, or otherwise touch your project data.  Data should be managed by
 the admin of the clients.
