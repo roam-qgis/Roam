@@ -30,8 +30,8 @@ EXCLUDES = '/EXCLUDE:excludes.txt'
 
 curpath = os.path.dirname(os.path.abspath(__file__))
 srcpath = os.path.join(curpath, "src")
-pluginpath = os.path.join("build", APPNAME, "app", "python", "plugins", APPNAME)
-buildpath = os.path.join(curpath, pluginpath)
+pluginpath = os.path.join(APPNAME, "app", "python", "plugins", APPNAME)
+buildpath = os.path.join(curpath, "build", pluginpath)
 targetspath = os.path.join(curpath, 'targets.ini')
 deploypath = os.path.join(curpath, "build", APPNAME)
 bootpath = os.path.join('src', "boot")
