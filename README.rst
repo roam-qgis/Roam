@@ -67,13 +67,13 @@ The client program includes a QGIS plugin, a bootloader to load QGIS using
 
 The client progam can be depolyed to a client using:
 
-.. code-block:: console
+::
 
     python build.py --target=Touch --with-tests=False deploy
     
 with ``Touch`` being defined in targets.ini as:
 
-.. code-block:: console
+::
 
     [Touch]
     client : \\computername\path\to\desktop
@@ -95,7 +95,7 @@ into the ``/project-manager/entry_forms`` folder and projects into the
 Project and forms in the ``/project-manager/`` folder can then be used inside
 targets.ini to depoly different forms and projects to different clients by running:
 
-.. code-block:: console
+::
 
     python build.py --target=Client1 --with-tests=False deploy
     python build.py --target=Client2 --with-tests=False deploy
@@ -127,7 +127,7 @@ On admin machine in ``/project-manager/projects`` folder:
       
 After using:
 
-.. code-block:: console
+::
 
     python build.py --target=Client1 --with-tests=False deploy
     
