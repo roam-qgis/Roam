@@ -55,10 +55,14 @@ and it sucks at error reporting.
 
 .. _fabricate: http://code.google.com/p/fabricate/
 
+The building process takes the src for the plugin from ``/src/`` and builds 
+the ui and Qt resource files into Python files moving the result files into the
+``/build/`` folder.
+
 To build just run **make_win.bat** from the main root folder.  build.py will generate
 all the needed files and deploy them into the build directory.
 
-The QGIS plugin location is |f| ``/QMap/app/python/plugins``
+The QGIS plugin location is |f| ``/build/QMap/app/python/plugins``
 
 You can run build.py using Python with other arguments:
 
@@ -71,13 +75,14 @@ You can run build.py using Python with other arguments:
     python build.py docs
 
     #Build only
-    python build.py build
+    python build.py
+    
 
 The version number used is {year}.{month}.{day}.{commitid} and inserted into
 metadata.txt.  The version in metadata.txt is the version number for all the
 files and related binaries in the project; ignore all other version numbers.
 
-Installing
+Depolying
 ----------
 
 .. note:: If you haven't done so already please read Building_
@@ -89,12 +94,12 @@ Install the following software onto the client
     - Microsoft Sync Framework
     - QGIS (Lastest version)
 
-Running the build.py file will compile and deploy the plugin to the list of
-clients.
+Running the build.py with the ``--target`` argument will compile and 
+deploy the plugin to a client.
 
 .. code-block:: console
 
-    python build.py
+    python build.py --target=Touch --with-tests=False deploy
 
 A list of targets that will be deployed can be found in targets.ini. An example
 of a target is:
@@ -103,9 +108,25 @@ of a target is:
 
     [Touch]
     client : \\computername\path\to\desktop
-    projects : All
-    forms : All
+    projects : Water.qgs
+    forms : formWater
     
+- ``[Touch]`` is the name of the target: This can be any valid string
+- ``client`` : is the path to the client a QMap folder will be created on the client
+under this path. Can also be a name of another target.
+- ``project``: A comma seperated list of QGIS project files to deploy to the client.
+Projects mush live in the ``/project-manager/`` folder.
+- ``forms`` : A comma seperated list of forms to depoly. 
+Form names are the names of the folder that contains the ui files.
+
+An example of a ``[All]`` target:
+
+.. code-block:: console
+    [All]
+    client : Client1,Client2,Client3
+    
+``Client1``,``Client2``,``Client3`` are then targets with the path to the real client
+like the ``[Touch]`` example above.
 
 .. note:: The build script will run the unit tests.  If any tests fail the
           build script will error and exit.  This is to prevent deploying a

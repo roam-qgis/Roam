@@ -41,18 +41,19 @@ args = ['/D', '/S', '/E', '/K', '/C', '/H', '/R', '/Y', '/I']
 
 def build():
     """
-    Build the project and deploy to all targets
+    Build the project.
     """
-    config = ConfigParser()
-    config.read(targetspath)
     build_plugin()
-    deploy_target('All', config)
 
 
 def compile():
     print " - building UI files..."
     for source in ui_sources:
-        run('pyuic4.bat', '-o', source + '.py', source + '.ui')
+        pyuic = 'pyuic4'
+        if os.name == 'nt':
+            pyuic += '.bat'
+
+        run(pyuic, '-o', source + '.py', source + '.ui')
 
     print " - building resource files..."
     run('pyrcc4', '-o', 'src/resources_rc.py', 'src/resources.qrc')
