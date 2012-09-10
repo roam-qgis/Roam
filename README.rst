@@ -38,7 +38,9 @@ Requirements
 - nose and mock (for Python tests)
 - Qt Designer (for form building)
 - Something to install it on (some kind of fancy tablet PC)
+
 If you want SQL Server syncing support
+
 - MS SQL Server 2008 (express or greater)
 - .NET 3.5 (or greater)
 - Microsoft Sync Framework
