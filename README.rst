@@ -19,10 +19,6 @@ Python plugin that removes most of the interface and replacing it with a simple
 to use interface for data collection. The program is only in early alpha stage 
 but is functional and activly worked on.
 
-At the current time it is implmented as a QGIS Python plugin and is aimed 
-at Windows, however it wouldn't take much to change it into a standalone 
-QGIS program and run on any platform.
-
 Although this project is written as a QGIS plugin it is designed to be run 
 in in it's own QGIS sandbox using the --config path command line option of QGIS. 
 This means that it acts like a standalone program and will store its settings 
@@ -40,11 +36,13 @@ Requirements
 -------------
 - Latest development QGIS Version (this is due to bug fixes in master)
 - nose and mock (for Python tests)
+- Qt Designer (for form building)
+- Something to install it on (some kind of fancy tablet PC)
+If you want SQL Server syncing support
 - MS SQL Server 2008 (express or greater)
 - .NET 3.5 (or greater)
 - Microsoft Sync Framework
-- Qt Designer (for form building)
-- Something to install it on (some kind of fancy tablet PC)
+
 
 Syncing
 --------------
