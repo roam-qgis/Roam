@@ -2,7 +2,7 @@
 |name| - Client Setup
 ======================
 
-.. |name| replace:: QGIS Data Collector
+.. |name| replace:: QMap
 .. |f| image:: images/folder.png
 
 .. contents::
@@ -13,6 +13,8 @@ Installing QGIS
 
 Installing MS SQL
 =======================
+
+SQL Express can be installed on the client by running `client-setup/install-sql.bat`
 
 Installing |name|
 =======================
