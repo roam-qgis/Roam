@@ -1,0 +1,2 @@
+setup.exe /Q /CONFIGURATIONFILE="ConfigurationFile.ini" /IACCEPTSQLSERVERLICENSETERMS
+netsh advfirewall firewall add rule name="SQLServer" dir=in action=allow protocol=TCP localport=1433 profile=DOMAIN
