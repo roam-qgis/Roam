@@ -56,14 +56,15 @@ def compile():
     run('pyrcc4', '-o', 'src/resources_rc.py', 'src/resources.qrc')
     run('pyrcc4', '-o', 'src/syncing/resources_rc.py', 'src/syncing/resources.qrc')
 
-    print " - building MSSQLSyncer app..."
-    run('MSBuild', '/property:Configuration=Release', '/verbosity:m', \
-        'src/syncing/MSSQLSyncer/MSSQLSyncer.csproj', shell=True, env=env)
+    if main.options.with_mssyncing == True:
+        print " - building MSSQLSyncer app..."
+        run('MSBuild', '/property:Configuration=Release', '/verbosity:m', \
+            'src/syncing/MSSQLSyncer/MSSQLSyncer.csproj', shell=True, env=env)
 
-    print " - building Provisioning app..."
-    run('MSBuild', '/property:Configuration=Release', '/verbosity:m', \
-        'provisioner/SqlSyncProvisioner/SqlSyncProvisioner.csproj', \
-        shell=True, env=env)
+        print " - building Provisioning app..."
+        run('MSBuild', '/property:Configuration=Release', '/verbosity:m', \
+            'provisioner/SqlSyncProvisioner/SqlSyncProvisioner.csproj', \
+            shell=True, env=env)
 
     print " - building docs..."
     docs()
@@ -223,7 +224,9 @@ if __name__ == "__main__":
     options = [
         optparse.make_option('-o', '--target', dest='target', help='Target to deploy'),
         optparse.make_option('--with-tests', action='store', help='Enable tests!', \
+                             default=True),
+        optparse.make_option('--with-mssyncing', action='store', help='Use MS SQL Syncing!', \
                              default=True)
     ]
-    
+
     main(extra_options=options)
