@@ -3,16 +3,13 @@
 import os.path
 import os
 import sys
-import nose
 import datetime
 from shutil import copytree, ignore_patterns, rmtree
 from fabricate import *
 from subprocess import Popen, PIPE
 from PyQt4.QtGui import QApplication
 from ConfigParser import ConfigParser, NoSectionError, NoOptionError
-from nose.plugins.cover import Coverage
 import optparse
-import nose
 
 ui_sources = ['src/ui_datatimerpicker', 'src/ui_listmodules',
               'src/syncing/ui_sync', 'src/ui_listfeatures', 'src/ui_errorlist']
@@ -99,8 +96,11 @@ def test():
         Run the tests in the project
     """
     print "Running tests..."
-    return nose.run()
-
+    import unittest
+    from src import tests
+    loader = unittest.TestLoader()
+    allsuite = loader.loadTestsFromModule(tests)
+    unittest.TextTestRunner().run(allsuite)
 
 def build_plugin():
     """
@@ -225,5 +225,5 @@ if __name__ == "__main__":
         optparse.make_option('--with-tests', action='store', help='Enable tests!', \
                              default=True)
     ]
-
+    
     main(extra_options=options)
