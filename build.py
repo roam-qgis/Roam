@@ -101,7 +101,8 @@ def test():
     from src import tests
     loader = unittest.TestLoader()
     allsuite = loader.loadTestsFromModule(tests)
-    unittest.TextTestRunner().run(allsuite)
+    result = unittest.TextTestRunner().run(allsuite)
+    return result.wasSuccessful()
 
 def build_plugin():
     """

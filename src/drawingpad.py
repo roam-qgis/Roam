@@ -127,9 +127,9 @@ class DrawingPad(QtGui.QDialog):
         self.openImage(startimage)
 
     def saveImage(self, filename):
-        filename = filename + ".jpg"
+        filename = filename + ".png"
         log(filename)
-        return self.scribbleArea.saveImage(filename, "jpg")
+        return self.scribbleArea.saveImage(filename, "png")
 
     def setPen(self, color, size=3):
         self.scribbleArea.setPenWidth(size)

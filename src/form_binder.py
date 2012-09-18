@@ -1,13 +1,11 @@
-from distutils.errors import CCompilerError
 import tempfile
 import uuid
 import os.path
+import os
 from PyQt4.QtGui import *
 from PyQt4.QtCore import *
 from utils import log, info, warning
-from qgis.gui import QgsAttributeEditor
 from select_feature_tool import SelectFeatureTool
-import os
 from functools import partial
 from datatimerpickerwidget import DateTimePickerDialog
 from drawingpad import DrawingPad
@@ -294,12 +292,12 @@ class FormBinder(QObject):
         self.forminstance.hide()
         curdir = os.path.dirname(__file__)
         id = self.feature.attributeMap()[self.layer.fieldNameIndex("UniqueID")].toString()
-        name = str(id) + "_" + controlname + ".jpg"
+        savedname = str(id) + "_" + controlname + ".jpg"
         imagename = os.path.join(curdir, "data", str(self.layer.name()), "images", \
-                                name)
+                                savedname)
 
-        name = "drawingFor_{0}".format(controlname)
-        tempimage = os.path.join(tempfile.gettempdir(), name)
+        tempname = "drawingFor_{0}".format(controlname)
+        tempimage = os.path.join(tempfile.gettempdir(), tempname)
 
         log("Looking for {0} or {1}".format(imagename, tempimage))
         imagetoload = self.images.get(controlname, imagename)
@@ -309,7 +307,7 @@ class FormBinder(QObject):
         drawingpad.ui.actionMapSnapshot.triggered.connect(partial(self.drawingPadMapSnapshot,drawingpad))
         if drawingpad.exec_():
             #Save the image to a temporay location until commit.
-            self.images[controlname] = tempimage + ".jpg"
+            self.images[controlname] = tempimage + ".png"
             drawingpad.saveImage(tempimage)
             self.forminstance.show()
         else:
