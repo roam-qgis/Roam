@@ -2,6 +2,7 @@ import os.path
 from PyQt4.QtCore import QSettings,QString
 from PyQt4.QtGui import QIcon
 from PyQt4.uic import loadUi
+from PyQt4.QtSql import QSqlDatabase
 import os
 import imp
 
@@ -33,6 +34,7 @@ class Form(object):
     def __init__(self, module):
         self._module = module
         self._settings = None
+        self._db = None
         
     @property
     def module(self):
@@ -43,6 +45,16 @@ class Form(object):
         uiFile = os.path.join(path, "form.ui")
         instance = loadUi(uiFile)
         return instance
+
+    def db(self):
+        if self._db is None:
+            path = os.path.dirname(self.module.__file__)
+            dbpath = os.path.join(path, "form.db")
+            self._db = QSqlDatabase.addDatabase("QSQLITE")
+            self._db.setDatabaseName(dbpath)
+            self._db.open()
+        return self._db
+
 
     def settings(self):
         if self._settings is None:

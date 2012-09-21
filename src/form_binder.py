@@ -4,12 +4,14 @@ import os.path
 import os
 from PyQt4.QtGui import *
 from PyQt4.QtCore import *
+from PyQt4.QtSql import QSqlQuery
 from utils import log, info, warning
 from select_feature_tool import SelectFeatureTool
 from functools import partial
 from datatimerpickerwidget import DateTimePickerDialog
 from drawingpad import DrawingPad
 from utils import log, warning
+import re
 
 
 class BindingError(Exception):
@@ -140,7 +142,7 @@ class FormBinder(QObject):
         self.images = {}
         self.mandatory_group = MandatoryGroup()
 
-    def bindFeature(self, qgsfeature, mandatory_fields=True):
+    def bindFeature(self, qgsfeature, db, mandatory_fields=True):
         """
         Binds a features values to the form. If the control has the mandatory
         property set then it will be added to the mandatory group.
@@ -148,7 +150,9 @@ class FormBinder(QObject):
         qgsfeature - A QgsFeature to bind the values from
         mandatory_fields - True if mandatory fields should be respected (default)
         """
+        self.db = db
         self.feature = qgsfeature
+        self.connectControlsToSQLCommands()
         for index, value in qgsfeature.attributeMap().items():
             field = self.fields[index]
 
@@ -172,6 +176,17 @@ class FormBinder(QObject):
                 warning(er.reason)
 
             self.fieldtocontrol[index] = control
+
+    def connectControlsToSQLCommands(self):
+        """
+            Loops all the controls and connects update signals
+            in order to use SQL commands correctly.
+
+            Note: We check all control because we can use SQL on non
+            field bound controls in order to show information.
+        """
+        for control in self.forminstance.findChildren(QWidget):
+            self.connectSQL(control)
 
     def getBuddy(self, control):
         try:
@@ -201,6 +216,10 @@ class FormBinder(QObject):
         except BindingError as er:
             warning(er.reason)
 
+    def checkItemsTableExists(self):
+        pass
+        #"SELECT name FROM sqlite_master WHERE type='table' AND name='ComboBoxItems';"
+
     def saveComboValues(self, combobox, text):
         """
         Save the value of the combo box into the form settings values.
@@ -208,17 +227,70 @@ class FormBinder(QObject):
         """
         comboitems = [combobox.itemText(i) for i in range(combobox.count())]
         name = combobox.objectName()
-        self.settings.beginGroup('ComboBoxItems')
-        items = self.settings.value('%s' % name).toString().split(',')
-        settingslist = [str(s) for s in items]
+        query = QSqlQuery()
+        query.prepare("SELECT value FROM ComboBoxItems WHERE control = :contorl")
+        query.bindValue(":control", name)
+        query.exec_()
+        log("LAST ERROR")
+        log(query.lastError().text())
+        items = []
+        while query.next():
+            value = query.value(0).toString()
+            if not value.isEmpty():
+                items.append(str(value))
 
-        if not text in comboitems and not text in settingslist:
-            settingslist.append(str(text))
-            newlist = ",".join(settingslist)
-            self.settings.setValue('%s' % name, newlist)
+        if not text in comboitems and not text in items:
+            query = QSqlQuery()
+            query.prepare("INSERT INTO ComboBoxItems (control, value)" \
+                          "VALUES (:control,:value)")
+            query.bindValue(":control", name)
+            query.bindValue(":value", text)
+            query.exec_()
+            log("LAST ERROR FOR INSERT")
+            log(query.lastError().text())
 
-        self.settings.endGroup()
-        self.settings.sync()
+    def updateControl(self, control, mapping, sql, *args):
+        """
+            Update control with result from SQL query.
+        """
+        query = QSqlQuery()
+        query.prepare(sql)
+        # Loop though all the placeholders and get value from the
+        # function assigned to each one.
+        for holder, function in mapping.items():
+            value = function()
+            query.bindValue(":%s" % holder, value)
+
+        query.exec_()
+
+        for key, value in query.boundValues().items():
+            log("%s is %s" % (key, value.toString()))
+
+        if isinstance(control, QComboBox):
+            control.clear()
+            control.addItem("")
+            while query.next():
+                value = query.value(0).toString()
+                if not value.isEmpty():
+                    control.addItem(value)
+
+    def connectSQL(self, control):
+        sql = control.property("sql").toString()
+        if not sql.isEmpty():
+            log("QUERY:%s" % sql)
+            placeholders = re.findall(r':(\w+)', sql)
+            mapping = {}
+            # Loop though all the sql placeholders and look for a
+            # control with that name to get updates from.
+            for holder in placeholders:
+                linked_control = self.getControl(holder)
+                if linked_control is None:
+                    continue
+
+                if isinstance(linked_control, QListWidget):
+                    mapping[holder] = lambda c = linked_control: c.currentItem().text()
+                    linked_control.currentItemChanged.connect(partial(self.updateControl, \
+                                                                      control, mapping, sql ))
 
     def bindValueToControl(self, control, value):
         """
@@ -235,6 +307,7 @@ class FormBinder(QObject):
             items = control.findItems(value.toString(), Qt.MatchExactly)
             try:
                 control.setCurrentItem(items[0])
+                control.currentItemChanged.emit(None, items[0])
             except IndexError:
                 pass
 
@@ -245,12 +318,16 @@ class FormBinder(QObject):
             control.setChecked(value.toBool())
 
         elif isinstance(control, QComboBox):
-            self.settings.beginGroup('ComboBoxItems')
-            items = self.settings.value('%s' % control.objectName()).toString() \
-                                                                    .split(',')
-            for item in items:
-                control.addItem(item)
-            self.settings.endGroup()
+            # Add items stored in the database
+            query = QSqlQuery()
+            query.prepare("SELECT value FROM ComboBoxItems WHERE control = :contorl")
+            query.bindValue(":control", control.objectName())
+            query.exec_()
+            while query.next():
+                newvalue = query.value(0).toString()
+                if not newvalue.isEmpty():
+                    control.addItem(newvalue)
+
             itemindex = control.findText(value.toString())
             control.setCurrentIndex(itemindex)
 
@@ -358,6 +435,9 @@ class FormBinder(QObject):
 
                 elif isinstance(control, QDateTimeEdit):
                     value = control.dateTime().toString(Qt.ISODate)
+
+                elif isinstance(control, QListWidget):
+                    value = control.currentItem().text()
 
                 info("Setting value to %s from %s" % (value, control.objectName()))
 

@@ -27,7 +27,7 @@ class DialogProvider(QObject):
         self.binder = FormBinder(layer, self.dialog, self.canvas, self.settings)
         self.binder.beginSelectFeature.connect(self.selectingFromMap)
         self.binder.endSelectFeature.connect(self.featureSelected)
-        self.binder.bindFeature(self.feature, mandatory_fields)
+        self.binder.bindFeature(self.feature, formmodule.db(), mandatory_fields)
         self.binder.bindSelectButtons()
 
         buttonbox = self.dialog.findChild(QDialogButtonBox)
