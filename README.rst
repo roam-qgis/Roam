@@ -35,7 +35,7 @@ renaming the underlying file name.
 Requirements
 -------------
 - Latest development QGIS Version (this is due to bug fixes in master)
-- nose and mock (for Python tests)
+- mock (for Python tests)
 - Qt Designer (for form building)
 - Something to install it on (some kind of fancy tablet PC)
 
@@ -45,14 +45,19 @@ If you want SQL Server syncing support
 - .NET 3.5 (or greater)
 - Microsoft Sync Framework
 
+OSGeo4W Packages
+
+- qgis-dev
+- qt4-devel
 
 Syncing
 --------------
 At the moment syncing is done using MS SQL Sync Framework as it takes away a lot
-of the leg work for MS SQL syncing. If syncing support is not needed you can 
-just remove the button from the interface and remove the calls to MSBuild 
-in build.py.  Later this might become a switch, and/or support for different 
-data sources added e.g. PostGIS, SpatiaLite
+of the leg work for MS SQL Server 2008 based layers. 
+
+If syncing support is not needed you can just remove the button from the interface 
+and and call build.py with --with-mssyncing=False. Syncing support for different 
+data sources e.g. PostGIS, SpatiaLite might added later.
 
 
 Program Layout
@@ -99,9 +104,9 @@ targets.ini to depoly different forms and projects to different clients by runni
 
 ::
 
-    python build.py --target=Client1 --with-tests=False deploy
-    python build.py --target=Client2 --with-tests=False deploy
-    python build.py --target=Client4 --with-tests=False deploy
+    python build.py --target=Client1 deploy
+    python build.py --target=Client2 deploy
+    python build.py --target=Client4 deploy
 
 With ``Client1``, ``Client2``, ``Client4` being different devices with different
 forms and projects.
@@ -134,12 +139,21 @@ After using:
 
 ::
 
-    python build.py --target=Client1 --with-tests=False deploy
+    python build.py --target=Client1 deploy
     
 The ``myproject.qgs`` file will be depolyed but not the data. Copy the data into
 ``{deploypath}/QMap/app/python/plugins/QMap/projects/`` and the project will open
 the data using relative paths.  Provided of course that your project file is saved
 in QGIS with relative paths.
+
+Running the sample
+-------------------
+
+- Download the sample data from https://github.com/downloads/NathanW2/qmap/sample_data.sqlite
+- Run make_win.bat in the OSGeo4W shell. Making sure --target is set to Sample.
+- Save sample_data.sqlite into ``C:\QMap\app\python\plugins\QMap\projects``
+- Lauch QMap.bat from inside ``C:\QMap``
+- Load the ``Trees (Sample)`` project from the project list.
 
 License
 --------------
