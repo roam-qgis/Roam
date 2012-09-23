@@ -6,15 +6,15 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>935</width>
-    <height>340</height>
+    <width>841</width>
+    <height>345</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Dialog</string>
   </property>
-  <layout class="QGridLayout" name="gridLayout_6">
-   <item row="0" column="0" colspan="2">
+  <layout class="QGridLayout" name="gridLayout">
+   <item row="0" column="0">
     <widget class="QLabel" name="label_3">
      <property name="text">
       <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
@@ -25,7 +25,7 @@ p, li { white-space: pre-wrap; }
      </property>
     </widget>
    </item>
-   <item row="1" column="0" colspan="5">
+   <item row="1" column="0" colspan="2">
     <widget class="QGroupBox" name="groupBox_10">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
@@ -39,604 +39,71 @@ p, li { white-space: pre-wrap; }
      <property name="checkable">
       <bool>false</bool>
      </property>
-     <layout class="QGridLayout" name="gridLayout">
-      <item row="1" column="0">
-       <layout class="QFormLayout" name="formLayout_6">
-        <property name="fieldGrowthPolicy">
-         <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
+     <layout class="QFormLayout" name="formLayout_4">
+      <property name="fieldGrowthPolicy">
+       <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
+      </property>
+      <item row="0" column="0">
+       <widget class="QLabel" name="Inspected_By_label">
+        <property name="text">
+         <string>Inspected By</string>
         </property>
-        <item row="0" column="0">
-         <widget class="QLabel" name="label_27">
-          <property name="text">
-           <string>Park Name</string>
-          </property>
-         </widget>
+       </widget>
+      </item>
+      <item row="0" column="1">
+       <widget class="QComboBox" name="Inspected_By">
+        <property name="editable">
+         <bool>true</bool>
+        </property>
+        <property name="mandatory" stdset="0">
+         <bool>true</bool>
+        </property>
+        <item>
+         <property name="text">
+          <string/>
+         </property>
         </item>
-        <item row="0" column="1">
-         <widget class="QComboBox" name="Park_Name">
-          <property name="editable">
+        <item>
+         <property name="text">
+          <string>John Doe</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Inspector 1</string>
+         </property>
+        </item>
+       </widget>
+      </item>
+      <item row="1" column="0">
+       <widget class="QLabel" name="DateInspected_label">
+        <property name="text">
+         <string>Date Inspected</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="1">
+       <layout class="QHBoxLayout" name="horizontalLayout">
+        <item>
+         <widget class="QDateTimeEdit" name="DateInspected">
+          <property name="mandatory" stdset="0">
            <bool>true</bool>
           </property>
-          <item>
-           <property name="text">
-            <string/>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>Leslie Park</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>Weeroona Park</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>Rotary Park / Info Centre</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>Warwick CBD and Gardens</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>Stanthorpe CBD and Piazza</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>Browns Falls Park</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>Queens Park</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>St Marks Park</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>CF White Oval</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>CF White Cricket</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>Crisp Oval</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>Sullivan Oval</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>Sheahan Oval</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>Morgan Park</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>Jackie Howe Park</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>Storm King Dam</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>Australiana Park</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>Kidspace - Kilpa St Park</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>Rotary Park</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>Victoria Park</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>Federation Park</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>Lions Park</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>Apex Park</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>River Reach Park</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>Mt Marlay Lookout</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>Jim Mitchell Park</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>Dalrymple Creek Park</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>Leyburn Sports Ground</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>Cunningham Memorial</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>Heritage Park</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>Lions Park</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>Fred Rogers Memorial Park</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>Gleeson Park</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>Marion Park </string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>Canning Park</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>Mile End Park</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>Liberator Park</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>Boston Park</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>Wallangarra Memorial Park</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>Barnes Park</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>Slade Park</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>Bony Mountain Sports Ground</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>Rocklands Reserve</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>Farm Creek Park</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>Pioneer Park </string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>Bicentennial Park</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>Stuart Henry Park</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>Cooks Park</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>Lions Park</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>Industrial Estate Park</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>Maryvale Park</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>Pratten Park</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>Mel Gibson Park</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>Karara Hall Grounds</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>McGregor Park</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>Tannymorel War Memorial Park</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>Killarney War Memorial Park</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>Gillam Park</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>Chase Estate Park</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>Lomandra Court Park</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>Henry Joppich Park</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>Ellen Backhouse Park</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>Millar Vale Park</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>Emu Vale Park</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>Jubilee Plots</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>Killarney Showgrounds</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>Killarney Polocross Ground</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>Allora Showgrounds</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>Dalveen Hall grounds</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>Leslie Reserve</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>Sunnyside Reserve</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>Daggs Falls Park </string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>Brock Park </string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>Verri Park</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>Warwick Green Belt </string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>Melaleuca Crt Park</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>Tierney Park</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>Soliders Memorial</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>Goomburra Park</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>Connelly Dam</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>Ballandean School Garden</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>Carrs Lookout</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>Drill Hall Park</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>Dalveen Park</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>Meadowbank Park</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>Mountain View Estate Park</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>Pennant Park</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>Tullock Park</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>Condavale Parklands</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>Arcoola Park</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>Shilliday Park</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>Victory Park</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>Willi St Park</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>Guide Park</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>Stan Walsh Park</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>Tyrell St Park</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>Hermay Crt Park</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>Mulberry Ridge Park</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>Memorial Park </string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>Lyndhurst Lane Park</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>Willow St Gardens</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>Applethorpe Park </string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>Mt Tabour Park</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>Donnellys Castle Rd</string>
-           </property>
-          </item>
          </widget>
         </item>
-        <item row="1" column="0">
-         <widget class="QLabel" name="label_22">
+        <item>
+         <widget class="QPushButton" name="DateInspected_pick">
           <property name="text">
-           <string>Inspected By</string>
+           <string>PushButton</string>
           </property>
-         </widget>
-        </item>
-        <item row="1" column="1">
-         <widget class="QComboBox" name="Inspected_By">
-          <property name="editable">
-           <bool>true</bool>
-          </property>
-          <item>
-           <property name="text">
-            <string>John Newley</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string/>
-           </property>
-          </item>
          </widget>
         </item>
        </layout>
       </item>
-      <item row="1" column="1">
-       <widget class="QLabel" name="label">
-        <property name="text">
-         <string>Location Details</string>
-        </property>
-       </widget>
-      </item>
-      <item row="1" column="2">
-       <widget class="QPlainTextEdit" name="plainTextEdit">
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
-        <property name="maximumSize">
-         <size>
-          <width>16777215</width>
-          <height>50</height>
-         </size>
-        </property>
-       </widget>
-      </item>
      </layout>
     </widget>
    </item>
-   <item row="1" column="5">
+   <item row="1" column="3">
     <widget class="QDialogButtonBox" name="buttonBox">
      <property name="layoutDirection">
       <enum>Qt::LeftToRight</enum>
@@ -658,18 +125,24 @@ p, li { white-space: pre-wrap; }
      </property>
     </widget>
    </item>
-   <item row="2" column="0" rowspan="3" colspan="2">
-    <layout class="QFormLayout" name="formLayout">
+   <item row="2" column="0">
+    <layout class="QGridLayout" name="gridLayout_7">
      <item row="0" column="0">
-      <widget class="QLabel" name="label_65">
+      <widget class="QLabel" name="Asset_Type_label">
        <property name="text">
         <string>Asset Type</string>
        </property>
       </widget>
      </item>
      <item row="0" column="1">
-      <widget class="QComboBox" name="T_Asset_Type">
+      <widget class="QComboBox" name="Asset_Type">
        <property name="editable">
+        <bool>true</bool>
+       </property>
+       <property name="currentIndex">
+        <number>0</number>
+       </property>
+       <property name="mandatory" stdset="0">
         <bool>true</bool>
        </property>
        <item>
@@ -717,7 +190,7 @@ p, li { white-space: pre-wrap; }
       </widget>
      </item>
      <item row="1" column="1">
-      <widget class="QComboBox" name="T_Asset_Sub_Type">
+      <widget class="QComboBox" name="Asset_Sub_Type">
        <property name="editable">
         <bool>true</bool>
        </property>
@@ -765,7 +238,7 @@ p, li { white-space: pre-wrap; }
       </widget>
      </item>
      <item row="3" column="1">
-      <widget class="QComboBox" name="T_Species">
+      <widget class="QComboBox" name="Species">
        <property name="editable">
         <bool>true</bool>
        </property>
@@ -854,8 +327,11 @@ p, li { white-space: pre-wrap; }
      </item>
     </layout>
    </item>
-   <item row="2" column="2" rowspan="2">
+   <item row="2" column="1">
     <layout class="QFormLayout" name="formLayout_3">
+     <property name="fieldGrowthPolicy">
+      <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
+     </property>
      <item row="0" column="0">
       <widget class="QLabel" name="label_109">
        <property name="text">
@@ -872,8 +348,23 @@ p, li { white-space: pre-wrap; }
      </item>
      <item row="1" column="0">
       <widget class="QLabel" name="label_108">
+       <property name="cursor">
+        <cursorShape>ArrowCursor</cursorShape>
+       </property>
        <property name="text">
         <string>Height (m)</string>
+       </property>
+       <property name="textFormat">
+        <enum>Qt::AutoText</enum>
+       </property>
+       <property name="scaledContents">
+        <bool>false</bool>
+       </property>
+       <property name="openExternalLinks">
+        <bool>false</bool>
+       </property>
+       <property name="buddy">
+        <cstring></cstring>
        </property>
       </widget>
      </item>
@@ -896,53 +387,7 @@ p, li { white-space: pre-wrap; }
      </item>
     </layout>
    </item>
-   <item row="2" column="3" rowspan="2">
-    <layout class="QFormLayout" name="formLayout_2">
-     <item row="0" column="0">
-      <widget class="QCheckBox" name="Effecting_Infrastructure">
-       <property name="text">
-        <string>Effecting Infrastructure</string>
-       </property>
-      </widget>
-     </item>
-     <item row="1" column="0">
-      <widget class="QCheckBox" name="Under_Electric_Lines">
-       <property name="text">
-        <string>Under Electric Lines</string>
-       </property>
-      </widget>
-     </item>
-     <item row="2" column="0">
-      <widget class="QCheckBox" name="Near_Sewer">
-       <property name="text">
-        <string>Near Sewer</string>
-       </property>
-      </widget>
-     </item>
-     <item row="3" column="0">
-      <widget class="QCheckBox" name="Near_Water">
-       <property name="text">
-        <string>Near Water</string>
-       </property>
-      </widget>
-     </item>
-     <item row="4" column="0">
-      <widget class="QCheckBox" name="Near_Communications">
-       <property name="text">
-        <string>Near Communications</string>
-       </property>
-      </widget>
-     </item>
-     <item row="5" column="0">
-      <widget class="QCheckBox" name="Near_Other_Infrastructure">
-       <property name="text">
-        <string>Near Other Infrastructure</string>
-       </property>
-      </widget>
-     </item>
-    </layout>
-   </item>
-   <item row="2" column="4" rowspan="3">
+   <item row="2" column="2">
     <widget class="QGroupBox" name="groupBox_9">
      <property name="title">
       <string>Condition</string>
@@ -1030,7 +475,7 @@ p, li { white-space: pre-wrap; }
        </widget>
       </item>
       <item row="2" column="0" colspan="2">
-       <widget class="QGroupBox" name="groupBox">
+       <widget class="QGroupBox" name="Diseased">
         <property name="title">
          <string>Disease Present</string>
         </property>
@@ -1043,22 +488,31 @@ p, li { white-space: pre-wrap; }
         <property name="checked">
          <bool>false</bool>
         </property>
-        <layout class="QGridLayout" name="gridLayout_3">
-         <item row="0" column="0">
+        <layout class="QFormLayout" name="formLayout">
+         <item row="1" column="0">
           <widget class="QLabel" name="label_79">
            <property name="text">
             <string>Type</string>
            </property>
           </widget>
          </item>
-         <item row="0" column="1">
-          <widget class="QLineEdit" name="Disease_Type"/>
+         <item row="1" column="1">
+          <widget class="QComboBox" name="Disease_Type">
+           <property name="editable">
+            <bool>true</bool>
+           </property>
+           <item>
+            <property name="text">
+             <string/>
+            </property>
+           </item>
+          </widget>
          </item>
         </layout>
        </widget>
       </item>
       <item row="3" column="0" colspan="2">
-       <widget class="QGroupBox" name="groupBox_2">
+       <widget class="QGroupBox" name="Pests">
         <property name="title">
          <string>Pest Present</string>
         </property>
@@ -1088,52 +542,48 @@ p, li { white-space: pre-wrap; }
      </layout>
     </widget>
    </item>
-   <item row="2" column="5">
-    <layout class="QGridLayout" name="gridLayout_4">
+   <item row="2" column="3">
+    <layout class="QGridLayout" name="gridLayout_6">
      <item row="0" column="0">
-      <widget class="QCheckBox" name="Heritage_Listed">
+      <widget class="QCheckBox" name="Effecting_Infrastructure">
        <property name="text">
-        <string>Heritage Listed</string>
+        <string>Effecting Infrastructure</string>
        </property>
       </widget>
      </item>
      <item row="1" column="0">
-      <widget class="QLabel" name="label_74">
+      <widget class="QCheckBox" name="Under_Electric_Lines">
        <property name="text">
-        <string>Recommended Action</string>
+        <string>Under Electric Lines</string>
        </property>
       </widget>
      </item>
      <item row="2" column="0">
-      <widget class="QComboBox" name="Recommended_Action">
-       <property name="editable">
-        <bool>true</bool>
+      <widget class="QCheckBox" name="Near_Sewer">
+       <property name="text">
+        <string>Near Sewer</string>
        </property>
-       <item>
-        <property name="text">
-         <string/>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>Assessment Required</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>Routine Pruning</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>Removal of Overhang</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>Remove Tree</string>
-        </property>
-       </item>
+      </widget>
+     </item>
+     <item row="3" column="0">
+      <widget class="QCheckBox" name="Near_Water">
+       <property name="text">
+        <string>Near Water</string>
+       </property>
+      </widget>
+     </item>
+     <item row="4" column="0">
+      <widget class="QCheckBox" name="Near_Communications">
+       <property name="text">
+        <string>Near Communications</string>
+       </property>
+      </widget>
+     </item>
+     <item row="5" column="0">
+      <widget class="QCheckBox" name="Near_Other_Infrastructure">
+       <property name="text">
+        <string>Near Other Infrastructure</string>
+       </property>
       </widget>
      </item>
     </layout>
