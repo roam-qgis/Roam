@@ -71,9 +71,10 @@ def compile():
 
 
 def docs():
-    print "Generating docs"
-    for doc in doc_sources:
-        run('python', 'docs/rst2html.py', doc + '.rst', doc + '.html')
+    if main.options.with_docs == True:
+		print "Generating docs"
+		for doc in doc_sources:
+			run('python', 'docs/rst2html.py', doc + '.rst', doc + '.html')
 
 
 def clean():
@@ -88,7 +89,10 @@ def getVersion():
     year = now.year
     month = now.month
     day = now.day
-    commit = shell('git', 'log', '-1', '--pretty=%h').strip()
+    try:
+		commit = shell('git', 'log', '-1', '--pretty=%h').strip()
+    except WindowsError:
+		commit = ""
     return "{0}.{1}.{2}.{3}".format(year, month, day, commit)
 
 
@@ -125,8 +129,8 @@ def build_plugin():
 
     # Replace version numbers
     version = getVersion()
-    run("sed", '-i', 's/version=0.1/version={0}/'.format(version), \
-        os.path.join(buildpath, 'metadata.txt'))
+    command = 's/version=0.1/version=%s/ "%s"' % (version, os.path.join(buildpath, 'metadata.txt'))
+    #run("sed", command)
 
     print "Local depoly compelete into {0}".format(buildpath)
 
@@ -227,6 +231,8 @@ if __name__ == "__main__":
         optparse.make_option('--with-tests', action='store', help='Enable tests!', \
                              default=True),
         optparse.make_option('--with-mssyncing', action='store', help='Use MS SQL Syncing!', \
+                             default=True),
+		optparse.make_option('--with-docs', action='store', help='Build docs', \
                              default=True)
     ]
 
