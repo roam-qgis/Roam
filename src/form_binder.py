@@ -141,6 +141,7 @@ class FormBinder(QObject):
         self.settings = settings
         self.images = {}
         self.mandatory_group = MandatoryGroup()
+        self.forsaving = set()
 
     def bindFeature(self, qgsfeature, db, mandatory_fields=True):
         """
@@ -436,8 +437,12 @@ class FormBinder(QObject):
                     value = control.currentItem().text()
 
                 info("Setting value to %s from %s" % (value, control.objectName()))
-
                 qgsfeature.changeAttribute(index, value)
+
+                # Save the value to the database as a default if it is needed.
+                if control in self.forsaving:
+                    self.saveValue(control, value)
+
         return qgsfeature
 
     def pickDateTime(self, control, mode):
@@ -455,6 +460,31 @@ class FormBinder(QObject):
 
             if hasattr(control, 'setTime'):
                 control.setTime(dlg.getSelectedTime())
+
+    def bindSaveValueButton(self, control):
+        try:
+            button = self.getControl(control.objectName() + "_save", QToolButton)
+        except ControlNotFound:
+            return
+
+        button.setCheckable(True)
+        button.toggled.connect(partial(self.setForSave, control))
+
+    def setForSave(self, control, checked):
+        if checked:
+            self.forsaving.add(control)
+        else:
+            self.forsaving.remove(control)
+
+    def saveValue(self, control, value):
+        name = control.objectName()
+        query = QSqlQuery()
+        query.prepare("INSERT INTO DefaultValues (control, value)" \
+                      "VALUES (:control,:value)")
+        query.bindValue(":control", name)
+        query.bindValue(":value", value)
+        query.exec_()
+
 
     def bindSelectButtons(self):
         """
