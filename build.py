@@ -12,7 +12,8 @@ from ConfigParser import ConfigParser, NoSectionError, NoOptionError
 import optparse
 
 ui_sources = ['src/ui_datatimerpicker', 'src/ui_listmodules',
-              'src/syncing/ui_sync', 'src/ui_listfeatures', 'src/ui_errorlist']
+              'src/syncing/ui_sync', 'src/ui_listfeatures', 'src/ui_errorlist',
+              'src/ui_helpviewer']
 
 doc_sources = ['docs/README', 'docs/ClientSetup']
 
