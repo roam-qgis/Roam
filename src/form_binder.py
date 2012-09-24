@@ -10,6 +10,7 @@ from select_feature_tool import SelectFeatureTool
 from functools import partial
 from datatimerpickerwidget import DateTimePickerDialog
 from drawingpad import DrawingPad
+from helpviewdialog import HelpViewDialog
 from utils import log, warning
 import re
 
@@ -130,7 +131,7 @@ class FormBinder(QObject):
     """
     Handles binding of values to and out of the form.
     """
-    def __init__(self, layer, formInstance, canvas, settings):
+    def __init__(self, layer, formInstance, canvas, settings, formmodule, db):
         QObject.__init__(self)
         self.layer = layer
         self.canvas = canvas
@@ -142,8 +143,10 @@ class FormBinder(QObject):
         self.images = {}
         self.mandatory_group = MandatoryGroup()
         self.forsaving = set()
+        self.formmodule = formmodule
+        self.db = db
 
-    def bindFeature(self, qgsfeature, db, mandatory_fields=True, editing=False):
+    def bindFeature(self, qgsfeature, mandatory_fields=True, editing=False):
         """
         Binds a features values to the form. If the control has the mandatory
         property set then it will be added to the mandatory group.
@@ -151,7 +154,6 @@ class FormBinder(QObject):
         qgsfeature - A QgsFeature to bind the values from
         mandatory_fields - True if mandatory fields should be respected (default)
         """
-        self.db = db
         self.feature = qgsfeature
         self.connectControlsToSQLCommands()
         defaults = self.getDefaults()
@@ -187,9 +189,25 @@ class FormBinder(QObject):
                 warning(er.reason)
 
             self.bindSaveValueButton(control, indefaults=isdefaultset)
+            self.createHelpLink(control)
 
             self.fieldtocontrol[index] = control
-
+    
+    def createHelpLink(self, control):
+        name = control.objectName()
+        helpfile = self.formmodule.getHelpFile(name)
+        if helpfile:  
+            label = self.getBuddy(control)
+            if label is None: return
+            text = '<a href="%s">%s<a>' % (helpfile, label.text())
+            label.setText(text)
+            label.linkActivated.connect(self.showHelp)
+    
+    def showHelp(self, url):
+        dlg = HelpViewDialog()
+        dlg.loadFile(url)
+        dlg.exec_()
+    
     def getDefaults(self):
         query = QSqlQuery("SELECT control, value FROM DefaultValues")
         query.exec_()

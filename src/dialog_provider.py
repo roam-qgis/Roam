@@ -24,10 +24,11 @@ class DialogProvider(QObject):
 
         self.settings = formmodule.settings()
 
-        self.binder = FormBinder(layer, self.dialog, self.canvas, self.settings)
+        self.binder = FormBinder(layer, self.dialog, self.canvas,\
+                                 self.settings, formmodule, formmodule.db())
         self.binder.beginSelectFeature.connect(self.selectingFromMap)
         self.binder.endSelectFeature.connect(self.featureSelected)
-        self.binder.bindFeature(self.feature, formmodule.db(), mandatory_fields, \
+        self.binder.bindFeature(self.feature, mandatory_fields, \
                                 self.update)
         self.binder.bindSelectButtons()
 

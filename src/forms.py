@@ -73,6 +73,15 @@ class Form(object):
             self._settings = QSettings(os.path.join(path, "settings.ini"), QSettings.IniFormat )
 
         return self._settings
+    
+    def getHelpFile(self, name):
+        path = os.path.dirname(self.module.__file__)
+        filename = "%s.html" % str(name)
+        filepath = os.path.join(path,"help", filename )
+        if os.path.exists(filepath):
+            return filepath
+        else:
+            return None
 
     def layerName(self):
         return str(self.settings().value("layer_name").toString())
