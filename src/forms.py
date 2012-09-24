@@ -63,6 +63,9 @@ class Form(object):
         if not self.db().tables().contains('ComboBoxItems'):
             q = QSqlQuery("CREATE TABLE IF NOT EXISTS ComboBoxItems ( control TEXT, value TEXT)")
             q.exec_()
+        if not self.db().tables().contains('DefaultValues'):
+            q = QSqlQuery("CREATE TABLE IF NOT EXISTS DefaultValues ( control TEXT, value TEXT)")
+            q.exec_()
 
     def settings(self):
         if self._settings is None:
