@@ -23,6 +23,7 @@
     <file alias="draw">resources/images/draw.png</file>
     <file alias="map">resources/images/map.png</file>
     <file alias="eraser">resources/images/eraser.png</file>
+    <file alias="save_default">resources/images/save_default.png</file>
   </qresource>
   <qresource prefix="syncing">
     <file alias="sync">resources/images/sync.png</file>

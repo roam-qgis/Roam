@@ -16,7 +16,7 @@ class DialogProvider(QObject):
         self.canvas = canvas
         self.iface = iface
 
-    def openDialog(self, formmodule, feature, layer, forupdate,mandatory_fields=True):
+    def openDialog(self, formmodule, feature, layer, forupdate, mandatory_fields=True):
         self.update = forupdate
         self.dialog = formmodule.formInstance(self.iface.mainWindow())
         self.layer = layer
@@ -27,7 +27,8 @@ class DialogProvider(QObject):
         self.binder = FormBinder(layer, self.dialog, self.canvas, self.settings)
         self.binder.beginSelectFeature.connect(self.selectingFromMap)
         self.binder.endSelectFeature.connect(self.featureSelected)
-        self.binder.bindFeature(self.feature, formmodule.db(), mandatory_fields)
+        self.binder.bindFeature(self.feature, formmodule.db(), mandatory_fields, \
+                                self.update)
         self.binder.bindSelectButtons()
 
         buttonbox = self.dialog.findChild(QDialogButtonBox)
@@ -37,7 +38,7 @@ class DialogProvider(QObject):
         else:
             buttonbox.accepted.connect(self.dialogAccept)
             buttonbox.accepted.connect(self.accepted)
-            
+
         buttonbox.rejected.connect(self.rejected)
         buttonbox.rejected.connect(self.dialog.reject)
         buttonbox.rejected.connect(self.deleteDialog)
