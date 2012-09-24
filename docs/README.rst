@@ -30,11 +30,8 @@ Zen
 - Don't reinvent the wheel -- unless for good reason.
 - Magic is cool.
 - Although not cool enough if it makes things confusing.
-- Datebases are handy things.
-- Although plain text files are normally easier to manage.
 - Convention over Configuration is cool idea -- lets do more of that!
 - Unless it starts to look like magic.
-
 
 Requirements
 -------------
