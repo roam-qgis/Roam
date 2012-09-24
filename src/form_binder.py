@@ -216,10 +216,6 @@ class FormBinder(QObject):
         except BindingError as er:
             warning(er.reason)
 
-    def checkItemsTableExists(self):
-        pass
-        #"SELECT name FROM sqlite_master WHERE type='table' AND name='ComboBoxItems';"
-
     def saveComboValues(self, combobox, text):
         """
         Save the value of the combo box into the form settings values.

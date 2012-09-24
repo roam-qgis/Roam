@@ -2,7 +2,7 @@ import os.path
 from PyQt4.QtCore import QSettings,QString
 from PyQt4.QtGui import QIcon
 from PyQt4.uic import loadUi
-from PyQt4.QtSql import QSqlDatabase
+from PyQt4.QtSql import QSqlDatabase, QSqlQuery
 import os
 import imp
 
@@ -35,7 +35,7 @@ class Form(object):
         self._module = module
         self._settings = None
         self._db = None
-        
+
     @property
     def module(self):
         return self._module
@@ -47,14 +47,22 @@ class Form(object):
         return instance
 
     def db(self):
+        """
+            Get or create the form.db database instance and the needed tables.
+        """
         if self._db is None:
             path = os.path.dirname(self.module.__file__)
             dbpath = os.path.join(path, "form.db")
             self._db = QSqlDatabase.addDatabase("QSQLITE")
             self._db.setDatabaseName(dbpath)
             self._db.open()
+            self.checkDatabaseTables()
         return self._db
 
+    def checkDatabaseTables(self):
+        if not self.db().tables().contains('ComboBoxItems'):
+            q = QSqlQuery("CREATE TABLE IF NOT EXISTS ComboBoxItems ( control TEXT, value TEXT)")
+            q.exec_()
 
     def settings(self):
         if self._settings is None:
