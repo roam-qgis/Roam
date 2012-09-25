@@ -196,8 +196,9 @@ class FormBinder(QObject):
     def createHelpLink(self, control):
         name = control.objectName()
         helpfile = self.formmodule.getHelpFile(name)
-        if helpfile:  
+        if helpfile:
             label = self.getBuddy(control)
+            if label is control: return
             if label is None: return
             text = '<a href="%s">%s<a>' % (helpfile, label.text())
             label.setText(text)
