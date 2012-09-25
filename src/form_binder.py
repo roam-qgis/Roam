@@ -359,6 +359,9 @@ class FormBinder(QObject):
         elif isinstance(control, QCheckBox) or isinstance(control, QGroupBox):
             control.setChecked(value.toBool())
 
+        elif isinstance(control, QPlainTextEdit):
+            control.setPlainText(value.toString())
+
         elif isinstance(control, QComboBox):
             # Add items stored in the database
             query = QSqlQuery()
@@ -457,7 +460,7 @@ class FormBinder(QObject):
                 if isinstance(control, QLineEdit):
                     value = control.text()
 
-                elif isinstance(control, QTextEdit):
+                elif isinstance(control, QTextEdit) or isinstance(control, QPlainTextEdit):
                     value = control.toPlainText()
 
                 elif isinstance(control, QCalendarWidget):
@@ -479,7 +482,11 @@ class FormBinder(QObject):
                     value = control.dateTime().toString(Qt.ISODate)
 
                 elif isinstance(control, QListWidget):
-                    value = control.currentItem().text()
+                    item = control.currentItem()
+                    if item:
+                        value = item.text()
+                    else:
+                        return QString("")
 
                 info("Setting value to %s from %s" % (value, control.objectName()))
                 qgsfeature.changeAttribute(index, value)
