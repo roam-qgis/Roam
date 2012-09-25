@@ -192,7 +192,7 @@ class FormBinder(QObject):
             self.createHelpLink(control)
 
             self.fieldtocontrol[index] = control
-    
+
     def createHelpLink(self, control):
         name = control.objectName()
         helpfile = self.formmodule.getHelpFile(name)
@@ -519,8 +519,10 @@ class FormBinder(QObject):
         try:
             button = self.getControl(control.objectName() + "_save", QToolButton)
         except ControlNotFound:
+            log("_save button not found for %s" % control.objectName())
             return
 
+        log("_save button for %s is %s" % (control.objectName(), str(button.isChecked()) ))
         return button.isChecked()
 
     def bindSaveValueButton(self, control, indefaults=False):
@@ -532,7 +534,7 @@ class FormBinder(QObject):
         button.setCheckable(True)
         button.setIcon(QIcon(":/icons/save_default"))
         button.setIconSize(QSize(24, 24))
-        button.setDown(indefaults)
+        button.setChecked(indefaults)
 
     def removeDefault(self, control):
         name = control.objectName()
@@ -542,9 +544,10 @@ class FormBinder(QObject):
         query.exec_()
 
     def saveDefault(self, control, value):
+        self.removeDefault(control)
         name = control.objectName()
         query = QSqlQuery()
-        query.prepare("REPLACE INTO DefaultValues (control, value)" \
+        query.prepare("INSERT INTO DefaultValues (control, value)" \
                       "VALUES (:control,:value)")
         query.bindValue(":control", name)
         query.bindValue(":value", value)
