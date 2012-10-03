@@ -8,6 +8,6 @@ class HelpViewDialog(QtGui.QDialog):
         self.ui.setupUi(self)
         
     def loadFile(self, htmlfile):
-        self.ui.webView.load(QtCore.QUrl(htmlfile))
+        self.ui.webView.load(QtCore.QUrl.fromLocalFile(htmlfile))
 
         
