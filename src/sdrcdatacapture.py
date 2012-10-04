@@ -32,6 +32,7 @@ import resources_rc
 from syncing.syncer import SyncDialog
 from utils import log
 import functools
+import utils
 
 
 class SDRCDataCapture():
@@ -43,7 +44,6 @@ class SDRCDataCapture():
         self.mainwindow = iface.mainWindow()
         self.iface.projectRead.connect(self.projectOpened)
         self.iface.initializationCompleted.connect(self.setupUI)
-        self.settings = QSettings("settings.ini", QSettings.IniFormat)
         self.actionGroup = QActionGroup(self.iface.mainWindow())
         self.iface.mapCanvas().grabGesture(Qt.PinchGesture)
         self.iface.mapCanvas().viewport().setAttribute(Qt.WA_AcceptTouchEvents) 
@@ -53,7 +53,13 @@ class SDRCDataCapture():
         Set up the main QGIS interface items.  Called after QGIS has loaded
         the plugin.
         """
-        self.iface.mainWindow().showFullScreen()
+        self.iface.mainWindow().setWindowTitle("QMap: A data collection program for QGIS")
+        fullscreen = utils.settings.value("fullscreen").toBool()
+        if fullscreen:
+            self.iface.mainWindow().showFullScreen()
+        else:
+            self.iface.mainWindow().showMaximized()
+
         self.navtoolbar.setMovable(False)
         self.navtoolbar.setAllowedAreas(Qt.TopToolBarArea)
         self.mainwindow.insertToolBar(self.toolbar, self.navtoolbar)
