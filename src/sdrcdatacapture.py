@@ -101,6 +101,12 @@ class SDRCDataCapture():
         self.syncAction = QAction(QIcon(":/syncing/sync"), "Sync", self.mainwindow)
         self.editAction.setCheckable(True)
 
+        self.menu = QMenu()
+        self.exitaction = self.menu.addAction("Exit")
+        self.exitaction.setIcon(QIcon(":/icons/exit"))
+        self.exitaction.triggered.connect(self.iface.actionExit().trigger)
+        self.openProjectAction.setMenu(self.menu)
+
         self.actionGroup.addAction(self.editAction)
 
         self.homeAction.triggered.connect(self.zoomToDefaultView)
