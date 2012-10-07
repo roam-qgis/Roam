@@ -32,10 +32,11 @@ pluginpath = os.path.join(APPNAME, "app", "python", "plugins", APPNAME)
 buildpath = os.path.join(curpath, "build", pluginpath)
 targetspath = os.path.join(curpath, 'targets.ini')
 deploypath = os.path.join(curpath, "build", APPNAME)
-bootpath = os.path.join('src', "boot")
+bootpath = os.path.join(curpath, "loader_src")
 
 args = ['/D', '/S', '/E', '/K', '/C', '/H', '/R', '/Y', '/I']
 
+iswindows = os.name == 'nt'
 
 def build():
     """
@@ -48,7 +49,7 @@ def compile():
     print " - building UI files..."
     for source in ui_sources:
         pyuic = 'pyuic4'
-        if os.name == 'nt':
+        if iswindows:
             pyuic += '.bat'
 
         run(pyuic, '-o', source + '.py', source + '.ui')
@@ -57,7 +58,7 @@ def compile():
     run('pyrcc4', '-o', 'src/resources_rc.py', 'src/resources.qrc')
     run('pyrcc4', '-o', 'src/syncing/resources_rc.py', 'src/syncing/resources.qrc')
 
-    if main.options.with_mssyncing == True:
+    if iswindows and main.options.with_mssyncing == True:
         print " - building MSSQLSyncer app..."
         run('MSBuild', '/property:Configuration=Release', '/verbosity:m', \
             'src/syncing/MSSQLSyncer/MSSQLSyncer.csproj', shell=True, env=env)
@@ -80,6 +81,7 @@ def docs():
 
 def clean():
     autoclean()
+    msg = shell('rm', '-r', deploypath)
 
 
 def getVersion():
@@ -124,9 +126,10 @@ def build_plugin():
 
     # Copy all the files to the ouput directory
     print "Copying new files..."
-    msg = shell('xcopy', srcpath, buildpath, args, EXCLUDES, silent=False)
-
-    msg = shell('xcopy', bootpath, deploypath, args, silent=False)
+    msg = shell('mkdir', '-p', buildpath, silent=False)
+    flags = '--update -rp'.split()
+    msg = shell('cp', flags, os.path.join(srcpath,'*'), buildpath, shell=True, silent=False)
+    msg = shell('cp', flags, os.path.join(bootpath,'*'), deploypath, shell=True, silent=False)
 
     # Replace version numbers
     version = getVersion()
