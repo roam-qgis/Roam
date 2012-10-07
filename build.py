@@ -4,10 +4,7 @@ import os.path
 import os
 import sys
 import datetime
-from shutil import copytree, ignore_patterns, rmtree
 from fabricate import *
-from subprocess import Popen, PIPE
-from PyQt4.QtGui import QApplication
 from ConfigParser import ConfigParser, NoSectionError, NoOptionError
 import optparse
 
@@ -19,12 +16,7 @@ doc_sources = ['docs/README', 'docs/ClientSetup']
 
 path = os.path.dirname(__file__)
 
-# Add the path to MSBuild to PATH so that subprocess can find it.
-env = os.environ.copy()
-env['PATH'] += ";c:\\WINDOWS\\Microsoft.NET\Framework\\v3.5"
-
 APPNAME = "QMap"
-EXCLUDES = '/EXCLUDE:excludes.txt'
 
 curpath = os.path.dirname(os.path.abspath(__file__))
 srcopyFilesath = os.path.join(curpath, "src")
@@ -34,8 +26,7 @@ targetspath = os.path.join(curpath, 'targets.ini')
 deploypath = os.path.join(curpath, "build", APPNAME)
 bootpath = os.path.join(curpath, "loader_src")
 
-args = ['/D', '/S', '/E', '/K', '/C', '/H', '/R', '/Y', '/I']
-flags = '--update -rp'.split()
+flags = '--update -rvp'.split()
 
 iswindows = os.name == 'nt'
 
@@ -60,6 +51,9 @@ def compile():
     run('pyrcc4', '-o', 'src/syncing/resources_rc.py', 'src/syncing/resources.qrc')
 
     if iswindows and main.options.with_mssyncing == True:
+        # Add the path to MSBuild to PATH so that subprocess can find it.
+        env = os.environ.copy()
+        env['PATH'] += ";c:\\WINDOWS\\Microsoft.NET\Framework\\v3.5"
         print " - building MSSQLSyncer app..."
         run('MSBuild', '/property:Configuration=Release', '/verbosity:m', \
             'src/syncing/MSSQLSyncer/MSSQLSyncer.csproj', shell=True, env=env)
@@ -140,12 +134,19 @@ def build_plugin():
     print "Local depoly compelete into {0}".format(buildpath)
 
 def copyFiles(src, dest):
-    msg = shell('cp', flags, os.path.join(src,'*'), dest, shell=True, silent=False)
+    src = os.path.join(src,'*')
+    if iswindows:
+        src = src.replace('\\','/')
+    msg = shell('cp', flags, src , dest, shell=True, silent=False)
 
 def copyFolder(src, dest):
+    if iswindows:
+        src = src.replace('\\','/')
     msg = shell('cp', flags, src, dest, shell=True, silent=False)
 
 def mkdir(path):
+    if iswindows:
+        path = path.replace('\\','/')
     msg = shell('mkdir', '-p', path, silent=False)
 
 def deploy():
