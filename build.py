@@ -27,7 +27,7 @@ APPNAME = "QMap"
 EXCLUDES = '/EXCLUDE:excludes.txt'
 
 curpath = os.path.dirname(os.path.abspath(__file__))
-srcpath = os.path.join(curpath, "src")
+srcopyFilesath = os.path.join(curpath, "src")
 pluginpath = os.path.join(APPNAME, "app", "python", "plugins", APPNAME)
 buildpath = os.path.join(curpath, "build", pluginpath)
 targetspath = os.path.join(curpath, 'targets.ini')
@@ -35,6 +35,7 @@ deploypath = os.path.join(curpath, "build", APPNAME)
 bootpath = os.path.join(curpath, "loader_src")
 
 args = ['/D', '/S', '/E', '/K', '/C', '/H', '/R', '/Y', '/I']
+flags = '--update -rp'.split()
 
 iswindows = os.name == 'nt'
 
@@ -65,7 +66,7 @@ def compile():
 
         print " - building Provisioning app..."
         run('MSBuild', '/property:Configuration=Release', '/verbosity:m', \
-            'provisioner/SqlSyncProvisioner/SqlSyncProvisioner.csproj', \
+            'provisioner/SqlSyncopyFilesrovisioner/SqlSyncopyFilesrovisioner.csproj', \
             shell=True, env=env)
 
     print " - building docs..."
@@ -126,10 +127,10 @@ def build_plugin():
 
     # Copy all the files to the ouput directory
     print "Copying new files..."
-    msg = shell('mkdir', '-p', buildpath, silent=False)
-    flags = '--update -rp'.split()
-    msg = shell('cp', flags, os.path.join(srcpath,'*'), buildpath, shell=True, silent=False)
-    msg = shell('cp', flags, os.path.join(bootpath,'*'), deploypath, shell=True, silent=False)
+
+    mkdir(buildpath)
+    copyFiles(srcopyFilesath,buildpath)
+    copyFiles(bootpath,deploypath)
 
     # Replace version numbers
     version = getVersion()
@@ -138,6 +139,14 @@ def build_plugin():
 
     print "Local depoly compelete into {0}".format(buildpath)
 
+def copyFiles(src, dest):
+    msg = shell('cp', flags, os.path.join(src,'*'), dest, shell=True, silent=False)
+
+def copyFolder(src, dest):
+    msg = shell('cp', flags, src, dest, shell=True, silent=False)
+
+def mkdir(path):
+    msg = shell('mkdir', '-p', path, silent=False)
 
 def deploy():
     targetname = main.options.target
@@ -160,8 +169,8 @@ def deploy_to(target, config):
 
     print "Deploying application to %s" % config['client']
     clientapppath = os.path.join(clientpath, APPNAME)
-    msg = shell('xcopy', deploypath, clientapppath, args \
-                , silent=False)
+    mkdir(clientapppath)
+    copyFiles(deploypath,clientapppath)
 
     projectpath = os.path.join(curpath, 'project-manager', 'projects')
     clientpojectpath = os.path.join(clientpath, pluginpath, 'projects')
@@ -173,30 +182,30 @@ def deploy_to(target, config):
 
     print formpath
 
-    msg = shell('xcopy', projectpath, clientpojectpath, '/T', '/E', '/I', '/Y', silent=False)
-    msg = shell('xcopy', formpath, clientformpath, '/I', '/Y', '/D', silent=False)
+    mkdir(clientpojectpath)
+    mkdir(clientformpath)
 
     if 'All' in projects:
         print "Loading all projects"
-        msg = shell('xcopy', projectpath, clientpojectpath, args, silent=False)
+        copyFiles(projectpath, clientpojectpath )
     else:
         for project in projects:
             if project and project[-4:] == ".qgs":
                 print "Loading project %s" % project
                 path = os.path.join(projectpath, project)
                 newpath = os.path.join(clientpojectpath, project)
-                msg = shell('copy', path, newpath, '/Y', silent=False, shell=True)
+                copyFolder(path, newpath)
 
     if 'All' in forms:
         print "Loading all forms"
-        msg = shell('xcopy', formpath, clientformpath, args, silent=False)
+        copyFiles(formpath, clientformpath )
     else:
         for form in forms:
             if form:
                 print "Loading form %s" % form
                 path = os.path.join(formpath, form)
                 newpath = os.path.join(clientformpath, form)
-                msg = shell('xcopy', path, newpath, args, silent=False)
+                copyFolder(path, newpath)
 
     print "Remote depoly compelete"
 
