@@ -375,7 +375,11 @@ class FormBinder(QObject):
                     control.addItem(newvalue)
 
             itemindex = control.findText(value.toString())
-            control.setCurrentIndex(itemindex)
+            if itemindex == -1:
+                control.insertItem(0,value.toString())
+                control.setCurrentIndex(0)
+            else:
+                control.setCurrentIndex(itemindex)
 
         elif isinstance(control, QDoubleSpinBox):
             double, passed = value.toDouble()
