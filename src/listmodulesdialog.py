@@ -32,6 +32,7 @@ class ListProjectsDialog(QDialog):
                 self.ui.moduleList.addItem( item )
                     
     def openProject(self, item):
+        self.setDisabled(True)
         path = item.data(QListWidgetItem.UserType).toString()
         self.requestOpenProject.emit(path)
         
