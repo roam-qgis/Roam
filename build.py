@@ -60,7 +60,7 @@ def compile():
 
         print " - building Provisioning app..."
         run('MSBuild', '/property:Configuration=Release', '/verbosity:m', \
-            'provisioner/SqlSyncopyFilesrovisioner/SqlSyncopyFilesrovisioner.csproj', \
+            'provisioner/SqlSyncProvisioner/SqlSyncProvisioner.csproj', \
             shell=True, env=env)
 
     print " - building docs..."
@@ -137,11 +137,13 @@ def copyFiles(src, dest):
     src = os.path.join(src,'*')
     if iswindows:
         src = src.replace('\\','/')
+        dest = dest.replace('\\','/')
     msg = shell('cp', flags, src , dest, shell=True, silent=False)
 
 def copyFolder(src, dest):
     if iswindows:
         src = src.replace('\\','/')
+        dest = dest.replace('\\','/')
     msg = shell('cp', flags, src, dest, shell=True, silent=False)
 
 def mkdir(path):
