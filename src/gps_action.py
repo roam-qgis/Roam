@@ -7,7 +7,10 @@ from qgis.gui import *
 import resources_rc
 import utils
 from utils import log
-from power import PowerState
+import os
+
+if os.name == 'nt':
+    from power import PowerState
 
 
 class GPSAction(QAction):
@@ -24,8 +27,10 @@ class GPSAction(QAction):
         self.marker.hide()
         self.lastposition = QgsPoint(0.0, 0.0)
         self.wgs84CRS = QgsCoordinateReferenceSystem(4326)
-        self.power = PowerState(self.parent())
-        self.power.poweroff.connect(self.disconnectGPS)
+
+        if os.name == 'nt':
+            self.power = PowerState(self.parent())
+            self.power.poweroff.connect(self.disconnectGPS)
 
     def connectGPS(self):
         if not self.isConnected:
@@ -60,9 +65,10 @@ class GPSAction(QAction):
         self.setIcon(QIcon(':/icons/gps_looking'))
         self.setIconText("Searching")
         self.gpsConn = gpsConnection
-        self.power = PowerState(self.canvas)
-        self.power.poweroff.connect(self.disconnectGPS)
-        self.power.poweron.connect(self.connectGPS)
+        if os.name == 'nt':
+            self.power = PowerState(self.canvas)
+            self.power.poweroff.connect(self.disconnectGPS)
+            self.power.poweron.connect(self.connectGPS)
         self.gpsConn.stateChanged.connect(self.gpsStateChanged)
         self.isConnected = True
         self.setEnabled(True)

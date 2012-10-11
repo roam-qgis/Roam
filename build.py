@@ -4,10 +4,7 @@ import os.path
 import os
 import sys
 import datetime
-from shutil import copytree, ignore_patterns, rmtree
 from fabricate import *
-from subprocess import Popen, PIPE
-from PyQt4.QtGui import QApplication
 from ConfigParser import ConfigParser, NoSectionError, NoOptionError
 import optparse
 
@@ -19,23 +16,20 @@ doc_sources = ['docs/README', 'docs/ClientSetup']
 
 path = os.path.dirname(__file__)
 
-# Add the path to MSBuild to PATH so that subprocess can find it.
-env = os.environ.copy()
-env['PATH'] += ";c:\\WINDOWS\\Microsoft.NET\Framework\\v3.5"
-
 APPNAME = "QMap"
-EXCLUDES = '/EXCLUDE:excludes.txt'
 
 curpath = os.path.dirname(os.path.abspath(__file__))
-srcpath = os.path.join(curpath, "src")
+srcopyFilesath = os.path.join(curpath, "src")
 pluginpath = os.path.join(APPNAME, "app", "python", "plugins", APPNAME)
 buildpath = os.path.join(curpath, "build", pluginpath)
 targetspath = os.path.join(curpath, 'targets.ini')
 deploypath = os.path.join(curpath, "build", APPNAME)
-bootpath = os.path.join('src', "boot")
+bootpath = os.path.join(curpath, "loader_src")
+dotnetpath = os.path.join(curpath, "dotnet")
 
-args = ['/D', '/S', '/E', '/K', '/C', '/H', '/R', '/Y', '/I']
+flags = '--update -rp'.split()
 
+iswindows = os.name == 'nt'
 
 def build():
     """
@@ -48,7 +42,7 @@ def compile():
     print " - building UI files..."
     for source in ui_sources:
         pyuic = 'pyuic4'
-        if os.name == 'nt':
+        if iswindows:
             pyuic += '.bat'
 
         run(pyuic, '-o', source + '.py', source + '.ui')
@@ -57,14 +51,17 @@ def compile():
     run('pyrcc4', '-o', 'src/resources_rc.py', 'src/resources.qrc')
     run('pyrcc4', '-o', 'src/syncing/resources_rc.py', 'src/syncing/resources.qrc')
 
-    if main.options.with_mssyncing == True:
+    if iswindows and main.options.with_mssyncing == True:
+        # Add the path to MSBuild to PATH so that subprocess can find it.
+        env = os.environ.copy()
+        env['PATH'] += ";c:\\WINDOWS\\Microsoft.NET\Framework\\v3.5"
         print " - building MSSQLSyncer app..."
         run('MSBuild', '/property:Configuration=Release', '/verbosity:m', \
-            'src/syncing/MSSQLSyncer/MSSQLSyncer.csproj', shell=True, env=env)
+            'dotnet/MSSQLSyncer/MSSQLSyncer.csproj', shell=True, env=env)
 
         print " - building Provisioning app..."
         run('MSBuild', '/property:Configuration=Release', '/verbosity:m', \
-            'provisioner/SqlSyncProvisioner/SqlSyncProvisioner.csproj', \
+            'dotnet/provisioner/SqlSyncProvisioner/SqlSyncProvisioner.csproj', \
             shell=True, env=env)
 
     print " - building docs..."
@@ -80,6 +77,7 @@ def docs():
 
 def clean():
     autoclean()
+    msg = shell('rm', '-r', deploypath)
 
 
 def getVersion():
@@ -124,10 +122,15 @@ def build_plugin():
 
     # Copy all the files to the ouput directory
     print "Copying new files..."
-    msg = shell('xcopy', srcpath, buildpath, args, EXCLUDES, silent=False)
 
-    msg = shell('xcopy', bootpath, deploypath, args, silent=False)
+    mkdir(buildpath)
+    copyFiles(srcopyFilesath,buildpath)
+    copyFiles(bootpath,deploypath)
 
+    if iswindows and main.options.with_mssyncing == True:
+        mssyncpath = os.path.join(dotnetpath,"MSSQLSyncer","bin")
+        destmssyncpath = os.path.join(buildpath,"syncing")
+        copyFolder(mssyncpath, destmssyncpath)
     # Replace version numbers
     version = getVersion()
     command = 's/version=0.1/version=%s/ "%s"' % (version, os.path.join(buildpath, 'metadata.txt'))
@@ -135,6 +138,23 @@ def build_plugin():
 
     print "Local depoly compelete into {0}".format(buildpath)
 
+def copyFiles(src, dest):
+    src = os.path.join(src,'*')
+    if iswindows:
+        src = src.replace('\\','/')
+        dest = dest.replace('\\','/')
+    msg = shell('cp', flags, src , dest, shell=True, silent=False)
+
+def copyFolder(src, dest):
+    if iswindows:
+        src = src.replace('\\','/')
+        dest = dest.replace('\\','/')
+    msg = shell('cp', flags, src, dest, shell=True, silent=False)
+
+def mkdir(path):
+    if iswindows:
+        path = path.replace('\\','/')
+    msg = shell('mkdir', '-p', path, silent=False)
 
 def deploy():
     targetname = main.options.target
@@ -157,8 +177,8 @@ def deploy_to(target, config):
 
     print "Deploying application to %s" % config['client']
     clientapppath = os.path.join(clientpath, APPNAME)
-    msg = shell('xcopy', deploypath, clientapppath, args \
-                , silent=False)
+    mkdir(clientapppath)
+    copyFiles(deploypath,clientapppath)
 
     projectpath = os.path.join(curpath, 'project-manager', 'projects')
     clientpojectpath = os.path.join(clientpath, pluginpath, 'projects')
@@ -170,30 +190,30 @@ def deploy_to(target, config):
 
     print formpath
 
-    msg = shell('xcopy', projectpath, clientpojectpath, '/T', '/E', '/I', '/Y', silent=False)
-    msg = shell('xcopy', formpath, clientformpath, '/I', '/Y', '/D', silent=False)
+    mkdir(clientpojectpath)
+    mkdir(clientformpath)
 
     if 'All' in projects:
         print "Loading all projects"
-        msg = shell('xcopy', projectpath, clientpojectpath, args, silent=False)
+        copyFiles(projectpath, clientpojectpath )
     else:
         for project in projects:
             if project and project[-4:] == ".qgs":
                 print "Loading project %s" % project
                 path = os.path.join(projectpath, project)
                 newpath = os.path.join(clientpojectpath, project)
-                msg = shell('copy', path, newpath, '/Y', silent=False, shell=True)
+                copyFolder(path, newpath)
 
     if 'All' in forms:
         print "Loading all forms"
-        msg = shell('xcopy', formpath, clientformpath, args, silent=False)
+        copyFiles(formpath, clientformpath )
     else:
         for form in forms:
             if form:
                 print "Loading form %s" % form
                 path = os.path.join(formpath, form)
                 newpath = os.path.join(clientformpath, form)
-                msg = shell('xcopy', path, newpath, args, silent=False)
+                copyFolder(path, newpath)
 
     print "Remote depoly compelete"
 
