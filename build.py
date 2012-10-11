@@ -25,6 +25,7 @@ buildpath = os.path.join(curpath, "build", pluginpath)
 targetspath = os.path.join(curpath, 'targets.ini')
 deploypath = os.path.join(curpath, "build", APPNAME)
 bootpath = os.path.join(curpath, "loader_src")
+dotnetpath = os.path.join(curpath, "dotnet")
 
 flags = '--update -rp'.split()
 
@@ -56,11 +57,11 @@ def compile():
         env['PATH'] += ";c:\\WINDOWS\\Microsoft.NET\Framework\\v3.5"
         print " - building MSSQLSyncer app..."
         run('MSBuild', '/property:Configuration=Release', '/verbosity:m', \
-            'src/syncing/MSSQLSyncer/MSSQLSyncer.csproj', shell=True, env=env)
+            'dotnet/MSSQLSyncer/MSSQLSyncer.csproj', shell=True, env=env)
 
         print " - building Provisioning app..."
         run('MSBuild', '/property:Configuration=Release', '/verbosity:m', \
-            'provisioner/SqlSyncProvisioner/SqlSyncProvisioner.csproj', \
+            'dotnet/provisioner/SqlSyncProvisioner/SqlSyncProvisioner.csproj', \
             shell=True, env=env)
 
     print " - building docs..."
@@ -126,6 +127,10 @@ def build_plugin():
     copyFiles(srcopyFilesath,buildpath)
     copyFiles(bootpath,deploypath)
 
+    if iswindows and main.options.with_mssyncing == True:
+        mssyncpath = os.path.join(dotnetpath,"MSSQLSyncer","bin")
+        destmssyncpath = os.path.join(buildpath,"syncing")
+        copyFolder(mssyncpath, destmssyncpath)
     # Replace version numbers
     version = getVersion()
     command = 's/version=0.1/version=%s/ "%s"' % (version, os.path.join(buildpath, 'metadata.txt'))
