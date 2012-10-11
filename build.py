@@ -26,7 +26,7 @@ targetspath = os.path.join(curpath, 'targets.ini')
 deploypath = os.path.join(curpath, "build", APPNAME)
 bootpath = os.path.join(curpath, "loader_src")
 
-flags = '--update -rvp'.split()
+flags = '--update -rp'.split()
 
 iswindows = os.name == 'nt'
 
