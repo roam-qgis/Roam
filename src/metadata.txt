@@ -9,9 +9,9 @@
 
 
 [general]
-name= SDRC Data Collection
+name= QMap
 qgisMinimumVersion=1.8
-description= SDRC Data collection QGIS Plugin
+description= A QGIS based field data collection application 
 version=0.1
 
 # end of mandatory metadata

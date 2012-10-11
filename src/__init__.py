@@ -18,9 +18,9 @@
  This script initializes the plugin, making it known to QGIS.
 """
 def name():
-    return "Prototype Data collection software for SDRC"
+    return "QMap"
 def description():
-    return "Prototype Data collection software for SDRC"
+    return "A QGIS based field data collection application "
 def version():
     return "Version 0.1"
 def icon():
