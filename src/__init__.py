@@ -1,8 +1,6 @@
 """
 /***************************************************************************
- SDRCDataCapture
-                                 A QGIS plugin
- Prototype Data collection software for SDRC
+                                QMap
                              -------------------
         begin                : 2012-03-21
         copyright            : (C) 2012 by Nathan Woodrow @ SDRC
@@ -30,6 +28,6 @@ def icon():
 def qgisMinimumVersion():
     return "1.8"
 def classFactory(iface):
-    from sdrcdatacapture import SDRCDataCapture
-    return SDRCDataCapture(iface)
+    from qmap import QMap
+    return QMap(iface)
 

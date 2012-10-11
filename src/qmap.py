@@ -1,6 +1,6 @@
 """
 /***************************************************************************
- SDRCDataCapture
+ QMap
                                  A QGIS plugin
  Data collection software for SDRC
                               -------------------
@@ -35,7 +35,7 @@ import functools
 import utils
 
 
-class SDRCDataCapture():
+class QMap():
     def __init__(self, iface):
         self.iface = iface
         self.layerstoForms = {}
