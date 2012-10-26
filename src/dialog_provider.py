@@ -33,6 +33,8 @@ class DialogProvider(QObject):
         self.binder.bindSelectButtons()
 
         buttonbox = self.dialog.findChild(QDialogButtonBox)
+        buttonbox.accepted.disconnect()
+        buttonbox.rejected.disconnect()
 
         if mandatory_fields:
             buttonbox.accepted.connect(self.validateForm)
