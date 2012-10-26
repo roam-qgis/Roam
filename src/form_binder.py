@@ -512,7 +512,11 @@ class FormBinder(QObject):
         """
         dlg = DateTimePickerDialog(mode)
         dlg.setWindowTitle("Select a date")
-        dlg.setDateTime(control.dateTime())
+        if control.dateTime() == QDateTime(2000, 1, 1, 00, 00, 00, 0):
+            dlg.setAsNow()
+        else:
+            dlg.setDateTime(control.dateTime())
+
         if dlg.exec_():
             if hasattr(control, 'setDate'):
                 control.setDate(dlg.getSelectedDate())
