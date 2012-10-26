@@ -33,8 +33,12 @@ class DialogProvider(QObject):
         self.binder.bindSelectButtons()
 
         buttonbox = self.dialog.findChild(QDialogButtonBox)
-        buttonbox.accepted.disconnect()
-        buttonbox.rejected.disconnect()
+        try:
+            buttonbox.accepted.disconnect()
+            buttonbox.rejected.disconnect()
+        except TypeError:
+            # If there are no signals to disconnect then we get a type error.
+            pass
 
         if mandatory_fields:
             buttonbox.accepted.connect(self.validateForm)
@@ -50,7 +54,8 @@ class DialogProvider(QObject):
         
         if self.settings.value("fullscreen", False).toBool():
             self.dialog.showFullScreen()
-        self.dialog.show()
+        else:
+            self.dialog.show()
 
     def selectingFromMap(self, message):
         self.dialog.hide()
