@@ -1,15 +1,19 @@
 import time
+from PyQt4 import uic
 from qgis.core import QgsMessageLog
 import logging
 import os
 from PyQt4.QtCore import QSettings
 
 LOG_FILENAME = 'main.log'
+uic.uiparser.logger.setLevel(logging.INFO)
+uic.properties.logger.setLevel(logging.INFO)
 logging.basicConfig(filename=LOG_FILENAME,level=logging.NOTSET)
 
 log = lambda msg: logging.debug(msg)
 info = lambda msg: logging.info(msg)
 warning = lambda msg: logging.warning(msg)
+error = lambda msg: logging.error(msg)
 
 curdir = os.path.dirname(__file__)
 settingspath = os.path.join(curdir,'settings.ini')
