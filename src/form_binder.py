@@ -523,8 +523,8 @@ class FormBinder(QObject):
     def shouldSaveValue(self, control):
         try:
             button = self.getControl(control.objectName() + "_save", QToolButton)
+            log("save button found for %s" % control.objectName())
         except ControlNotFound:
-            log("_save button not found for %s" % control.objectName())
             return
 
         log("_save button for %s is %s" % (control.objectName(), str(button.isChecked()) ))

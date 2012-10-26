@@ -3,7 +3,7 @@ import os
 from form_binder import FormBinder
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
-from utils import Timer, log, info, warning
+from utils import Timer, log, info, warning, error
 import tempfile
 from ui_errorlist import Ui_Dialog
 
@@ -100,10 +100,13 @@ class DialogProvider(QObject):
         if self.update:
             self.layer.updateFeature( feature )
         else:
-            self.layer.addFeature( self.feature )
+            self.layer.addFeature( feature )
 
-        
-        self.layer.commitChanges()
+        saved = self.layer.commitChanges()
+        if not saved:
+            for e in self.layer.commitErrors():
+                error(e)
+
         self.canvas.refresh()
 
         # After we commit we have to move the drawing into the correct path.
