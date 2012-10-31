@@ -112,11 +112,11 @@ class QMap():
         self.syncAction = QAction(QIcon(":/syncing/sync"), "Sync", self.mainwindow)
         self.editattributesaction.setCheckable(True)
 
-        self.moveaction = QAction(QIcon(":/icons/edit"), "Move", self.mainwindow)
+        self.moveaction = QAction(QIcon(":/icons/edit"), "Move Feature", self.mainwindow)
         self.moveaction.toggled.connect(functools.partial(self.setMapTool, self.movetool))
         self.moveaction.setCheckable(True)
 
-        self.editingmodeaction = QAction(QIcon(":/icons/edit"), "Editing Mode", self.mainwindow)
+        self.editingmodeaction = QAction(QIcon(":/icons/edit"), "Editing Tools", self.mainwindow)
         self.editingmodeaction.setCheckable(True)
         self.editingmodeaction.toggled.connect(self.showEditingToolbar)
 
@@ -159,8 +159,7 @@ class QMap():
             self.editingtoolbar.show()
             self.editattributesaction.toggle()
             widget = self.toolbar.widgetForAction(self.editingmodeaction)
-            mapToGlobal = widget.mapToGlobal
-            x = mapToGlobal(widget.pos()).x()
+            x = self.toolbar.mapToGlobal(widget.pos()).x()
             newpoint = QPoint(x, self.toolbar.rect().height() + 10 )
             self.editingtoolbar.move(newpoint)
         else:
