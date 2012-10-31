@@ -2,7 +2,7 @@
 /***************************************************************************
  QMap
                                  A QGIS plugin
- Data collection software for SDRC
+ Data collection software for QGIS
                               -------------------
         begin                : 2012-03-21
         copyright            : (C) 2012 by Nathan Woodrow @ SDRC
@@ -34,7 +34,6 @@ from utils import log
 import functools
 import utils
 
-
 class QMap():
     def __init__(self, iface):
         self.iface = iface
@@ -45,6 +44,9 @@ class QMap():
         self.iface.projectRead.connect(self.projectOpened)
         self.iface.initializationCompleted.connect(self.setupUI)
         self.actionGroup = QActionGroup(self.iface.mainWindow())
+        self.actionGroup.setExclusive(True)
+        self.editActionGroup = QActionGroup(self.iface.mainWindow())
+        self.editActionGroup.setExclusive(True)
         self.iface.mapCanvas().grabGesture(Qt.PinchGesture)
         self.iface.mapCanvas().viewport().setAttribute(Qt.WA_AcceptTouchEvents) 
 
@@ -82,6 +84,15 @@ class QMap():
         self.mainwindow.addToolBar(Qt.TopToolBarArea, self.toolbar)
         self.toolbar.setMovable(False)
 
+        self.editingtoolbar = QToolBar("Editing", self.mainwindow)
+        self.editingtoolbar.setMovable(False)
+        self.editingtoolbar.setWindowFlags(Qt.Tool | Qt.FramelessWindowHint | Qt.X11BypassWindowManagerHint)
+        self.editingtoolbar.setAllowedAreas(Qt.NoToolBarArea)
+        point = self.iface.mapCanvas().mapToGlobal(self.iface.mapCanvas().rect().bottomRight())
+        newpoint = QPoint(point.x() - self.editingtoolbar.width() - 5, point.y() - self.editingtoolbar.height() - 5)
+        self.editingtoolbar.move(newpoint)
+
+
         spacewidget = QWidget()
         spacewidget.setMinimumWidth(30)
 
@@ -97,9 +108,13 @@ class QMap():
                                          self.mainwindow)
         self.toggleRasterAction = QAction(QIcon(":/icons/photo"), "Aerial Photos",\
                                           self.mainwindow)
-        self.editAction = EditAction("Edit", self.iface)
+        self.editattributesaction = EditAction("Edit Attributes", self.iface)
         self.syncAction = QAction(QIcon(":/syncing/sync"), "Sync", self.mainwindow)
-        self.editAction.setCheckable(True)
+        self.editattributesaction.setCheckable(True)
+
+        self.editingmodeaction = QAction(QIcon(":/icons/edit"), "Editing Mode", self.mainwindow)
+        self.editingmodeaction.setCheckable(True)
+        self.editingmodeaction.toggled.connect(self.showEditingToolbar)
 
         self.menu = QMenu()
         self.exitaction = self.menu.addAction("Exit")
@@ -107,7 +122,8 @@ class QMap():
         self.exitaction.triggered.connect(self.iface.actionExit().trigger)
         self.openProjectAction.setMenu(self.menu)
 
-        self.actionGroup.addAction(self.editAction)
+        self.editActionGroup.addAction(self.editattributesaction)
+        self.actionGroup.addAction(self.editingmodeaction)
 
         self.homeAction.triggered.connect(self.zoomToDefaultView)
         self.syncAction.triggered.connect(self.sync)
@@ -122,13 +138,27 @@ class QMap():
 
         self.navtoolbar.addAction(self.toggleRasterAction)
         self.navtoolbar.insertWidget(self.iface.actionZoomFullExtent(), spacewidget)
-        self.toolbar.addAction(self.editAction)
+        self.toolbar.addAction(self.editingmodeaction)
         self.toolbar.addAction(self.syncAction)
         self.toolbar.insertSeparator(self.syncAction)
         self.toolbar.insertWidget(self.gpsAction, gpsspacewidget)
         self.toolbar.addAction(self.gpsAction)
 
+        self.editingtoolbar.addAction(self.editattributesaction)
+        self.editingtoolbar.addAction("Move Point")
+
         self.setupIcons()
+
+    def showEditingToolbar(self, toggled):
+        if toggled:
+            self.editingtoolbar.show()
+            self.editattributesaction.toggle()
+            point = self.iface.mapCanvas().mapToGlobal(self.iface.mapCanvas().rect().bottomRight())
+            newpoint = QPoint(point.x() - self.editingtoolbar.width() - 5, point.y() - self.editingtoolbar.height() - 5)
+            self.editingtoolbar.move(newpoint)
+        else:
+            self.editActionGroup.checkedAction().toggle()
+            self.editingtoolbar.hide()
 
     def zoomToDefaultView(self):
         """
@@ -213,14 +243,14 @@ class QMap():
                 icon = form.icon()
                 action = AddAction(form.formName(), self.iface, \
                                    form, layer, icon)
-                self.toolbar.insertAction(self.editAction, action)
+                self.toolbar.insertAction(self.editingmodeaction, action)
                 self.actionGroup.addAction(action)
                 self.actions.append(action)
                 layerstoForms[layer] = form
             except KeyError:
                 log("Couldn't find layer for form %s" % form.layerName())
 
-        self.editAction.setLayersForms(layerstoForms)
+        self.editattributesaction.setLayersForms(layerstoForms)
 
     def rejectProjectDialog(self):
         """

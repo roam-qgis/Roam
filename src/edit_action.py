@@ -12,7 +12,7 @@ class EditAction(QAction):
         QAction.__init__(self, name, iface.mainWindow())
         self.canvas = iface.mapCanvas()
         self.layerstoformmapping = {}
-        self.triggered.connect(self.setTool)
+        self.toggled.connect(self.setTool)
         self.tool = PointTool( self.canvas )
         self.tool.mouseClicked.connect( self.findFeatures )
         self.tool.mouseMove.connect(self.highlightFeatures)
