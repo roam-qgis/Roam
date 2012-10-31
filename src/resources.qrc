@@ -3,6 +3,7 @@
     <file alias="tick">resources/images/tick.png</file>
     <file alias="cancel">resources/images/cancel.png</file>
     <file alias="edit">resources/images/edit.png</file>
+    <file alias="edittools">resources/images/tools.png</file>
     <file alias="home">resources/images/home.png</file>
     <file alias="in">resources/images/in.png</file>
     <file alias="out">resources/images/out.png</file>
@@ -25,6 +26,7 @@
     <file alias="eraser">resources/images/eraser.png</file>
     <file alias="save_default">resources/images/save_default.png</file>
     <file alias="exit">resources/images/exit.png</file>
+    <file alias="move">resources/images/move.png</file>
   </qresource>
   <qresource prefix="syncing">
     <file alias="sync">resources/images/sync.png</file>
