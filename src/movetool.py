@@ -1,6 +1,7 @@
 from qgis.core import *
 from qgis.gui import *
 from PyQt4.QtCore import Qt
+from PyQt4.QtGui import QColor
 import qmap
 
 class MoveTool(QgsMapTool):
@@ -78,10 +79,9 @@ class MoveTool(QgsMapTool):
 
 	def deactivate(self):
 		self.band = None
-		QgsMapTool.deactivate(self)
 
 	def createRubberBand(self):
 		band = QgsRubberBand(self.canvas)
-		band.setColor(Qt.red)
-		band.setWidth(5)
+		band.setColor(QColor.fromRgb(237,85,9))
+		band.setWidth(6)
 		return band

@@ -1,5 +1,5 @@
 from point_tool import PointTool, log
-from PyQt4.QtGui import QAction, QIcon
+from PyQt4.QtGui import QAction, QIcon, QColor
 from PyQt4.QtCore import Qt
 from qgis.core import *
 from qgis.gui import *
@@ -23,7 +23,7 @@ class EditAction(QAction):
         self.dialogprovider.rejected.connect(self.setTool)
         self.setCheckable(True)
         self.band = QgsRubberBand(self.canvas)
-        self.band.setColor(Qt.yellow)
+        self.band.setColor(QColor.fromRgb(224,162,16))
         self.band.setWidth(3)
 
     def setTool(self):
