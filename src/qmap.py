@@ -22,6 +22,7 @@ import os
 from add_action import AddAction
 from edit_action import EditAction
 from gps_action import GPSAction
+from movetool import MoveTool
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 import forms
@@ -35,6 +36,8 @@ import functools
 import utils
 
 class QMap():
+    layerformmap = {}
+
     def __init__(self, iface):
         self.iface = iface
         self.layerstoForms = {}
@@ -48,7 +51,8 @@ class QMap():
         self.editActionGroup = QActionGroup(self.iface.mainWindow())
         self.editActionGroup.setExclusive(True)
         self.iface.mapCanvas().grabGesture(Qt.PinchGesture)
-        self.iface.mapCanvas().viewport().setAttribute(Qt.WA_AcceptTouchEvents) 
+        self.iface.mapCanvas().viewport().setAttribute(Qt.WA_AcceptTouchEvents)
+        self.movetool = MoveTool(iface.mapCanvas()) 
 
     def setupUI(self):
         """
@@ -88,10 +92,6 @@ class QMap():
         self.editingtoolbar.setMovable(False)
         self.editingtoolbar.setWindowFlags(Qt.Tool | Qt.FramelessWindowHint | Qt.X11BypassWindowManagerHint)
         self.editingtoolbar.setAllowedAreas(Qt.NoToolBarArea)
-        point = self.iface.mapCanvas().mapToGlobal(self.iface.mapCanvas().rect().bottomRight())
-        newpoint = QPoint(point.x() - self.editingtoolbar.width() - 5, point.y() - self.editingtoolbar.height() - 5)
-        self.editingtoolbar.move(newpoint)
-
 
         spacewidget = QWidget()
         spacewidget.setMinimumWidth(30)
@@ -112,6 +112,10 @@ class QMap():
         self.syncAction = QAction(QIcon(":/syncing/sync"), "Sync", self.mainwindow)
         self.editattributesaction.setCheckable(True)
 
+        self.moveaction = QAction(QIcon(":/icons/edit"), "Move", self.mainwindow)
+        self.moveaction.toggled.connect(functools.partial(self.setMapTool, self.movetool))
+        self.moveaction.setCheckable(True)
+
         self.editingmodeaction = QAction(QIcon(":/icons/edit"), "Editing Mode", self.mainwindow)
         self.editingmodeaction.setCheckable(True)
         self.editingmodeaction.toggled.connect(self.showEditingToolbar)
@@ -123,6 +127,7 @@ class QMap():
         self.openProjectAction.setMenu(self.menu)
 
         self.editActionGroup.addAction(self.editattributesaction)
+        self.editActionGroup.addAction(self.moveaction)
         self.actionGroup.addAction(self.editingmodeaction)
 
         self.homeAction.triggered.connect(self.zoomToDefaultView)
@@ -145,7 +150,7 @@ class QMap():
         self.toolbar.addAction(self.gpsAction)
 
         self.editingtoolbar.addAction(self.editattributesaction)
-        self.editingtoolbar.addAction("Move Point")
+        self.editingtoolbar.addAction(self.moveaction)
 
         self.setupIcons()
 
@@ -153,8 +158,10 @@ class QMap():
         if toggled:
             self.editingtoolbar.show()
             self.editattributesaction.toggle()
-            point = self.iface.mapCanvas().mapToGlobal(self.iface.mapCanvas().rect().bottomRight())
-            newpoint = QPoint(point.x() - self.editingtoolbar.width() - 5, point.y() - self.editingtoolbar.height() - 5)
+            widget = self.toolbar.widgetForAction(self.editingmodeaction)
+            mapToGlobal = widget.mapToGlobal
+            x = mapToGlobal(widget.pos()).x()
+            newpoint = QPoint(x, self.toolbar.rect().height() + 10 )
             self.editingtoolbar.move(newpoint)
         else:
             self.editActionGroup.checkedAction().toggle()
@@ -251,6 +258,7 @@ class QMap():
                 log("Couldn't find layer for form %s" % form.layerName())
 
         self.editattributesaction.setLayersForms(layerstoForms)
+        QMap.layerformmap = layerstoForms
 
     def rejectProjectDialog(self):
         """
