@@ -36,7 +36,7 @@ class EditAction(QAction):
 
         layer = qmap.QMap.layerformmap.iterkeys().next()
 
-        searchRadius = QgsTolerance.toleranceInMapUnits( 5, layer, \
+        searchRadius = QgsTolerance.toleranceInMapUnits( 10, layer, \
                                                          self.canvas.mapRenderer(), QgsTolerance.Pixels)
 
         rect = QgsRectangle()                                                 
@@ -44,9 +44,7 @@ class EditAction(QAction):
         rect.setXMaximum( point.x() + searchRadius );
         rect.setYMinimum( point.y() - searchRadius );
         rect.setYMaximum( point.y() + searchRadius );
-
-        log("Finding Featues at %s with radius of %s" % (point, searchRadius))
-        
+                
         featuresToForms = {}
         for layer, form in qmap.QMap.layerformmap.iteritems():
             layer.select( layer.pendingAllAttributesList(), rect, True, True)
