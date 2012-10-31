@@ -256,7 +256,6 @@ class QMap():
             except KeyError:
                 log("Couldn't find layer for form %s" % form.layerName())
 
-        self.editattributesaction.setLayersForms(layerstoForms)
         QMap.layerformmap = layerstoForms
 
     def rejectProjectDialog(self):

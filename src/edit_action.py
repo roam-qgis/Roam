@@ -6,12 +6,12 @@ from qgis.gui import *
 from listfeatureform import ListFeaturesForm
 import resources_rc
 from dialog_provider import DialogProvider
+import qmap
 
 class EditAction(QAction):
     def __init__(self, name, iface ):
         QAction.__init__(self, name, iface.mainWindow())
         self.canvas = iface.mapCanvas()
-        self.layerstoformmapping = {}
         self.toggled.connect(self.setTool)
         self.tool = PointTool( self.canvas )
         self.tool.mouseClicked.connect( self.findFeatures )
@@ -31,10 +31,10 @@ class EditAction(QAction):
 
     def findFeatures(self, point):
         #If we don't have a any layers to forms mappings yet just exit.
-        if not self.layerstoformmapping:
+        if not qmap.QMap.layerformmap:
             return
 
-        layer = self.layerstoformmapping.iterkeys().next()
+        layer = qmap.QMap.layerformmap.iterkeys().next()
 
         searchRadius = QgsTolerance.toleranceInMapUnits( 5, layer, \
                                                          self.canvas.mapRenderer(), QgsTolerance.Pixels)
@@ -48,7 +48,7 @@ class EditAction(QAction):
         log("Finding Featues at %s with radius of %s" % (point, searchRadius))
         
         featuresToForms = {}
-        for layer, form in self.layerstoformmapping.iteritems():
+        for layer, form in qmap.QMap.layerformmap.iteritems():
             layer.select( layer.pendingAllAttributesList(), rect, True, True)
             for feature in layer:
                 featuresToForms[feature] = (form, layer)
@@ -64,10 +64,10 @@ class EditAction(QAction):
             listUi.exec_()
         
     def highlightFeatures(self, point):
-        if not self.layerstoformmapping:
+        if not qmap.QMap.layerformmap:
             return
 
-        layer = self.layerstoformmapping.iterkeys().next()
+        layer = qmap.QMap.layerformmap.iterkeys().next()
 
         searchRadius = QgsTolerance.toleranceInMapUnits( 5, layer, \
                                                          self.canvas.mapRenderer(), QgsTolerance.Pixels)
@@ -78,7 +78,7 @@ class EditAction(QAction):
         rect.setYMaximum( point.y() + searchRadius );
 
         self.band.reset()
-        for layer in self.layerstoformmapping.iterkeys():
+        for layer in qmap.QMap.layerformmap.iterkeys():
             layer.select( [], rect, True, True)    
             for feature in layer:
                 log("Looping feature")
@@ -88,7 +88,7 @@ class EditAction(QAction):
                 self.band.addGeometry(feature.geometry(), None)
 
     def setLayersForms(self,layerforms):
-        self.layerstoformmapping = layerforms
+        qmap.QMap.layerformmap = layerforms
     
     def openForm(self,formmodule,feature,maplayer):
         if not maplayer.isEditable():
