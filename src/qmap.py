@@ -34,6 +34,8 @@ from syncing.syncer import SyncDialog
 from utils import log
 import functools
 import utils
+from floatingtoolbar import FloatingToolBar
+
 
 class QMap():
     layerformmap = {}
@@ -48,8 +50,8 @@ class QMap():
         self.iface.initializationCompleted.connect(self.setupUI)
         self.actionGroup = QActionGroup(self.iface.mainWindow())
         self.actionGroup.setExclusive(True)
-        self.editActionGroup = QActionGroup(self.iface.mainWindow())
-        self.editActionGroup.setExclusive(True)
+        # self.editActionGroup = QActionGroup(self.iface.mainWindow())
+        # self.editActionGroup.setExclusive(True)
         self.iface.mapCanvas().grabGesture(Qt.PinchGesture)
         self.iface.mapCanvas().viewport().setAttribute(Qt.WA_AcceptTouchEvents)
         self.movetool = MoveTool(iface.mapCanvas()) 
@@ -79,46 +81,71 @@ class QMap():
         """
         self.iface.mapCanvas().setMapTool(tool)
 
-    def initGui(self):
+    def createToolBars(self):
         """
-        Create all the icons and setup the tool bars.  Called by QGIS when
-        loading. This is called before setupUI.
+        Create all the needed toolbars
         """
         self.toolbar = QToolBar("SDRC Data Capture", self.mainwindow)
         self.mainwindow.addToolBar(Qt.TopToolBarArea, self.toolbar)
         self.toolbar.setMovable(False)
 
-        self.editingtoolbar = QToolBar("Editing", self.mainwindow)
-        self.editingtoolbar.setMovable(False)
-        self.editingtoolbar.setWindowFlags(Qt.Tool | Qt.FramelessWindowHint | Qt.X11BypassWindowManagerHint)
-        self.editingtoolbar.setAllowedAreas(Qt.NoToolBarArea)
+        self.editingtoolbar = FloatingToolBar("Editing", self.toolbar)
+        self.extraaddtoolbar = FloatingToolBar("Extra Add Tools", self.toolbar)
 
-        spacewidget = QWidget()
-        spacewidget.setMinimumWidth(30)
+    def createActions(self):
+        """
+        Create all the actions
+        """
 
-        gpsspacewidget = QWidget()
-        gpsspacewidget.setMinimumWidth(30)
-        gpsspacewidget.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
-
-        self.homeAction = QAction(self.iface.actionZoomFullExtent().icon(), \
-                                  "Default View", self.mainwindow)
-        self.gpsAction = GPSAction(QIcon(":/icons/gps"), self.iface.mapCanvas(), \
-                                   self.mainwindow)
-        self.openProjectAction = QAction(QIcon(":/icons/open"), "Open Project", \
-                                         self.mainwindow)
-        self.toggleRasterAction = QAction(QIcon(":/icons/photo"), "Aerial Photos",\
-                                          self.mainwindow)
-        self.editattributesaction = EditAction("Edit Attributes", self.iface)
+        self.homeAction = (QAction(self.iface.actionZoomFullExtent().icon(),
+                                  "Default View", self.mainwindow))
+        self.gpsAction = (GPSAction(QIcon(":/icons/gps"), self.iface.mapCanvas(),
+                                   self.mainwindow))
+        self.openProjectAction = (QAction(QIcon(":/icons/open"), "Open Project",
+                                         self.mainwindow))
+        self.toggleRasterAction = (QAction(QIcon(":/icons/photo"), "Aerial Photos",
+                                          self.mainwindow))
         self.syncAction = QAction(QIcon(":/syncing/sync"), "Sync", self.mainwindow)
+
+        self.editattributesaction = EditAction("Edit Attributes", self.iface)
         self.editattributesaction.setCheckable(True)
 
         self.moveaction = QAction(QIcon(":/icons/move"), "Move Feature", self.mainwindow)
-        self.moveaction.toggled.connect(functools.partial(self.setMapTool, self.movetool))
         self.moveaction.setCheckable(True)
 
         self.editingmodeaction = QAction(QIcon(":/icons/edittools"), "Editing Tools", self.mainwindow)
         self.editingmodeaction.setCheckable(True)
-        self.editingmodeaction.toggled.connect(self.showEditingToolbar)
+
+        self.addatgpsaction = QAction(QIcon(":/icons/gpsadd"), "Add at GPS", self.mainwindow)
+
+    def initGui(self):
+        """
+        Create all the icons and setup the tool bars.  Called by QGIS when
+        loading. This is called before setupUI.
+        """
+
+        def createSpacer():
+            widget = QWidget()
+            widget.setMinimumWidth(30)
+            return widget
+
+        self.createToolBars()
+        self.createActions()
+
+        spacewidget = createSpacer()
+        gpsspacewidget = createSpacer()
+        gpsspacewidget.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
+
+        self.moveaction.toggled.connect(functools.partial(self.setMapTool, self.movetool))
+        
+        showediting = (functools.partial(self.editingtoolbar.showToolbar, 
+                                         self.editingmodeaction,
+                                         self.editattributesaction))
+        self.editingmodeaction.toggled.connect(showediting)
+
+        self.addatgpsaction.triggered.connect(self.addAtGPS)
+        self.addatgpsaction.setEnabled(self.gpsAction.isConnected)
+        self.gpsAction.gpsfixed.connect(self.addatgpsaction.setEnabled)
 
         self.menu = QMenu()
         self.exitaction = self.menu.addAction("Exit")
@@ -126,8 +153,9 @@ class QMap():
         self.exitaction.triggered.connect(self.iface.actionExit().trigger)
         self.openProjectAction.setMenu(self.menu)
 
-        self.editActionGroup.addAction(self.editattributesaction)
-        self.editActionGroup.addAction(self.moveaction)
+        self.editingtoolbar.addToActionGroup(self.editattributesaction)
+        self.editingtoolbar.addToActionGroup(self.moveaction)
+
         self.actionGroup.addAction(self.editingmodeaction)
 
         self.homeAction.triggered.connect(self.zoomToDefaultView)
@@ -149,22 +177,22 @@ class QMap():
         self.toolbar.insertWidget(self.gpsAction, gpsspacewidget)
         self.toolbar.addAction(self.gpsAction)
 
+        self.extraaddtoolbar.addAction(self.addatgpsaction)
+
         self.editingtoolbar.addAction(self.editattributesaction)
         self.editingtoolbar.addAction(self.moveaction)
 
         self.setupIcons()
 
-    def showEditingToolbar(self, toggled):
-        if toggled:
-            self.editingtoolbar.show()
-            self.editattributesaction.toggle()
-            widget = self.toolbar.widgetForAction(self.editingmodeaction)
-            x = self.toolbar.mapToGlobal(widget.pos()).x()
-            newpoint = QPoint(x, self.toolbar.rect().height() + 10 )
-            self.editingtoolbar.move(newpoint)
-        else:
-            self.editActionGroup.checkedAction().toggle()
-            self.editingtoolbar.hide()
+    def addAtGPS(self):
+        action = self.actionGroup.checkedAction()
+        log(action)
+        if action:
+            point = self.gpsAction.gpsLocation
+            try:
+                action.pointClick(point)
+            except AttributeError:
+                pass
 
     def zoomToDefaultView(self):
         """
@@ -246,10 +274,13 @@ class QMap():
         for form in userForms:
             try:
                 layer = layers[form.layerName()]
-                icon = form.icon()
-                action = AddAction(form.formName(), self.iface, \
-                                   form, layer, icon)
+                action = (AddAction(form.formName(), self.iface,
+                                   form, layer, form.icon()))
                 self.toolbar.insertAction(self.editingmodeaction, action)
+                showgpstools = (functools.partial(self.extraaddtoolbar.showToolbar, 
+                                                 action,
+                                                 None))
+                action.toggled.connect(showgpstools)
                 self.actionGroup.addAction(action)
                 self.actions.append(action)
                 layerstoForms[layer] = form

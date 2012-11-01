@@ -27,6 +27,7 @@
     <file alias="save_default">resources/images/save_default.png</file>
     <file alias="exit">resources/images/exit.png</file>
     <file alias="move">resources/images/move.png</file>
+    <file alias="gpsadd">resources/images/addatgps.png</file>
   </qresource>
   <qresource prefix="syncing">
     <file alias="sync">resources/images/sync.png</file>

@@ -12,7 +12,7 @@ class AddAction(QAction):
         self.canvas = iface.mapCanvas()
         self.form = form
         self.layer = layer
-        self.triggered.connect(self.setTool)
+        self.toggled.connect(self.setTool)
         self.tool = PointTool( self.canvas )
         self.tool.mouseClicked.connect( self.pointClick )
         self.fields = self.layer.pendingFields()
