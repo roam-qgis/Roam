@@ -14,6 +14,8 @@ if os.name == 'nt':
 
 
 class GPSAction(QAction):
+    gpsfixed = pyqtSignal(bool)
+
     def __init__(self, icon, canvas, parent):
         QAction.__init__(self, icon, "Enable GPS", parent)
         self.canvas = canvas
@@ -48,6 +50,15 @@ class GPSAction(QAction):
             self.detector.advance()
         else:
             self.disconnectGPS()
+
+    @property
+    def isConnected(self):
+        return self._isconnected
+
+    @isConnected.setter
+    def isConnected(self, value):
+        self._isconnected = value
+        self.gpsfixed.emit(value)
 
     def disconnectGPS(self):
         if self.isConnected:
@@ -88,6 +99,8 @@ class GPSAction(QAction):
             self.setIcon(QIcon(':/icons/gps_on'))
             self.setIconText("GPS Fixed")
             fixed = True
+
+        self.gpsfixed.emit(fixed)
 
         myPoistion = self.lastposition
         if fixed:
