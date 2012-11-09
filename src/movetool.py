@@ -13,6 +13,9 @@ class MoveTool(QgsMapTool):
 		self.canvas = canvas
 
 	def canvasMoveEvent(self, event):
+		"""
+		Override of QgsMapTool mouse move event
+		"""
 		if self.band:
 			point = QgsMapTool.toMapCoordinates(self, event.pos())
 			offsetX = point.x() - self.startcoord.x()
@@ -22,6 +25,9 @@ class MoveTool(QgsMapTool):
 			self.band.update()
 
 	def canvasPressEvent(self, event):
+		"""
+		Override of QgsMapTool mouse press event
+		"""
 		self.band = None
 		self.feature = None
 		self.layer = None
@@ -55,6 +61,9 @@ class MoveTool(QgsMapTool):
 				return
 
 	def canvasReleaseEvent(self, event):
+		"""
+		Override of QgsMapTool mouse release event
+		"""
 		if not self.band:
 			return
 
@@ -78,9 +87,15 @@ class MoveTool(QgsMapTool):
 		self.canvas.refresh()
 
 	def deactivate(self):
+		"""
+		Deactive the tool.
+		"""
 		self.band = None
 
 	def createRubberBand(self):
+		"""
+		Creates a new rubber band.
+		"""
 		band = QgsRubberBand(self.canvas)
 		band.setColor(QColor.fromRgb(237,85,9))
 		band.setWidth(6)

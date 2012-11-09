@@ -8,6 +8,11 @@ import tempfile
 from ui_errorlist import Ui_Dialog
 
 class DialogProvider(QObject):
+    """
+    A class to handle opening user form and creating all the required bindings
+
+    @note: There is a little too much work in this class. Needs a bit of a clean up.
+    """
     accepted = pyqtSignal()
     rejected = pyqtSignal()
     
@@ -17,6 +22,11 @@ class DialogProvider(QObject):
         self.iface = iface
 
     def openDialog(self, formmodule, feature, layer, forupdate, mandatory_fields=True):
+        """
+        Opens a form for the given feature
+
+        @refactor: This really needs to be cleaned up.
+        """
         self.update = forupdate
         self.dialog = formmodule.formInstance(self.iface.mainWindow())
         self.layer = layer
@@ -58,6 +68,11 @@ class DialogProvider(QObject):
             self.dialog.show()
 
     def selectingFromMap(self, message):
+        """
+        Put QMap in the select feature from map mode
+        
+        Hides the dialog and shows the user a message
+        """
         self.dialog.hide()
         label = QLabel()
         label.setText(QString(message))
@@ -66,12 +81,21 @@ class DialogProvider(QObject):
         self.disableToolbars()
 
     def featureSelected(self):
+        """
+        Called once a feature has been selected. Shows the dialog back to the user.
+        """
         log('Feature selected')
         self.canvas.scene().removeItem(self.item)
         self.dialog.show()
         self.enableToolbars()
 
     def validateForm(self):
+        """
+        Validate the users form.  If there are any errors report them to the user.
+
+        @refactor: Should really just return a bool and let the caller handle what happens next.
+                   We should also consider using QValidator for validation.
+        """
         controls = self.binder.mandatory_group.unchanged()
         haserrors = len(controls) > 0
         
@@ -98,6 +122,10 @@ class DialogProvider(QObject):
             self.dialogAccept()
             
     def dialogAccept(self):
+        """
+        Accept the current open dialog and save the new/updated feature 
+        back to the layer.
+        """
         info("Saving values back")
         feature = self.binder.unbindFeature(self.feature)
         info("New feature %s" % feature)
@@ -148,11 +176,21 @@ class DialogProvider(QObject):
         del self.dialog
 
     def disableToolbars(self):
+        """ 
+        Disable the toolbars in the main interface.
+
+        @refactor: Should be moved into qmap.py
+        """
         toolbars = self.iface.mainWindow().findChildren(QToolBar)
         for toolbar in toolbars:
             toolbar.setEnabled(False)
 
     def enableToolbars(self):
+        """ 
+        Enable the toolbars in the main interface.
+
+        @refactor: Should be moved into qmap.py
+        """
         toolbars = self.iface.mainWindow().findChildren(QToolBar)
         for toolbar in toolbars:
             toolbar.setEnabled(True)

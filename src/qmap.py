@@ -185,6 +185,9 @@ class QMap():
         self.setupIcons()
 
     def addAtGPS(self):
+        """
+        Add a record at the current GPS location.
+        """
         action = self.actionGroup.checkedAction()
         log(action)
         if action:

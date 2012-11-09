@@ -5,8 +5,14 @@ from qgis.core import *
 from qgis.gui import *
 from utils import log
 
-# Vertex Finder Tool class
+
 class PointTool(QgsMapTool):
+    """
+    A basic point tool that can be connected to actions in order to handle
+    point based actions.
+
+    Emits mouseClicked and mouseMove signals.
+    """
     mouseClicked = pyqtSignal(QgsPoint)
     mouseMove = pyqtSignal(QgsPoint)
 
@@ -43,6 +49,11 @@ class PointTool(QgsMapTool):
         pass
 
     def setAsMapTool(self):
+        """ 
+        Set the current tool as active
+
+        @note: Should be moved out into qmap.py
+        """
         self.canvas.setMapTool(self)
 
     def canvasMoveEvent(self, event):
@@ -66,9 +77,18 @@ class PointTool(QgsMapTool):
         
 
     def activate(self):
+        """
+        Set the tool as the active tool in the canvas. 
+
+        @note: Should be moved out into qmap.py 
+               and just expose a cursor to be used
+        """
         self.canvas.setCursor(self.cursor)
 
     def deactivate(self):
+        """
+        Deactive the tool.
+        """
         self.canvas.scene().removeItem(self.m1)
         self.m1 = None
         pass

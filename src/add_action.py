@@ -7,6 +7,13 @@ import os
 from dialog_provider import DialogProvider
 
 class AddAction(QAction):
+    """
+    Add action for adding a new point.  Handles invoking the form for the
+    layer.
+
+    @note: This class feels like it knows a little too much.  Maybe move the
+           DialogProvider and feature creation logic out.
+    """
     def __init__(self, name, iface, form, layer, icon ):
         QAction.__init__(self, icon, name, iface.mainWindow())
         self.canvas = iface.mapCanvas()
@@ -23,9 +30,19 @@ class AddAction(QAction):
         self.setCheckable(True)
 
     def setTool(self):
+        """ 
+        Set the current tool as active
+
+        @note: Should be moved out into qmap.py
+        """
         self.canvas.setMapTool(self.tool)
         
     def pointClick(self, point):
+        """
+        Add a new feature at the given point location
+
+        point - A QgsPoint at which to create the new feature.
+        """
         if not self.layer.isEditable():
             self.layer.startEditing()
     
