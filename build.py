@@ -138,7 +138,7 @@ def build_plugin():
     command = 's/version=0.1/version=%s/ "%s"' % (version, os.path.join(deploypath, 'metadata.txt'))
     #run("sed", command)
 
-    print "Local depoly compelete into {0}".format(deploypath)
+    print "Local build into {0}".format(deploypath)
 
 def copyFiles(src, dest):
     src = os.path.join(src,'*')
@@ -235,7 +235,6 @@ def deploy_to(target, config):
 
 
 def deploy_target(targetname, config):
-    print targetname
     targets = {}
     try:
         clients = config.get(targetname, 'client').split(',')
