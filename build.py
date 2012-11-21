@@ -164,6 +164,13 @@ def deploy():
 
     config = ConfigParser()
     config.read(targetspath)
+
+    try:
+        config.get(targetname, 'client').split(',')
+    except NoSectionError as ex:
+        print "No client in targets.ini defined as %s" % targetname
+        return
+
     build_plugin()
     deploy_target(targetname, config)
 
