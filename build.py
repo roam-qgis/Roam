@@ -213,7 +213,10 @@ def deploy_to(target, config):
                 print "Loading form %s" % form
                 path = os.path.join(formpath, form)
                 newpath = os.path.join(clientformpath, form)
-                copyFolder(path, newpath)
+                if os.path.exists(newpath):
+                    copyFiles(path, newpath )
+                else:
+                    copyFolder(path, newpath)
 
     print "Remote depoly compelete"
 
