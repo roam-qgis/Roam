@@ -10,9 +10,13 @@ namespace ConsoleApplication1
     {
         static void Main(string[] args)
         {
-            Console.WriteLine(args.Length);
+            if (args.Length == 0)
+            {
+                Console.WriteLine("Wrong number of args");
+                printUsage();
+                return;
+            }
 
-            string connectionstring = "Data Source={0};Initial Catalog={1};Integrated Security=SSPI;";
             SqlConnection server = new SqlConnection();
             SqlConnection client = new SqlConnection();
             string serverconn = "";
@@ -25,6 +29,7 @@ namespace ConsoleApplication1
             if (!hasserver)
             {
                 Console.Error.WriteLine("We need a server connection string");
+                printUsage();
                 return;
             }
 
@@ -34,7 +39,7 @@ namespace ConsoleApplication1
             if (!hastable)
             {
                 Console.Error.WriteLine("We need a table to work on");
-                Console.Read();
+                printUsage();
                 return;
             }
 
@@ -86,6 +91,20 @@ namespace ConsoleApplication1
             Console.WriteLine("Table:" + tablename);
             Console.WriteLine("Direction:" + direction);
             Console.WriteLine("Mode:" + (deprovison ? "Deprovison" : "Provision"));
+        }
+
+        static void printUsage()
+        {
+            Console.WriteLine(@"provisioner --server={connectionstring} --table={tablename} [options]
+[options]
+
+--client={connectionstring} : The connection string to the client database. 
+                              If blank will be set to server connection.
+--direction=OneWay|TwoWay : The direction that the table will sync.
+                            if blank will be set to OneWay.
+--deprovision : Deprovision the table rather then provision. WARNING: Will drop
+                the table on the client if client and server are different! Never
+                drops server tables.");
         }
     }
 }
