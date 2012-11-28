@@ -14,53 +14,65 @@ namespace SqlSyncProvisioner
         [STAThread]
         static void Main(string[] args)
         {
-            if (args.Length == 0)
-            {
-                Application.EnableVisualStyles();
-                Application.SetCompatibleTextRenderingDefault(false);
-                Application.Run(new Form1());
-                return;
-            }
+            //if (args.Length == 0)
+            //{
+            //    Application.EnableVisualStyles();
+            //    Application.SetCompatibleTextRenderingDefault(false);
+            //    Application.Run(new Form1());
+            //    return;
+            //}
 
-            
+ 
             string connectionstring = "Data Source={0};Initial Catalog={1};Integrated Security=SSPI;";
             SqlConnection server = new SqlConnection();
             SqlConnection client = new SqlConnection();
-            List<String> scopes;
-            bool provison_server;
-            bool provison_client;
-            bool deprovison_server;
-            bool deprovison_client;
+            bool deprovison;
+            string tablename;
+            string direction;
+
+            Console.WriteLine(args);
+
+            // If there is no client arg given then we assume that we are talking
+            // working on the server tables
+            if (!args.Contains("--table"))
+            {
+                Console.Error.WriteLine("We need a table to work on");
+                return;
+            }
+
             foreach (var arg in args)
             {
-                var pairs = arg.Split('=');
+                var pairs = arg.Split(new char[] { '=' }, 2, 
+                                      StringSplitOptions.None);
                 var name = pairs[0];
-                string[] parms = pairs[1].Split('|');
-                string conn = "";
+                string parm = pairs[1];
                 switch (name)
 	            {
                     case "--server":
-                        conn = String.Format(connectionstring, parms[0], parms[1]);
-                        server.ConnectionString = conn;
+                        server.ConnectionString = parm;
                         break;
                     case "--client":
-                        conn = String.Format(connectionstring, parms[0], parms[1]);
-                        client.ConnectionString = conn;
+                        client.ConnectionString = parm;
                         break;
-                    case "--scopes":
-                        scopes = parms.ToList();
+                    case "--table":
+                        tablename = parm;
                         break;
-                    case "--provision":
-                        provison_server = parms.Contains("server");
-                        provison_client = parms.Contains("client");
+                    case "--direction":
+                        direction = parm;
                         break;
                     case "--deprovision":
-                        deprovison_server = parms.Contains("server");
-                        deprovison_client = parms.Contains("client");
+                        deprovison = true;
                         break;
 		            default:
                         break;
 	            }
+            }
+
+            // If there is no client arg given then we assume that we are talking
+            // working on the server tables
+            if (!args.Contains("--client"))
+            {
+                client = server;
             }
 
             Console.WriteLine(args);

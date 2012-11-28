@@ -69,7 +69,7 @@ namespace ConsoleApplication1
                 }
             }
 
-            // If there is no client arg given then we assume that we are talking
+            // If there is no client arg given then we assume that we are
             // working on the server tables
             bool hasclient = args.Any(x => x.Contains("--client"));
             if (!hasclient)

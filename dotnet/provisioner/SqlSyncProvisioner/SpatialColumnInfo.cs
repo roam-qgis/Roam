@@ -1,6 +1,6 @@
 ﻿namespace SqlSyncProvisioner
 {
-    internal class SpatialColumnInfo
+    class SpatialColumnInfo
     {
         public string TableName { get; set; }
 

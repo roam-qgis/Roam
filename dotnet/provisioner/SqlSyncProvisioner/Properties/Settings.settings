@@ -1,12 +1,5 @@
 ﻿<?xml version='1.0' encoding='utf-8'?>
-<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="SqlSyncProvisioner.Properties" GeneratedClassName="Settings">
+<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)">
   <Profiles />
-  <Settings>
-    <Setting Name="SlaveConnectionString" Type="System.String" Scope="Application">
-      <Value Profile="(Default)">Data Source=SD0469;Initial Catalog=FieldData;Integrated Security=SSPI;</Value>
-    </Setting>
-    <Setting Name="MasterConnectionString" Type="System.String" Scope="Application">
-      <Value Profile="(Default)">Data Source=SD0407;Initial Catalog=SpatialDataIntegrated Security=SSPI;</Value>
-    </Setting>
-  </Settings>
+  <Settings />
 </SettingsFile>

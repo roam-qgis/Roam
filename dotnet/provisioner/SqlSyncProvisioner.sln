@@ -3,6 +3,8 @@ Microsoft Visual Studio Solution File, Format Version 10.00
 # Visual Studio 2008
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SqlSyncProvisioner", "SqlSyncProvisioner\SqlSyncProvisioner.csproj", "{2881561E-4FBE-4C3D-B052-76330B772641}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "provisioner", "provisioner\provisioner.csproj", "{044E29DB-232E-43D0-A183-9CD59B5C3E36}"
+EndProject
 Global
 	GlobalSection(SubversionScc) = preSolution
 		Svn-Managed = True
@@ -17,6 +19,10 @@ Global
 		{2881561E-4FBE-4C3D-B052-76330B772641}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2881561E-4FBE-4C3D-B052-76330B772641}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2881561E-4FBE-4C3D-B052-76330B772641}.Release|Any CPU.Build.0 = Release|Any CPU
+		{044E29DB-232E-43D0-A183-9CD59B5C3E36}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{044E29DB-232E-43D0-A183-9CD59B5C3E36}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{044E29DB-232E-43D0-A183-9CD59B5C3E36}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{044E29DB-232E-43D0-A183-9CD59B5C3E36}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
