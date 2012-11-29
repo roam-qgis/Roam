@@ -80,10 +80,18 @@ namespace MSSQLSyncer
                                      client = new SqlConnection(clientconn))
                 {
                    SyncOperationStatistics stats;
-                   stats = syncscope(server, client, scope, SyncDirectionOrder.Download);
-                   //stats = syncscope(server, client, "TwoWay", SyncDirectionOrder.DownloadAndUpload);
+                   try
+                   {
+                       stats = syncscope(server, client, scope, SyncDirectionOrder.Download);
+                       //stats = syncscope(server, client, "TwoWay", SyncDirectionOrder.DownloadAndUpload);
+                   }
+                   catch (DbSyncException ex)
+                   {
+                       Console.Error.WriteLine(ex.Message);
+                       continue;
+                   }
                    total_down += stats.DownloadChangesApplied;
-                   total_up += stats.UploadChangesApplied;                   
+                   total_up += stats.UploadChangesApplied;
                 }
             }
 
@@ -91,6 +99,9 @@ namespace MSSQLSyncer
                   + total_down
                   + Resources.Program_Main_
                   + total_up);
+#if DEBUG
+            Console.Read();
+#endif
         }
 
         /// <summary>
@@ -115,30 +126,45 @@ namespace MSSQLSyncer
                 orchestrator.SessionProgress += new EventHandler<SyncStagedProgressEventArgs>(orchestrator_SessionProgress);
                 slaveProvider.ApplyChangeFailed += new EventHandler<DbApplyChangeFailedEventArgs>(slaveProvider_ApplyChangeFailed);
 
-                try
-                {
-                    SyncOperationStatistics stats = orchestrator.Synchronize();
-                    return stats;
-                }
-                catch (Exception ex)
-                {
-                    Console.Error.WriteLine(ex.Message);
-                    return null;
-                }
+                SyncOperationStatistics stats = orchestrator.Synchronize();
+                return stats;
             }
         }
 
         static void  orchestrator_SessionProgress(object sender, SyncStagedProgressEventArgs e)
         {
-            Console.WriteLine(e.TotalWork);
-            Console.WriteLine(e.CompletedWork);
-            //DbSyncSessionProgressEventArgs sessionProgress = (DbSyncSessionProgressEventArgs)args;
-            //DbSyncScopeProgress progress = sessionProgress.GroupProgress;
-            //switch (sessionProgress.DbSyncStage)
-            //{
-            //    case  DbSyncStage.
-                
-            //}
+            DbSyncSessionProgressEventArgs sessionProgress = (DbSyncSessionProgressEventArgs)e;
+            DbSyncScopeProgress progress = sessionProgress.GroupProgress;
+            string message;
+            switch (sessionProgress.DbSyncStage)
+            {
+                case DbSyncStage.SelectingChanges:
+                    message = "Sync Stage: Selecting Changes";
+                    Console.WriteLine(message);
+                    foreach (DbSyncTableProgress tableProgress in progress.TablesProgress)
+                    {
+                        message = "Enumerated changes for table: " + tableProgress.TableName;
+                        message += "[Inserts:" + tableProgress.Inserts.ToString() + "/Updates :" + tableProgress.Updates.ToString() + "/Deletes :" + tableProgress.Deletes.ToString() + "]";
+                        Console.WriteLine(message);
+                    }
+                    break;
+                case DbSyncStage.ApplyingChanges:
+                    message = "Sync Stage: Applying Changes";
+                    Console.WriteLine(message);
+                    foreach (DbSyncTableProgress tableProgress in progress.TablesProgress)
+                    {
+                        message = "Applied changes for table: " + tableProgress.TableName;
+                        message += "[Inserts:" + tableProgress.Inserts.ToString() + "/Updates :" + tableProgress.Updates.ToString() + "/Deletes :" + tableProgress.Deletes.ToString() + "]";
+                        Console.WriteLine(message);
+                    }
+                    break;
+                default:
+                    break;
+            }
+
+            message = "Total Changes : " + progress.TotalChanges.ToString() + "  Inserts :" + progress.TotalInserts.ToString();
+            message += "  Updates :" + progress.TotalUpdates.ToString() + "  Deletes :" + progress.TotalDeletes.ToString();
+            Console.WriteLine(message);
         }
 
         static void slaveProvider_ApplyChangeFailed(object sender, Microsoft.Synchronization.Data.DbApplyChangeFailedEventArgs e)

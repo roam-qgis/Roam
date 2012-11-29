@@ -22,23 +22,5 @@ namespace MSSQLSyncer.Properties {
                 return defaultInstance;
             }
         }
-        
-        [global::System.Configuration.ApplicationScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("Data Source=SD0302;Initial Catalog=SpatialMaster;Integrated Security=SSPI;")]
-        public string ServerConnectionString {
-            get {
-                return ((string)(this["ServerConnectionString"]));
-            }
-        }
-        
-        [global::System.Configuration.ApplicationScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("Data Source=SD0407;Initial Catalog=SpatialSlave1;Integrated Security=SSPI;")]
-        public string ClientConnectionString {
-            get {
-                return ((string)(this["ClientConnectionString"]));
-            }
-        }
     }
 }
