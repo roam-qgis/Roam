@@ -4,20 +4,88 @@ namespace MSSQLSyncer
     using System.Data.SqlClient;
     using Microsoft.Synchronization;
     using Microsoft.Synchronization.Data.SqlServer;
+    using System.Collections.Generic;
     using Properties;
+    using System.Linq;
+    using Microsoft.Synchronization.Data;
 
     static class Program
     {
         /// <summary>The main entry point for the application.</summary>
-        static void Main()
+        static void Main(string[] args)
         {
-            SyncOperationStatistics stats = sync("OneWay", SyncDirectionOrder.Download);
-            SyncOperationStatistics stats2 = sync("TwoWay", SyncDirectionOrder.DownloadAndUpload);
-            if (stats == null || stats2 == null)
+            if (args.Length == 0)
+            {
+                Console.WriteLine("Wrong number of args");
+                printUsage();
                 return;
+            }
 
-            int total_down = stats.DownloadChangesTotal + stats2.DownloadChangesTotal;
-            int total_up = stats.UploadChangesApplied + stats2.UploadChangesTotal;
+            string serverconn = "";
+            string clientconn = "";
+            string tablename = "";
+
+            foreach (var arg in args)
+            {
+                Console.WriteLine(arg);
+                var pairs = arg.Split(new char[] { '=' }, 2,
+                                      StringSplitOptions.None);
+                var name = pairs[0];
+                string parm = pairs[1];
+                switch (name)
+                {
+                    case "--server":
+                        serverconn = parm;
+                        break;
+                    case "--client":
+                        clientconn = parm;
+                        break;
+                    case "--table":
+                        tablename = parm;
+                        break;
+                    default:
+                        break;
+                }
+            }
+
+            if (String.IsNullOrEmpty(serverconn))
+            {
+                Console.Error.WriteLine("We need a server connection string");
+                printUsage();
+                return;
+            }
+
+            // If there is no client then use local host.
+            if (String.IsNullOrEmpty(clientconn))
+            {
+                clientconn = "Data Source=localhost;Initial Catalog=FieldData;Integrated Security=SSPI;";
+            }
+
+            
+            Console.WriteLine("\n\r");
+
+            Console.WriteLine("Running using these settings");
+            Console.WriteLine("Server:" + serverconn);
+            Console.WriteLine("Client:" + clientconn);
+            Console.WriteLine("Table:" + (String.IsNullOrEmpty(tablename) ? "All tables" 
+                                                                         : tablename ));
+
+            string [] scopes = {"OneWay", "TwoWay"};
+
+            int total_down = 0;
+            int total_up = 0;
+            foreach(string scope in scopes)
+            {
+                using (SqlConnection server = new SqlConnection(serverconn),
+                                     client = new SqlConnection(clientconn))
+                {
+                   SyncOperationStatistics stats;
+                   stats = syncscope(server, client, scope, SyncDirectionOrder.Download);
+                   //stats = syncscope(server, client, "TwoWay", SyncDirectionOrder.DownloadAndUpload);
+                   total_down += stats.DownloadChangesApplied;
+                   total_up += stats.UploadChangesApplied;                   
+                }
+            }
 
             Console.WriteLine(Resources.Program_Main_Changes_Downloaded__
                   + total_down
@@ -25,39 +93,52 @@ namespace MSSQLSyncer
                   + total_up);
         }
 
-        static SyncOperationStatistics sync(string scope, SyncDirectionOrder order)
+        /// <summary>
+        /// Sync a single scope from the client to the server.
+        /// </summary>
+        /// <param name="server">Provider for the server.</param>
+        /// <param name="client">Provider for the client.</param>
+        /// <param name="tablename">The able name to sync.</param>
+        static SyncOperationStatistics syncscope(SqlConnection server, SqlConnection client,
+                              string scope, SyncDirectionOrder order)
         {
-            using (SqlSyncProvider masterProvider = new SqlSyncProvider { ScopeName = scope },
-                     slaveProvider = new SqlSyncProvider { ScopeName = scope })
+            using (SqlSyncProvider masterProvider = new SqlSyncProvider(scope, server),
+                                    slaveProvider = new SqlSyncProvider(scope, client))
             {
-                using (SqlConnection master = new SqlConnection(Settings.Default.ServerConnectionString),
-                                     slave = new SqlConnection(Settings.Default.ClientConnectionString))
+                SyncOrchestrator orchestrator = new SyncOrchestrator
                 {
-                    masterProvider.Connection = master;
-                    slaveProvider.Connection = slave;
+                    LocalProvider = slaveProvider,
+                    RemoteProvider = masterProvider,
+                    Direction = order
+                };
 
-                    SyncOrchestrator orchestrator = new SyncOrchestrator
-                    {
-                        LocalProvider = slaveProvider,
-                        RemoteProvider = masterProvider,
-                        Direction = order
-                    };
-                    if (scope == "OneWay")
-                    {
-                        slaveProvider.ApplyChangeFailed += new EventHandler<Microsoft.Synchronization.Data.DbApplyChangeFailedEventArgs>(slaveProvider_ApplyChangeFailed);
-                    }
-                    try
-                    {
-                        SyncOperationStatistics stats = orchestrator.Synchronize();
-                        return stats;
-                    }
-                    catch (Exception ex)
-                    {
-                        Console.Error.WriteLine(ex.Message);
-                        return null;
-                    }
+                orchestrator.SessionProgress += new EventHandler<SyncStagedProgressEventArgs>(orchestrator_SessionProgress);
+                slaveProvider.ApplyChangeFailed += new EventHandler<DbApplyChangeFailedEventArgs>(slaveProvider_ApplyChangeFailed);
+
+                try
+                {
+                    SyncOperationStatistics stats = orchestrator.Synchronize();
+                    return stats;
+                }
+                catch (Exception ex)
+                {
+                    Console.Error.WriteLine(ex.Message);
+                    return null;
                 }
             }
+        }
+
+        static void  orchestrator_SessionProgress(object sender, SyncStagedProgressEventArgs e)
+        {
+            Console.WriteLine(e.TotalWork);
+            Console.WriteLine(e.CompletedWork);
+            //DbSyncSessionProgressEventArgs sessionProgress = (DbSyncSessionProgressEventArgs)args;
+            //DbSyncScopeProgress progress = sessionProgress.GroupProgress;
+            //switch (sessionProgress.DbSyncStage)
+            //{
+            //    case  DbSyncStage.
+                
+            //}
         }
 
         static void slaveProvider_ApplyChangeFailed(object sender, Microsoft.Synchronization.Data.DbApplyChangeFailedEventArgs e)
@@ -82,6 +163,20 @@ namespace MSSQLSyncer
                 default:
                     break;
             }
+        }
+
+        static void printUsage()
+        {
+            Console.WriteLine(@"provisioner --server={connectionstring} --table={tablename} [options]
+[options]
+
+--client={connectionstring} : The connection string to the client database. 
+                              If blank will be set to server connection.
+--direction=OneWay|TwoWay : The direction that the table will sync.
+                            if blank will be set to OneWay.
+--deprovision : Deprovision the table rather then provision. WARNING: Will drop
+                the table on the client if client and server are different! Never
+                drops server tables.");
         }
     }
 }
