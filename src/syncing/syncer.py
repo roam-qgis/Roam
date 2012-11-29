@@ -12,47 +12,53 @@ sys.path.append(pardir)
 
 from utils import log, settings
 
-def syncMSSQL():
-    """
-    Run the sync for MS SQL.
+class Syncer(QObject):
+    syncprogress = pyqtSignal(str)
 
-    returns -- Returns a tuple of (state, message). state can be 'Pass' or
-               'Fail'
-    """
-    curdir = os.path.abspath(os.path.dirname(__file__))
-    cmdpath = os.path.join(curdir,'bin\MSSQLSyncer.exe')
-    p = Popen(cmdpath, stdout=PIPE, stderr=PIPE, stdin=PIPE, shell = True)
-    stdout, stderr = p.communicate()
-    if not stdout == "":
-        log(stdout)
-        return ('Pass', stdout)
-    else:
-        log(stderr)
-        return ('Fail', stderr)
+    def syncMSSQL(self):
+        """
+        Run the sync for MS SQL.
 
-def syncImages():
-    """
-    Run the sync over the images
+        returns -- Returns a tuple of (state, message). state can be 'Pass' or
+                   'Fail'
+        """
+        curdir = os.path.abspath(os.path.dirname(__file__))
+        cmdpath = os.path.join(curdir,'bin\syncer.exe')
+        server = "Data Source=localhost;Initial Catalog=FieldData;Integrated Security=SSPI;"
+        client = "Data Source=localhost;Initial Catalog=SpatialData;Integrated Security=SSPI;"
+        args = [cmdpath, '--server="{0}"'.format(server), '--client="{0}"'.format(server), '--porcelain']
+        p = Popen(args, stdout=PIPE, stderr=PIPE, shell=True)
+        while p.poll() is None:
+            out = p.stdout.readline()
+            # if out[0] == 't':
+            #     pairs = out.split('|')
+            #     for pair in pairs:
+            #         pair.splt(":")
+            self.syncprogress.emit(out)
 
-    returns -- Returns a tuple of (state, message). state can be 'Pass' or
-               'Fail'
-    """
-    images = os.path.join(pardir, "data")
-    server = settings.value("syncing/server_image_location").toString()
-    if server.isEmpty():
-        return ('Fail', "No server image location found in settings.ini")
+    def syncImages(self):
+        """
+        Run the sync over the images
 
-    if not os.path.exists(images):
-        # Don't return a fail if there is no data directory
-        return ('Pass', 'Images uploaded: %s' % str(0))
+        returns -- Returns a tuple of (state, message). state can be 'Pass' or
+                   'Fail'
+        """
+        images = os.path.join(pardir, "data")
+        server = settings.value("syncing/server_image_location").toString()
+        if server.isEmpty():
+            return ('Fail', "No server image location found in settings.ini")
 
-    cmd = 'xcopy "%s" "%s" /Q /D /S /E /K /C /H /R /Y' % (images, server)
-    p = Popen(cmd, stdout=PIPE, stderr=PIPE, stdin=PIPE, shell = True)
-    stdout, stderr = p.communicate()
-    if not stderr == "":
-        return ('Fail', stderr)
-    else:
-        return ('Pass', stdout)
+        if not os.path.exists(images):
+            # Don't return a fail if there is no data directory
+            return ('Pass', 'Images uploaded: %s' % str(0))
+
+        cmd = 'xcopy "%s" "%s" /Q /D /S /E /K /C /H /R /Y' % (images, server)
+        p = Popen(cmd, stdout=PIPE, stderr=PIPE, stdin=PIPE, shell = True)
+        stdout, stderr = p.communicate()
+        if not stderr == "":
+            return ('Fail', stderr)
+        else:
+            return ('Pass', stdout)
        
 
 class SyncDialog(QDialog):
@@ -92,22 +98,30 @@ class SyncDialog(QDialog):
         message = self.ui.statusLabel.text()
         self.ui.statusLabel.setText(message + "\n\n Syncing map data...")
         QCoreApplication.processEvents()
+
+        sync = Syncer()
+        sync.syncprogress.connect(self.pushupdate)
         
-        state, sqlmsg = syncMSSQL()
+        sync.syncMSSQL()
 
-        if state == 'Fail':
-            self.updateFailedStatus(sqlmsg)
-            return
+        # if state == 'Fail':
+        #     self.updateFailedStatus(sqlmsg)
+        #     return
 
-        log(sqlmsg)
+        # log(sqlmsg)
 
-        self.ui.statusLabel.setText(message + "\n\n Syncing images...")
+        # self.ui.statusLabel.setText(message + "\n\n Syncing images...")
+        # QCoreApplication.processEvents()
+        
+        # state, msg = syncImages()
+
+        # if state == 'Fail':
+        #     self.updateFailedStatus(msg)
+        #     return
+
+        # self.updateStatus("%s \n %s" % (sqlmsg, msg))
+
+    def pushupdate(self, message):
         QCoreApplication.processEvents()
-        
-        state, msg = syncImages()
-
-        if state == 'Fail':
-            self.updateFailedStatus(msg)
-            return
-
-        self.updateStatus("%s \n %s" % (sqlmsg, msg))
+        self.ui.statusLabel.setText(message)
+        QCoreApplication.processEvents()
