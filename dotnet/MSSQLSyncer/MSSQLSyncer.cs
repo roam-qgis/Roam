@@ -9,8 +9,11 @@ namespace MSSQLSyncer
     using System.Linq;
     using Microsoft.Synchronization.Data;
 
+
     static class Program
     {
+        static bool porcelain = false;
+
         /// <summary>The main entry point for the application.</summary>
         static void Main(string[] args)
         {
@@ -23,7 +26,7 @@ namespace MSSQLSyncer
 
             string serverconn = "";
             string clientconn = "";
-            string tablename = "";
+            string scopetosync = "";
 
             foreach (var arg in args)
             {
@@ -31,7 +34,10 @@ namespace MSSQLSyncer
                 var pairs = arg.Split(new char[] { '=' }, 2,
                                       StringSplitOptions.None);
                 var name = pairs[0];
-                string parm = pairs[1];
+                string parm = "";
+                if (pairs.Length == 2)
+                    parm = pairs[1];
+
                 switch (name)
                 {
                     case "--server":
@@ -40,8 +46,11 @@ namespace MSSQLSyncer
                     case "--client":
                         clientconn = parm;
                         break;
-                    case "--table":
-                        tablename = parm;
+                    case "--scope":
+                        scopetosync = parm;
+                        break;
+                    case "--porcelain":
+                        porcelain = true;
                         break;
                     default:
                         break;
@@ -61,16 +70,29 @@ namespace MSSQLSyncer
                 clientconn = "Data Source=localhost;Initial Catalog=FieldData;Integrated Security=SSPI;";
             }
 
-            
-            Console.WriteLine("\n\r");
 
-            Console.WriteLine("Running using these settings");
-            Console.WriteLine("Server:" + serverconn);
-            Console.WriteLine("Client:" + clientconn);
-            Console.WriteLine("Table:" + (String.IsNullOrEmpty(tablename) ? "All tables" 
-                                                                         : tablename ));
+            if (!porcelain)
+            {
+                Console.WriteLine("\n\r");
 
-            string [] scopes = {"OneWay", "TwoWay"};
+                Console.WriteLine("Running using these settings");
+                Console.WriteLine("Server:" + serverconn);
+                Console.WriteLine("Client:" + clientconn);
+                Console.WriteLine("Table:" + (String.IsNullOrEmpty(scopetosync) ? "All scopes"
+                                                                             : scopetosync));
+            }
+
+            List<string> scopes = new List<string>();
+
+            if (!String.IsNullOrEmpty(scopetosync))
+            {
+                scopes.Add(scopetosync);
+            }
+            else
+            {
+                scopes.Add("OneWay");
+                scopes.Add("TwoWay");
+            }
 
             int total_down = 0;
             int total_up = 0;
@@ -95,10 +117,20 @@ namespace MSSQLSyncer
                 }
             }
 
-            Console.WriteLine(Resources.Program_Main_Changes_Downloaded__
-                  + total_down
-                  + Resources.Program_Main_
-                  + total_up);
+            if (porcelain)
+            {
+                string message;
+                message = "td:" + total_down +
+                           "|tu:" + total_up;
+                Console.WriteLine(message);
+            }
+            else
+            {
+                Console.WriteLine(Resources.Program_Main_Changes_Downloaded__
+                                  + total_down
+                                  + Resources.Program_Main_
+                                  + total_up);
+            }
 #if DEBUG
             Console.Read();
 #endif
@@ -123,50 +155,53 @@ namespace MSSQLSyncer
                     Direction = order
                 };
 
-                orchestrator.SessionProgress += new EventHandler<SyncStagedProgressEventArgs>(orchestrator_SessionProgress);
-                slaveProvider.ApplyChangeFailed += new EventHandler<DbApplyChangeFailedEventArgs>(slaveProvider_ApplyChangeFailed);
+                slaveProvider.ApplyingChanges += applyingChanges;
+                masterProvider.ApplyingChanges += applyingChanges;
+                slaveProvider.ApplyChangeFailed += slaveProvider_ApplyChangeFailed;
 
                 SyncOperationStatistics stats = orchestrator.Synchronize();
                 return stats;
             }
         }
 
-        static void  orchestrator_SessionProgress(object sender, SyncStagedProgressEventArgs e)
+        /// <summary>
+        /// Reports the progress on the changes being applied.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        static void applyingChanges(object sender, DbApplyingChangesEventArgs e)
         {
-            DbSyncSessionProgressEventArgs sessionProgress = (DbSyncSessionProgressEventArgs)e;
-            DbSyncScopeProgress progress = sessionProgress.GroupProgress;
             string message;
-            switch (sessionProgress.DbSyncStage)
+            if (!porcelain)
             {
-                case DbSyncStage.SelectingChanges:
-                    message = "Sync Stage: Selecting Changes";
-                    Console.WriteLine(message);
-                    foreach (DbSyncTableProgress tableProgress in progress.TablesProgress)
-                    {
-                        message = "Enumerated changes for table: " + tableProgress.TableName;
-                        message += "[Inserts:" + tableProgress.Inserts.ToString() + "/Updates :" + tableProgress.Updates.ToString() + "/Deletes :" + tableProgress.Deletes.ToString() + "]";
-                        Console.WriteLine(message);
-                    }
-                    break;
-                case DbSyncStage.ApplyingChanges:
-                    message = "Sync Stage: Applying Changes";
-                    Console.WriteLine(message);
-                    foreach (DbSyncTableProgress tableProgress in progress.TablesProgress)
-                    {
-                        message = "Applied changes for table: " + tableProgress.TableName;
-                        message += "[Inserts:" + tableProgress.Inserts.ToString() + "/Updates :" + tableProgress.Updates.ToString() + "/Deletes :" + tableProgress.Deletes.ToString() + "]";
-                        Console.WriteLine(message);
-                    }
-                    break;
-                default:
-                    break;
+                message = "Sync Stage: Applying Changes";
+                Console.WriteLine(message);
             }
-
-            message = "Total Changes : " + progress.TotalChanges.ToString() + "  Inserts :" + progress.TotalInserts.ToString();
-            message += "  Updates :" + progress.TotalUpdates.ToString() + "  Deletes :" + progress.TotalDeletes.ToString();
-            Console.WriteLine(message);
+            foreach (DbSyncTableProgress tableProgress in e.Context.ScopeProgress.TablesProgress)
+            {
+                if (porcelain)
+                {
+                    message = "t:" + tableProgress.TableName;
+                    message += "|i:" + tableProgress.Inserts.ToString() +
+                               "|u:" + tableProgress.Updates.ToString() +
+                               "|d:" + tableProgress.Deletes.ToString();
+                }
+                else
+                {
+                    message = "Applied changes for table: " + tableProgress.TableName;
+                    message += " [ Inserts:" + tableProgress.Inserts.ToString() +
+                               " | Updates :" + tableProgress.Updates.ToString() +
+                               " | Deletes :" + tableProgress.Deletes.ToString() + " ]";
+                }
+                Console.WriteLine(message);
+            }
         }
 
+        /// <summary>
+        /// Handles errors that happen during syncing down to the client.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         static void slaveProvider_ApplyChangeFailed(object sender, Microsoft.Synchronization.Data.DbApplyChangeFailedEventArgs e)
         {
             switch (e.Conflict.Type)
@@ -184,7 +219,8 @@ namespace MSSQLSyncer
                 case Microsoft.Synchronization.Data.DbConflictType.LocalUpdateRemoteDelete:
                     break;
                 case Microsoft.Synchronization.Data.DbConflictType.LocalUpdateRemoteUpdate:
-                    e.Action = Microsoft.Synchronization.Data.ApplyAction.RetryWithForceWrite;
+                    // If there are server edits and local edits then the server always wins.
+                    e.Action = ApplyAction.RetryWithForceWrite;
                     break;
                 default:
                     break;
@@ -193,16 +229,11 @@ namespace MSSQLSyncer
 
         static void printUsage()
         {
-            Console.WriteLine(@"provisioner --server={connectionstring} --table={tablename} [options]
-[options]
+            Console.WriteLine(@"syncer --server={connectionstring} --client={connectionstring} --scope={scope}
 
 --client={connectionstring} : The connection string to the client database. 
-                              If blank will be set to server connection.
---direction=OneWay|TwoWay : The direction that the table will sync.
-                            if blank will be set to OneWay.
---deprovision : Deprovision the table rather then provision. WARNING: Will drop
-                the table on the client if client and server are different! Never
-                drops server tables.");
+
+--scope : The scope to sync from the database.  If blank all scopes will be synced.");
         }
     }
 }
