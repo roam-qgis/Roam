@@ -20,10 +20,9 @@ APPNAME = "QMap"
 
 curpath = os.path.dirname(os.path.abspath(__file__))
 srcopyFilesath = os.path.join(curpath, "src")
-pluginpath = os.path.join(APPNAME, "app", "python", "plugins", APPNAME)
-buildpath = os.path.join(curpath, "build", pluginpath)
+buildpath = os.path.join(curpath, "build", APPNAME)
+deploypath = os.path.join(curpath, "build", APPNAME, APPNAME.lower())
 targetspath = os.path.join(curpath, 'targets.ini')
-deploypath = os.path.join(curpath, "build", APPNAME)
 bootpath = os.path.join(curpath, "loader_src")
 dotnetpath = os.path.join(curpath, "dotnet")
 
@@ -77,7 +76,7 @@ def docs():
 
 def clean():
     autoclean()
-    msg = shell('rm', '-r', deploypath)
+    msg = shell('rm', '-r', buildpath)
 
 
 def getVersion():
@@ -123,20 +122,20 @@ def build_plugin():
     # Copy all the files to the ouput directory
     print "Copying new files..."
 
-    mkdir(buildpath)
-    copyFiles(srcopyFilesath,buildpath)
-    copyFiles(bootpath,deploypath)
+    mkdir(deploypath)
+    copyFiles(srcopyFilesath,deploypath)
+    copyFiles(bootpath,buildpath)
 
     if iswindows and main.options.with_mssyncing == True:
         mssyncpath = os.path.join(dotnetpath,"MSSQLSyncer","bin")
-        destmssyncpath = os.path.join(buildpath,"syncing")
+        destmssyncpath = os.path.join(deploypath,"syncing")
         copyFolder(mssyncpath, destmssyncpath)
     # Replace version numbers
     version = getVersion()
-    command = 's/version=0.1/version=%s/ "%s"' % (version, os.path.join(buildpath, 'metadata.txt'))
+    command = 's/version=0.1/version=%s/ "%s"' % (version, os.path.join(deploypath, 'metadata.txt'))
     #run("sed", command)
 
-    print "Local depoly compelete into {0}".format(buildpath)
+    print "Local depoly compelete into {0}".format(deploypath)
 
 def copyFiles(src, dest):
     src = os.path.join(src,'*')
@@ -183,17 +182,17 @@ def deploy_to(target, config):
     clientpath = os.path.normpath(config['client'])
 
     print "Deploying application to %s" % config['client']
-    clientapppath = os.path.join(clientpath, APPNAME)
-    mkdir(clientapppath)
-    copyFiles(deploypath,clientapppath)
+    clientpluginpath = os.path.join(clientpath, APPNAME)
+    mkdir(clientpluginpath)
+    copyFiles(buildpath,clientpluginpath)
 
     projectpath = os.path.join(curpath, 'project-manager', 'projects')
-    clientpojectpath = os.path.join(clientpath, pluginpath, 'projects')
+    clientpojectpath = os.path.join(clientpluginpath, APPNAME.lower(), 'projects')
 
     print projectpath
 
     formpath = os.path.join(curpath, 'project-manager', 'entry_forms')
-    clientformpath = os.path.join(clientpath, pluginpath, 'entry_forms')
+    clientformpath = os.path.join(clientpluginpath, APPNAME.lower(), 'entry_forms')
 
     print formpath
 
