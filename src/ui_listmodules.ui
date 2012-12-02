@@ -9,8 +9,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>376</width>
-    <height>428</height>
+    <width>813</width>
+    <height>473</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -34,6 +34,8 @@
      <property name="font">
       <font>
        <pointsize>14</pointsize>
+       <weight>75</weight>
+       <bold>true</bold>
       </font>
      </property>
      <property name="styleSheet">
@@ -51,17 +53,53 @@
      <property name="showDropIndicator" stdset="0">
       <bool>false</bool>
      </property>
-     <property name="isWrapping" stdset="0">
+     <property name="alternatingRowColors">
       <bool>false</bool>
      </property>
+     <property name="iconSize">
+      <size>
+       <width>200</width>
+       <height>200</height>
+      </size>
+     </property>
+     <property name="textElideMode">
+      <enum>Qt::ElideRight</enum>
+     </property>
+     <property name="verticalScrollMode">
+      <enum>QAbstractItemView::ScrollPerItem</enum>
+     </property>
+     <property name="movement">
+      <enum>QListView::Static</enum>
+     </property>
+     <property name="flow">
+      <enum>QListView::LeftToRight</enum>
+     </property>
+     <property name="isWrapping" stdset="0">
+      <bool>true</bool>
+     </property>
      <property name="resizeMode">
-      <enum>QListView::Adjust</enum>
+      <enum>QListView::Fixed</enum>
      </property>
      <property name="layoutMode">
       <enum>QListView::SinglePass</enum>
      </property>
      <property name="spacing">
-      <number>3</number>
+      <number>0</number>
+     </property>
+     <property name="gridSize">
+      <size>
+       <width>250</width>
+       <height>250</height>
+      </size>
+     </property>
+     <property name="viewMode">
+      <enum>QListView::IconMode</enum>
+     </property>
+     <property name="uniformItemSizes">
+      <bool>false</bool>
+     </property>
+     <property name="batchSize">
+      <number>39</number>
      </property>
      <property name="wordWrap">
       <bool>true</bool>

@@ -26,9 +26,14 @@ targetspath = os.path.join(curpath, 'targets.ini')
 bootpath = os.path.join(curpath, "loader_src")
 dotnetpath = os.path.join(curpath, "dotnet")
 
-flags = '--update -rp'.split()
+flags = '--update -rvp'.split()
 
 iswindows = os.name == 'nt'
+
+if iswindows:
+    # Add the path to MSBuild to PATH so that subprocess can find it.
+    env = os.environ.copy()
+    env['PATH'] += ";c:\\WINDOWS\\Microsoft.NET\Framework\\v3.5"
 
 def build():
     """
@@ -36,8 +41,14 @@ def build():
     """
     build_plugin()
 
+def compileprovisioning():
+    if iswindows and main.options.with_mssyncing == True:
+        print " - building Provisioning app..."
+        run('MSBuild', '/property:Configuration=Release', '/verbosity:m', \
+            'dotnet/provisioner/SqlSyncProvisioner/SqlSyncProvisioner.csproj', \
+            shell=True, env=env)
 
-def compile():
+def compileplugin():
     print " - building UI files..."
     for source in ui_sources:
         pyuic = 'pyuic4'
@@ -51,17 +62,9 @@ def compile():
     run('pyrcc4', '-o', 'src/syncing/resources_rc.py', 'src/syncing/resources.qrc')
 
     if iswindows and main.options.with_mssyncing == True:
-        # Add the path to MSBuild to PATH so that subprocess can find it.
-        env = os.environ.copy()
-        env['PATH'] += ";c:\\WINDOWS\\Microsoft.NET\Framework\\v3.5"
         print " - building MSSQLSyncer app..."
         run('MSBuild', '/property:Configuration=Release', '/verbosity:m', \
             'dotnet/MSSQLSyncer/MSSQLSyncer.csproj', shell=True, env=env)
-
-        print " - building Provisioning app..."
-        run('MSBuild', '/property:Configuration=Release', '/verbosity:m', \
-            'dotnet/provisioner/SqlSyncProvisioner/SqlSyncProvisioner.csproj', \
-            shell=True, env=env)
 
     print " - building docs..."
     docs()
@@ -112,7 +115,7 @@ def build_plugin():
     """
     print "Deploy started"
     print "Building..."
-    compile()
+    compileplugin()
     if main.options.with_tests == True:
         passed = test()
         if not passed:
@@ -186,28 +189,32 @@ def deploy_to(target, config):
     mkdir(clientpluginpath)
     copyFiles(buildpath,clientpluginpath)
 
-    projectpath = os.path.join(curpath, 'project-manager', 'projects')
-    clientpojectpath = os.path.join(clientpluginpath, APPNAME.lower(), 'projects')
+    projecthome = os.path.join(curpath, 'project-manager', 'projects')
+    clientpojecthome = os.path.join(clientpluginpath, APPNAME.lower(), 'projects')
 
-    print projectpath
+    print projecthome
 
     formpath = os.path.join(curpath, 'project-manager', 'entry_forms')
     clientformpath = os.path.join(clientpluginpath, APPNAME.lower(), 'entry_forms')
 
     print formpath
 
-    mkdir(clientpojectpath)
+    mkdir(clientpojecthome)
     mkdir(clientformpath)
 
     if 'All' in projects:
         print "Loading all projects"
-        copyFiles(projectpath, clientpojectpath )
+        copyFiles(projecthome, clientpojecthome )
     else:
         for project in projects:
             if project and project[-4:] == ".qgs":
                 print "Loading project %s" % project
-                path = os.path.join(projectpath, project)
-                newpath = os.path.join(clientpojectpath, project)
+                path = os.path.join(projecthome, project)
+                newpath = os.path.join(clientpojecthome, project)
+                copyFolder(path, newpath)
+                icon = project[:-4] + ".png"
+                path = os.path.join(projecthome, icon)
+                newpath = os.path.join(clientpojecthome, icon)
                 copyFolder(path, newpath)
 
     if 'All' in forms:

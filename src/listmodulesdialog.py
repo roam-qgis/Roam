@@ -28,7 +28,9 @@ class ListProjectsDialog(QDialog):
                 moduleName = os.path.basename(modulepath)[:-4]
                 item = QListWidgetItem(moduleName, self.ui.moduleList, QListWidgetItem.UserType)
                 item.setData(QListWidgetItem.UserType, modulepath)
-                print modulepath
+                pix = QPixmap("{0}.png".format(modulepath[:-4]))
+                icon = QIcon(pix.scaled(200,200))
+                item.setIcon(icon)
                 self.ui.moduleList.addItem( item )
                     
     def openProject(self, item):
