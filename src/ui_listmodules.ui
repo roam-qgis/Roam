@@ -22,6 +22,12 @@
   <property name="autoFillBackground">
    <bool>false</bool>
   </property>
+  <property name="styleSheet">
+   <string notr="true">QListWidget::item { 
+border: 1px solid black; 
+border-radius: 5px;
+}</string>
+  </property>
   <layout class="QGridLayout" name="gridLayout">
    <property name="margin">
     <number>3</number>
