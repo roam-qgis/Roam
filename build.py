@@ -185,17 +185,17 @@ def deploy_to(target, config):
     clientpath = os.path.normpath(config['client'])
 
     print "Deploying application to %s" % config['client']
-    clientpluginpath = os.path.join(clientpath, APPNAME)
-    mkdir(clientpluginpath)
-    copyFiles(buildpath,clientpluginpath)
+    clientpath = os.path.join(clientpath, APPNAME)
+    mkdir(clientpath)
+    copyFiles(buildpath,clientpath)
 
     projecthome = os.path.join(curpath, 'project-manager', 'projects')
-    clientpojecthome = os.path.join(clientpluginpath, APPNAME.lower(), 'projects')
+    clientpojecthome = os.path.join(clientpath, APPNAME.lower(), 'projects')
 
     print projecthome
 
     formpath = os.path.join(curpath, 'project-manager', 'entry_forms')
-    clientformpath = os.path.join(clientpluginpath, APPNAME.lower(), 'entry_forms')
+    clientformpath = os.path.join(clientpath, APPNAME.lower(), 'entry_forms')
 
     print formpath
 
