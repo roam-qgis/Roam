@@ -1,9 +1,9 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 10.00
 # Visual Studio 2008
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "provisioner", "provisioner.csproj", "{044E29DB-232E-43D0-A183-9CD59B5C3E36}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "provisioner", "provisioner\provisioner.csproj", "{044E29DB-232E-43D0-A183-9CD59B5C3E36}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "libprovisioner", "..\libprovisioner\libprovisioner.csproj", "{3A0290C4-3413-481A-95E8-AA9BA970D908}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "libprovisioner", "libprovisioner\libprovisioner.csproj", "{3A0290C4-3413-481A-95E8-AA9BA970D908}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
