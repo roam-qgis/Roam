@@ -101,7 +101,7 @@ namespace MSSQLSyncer
                    SyncOperationStatistics stats;
                    try
                    {
-                       stats = syncing.syncscope(server, client, 
+                       stats = syncing.syncscope(server, client,
                                                  scope.name, scope.order,
                                                  applyingChanges);
                    }
@@ -112,8 +112,13 @@ namespace MSSQLSyncer
                    }
                    catch (SqlException ex)
                    {
-                        Console.WriteLine("Error:" + ex.Message);
-                        continue;
+                       Console.WriteLine("Error:" + ex.Message);
+                       continue;
+                   }
+                   catch (Exception ex)
+                   {
+                       Console.WriteLine("Error:" + ex.Message);
+                       continue;
                    }
                    total_down += stats.DownloadChangesApplied;
                    total_up += stats.UploadChangesApplied;

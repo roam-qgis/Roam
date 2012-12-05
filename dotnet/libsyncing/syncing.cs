@@ -74,6 +74,15 @@ public static class syncing
                           string scope, SyncDirectionOrder order, 
                           Action<object, DbApplyingChangesEventArgs> callback)
     {
+        // If we are only doing a download and the scope on the database
+        // is out of date then we need to reprovision the data, but for now just
+        // error.
+        if (order == SyncDirectionOrder.Download && 
+            ScopesDiffer(server, client, scope))
+        {
+            throw new Exception("Scopes on server and client differ");
+        }
+
         using (SqlSyncProvider masterProvider = new SqlSyncProvider(scope, server),
                                 slaveProvider = new SqlSyncProvider(scope, client))
         {
@@ -124,5 +133,41 @@ public static class syncing
             default:
                 break;
         }
+    }
+
+    /// <summary>
+    /// Compares the xml scope info in server and client to make sure they are
+    /// the same.
+    /// </summary>
+    /// <param name="server"></param>
+    /// <param name="client"></param>
+    /// <returns></returns>
+    static bool ScopesDiffer(SqlConnection server, SqlConnection client, 
+                                  string scopename)
+    {
+        string sql = @"SELECT scope_config.config_data 
+                       FROM scope_config 
+                       INNER JOIN scope_info ON scope_config.config_id = scope_info.scope_config_id 
+                       WHERE scope_info.sync_scope_name = @scope";
+        SqlParameter param = new SqlParameter("@scope", scopename);
+
+        string clientScopeConfig;
+        string serverScopeConfig;
+
+        using (SqlCommand command = new SqlCommand(sql))
+        {
+            command.CommandText = sql;
+            command.Parameters.Add(param);
+
+            server.Open();
+            client.Open();
+            command.Connection = server;
+            serverScopeConfig = command.ExecuteScalar() as string;
+            clientScopeConfig = command.ExecuteScalar() as string;
+            client.Close();
+            server.Close();
+        }
+
+        return (serverScopeConfig != clientScopeConfig);
     }
 }
