@@ -93,6 +93,9 @@ class SyncDialog(QDialog):
         scr = QApplication.desktop().screenGeometry(0)
         self.move( scr.center() - self.rect().center() )
         self.failed = False
+        message = "Total Downloaded:\nTotal Uploaded:"
+        self.ui.updatestatus.setText('')
+        self.ui.statusLabel.setText(message)
 
     def updateStatus(self, text):
         self.ui.statusLabel.setText(text)
@@ -142,6 +145,7 @@ class SyncDialog(QDialog):
         message = "Total Downloaded: {0}\nTotal Uploaded: {1}".format(down,up)
         self.ui.updatestatus.setText('')
         self.ui.statusLabel.setText(message)
+        self.ui.header.setText("Sync complete")
         QCoreApplication.processEvents()
 
     def tableupdate(self, table, changes):
