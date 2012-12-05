@@ -30,7 +30,6 @@ namespace MSSQLSyncer
 
             foreach (var arg in args)
             {
-                Console.WriteLine(arg);
                 var pairs = arg.Split(new char[] { '=' }, 2,
                                       StringSplitOptions.None);
                 var name = pairs[0];
@@ -131,9 +130,6 @@ namespace MSSQLSyncer
                                   + Resources.Program_Main_
                                   + total_up);
             }
-#if DEBUG
-            Console.Read();
-#endif
         }
 
         /// <summary>

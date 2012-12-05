@@ -13,7 +13,8 @@ sys.path.append(pardir)
 from utils import log, settings
 
 class Syncer(QObject):
-    syncprogress = pyqtSignal(str)
+    syncingtable = pyqtSignal(str, int)
+    syncingfinished = pyqtSignal(int, int)
 
     def syncMSSQL(self):
         """
@@ -24,17 +25,37 @@ class Syncer(QObject):
         """
         curdir = os.path.abspath(os.path.dirname(__file__))
         cmdpath = os.path.join(curdir,'bin\syncer.exe')
+        # TODO Get connection strings from the settings.ini file.
         server = "Data Source=localhost;Initial Catalog=FieldData;Integrated Security=SSPI;"
         client = "Data Source=localhost;Initial Catalog=SpatialData;Integrated Security=SSPI;"
-        args = [cmdpath, '--server="{0}"'.format(server), '--client="{0}"'.format(server), '--porcelain']
+        print server
+        print client
+        args = [cmdpath, '--server={0}'.format(server), '--client={0}'.format(client), '--porcelain']
         p = Popen(args, stdout=PIPE, stderr=PIPE, shell=True)
         while p.poll() is None:
+            # error = p.stderr.readline()
+            # print "ERROR:" + error 
             out = p.stdout.readline()
-            # if out[0] == 't':
-            #     pairs = out.split('|')
-            #     for pair in pairs:
-            #         pair.splt(":")
-            self.syncprogress.emit(out)
+            try:
+                values = dict(item.split(":") for item in out.split("|"))
+                if 'td' in values and 'tu' in values:
+                    downloads = int(values.get('td'))
+                    uploads = int(values.get('tu'))
+                    self.syncingfinished.emit(downloads, uploads)
+
+                elif 't' in values:
+                    table = values.get('t')
+                    inserts = int(values.get('i'))
+                    deletes = int(values.get('d'))
+                    updates = int(values.get('u'))
+                    changes = inserts + deletes + updates
+                    self.syncingtable.emit(table, changes)
+                else:
+                    message = out 
+                
+            except ValueError:
+                # Log but don't show it to the user
+                pass
 
     def syncImages(self):
         """
@@ -94,14 +115,9 @@ class SyncDialog(QDialog):
         """
         Shows the sync dialog and runs the sync commands.
         """
-        self.ui.statusLabel.setText("Syncing with server. \n Please Wait")
-        message = self.ui.statusLabel.text()
-        self.ui.statusLabel.setText(message + "\n\n Syncing map data...")
-        QCoreApplication.processEvents()
-
         sync = Syncer()
-        sync.syncprogress.connect(self.pushupdate)
-        
+        sync.syncingtable.connect(self.tableupdate)
+        sync.syncingfinished.connect(self.syncfinsihed)
         sync.syncMSSQL()
 
         # if state == 'Fail':
@@ -121,7 +137,30 @@ class SyncDialog(QDialog):
 
         # self.updateStatus("%s \n %s" % (sqlmsg, msg))
 
-    def pushupdate(self, message):
+    def syncfinsihed(self, down, up):
         QCoreApplication.processEvents()
+        message = "Total Downloaded: {0}\nTotal Uploaded: {1}".format(down,up)
+        self.ui.updatestatus.setText('')
         self.ui.statusLabel.setText(message)
         QCoreApplication.processEvents()
+
+    def tableupdate(self, table, changes):
+        # ewww
+        QCoreApplication.processEvents()
+        message = "Updated layer {0} with {1} changes".format(table, changes)
+        self.ui.updatestatus.setText(message)
+        QCoreApplication.processEvents()
+
+def update(message):
+    print message
+
+if __name__ == "__main__":
+    app = QApplication([])
+    syndlg = SyncDialog()
+    syndlg.setModal(True)
+    syndlg.show()
+    # HACK
+    QCoreApplication.processEvents()
+    syndlg.runSync()
+
+    app.exec_()

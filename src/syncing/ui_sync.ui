@@ -6,12 +6,12 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>713</width>
-    <height>336</height>
+    <width>761</width>
+    <height>299</height>
    </rect>
   </property>
   <property name="sizePolicy">
-   <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+   <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
     <horstretch>0</horstretch>
     <verstretch>0</verstretch>
    </sizepolicy>
@@ -21,11 +21,13 @@
   </property>
   <property name="styleSheet">
    <string notr="true">* {font: 75 23pt &quot;Tahoma&quot;;}
+QLabel {qproperty-alignment: AlignCenter;}
 QPushButton { font: 75 20pt &quot;Tahoma&quot;; }
+
 </string>
   </property>
   <layout class="QGridLayout" name="gridLayout">
-   <item row="0" column="0" rowspan="2">
+   <item row="0" column="0" rowspan="4">
     <widget class="QLabel" name="label">
      <property name="maximumSize">
       <size>
@@ -44,8 +46,8 @@ QPushButton { font: 75 20pt &quot;Tahoma&quot;; }
      </property>
     </widget>
    </item>
-   <item row="0" column="1">
-    <widget class="QLabel" name="statusLabel">
+   <item row="1" column="1" colspan="2">
+    <widget class="QLabel" name="updatestatus">
      <property name="font">
       <font>
        <family>Tahoma</family>
@@ -59,8 +61,7 @@ QPushButton { font: 75 20pt &quot;Tahoma&quot;; }
       <string notr="true"/>
      </property>
      <property name="text">
-      <string>Syncing with server
-Please wait</string>
+      <string/>
      </property>
      <property name="alignment">
       <set>Qt::AlignCenter</set>
@@ -70,7 +71,7 @@ Please wait</string>
      </property>
     </widget>
    </item>
-   <item row="1" column="1">
+   <item row="6" column="1">
     <widget class="QDialogButtonBox" name="buttonBox">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
@@ -98,6 +99,42 @@ Please wait</string>
      </property>
      <property name="centerButtons">
       <bool>true</bool>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="1" colspan="2">
+    <widget class="QLabel" name="header">
+     <property name="font">
+      <font>
+       <family>Tahoma</family>
+       <pointsize>23</pointsize>
+       <weight>9</weight>
+       <italic>false</italic>
+       <bold>false</bold>
+      </font>
+     </property>
+     <property name="styleSheet">
+      <string notr="true"/>
+     </property>
+     <property name="text">
+      <string>Syncing with server
+Please wait</string>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignCenter</set>
+     </property>
+     <property name="wordWrap">
+      <bool>true</bool>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="1" rowspan="2">
+    <widget class="QLabel" name="statusLabel">
+     <property name="text">
+      <string/>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignCenter</set>
      </property>
     </widget>
    </item>
