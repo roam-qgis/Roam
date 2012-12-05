@@ -9,6 +9,11 @@ namespace MSSQLSyncer
     using System.Linq;
     using Microsoft.Synchronization.Data;
 
+    class Scope
+    {
+        public string name;
+        public SyncDirectionOrder order;
+    }
 
     static class Program
     {
@@ -81,21 +86,22 @@ namespace MSSQLSyncer
                                                                              : scopetosync));
             }
 
-            List<string> scopes = new List<string>();
+
+            List<Scope> scopes = new List<Scope>();
 
             if (!String.IsNullOrEmpty(scopetosync))
             {
-                scopes.Add(scopetosync);
+                scopes.Add(new Scope() { name = scopetosync, order = SyncDirectionOrder.Download });
             }
             else
             {
-                scopes.Add("OneWay");
-                scopes.Add("TwoWay");
+                scopes.Add(new Scope() { name = "OneWay", order = SyncDirectionOrder.Download });
+                scopes.Add(new Scope() { name = "TwoWay", order = SyncDirectionOrder.DownloadAndUpload });
             }
 
             int total_down = 0;
             int total_up = 0;
-            foreach(string scope in scopes)
+            foreach(Scope scope in scopes)
             {
                 using (SqlConnection server = new SqlConnection(serverconn),
                                      client = new SqlConnection(clientconn))
@@ -103,8 +109,7 @@ namespace MSSQLSyncer
                    SyncOperationStatistics stats;
                    try
                    {
-                       stats = syncscope(server, client, scope, SyncDirectionOrder.Download);
-                       //stats = syncscope(server, client, "TwoWay", SyncDirectionOrder.DownloadAndUpload);
+                       stats = syncscope(server, client, scope.name, scope.order);
                    }
                    catch (DbSyncException ex)
                    {
