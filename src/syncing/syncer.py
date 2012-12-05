@@ -24,14 +24,15 @@ class Syncer(QObject):
                    'Fail'
         """
         curdir = os.path.abspath(os.path.dirname(__file__))
-        cmdpath = os.path.join(curdir,'bin\syncer.exe')
+        cmdpath = os.path.join(curdir,'syncer.exe')
         # TODO Get connection strings from the settings.ini file.
         server = "Data Source=localhost;Initial Catalog=FieldData;Integrated Security=SSPI;"
         client = "Data Source=localhost;Initial Catalog=SpatialData;Integrated Security=SSPI;"
         print server
         print client
         args = [cmdpath, '--server={0}'.format(server), '--client={0}'.format(client), '--porcelain']
-        p = Popen(args, stdout=PIPE, stderr=PIPE, shell=True)
+        # We have to PIPE stdin even if we don't use it because of Windows  
+        p = Popen(args, stdout=PIPE, stderr=PIPE,stdin=PIPE, shell=True)
         while p.poll() is None:
             # error = p.stderr.readline()
             # print "ERROR:" + error 
@@ -97,10 +98,6 @@ class SyncDialog(QDialog):
         self.ui.updatestatus.setText('')
         self.ui.statusLabel.setText(message)
 
-    def updateStatus(self, text):
-        self.ui.statusLabel.setText(text)
-        self.ui.buttonBox.show()
-
     def updateFailedStatus(self, text):
         self.ui.statusLabel.setStyleSheet("color: rgba(222, 13, 6);")
         self.ui.statusLabel.setText("We couldn't sync for some reason. \n "\
@@ -122,6 +119,8 @@ class SyncDialog(QDialog):
         sync.syncingtable.connect(self.tableupdate)
         sync.syncingfinished.connect(self.syncfinsihed)
         sync.syncMSSQL()
+
+        self.ui.buttonBox.show()
 
         # if state == 'Fail':
         #     self.updateFailedStatus(sqlmsg)
@@ -147,7 +146,7 @@ class SyncDialog(QDialog):
         self.ui.statusLabel.setText(message)
         self.ui.header.setText("Sync complete")
         QCoreApplication.processEvents()
-
+        
     def tableupdate(self, table, changes):
         # ewww
         QCoreApplication.processEvents()

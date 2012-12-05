@@ -132,7 +132,7 @@ def build_plugin():
     if iswindows and main.options.with_mssyncing == True:
         mssyncpath = os.path.join(dotnetpath,"MSSQLSyncer","bin")
         destmssyncpath = os.path.join(deploypath,"syncing")
-        copyFolder(mssyncpath, destmssyncpath)
+        copyFiles(mssyncpath, destmssyncpath)
     # Replace version numbers
     version = getVersion()
     command = 's/version=0.1/version=%s/ "%s"' % (version, os.path.join(deploypath, 'metadata.txt'))
