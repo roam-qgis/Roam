@@ -86,17 +86,15 @@ namespace MSSQLSyncer
                                                                              : scopetosync));
             }
 
-
-            List<Scope> scopes = new List<Scope>();
+            List<Scope> scopes;
 
             if (!String.IsNullOrEmpty(scopetosync))
             {
-                scopes.Add(new Scope() { name = scopetosync, order = SyncDirectionOrder.Download });
+                scopes = getScopes(clientconn, scopetosync);
             }
             else
             {
-                scopes.Add(new Scope() { name = "OneWay", order = SyncDirectionOrder.Download });
-                scopes.Add(new Scope() { name = "TwoWay", order = SyncDirectionOrder.DownloadAndUpload });
+                scopes = getScopes(clientconn);
             }
 
             int total_down = 0;
@@ -140,6 +138,48 @@ namespace MSSQLSyncer
                                   + Resources.Program_Main_
                                   + total_up);
             }
+        }
+
+        private static List<Scope> getScopes(string clientconn)
+        {
+            return getScopes(clientconn, null);
+        }
+
+        private static List<Scope> getScopes(string clientconn, string scope)
+        {
+            List<Scope> scopes = new List<Scope>();
+            using (SqlConnection client = new SqlConnection(clientconn))
+            {
+                client.Open();
+                string command = "SELECT scope, syncorder FROM scopes";
+                SqlCommand query = new SqlCommand(command, client);
+                if (!String.IsNullOrEmpty(scope))
+                {
+                    query.CommandText += " WHERE scope = @scope";
+                    SqlParameter param  = new SqlParameter();
+                    param.ParameterName = "@scope";
+			        param.Value         = scope;
+                    query.Parameters.Add(param);
+                }
+
+                // We should handle if the table scopes doesn't exist and maybe
+                // grab all the scopes from the database and just sync one way.
+
+                SqlDataReader reader = query.ExecuteReader();
+                while (reader.Read())
+                {
+                    string name = reader["scope"].ToString();
+                    string order = reader["syncorder"].ToString();
+                    SyncDirectionOrder syncorder = StringToEnum<SyncDirectionOrder>(order);
+                    scopes.Add(new Scope() { name = name, order = syncorder });
+                }
+            }
+            return scopes;
+        }
+
+        public static T StringToEnum<T>(string name)
+        {
+            return (T)Enum.Parse(typeof(T), name);
         }
 
         /// <summary>
