@@ -9,12 +9,6 @@ namespace MSSQLSyncer
     using System.Linq;
     using Microsoft.Synchronization.Data;
 
-    class Scope
-    {
-        public string name;
-        public SyncDirectionOrder order;
-    }
-
     static class Program
     {
         static bool porcelain = false;
@@ -86,20 +80,20 @@ namespace MSSQLSyncer
                                                                              : scopetosync));
             }
 
-            List<Scope> scopes;
+            List<syncing.Scope> scopes;
 
             if (!String.IsNullOrEmpty(scopetosync))
             {
-                scopes = getScopes(clientconn, scopetosync);
+                scopes = syncing.getScopes(clientconn, scopetosync);
             }
             else
             {
-                scopes = getScopes(clientconn);
+                scopes = syncing.getScopes(clientconn);
             }
 
             int total_down = 0;
             int total_up = 0;
-            foreach(Scope scope in scopes)
+            foreach (syncing.Scope scope in scopes)
             {
                 using (SqlConnection server = new SqlConnection(serverconn),
                                      client = new SqlConnection(clientconn))
@@ -107,7 +101,9 @@ namespace MSSQLSyncer
                    SyncOperationStatistics stats;
                    try
                    {
-                       stats = syncscope(server, client, scope.name, scope.order);
+                       stats = syncing.syncscope(server, client, 
+                                                 scope.name, scope.order,
+                                                 applyingChanges);
                    }
                    catch (DbSyncException ex)
                    {
@@ -141,87 +137,6 @@ namespace MSSQLSyncer
         }
 
         /// <summary>
-        /// Return all the scopes defined in the database.
-        /// </summary>
-        /// <param name="clientconn"></param>
-        /// <returns></returns>
-        private static List<Scope> getScopes(string clientconn)
-        {
-            return getScopes(clientconn, null);
-        }
-
-        /// <summary>
-        /// Returns the scopes and their sync order that are defined in the database.
-        /// </summary>
-        /// <param name="clientconn">The connection string to the client</param>
-        /// <param name="scope">The name of the scope to sync. If blank return
-        /// all scopes.</param>
-        /// <returns>A list of <see cref="Scope"/> that contains a name and order</returns>
-        private static List<Scope> getScopes(string clientconn, string scope)
-        {
-            List<Scope> scopes = new List<Scope>();
-            using (SqlConnection client = new SqlConnection(clientconn))
-            {
-                client.Open();
-                string command = "SELECT scope, syncorder FROM scopes";
-                SqlCommand query = new SqlCommand(command, client);
-                if (!String.IsNullOrEmpty(scope))
-                {
-                    query.CommandText += " WHERE scope = @scope";
-                    SqlParameter param  = new SqlParameter();
-                    param.ParameterName = "@scope";
-			        param.Value         = scope;
-                    query.Parameters.Add(param);
-                }
-
-                // We should handle if the table scopes doesn't exist and maybe
-                // grab all the scopes from the database and just sync one way.
-
-                SqlDataReader reader = query.ExecuteReader();
-                while (reader.Read())
-                {
-                    string name = reader["scope"].ToString();
-                    string order = reader["syncorder"].ToString();
-                    SyncDirectionOrder syncorder = StringToEnum<SyncDirectionOrder>(order);
-                    scopes.Add(new Scope() { name = name, order = syncorder });
-                }
-                client.Close();
-            }
-            return scopes;
-        }
-
-        public static T StringToEnum<T>(string name)
-        {
-            return (T)Enum.Parse(typeof(T), name);
-        }
-
-        /// <summary>
-        /// Sync a single scope from the client to the server.
-        /// </summary>
-        /// <param name="server">Provider for the server.</param>
-        /// <param name="client">Provider for the client.</param>
-        /// <param name="tablename">The able name to sync.</param>
-        static SyncOperationStatistics syncscope(SqlConnection server, SqlConnection client,
-                              string scope, SyncDirectionOrder order)
-        {
-            using (SqlSyncProvider masterProvider = new SqlSyncProvider(scope, server),
-                                    slaveProvider = new SqlSyncProvider(scope, client))
-            {
-                SyncOrchestrator orchestrator = new SyncOrchestrator
-                {
-                    LocalProvider = slaveProvider,
-                    RemoteProvider = masterProvider,
-                    Direction = order
-                };
-
-                slaveProvider.ApplyingChanges += applyingChanges;
-                masterProvider.ApplyingChanges += applyingChanges;
-                slaveProvider.ApplyChangeFailed += slaveProvider_ApplyChangeFailed;
-                return orchestrator.Synchronize();
-            }
-        }
-
-        /// <summary>
         /// Reports the progress on the changes being applied.
         /// </summary>
         /// <param name="sender"></param>
@@ -229,11 +144,6 @@ namespace MSSQLSyncer
         static void applyingChanges(object sender, DbApplyingChangesEventArgs e)
         {
             string message;
-            if (!porcelain)
-            {
-                message = "Sync Stage: Applying Changes";
-                Console.WriteLine(message);
-            }
             foreach (DbSyncTableProgress tableProgress in e.Context.ScopeProgress.TablesProgress)
             {
                 if (porcelain)
@@ -251,36 +161,6 @@ namespace MSSQLSyncer
                                " | Deletes :" + tableProgress.Deletes.ToString() + " ]";
                 }
                 Console.WriteLine(message);
-            }
-        }
-
-        /// <summary>
-        /// Handles errors that happen during syncing down to the client.
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        static void slaveProvider_ApplyChangeFailed(object sender, Microsoft.Synchronization.Data.DbApplyChangeFailedEventArgs e)
-        {
-            switch (e.Conflict.Type)
-            {
-                case Microsoft.Synchronization.Data.DbConflictType.ErrorsOccurred:
-                    break;
-                case Microsoft.Synchronization.Data.DbConflictType.LocalCleanedupDeleteRemoteUpdate:
-                    break;
-                case Microsoft.Synchronization.Data.DbConflictType.LocalDeleteRemoteDelete:
-                    break;
-                case Microsoft.Synchronization.Data.DbConflictType.LocalDeleteRemoteUpdate:
-                    break;
-                case Microsoft.Synchronization.Data.DbConflictType.LocalInsertRemoteInsert:
-                    break;
-                case Microsoft.Synchronization.Data.DbConflictType.LocalUpdateRemoteDelete:
-                    break;
-                case Microsoft.Synchronization.Data.DbConflictType.LocalUpdateRemoteUpdate:
-                    // If there are server edits and local edits then the server always wins.
-                    e.Action = ApplyAction.RetryWithForceWrite;
-                    break;
-                default:
-                    break;
             }
         }
 
