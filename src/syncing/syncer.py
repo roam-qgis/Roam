@@ -145,7 +145,6 @@ class SyncDialog(QDialog):
         # self.updateStatus("%s \n %s" % (sqlmsg, msg))
 
     def syncfinsihed(self, down, up):
-        QCoreApplication.processEvents()
         message = "Total Downloaded: {0}\nTotal Uploaded: {1}".format(down,up)
         self.ui.updatestatus.setText('')
         self.ui.statusLabel.setText(message)
@@ -154,7 +153,6 @@ class SyncDialog(QDialog):
 
     def tableupdate(self, table, changes):
         # ewww
-        QCoreApplication.processEvents()
         message = "Updated layer {0} with {1} changes".format(table, changes)
         self.ui.updatestatus.setText(message)
         QCoreApplication.processEvents()
