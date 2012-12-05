@@ -111,6 +111,11 @@ namespace MSSQLSyncer
                        Console.Error.WriteLine(ex.Message);
                        continue;
                    }
+                   catch (SqlException ex)
+                   {
+                        Console.WriteLine("Error:" + ex.Message);
+                        continue;
+                   }
                    total_down += stats.DownloadChangesApplied;
                    total_up += stats.UploadChangesApplied;
                 }
@@ -154,9 +159,7 @@ namespace MSSQLSyncer
                 slaveProvider.ApplyingChanges += applyingChanges;
                 masterProvider.ApplyingChanges += applyingChanges;
                 slaveProvider.ApplyChangeFailed += slaveProvider_ApplyChangeFailed;
-
-                SyncOperationStatistics stats = orchestrator.Synchronize();
-                return stats;
+                return orchestrator.Synchronize();
             }
         }
 

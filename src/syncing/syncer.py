@@ -15,13 +15,12 @@ from utils import log, settings
 class Syncer(QObject):
     syncingtable = pyqtSignal(str, int)
     syncingfinished = pyqtSignal(int, int)
+    syncingerror = pyqtSignal(str)
 
     def syncMSSQL(self):
         """
         Run the sync for MS SQL.
 
-        returns -- Returns a tuple of (state, message). state can be 'Pass' or
-                   'Fail'
         """
         curdir = os.path.abspath(os.path.dirname(__file__))
         cmdpath = os.path.join(curdir,'syncer.exe')
@@ -38,6 +37,11 @@ class Syncer(QObject):
             # print "ERROR:" + error 
             out = p.stdout.readline()
             try:
+                # Can't seem to get p.stderr to work correctly. Will use this hack for now.
+                if out[:5] == "Error":
+                    log(out)
+                    self.syncingerror.emit(out)
+                    continue
                 values = dict(item.split(":") for item in out.split("|"))
                 if 'td' in values and 'tu' in values:
                     downloads = int(values.get('td'))
@@ -55,7 +59,7 @@ class Syncer(QObject):
                     message = out 
                 
             except ValueError:
-                # Log but don't show it to the user
+                # We should really log errors but don't show them to the user
                 pass
 
     def syncImages(self):
@@ -97,6 +101,7 @@ class SyncDialog(QDialog):
         message = "Total Downloaded:\nTotal Uploaded:"
         self.ui.updatestatus.setText('')
         self.ui.statusLabel.setText(message)
+        self.ui.buttonBox.hide()
 
     def updateFailedStatus(self, text):
         self.ui.statusLabel.setStyleSheet("color: rgba(222, 13, 6);")
@@ -146,7 +151,7 @@ class SyncDialog(QDialog):
         self.ui.statusLabel.setText(message)
         self.ui.header.setText("Sync complete")
         QCoreApplication.processEvents()
-        
+
     def tableupdate(self, table, changes):
         # ewww
         QCoreApplication.processEvents()
