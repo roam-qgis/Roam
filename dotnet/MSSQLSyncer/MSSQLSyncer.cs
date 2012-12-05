@@ -140,11 +140,23 @@ namespace MSSQLSyncer
             }
         }
 
+        /// <summary>
+        /// Return all the scopes defined in the database.
+        /// </summary>
+        /// <param name="clientconn"></param>
+        /// <returns></returns>
         private static List<Scope> getScopes(string clientconn)
         {
             return getScopes(clientconn, null);
         }
 
+        /// <summary>
+        /// Returns the scopes and their sync order that are defined in the database.
+        /// </summary>
+        /// <param name="clientconn">The connection string to the client</param>
+        /// <param name="scope">The name of the scope to sync. If blank return
+        /// all scopes.</param>
+        /// <returns>A list of <see cref="Scope"/> that contains a name and order</returns>
         private static List<Scope> getScopes(string clientconn, string scope)
         {
             List<Scope> scopes = new List<Scope>();
@@ -173,6 +185,7 @@ namespace MSSQLSyncer
                     SyncDirectionOrder syncorder = StringToEnum<SyncDirectionOrder>(order);
                     scopes.Add(new Scope() { name = name, order = syncorder });
                 }
+                client.Close();
             }
             return scopes;
         }
