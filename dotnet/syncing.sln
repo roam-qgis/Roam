@@ -5,6 +5,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "provisioner", "provisioner\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "libsyncing", "libsyncing\libsyncing.csproj", "{3A0290C4-3413-481A-95E8-AA9BA970D908}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "syncer", "syncer\syncer.csproj", "{662F3DE9-9824-4C40-AF20-88EF9CC85649}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -19,6 +21,10 @@ Global
 		{3A0290C4-3413-481A-95E8-AA9BA970D908}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3A0290C4-3413-481A-95E8-AA9BA970D908}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3A0290C4-3413-481A-95E8-AA9BA970D908}.Release|Any CPU.Build.0 = Release|Any CPU
+		{662F3DE9-9824-4C40-AF20-88EF9CC85649}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{662F3DE9-9824-4C40-AF20-88EF9CC85649}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{662F3DE9-9824-4C40-AF20-88EF9CC85649}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{662F3DE9-9824-4C40-AF20-88EF9CC85649}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

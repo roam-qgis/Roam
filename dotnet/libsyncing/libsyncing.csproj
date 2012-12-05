@@ -5,11 +5,11 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{044E29DB-232E-43D0-A183-9CD59B5C3E36}</ProjectGuid>
-    <OutputType>Exe</OutputType>
+    <ProjectGuid>{3A0290C4-3413-481A-95E8-AA9BA970D908}</ProjectGuid>
+    <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>provisioner</RootNamespace>
-    <AssemblyName>provisioner</AssemblyName>
+    <RootNamespace>libprovisioner</RootNamespace>
+    <AssemblyName>libprovisioner</AssemblyName>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -45,14 +45,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\libsyncing\libsyncing.csproj">
-      <Project>{3A0290C4-3413-481A-95E8-AA9BA970D908}</Project>
-      <Name>libsyncing</Name>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
