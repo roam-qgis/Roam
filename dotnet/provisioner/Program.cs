@@ -110,9 +110,12 @@ namespace ConsoleApplication1
             {
                 Provisioning.ProvisionTable(server, client, tablename, srid);
                 Console.WriteLine("Provision complete");
-                Console.WriteLine("Adding to scopes table on client");
-                Provisioning.AddScopeToScopesTable(client, tablename,
-                                                   utils.StringToEnum<SyncDirectionOrder>(direction));
+                if (server.ConnectionString != client.ConnectionString)
+                {
+                    Console.WriteLine("Adding to scopes table on client");
+                    Provisioning.AddScopeToScopesTable(client, tablename,
+                                                       utils.StringToEnum<SyncDirectionOrder>(direction));
+                }
                 Console.WriteLine("Complete");
             }
             else

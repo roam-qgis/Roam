@@ -140,24 +140,21 @@ public static class syncing
     static bool ScopesDiffer(SqlConnection server, SqlConnection client, 
                                   string scopename)
     {
-        string sql = @"SELECT scope_config.config_data 
+        string sql = String.Format(@"SELECT scope_config.config_data 
                        FROM scope_config 
                        INNER JOIN scope_info ON scope_config.config_id = scope_info.scope_config_id 
-                       WHERE scope_info.sync_scope_name = @scope";
-        SqlParameter param = new SqlParameter("@scope", scopename);
+                       WHERE scope_info.sync_scope_name = N'{0}'",scopename);
 
         string clientScopeConfig;
         string serverScopeConfig;
 
         using (SqlCommand command = new SqlCommand(sql))
         {
-            command.CommandText = sql;
-            command.Parameters.Add(param);
-
             server.Open();
             client.Open();
             command.Connection = server;
             serverScopeConfig = command.ExecuteScalar() as string;
+            command.Connection = client;
             clientScopeConfig = command.ExecuteScalar() as string;
             client.Close();
             server.Close();

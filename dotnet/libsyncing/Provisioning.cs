@@ -149,20 +149,19 @@ public static class Provisioning
         {
             try
             {
-                string sql = String.Format(@"ALTER TABLE [{0}] ALTER COLUMN {1} geometry;", 
-                                             tableName, geometryColumn.QuotedName);
-                                //CREATE SPATIAL INDEX [ogr_@table_sidx] ON [@table]
-                                //(
-                                //    [@geomcolumn]
-                                //) 
-                                //USING GEOMETRY_GRID WITH 
-                                //(
-                                //    BOUNDING_BOX =(300000, 6700000, 500000, 7000000), 
-                                //    GRIDS =(LEVEL_1 = MEDIUM,LEVEL_2 = MEDIUM,LEVEL_3 = MEDIUM,LEVEL_4 = MEDIUM), 
-                                //    CELLS_PER_OBJECT = 16, PAD_INDEX  = OFF, 
-                                //    SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, 
-                                //    ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON
-                                //) ON [PRIMARY];";
+                string sql = String.Format(@"ALTER TABLE [{0}] ALTER COLUMN [{1}] geometry;    
+                                CREATE SPATIAL INDEX [ogr_{0}_sidx] ON [{0}]
+                                (
+                                    [{1}]
+                                ) 
+                                USING GEOMETRY_GRID WITH 
+                                (
+                                    BOUNDING_BOX =(300000, 6700000, 500000, 7000000), 
+                                    GRIDS =(LEVEL_1 = MEDIUM,LEVEL_2 = MEDIUM,LEVEL_3 = MEDIUM,LEVEL_4 = MEDIUM), 
+                                    CELLS_PER_OBJECT = 16, PAD_INDEX  = OFF, 
+                                    SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, 
+                                    ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON
+                                ) ON [PRIMARY];",tableName, geometryColumn.UnquotedName);
                 // Index
                 command.CommandText = sql;
                 //command.Parameters.AddWithValue("@table", tableName);
