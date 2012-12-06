@@ -41,12 +41,6 @@ def build():
     """
     build_plugin()
 
-def compileprovisioning():
-    if iswindows and main.options.with_mssyncing == True:
-        print " - building Provisioning app..."
-        run('MSBuild', '/property:Configuration=Release', '/verbosity:m', \
-            'dotnet/provisioner/SqlSyncProvisioner/SqlSyncProvisioner.csproj', \
-            shell=True, env=env)
 
 def compileplugin():
     print " - building UI files..."
@@ -62,9 +56,15 @@ def compileplugin():
     run('pyrcc4', '-o', 'src/syncing/resources_rc.py', 'src/syncing/resources.qrc')
 
     if iswindows and main.options.with_mssyncing == True:
-        print " - building MSSQLSyncer app..."
+        print " - building syncing tools..."
         run('MSBuild', '/property:Configuration=Release', '/verbosity:m', \
-            'dotnet/MSSQLSyncer/MSSQLSyncer.csproj', shell=True, env=env)
+            'dotnet/libsyncing/libsyncing.csproj', shell=True, env=env)
+        run('MSBuild', '/property:Configuration=Release', '/verbosity:m', \
+            'dotnet/provisioner/provisioner.csproj', \
+            shell=True, env=env)
+        run('MSBuild', '/property:Configuration=Release', '/verbosity:m', \
+            'dotnet/syncer/syncer.csproj', \
+            shell=True, env=env)
 
     print " - building docs..."
     docs()
@@ -130,9 +130,12 @@ def build_plugin():
     copyFiles(bootpath,buildpath)
 
     if iswindows and main.options.with_mssyncing == True:
-        mssyncpath = os.path.join(dotnetpath,"MSSQLSyncer","bin")
+        mssyncpath = os.path.join(dotnetpath, "bin")
+        lib = os.path.join(mssyncpath, "libsyncing.dll")
+        bin = os.path.join(mssyncpath, "syncer.exe")
         destmssyncpath = os.path.join(deploypath,"syncing")
-        copyFiles(mssyncpath, destmssyncpath)
+        copyFolder(lib, destmssyncpath)
+        copyFolder(bin, destmssyncpath)
     # Replace version numbers
     version = getVersion()
     command = 's/version=0.1/version=%s/ "%s"' % (version, os.path.join(deploypath, 'metadata.txt'))
