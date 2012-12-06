@@ -1,5 +1,6 @@
 ﻿using System.Data.SqlClient;
 using Microsoft.Synchronization.Data.SqlServer;
+
 public static class Deprovisioning
 {
     /// <summary>
@@ -9,21 +10,26 @@ public static class Deprovisioning
     /// <param name="table">The table to drop.</param>
     public static void DropTable(SqlConnection conn, string table)
     {
-        string sql = @"IF (EXISTS (SELECT * 
+        string sql = string.Format(@"IF (EXISTS (SELECT * 
                              FROM INFORMATION_SCHEMA.TABLES 
                              WHERE TABLE_SCHEMA = 'dbo' 
-                             AND TABLE_NAME = @table))
-                          DROP TABLE @table";
+                             AND TABLE_NAME = '{0}'))
+                          DROP TABLE [{0}]",table);
 
         using (SqlCommand command = conn.CreateCommand())
         {
-            conn.Open();
             command.CommandText = sql;
-            command.Parameters.Add("@table", table);
             command.ExecuteNonQuery();
-            conn.Close();
         }
-    
+    }
+
+    public static void RemoveFromScopesTable(SqlConnection conn, string scope)
+    {
+        string sql = string.Format(@"DELETE FROM [scopes]
+                       WHERE scope = {0}", scope);
+        SqlCommand command = conn.CreateCommand();
+        command.CommandText = sql;
+        command.ExecuteNonQuery();
     }
 
     /// <summary>
@@ -33,17 +39,15 @@ public static class Deprovisioning
     /// <param name="table"></param>
     public static void DropTableGeomTrigger(SqlConnection conn, string table)
     {
-        string sql = @"IF EXISTS (SELECT * 
-                                      FROM sys.triggers 
-                                      WHERE object_id = OBJECT_ID(N'[dbo].[{0}_GEOMSRID_trigger]')) 
+        string sql = @"IF (EXISTS (SELECT * 
+                                  FROM sys.triggers 
+                                  WHERE object_id = OBJECT_ID(N'[dbo].[{0}_GEOMSRID_trigger]')))
                            DROP TRIGGER [dbo].[{0}_GEOMSRID_trigger]";
 
         using (SqlCommand command = conn.CreateCommand())
         {
-            conn.Open();
             command.CommandText = string.Format(sql, table);
             command.ExecuteNonQuery();
-            conn.Close();
         }
     }
 
@@ -55,7 +59,11 @@ public static class Deprovisioning
     /// <returns></returns>
     public static void DeprovisonScope(SqlConnection conn, string scope)
     {
+        conn.Open();
         SqlSyncScopeDeprovisioning prov = new SqlSyncScopeDeprovisioning(conn);
+        //prov.DeprovisionScope(scope);
         prov.DeprovisionScope(scope);
+        DropTableGeomTrigger(conn, scope);
+        conn.Close();
     }
 }

@@ -56,7 +56,7 @@ public static class syncing
             {
                 string name = reader["scope"].ToString();
                 string order = reader["syncorder"].ToString();
-                SyncDirectionOrder syncorder = StringToEnum<SyncDirectionOrder>(order);
+                SyncDirectionOrder syncorder = utils.StringToEnum<SyncDirectionOrder>(order);
                 scopes.Add(new Scope() { name = name, order = syncorder });
             }
             client.Close();
@@ -98,11 +98,6 @@ public static class syncing
             slaveProvider.ApplyChangeFailed += slaveProvider_ApplyChangeFailed;
             return orchestrator.Synchronize();
         }
-    }
-
-    public static T StringToEnum<T>(string name)
-    {
-        return (T)Enum.Parse(typeof(T), name);
     }
 
     /// <summary>

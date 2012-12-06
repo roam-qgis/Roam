@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Data.SqlClient;
+using Microsoft.Synchronization;
 
 namespace ConsoleApplication1
 {
@@ -23,7 +24,8 @@ namespace ConsoleApplication1
             string clientconn = "";
             bool deprovison = false;
             string tablename = "";
-            string direction = "OneWay";
+            string direction = "Download";
+            int srid = 0;
 
             bool hasserver = args.Any(x => x.Contains("--server"));
             if (!hasserver)
@@ -49,7 +51,9 @@ namespace ConsoleApplication1
                 var pairs = arg.Split(new char[] { '=' }, 2,
                                       StringSplitOptions.None);
                 var name = pairs[0];
-                string parm = pairs[1];
+                string parm = "";
+                if (pairs.Length == 2)
+                    parm = pairs[1];
                 switch (name)
                 {
                     case "--server":
@@ -69,9 +73,19 @@ namespace ConsoleApplication1
                     case "--deprovision":
                         deprovison = true;
                         break;
+                    case "--srid":
+                        srid = int.Parse(parm);
+                        break;
                     default:
                         break;
                 }
+            }
+
+            if (srid == 0)
+            {
+                Console.Error.WriteLine("We need a SRID");
+                printUsage();
+                return;
             }
 
             // If there is no client arg given then we assume that we are
@@ -91,16 +105,33 @@ namespace ConsoleApplication1
             Console.WriteLine("Table:" + tablename);
             Console.WriteLine("Direction:" + direction);
             Console.WriteLine("Mode:" + (deprovison ? "Deprovison" : "Provision"));
+
+            if (!deprovison)
+            {
+                Provisioning.ProvisionTable(server, client, tablename, srid);
+                Console.WriteLine("Provision complete");
+                Console.WriteLine("Adding to scopes table on client");
+                Provisioning.AddScopeToScopesTable(client, tablename,
+                                                   utils.StringToEnum<SyncDirectionOrder>(direction));
+                Console.WriteLine("Complete");
+            }
+            else
+            {
+                Deprovisioning.DeprovisonScope(client, tablename);
+                Console.WriteLine("Deprovision complete");
+            }  
+
+            Console.Read();
         }
 
         static void printUsage()
         {
-            Console.WriteLine(@"provisioner --server={connectionstring} --table={tablename} [options]
+            Console.WriteLine(@"provisioner --server={connectionstring} --table={tablename} --srid={SRID} [options]
 [options]
 
 --client={connectionstring} : The connection string to the client database. 
                               If blank will be set to server connection.
---direction=OneWay|TwoWay : The direction that the table will sync.
+--direction=UploadAndDownload|DownloadAndUpload|Upload|Download : The direction that the table will sync.
                             if blank will be set to OneWay.
 --deprovision : Deprovision the table rather then provision. WARNING: Will drop
                 the table on the client if client and server are different! Never

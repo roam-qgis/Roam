@@ -5,20 +5,41 @@ using System.Text;
 using Microsoft.Synchronization.Data;
 using Microsoft.Synchronization.Data.SqlServer;
 using Microsoft.Synchronization;
-using Microsoft.SqlServer.Management.Smo
+using Microsoft.SqlServer.Management.Smo;
 using System.Data.SqlClient;
 using System.Collections.Specialized;
 
-class Provisioning
+public static class Provisioning
 {
     public static void CreateScopesTable(SqlConnection conn)
     {
-        throw new NotImplementedException();
+        string sql = @"IF NOT (EXISTS (SELECT * 
+                                 FROM INFORMATION_SCHEMA.TABLES 
+                                 WHERE TABLE_SCHEMA = 'dbo' 
+                                 AND TABLE_NAME = 'scopes'))
+                          BEGIN
+                            CREATE TABLE [dbo].[scopes](
+	                          [scope] [nvarchar](max) NULL,
+	                          [syncorder] [nvarchar](max) NULL)
+                          END";
+        SqlCommand command = conn.CreateCommand();
+        command.CommandText = sql;
+        command.ExecuteNonQuery();
     }
 
-    public static void AddScopeToScopesTable(SqlConnection conn)
+    public static void AddScopeToScopesTable(SqlConnection conn, string scope,
+                                             SyncDirectionOrder order)
     {
-        throw new NotImplementedException();
+        CreateScopesTable(conn);
+
+        string sql = @"DELETE FROM [scopes] WHERE scope = @scope;
+                       INSERT INTO [scopes] ([scope] ,[syncorder])
+                              VALUES (@scope, @order)";
+        SqlCommand command = conn.CreateCommand();
+        command.CommandText = sql;
+        command.Parameters.AddWithValue("@scope", scope);
+        command.Parameters.AddWithValue("@order", order.ToString());
+        command.ExecuteNonQuery();
     }
 
     public static void ProvisionTable(SqlConnection server, SqlConnection client, 
@@ -31,7 +52,11 @@ class Provisioning
 
         if (destinationConfig.ScopeExists(tableName))
         {
+#if DEBUG
+            Deprovisioning.DeprovisonScope(client, tableName);
+#else
             throw new SyncConstraintConflictNotAllowedException(@"Scope already exists.  Please deprovision scope first.");
+#endif
         }
 
         // Get table info from server
@@ -69,15 +94,25 @@ class Provisioning
             table.Columns.Remove(identityColumn);
         }
 
-        destinationConfig.SetCreateTableDefault(clientMode ? DbSyncCreationOption.Create : DbSyncCreationOption.Skip);
+        destinationConfig.SetCreateTableDefault(clientMode ? DbSyncCreationOption.Create 
+                                                           : DbSyncCreationOption.Skip);
         
-        // Add the table that we found on the server to the d
+        // Add the table that we found on the server to the description.
         scopeDescription.Tables.Add(table);
 
         //It is important to call this after the tables have been added to the scope
         destinationConfig.PopulateFromScopeDescription(scopeDescription);
 
-        //provision the server
+        // Drop the table from the client if we are in client mode
+        // TODO We should sync the table first, but only if it is upload.
+        if (clientMode)
+        {
+            client.Open();
+            Deprovisioning.DropTable(client, tableName);
+            client.Close();
+        }
+
+        //provision the client
         destinationConfig.Apply();
 
         client.Open();
@@ -86,26 +121,23 @@ class Provisioning
         // Readd indentity column back onto client as primary key.
         if (clientMode && identityColumn != null && identityColumn != joinColumn)
         {
-            string sql = @"ALTER TABLE [@table] ADD @id int IDENTITY(1,1) NOT NULL;
-                           ALTER TABLE [@table] DROP CONSTRAINT PK_@table;
-                           ALTER TABLE [@table] ADD CONSTRAINT PK_@table PRIMARY KEY CLUSTERED (@id;";
-            command.CommandText = sql;
-            command.Parameters.Add("@table", tableName);
-            command.Parameters.Add("@id", identityColumn.QuotedName);
+            string sql = @"ALTER TABLE [{1}] ADD {0} int IDENTITY(1,1) NOT NULL;
+                           ALTER TABLE [{1}] DROP CONSTRAINT PK_{1};
+                           ALTER TABLE [{1}] ADD CONSTRAINT PK_{1} PRIMARY KEY CLUSTERED ({0});";
+            command.CommandText = String.Format(sql, identityColumn.QuotedName, tableName);
             command.ExecuteNonQuery();
         }
 
         // If we have a uniqueidentifier column and on client.  Add index and default value.
         if (uniqueColumn != null && clientMode && uniqueColumn == joinColumn)
-        {  
-            string sql = @"ALTER TABLE [@table] ADD UNIQUE (@uniquecolumn);
-                           ALTER TABLE [@table] ADD CONSTRAINT [DF_@table_@uniquecolumnescape]
-                                 DEFAULT (newid()) FOR uniquecolumn;";
+        {
+            string sql = @"ALTER TABLE [{1}] ADD UNIQUE ({0});
+                           ALTER TABLE [{1}] ADD CONSTRAINT [DF_{1}_{2}]
+                                 DEFAULT (newid()) FOR {0};";
 
-            command.CommandText = sql;
-            command.Parameters.Add("@table", tableName);
-            command.Parameters.Add("@uniquecolumn", uniqueColumn.QuotedName);
-            command.Parameters.Add("@uniquecolumnescape", uniqueColumn.UnquotedName.Replace(' ', '_'));
+            command.CommandText = String.Format(sql, uniqueColumn.QuotedName, 
+                                                tableName,
+                                                uniqueColumn.UnquotedName.Replace(' ', '_'));
             command.ExecuteNonQuery();
         }
 
@@ -117,23 +149,24 @@ class Provisioning
         {
             try
             {
-                string sql  = @"ALTER TABLE [@table] ALTER COLUMN @geomcolumn geometry;
-                                CREATE SPATIAL INDEX [ogr_@table_sidx] ON [@table]
-                                (
-                                    @geomcolumn
-                                ) 
-                                USING GEOMETRY_GRID WITH 
-                                (
-                                    BOUNDING_BOX =(300000, 6700000, 500000, 7000000), 
-                                    GRIDS =(LEVEL_1 = MEDIUM,LEVEL_2 = MEDIUM,LEVEL_3 = MEDIUM,LEVEL_4 = MEDIUM), 
-                                    CELLS_PER_OBJECT = 16, PAD_INDEX  = OFF, 
-                                    SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, 
-                                    ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON
-                                ) ON [PRIMARY];";
+                string sql = String.Format(@"ALTER TABLE [{0}] ALTER COLUMN {1} geometry;", 
+                                             tableName, geometryColumn.QuotedName);
+                                //CREATE SPATIAL INDEX [ogr_@table_sidx] ON [@table]
+                                //(
+                                //    [@geomcolumn]
+                                //) 
+                                //USING GEOMETRY_GRID WITH 
+                                //(
+                                //    BOUNDING_BOX =(300000, 6700000, 500000, 7000000), 
+                                //    GRIDS =(LEVEL_1 = MEDIUM,LEVEL_2 = MEDIUM,LEVEL_3 = MEDIUM,LEVEL_4 = MEDIUM), 
+                                //    CELLS_PER_OBJECT = 16, PAD_INDEX  = OFF, 
+                                //    SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, 
+                                //    ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON
+                                //) ON [PRIMARY];";
                 // Index
                 command.CommandText = sql;
-                command.Parameters.Add("@table", tableName);
-                command.Parameters.Add("@geomcolumn", geometryColumn.QuotedName);
+                //command.Parameters.AddWithValue("@table", tableName);
+                //command.Parameters.AddWithValue("!geomcolumn", geometryColumn.QuotedName);
                 command.ExecuteNonQuery();
             }
             catch (SqlException sqlException)
