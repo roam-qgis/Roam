@@ -66,6 +66,13 @@ def compileplugin():
             'dotnet/syncer/syncer.csproj', \
             shell=True, env=env)
 
+        mssyncpath = os.path.join(dotnetpath, "bin")
+        lib = os.path.join(mssyncpath, "libsyncing.dll")
+        bin = os.path.join(mssyncpath, "provisioner.exe")
+        clientsetuppath = os.path.join(curpath,"client-setup")
+        copyFolder(lib, clientsetuppath)
+        copyFolder(bin, clientsetuppath)
+
     print " - building docs..."
     docs()
 
