@@ -29,7 +29,4 @@
     <file alias="move">resources/images/move.png</file>
     <file alias="gpsadd">resources/images/addatgps.png</file>
   </qresource>
-  <qresource prefix="syncing">
-    <file alias="sync">resources/images/sync.png</file>
-  </qresource>
 </RCC>

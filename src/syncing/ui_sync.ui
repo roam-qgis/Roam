@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>761</width>
-    <height>299</height>
+    <width>821</width>
+    <height>477</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -20,58 +20,12 @@
    <string>Form</string>
   </property>
   <property name="styleSheet">
-   <string notr="true">* {font: 75 23pt &quot;Tahoma&quot;;}
-QLabel {qproperty-alignment: AlignCenter;}
-QPushButton { font: 75 20pt &quot;Tahoma&quot;; }
+   <string notr="true">QPushButton { font: 75 20pt &quot;Tahoma&quot;; }
 
 </string>
   </property>
   <layout class="QGridLayout" name="gridLayout">
-   <item row="0" column="0" rowspan="4">
-    <widget class="QLabel" name="label">
-     <property name="maximumSize">
-      <size>
-       <width>200</width>
-       <height>200</height>
-      </size>
-     </property>
-     <property name="text">
-      <string/>
-     </property>
-     <property name="pixmap">
-      <pixmap resource="resources.qrc">:/syncing/sync</pixmap>
-     </property>
-     <property name="scaledContents">
-      <bool>true</bool>
-     </property>
-    </widget>
-   </item>
-   <item row="1" column="1" colspan="2">
-    <widget class="QLabel" name="updatestatus">
-     <property name="font">
-      <font>
-       <family>Tahoma</family>
-       <pointsize>23</pointsize>
-       <weight>9</weight>
-       <italic>false</italic>
-       <bold>false</bold>
-      </font>
-     </property>
-     <property name="styleSheet">
-      <string notr="true"/>
-     </property>
-     <property name="text">
-      <string/>
-     </property>
-     <property name="alignment">
-      <set>Qt::AlignCenter</set>
-     </property>
-     <property name="wordWrap">
-      <bool>true</bool>
-     </property>
-    </widget>
-   </item>
-   <item row="6" column="1">
+   <item row="6" column="1" colspan="2">
     <widget class="QDialogButtonBox" name="buttonBox">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
@@ -83,7 +37,7 @@ QPushButton { font: 75 20pt &quot;Tahoma&quot;; }
       <font>
        <family>Tahoma</family>
        <pointsize>23</pointsize>
-       <weight>9</weight>
+       <weight>50</weight>
        <italic>false</italic>
        <bold>false</bold>
       </font>
@@ -108,17 +62,16 @@ QPushButton { font: 75 20pt &quot;Tahoma&quot;; }
       <font>
        <family>Tahoma</family>
        <pointsize>23</pointsize>
-       <weight>9</weight>
+       <weight>75</weight>
        <italic>false</italic>
-       <bold>false</bold>
+       <bold>true</bold>
       </font>
      </property>
      <property name="styleSheet">
       <string notr="true"/>
      </property>
      <property name="text">
-      <string>Syncing with server
-Please wait</string>
+      <string>Sync in progress</string>
      </property>
      <property name="alignment">
       <set>Qt::AlignCenter</set>
@@ -128,13 +81,73 @@ Please wait</string>
      </property>
     </widget>
    </item>
-   <item row="2" column="1" rowspan="2">
+   <item row="2" column="1" rowspan="2" colspan="2">
     <widget class="QLabel" name="statusLabel">
+     <property name="font">
+      <font>
+       <family>Tahoma</family>
+       <pointsize>23</pointsize>
+      </font>
+     </property>
      <property name="text">
-      <string/>
+      <string>Total Downloaded: - 
+Total Uploaded: - </string>
      </property>
      <property name="alignment">
       <set>Qt::AlignCenter</set>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="0" rowspan="4">
+    <widget class="QLabel" name="label">
+     <property name="maximumSize">
+      <size>
+       <width>200</width>
+       <height>200</height>
+      </size>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+     <property name="pixmap">
+      <pixmap resource="resources.qrc">:/syncing/sync</pixmap>
+     </property>
+     <property name="scaledContents">
+      <bool>true</bool>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="1">
+    <widget class="QTextEdit" name="updatestatus">
+     <property name="font">
+      <font>
+       <family>Tahoma</family>
+       <pointsize>20</pointsize>
+       <weight>50</weight>
+       <bold>false</bold>
+      </font>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">background-color: rgba(255, 255, 255, 0);</string>
+     </property>
+     <property name="frameShape">
+      <enum>QFrame::NoFrame</enum>
+     </property>
+     <property name="documentTitle">
+      <string/>
+     </property>
+     <property name="readOnly">
+      <bool>true</bool>
+     </property>
+     <property name="html">
+      <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Tahoma'; font-size:20pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:12pt;&quot;&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+     </property>
+     <property name="textInteractionFlags">
+      <set>Qt::NoTextInteraction</set>
      </property>
     </widget>
    </item>
@@ -142,6 +155,7 @@ Please wait</string>
  </widget>
  <resources>
   <include location="resources.qrc"/>
+  <include location="../resources.qrc"/>
  </resources>
  <connections>
   <connection>

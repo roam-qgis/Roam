@@ -93,15 +93,11 @@ class SyncDialog(QDialog):
         # Set up the user interface from Designer.
         self.ui = Ui_syncForm()
         self.ui.setupUi(self)
-        self.ui.buttonBox.hide()
         self.setWindowFlags(Qt.FramelessWindowHint)
         scr = QApplication.desktop().screenGeometry(0)
         self.move( scr.center() - self.rect().center() )
         self.failed = False
-        message = "Total Downloaded:\nTotal Uploaded:"
-        self.ui.updatestatus.setText('')
-        self.ui.statusLabel.setText(message)
-        self.ui.buttonBox.hide()
+        self.ui.buttonBox.setEnabled(False)
 
     def updateFailedStatus(self, text):
         self.ui.statusLabel.setStyleSheet("color: rgba(222, 13, 6);")
@@ -125,8 +121,6 @@ class SyncDialog(QDialog):
         sync.syncingfinished.connect(self.syncfinsihed)
         sync.syncMSSQL()
 
-        self.ui.buttonBox.show()
-
         # if state == 'Fail':
         #     self.updateFailedStatus(sqlmsg)
         #     return
@@ -146,27 +140,14 @@ class SyncDialog(QDialog):
 
     def syncfinsihed(self, down, up):
         message = "Total Downloaded: {0}\nTotal Uploaded: {1}".format(down,up)
-        self.ui.updatestatus.setText('')
         self.ui.statusLabel.setText(message)
         self.ui.header.setText("Sync complete")
+        self.ui.buttonBox.setEnabled(True)
         QCoreApplication.processEvents()
 
     def tableupdate(self, table, changes):
         # ewww
-        message = "Updated layer {0} with {1} changes".format(table, changes)
-        self.ui.updatestatus.setText(message)
+        message = self.ui.updatestatus.toPlainText()
+        message += "\nUpdated layer {0} with {1} changes".format(table, changes)
+        self.ui.updatestatus.setPlainText(message)
         QCoreApplication.processEvents()
-
-def update(message):
-    print message
-
-if __name__ == "__main__":
-    app = QApplication([])
-    syndlg = SyncDialog()
-    syndlg.setModal(True)
-    syndlg.show()
-    # HACK
-    QCoreApplication.processEvents()
-    syndlg.runSync()
-
-    app.exec_()
