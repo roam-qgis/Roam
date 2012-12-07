@@ -1,6 +1,7 @@
 #! /usr/bin/python
 ''' Build file that compiles all the needed resources'''
 import os.path
+from os.path import join
 import os
 import sys
 import datetime
@@ -8,23 +9,22 @@ from fabricate import *
 from ConfigParser import ConfigParser, NoSectionError, NoOptionError
 import optparse
 
-ui_sources = ['src/ui_datatimerpicker', 'src/ui_listmodules',
-              'src/syncing/ui_sync', 'src/ui_listfeatures', 'src/ui_errorlist',
-              'src/ui_helpviewer']
+APPNAME = "QMap"
+curpath = os.path.dirname(os.path.abspath(__file__))
+srcopyFilesath = join(curpath, "src", "plugin")
+buildpath = join(curpath, "build", APPNAME)
+deploypath = join(curpath, "build", APPNAME, APPNAME.lower())
+targetspath = join(curpath, 'targets.ini')
+bootpath = join(curpath, "src", "loader_src")
+dotnetpath = join(curpath, "src", "dotnet")
+
+ui_sources = ['ui_datatimerpicker', 'ui_listmodules',
+              'syncing/ui_sync', 'ui_listfeatures', 'ui_errorlist',
+              'ui_helpviewer']
 
 doc_sources = ['docs/README', 'docs/ClientSetup', 'docs/UserGuide']
 
 path = os.path.dirname(__file__)
-
-APPNAME = "QMap"
-
-curpath = os.path.dirname(os.path.abspath(__file__))
-srcopyFilesath = os.path.join(curpath, "src")
-buildpath = os.path.join(curpath, "build", APPNAME)
-deploypath = os.path.join(curpath, "build", APPNAME, APPNAME.lower())
-targetspath = os.path.join(curpath, 'targets.ini')
-bootpath = os.path.join(curpath, "loader_src")
-dotnetpath = os.path.join(curpath, "dotnet")
 
 flags = '--update -rvp'.split()
 
@@ -48,23 +48,22 @@ def compileplugin():
         pyuic = 'pyuic4'
         if iswindows:
             pyuic += '.bat'
-
+        source = join(srcopyFilesath, source)
         run(pyuic, '-o', source + '.py', source + '.ui')
 
     print " - building resource files..."
-    run('pyrcc4', '-o', 'src/resources_rc.py', 'src/resources.qrc')
-    run('pyrcc4', '-o', 'src/syncing/resources_rc.py', 'src/syncing/resources.qrc')
+    run('pyrcc4', '-o', join(srcopyFilesath,'resources_rc.py'), join(srcopyFilesath,'resources.qrc'))
+    run('pyrcc4', '-o', join(srcopyFilesath,'syncing/resources_rc.py'), join(srcopyFilesath,'syncing/resources.qrc'))
 
     if iswindows and main.options.with_mssyncing == True:
+        projects = ['libsyncing/libsyncing.csproj', 
+                    'provisioner/provisioner.csproj',
+                    'syncer/syncer.csproj']
+
         print " - building syncing tools..."
-        run('MSBuild', '/property:Configuration=Release', '/verbosity:m', \
-            'dotnet/libsyncing/libsyncing.csproj', shell=True, env=env)
-        run('MSBuild', '/property:Configuration=Release', '/verbosity:m', \
-            'dotnet/provisioner/provisioner.csproj', \
-            shell=True, env=env)
-        run('MSBuild', '/property:Configuration=Release', '/verbosity:m', \
-            'dotnet/syncer/syncer.csproj', \
-            shell=True, env=env)
+        for project in projects:
+            run('MSBuild', '/property:Configuration=Release', '/verbosity:m', \
+            join(dotnetpath, project), shell=True, env=env)
 
         mssyncpath = os.path.join(dotnetpath, "bin")
         lib = os.path.join(mssyncpath, "libsyncing.dll")
