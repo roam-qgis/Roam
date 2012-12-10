@@ -198,12 +198,12 @@ def deploy_to(target, config):
     mkdir(clientpath)
     copyFiles(buildpath,clientpath)
 
-    projecthome = os.path.join(curpath, 'project-manager', 'projects')
+    projecthome = os.path.join(curpath, 'client-manager', 'projects')
     clientpojecthome = os.path.join(clientpath, APPNAME.lower(), 'projects')
 
     print projecthome
 
-    formpath = os.path.join(curpath, 'project-manager', 'entry_forms')
+    formpath = os.path.join(curpath, 'client-manager', 'entry_forms')
     clientformpath = os.path.join(clientpath, APPNAME.lower(), 'entry_forms')
 
     print formpath
