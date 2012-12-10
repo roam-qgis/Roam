@@ -1,7 +1,6 @@
 .coverage
 .deps
 .noseids
-boot/app/
 cover/
 *.log
 *.pyc
@@ -12,9 +11,11 @@ obj/
 *.user
 docs/*.html
 resources_rc.py
+libsyncing.dll
+provisioner.exe
 
 # This is the plugin build folder. We don't ever need to version this.
-QMap/
+build/
 
 *.py[co]
 
