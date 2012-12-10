@@ -108,7 +108,19 @@ namespace ConsoleApplication1
 
             if (!deprovison)
             {
-                Provisioning.ProvisionTable(server, client, tablename, srid);
+                try
+                {
+                    Provisioning.ProvisionTable(server, client, tablename, srid);
+                }
+                catch (SyncConstraintConflictNotAllowedException)
+                {
+                    ConsoleColor color = Console.ForegroundColor;
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    string message = string.Format("Scope called {0} already exists. Please use --deprovision first", tablename);
+                    Console.Error.WriteLine(message);
+                    Console.ForegroundColor = color;
+                    return;
+                }
                 Console.WriteLine("Provision complete");
                 if (server.ConnectionString != client.ConnectionString)
                 {
@@ -123,8 +135,6 @@ namespace ConsoleApplication1
                 Deprovisioning.DeprovisonScope(client, tablename);
                 Console.WriteLine("Deprovision complete");
             }  
-
-            Console.Read();
         }
 
         static void printUsage()
