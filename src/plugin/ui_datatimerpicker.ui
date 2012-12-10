@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>692</width>
-    <height>415</height>
+    <width>815</width>
+    <height>440</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -20,12 +20,11 @@
    <string>Form</string>
   </property>
   <property name="styleSheet">
-   <string notr="true">* {font: 75 12pt &quot;Tahoma&quot;;}
-QPushButton { font: 75 20pt &quot;Tahoma&quot;; }
+   <string notr="true">QPushButton { font: 75 20pt &quot;Tahoma&quot;; }
 </string>
   </property>
-  <layout class="QGridLayout" name="gridLayout">
-   <item row="0" column="0" colspan="4">
+  <layout class="QGridLayout" name="gridLayout_2">
+   <item row="0" column="0">
     <widget class="QPushButton" name="setasnowbutton">
      <property name="font">
       <font>
@@ -41,37 +40,19 @@ QPushButton { font: 75 20pt &quot;Tahoma&quot;; }
      </property>
     </widget>
    </item>
-   <item row="1" column="0">
-    <widget class="QLabel" name="label_3">
-     <property name="text">
-      <string>Date</string>
-     </property>
-     <property name="buddy">
-      <cstring>datepicker</cstring>
-     </property>
-    </widget>
-   </item>
-   <item row="1" column="1">
+   <item row="0" column="1">
     <widget class="QLabel" name="label">
-     <property name="text">
-      <string>Hours</string>
+     <property name="font">
+      <font>
+       <pointsize>20</pointsize>
+      </font>
      </property>
-     <property name="buddy">
-      <cstring>hourpicker</cstring>
+     <property name="text">
+      <string/>
      </property>
     </widget>
    </item>
-   <item row="1" column="2">
-    <widget class="QLabel" name="label_2">
-     <property name="text">
-      <string>Minutes</string>
-     </property>
-     <property name="buddy">
-      <cstring>minutepicker</cstring>
-     </property>
-    </widget>
-   </item>
-   <item row="2" column="0">
+   <item row="1" column="0">
     <widget class="QCalendarWidget" name="datepicker">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
@@ -79,140 +60,175 @@ QPushButton { font: 75 20pt &quot;Tahoma&quot;; }
        <verstretch>0</verstretch>
       </sizepolicy>
      </property>
-    </widget>
-   </item>
-   <item row="2" column="1">
-    <widget class="QListWidget" name="hourpicker">
-     <property name="styleSheet">
-      <string notr="true">font: 75 12pt &quot;Tahoma&quot;;</string>
+     <property name="font">
+      <font>
+       <pointsize>14</pointsize>
+      </font>
      </property>
-     <item>
-      <property name="text">
-       <string>1</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
-       <string>2</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
-       <string>3</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
-       <string>4</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
-       <string>5</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
-       <string>6</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
-       <string>7</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
-       <string>8</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
-       <string>9</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
-       <string>10</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
-       <string>11</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
-       <string>12</string>
-      </property>
-     </item>
     </widget>
    </item>
-   <item row="2" column="2">
-    <widget class="QListWidget" name="minutepicker">
-     <item>
-      <property name="text">
-       <string>0</string>
-      </property>
+   <item row="1" column="1">
+    <layout class="QGridLayout" name="gridLayout">
+     <item row="0" column="0">
+      <widget class="QListWidget" name="hourpicker">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="font">
+        <font>
+         <family>Tahoma</family>
+         <pointsize>16</pointsize>
+         <weight>9</weight>
+         <italic>false</italic>
+         <bold>false</bold>
+        </font>
+       </property>
+       <property name="styleSheet">
+        <string notr="true"/>
+       </property>
+       <item>
+        <property name="text">
+         <string>1</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>2</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>3</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>4</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>5</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>6</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>7</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>8</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>9</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>10</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>11</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>12</string>
+        </property>
+       </item>
+      </widget>
      </item>
-     <item>
-      <property name="text">
-       <string>5</string>
-      </property>
+     <item row="0" column="1">
+      <widget class="QListWidget" name="minutepicker">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="font">
+        <font>
+         <pointsize>16</pointsize>
+        </font>
+       </property>
+       <item>
+        <property name="text">
+         <string>0</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>5</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>10</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>15</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>20</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>25</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>30</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>35</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>40</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>45</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>50</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>55</string>
+        </property>
+       </item>
+      </widget>
      </item>
-     <item>
-      <property name="text">
-       <string>10</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
-       <string>15</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
-       <string>20</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
-       <string>25</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
-       <string>30</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
-       <string>35</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
-       <string>40</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
-       <string>45</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
-       <string>50</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
-       <string>55</string>
-      </property>
-     </item>
-    </widget>
+    </layout>
    </item>
-   <item row="2" column="3">
+   <item row="1" column="2">
     <layout class="QVBoxLayout" name="verticalLayout">
      <item>
       <spacer name="verticalSpacer_2">
@@ -228,7 +244,7 @@ QPushButton { font: 75 20pt &quot;Tahoma&quot;; }
       </spacer>
      </item>
      <item>
-      <widget class="QPushButton" name="ampmbutton">
+      <widget class="QPushButton" name="ambutton">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
          <horstretch>0</horstretch>
@@ -250,6 +266,28 @@ QPushButton { font: 75 20pt &quot;Tahoma&quot;; }
       </widget>
      </item>
      <item>
+      <widget class="QPushButton" name="pmbutton">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="minimumSize">
+        <size>
+         <width>0</width>
+         <height>100</height>
+        </size>
+       </property>
+       <property name="text">
+        <string>PM</string>
+       </property>
+       <property name="checkable">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item>
       <spacer name="verticalSpacer">
        <property name="orientation">
         <enum>Qt::Vertical</enum>
@@ -264,16 +302,19 @@ QPushButton { font: 75 20pt &quot;Tahoma&quot;; }
      </item>
     </layout>
    </item>
-   <item row="3" column="0" colspan="4">
+   <item row="2" column="0" colspan="2">
     <widget class="QDialogButtonBox" name="buttonBox">
      <property name="font">
       <font>
        <family>Tahoma</family>
        <pointsize>12</pointsize>
-       <weight>9</weight>
+       <weight>50</weight>
        <italic>false</italic>
        <bold>false</bold>
       </font>
+     </property>
+     <property name="layoutDirection">
+      <enum>Qt::LeftToRight</enum>
      </property>
      <property name="standardButtons">
       <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>

@@ -1,4 +1,4 @@
-from PyQt4.QtGui import QDialog
+from PyQt4.QtGui import QDialog,QApplication, QButtonGroup
 from PyQt4.QtCore import QTime, Qt, QDateTime, QString
 from ui_datatimerpicker import Ui_datatimerpicker
 from qgis.core import *
@@ -14,7 +14,17 @@ class DateTimePickerDialog(QDialog):
         # Set up the user interface from Designer.
         self.ui = Ui_datatimerpicker()
         self.ui.setupUi(self)
-        self.ui.ampmbutton.toggled.connect(self._switchampm)
+        self.group = QButtonGroup()
+        self.group.setExclusive(True)
+        self.group.addButton(self.ui.ambutton)
+        self.group.addButton(self.ui.pmbutton)
+
+        self.ui.ambutton.toggled.connect(self.isDirty)
+        self.ui.pmbutton.toggled.connect(self.isDirty)
+        self.ui.datepicker.selectionChanged.connect(self.isDirty)
+        self.ui.hourpicker.itemSelectionChanged.connect(self.isDirty)
+        self.ui.minutepicker.itemSelectionChanged.connect(self.isDirty)
+
         self.ui.buttonBox.accepted.connect(self.accept)
         self.ui.buttonBox.rejected.connect(self.reject)
         self.ui.setasnowbutton.pressed.connect(self.setAsNow)
@@ -26,6 +36,13 @@ class DateTimePickerDialog(QDialog):
             self.ui.ampmbutton.hide()
         elif mode == "Time":
             self.ui.datepicker.hide()
+
+    def isDirty(self, *args):
+        date = self.getSelectedDate()
+        time = self.getSelectedTime()
+        datetime = QDateTime(date, time)
+        value = datetime.toString("ddd d MMM yyyy 'at' h:m ap")
+        self.ui.label.setText(value)
 
     def setDateTime(self, datetime):
         """
@@ -70,7 +87,7 @@ class DateTimePickerDialog(QDialog):
             log("Can't find minute")
 
         if amap == "PM":
-            self.ui.ampmbutton.setChecked(True)
+            self.ui.pmbutton.toggle()
 
     def setDate(self, date):
         """
@@ -82,10 +99,18 @@ class DateTimePickerDialog(QDialog):
         """
         Returns the currently selected data and time
         """
-        hour = self.ui.hourpicker.currentItem().text()
-        minute = self.ui.minutepicker.currentItem().text()
-        ampm = self.ui.ampmbutton.text()
-        return QTime.fromString("%s%s%s" % (hour, minute, ampm), "hmAP")
+        try:
+            hour = self.ui.hourpicker.currentItem().text()
+        except AttributeError:
+            hour = ""
+
+        try:
+            minute = self.ui.minutepicker.currentItem().text()
+        except AttributeError:
+            minute = ""
+
+        zone = self.ui.ambutton.isChecked() and "AM" or "PM"
+        return QTime.fromString("%s%s%s" % (hour, minute, zone), "hmAP")
 
     def getSelectedDate(self):
         """
@@ -93,8 +118,8 @@ class DateTimePickerDialog(QDialog):
         """
         return self.ui.datepicker.selectedDate()
 
-    def _switchampm(self, checked):
-        text = "AM"
-        if checked:
-            text = "PM"
-        self.ui.ampmbutton.setText(text)
+if __name__ == "__main__":
+    app = QApplication([])
+    dlg = DateTimePickerDialog()
+    dlg.show()
+    app.exec_()
