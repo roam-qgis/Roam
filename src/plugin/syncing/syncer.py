@@ -24,9 +24,8 @@ class Syncer(QObject):
         """
         curdir = os.path.abspath(os.path.dirname(__file__))
         cmdpath = os.path.join(curdir,'syncer.exe')
-        # TODO Get connection strings from the settings.ini file.
-        server = "Data Source=localhost;Initial Catalog=FieldData;Integrated Security=SSPI;"
-        client = "Data Source=localhost;Initial Catalog=SpatialData;Integrated Security=SSPI;"
+        server = settings.value("syncing/server").toPyObject()
+        client = settings.value("syncing/client").toPyObject()
         print server
         print client
         args = [cmdpath, '--server={0}'.format(server), '--client={0}'.format(client), '--porcelain']
