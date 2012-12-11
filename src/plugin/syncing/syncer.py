@@ -146,6 +146,8 @@ class SyncDialog(QDialog):
 
     def tableupdate(self, table, changes):
         # ewww
+        if changes == 0:
+            return
         message = self.ui.updatestatus.toPlainText()
         message += "\nUpdated layer {0} with {1} changes".format(table, changes)
         self.ui.updatestatus.setPlainText(message)
