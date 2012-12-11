@@ -119,11 +119,12 @@ namespace ConsoleApplication1
                     string message = string.Format("Scope called {0} already exists. Please use --deprovision first", tablename);
                     Console.Error.WriteLine(message);
                     Console.ForegroundColor = color;
-                    return;
                 }
                 Console.WriteLine("Provision complete");
                 if (server.ConnectionString != client.ConnectionString)
                 {
+                    if (client.State == System.Data.ConnectionState.Closed)
+                        client.Open();
                     Console.WriteLine("Adding to scopes table on client");
                     Provisioning.AddScopeToScopesTable(client, tablename,
                                                        utils.StringToEnum<SyncDirectionOrder>(direction));

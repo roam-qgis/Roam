@@ -200,7 +200,17 @@ public static class Provisioning
                                              || sp.Name.Equals(tableName + "_selectrow", StringComparison.InvariantCultureIgnoreCase)))
         {
             sp.TextBody = sp.TextBody.Replace(geometryColumn.QuotedName, string.Format("{0}.STAsText() as {0}", geometryColumn.QuotedName));
-            sp.Alter();
+            try
+            {
+                sp.Alter();   
+            }
+            catch (FailedOperationException ex)
+            {
+                if (ex.Operation != "Alter")
+                {
+                    throw;
+                }
+            }
         }
     }
 
