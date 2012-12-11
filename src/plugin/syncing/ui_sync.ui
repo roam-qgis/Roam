@@ -6,12 +6,12 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>821</width>
-    <height>477</height>
+    <width>887</width>
+    <height>421</height>
    </rect>
   </property>
   <property name="sizePolicy">
-   <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+   <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
     <horstretch>0</horstretch>
     <verstretch>0</verstretch>
    </sizepolicy>
@@ -25,37 +25,6 @@
 </string>
   </property>
   <layout class="QGridLayout" name="gridLayout">
-   <item row="6" column="1" colspan="2">
-    <widget class="QDialogButtonBox" name="buttonBox">
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-       <horstretch>0</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
-     </property>
-     <property name="font">
-      <font>
-       <family>Tahoma</family>
-       <pointsize>23</pointsize>
-       <weight>50</weight>
-       <italic>false</italic>
-       <bold>false</bold>
-      </font>
-     </property>
-     <property name="styleSheet">
-      <string notr="true"/>
-     </property>
-     <property name="orientation">
-      <enum>Qt::Horizontal</enum>
-     </property>
-     <property name="standardButtons">
-      <set>QDialogButtonBox::Ok</set>
-     </property>
-     <property name="centerButtons">
-      <bool>true</bool>
-     </property>
-    </widget>
-   </item>
    <item row="0" column="1" colspan="2">
     <widget class="QLabel" name="header">
      <property name="font">
@@ -81,25 +50,14 @@
      </property>
     </widget>
    </item>
-   <item row="2" column="1" rowspan="2" colspan="2">
-    <widget class="QLabel" name="statusLabel">
-     <property name="font">
-      <font>
-       <family>Tahoma</family>
-       <pointsize>23</pointsize>
-      </font>
-     </property>
-     <property name="text">
-      <string>Total Downloaded: - 
-Total Uploaded: - </string>
-     </property>
-     <property name="alignment">
-      <set>Qt::AlignCenter</set>
-     </property>
-    </widget>
-   </item>
    <item row="0" column="0" rowspan="4">
     <widget class="QLabel" name="label">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
      <property name="maximumSize">
       <size>
        <width>200</width>
@@ -148,6 +106,54 @@ p, li { white-space: pre-wrap; }
      </property>
      <property name="textInteractionFlags">
       <set>Qt::NoTextInteraction</set>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="1" rowspan="2" colspan="2">
+    <widget class="QLabel" name="statusLabel">
+     <property name="font">
+      <font>
+       <family>Tahoma</family>
+       <pointsize>23</pointsize>
+      </font>
+     </property>
+     <property name="text">
+      <string>Total Downloaded: - 
+Total Uploaded: - </string>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignCenter</set>
+     </property>
+    </widget>
+   </item>
+   <item row="6" column="1" colspan="2">
+    <widget class="QDialogButtonBox" name="buttonBox">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="font">
+      <font>
+       <family>Tahoma</family>
+       <pointsize>23</pointsize>
+       <weight>50</weight>
+       <italic>false</italic>
+       <bold>false</bold>
+      </font>
+     </property>
+     <property name="styleSheet">
+      <string notr="true"/>
+     </property>
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <property name="standardButtons">
+      <set>QDialogButtonBox::Ok</set>
+     </property>
+     <property name="centerButtons">
+      <bool>true</bool>
      </property>
     </widget>
    </item>
