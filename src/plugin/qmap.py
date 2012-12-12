@@ -173,9 +173,9 @@ class QMap():
         self.navtoolbar.insertWidget(self.iface.actionZoomFullExtent(), spacewidget)
         self.toolbar.addAction(self.editingmodeaction)
         self.toolbar.addAction(self.syncAction)
-        self.toolbar.insertSeparator(self.syncAction)
-        self.toolbar.insertWidget(self.gpsAction, gpsspacewidget)
         self.toolbar.addAction(self.gpsAction)
+        self.toolbar.insertWidget(self.syncAction, gpsspacewidget)
+        self.toolbar.insertSeparator(self.gpsAction)
 
         self.extraaddtoolbar.addAction(self.addatgpsaction)
 
