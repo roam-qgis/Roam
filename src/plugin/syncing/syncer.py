@@ -2,12 +2,7 @@ from PyQt4.QtCore import QObject, pyqtSignal
 from os import path
 import sys
 from subprocess import Popen, PIPE
-
-#This feels a bit hacky
-pardir = path.abspath(path.join(path.dirname(__file__), '..'))
-sys.path.append(pardir)
-
-from utils import log, settings
+from qmap.utils import log, settings
 
 class Syncer(QObject):
     syncingtable = pyqtSignal(str, int)
@@ -43,7 +38,6 @@ class Syncer(QObject):
                     downloads = int(values.get('td'))
                     uploads = int(values.get('tu'))
                     self.syncingfinished.emit(downloads, uploads)
-
                 elif 't' in values:
                     table = values.get('t')
                     inserts = int(values.get('i'))
