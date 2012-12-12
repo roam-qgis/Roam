@@ -6,15 +6,15 @@ import os
 import sys
 import datetime
 from fabricate import *
-from ConfigParser import ConfigParser, NoSectionError, NoOptionError
 import optparse
+import json
 
 APPNAME = "QMap"
 curpath = os.path.dirname(os.path.abspath(__file__))
 srcopyFilesath = join(curpath, "src", "plugin")
 buildpath = join(curpath, "build", APPNAME)
 deploypath = join(curpath, "build", APPNAME, APPNAME.lower())
-targetspath = join(curpath, 'targets.ini')
+targetspath = join(curpath, 'targets.config')
 bootpath = join(curpath, "src", "loader_src")
 dotnetpath = join(curpath, "src", "dotnet")
 
@@ -173,17 +173,22 @@ def deploy():
         print "No target name given depolying All target"
         targetname = 'All'
 
-    config = ConfigParser()
-    config.read(targetspath)
+    try:
+        with open(targetspath,'r') as f:
+            config = json.load(f)
+            print config
+    except IOError:
+        print "Failed to open %s" % targetspath
+        return
 
     try:
-        config.get(targetname, 'client').split(',')
-    except NoSectionError as ex:
+        config['clients'][targetname]
+    except KeyError as ex:
         print "No client in targets.ini defined as %s" % targetname
         return
 
     build_plugin()
-    deploy_target(targetname, config)
+    deploy_target(targetname, config['clients'])
 
 
 def deploy_to(target, config):
@@ -249,28 +254,27 @@ def deploy_to(target, config):
 def deploy_target(targetname, config):
     targets = {}
     try:
-        clients = config.get(targetname, 'client').split(',')
+        clients = config[targetname]['client']
+        print config[targetname]
         for client in clients:
-            client = client.strip()
+            client = client
             if client == targetname:
                 print "Can't include a section as a deploy target of itself"
                 continue
 
-            if client in config.sections():
+            if client in config:
                 deploy_target(client, config)
             else:
                 print 'Client -> %s' % client
-                projects = config.get(targetname, 'projects').split(',')
-                forms = config.get(targetname, 'forms').split(',')
+                projects = config[targetname]['projects']
+                forms = config[targetname]['forms']
                 targets[targetname] = {'client': client, 'projects': projects, \
                                  'forms': forms}
 
             for target, items in targets.iteritems():
                 deploy_to(target, items)
 
-    except NoSectionError as ex:
-        print ex.message
-    except NoOptionError as ex:
+    except KeyError as ex:
         print ex.message
 
 if __name__ == "__main__":
