@@ -1,13 +1,10 @@
-from PyQt4.QtCore import *
-from PyQt4.QtGui import *
-from qgis.core import *
-from ui_sync import Ui_syncForm
-import os
+from PyQt4.QtCore import QObject, pyqtSignal
+from os import path
 import sys
 from subprocess import Popen, PIPE
 
 #This feels a bit hacky
-pardir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
+pardir = path.abspath(path.join(path.dirname(__file__), '..'))
 sys.path.append(pardir)
 
 from utils import log, settings
@@ -22,8 +19,8 @@ class Syncer(QObject):
         Run the sync for MS SQL.
 
         """
-        curdir = os.path.abspath(os.path.dirname(__file__))
-        cmdpath = os.path.join(curdir,'syncer.exe')
+        curdir = path.abspath(path.dirname(__file__))
+        cmdpath = path.join(curdir,'syncer.exe')
         server = settings.value("syncing/server").toPyObject()
         client = settings.value("syncing/client").toPyObject()
         print server
@@ -68,12 +65,12 @@ class Syncer(QObject):
         returns -- Returns a tuple of (state, message). state can be 'Pass' or
                    'Fail'
         """
-        images = os.path.join(pardir, "data")
+        images = path.join(pardir, "data")
         server = settings.value("syncing/server_image_location").toString()
         if server.isEmpty():
             return ('Fail', "No server image location found in settings.ini")
 
-        if not os.path.exists(images):
+        if not path.exists(images):
             # Don't return a fail if there is no data directory
             return ('Pass', 'Images uploaded: %s' % str(0))
 
@@ -84,71 +81,4 @@ class Syncer(QObject):
             return ('Fail', stderr)
         else:
             return ('Pass', stdout)
-       
 
-class SyncDialog(QDialog):
-    def __init__(self):
-        QDialog.__init__(self)
-        # Set up the user interface from Designer.
-        self.ui = Ui_syncForm()
-        self.ui.setupUi(self)
-        self.setWindowFlags(Qt.FramelessWindowHint)
-        scr = QApplication.desktop().screenGeometry(0)
-        self.move( scr.center() - self.rect().center() )
-        self.failed = False
-        self.ui.buttonBox.setEnabled(False)
-
-    def updateFailedStatus(self, text):
-        self.ui.statusLabel.setStyleSheet("color: rgba(222, 13, 6);")
-        self.ui.statusLabel.setText("We couldn't sync for some reason. \n "\
-                                    "Dont' worry you might just not have an " \
-                                    "internet connection at this time" \
-                                    "\n\n We have logged it "
-                                    "so we can take a look. Just in case.")
-                                    
-        self.ui.label.setPixmap(QPixmap(":/syncing/sad"))
-        log("SYNC ERROR:" + text)
-        self.ui.buttonBox.show()
-        self.failed = True
-
-    def runSync(self):
-        """
-        Shows the sync dialog and runs the sync commands.
-        """
-        sync = Syncer()
-        sync.syncingtable.connect(self.tableupdate)
-        sync.syncingfinished.connect(self.syncfinsihed)
-        sync.syncMSSQL()
-
-        # if state == 'Fail':
-        #     self.updateFailedStatus(sqlmsg)
-        #     return
-
-        # log(sqlmsg)
-
-        # self.ui.statusLabel.setText(message + "\n\n Syncing images...")
-        # QCoreApplication.processEvents()
-        
-        # state, msg = syncImages()
-
-        # if state == 'Fail':
-        #     self.updateFailedStatus(msg)
-        #     return
-
-        # self.updateStatus("%s \n %s" % (sqlmsg, msg))
-
-    def syncfinsihed(self, down, up):
-        message = "Total Downloaded: {0}\nTotal Uploaded: {1}".format(down,up)
-        self.ui.statusLabel.setText(message)
-        self.ui.header.setText("Sync complete")
-        self.ui.buttonBox.setEnabled(True)
-        QCoreApplication.processEvents()
-
-    def tableupdate(self, table, changes):
-        # ewww
-        if changes == 0:
-            return
-        message = self.ui.updatestatus.toPlainText()
-        message += "\nUpdated layer {0} with {1} changes".format(table, changes)
-        self.ui.updatestatus.setPlainText(message)
-        QCoreApplication.processEvents()
