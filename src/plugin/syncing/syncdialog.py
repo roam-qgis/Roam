@@ -1,7 +1,6 @@
 from PyQt4.QtGui import QDialog, QApplication
 from PyQt4.QtCore import Qt, QCoreApplication
 from ui_sync import Ui_syncForm
-from qmap.syncing.syncer import Syncer
 
 class SyncDialog(QDialog):
     def __init__(self):
@@ -28,14 +27,18 @@ class SyncDialog(QDialog):
         self.ui.buttonBox.show()
         self.failed = True
 
-    def runSync(self):
+    def runSync(self, providers):
         """
         Shows the sync dialog and runs the sync commands.
         """
-        sync = Syncer()
-        sync.syncingtable.connect(self.tableupdate)
-        sync.syncingfinished.connect(self.syncfinsihed)
-        sync.syncMSSQL()
+        for provider in providers:
+            provider.syncingtable.connect(self.tableupdate)
+            provider.syncingfinished.connect(self.syncfinsihed)
+            provider.sync()
+
+        # sync = Syncer()
+
+        # sync.syncMSSQL()
 
         # if state == 'Fail':
         #     self.updateFailedStatus(sqlmsg)

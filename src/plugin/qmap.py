@@ -35,6 +35,7 @@ from utils import log
 import functools
 import utils
 from floatingtoolbar import FloatingToolBar
+from syncing.syncer import syncproviders
 
 
 class QMap():
@@ -357,5 +358,5 @@ class QMap():
         self.syndlg.show()
         # HACK
         QCoreApplication.processEvents()
-        self.syndlg.runSync()
+        self.syndlg.runSync(syncproviders)
         self.iface.mapCanvas().refresh()
