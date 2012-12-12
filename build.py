@@ -136,15 +136,15 @@ def build_plugin():
     copyFiles(bootpath,buildpath)
 
     if iswindows and main.options.with_mssyncing == True:
-        mssyncpath = os.path.join(dotnetpath, "bin")
-        lib = os.path.join(mssyncpath, "libsyncing.dll")
-        bin = os.path.join(mssyncpath, "syncer.exe")
-        destmssyncpath = os.path.join(deploypath,"syncing")
+        mssyncpath = join(dotnetpath, "bin")
+        lib = join(mssyncpath, "libsyncing.dll")
+        bin = join(mssyncpath, "syncer.exe")
+        destmssyncpath = join(deploypath,"syncing")
         copyFolder(lib, destmssyncpath)
         copyFolder(bin, destmssyncpath)
     # Replace version numbers
     version = getVersion()
-    command = 's/version=0.1/version=%s/ "%s"' % (version, os.path.join(deploypath, 'metadata.txt'))
+    command = 's/version=0.1/version=%s/ "%s"' % (version, join(deploypath, 'metadata.txt'))
     #run("sed", command)
 
     print "Local build into {0}".format(deploypath)
@@ -182,23 +182,22 @@ def deploy():
         return
 
     try:
-        config['clients'][targetname]
+        clients = config['clients'][targetname]
     except KeyError as ex:
         print "No client in targets.ini defined as %s" % targetname
         return
 
     build_plugin()
-    deploy_target(targetname, config['clients'])
+    target = config['clients'][targetname]
+    print "Deploying application to %s" % targetname
+    deploytarget(target)
 
+def deploytarget(clientconfig):
+    projects = clientconfig['projects']
+    forms = clientconfig['forms']
+    clientpath = os.path.normpath(clientconfig['path'])
 
-def deploy_to(target, config):
-    print "Remote depolying to %s" % target
-
-    projects = config['projects']
-    forms = config['forms']
-    clientpath = os.path.normpath(config['client'])
-
-    print "Deploying application to %s" % config['client']
+    print "Deploying application to %s" % clientpath
     clientpath = os.path.join(clientpath, APPNAME)
     mkdir(clientpath)
     copyFiles(buildpath,clientpath)
@@ -249,33 +248,6 @@ def deploy_to(target, config):
                     copyFolder(path, newpath)
 
     print "Remote depoly compelete"
-
-
-def deploy_target(targetname, config):
-    targets = {}
-    try:
-        clients = config[targetname]['client']
-        print config[targetname]
-        for client in clients:
-            client = client
-            if client == targetname:
-                print "Can't include a section as a deploy target of itself"
-                continue
-
-            if client in config:
-                deploy_target(client, config)
-            else:
-                print 'Client -> %s' % client
-                projects = config[targetname]['projects']
-                forms = config[targetname]['forms']
-                targets[targetname] = {'client': client, 'projects': projects, \
-                                 'forms': forms}
-
-            for target, items in targets.iteritems():
-                deploy_to(target, items)
-
-    except KeyError as ex:
-        print ex.message
 
 if __name__ == "__main__":
     options = [
