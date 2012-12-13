@@ -63,7 +63,7 @@ class QMap():
         the plugin.
         """
         self.iface.mainWindow().setWindowTitle("QMap: A data collection program for QGIS")
-        fullscreen = utils.settings.value("fullscreen").toBool()
+        fullscreen = utils.settings["fullscreen"]
         if fullscreen:
             self.iface.mainWindow().showFullScreen()
         else:

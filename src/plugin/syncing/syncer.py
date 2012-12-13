@@ -23,8 +23,8 @@ def syncMSSQL(self):
     """
     curdir = path.abspath(path.dirname(__file__))
     cmdpath = path.join(curdir,'syncer.exe')
-    server = settings.value("syncing/server").toPyObject()
-    client = settings.value("syncing/client").toPyObject()
+    server = settings["syncing"]["server"]
+    client = settings["syncing"]["client"]
     args = [cmdpath, '--server={0}'.format(server), '--client={0}'.format(client), '--porcelain']
     # We have to PIPE stdin even if we don't use it because of Windows  
     p = Popen(args, stdout=PIPE, stderr=PIPE,stdin=PIPE, shell=True)
@@ -65,9 +65,10 @@ def syncImages(self):
                'Fail'
     """
     images = path.join(pardir, "data")
-    server = settings.value("syncing/server_image_location").toString()
-    if server.isEmpty():
-        return ('Fail', "No server image location found in settings.ini")
+    try:
+        server = settings["syncing"]["server_image_location"]
+    except KeyError:
+        return ('Fail', "No server image location found in settings.config")
 
     if not path.exists(images):
         # Don't return a fail if there is no data directory

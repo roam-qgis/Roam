@@ -41,7 +41,7 @@ class GPSAction(QAction):
             self.setIconText("Connecting")
             self.setEnabled(False)
 
-            portname = utils.settings.value("gps/port").toString()
+            portname = utils.settings["gpsport"]
             log("Connecting to:" + portname)
             self.detector = QgsGPSDetector(portname)
             self.detector.detected.connect(self.connected)

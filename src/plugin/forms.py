@@ -5,6 +5,7 @@ from PyQt4.uic import loadUi
 from PyQt4.QtSql import QSqlDatabase, QSqlQuery
 import os
 import imp
+import json
 
 def getForms():
     """ Get all the custom user forms that have been created.
@@ -17,8 +18,9 @@ def getForms():
     formspath = os.path.join(curdir,'entry_forms')
     for module in os.listdir(formspath):
         if module[:4] == 'form':
-            instance = loadFormModule(module)
-            modules.append(Form(instance))
+            if os.path.exists(os.path.join(formspath,module,"settings.config")):
+                instance = loadFormModule(module)
+                modules.append(Form(instance))
 
     return modules
 
@@ -70,7 +72,8 @@ class Form(object):
     def settings(self):
         if self._settings is None:
             path = os.path.dirname(self.module.__file__)
-            self._settings = QSettings(os.path.join(path, "settings.ini"), QSettings.IniFormat )
+            with open(os.path.join(path, "settings.config"),'r') as f:
+                self._settings = json.load(f)
 
         return self._settings
     
@@ -84,10 +87,10 @@ class Form(object):
             return None
 
     def layerName(self):
-        return str(self.settings().value("layer_name").toString())
+        return str(self.settings()["layer_name"])
 
     def formName(self):
-        return str(self.settings().value("form_name").toString())
+        return str(self.settings()["form_name"])
 
     def icon(self):
         return QIcon(os.path.join(os.path.dirname(self.module.__file__),'icon.png'))

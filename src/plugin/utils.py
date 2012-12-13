@@ -4,6 +4,7 @@ from qgis.core import QgsMessageLog
 import logging
 import os
 from PyQt4.QtCore import QSettings
+import json
 
 LOG_FILENAME = 'main.log'
 uic.uiparser.logger.setLevel(logging.INFO)
@@ -16,8 +17,9 @@ warning = lambda msg: logging.warning(msg)
 error = lambda msg: logging.error(msg)
 
 curdir = os.path.dirname(__file__)
-settingspath = os.path.join(curdir,'settings.ini')
-settings = QSettings(settingspath, QSettings.IniFormat)
+settingspath = os.path.join(curdir,'settings.config')
+with open(settingspath,'r') as f:
+    settings = json.load(f)
 
 class Timer():
     def __init__(self, message=""):
