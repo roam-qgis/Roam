@@ -24,7 +24,7 @@ def getForms():
 
 def loadFormModule(module):
     """ Load the forms module """
-    formmodule = __import__("entry_forms.%s" % module, locals(), globals(),["*"], 1)
+    formmodule = __import__("qmap.entry_forms.%s" % module, locals(), globals(),["*"], 1)
     return formmodule
 
 class Form(object):

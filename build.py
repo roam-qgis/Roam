@@ -224,7 +224,10 @@ def deploy_to(target, config):
                 icon = project[:-4] + ".png"
                 path = os.path.join(projecthome, icon)
                 newpath = os.path.join(clientpojecthome, icon)
-                copyFolder(path, newpath)
+                if os.path.exists(path):
+                    copyFolder(path, newpath)
+                else:
+                    print "No project image. Ignoring"
 
     if 'All' in forms:
         print "Loading all forms"
