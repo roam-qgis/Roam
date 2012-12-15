@@ -273,23 +273,24 @@ class QMap():
         for action in self.actions:
             self.toolbar.removeAction(action)
 
-        userForms = forms.getForms()
-
-        for form in userForms:
+        for layername, form in forms.getForms().iteritems():
             try:
-                layer = layers[form.layerName()]
-                action = (AddAction(form.formName(), self.iface,
-                                   form, layer, form.icon()))
-                self.toolbar.insertAction(self.editingmodeaction, action)
-                showgpstools = (functools.partial(self.extraaddtoolbar.showToolbar, 
-                                                 action,
-                                                 None))
-                action.toggled.connect(showgpstools)
-                self.actionGroup.addAction(action)
-                self.actions.append(action)
-                layerstoForms[layer] = form
+                layer = layers[layername]    
             except KeyError:
-                log("Couldn't find layer for form %s" % form.layerName())
+                log("Couldn't find layer for form %s" % layername)
+                continue           
+            text = "New %s" % form.nameforform(layername)
+            action = (AddAction(text, self.iface,
+                               form, layer, form.icon()))
+            self.toolbar.insertAction(self.editingmodeaction, action)
+            showgpstools = (functools.partial(self.extraaddtoolbar.showToolbar, 
+                                             action,
+                                             None))
+            action.toggled.connect(showgpstools)
+            self.actionGroup.addAction(action)
+            self.actions.append(action)
+            layerstoForms[layer] = form
+
 
         QMap.layerformmap = layerstoForms
 

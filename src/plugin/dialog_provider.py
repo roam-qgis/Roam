@@ -62,7 +62,7 @@ class DialogProvider(QObject):
 
         self.dialog.setModal(True)
         
-        if self.settings.value("fullscreen", False).toBool():
+        if self.settings.get("fullscreen", False):
             self.dialog.showFullScreen()
         else:
             self.dialog.show()

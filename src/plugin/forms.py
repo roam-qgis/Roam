@@ -13,16 +13,18 @@ def getForms():
 
     @Returns A list of modules that contain user forms.
     """
-    modules = []
+    forms = {}
     curdir = os.path.abspath(os.path.dirname(__file__))
     formspath = os.path.join(curdir,'entry_forms')
     for module in os.listdir(formspath):
         if module[:4] == 'form':
             if os.path.exists(os.path.join(formspath,module,"settings.config")):
                 instance = loadFormModule(module)
-                modules.append(Form(instance))
+                form = Form(instance)
+                for layername in form.layers():
+                    forms[layername] = form
 
-    return modules
+    return forms
 
 def loadFormModule(module):
     """ Load the forms module """
@@ -86,11 +88,11 @@ class Form(object):
         else:
             return None
 
-    def layerName(self):
-        return str(self.settings()["layer_name"])
+    def layers(self):
+        return self.settings()["layers"].keys()
 
-    def formName(self):
-        return str(self.settings()["form_name"])
+    def nameforform(self, layer):
+        return self.settings()["layers"][layer]["text"]
 
     def icon(self):
         return QIcon(os.path.join(os.path.dirname(self.module.__file__),'icon.png'))

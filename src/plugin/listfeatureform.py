@@ -42,7 +42,7 @@ class FeatureItem(QListWidgetItem):
         self._layer = layer
         formname = "Default"''
         if not form == "Default":
-            formname = form.formName()
+            formname = "Edit %s" % form.nameforform(str(layer.name()))
 
         self.setText("%s for item no. %s" % ( formname , str(self.feature.id()) ))
         

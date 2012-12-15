@@ -184,7 +184,7 @@ def deploy():
     try:
         clients = config['clients'][targetname]
     except KeyError as ex:
-        print "No client in targets.ini defined as %s" % targetname
+        print "No client in targets.config defined as %s" % targetname
         return
 
     build_plugin()

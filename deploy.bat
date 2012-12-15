@@ -10,5 +10,6 @@ set QGISHOME=C:\OSGeo4W\apps\qgis-dev\
 
 python build.py --target=Sample ^
 		--with-docs=False ^
+		--with-mssyncing=False ^
 		--with-tests=False deploy
 pause
