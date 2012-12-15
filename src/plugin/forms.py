@@ -89,10 +89,20 @@ class Form(object):
             return None
 
     def layers(self):
+        """
+        Returns a list of layer names this form can be used with
+        """
         return self.settings()["layers"].keys()
 
     def nameforform(self, layer):
+        """
+        Return the text for the form
+        """
         return self.settings()["layers"][layer]["text"]
 
     def icon(self):
+        """
+        Return the icon for the form
+        """
+        # TODO Return a icon for each 
         return QIcon(os.path.join(os.path.dirname(self.module.__file__),'icon.png'))
