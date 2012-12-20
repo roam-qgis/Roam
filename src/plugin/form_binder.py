@@ -13,6 +13,7 @@ from drawingpad import DrawingPad
 from helpviewdialog import HelpViewDialog
 from utils import log, warning
 import re
+from qgis.gui import QgsAttributeEditor
 
 
 class BindingError(Exception):
@@ -184,7 +185,7 @@ class FormBinder(QObject):
                     pass
 
             try:
-                self.bindValueToControl(control, value)
+                self.bindValueToControl(control, value, index)
             except BindingError as er:
                 warning(er.reason)
 
@@ -335,7 +336,7 @@ class FormBinder(QObject):
                     linked_control.currentItemChanged.connect(partial(self.updateControl, \
                                                                       control, mapping, sql ))
 
-    def bindValueToControl(self, control, value):
+    def bindValueToControl(self, control, value, index=0):
         """
         Binds a control to the supplied value.
         Raises BindingError() if control is not supported.
@@ -354,40 +355,8 @@ class FormBinder(QObject):
             except IndexError:
                 pass
 
-        elif isinstance(control, QLineEdit) or isinstance(control, QTextEdit):
-            control.setText(value.toString())
-
-        elif isinstance(control, QCheckBox) or isinstance(control, QGroupBox):
+        elif isinstance(control, QGroupBox):
             control.setChecked(value.toBool())
-
-        elif isinstance(control, QPlainTextEdit):
-            control.setPlainText(value.toString())
-
-        elif isinstance(control, QComboBox):
-            # Add items stored in the database
-            query = QSqlQuery()
-            query.prepare("SELECT value FROM ComboBoxItems WHERE control = :contorl")
-            query.bindValue(":control", control.objectName())
-            query.exec_()
-            while query.next():
-                newvalue = query.value(0).toString()
-                if not newvalue.isEmpty():
-                    control.addItem(newvalue)
-
-            itemindex = control.findText(value.toString())
-            if itemindex == -1:
-                control.insertItem(0,value.toString())
-                control.setCurrentIndex(0)
-            else:
-                control.setCurrentIndex(itemindex)
-
-        elif isinstance(control, QDoubleSpinBox):
-            double, passed = value.toDouble()
-            control.setValue(double)
-
-        elif isinstance(control, QSpinBox):
-            integer, passed = value.toInt()
-            control.setValue(integer)
 
         elif isinstance(control, QDateTimeEdit):
             control.setDateTime(QDateTime.fromString(value.toString(), Qt.ISODate))
@@ -406,7 +375,9 @@ class FormBinder(QObject):
                 control.setIconSize(QSize(24,24))
                 control.pressed.connect(partial(self.loadDrawingTool, control))
         else:
-            raise BindingError(control, value.toString(), "Unsupported widget %s" % control)
+            widget = QgsAttributeEditor.createAttributeEditor(None, control, self.layer, index, value)
+            log(control)
+            log(widget)
 
     def loadDrawingTool(self, control):
         """

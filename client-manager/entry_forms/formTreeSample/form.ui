@@ -158,36 +158,6 @@ p, li { white-space: pre-wrap; }
          <string/>
         </property>
        </item>
-       <item>
-        <property name="text">
-         <string>Streetscape</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>Street Tree</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>Road Reserve</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>Active Park</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>Passive Park</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>Open Space</string>
-        </property>
-       </item>
       </widget>
      </item>
      <item row="1" column="0">
