@@ -13,52 +13,48 @@
 
 .. contents::
 
-|name| is a simple to use, simple to configure, data collection
-program built by Southern Downs Regional Council that uses QGIS.  |name| is a QGIS
-Python plugin that removes most of the interface and replacing it with a simple
-to use interface for data collection. The program is only in early alpha stage 
-but is functional and activly worked on.
+|name| is a field data collection application built using QGIS. It was built to be easy to use on (windows) based tablet devices, with Android planned for the future.
 
-Although this project is written as a QGIS plugin it is designed to be run 
-in in it's own QGIS sandbox using the --config path command line option of QGIS. 
-This means that it acts like a standalone program and will store its settings 
-away from the normal QGIS install. This is to provide a controlled QGIS 
-environment with a minimal interface
+Custom forms are built using Qt Designer and follow a convention based approach in order to save configuration.  The general goal of |name| is to be datasource agnostic in most of what it does.  
 
-As |name| is just QGIS you can use your normal QGIS project files (.qgs)
-in order to create mapping projects. Forms are loaded based 
-on the naming of layers in the project.  E.g. A form can be bound to the 
-layer "Sewer Main" and will be useable in any project that includes 
-a layer with the name "Sewer Main". Note QGIS allows you rename layers without
-renaming the underlying file name.
+|name| was orignally built by Southern Downs Regional Council, and now open sourced under the GPL, in order to aid in field data collection. |name| is maintained by `Nathan <https://github.com/NathanW2>`_ at work and in his spare time.
+
 
 Requirements
 -------------
 - Latest development QGIS Version (this is due to bug fixes in master)
-- mock (for Python tests)
-- Qt Designer (for form building)
-- Something to install it on (some kind of fancy tablet PC)
-
-If you want SQL Server syncing support
-
-- MS SQL Server 2008 (express or greater)
-- .NET 3.5 (or greater)
-- Microsoft Sync Framework
+- mock (optional to run tests)
+- Qt Designer (part of the qt4-devel package)
 
 OSGeo4W Packages
 
 - qgis-dev
 - qt4-devel
 
-Syncing
---------------
-At the moment syncing is done using MS SQL Sync Framework as it takes away a lot
-of the leg work for MS SQL Server 2008 based layers. 
+If you need SQL Server syncing support
 
-If syncing support is not needed you can just remove the button from the interface 
-and and call build.py with --with-mssyncing=False. Syncing support for different 
-data sources e.g. PostGIS, SpatiaLite might added later.
+- MS SQL Server 2008 (express or greater)
+- .NET 3.5 (or greater)
+- Microsoft Sync Framework
 
+Syncing Support
+-----------------
+Supported sycning providers
+
+  - MS SQL Server 2008
+
+At the moment syncing of MS SQL 2008 Spatial layers is done using MS SQL Sync Framework.
+
+Syncing support is not a requirement to use QMap, nor is it a requirement to use SQL Server 2008 layers in your projects.  
+
+If syncing support is not needed build.py can take --with-mssyncing=False which will skip the compiling of the .NET syncing library. 
+
+Syncing support for different data sources e.g. PostGIS, SpatiaLite might added later.
+
+Downloading and Running
+-----------------------
+
+  - Download the latest version of |name| from 
 
 Program Layout
 --------------
