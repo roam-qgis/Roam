@@ -1,5 +1,5 @@
 import PyQt4.uic
-from PyQt4.QtCore import QAbstractItemModel, Qt
+from PyQt4.QtCore import QAbstractItemModel, Qt, QString
 from PyQt4.QtGui import (QDialog, QApplication, QListWidgetItem, 
 						QStandardItemModel, QStandardItem, QDataWidgetMapper)
 import sys
@@ -46,26 +46,46 @@ class QMapManager(QDialog):
 		self.projectlist.setModel(self.projectsmodel)
 		self.formlist.setModel(self.formmodel)
 		self.clientlist.setModel(self.model)
+		self.clientlist.selectionModel().selectionChanged.connect(self.update)
 
 		self.mapper = QDataWidgetMapper()
-		self.clientlist.selectionModel().currentChanged.connect(self.mapper.setCurrentModelIndex)
 		self.mapper.setModel(self.model)
 		self.mapper.addMapping(self.installpath, 1)
+		
 		self.populateForms()
 		self.populateProjects()
 		self.populateClients(config)
+
+	def update(self, selected, deselected ):
+		index = selected.indexes()[0]
+		self.mapper.setCurrentModelIndex(index)
+		item = self.model.itemFromIndex(index)
+		settings = item.data().toPyObject()
+
+		for row in xrange(0,self.projectsmodel.rowCount()):
+			index = self.projectsmodel.index(row, 0)
+			item = self.projectsmodel.itemFromIndex(index)
+			item.setCheckState(Qt.Unchecked)
+
+		projects = settings[QString('projects')]
+		forms = settings[QString('forms')]  
+
+		for form in forms:
+			formitem = self.formmodel.findItems(form)[0]
+		 	formitem.setCheckState(Qt.Checked)
+
+		for project in projects:
+			project = project[:-4]
+			projectitem = self.projectsmodel.findItems(project)[0]
+		 	projectitem.setCheckState(Qt.Checked)
+				
 
 	def populateClients(self, config):
 		row = 0
 		for client, settings in config['clients'].iteritems():
 			name = QStandardItem(client)
+			name.setData(settings)
 			path = QStandardItem(settings['path'])
-			for project in settings['projects']:
-				project = project[:-4]
-				item = self.projectsmodel.findItems(project)[0]
-				index = self.projectsmodel.indexFromItem(item)
-				if index:
-					item.setCheckState(Qt.Checked)
 			self.model.insertRow(row, [name, path])
 			row += 1
 
