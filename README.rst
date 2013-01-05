@@ -41,7 +41,7 @@ Syncing Support
 -----------------
 Supported sycning providers
 
-  - MS SQL Server 2008
+- MS SQL Server 2008
 
 At the moment syncing of MS SQL 2008 Spatial layers is done using MS SQL Sync Framework.
 
@@ -54,31 +54,31 @@ Syncing support for different data sources e.g. PostGIS, SpatiaLite might added 
 Downloading and Running
 -----------------------
 
-  - Download the latest version (highest number wins) of |name| from https://github.com/NathanW2/qmap/tags using the Source Code(.zip).
-  - Extact source files
-  - Run build.bat - This will compile all the files that QMap needs.  If you don't need SQL syncing pass the --with-mssyncing=False to build.py in build.bat.
-  - Add the client settings to targets.config following the below format (inside the "clients section")
+- Download the latest version (highest number wins) of |name| from https://github.com/NathanW2/qmap/tags using the Source Code(.zip).
+- Extact source files
+- Run build.bat - This will compile all the files that QMap needs.  If you don't need SQL syncing pass the --with-mssyncing=False to build.py in build.bat.
+- Add the client settings to targets.config following the below format (inside the "clients section")
 
-    ::
+  ::
 
-        "{Client Name}": {
-              "path" : "{Path to client}",
-              "projects" : [{List of Projects}],
-              "forms" : [{List of forms}]
-            },
+      "{Client Name}": { 
+            "path" : "{Path to client}",
+            "projects" : [{List of Projects}],
+            "forms" : [{List of forms}]
+          },
 
-    an example of a client config is
+  an example of a client config is
 
-    ::
+  ::
 
-        "Sample": {
-          "path" : "C:/",
-          "projects" : ["Trees (Sample).qgs",
-                  "Trees (Sample) Multi.qgs"],
-          "forms" : ["formTreeSample"]
-            },
+      "Sample": {
+        "path" : "C:/",
+        "projects" : ["Trees (Sample).qgs",
+                "Trees (Sample) Multi.qgs"],
+        "forms" : ["formTreeSample"]
+          },
 
-  - Run depoly.bat changing --target=Sample to match the {Client Name} in your targets.config.
+- Run depoly.bat changing --target=Sample to match the {Client Name} in your targets.config.
   
 
 
