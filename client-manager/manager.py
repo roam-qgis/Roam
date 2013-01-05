@@ -1,5 +1,5 @@
 import PyQt4.uic
-from PyQt4.QtCore import QAbstractItemModel
+from PyQt4.QtCore import QAbstractItemModel, Qt
 from PyQt4.QtGui import (QDialog, QApplication, QListWidgetItem, 
 						QStandardItemModel, QStandardItem, QDataWidgetMapper)
 import sys
@@ -65,7 +65,7 @@ class QMapManager(QDialog):
 				item = self.projectsmodel.findItems(project)[0]
 				index = self.projectsmodel.indexFromItem(item)
 				if index:
-					item.setChecked
+					item.setCheckState(Qt.Checked)
 			self.model.insertRow(row, [name, path])
 			row += 1
 
