@@ -54,7 +54,33 @@ Syncing support for different data sources e.g. PostGIS, SpatiaLite might added 
 Downloading and Running
 -----------------------
 
-  - Download the latest version of |name| from 
+  - Download the latest version (highest number wins) of |name| from https://github.com/NathanW2/qmap/tags using the Source Code(.zip).
+  - Extact source files
+  - Run build.bat - This will compile all the files that QMap needs.  If you don't need SQL syncing pass the --with-mssyncing=False to build.py in build.bat.
+  - Add the client settings to targets.config following the below format (inside the "clients section")
+
+    ::
+
+        "{Client Name}": {
+              "path" : "{Path to client}",
+              "projects" : [{List of Projects}],
+              "forms" : [{List of forms}]
+            },
+
+    an example of a client config is
+
+    ::
+
+        "Sample": {
+          "path" : "C:/",
+          "projects" : ["Trees (Sample).qgs",
+                  "Trees (Sample) Multi.qgs"],
+          "forms" : ["formTreeSample"]
+            },
+
+  - Run depoly.bat changing --target=Sample to match the {Client Name} in your targets.config.
+  
+
 
 Program Layout
 --------------
@@ -104,7 +130,7 @@ targets.ini to depoly different forms and projects to different clients by runni
     python build.py --target=Client2 deploy
     python build.py --target=Client4 deploy
 
-With ``Client1``, ``Client2``, ``Client4` being different devices with different
+With ``Client1``, ``Client2``, ``Client4`` being different devices with different
 forms and projects.
 
 Client Manager and Data
