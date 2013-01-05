@@ -1,7 +1,8 @@
 import PyQt4.uic
 from PyQt4.QtCore import QAbstractItemModel, Qt, QString
 from PyQt4.QtGui import (QDialog, QApplication, QListWidgetItem, 
-						QStandardItemModel, QStandardItem, QDataWidgetMapper)
+						QStandardItemModel, QStandardItem, QDataWidgetMapper,
+						QItemSelectionModel)
 import sys
 import os
 import json
@@ -47,7 +48,7 @@ class QMapManager(QDialog):
 		self.formlist.setModel(self.formmodel)
 		self.clientlist.setModel(self.model)
 		self.clientlist.selectionModel().selectionChanged.connect(self.update)
-
+		self.installbutton.pressed.connect(self.installToClient)
 		self.mapper = QDataWidgetMapper()
 		self.mapper.setModel(self.model)
 		self.mapper.addMapping(self.installpath, 1)
@@ -55,6 +56,11 @@ class QMapManager(QDialog):
 		self.populateForms()
 		self.populateProjects()
 		self.populateClients(config)
+		
+	def installToClient(self):
+		index = self.clientlist.selectionModel().currentIndex()
+		item = self.model.itemFromIndex(index)
+		print "Deploying to " + item.text()
 
 	def update(self, selected, deselected ):
 		index = selected.indexes()[0]

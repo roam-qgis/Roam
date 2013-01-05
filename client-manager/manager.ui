@@ -74,7 +74,7 @@
        </layout>
       </item>
       <item row="3" column="0" colspan="2">
-       <widget class="QPushButton" name="pushButton">
+       <widget class="QPushButton" name="installbutton">
         <property name="font">
          <font>
           <pointsize>14</pointsize>
