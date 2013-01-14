@@ -33,7 +33,7 @@ class SyncDialog(QDialog):
         Shows the sync dialog and runs the sync commands.
         """
         for provider in providers:
-            provider.syncingtable.connect(self.tableupdate)
+            provider.syncstatus.connect(self.syncstatus)
             provider.syncingfinished.connect(self.syncfinsihed)
             provider.sync()
 
@@ -45,11 +45,11 @@ class SyncDialog(QDialog):
         self.ui.buttonBox.setEnabled(True)
         QCoreApplication.processEvents()
 
-    def tableupdate(self, table, changes):
+    def syncstatus(self, layer, changes):
         # ewww
         if changes == 0:
             return
-        message = self.ui.updatestatus.toPlainText()
-        message += "\nUpdated layer {0} with {1} changes".format(table, changes)
-        self.ui.updatestatus.setPlainText(message)
+
+        message = "Updated layer {0} with {1} changes".format(layer, changes)
+        self.ui.updatestatus.addItem(message)
         QCoreApplication.processEvents()

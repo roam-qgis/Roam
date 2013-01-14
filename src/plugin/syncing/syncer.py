@@ -5,7 +5,7 @@ from subprocess import Popen, PIPE
 from qmap.utils import log, settings, error
 
 class Syncer(QObject):
-    syncingtable = pyqtSignal(str, int)
+    syncstatus = pyqtSignal(str, int)
     syncingfinished = pyqtSignal(int, int, list)
     syncingerror = pyqtSignal(str)
 
@@ -53,7 +53,7 @@ def syncMSSQL(self):
                 deletes = int(values.get('d'))
                 updates = int(values.get('u'))
                 changes = inserts + deletes + updates
-                self.syncingtable.emit(table, changes)
+                self.syncstatus.emit(table, changes)
             else:
                 message = out 
             
