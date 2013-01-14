@@ -80,7 +80,7 @@ public static class syncing
         if (order == SyncDirectionOrder.Download && 
             ScopesDiffer(server, client, scope))
         {
-            throw new Exception("Scopes on server and client differ");
+            Provisioning.ProvisionTable(server, client, scope, 28356, true); 
         }
 
         using (SqlSyncProvider masterProvider = new SqlSyncProvider(scope, server),

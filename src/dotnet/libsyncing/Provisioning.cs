@@ -42,21 +42,24 @@ public static class Provisioning
         command.ExecuteNonQuery();
     }
 
-    public static void ProvisionTable(SqlConnection server, SqlConnection client, 
+    public static void ProvisionTable(SqlConnection server, SqlConnection client,
                                       string tableName, int srid)
+    {
+        ProvisionTable(server, client, tableName, srid, false);
+    }
+
+
+    public static void ProvisionTable(SqlConnection server, SqlConnection client,
+                                      string tableName, int srid, bool deprovisonScopeFirst)
     {
         bool clientMode = !client.ConnectionString.Equals(server.ConnectionString);
 
         DbSyncScopeDescription scopeDescription = new DbSyncScopeDescription(tableName);
         SqlSyncScopeProvisioning destinationConfig = new SqlSyncScopeProvisioning(client);
 
-        if (destinationConfig.ScopeExists(tableName))
+        if (deprovisonScopeFirst && destinationConfig.ScopeExists(tableName))
         {
-#if DEBUG
             Deprovisioning.DeprovisonScope(client, tableName);
-#else
-            throw new SyncConstraintConflictNotAllowedException(@"Scope already exists.  Please deprovision scope first.");
-#endif
         }
 
         // Get table info from server
