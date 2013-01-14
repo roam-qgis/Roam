@@ -83,6 +83,13 @@ public static class syncing
             Provisioning.ProvisionTable(server, client, scope, 28356, true); 
         }
 
+        if ((order == SyncDirectionOrder.UploadAndDownload || 
+            order == SyncDirectionOrder.DownloadAndUpload) &&
+            ScopesDiffer(server, client, scope))
+        {
+            throw new DbSyncException("Can not sync twoway tables with changed scopes");
+        }
+
         using (SqlSyncProvider masterProvider = new SqlSyncProvider(scope, server),
                                 slaveProvider = new SqlSyncProvider(scope, client))
         {
