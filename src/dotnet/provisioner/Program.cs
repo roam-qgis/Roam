@@ -81,7 +81,7 @@ namespace ConsoleApplication1
                 }
             }
 
-            if (srid == 0)
+            if (srid == 0 && !deprovison)
             {
                 Console.Error.WriteLine("We need a SRID");
                 printUsage();
