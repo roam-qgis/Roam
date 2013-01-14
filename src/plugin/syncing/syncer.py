@@ -2,18 +2,20 @@ from PyQt4.QtCore import QObject, pyqtSignal
 from os import path
 import sys
 from subprocess import Popen, PIPE
-from qmap.utils import log, settings
+from qmap.utils import log, settings, error
 
 class Syncer(QObject):
     syncingtable = pyqtSignal(str, int)
-    syncingfinished = pyqtSignal(int, int)
+    syncingfinished = pyqtSignal(int, int, list)
     syncingerror = pyqtSignal(str)
 
     def __init__(self, func=None):
         super(Syncer, self).__init__()
         self.func = func
+        self.errors = []
 
     def sync(self):
+        self.errors =  []
         self.func(self)
 
 def syncMSSQL(self):
@@ -32,17 +34,19 @@ def syncMSSQL(self):
         # error = p.stderr.readline()
         # print "ERROR:" + error 
         out = p.stdout.readline()
+        log(out)
         try:
             # Can't seem to get p.stderr to work correctly. Will use this hack for now.
             if out[:5] == "Error":
-                log(out)
+                error(out)
+                self.errors.append(out)
                 self.syncingerror.emit(out)
                 continue
             values = dict(item.split(":") for item in out.split("|"))
             if 'td' in values and 'tu' in values:
                 downloads = int(values.get('td'))
                 uploads = int(values.get('tu'))
-                self.syncingfinished.emit(downloads, uploads)
+                self.syncingfinished.emit(downloads, uploads, self.errors)
             elif 't' in values:
                 table = values.get('t')
                 inserts = int(values.get('i'))

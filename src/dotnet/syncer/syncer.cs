@@ -107,7 +107,7 @@ namespace MSSQLSyncer
                    }
                    catch (DbSyncException ex)
                    {
-                       Console.Error.WriteLine(ex.Message);
+                       Console.WriteLine("Error:" + ex.Message);
                        continue;
                    }
                    catch (SqlException ex)

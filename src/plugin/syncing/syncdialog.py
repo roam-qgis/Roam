@@ -1,6 +1,7 @@
 from PyQt4.QtGui import QDialog, QApplication
 from PyQt4.QtCore import Qt, QCoreApplication
 from ui_sync import Ui_syncForm
+from qmap.utils import log, error
 
 class SyncDialog(QDialog):
     def __init__(self):
@@ -36,29 +37,9 @@ class SyncDialog(QDialog):
             provider.syncingfinished.connect(self.syncfinsihed)
             provider.sync()
 
-        # sync = Syncer()
+    def syncfinsihed(self, down, up, errors):
+        message = "Total Downloaded: {0}\nTotal Uploaded: {1}\n{2} Error(s)".format(down,up, len(errors))
 
-        # sync.syncMSSQL()
-
-        # if state == 'Fail':
-        #     self.updateFailedStatus(sqlmsg)
-        #     return
-
-        # log(sqlmsg)
-
-        # self.ui.statusLabel.setText(message + "\n\n Syncing images...")
-        # QCoreApplication.processEvents()
-        
-        # state, msg = syncImages()
-
-        # if state == 'Fail':
-        #     self.updateFailedStatus(msg)
-        #     return
-
-        # self.updateStatus("%s \n %s" % (sqlmsg, msg))
-
-    def syncfinsihed(self, down, up):
-        message = "Total Downloaded: {0}\nTotal Uploaded: {1}".format(down,up)
         self.ui.statusLabel.setText(message)
         self.ui.header.setText("Sync complete")
         self.ui.buttonBox.setEnabled(True)
