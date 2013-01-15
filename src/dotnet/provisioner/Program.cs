@@ -24,9 +24,9 @@ namespace ConsoleApplication1
             string serverconn = "";
             string clientconn = "";
             bool deprovison = false;
+            bool reprovision = false;
             string tablename = "";
             string direction = "Download";
-            int srid = 0;
 
             bool hasserver = args.Any(x => x.Contains("--server"));
             if (!hasserver)
@@ -73,6 +73,9 @@ namespace ConsoleApplication1
                     case "--deprovision":
                         deprovison = true;
                         break;
+                    case "--reprovision":
+                        reprovision = true;
+                        break;
                     default:
                         break;
                 }
@@ -87,69 +90,80 @@ namespace ConsoleApplication1
                 Console.WriteLine("No client given. Client is now server connection");
             }
 
-            ConsoleColor color;
             Console.WriteLine("Running using these settings");
             Console.WriteLine(" Server:" + server.ConnectionString);
             Console.WriteLine(" Client:" + client.ConnectionString);
             Console.WriteLine(" Table:" + tablename);
             Console.WriteLine(" Direction:" + direction);
-            Console.WriteLine(" Mode:" + (deprovison ? "Deprovison" : "Provision"));
+            string mode = (deprovison ? "Deprovison" : reprovision ? "Reprovision" : "Provision");
+            Console.WriteLine(" Mode:" + mode);
 
-
-            if (!deprovison)
+            if (reprovision)
             {
-                try
-                {
-                    Provisioning.ProvisionTable(server, client, tablename);
-                }
-                catch (SyncConstraintConflictNotAllowedException)
-                {
-                    color = Console.ForegroundColor;
-                    Console.ForegroundColor = ConsoleColor.Red;
-                    string message = string.Format("Scope called {0} already exists. Please use --deprovision first", tablename);
-                    Console.Error.WriteLine(message);
-                    Console.ForegroundColor = color;
-                }
-                Console.WriteLine("Provision complete");
-                if (server.ConnectionString != client.ConnectionString)
-                {
-                    if (client.State == System.Data.ConnectionState.Closed)
-                        client.Open();
-                    Console.WriteLine("Adding to scopes table on client");
-                    Provisioning.AddScopeToScopesTable(client, tablename,
-                                                       utils.StringToEnum<SyncDirectionOrder>(direction));
-                }
-                color = Console.ForegroundColor;
-                Console.ForegroundColor = ConsoleColor.Green;
-                Console.WriteLine("Complete");
-                Console.ForegroundColor = color;
+                Deprovison(server, client, tablename);
+                Provision(server, client, tablename, direction);
+            }
+            else if (deprovison)
+            {
+                Deprovison(server, client, tablename);
             }
             else
             {
-                if (client.ConnectionString != server.ConnectionString)
-                {
-                    Console.WriteLine(client.ConnectionString != server.ConnectionString);
+                Provision(server, client, tablename, direction);
+            }
+        }
+
+        private static void Deprovison(SqlConnection server, SqlConnection client, string tablename)
+        {
+            if (client.ConnectionString != server.ConnectionString)
+            {
+                Console.WriteLine(client.ConnectionString != server.ConnectionString);
+                client.Open();
+                Console.WriteLine("Droping table...");
+                Deprovisioning.DropTable(client, tablename);
+                client.Close();
+            }
+            bool pass = Deprovisioning.DeprovisonScope(client, tablename);
+            if (!pass)
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.Error.WriteLine("Deprovision failed for " + tablename);
+                Console.ResetColor();
+            }
+            else
+            {
+                Console.ForegroundColor = ConsoleColor.Green;
+                Console.WriteLine("Deprovision complete");
+                Console.ResetColor();
+            }
+        }
+
+        private static void Provision(SqlConnection server, SqlConnection client,
+                                      string tablename, string direction)
+        {
+            try
+            {
+                Provisioning.ProvisionTable(server, client, tablename);
+            }
+            catch (SyncConstraintConflictNotAllowedException)
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+                string message = string.Format("Scope called {0} already exists. Please use --deprovision first", tablename);
+                Console.Error.WriteLine(message);
+                Console.ResetColor();
+            }
+            Console.WriteLine("Provision complete");
+            if (server.ConnectionString != client.ConnectionString)
+            {
+                if (client.State == System.Data.ConnectionState.Closed)
                     client.Open();
-                    Console.WriteLine("Droping table...");
-                    Deprovisioning.DropTable(client, tablename);
-                    client.Close();
-                }
-                bool pass = Deprovisioning.DeprovisonScope(client, tablename);
-                if (!pass)
-                {
-                    color = Console.ForegroundColor;
-                    Console.ForegroundColor = ConsoleColor.Red;
-                    Console.Error.WriteLine("Deprovision failed for " + tablename);
-                    Console.ForegroundColor = color;
-                }
-                else
-                {
-                    color = Console.ForegroundColor;
-                    Console.ForegroundColor = ConsoleColor.Green;
-                    Console.WriteLine("Deprovision complete");
-                    Console.ForegroundColor = color;
-                }
-            }  
+                Console.WriteLine("Adding to scopes table on client");
+                Provisioning.AddScopeToScopesTable(client, tablename,
+                                                   utils.StringToEnum<SyncDirectionOrder>(direction));
+            }
+            Console.ForegroundColor = ConsoleColor.Green;
+            Console.WriteLine("Complete");
+            Console.ResetColor();
         }
 
         static void printUsage()

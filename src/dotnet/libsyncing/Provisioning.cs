@@ -119,7 +119,8 @@ public static class Provisioning
         //provision the client
         destinationConfig.Apply();
 
-        client.Open();
+        if (client.State == System.Data.ConnectionState.Closed)
+            client.Open();
         SqlCommand command = client.CreateCommand();
         
         // Readd indentity column back onto client as primary key.
