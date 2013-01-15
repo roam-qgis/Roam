@@ -186,8 +186,10 @@ public static class Provisioning
         // Server and client. Drop trigger and create WKT transfer trigger.
         Deprovisioning.DropTableGeomTrigger(client, tableName);
 
-        command.CommandText = string.Format(@"SELECT TOP 1 {0}.STSrid FROM [{1}]", 
-                                            geometryColumn.QuotedName, tableName);
+        command.CommandText = string.Format(@"SELECT TOP 1 [srid]
+                                              FROM [FieldData].[dbo].[geometry_columns] 
+                                              WHERE [f_table_name] = '{0}'", 
+                                            tableName);
 
         int srid = (command.ExecuteScalar() as int?).Value;
 
