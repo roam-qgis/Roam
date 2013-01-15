@@ -1,7 +1,7 @@
 from PyQt4.QtGui import QDialog, QApplication
 from PyQt4.QtCore import Qt, QCoreApplication
 from ui_sync import Ui_syncForm
-from qmap.utils import log, error
+from qmap.utils import log, error, _pluralstring
 
 class SyncDialog(QDialog):
     def __init__(self):
@@ -38,7 +38,8 @@ class SyncDialog(QDialog):
             provider.sync()
 
     def syncfinsihed(self, down, up, errors):
-        message = "Total Downloaded: {0}\nTotal Uploaded: {1}\n{2} Error(s)".format(down,up, len(errors))
+        errormessage = _pluralstring("Error", len(errors))
+        message = "Total Downloaded: {0}\nTotal Uploaded: {1}\n{2}".format(down,up, errormessage)
 
         self.ui.statusLabel.setText(message)
         self.ui.header.setText("Sync complete")
@@ -50,6 +51,7 @@ class SyncDialog(QDialog):
         if changes == 0:
             return
 
-        message = "Updated layer {0} with {1} changes".format(layer, changes)
+        changemessage = _pluralstring("change", changes)
+        message = "Updated layer {0} with {1}".format(layer, changemessage)
         self.ui.updatestatus.addItem(message)
         QCoreApplication.processEvents()
