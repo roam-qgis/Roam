@@ -1,5 +1,7 @@
 ﻿using System.Data.SqlClient;
 using Microsoft.Synchronization.Data.SqlServer;
+using Microsoft.Synchronization.Data;
+using System;
 
 public static class Deprovisioning
 {
@@ -57,13 +59,24 @@ public static class Deprovisioning
     /// <param name="conn"></param>
     /// <param name="scope"></param>
     /// <returns></returns>
-    public static void DeprovisonScope(SqlConnection conn, string scope)
+    public static bool DeprovisonScope(SqlConnection conn, string scope)
     {
         conn.Open();
         SqlSyncScopeDeprovisioning prov = new SqlSyncScopeDeprovisioning(conn);
-        //prov.DeprovisionScope(scope);
-        prov.DeprovisionScope(scope);
-        DropTableGeomTrigger(conn, scope);
+        try
+        {
+            prov.DeprovisionScope(scope);
+            DropTableGeomTrigger(conn, scope);
+        }
+        catch (DbSyncException ex)
+        {
+            ConsoleColor color = Console.ForegroundColor;
+            Console.ForegroundColor = ConsoleColor.Red;
+            Console.Error.WriteLine(ex.Message);
+            Console.ForegroundColor = color;
+            return false;
+        }
         conn.Close();
+        return true;
     }
 }

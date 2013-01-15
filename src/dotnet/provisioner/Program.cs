@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Data.SqlClient;
 using Microsoft.Synchronization;
+using Microsoft.Synchronization.Data;
 
 namespace ConsoleApplication1
 {
@@ -47,7 +48,6 @@ namespace ConsoleApplication1
 
             foreach (var arg in args)
             {
-                Console.WriteLine(arg);
                 var pairs = arg.Split(new char[] { '=' }, 2,
                                       StringSplitOptions.None);
                 var name = pairs[0];
@@ -97,14 +97,14 @@ namespace ConsoleApplication1
                 Console.WriteLine("No client given. Client is now server connection");
             }
 
-            Console.WriteLine("\n\r");
-
+            ConsoleColor color;
             Console.WriteLine("Running using these settings");
-            Console.WriteLine("Server:" + server.ConnectionString);
-            Console.WriteLine("Client:" + client.ConnectionString);
-            Console.WriteLine("Table:" + tablename);
-            Console.WriteLine("Direction:" + direction);
-            Console.WriteLine("Mode:" + (deprovison ? "Deprovison" : "Provision"));
+            Console.WriteLine(" Server:" + server.ConnectionString);
+            Console.WriteLine(" Client:" + client.ConnectionString);
+            Console.WriteLine(" Table:" + tablename);
+            Console.WriteLine(" Direction:" + direction);
+            Console.WriteLine(" Mode:" + (deprovison ? "Deprovison" : "Provision"));
+
 
             if (!deprovison)
             {
@@ -114,7 +114,7 @@ namespace ConsoleApplication1
                 }
                 catch (SyncConstraintConflictNotAllowedException)
                 {
-                    ConsoleColor color = Console.ForegroundColor;
+                    color = Console.ForegroundColor;
                     Console.ForegroundColor = ConsoleColor.Red;
                     string message = string.Format("Scope called {0} already exists. Please use --deprovision first", tablename);
                     Console.Error.WriteLine(message);
@@ -129,12 +129,36 @@ namespace ConsoleApplication1
                     Provisioning.AddScopeToScopesTable(client, tablename,
                                                        utils.StringToEnum<SyncDirectionOrder>(direction));
                 }
+                color = Console.ForegroundColor;
+                Console.ForegroundColor = ConsoleColor.Green;
                 Console.WriteLine("Complete");
+                Console.ForegroundColor = color;
             }
             else
             {
-                Deprovisioning.DeprovisonScope(client, tablename);
-                Console.WriteLine("Deprovision complete");
+                if (client.ConnectionString != server.ConnectionString)
+                {
+                    Console.WriteLine(client.ConnectionString != server.ConnectionString);
+                    client.Open();
+                    Console.WriteLine("Droping table...");
+                    Deprovisioning.DropTable(client, tablename);
+                    client.Close();
+                }
+                bool pass = Deprovisioning.DeprovisonScope(client, tablename);
+                if (!pass)
+                {
+                    color = Console.ForegroundColor;
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.Error.WriteLine("Deprovision failed for " + tablename);
+                    Console.ForegroundColor = color;
+                }
+                else
+                {
+                    color = Console.ForegroundColor;
+                    Console.ForegroundColor = ConsoleColor.Green;
+                    Console.WriteLine("Deprovision complete");
+                    Console.ForegroundColor = color;
+                }
             }  
         }
 

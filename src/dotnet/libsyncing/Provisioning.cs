@@ -59,6 +59,7 @@ public static class Provisioning
 
         if (deprovisonScopeFirst && destinationConfig.ScopeExists(tableName))
         {
+            Deprovisioning.DropTable(client, tableName);
             Deprovisioning.DeprovisonScope(client, tableName);
         }
 
