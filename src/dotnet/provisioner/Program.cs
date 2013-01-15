@@ -73,19 +73,9 @@ namespace ConsoleApplication1
                     case "--deprovision":
                         deprovison = true;
                         break;
-                    case "--srid":
-                        srid = int.Parse(parm);
-                        break;
                     default:
                         break;
                 }
-            }
-
-            if (srid == 0 && !deprovison)
-            {
-                Console.Error.WriteLine("We need a SRID");
-                printUsage();
-                return;
             }
 
             // If there is no client arg given then we assume that we are
@@ -110,7 +100,7 @@ namespace ConsoleApplication1
             {
                 try
                 {
-                    Provisioning.ProvisionTable(server, client, tablename, srid);
+                    Provisioning.ProvisionTable(server, client, tablename);
                 }
                 catch (SyncConstraintConflictNotAllowedException)
                 {

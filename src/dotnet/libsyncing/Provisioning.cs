@@ -43,14 +43,14 @@ public static class Provisioning
     }
 
     public static void ProvisionTable(SqlConnection server, SqlConnection client,
-                                      string tableName, int srid)
+                                      string tableName)
     {
-        ProvisionTable(server, client, tableName, srid, false);
+        ProvisionTable(server, client, tableName, false);
     }
 
 
     public static void ProvisionTable(SqlConnection server, SqlConnection client,
-                                      string tableName, int srid, bool deprovisonScopeFirst)
+                                      string tableName, bool deprovisonScopeFirst)
     {
         bool clientMode = !client.ConnectionString.Equals(server.ConnectionString);
 
@@ -184,6 +184,11 @@ public static class Provisioning
 
         // Server and client. Drop trigger and create WKT transfer trigger.
         Deprovisioning.DropTableGeomTrigger(client, tableName);
+
+        command.CommandText = string.Format(@"SELECT TOP 1 {0}.STSrid FROM [{1}]", 
+                                            geometryColumn.QuotedName, tableName);
+
+        int srid = (command.ExecuteScalar() as int?).Value;
 
         command.CommandText = string.Format(@"CREATE TRIGGER [dbo].[{0}_GEOMSRID_trigger]
                                               ON [dbo].[{0}]

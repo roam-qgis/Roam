@@ -83,7 +83,7 @@ public static class syncing
             ScopesDiffer(server, client, scope))
         {
             ProgressUpdate("Scope has changed on server. Reprovisoning client");
-            Provisioning.ProvisionTable(server, client, scope, 28356, true);
+            Provisioning.ProvisionTable(server, client, scope, true);
         }
         else if (order != SyncDirectionOrder.Download &&
             ScopesDiffer(server, client, scope))
