@@ -81,7 +81,7 @@ namespace MSSQLSyncer
             }
 
             List<syncing.Scope> scopes;
-
+            syncing.ProgressUpdate += syncing_ProgressUpdate;
             if (!String.IsNullOrEmpty(scopetosync))
             {
                 scopes = syncing.getScopes(clientconn, scopetosync);
@@ -93,8 +93,10 @@ namespace MSSQLSyncer
 
             int total_down = 0;
             int total_up = 0;
+            
             foreach (syncing.Scope scope in scopes)
             {
+                
                 using (SqlConnection server = new SqlConnection(serverconn),
                                      client = new SqlConnection(clientconn))
                 {
@@ -104,6 +106,7 @@ namespace MSSQLSyncer
                        stats = syncing.syncscope(server, client,
                                                  scope.name, scope.order,
                                                  applyingChanges);
+
                    }
                    catch (DbSyncException ex)
                    {
@@ -119,6 +122,10 @@ namespace MSSQLSyncer
                    {
                        Console.WriteLine("Error:" + ex.Message);
                        continue;
+                   }
+                   finally
+                   {
+  
                    }
                    total_down += stats.DownloadChangesApplied;
                    total_up += stats.UploadChangesApplied;
@@ -139,6 +146,13 @@ namespace MSSQLSyncer
                                   + Resources.Program_Main_
                                   + total_up);
             }
+            syncing.ProgressUpdate -= syncing_ProgressUpdate;
+        }
+
+        static void syncing_ProgressUpdate(string obj)
+        {
+            if (!porcelain)
+                Console.WriteLine(obj);
         }
 
         /// <summary>

@@ -8,6 +8,8 @@ using Microsoft.Synchronization.Data;
 
 public static class syncing
 {
+    public static event Action<String> ProgressUpdate = delegate { };
+
     public class Scope
     {
         public string name;
@@ -80,7 +82,8 @@ public static class syncing
         if (order == SyncDirectionOrder.Download && 
             ScopesDiffer(server, client, scope))
         {
-            Provisioning.ProvisionTable(server, client, scope, 28356, true); 
+            ProgressUpdate("Scope has changed on server. Reprovisoning client");
+            Provisioning.ProvisionTable(server, client, scope, 28356, true);
         }
         else if (order != SyncDirectionOrder.Download &&
             ScopesDiffer(server, client, scope))

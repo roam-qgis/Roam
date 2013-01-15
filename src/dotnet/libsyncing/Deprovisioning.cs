@@ -12,6 +12,8 @@ public static class Deprovisioning
     /// <param name="table">The table to drop.</param>
     public static void DropTable(SqlConnection conn, string table)
     {
+        if (conn.State == System.Data.ConnectionState.Closed)
+            conn.Open();
         string sql = string.Format(@"IF (EXISTS (SELECT * 
                              FROM INFORMATION_SCHEMA.TABLES 
                              WHERE TABLE_SCHEMA = 'dbo' 
@@ -27,6 +29,8 @@ public static class Deprovisioning
 
     public static void RemoveFromScopesTable(SqlConnection conn, string scope)
     {
+        if (conn.State == System.Data.ConnectionState.Closed)
+            conn.Open();
         string sql = string.Format(@"DELETE FROM [scopes]
                        WHERE scope = {0}", scope);
         SqlCommand command = conn.CreateCommand();
@@ -41,6 +45,8 @@ public static class Deprovisioning
     /// <param name="table"></param>
     public static void DropTableGeomTrigger(SqlConnection conn, string table)
     {
+        if (conn.State == System.Data.ConnectionState.Closed)
+            conn.Open();
         string sql = @"IF (EXISTS (SELECT * 
                                   FROM sys.triggers 
                                   WHERE object_id = OBJECT_ID(N'[dbo].[{0}_GEOMSRID_trigger]')))
@@ -61,7 +67,8 @@ public static class Deprovisioning
     /// <returns></returns>
     public static bool DeprovisonScope(SqlConnection conn, string scope)
     {
-        conn.Open();
+        if (conn.State == System.Data.ConnectionState.Closed)
+            conn.Open();
         SqlSyncScopeDeprovisioning prov = new SqlSyncScopeDeprovisioning(conn);
         try
         {
@@ -76,7 +83,6 @@ public static class Deprovisioning
             Console.ForegroundColor = color;
             return false;
         }
-        conn.Close();
         return true;
     }
 }
