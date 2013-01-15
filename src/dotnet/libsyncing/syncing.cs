@@ -82,9 +82,7 @@ public static class syncing
         {
             Provisioning.ProvisionTable(server, client, scope, 28356, true); 
         }
-
-        if ((order == SyncDirectionOrder.UploadAndDownload || 
-            order == SyncDirectionOrder.DownloadAndUpload) &&
+        else if (order != SyncDirectionOrder.Download &&
             ScopesDiffer(server, client, scope))
         {
             throw new DbSyncException("Can not sync twoway tables with changed scopes");
