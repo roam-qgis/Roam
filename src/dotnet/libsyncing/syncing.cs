@@ -158,14 +158,14 @@ public static class syncing
 
         using (SqlCommand command = new SqlCommand(sql))
         {
-            server.Open();
-            client.Open();
+            if (server.State == System.Data.ConnectionState.Closed)
+                server.Open();
+            if (client.State == System.Data.ConnectionState.Closed)
+                client.Open();
             command.Connection = server;
             serverScopeConfig = command.ExecuteScalar() as string;
             command.Connection = client;
             clientScopeConfig = command.ExecuteScalar() as string;
-            client.Close();
-            server.Close();
         }
 
         return (serverScopeConfig != clientScopeConfig);

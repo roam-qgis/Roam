@@ -111,13 +111,22 @@ public static class Provisioning
         // TODO We should sync the table first, but only if it is upload.
         if (clientMode)
         {
-            client.Open();
+            if (client.State == System.Data.ConnectionState.Closed)
+                client.Open();
             Deprovisioning.DropTable(client, tableName);
-            client.Close();
         }
 
-        //provision the client
-        destinationConfig.Apply();
+        try
+        {
+            //provision the client
+            destinationConfig.Apply();
+        }
+        catch (DbProvisioningException ex)
+        {
+            Console.ForegroundColor = ConsoleColor.Red;
+            Console.Error.WriteLine(ex.Message);
+            Console.ResetColor();
+        }
 
         if (client.State == System.Data.ConnectionState.Closed)
             client.Open();
