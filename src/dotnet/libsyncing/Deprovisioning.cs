@@ -1,5 +1,7 @@
 ﻿using System.Data.SqlClient;
 using Microsoft.Synchronization.Data.SqlServer;
+using Microsoft.Synchronization.Data;
+using System;
 
 public static class Deprovisioning
 {
@@ -10,6 +12,8 @@ public static class Deprovisioning
     /// <param name="table">The table to drop.</param>
     public static void DropTable(SqlConnection conn, string table)
     {
+        if (conn.State == System.Data.ConnectionState.Closed)
+            conn.Open();
         string sql = string.Format(@"IF (EXISTS (SELECT * 
                              FROM INFORMATION_SCHEMA.TABLES 
                              WHERE TABLE_SCHEMA = 'dbo' 
@@ -25,6 +29,8 @@ public static class Deprovisioning
 
     public static void RemoveFromScopesTable(SqlConnection conn, string scope)
     {
+        if (conn.State == System.Data.ConnectionState.Closed)
+            conn.Open();
         string sql = string.Format(@"DELETE FROM [scopes]
                        WHERE scope = {0}", scope);
         SqlCommand command = conn.CreateCommand();
@@ -39,6 +45,8 @@ public static class Deprovisioning
     /// <param name="table"></param>
     public static void DropTableGeomTrigger(SqlConnection conn, string table)
     {
+        if (conn.State == System.Data.ConnectionState.Closed)
+            conn.Open();
         string sql = @"IF (EXISTS (SELECT * 
                                   FROM sys.triggers 
                                   WHERE object_id = OBJECT_ID(N'[dbo].[{0}_GEOMSRID_trigger]')))
@@ -57,13 +65,24 @@ public static class Deprovisioning
     /// <param name="conn"></param>
     /// <param name="scope"></param>
     /// <returns></returns>
-    public static void DeprovisonScope(SqlConnection conn, string scope)
+    public static bool DeprovisonScope(SqlConnection conn, string scope)
     {
-        conn.Open();
+        if (conn.State == System.Data.ConnectionState.Closed)
+            conn.Open();
         SqlSyncScopeDeprovisioning prov = new SqlSyncScopeDeprovisioning(conn);
-        //prov.DeprovisionScope(scope);
-        prov.DeprovisionScope(scope);
-        DropTableGeomTrigger(conn, scope);
-        conn.Close();
+        try
+        {
+            prov.DeprovisionScope(scope);
+            DropTableGeomTrigger(conn, scope);
+        }
+        catch (DbSyncException ex)
+        {
+            ConsoleColor color = Console.ForegroundColor;
+            Console.ForegroundColor = ConsoleColor.Red;
+            Console.Error.WriteLine(ex.Message);
+            Console.ForegroundColor = color;
+            return false;
+        }
+        return true;
     }
 }
