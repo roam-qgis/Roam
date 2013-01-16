@@ -42,21 +42,25 @@ public static class Provisioning
         command.ExecuteNonQuery();
     }
 
-    public static void ProvisionTable(SqlConnection server, SqlConnection client, 
-                                      string tableName, int srid)
+    public static void ProvisionTable(SqlConnection server, SqlConnection client,
+                                      string tableName)
+    {
+        ProvisionTable(server, client, tableName, false);
+    }
+
+
+    public static void ProvisionTable(SqlConnection server, SqlConnection client,
+                                      string tableName, bool deprovisonScopeFirst)
     {
         bool clientMode = !client.ConnectionString.Equals(server.ConnectionString);
 
         DbSyncScopeDescription scopeDescription = new DbSyncScopeDescription(tableName);
         SqlSyncScopeProvisioning destinationConfig = new SqlSyncScopeProvisioning(client);
 
-        if (destinationConfig.ScopeExists(tableName))
+        if (deprovisonScopeFirst && destinationConfig.ScopeExists(tableName))
         {
-#if DEBUG
+            Deprovisioning.DropTable(client, tableName);
             Deprovisioning.DeprovisonScope(client, tableName);
-#else
-            throw new SyncConstraintConflictNotAllowedException(@"Scope already exists.  Please deprovision scope first.");
-#endif
         }
 
         // Get table info from server
@@ -115,7 +119,8 @@ public static class Provisioning
         //provision the client
         destinationConfig.Apply();
 
-        client.Open();
+        if (client.State == System.Data.ConnectionState.Closed)
+            client.Open();
         SqlCommand command = client.CreateCommand();
         
         // Readd indentity column back onto client as primary key.
@@ -180,6 +185,13 @@ public static class Provisioning
 
         // Server and client. Drop trigger and create WKT transfer trigger.
         Deprovisioning.DropTableGeomTrigger(client, tableName);
+
+        command.CommandText = string.Format(@"SELECT TOP 1 [srid]
+                                              FROM [FieldData].[dbo].[geometry_columns] 
+                                              WHERE [f_table_name] = '{0}'", 
+                                            tableName);
+
+        int srid = (command.ExecuteScalar() as int?).Value;
 
         command.CommandText = string.Format(@"CREATE TRIGGER [dbo].[{0}_GEOMSRID_trigger]
                                               ON [dbo].[{0}]

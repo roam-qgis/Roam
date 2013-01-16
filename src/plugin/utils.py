@@ -37,3 +37,6 @@ def timeit(method):
 
        # log("% r (% r,% r)% 2.2f seconds " % (method.__name__, args, kw, th-ts))
         return result
+
+def _pluralstring(text='', num=0):
+    return "%d %s%s" % (num, text, "s"[num==1:])

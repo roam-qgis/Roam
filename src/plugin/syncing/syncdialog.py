@@ -1,6 +1,7 @@
 from PyQt4.QtGui import QDialog, QApplication
 from PyQt4.QtCore import Qt, QCoreApplication
 from ui_sync import Ui_syncForm
+from qmap.utils import log, error, _pluralstring
 
 class SyncDialog(QDialog):
     def __init__(self):
@@ -32,43 +33,25 @@ class SyncDialog(QDialog):
         Shows the sync dialog and runs the sync commands.
         """
         for provider in providers:
-            provider.syncingtable.connect(self.tableupdate)
+            provider.syncstatus.connect(self.syncstatus)
             provider.syncingfinished.connect(self.syncfinsihed)
             provider.sync()
 
-        # sync = Syncer()
+    def syncfinsihed(self, down, up, errors):
+        errormessage = _pluralstring("Error", len(errors))
+        message = "Total Downloaded: {0}\nTotal Uploaded: {1}\n{2}".format(down,up, errormessage)
 
-        # sync.syncMSSQL()
-
-        # if state == 'Fail':
-        #     self.updateFailedStatus(sqlmsg)
-        #     return
-
-        # log(sqlmsg)
-
-        # self.ui.statusLabel.setText(message + "\n\n Syncing images...")
-        # QCoreApplication.processEvents()
-        
-        # state, msg = syncImages()
-
-        # if state == 'Fail':
-        #     self.updateFailedStatus(msg)
-        #     return
-
-        # self.updateStatus("%s \n %s" % (sqlmsg, msg))
-
-    def syncfinsihed(self, down, up):
-        message = "Total Downloaded: {0}\nTotal Uploaded: {1}".format(down,up)
         self.ui.statusLabel.setText(message)
         self.ui.header.setText("Sync complete")
         self.ui.buttonBox.setEnabled(True)
         QCoreApplication.processEvents()
 
-    def tableupdate(self, table, changes):
+    def syncstatus(self, layer, changes):
         # ewww
         if changes == 0:
             return
-        message = self.ui.updatestatus.toPlainText()
-        message += "\nUpdated layer {0} with {1} changes".format(table, changes)
-        self.ui.updatestatus.setPlainText(message)
+
+        changemessage = _pluralstring("change", changes)
+        message = "Updated layer {0} with {1}".format(layer, changemessage)
+        self.ui.updatestatus.addItem(message)
         QCoreApplication.processEvents()
