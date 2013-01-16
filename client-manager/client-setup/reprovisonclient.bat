@@ -6,5 +6,5 @@ set CLIENT="Data Source=localhost;Initial Catalog=SpatialData;Integrated Securit
 
 for %%i in %TABLE_LIST% DO (
 	ECHO Provisioning %%i
-	provisioner.exe --server=%SERVER% --client=%CLIENT% --table=%%i --reprovision
+	provisioner.exe --server=%SERVER% --client=%CLIENT% --table=%%i --reprovision --direction=UploadAndDownload
 	)
