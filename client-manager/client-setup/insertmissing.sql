@@ -10,6 +10,8 @@ Set Nocount OFF
 Declare @scope varchar(max)
 Declare @cols varchar(max), @query varchar(max)
 
+SET ANSI_NULLS, QUOTED_IDENTIFIER ON
+
 While EXISTS(SELECT * From #Temp)
 Begin
       Set Nocount On
@@ -35,7 +37,6 @@ Begin
                           WHERE NOT EXISTS (SELECT * FROM ' + @scope + ' new
                                                              WHERE new.UniqueID = old.UniqueID)'
     exec(@query)
-      print @query
       
       Set Nocount On
     Delete #Temp Where scope = @scope 

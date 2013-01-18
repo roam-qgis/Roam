@@ -24,6 +24,8 @@ WHERE syncorder != 'Download'
 
 Declare @scope varchar(max)
 
+SET ANSI_NULLS, QUOTED_IDENTIFIER ON
+
 While EXISTS(SELECT * From #Temp)
 Begin
     Select Top 1 @scope = scope From #Temp

@@ -1,6 +1,11 @@
 @ECHO OFF
 
-set TABLE_LIST=(WaterJobs, SewerJobs, ParkAssets)
+REM Update the client to use the new table per scope syncing style.
+REM This allows us to update clients one by one by not loose data between the sync.
+REM Only handles new records not changed data on client.
+
+
+set TABLE_LIST=(WaterJobs, ParkAssets)
 set SERVER="Data Source=localhost;Initial Catalog=FieldData;Integrated Security=SSPI;"
 set CLIENT="Data Source=localhost;Initial Catalog=SpatialData;Integrated Security=SSPI;"
 
@@ -11,6 +16,6 @@ for %%i in %TABLE_LIST% DO (
 	provisioner.exe --server=%SERVER% --client=%CLIENT% --table=%%i --reprovision --direction=UploadAndDownload
 	)
 
-syncer.exe --server=%SERVER% --client=%CLIENT% --reprovision
-sqlcmd -S SD0302 -d SpatialData -i waterjobs.sql
-syncer.exe --server=%SERVER% --client=%CLIENT% --reprovision
+syncer.exe --server=%SERVER% --client=%CLIENT%
+sqlcmd -S SD0302 -d SpatialData -i insertmissing.sql
+syncer.exe --server=%SERVER% --client=%CLIENT%
