@@ -25,8 +25,9 @@ namespace ConsoleApplication1
             string clientconn = "";
             bool deprovison = false;
             bool reprovision = false;
-            string tablename = "";
+            string scopename = "";
             string direction = "Download";
+            bool droptable = true;
 
             bool hasserver = args.Any(x => x.Contains("--server"));
             if (!hasserver)
@@ -38,7 +39,7 @@ namespace ConsoleApplication1
 
             // If there is no client arg given then we assume that we are talking
             // working on the server tables
-            bool hastable = args.Any(x => x.Contains("--table"));
+            bool hastable = args.Any(x => x.Contains("--scope"));
             if (!hastable)
             {
                 Console.Error.WriteLine("We need a table to work on");
@@ -64,8 +65,8 @@ namespace ConsoleApplication1
                         clientconn = parm;
                         client.ConnectionString = parm;
                         break;
-                    case "--table":
-                        tablename = parm;
+                    case "--scope":
+                        scopename = parm;
                         break;
                     case "--direction":
                         direction = parm;
@@ -75,6 +76,9 @@ namespace ConsoleApplication1
                         break;
                     case "--reprovision":
                         reprovision = true;
+                        break;
+                    case "--dontdroptables":
+                        droptable = false;
                         break;
                     default:
                         break;
@@ -91,7 +95,7 @@ namespace ConsoleApplication1
             }
 
             Console.WriteLine("Running using these settings");
-            Console.WriteLine(" Table:" + tablename);
+            Console.WriteLine(" Table:" + scopename);
             Console.WriteLine(" Direction:" + direction);
             string mode = (deprovison ? "Deprovison" : reprovision ? "Reprovision" : "Provision");
             Console.WriteLine(" Mode:" + mode);
@@ -100,16 +104,16 @@ namespace ConsoleApplication1
 
             if (reprovision)
             {
-                Deprovison(server, client, tablename);
-                Provision(server, client, tablename, direction);
+                Deprovison(server, client, scopename, droptable);
+                Provision(server, client, scopename, direction);
             }
             else if (deprovison)
             {
-                Deprovison(server, client, tablename);
+                Deprovison(server, client, scopename, droptable);
             }
             else
             {
-                Provision(server, client, tablename, direction);
+                Provision(server, client, scopename, direction);
             }
             Provisioning.ProgressUpdate -= Provisioning_ProgressUpdate;
         }
@@ -121,9 +125,10 @@ namespace ConsoleApplication1
             Console.ResetColor();
         }
 
-        private static void Deprovison(SqlConnection server, SqlConnection client, string tablename)
+        private static void Deprovison(SqlConnection server, SqlConnection client,
+                                        string tablename, bool droptable)
         {
-            if (client.ConnectionString != server.ConnectionString)
+            if (droptable && client.ConnectionString != server.ConnectionString)
             {
                 Console.WriteLine(client.ConnectionString != server.ConnectionString);
                 client.Open();
