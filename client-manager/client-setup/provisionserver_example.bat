@@ -5,9 +5,16 @@ REM We list each table that should be synced in the TABLE_LIST variable and loop
 REM If a layer is already provisioned an error will be thrown.  To handle this you need to use the --deprovision
 REM flag and then call provision.exe again.
 
-set TABLE_LIST=(SewerJobs WaterJobs ParkAssets AddressNumbers WaterMains WaterServices Cadastre RoadLabels LocalityBoundaries SewerNodes SewerPipes Towns WaterFittings WaterMeters)
-set SERVER="Data Source=localhost;Initial Catalog=FieldData;Integrated Security=SSPI;"
+CALL setenv.bat
+set SERVER="Data Source=SD0302;Initial Catalog=SpatialData;Integrated Security=SSPI;"
+
 
 for %%i in %TABLE_LIST% DO (
-	ECHO Provisioning %%i
-	provisioner.exe --server=%SERVER% --client=%SERVER% --table=%%i --srid=28356)
+	ECHO Deprovisioning %%i
+	provisioner.exe --server=%SERVER% --client=%SERVER% --scope=%%i --reprovision)
+)
+
+for %%i in %TWOWAYTABLE_LIST% DO (
+	ECHO Deprovisioning %%i
+	provisioner.exe --server=%SERVER% --client=%SERVER% --scope=%%i --reprovision)
+)

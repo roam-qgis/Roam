@@ -70,9 +70,7 @@ def compileplugin():
         bin = os.path.join(mssyncpath, "provisioner.exe")
         syncbin = os.path.join(mssyncpath, "syncer.exe")
         clientsetuppath = os.path.join(curpath,"client-manager","client-setup")
-        copyFolder(lib, clientsetuppath)
-        copyFolder(bin, clientsetuppath)
-        copyFolder(syncbin, clientsetuppath)
+        copyFiles(mssyncpath, clientsetuppath)
 
     print " - building docs..."
     docs()
