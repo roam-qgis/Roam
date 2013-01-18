@@ -98,6 +98,8 @@ namespace ConsoleApplication1
             string mode = (deprovison ? "Deprovison" : reprovision ? "Reprovision" : "Provision");
             Console.WriteLine(" Mode:" + mode);
 
+            Provisioning.ProgressUpdate += Provisioning_ProgressUpdate;
+
             if (reprovision)
             {
                 Deprovison(server, client, tablename);
@@ -111,6 +113,14 @@ namespace ConsoleApplication1
             {
                 Provision(server, client, tablename, direction);
             }
+            Provisioning.ProgressUpdate -= Provisioning_ProgressUpdate;
+        }
+
+        static void Provisioning_ProgressUpdate(string obj)
+        {
+            Console.ForegroundColor = ConsoleColor.DarkYellow;
+            Console.WriteLine(obj);
+            Console.ResetColor();
         }
 
         private static void Deprovison(SqlConnection server, SqlConnection client, string tablename)

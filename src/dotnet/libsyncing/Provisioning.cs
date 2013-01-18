@@ -9,8 +9,11 @@ using Microsoft.SqlServer.Management.Smo;
 using System.Data.SqlClient;
 using System.Collections.Specialized;
 
+
 public static class Provisioning
 {
+    public static event Action<String> ProgressUpdate = delegate { };
+
     public static void CreateScopesTable(SqlConnection conn)
     {
         string sql = @"IF NOT (EXISTS (SELECT * 
@@ -53,6 +56,10 @@ public static class Provisioning
                                       string tableName, bool deprovisonScopeFirst)
     {
         bool clientMode = !client.ConnectionString.Equals(server.ConnectionString);
+
+        if (client.State == System.Data.ConnectionState.Closed)
+            client.Open();
+        SqlCommand command = client.CreateCommand();
 
         DbSyncScopeDescription scopeDescription = new DbSyncScopeDescription(tableName);
         SqlSyncScopeProvisioning destinationConfig = new SqlSyncScopeProvisioning(client);
@@ -127,10 +134,6 @@ public static class Provisioning
             Console.Error.WriteLine(ex.Message);
             Console.ResetColor();
         }
-
-        if (client.State == System.Data.ConnectionState.Closed)
-            client.Open();
-        SqlCommand command = client.CreateCommand();
         
         // Readd indentity column back onto client as primary key.
         if (clientMode && identityColumn != null && identityColumn != joinColumn)
@@ -157,6 +160,19 @@ public static class Provisioning
 
         if (geometryColumn == null)
             return;
+
+        command.CommandText = string.Format(@"SELECT TOP 1 [srid]
+                                              FROM [FieldData].[dbo].[geometry_columns] 
+                                              WHERE [f_table_name] = '{0}'",
+                                            tableName);
+
+        int? srid = command.ExecuteScalar() as int?;
+
+        if (!srid.HasValue)
+        {
+            srid = libsyncing.Properties.Settings.Default.defaultsrid;
+            ProgressUpdate("No SRID found in geometry_columns. Using default: " + srid);
+        }
     
         // Everything after this point is for geometry based tables only.
         if (clientMode)
@@ -191,16 +207,8 @@ public static class Provisioning
             }
         }
 
-
         // Server and client. Drop trigger and create WKT transfer trigger.
         Deprovisioning.DropTableGeomTrigger(client, tableName);
-
-        command.CommandText = string.Format(@"SELECT TOP 1 [srid]
-                                              FROM [FieldData].[dbo].[geometry_columns] 
-                                              WHERE [f_table_name] = '{0}'", 
-                                            tableName);
-
-        int srid = (command.ExecuteScalar() as int?).Value;
 
         command.CommandText = string.Format(@"CREATE TRIGGER [dbo].[{0}_GEOMSRID_trigger]
                                               ON [dbo].[{0}]
@@ -209,7 +217,7 @@ public static class Provisioning
                                               SET [{1}].STSrid = {2}
                                               FROM [dbo].[{0}]
                                               JOIN inserted
-                                              ON [dbo].[{0}].{3} = inserted.{3} AND inserted.[{1}] IS NOT NULL", tableName, geometryColumn.UnquotedName, srid, joinColumn.QuotedName);
+                                              ON [dbo].[{0}].{3} = inserted.{3} AND inserted.[{1}] IS NOT NULL", tableName, geometryColumn.UnquotedName, srid.Value, joinColumn.QuotedName);
         command.ExecuteNonQuery();
 
         // Alter selectedchanges stored procedure to convert geometry to WKT on fly.
