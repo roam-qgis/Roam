@@ -91,8 +91,6 @@ namespace ConsoleApplication1
             }
 
             Console.WriteLine("Running using these settings");
-            Console.WriteLine(" Server:" + server.ConnectionString);
-            Console.WriteLine(" Client:" + client.ConnectionString);
             Console.WriteLine(" Table:" + tablename);
             Console.WriteLine(" Direction:" + direction);
             string mode = (deprovison ? "Deprovison" : reprovision ? "Reprovision" : "Provision");

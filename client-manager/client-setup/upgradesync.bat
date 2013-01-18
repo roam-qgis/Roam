@@ -17,11 +17,13 @@ sqlcmd -S SD0302 -d SpatialData -i backuptables.sql
 for %%i in %TWOWAYTABLE_LIST% DO (
 	ECHO Provisioning %%i
 	provisioner.exe --server=%SERVER% --client=%CLIENT% --table=%%i --reprovision --direction=UploadAndDownload
+	ECHO.
 	)
 
 for %%i in %TABLE_LIST% DO (
 	ECHO Provisioning %%i
 	provisioner.exe --server=%SERVER% --client=%CLIENT% --table=%%i --reprovision
+	ECHO.
 	)
 
 syncer.exe --server=%SERVER% --client=%CLIENT%
