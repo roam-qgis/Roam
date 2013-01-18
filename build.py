@@ -68,9 +68,11 @@ def compileplugin():
         mssyncpath = os.path.join(dotnetpath, "bin")
         lib = os.path.join(mssyncpath, "libsyncing.dll")
         bin = os.path.join(mssyncpath, "provisioner.exe")
+        syncbin = os.path.join(mssyncpath, "syncer.exe")
         clientsetuppath = os.path.join(curpath,"client-manager","client-setup")
         copyFolder(lib, clientsetuppath)
         copyFolder(bin, clientsetuppath)
+        copyFolder(syncbin, clientsetuppath)
 
     print " - building docs..."
     docs()
