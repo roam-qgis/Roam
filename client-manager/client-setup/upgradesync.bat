@@ -1,5 +1,7 @@
 @ECHO OFF
 
+set clientarg=%1
+
 REM Update the client to use the new table per scope syncing style.
 REM This allows us to update clients one by one by not loose data between the sync.
 REM Only handles new records not changed data on client.
@@ -7,7 +9,7 @@ REM Only handles new records not changed data on client.
 
 set TABLE_LIST=(WaterJobs, ParkAssets)
 set SERVER="Data Source=localhost;Initial Catalog=FieldData;Integrated Security=SSPI;"
-set CLIENT="Data Source=localhost;Initial Catalog=SpatialData;Integrated Security=SSPI;"
+set CLIENT="Data Source=%clientarg%;Initial Catalog=SpatialData;Integrated Security=SSPI;"
 
 sqlcmd -S SD0302 -d SpatialData -i backuptables.sql
 
@@ -17,5 +19,5 @@ for %%i in %TABLE_LIST% DO (
 	)
 
 syncer.exe --server=%SERVER% --client=%CLIENT%
-sqlcmd -S SD0302 -d SpatialData -i insertmissing.sql
+sqlcmd -S %clientarg% -d SpatialData -i insertmissing.sql
 syncer.exe --server=%SERVER% --client=%CLIENT%
