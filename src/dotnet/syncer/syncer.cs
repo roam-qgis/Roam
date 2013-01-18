@@ -180,9 +180,9 @@ namespace MSSQLSyncer
                 else
                 {
                     //message = "Applied changes for table: -> " + tableProgress.TableName;
-                    Console.Write("Applied changes for table: ");
+                    Console.Write("Applied changes for table: " + tableProgress.TableName);
                     Console.ForegroundColor = ConsoleColor.Yellow;
-                    Console.Write("<-");
+                    Console.Write(" <-");
                     Console.ResetColor();
                     message = " [ Inserts:" + tableProgress.Inserts.ToString() +
                                " | Updates :" + tableProgress.Updates.ToString() +
@@ -217,9 +217,9 @@ namespace MSSQLSyncer
                 else
                 {
                     //message = "Applied changes for table: -> " + tableProgress.TableName;
-                    Console.Write("Applied changes for table: ");
+                    Console.Write("Applied changes for table: " + tableProgress.TableName);
                     Console.ForegroundColor = ConsoleColor.Green;
-                    Console.Write("->");
+                    Console.Write(" ->");
                     Console.ResetColor();
                     message = " [ Inserts:" + tableProgress.Inserts.ToString() +
                                " | Updates :" + tableProgress.Updates.ToString() +
