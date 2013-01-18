@@ -1,3 +1,7 @@
+-- Create a backup of all that can have data on the client.
+-- We are making a backup so that we can merge any data is that is missing
+-- from the server since we started doing a backup.
+
 declare @sql varchar(max)
 declare @tablenames varchar(max)
 
@@ -11,8 +15,7 @@ exec (@sql)
 
 -- Backup tables
 -- Get all the tables that are not download only.
--- IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[#Temp]') AND type in (N'U'))
-DROP TABLE #Temp
+IF OBJECT_ID('tempdb..#Temp') IS NOT NULL DROP TABLE #Temp
 
 SELECT scope
 INTO #Temp
