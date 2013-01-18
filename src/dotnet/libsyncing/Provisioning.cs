@@ -161,12 +161,17 @@ public static class Provisioning
         if (geometryColumn == null)
             return;
 
-        command.CommandText = string.Format(@"SELECT TOP 1 [srid]
-                                              FROM [FieldData].[dbo].[geometry_columns] 
+        if (server.State == System.Data.ConnectionState.Closed)
+            server.Open();
+
+        SqlCommand servercommand = server.CreateCommand();
+
+        servercommand.CommandText = string.Format(@"SELECT TOP 1 [srid]
+                                              FROM [geometry_columns] 
                                               WHERE [f_table_name] = '{0}'",
                                             tableName);
 
-        int? srid = command.ExecuteScalar() as int?;
+        int? srid = servercommand.ExecuteScalar() as int?;
 
         if (!srid.HasValue)
         {
