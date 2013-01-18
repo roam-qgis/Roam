@@ -74,7 +74,8 @@ public static class syncing
     /// <param name="tablename">The able name to sync.</param>
     public static SyncOperationStatistics syncscope(SqlConnection server, SqlConnection client,
                           string scope, SyncDirectionOrder order, 
-                          Action<object, DbApplyingChangesEventArgs> callback)
+                          Action<object, DbApplyingChangesEventArgs> callback,
+                          Action<object, DbApplyingChangesEventArgs> mastercallback)
     {
         // If we are only doing a download and the scope on the database
         // is out of date then we need to reprovision the data, but for now just
@@ -102,7 +103,7 @@ public static class syncing
             };
 
             slaveProvider.ApplyingChanges += new EventHandler<DbApplyingChangesEventArgs>(callback);
-            masterProvider.ApplyingChanges += new EventHandler<DbApplyingChangesEventArgs>(callback);
+            masterProvider.ApplyingChanges += new EventHandler<DbApplyingChangesEventArgs>(mastercallback);
             slaveProvider.ApplyChangeFailed += slaveProvider_ApplyChangeFailed;
             return orchestrator.Synchronize();
         }
@@ -166,6 +167,7 @@ public static class syncing
             serverScopeConfig = command.ExecuteScalar() as string;
             command.Connection = client;
             clientScopeConfig = command.ExecuteScalar() as string;
+
         }
 
         return (serverScopeConfig != clientScopeConfig);

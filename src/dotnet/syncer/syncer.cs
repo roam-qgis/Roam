@@ -105,7 +105,8 @@ namespace MSSQLSyncer
                    {
                        stats = syncing.syncscope(server, client,
                                                  scope.name, scope.order,
-                                                 applyingChanges);
+                                                 applyingChanges,
+                                                 applyingChangesMaster);
 
                    }
                    catch (DbSyncException ex)
@@ -160,26 +161,71 @@ namespace MSSQLSyncer
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        static void applyingChanges(object sender, DbApplyingChangesEventArgs e)
+        static void applyingChangesMaster(object sender, DbApplyingChangesEventArgs e)
         {
             string message;
             foreach (DbSyncTableProgress tableProgress in e.Context.ScopeProgress.TablesProgress)
             {
+                if (tableProgress.TotalChanges == 0)
+                    continue;
+
                 if (porcelain)
                 {
                     message = "t:" + tableProgress.TableName;
                     message += "|i:" + tableProgress.Inserts.ToString() +
                                "|u:" + tableProgress.Updates.ToString() +
                                "|d:" + tableProgress.Deletes.ToString();
+                    Console.WriteLine(message);
                 }
                 else
                 {
-                    message = "Applied changes for table: " + tableProgress.TableName;
-                    message += " [ Inserts:" + tableProgress.Inserts.ToString() +
+                    //message = "Applied changes for table: -> " + tableProgress.TableName;
+                    Console.Write("Applied changes for table: ");
+                    Console.ForegroundColor = ConsoleColor.Yellow;
+                    Console.Write("<-");
+                    Console.ResetColor();
+                    message = " [ Inserts:" + tableProgress.Inserts.ToString() +
                                " | Updates :" + tableProgress.Updates.ToString() +
                                " | Deletes :" + tableProgress.Deletes.ToString() + " ]";
+                    Console.Write(message + "\n");
                 }
-                Console.WriteLine(message);
+            }
+        }
+
+
+        /// <summary>
+        /// Reports the progress on the changes being applied.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        static void applyingChanges(object sender, DbApplyingChangesEventArgs e)
+        {
+            string message;
+            foreach (DbSyncTableProgress tableProgress in e.Context.ScopeProgress.TablesProgress)
+            {
+                if (tableProgress.TotalChanges == 0)
+                    continue;
+
+                if (porcelain)
+                {
+                    message = "t:" + tableProgress.TableName;
+                    message += "|i:" + tableProgress.Inserts.ToString() +
+                               "|u:" + tableProgress.Updates.ToString() +
+                               "|d:" + tableProgress.Deletes.ToString();
+                    Console.WriteLine(message);
+                }
+                else
+                {
+                    //message = "Applied changes for table: -> " + tableProgress.TableName;
+                    Console.Write("Applied changes for table: ");
+                    Console.ForegroundColor = ConsoleColor.Green;
+                    Console.Write("->");
+                    Console.ResetColor();
+                    message = " [ Inserts:" + tableProgress.Inserts.ToString() +
+                               " | Updates :" + tableProgress.Updates.ToString() +
+                               " | Deletes :" + tableProgress.Deletes.ToString() + " ]";
+                    Console.Write(message + "\n");
+                }
             }
         }
 
