@@ -6,6 +6,7 @@ from PyQt4.QtSql import QSqlDatabase, QSqlQuery
 import os
 import imp
 import json
+import utils
 
 def getForms():
     """ Get all the custom user forms that have been created.
@@ -39,14 +40,15 @@ class Form(object):
         self._module = module
         self._settings = None
         self._db = None
+        self.name = os.path.dirname(self.module.__file__)
+        self.savedvaluesfile = os.path.join(self.name , "savedvalues.json")
 
     @property
     def module(self):
         return self._module
 
     def formInstance(self, parent=None):
-        path = os.path.dirname(self.module.__file__)
-        uiFile = os.path.join(path, "form.ui")
+        uiFile = os.path.join(self.name, "form.ui")
         instance = loadUi(uiFile)
         return instance
 
@@ -55,8 +57,7 @@ class Form(object):
             Get or create the form.db database instance and the needed tables.
         """
         if self._db is None:
-            path = os.path.dirname(self.module.__file__)
-            dbpath = os.path.join(path, "form.db")
+            dbpath = os.path.join(self.name, "form.db")
             self._db = QSqlDatabase.addDatabase("QSQLITE")
             self._db.setDatabaseName(dbpath)
             self._db.open()
@@ -73,20 +74,38 @@ class Form(object):
 
     def settings(self):
         if self._settings is None:
-            path = os.path.dirname(self.module.__file__)
-            with open(os.path.join(path, "settings.config"),'r') as f:
+            with open(os.path.join(self.name, "settings.config"),'r') as f:
                 self._settings = json.load(f)
 
         return self._settings
     
-    def getHelpFile(self, name):
-        path = os.path.dirname(self.module.__file__)
-        filename = "%s.html" % str(name)
-        filepath = os.path.join(path,"help", filename )
+    def getHelpFile(self, fieldname):
+        filename = "%s.html" % str(fieldname)
+        filepath = os.path.join(self.name,"help", filename )
         if os.path.exists(filepath):
             return filepath
         else:
             return None
+
+    def getSavedValues(self):
+        attr = {}
+        try:
+            utils.log(self.savedvaluesfile)
+            with open(self.savedvaluesfile, 'r') as f:
+                attr = json.loads(f.read())
+        except IOError:
+            utils.log('No saved values found for %s' % self.name)
+        except ValueError:
+            utils.log('No saved values found for %s' % self.name)
+        return attr
+
+    def setSavedValues(self, values):
+        path = os.path.dirname(self.savedvaluesfile)
+        if not os.path.exists(path):
+            makedirs(path)
+
+        with open(self.savedvaluesfile, 'w') as f:
+            json.dump(values,f)
 
     def layers(self):
         """

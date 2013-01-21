@@ -127,7 +127,7 @@ class DialogProvider(QObject):
         back to the layer.
         """
         info("Saving values back")
-        feature = self.binder.unbindFeature(self.feature)
+        feature = self.binder.unbindFeature(self.feature, self.update)
         info("New feature %s" % feature)
         for value in self.feature.attributeMap().values():
             info("New value %s" % value.toString())
