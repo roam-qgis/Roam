@@ -176,20 +176,18 @@ class FormBinder(QObject):
 
             info("Binding %s to %s" % (control.objectName(), value.toString()))
 
-            indefaults = False
+            self.bindSaveValueButton(control, defaults, editingmode=editing)
             if not editing:
-                if name in defaults.keys():
-                    button = self.getControl('%s_save' % name, QToolButton) 
-                    if not button: continue
+                try:
                     value = defaults[name]
-                    indefaults = True
+                except KeyError:
+                    pass 
 
             try:
                 self.bindValueToControl(control, value, index)
             except BindingError as er:
                 warning(er.reason)
 
-            self.bindSaveValueButton(control, indefaults=indefaults)
             self.createHelpLink(control)
 
             self.fieldtocontrol[index] = control
@@ -329,7 +327,7 @@ class FormBinder(QObject):
                 # This is to work around http://hub.qgis.org/issues/7012
                 control.setEditable(editable)
 
-    def unbindFeature(self, qgsfeature):
+    def unbindFeature(self, qgsfeature, editingmode=False):
         """
         Unbinds the feature from the form saving the values back to the QgsFeature.
 
@@ -364,10 +362,11 @@ class FormBinder(QObject):
                 if self.shouldSaveValue(control):
                     savefields.append(index)
 
-        m = qgsfeature.attributeMap()
-        fields_map = self.layer.pendingFields()
-        attr = { str(fields_map[k].name()): str(v.toString()) for k, v in m.items() if k in savefields }
-        self.form.setSavedValues(attr)
+        if not editingmode:
+            m = qgsfeature.attributeMap()
+            fields_map = self.layer.pendingFields()
+            attr = { str(fields_map[k].name()): str(v.toString()) for k, v in m.items() if k in savefields }
+            self.form.setSavedValues(attr)
 
         return qgsfeature
 
@@ -445,16 +444,18 @@ class FormBinder(QObject):
 
         return button.isChecked()
 
-    def bindSaveValueButton(self, control, indefaults=False):
+    def bindSaveValueButton(self, control, defaults, editingmode=False):
+        name = str(control.objectName())
         try:
-            button = self.getControl(control.objectName() + "_save", QToolButton)
+            button = self.getControl(name + "_save", QToolButton)
         except ControlNotFound:
             return
 
-        button.setCheckable(True)
+        button.setCheckable(not editingmode)
         button.setIcon(QIcon(":/icons/save_default"))
         button.setIconSize(QSize(24, 24))
-        button.setChecked(indefaults)
+        button.setChecked(name in defaults)
+        button.setVisible(not editingmode)
 
     def bindSelectButtons(self):
         """
