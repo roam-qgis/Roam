@@ -344,19 +344,13 @@ class FormBinder(QObject):
         control - QWidget based control that takes the new value
         value - A QVariant holding the value
         """
-        if isinstance(control, QCalendarWidget):
-            control.setSelectedDate(QDate.fromString(value.toString(), Qt.ISODate))
-
-        elif isinstance(control, QListWidget):
+        if isinstance(control, QListWidget):
             items = control.findItems(value.toString(), Qt.MatchExactly)
             try:
                 control.setCurrentItem(items[0])
                 control.currentItemChanged.emit(None, items[0])
             except IndexError:
                 pass
-
-        elif isinstance(control, QGroupBox):
-            control.setChecked(value.toBool())
 
         elif isinstance(control, QDateTimeEdit):
             control.setDateTime(QDateTime.fromString(value.toString(), Qt.ISODate))
@@ -369,15 +363,18 @@ class FormBinder(QObject):
                     button.setText("Pick")
                     button.setIconSize(QSize(24,24))
                     button.pressed.connect(partial(self.pickDateTime, control, "DateTime" ))
+
         elif isinstance(control, QPushButton):
             if control.text() == "Drawing":
                 control.setIcon(QIcon(":/icons/draw"))
                 control.setIconSize(QSize(24,24))
                 control.pressed.connect(partial(self.loadDrawingTool, control))
         else:
-            widget = QgsAttributeEditor.createAttributeEditor(None, control, self.layer, index, value)
+            widget = QgsAttributeEditor.createAttributeEditor(self.forminstance, control, self.layer, index, value)
+            wasset = QgsAttributeEditor.setValue(widget, self.layer, index, value)
             log(control)
             log(widget)
+            log(wasset)
 
     def loadDrawingTool(self, control):
         """
