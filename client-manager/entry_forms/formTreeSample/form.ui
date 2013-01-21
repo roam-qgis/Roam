@@ -62,16 +62,6 @@ p, li { white-space: pre-wrap; }
             <string/>
            </property>
           </item>
-          <item>
-           <property name="text">
-            <string>John Doe</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>Inspector 1</string>
-           </property>
-          </item>
          </widget>
         </item>
         <item>
@@ -175,16 +165,6 @@ p, li { white-space: pre-wrap; }
        <item>
         <property name="text">
          <string/>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>Significant</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>Heritage</string>
         </property>
        </item>
       </widget>
