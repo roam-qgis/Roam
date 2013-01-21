@@ -194,7 +194,7 @@
             <excludeAttributesWFS/>
             <attributeactions/>
         </maplayer>
-        <maplayer minimumScale="0" maximumScale="1e+08" geometry="Point" type="vector" hasScaleBasedVisibilityFlag="0">
+        <maplayer minimumScale="-4.65661e-10" maximumScale="1e+08" geometry="Point" type="vector" hasScaleBasedVisibilityFlag="0">
             <id>trees20120923001707500</id>
             <datasource>dbname='./sample_data.sqlite' table="trees" (geomm) sql=</datasource>
             <title></title>
@@ -356,27 +356,27 @@
                     <valuepair key="Test" value="Test"/>
                     <valuepair key="dsaasd" value="Sdaa"/>
                 </edittype>
-                <edittype type="2" name="Botanical_Name"/>
+                <edittype type="1" name="Botanical_Name"/>
                 <edittype type="0" name="Canopy_Width"/>
-                <edittype type="0" name="Common_Name"/>
+                <edittype type="1" name="Common_Name"/>
                 <edittype type="0" name="Condition"/>
-                <edittype type="0" name="Crown_Shape"/>
+                <edittype type="1" name="Crown_Shape"/>
                 <edittype type="0" name="DateInspected"/>
                 <edittype unchecked="0" type="7" checked="1" name="Diseased"/>
                 <edittype unchecked="0" type="7" checked="1" name="Effecting_Infrastructure"/>
                 <edittype type="0" name="Estimated_Age"/>
-                <edittype type="2" name="Family"/>
+                <edittype type="1" name="Family"/>
                 <edittype type="0" name="Form"/>
-                <edittype type="2" name="Genus"/>
+                <edittype type="1" name="Genus"/>
                 <edittype type="0" name="Height"/>
                 <edittype type="1" name="Inspected_By"/>
                 <edittype unchecked="0" type="7" checked="1" name="Near_Communications"/>
                 <edittype unchecked="0" type="7" checked="1" name="Near_Other_Infrastructure"/>
                 <edittype unchecked="0" type="7" checked="1" name="Near_Sewer"/>
                 <edittype unchecked="0" type="7" checked="1" name="Near_Water"/>
-                <edittype type="2" name="Pest_Type"/>
+                <edittype type="1" name="Pest_Type"/>
                 <edittype unchecked="0" type="7" checked="1" name="Pests"/>
-                <edittype type="2" name="Species"/>
+                <edittype type="1" name="Species"/>
                 <edittype unchecked="0" type="7" checked="1" name="Under_Electric_Lines"/>
                 <edittype type="0" name="id"/>
                 <edittype type="0" name="pk"/>
