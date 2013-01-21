@@ -339,30 +339,21 @@ class FormBinder(QObject):
     def bindValueToControl(self, control, value, index=0):
         """
         Binds a control to the supplied value.
-        Raises BindingError() if control is not supported.
 
         control - QWidget based control that takes the new value
         value - A QVariant holding the value
         """
-        if isinstance(control, QListWidget):
-            items = control.findItems(value.toString(), Qt.MatchExactly)
-            try:
-                control.setCurrentItem(items[0])
-                control.currentItemChanged.emit(None, items[0])
-            except IndexError:
-                pass
-
-        elif isinstance(control, QDateTimeEdit):
+        if isinstance(control, QDateTimeEdit):
             control.setDateTime(QDateTime.fromString(value.toString(), Qt.ISODate))
             # Wire up the date picker button
-            parent = control.parentWidget()
-            if parent:
-                button = parent.findChild(QPushButton, control.objectName() + "_pick" )
-                if button:
-                    button.setIcon(QIcon(":/icons/calender"))
-                    button.setText("Pick")
-                    button.setIconSize(QSize(24,24))
-                    button.pressed.connect(partial(self.pickDateTime, control, "DateTime" ))
+            button = self.getControl(control.objectName() + "_pick", QPushButton )
+            if not button:
+                return
+
+            button.setIcon(QIcon(":/icons/calender"))
+            button.setText("Pick")
+            button.setIconSize(QSize(24,24))
+            button.pressed.connect(partial(self.pickDateTime, control, "DateTime" ))
 
         elif isinstance(control, QPushButton):
             if control.text() == "Drawing":
@@ -370,11 +361,19 @@ class FormBinder(QObject):
                 control.setIconSize(QSize(24,24))
                 control.pressed.connect(partial(self.loadDrawingTool, control))
         else:
+            try:
+                editable = control.isEditable()
+            except AttributeError:
+                pass
+
             widget = QgsAttributeEditor.createAttributeEditor(self.forminstance, control, self.layer, index, value)
-            wasset = QgsAttributeEditor.setValue(widget, self.layer, index, value)
-            log(control)
+            wasset = QgsAttributeEditor.setValue(control, self.layer, index, value)
             log(widget)
-            log(wasset)
+            try:
+                # Set the control back to the editable state the form says it should be.
+                control.setEditable(editable)
+            except AttributeError:
+                pass
 
     def loadDrawingTool(self, control):
         """
@@ -426,7 +425,6 @@ class FormBinder(QObject):
         Unbinds the feature from the form saving the values back to the QgsFeature.
 
         qgsfeature -- A QgsFeature that will store the new values.
-        TODO: If the parent of the control is a QGroupBox and is disabled, the control is ignored for changing.
         """
         for index, control in self.fieldtocontrol.items():
                 value = None
