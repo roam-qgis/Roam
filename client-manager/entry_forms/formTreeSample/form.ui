@@ -39,7 +39,7 @@ p, li { white-space: pre-wrap; }
      <property name="checkable">
       <bool>false</bool>
      </property>
-     <layout class="QFormLayout" name="formLayout_2">
+     <layout class="QGridLayout" name="gridLayout_3">
       <item row="0" column="0">
        <widget class="QLabel" name="Inspected_By_label">
         <property name="text">
@@ -53,6 +53,9 @@ p, li { white-space: pre-wrap; }
          <widget class="QComboBox" name="Inspected_By">
           <property name="editable">
            <bool>true</bool>
+          </property>
+          <property name="sizeAdjustPolicy">
+           <enum>QComboBox::AdjustToMinimumContentsLength</enum>
           </property>
           <property name="mandatory" stdset="0">
            <bool>true</bool>
