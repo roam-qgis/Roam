@@ -21,6 +21,8 @@ settingspath = os.path.join(curdir,'settings.config')
 with open(settingspath,'r') as f:
     settings = json.load(f)
 
+appdata = os.path.join(os.environ['APPDATA'], "QMap")
+
 class Timer():
     def __init__(self, message=""):
         self.message = message

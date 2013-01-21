@@ -11,7 +11,7 @@ from functools import partial
 from datatimerpickerwidget import DateTimePickerDialog
 from drawingpad import DrawingPad
 from helpviewdialog import HelpViewDialog
-from utils import log, warning
+from utils import log, warning, appdata
 import re
 from qgis.gui import QgsAttributeEditor
 from qgis.core import QgsVectorLayer
@@ -133,7 +133,7 @@ class FormBinder(QObject):
     """
     Handles binding of values to and out of the form.
     """
-    def __init__(self, layer, formInstance, canvas, settings, formmodule, db):
+    def __init__(self, layer, formInstance, canvas, settings, form, db):
         QObject.__init__(self)
         self.layer = layer
         self.canvas = canvas
@@ -144,8 +144,7 @@ class FormBinder(QObject):
         self.settings = settings
         self.images = {}
         self.mandatory_group = MandatoryGroup()
-        self.forsaving = set()
-        self.formmodule = formmodule
+        self.form = form
         self.db = db
 
     def bindFeature(self, qgsfeature, mandatory_fields=True, editing=False):
@@ -158,12 +157,13 @@ class FormBinder(QObject):
         """
         self.feature = qgsfeature
         self.connectControlsToSQLCommands()
-        defaults = self.getDefaults()
+        defaults = self.form.getSavedValues()
+
         for index, value in qgsfeature.attributeMap().items():
-            field = self.fields[index]
+            name = str(self.fields[index].name())
 
             try:
-                control = self.getControl(field.name())
+                control = self.getControl(name)
             except ControlNotFound as ex:
                 warning(ex.message)
                 continue
@@ -176,28 +176,27 @@ class FormBinder(QObject):
 
             info("Binding %s to %s" % (control.objectName(), value.toString()))
 
-            isdefaultset = False
+            indefaults = False
             if not editing:
-                try:
-                    # Get the default value from the database and use that instead.
-                    value = defaults[control]
-                    isdefaultset = control in defaults
-                except KeyError:
-                    pass
+                if name in defaults.keys():
+                    button = self.getControl('%s_save' % name, QToolButton) 
+                    if not button: continue
+                    value = defaults[name]
+                    indefaults = True
 
             try:
                 self.bindValueToControl(control, value, index)
             except BindingError as er:
                 warning(er.reason)
 
-            self.bindSaveValueButton(control, indefaults=isdefaultset)
+            self.bindSaveValueButton(control, indefaults=indefaults)
             self.createHelpLink(control)
 
             self.fieldtocontrol[index] = control
 
     def createHelpLink(self, control):
         name = control.objectName()
-        helpfile = self.formmodule.getHelpFile(name)
+        helpfile = self.form.getHelpFile(name)
         if helpfile:
             label = self.getBuddy(control)
             if label is control: return
@@ -210,21 +209,6 @@ class FormBinder(QObject):
         dlg = HelpViewDialog()
         dlg.loadFile(url)
         dlg.exec_()
-    
-    def getDefaults(self):
-        query = QSqlQuery("SELECT control, value FROM DefaultValues")
-        query.exec_()
-        defaults = {}
-        while query.next():
-            try:
-                name = query.value(0).toString()
-                control = self.getControl(name)
-            except ControlNotFound:
-                continue
-
-            value = query.value(1)
-            defaults[control] = value
-        return defaults
 
     def connectControlsToSQLCommands(self):
         """
@@ -351,6 +335,7 @@ class FormBinder(QObject):
 
         qgsfeature -- A QgsFeature that will store the new values.
         """
+        savefields = []
         for index, control in self.fieldtocontrol.items():
                 value = QVariant()
                 if isinstance(control, QDateTimeEdit):
@@ -377,9 +362,12 @@ class FormBinder(QObject):
 
                 # Save the value to the database as a default if it is needed.
                 if self.shouldSaveValue(control):
-                    self.saveDefault(control, value)
-                else:
-                    self.removeDefault(control)
+                    savefields.append(index)
+
+        m = qgsfeature.attributeMap()
+        fields_map = self.layer.pendingFields()
+        attr = { str(fields_map[k].name()): str(v.toString()) for k, v in m.items() if k in savefields }
+        self.form.setSavedValues(attr)
 
         return qgsfeature
 
@@ -429,8 +417,6 @@ class FormBinder(QObject):
         self.canvas.saveAsImage(tempimage, image)
         pad.openImage(tempimage)
 
-
-
     def pickDateTime(self, control, mode):
         """
         Open the date time picker dialog
@@ -454,11 +440,9 @@ class FormBinder(QObject):
     def shouldSaveValue(self, control):
         try:
             button = self.getControl(control.objectName() + "_save", QToolButton)
-            log("save button found for %s" % control.objectName())
         except ControlNotFound:
             return
 
-        log("_save button for %s is %s" % (control.objectName(), str(button.isChecked()) ))
         return button.isChecked()
 
     def bindSaveValueButton(self, control, indefaults=False):
@@ -471,23 +455,6 @@ class FormBinder(QObject):
         button.setIcon(QIcon(":/icons/save_default"))
         button.setIconSize(QSize(24, 24))
         button.setChecked(indefaults)
-
-    def removeDefault(self, control):
-        name = control.objectName()
-        query = QSqlQuery()
-        query.prepare("DELETE FROM DefaultValues WHERE control = :control")
-        query.bindValue(":control", name)
-        query.exec_()
-
-    def saveDefault(self, control, value):
-        self.removeDefault(control)
-        name = control.objectName()
-        query = QSqlQuery()
-        query.prepare("INSERT INTO DefaultValues (control, value)" \
-                      "VALUES (:control,:value)")
-        query.bindValue(":control", name)
-        query.bindValue(":value", value)
-        query.exec_()
 
     def bindSelectButtons(self):
         """
