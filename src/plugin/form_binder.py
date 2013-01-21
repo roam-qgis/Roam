@@ -14,6 +14,7 @@ from helpviewdialog import HelpViewDialog
 from utils import log, warning
 import re
 from qgis.gui import QgsAttributeEditor
+from qgis.core import QgsVectorLayer
 
 
 class BindingError(Exception):
@@ -361,19 +362,56 @@ class FormBinder(QObject):
                 control.setIconSize(QSize(24,24))
                 control.pressed.connect(partial(self.loadDrawingTool, control))
         else:
-            try:
+            if self.layer.editType(index) == QgsVectorLayer.UniqueValues:
                 editable = control.isEditable()
-            except AttributeError:
-                pass
 
             widget = QgsAttributeEditor.createAttributeEditor(self.forminstance, control, self.layer, index, value)
             wasset = QgsAttributeEditor.setValue(control, self.layer, index, value)
             log(widget)
-            try:
+            
+            if self.layer.editType(index) == QgsVectorLayer.UniqueValues:
                 # Set the control back to the editable state the form says it should be.
+                # This is to work around http://hub.qgis.org/issues/7012
                 control.setEditable(editable)
-            except AttributeError:
-                pass
+
+    def unbindFeature(self, qgsfeature):
+        """
+        Unbinds the feature from the form saving the values back to the QgsFeature.
+
+        qgsfeature -- A QgsFeature that will store the new values.
+        """
+        for index, control in self.fieldtocontrol.items():
+                value = QVariant()
+                if isinstance(control, QDateTimeEdit):
+                    value = control.dateTime().toString(Qt.ISODate)
+                elif isinstance(control, QListWidget):
+                    item = control.currentItem()
+                    if item:
+                        value = item.text()
+                    else:
+                        return QString("")
+                else:
+                    if (self.layer.editType(index) == QgsVectorLayer.UniqueValues and
+                       control.isEditable()):
+                        # Due to http://hub.qgis.org/issues/7012 we can't have editable
+                        # comboxs using QgsAttributeEditor. If the value isn't in the
+                        # dataset already it will return null.  Until that bug is fixed
+                        # we are just going to handle ourself.
+                        value = control.currentText()
+                    else:
+                        modified = QgsAttributeEditor.retrieveValue(control, self.layer, index, value)
+
+                info("Setting value to %s from %s" % (value, control.objectName()))
+                qgsfeature.changeAttribute(index, value)
+
+                # Save the value to the database as a default if it is needed.
+                if self.shouldSaveValue(control):
+                    self.saveDefault(control, value)
+                else:
+                    self.removeDefault(control)
+
+        return qgsfeature
+
 
     def loadDrawingTool(self, control):
         """
@@ -420,55 +458,7 @@ class FormBinder(QObject):
         self.canvas.saveAsImage(tempimage, image)
         pad.openImage(tempimage)
 
-    def unbindFeature(self, qgsfeature):
-        """
-        Unbinds the feature from the form saving the values back to the QgsFeature.
 
-        qgsfeature -- A QgsFeature that will store the new values.
-        """
-        for index, control in self.fieldtocontrol.items():
-                value = None
-                if isinstance(control, QLineEdit):
-                    value = control.text()
-
-                elif isinstance(control, QTextEdit) or isinstance(control, QPlainTextEdit):
-                    value = control.toPlainText()
-
-                elif isinstance(control, QCalendarWidget):
-                    value = control.selectedDate().toString(Qt.ISODate)
-
-                elif isinstance(control, QCheckBox) or isinstance(control, QGroupBox):
-                    value = 0
-                    if control.isChecked():
-                        value = 1
-                elif isinstance(control, QComboBox):
-                    value = control.currentText()
-                    if control.isEditable():
-                        self.saveComboValues(control, value)
-
-                elif isinstance(control, QDoubleSpinBox) or isinstance(control, QSpinBox):
-                    value = control.value()
-
-                elif isinstance(control, QDateTimeEdit):
-                    value = control.dateTime().toString(Qt.ISODate)
-
-                elif isinstance(control, QListWidget):
-                    item = control.currentItem()
-                    if item:
-                        value = item.text()
-                    else:
-                        return QString("")
-
-                info("Setting value to %s from %s" % (value, control.objectName()))
-                qgsfeature.changeAttribute(index, value)
-
-                # Save the value to the database as a default if it is needed.
-                if self.shouldSaveValue(control):
-                    self.saveDefault(control, value)
-                else:
-                    self.removeDefault(control)
-
-        return qgsfeature
 
     def pickDateTime(self, control, mode):
         """
