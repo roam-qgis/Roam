@@ -265,35 +265,6 @@ class FormBinder(QObject):
         except BindingError as er:
             warning(er.reason)
 
-    def saveComboValues(self, combobox, text):
-        """
-        Save the value of the combo box into the form settings values.
-        Only saves new values.
-        """
-        comboitems = [combobox.itemText(i) for i in range(combobox.count())]
-        name = combobox.objectName()
-        query = QSqlQuery()
-        query.prepare("SELECT value FROM ComboBoxItems WHERE control = :contorl")
-        query.bindValue(":control", name)
-        query.exec_()
-        log("LAST ERROR")
-        log(query.lastError().text())
-        items = []
-        while query.next():
-            value = query.value(0).toString()
-            if not value.isEmpty():
-                items.append(str(value))
-
-        if not text in comboitems and not text in items:
-            query = QSqlQuery()
-            query.prepare("INSERT INTO ComboBoxItems (control, value)" \
-                          "VALUES (:control,:value)")
-            query.bindValue(":control", name)
-            query.bindValue(":value", text)
-            query.exec_()
-            log("LAST ERROR FOR INSERT")
-            log(query.lastError().text())
-
     def updateControl(self, control, mapping, sql, *args):
         """
             Update control with result from SQL query.
@@ -345,8 +316,8 @@ class FormBinder(QObject):
         value - A QVariant holding the value
         """
         if isinstance(control, QDateTimeEdit):
+            # Can be removed after http://hub.qgis.org/issues/7013 is fixed.
             control.setDateTime(QDateTime.fromString(value.toString(), Qt.ISODate))
-            # Wire up the date picker button
             button = self.getControl(control.objectName() + "_pick", QPushButton )
             if not button:
                 return
