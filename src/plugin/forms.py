@@ -2,7 +2,6 @@ import os.path
 from PyQt4.QtCore import QSettings,QString
 from PyQt4.QtGui import QIcon
 from PyQt4.uic import loadUi
-from PyQt4.QtSql import QSqlDatabase, QSqlQuery
 import os
 import imp
 import json
@@ -51,26 +50,6 @@ class Form(object):
         uiFile = os.path.join(self.name, "form.ui")
         instance = loadUi(uiFile)
         return instance
-
-    def db(self):
-        """
-            Get or create the form.db database instance and the needed tables.
-        """
-        if self._db is None:
-            dbpath = os.path.join(self.name, "form.db")
-            self._db = QSqlDatabase.addDatabase("QSQLITE")
-            self._db.setDatabaseName(dbpath)
-            self._db.open()
-            self.checkDatabaseTables()
-        return self._db
-
-    def checkDatabaseTables(self):
-        if not self.db().tables().contains('ComboBoxItems'):
-            q = QSqlQuery("CREATE TABLE IF NOT EXISTS ComboBoxItems ( control TEXT, value TEXT)")
-            q.exec_()
-        if not self.db().tables().contains('DefaultValues'):
-            q = QSqlQuery("CREATE TABLE IF NOT EXISTS DefaultValues ( control TEXT, value TEXT)")
-            q.exec_()
 
     def settings(self):
         if self._settings is None:

@@ -4,7 +4,6 @@ import os.path
 import os
 from PyQt4.QtGui import *
 from PyQt4.QtCore import *
-from PyQt4.QtSql import QSqlQuery
 from utils import log, info, warning
 from select_feature_tool import SelectFeatureTool
 from functools import partial
@@ -133,7 +132,7 @@ class FormBinder(QObject):
     """
     Handles binding of values to and out of the form.
     """
-    def __init__(self, layer, formInstance, canvas, settings, form, db):
+    def __init__(self, layer, formInstance, canvas, settings, form):
         QObject.__init__(self)
         self.layer = layer
         self.canvas = canvas
@@ -145,7 +144,6 @@ class FormBinder(QObject):
         self.images = {}
         self.mandatory_group = MandatoryGroup()
         self.form = form
-        self.db = db
 
     def bindFeature(self, qgsfeature, mandatory_fields=True, editing=False):
         """
