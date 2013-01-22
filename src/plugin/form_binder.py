@@ -214,7 +214,7 @@ class FormBinder(QObject):
 
     def getControl(self, name, control_type=QWidget):
         control = self.forminstance.findChild(control_type, name)
-        if not control:
+        if control is None:
             raise ControlNotFound(name)
 
         return control

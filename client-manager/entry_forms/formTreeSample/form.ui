@@ -60,11 +60,6 @@ p, li { white-space: pre-wrap; }
           <property name="mandatory" stdset="0">
            <bool>true</bool>
           </property>
-          <item>
-           <property name="text">
-            <string/>
-           </property>
-          </item>
          </widget>
         </item>
         <item>
@@ -141,16 +136,11 @@ p, li { white-space: pre-wrap; }
         <bool>true</bool>
        </property>
        <property name="currentIndex">
-        <number>0</number>
+        <number>-1</number>
        </property>
        <property name="mandatory" stdset="0">
         <bool>true</bool>
        </property>
-       <item>
-        <property name="text">
-         <string/>
-        </property>
-       </item>
       </widget>
      </item>
      <item row="1" column="0">
@@ -165,11 +155,6 @@ p, li { white-space: pre-wrap; }
        <property name="editable">
         <bool>true</bool>
        </property>
-       <item>
-        <property name="text">
-         <string/>
-        </property>
-       </item>
       </widget>
      </item>
      <item row="2" column="0">
@@ -184,11 +169,6 @@ p, li { white-space: pre-wrap; }
        <property name="editable">
         <bool>true</bool>
        </property>
-       <item>
-        <property name="text">
-         <string/>
-        </property>
-       </item>
       </widget>
      </item>
      <item row="3" column="0">
@@ -203,11 +183,6 @@ p, li { white-space: pre-wrap; }
        <property name="editable">
         <bool>true</bool>
        </property>
-       <item>
-        <property name="text">
-         <string/>
-        </property>
-       </item>
       </widget>
      </item>
      <item row="4" column="0">
@@ -222,11 +197,6 @@ p, li { white-space: pre-wrap; }
        <property name="editable">
         <bool>true</bool>
        </property>
-       <item>
-        <property name="text">
-         <string/>
-        </property>
-       </item>
       </widget>
      </item>
      <item row="5" column="0">
@@ -241,11 +211,6 @@ p, li { white-space: pre-wrap; }
        <property name="editable">
         <bool>true</bool>
        </property>
-       <item>
-        <property name="text">
-         <string/>
-        </property>
-       </item>
       </widget>
      </item>
      <item row="6" column="0">
@@ -260,11 +225,6 @@ p, li { white-space: pre-wrap; }
        <property name="editable">
         <bool>true</bool>
        </property>
-       <item>
-        <property name="text">
-         <string/>
-        </property>
-       </item>
       </widget>
      </item>
      <item row="7" column="0">
@@ -279,11 +239,6 @@ p, li { white-space: pre-wrap; }
        <property name="editable">
         <bool>true</bool>
        </property>
-       <item>
-        <property name="text">
-         <string/>
-        </property>
-       </item>
       </widget>
      </item>
     </layout>
@@ -465,11 +420,6 @@ p, li { white-space: pre-wrap; }
            <property name="editable">
             <bool>true</bool>
            </property>
-           <item>
-            <property name="text">
-             <string/>
-            </property>
-           </item>
           </widget>
          </item>
         </layout>
