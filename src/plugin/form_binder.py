@@ -156,7 +156,6 @@ class FormBinder(QObject):
         mandatory_fields - True if mandatory fields should be respected (default)
         """
         self.feature = qgsfeature
-        self.connectControlsToSQLCommands()
         defaults = self.form.getSavedValues()
 
         for index, value in qgsfeature.attributeMap().items():
@@ -208,17 +207,6 @@ class FormBinder(QObject):
         dlg.loadFile(url)
         dlg.exec_()
 
-    def connectControlsToSQLCommands(self):
-        """
-            Loops all the controls and connects update signals
-            in order to use SQL commands correctly.
-
-            Note: We check all control because we can use SQL on non
-            field bound controls in order to show information.
-        """
-        for control in self.forminstance.findChildren(QWidget):
-            self.connectSQL(control)
-
     def getBuddy(self, control):
         try:
             label = self.getControl(control.objectName() + "_label", control_type=QLabel)
@@ -246,49 +234,6 @@ class FormBinder(QObject):
             self.bindValueToControl(control, value)
         except BindingError as er:
             warning(er.reason)
-
-    def updateControl(self, control, mapping, sql, *args):
-        """
-            Update control with result from SQL query.
-        """
-        query = QSqlQuery()
-        query.prepare(sql)
-        # Loop though all the placeholders and get value from the
-        # function assigned to each one.
-        for holder, function in mapping.items():
-            value = function()
-            query.bindValue(":%s" % holder, value)
-
-        query.exec_()
-
-        for key, value in query.boundValues().items():
-            log("%s is %s" % (key, value.toString()))
-
-        if isinstance(control, QComboBox):
-            control.clear()
-            control.addItem("")
-            while query.next():
-                value = query.value(0).toString()
-                if not value.isEmpty():
-                    control.addItem(value)
-
-    def connectSQL(self, control):
-        sql = control.property("sql").toString()
-        if not sql.isEmpty():
-            log("QUERY:%s" % sql)
-            placeholders = re.findall(r':(\w+)', sql)
-            mapping = {}
-            # Loop though all the sql placeholders and look for a
-            # control with that name to get updates from.
-            for holder in placeholders:
-                linked_control = self.getControl(holder)
-                if linked_control is None:
-                    continue
-
-                if isinstance(linked_control, QListWidget):
-                    mapping[holder] = lambda c = linked_control: c.currentItem().text()
-                    linked_control.currentItemChanged.connect(partial(self.updateControl, \
-                                                                      control, mapping, sql ))
 
     def bindValueToControl(self, control, value, index=0):
         """
