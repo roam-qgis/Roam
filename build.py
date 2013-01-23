@@ -176,7 +176,6 @@ def deploy():
     try:
         with open(targetspath,'r') as f:
             config = json.load(f)
-            print config
     except IOError:
         print "Failed to open %s" % targetspath
         return
