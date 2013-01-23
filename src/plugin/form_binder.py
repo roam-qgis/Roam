@@ -264,6 +264,11 @@ class FormBinder(QObject):
             widget = QgsAttributeEditor.createAttributeEditor(self.forminstance, control, self.layer, index, value)
             wasset = QgsAttributeEditor.setValue(control, self.layer, index, value)
             log(widget)
+
+            try:
+                control.setValidator(None)
+            except AttributeError:
+                pass
             
             if self.layer.editType(index) == QgsVectorLayer.UniqueValues:
                 # Set the control back to the editable state the form says it should be.
