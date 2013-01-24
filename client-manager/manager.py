@@ -31,11 +31,6 @@ def getProjects():
 		if project.endswith(".qgs"):
 			yield project[:-4]
 
-def readTargetsConfig():
-    with open(build.targetspath,'r') as f:
-        config = json.load(f)
-        return config
-
 class QMapManager(QDialog):
 	def __init__(self, config, parent=None):
 		QDialog.__init__(self, parent)
@@ -52,15 +47,16 @@ class QMapManager(QDialog):
 		self.mapper = QDataWidgetMapper()
 		self.mapper.setModel(self.model)
 		self.mapper.addMapping(self.installpath, 1)
-		
+		self.config = config
 		self.populateForms()
 		self.populateProjects()
-		self.populateClients(config)
+		self.populateClients()
 		
 	def installToClient(self):
 		index = self.clientlist.selectionModel().currentIndex()
 		item = self.model.itemFromIndex(index)
 		print "Deploying to " + item.text()
+		build.deployTargetByName(str(item.text()))
 
 	def update(self, selected, deselected ):
 		index = selected.indexes()[0]
@@ -86,9 +82,9 @@ class QMapManager(QDialog):
 		 	projectitem.setCheckState(Qt.Checked)
 				
 
-	def populateClients(self, config):
+	def populateClients(self):
 		row = 0
-		for client, settings in config['clients'].iteritems():
+		for client, settings in self.config['clients'].iteritems():
 			name = QStandardItem(client)
 			name.setData(settings)
 			path = QStandardItem(settings['path'])
@@ -113,7 +109,8 @@ class QMapManager(QDialog):
 
 if __name__ == "__main__":
 	app = QApplication(sys.argv)
-	config = readTargetsConfig()
+	config = build.readTargetsConfig()
+	print config
 	manager = QMapManager(config)
 	manager.show()
 	app.exec_()

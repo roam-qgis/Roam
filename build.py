@@ -35,12 +35,20 @@ if iswindows:
     env = os.environ.copy()
     env['PATH'] += ";c:\\WINDOWS\\Microsoft.NET\Framework\\v3.5"
 
+def readTargetsConfig():
+    try:
+        with open(targetspath,'r') as f:
+            config = json.load(f)
+            return config
+    except IOError:
+        print "Failed to open %s" % targetspath
+        return
+
 def build():
     """
-    Build the project.
+    Build the QMap plugin.  Called from the command line.
     """
     build_plugin()
-
 
 def compileplugin():
     print " - building UI files..."
@@ -55,7 +63,7 @@ def compileplugin():
     run('pyrcc4', '-o', join(srcopyFilesath,'resources_rc.py'), join(srcopyFilesath,'resources.qrc'))
     run('pyrcc4', '-o', join(srcopyFilesath,'syncing/resources_rc.py'), join(srcopyFilesath,'syncing/resources.qrc'))
 
-    if iswindows and main.options.with_mssyncing == True:
+    if iswindows:
         projects = ['libsyncing/libsyncing.csproj', 
                     'provisioner/provisioner.csproj',
                     'syncer/syncer.csproj']
@@ -72,21 +80,14 @@ def compileplugin():
         copyFolder(lib, clientsetuppath)
         copyFolder(bin, clientsetuppath)
 
-    print " - building docs..."
-    docs()
-
-
 def docs():
-    if main.options.with_docs == True:
-		print "Generating docs"
-		for doc in doc_sources:
-			run('python', 'docs/rst2html.py', doc + '.rst', doc + '.html')
-
+	print "Generating docs"
+	for doc in doc_sources:
+		run('python', 'docs/rst2html.py', doc + '.rst', doc + '.html')
 
 def clean():
     autoclean()
     msg = shell('rm', '-r', buildpath)
-
 
 def getVersion():
     """
@@ -101,7 +102,6 @@ def getVersion():
     except WindowsError:
 		commit = ""
     return "{0}.{1}.{2}.{3}".format(year, month, day, commit)
-
 
 def test():
     """
@@ -122,12 +122,6 @@ def build_plugin():
     print "Deploy started"
     print "Building..."
     compileplugin()
-    if main.options.with_tests == True:
-        passed = test()
-        if not passed:
-            print "Tests Failed!!"
-            sys.exit()
-
     # Copy all the files to the ouput directory
     print "Copying new files..."
 
@@ -135,7 +129,7 @@ def build_plugin():
     copyFiles(srcopyFilesath,deploypath)
     copyFiles(bootpath,buildpath)
 
-    if iswindows and main.options.with_mssyncing == True:
+    if iswindows:
         mssyncpath = join(dotnetpath, "bin")
         lib = join(mssyncpath, "libsyncing.dll")
         bin = join(mssyncpath, "syncer.exe")
@@ -168,27 +162,25 @@ def mkdir(path):
     msg = shell('mkdir', '-p', path, silent=False)
 
 def deploy():
+    """ Deploy the target given via the command line """
     targetname = main.options.target
     if targetname is None:
         print "No target name given depolying All target"
         targetname = 'All'
 
-    try:
-        with open(targetspath,'r') as f:
-            config = json.load(f)
-            print config
-    except IOError:
-        print "Failed to open %s" % targetspath
-        return
+    deployTargetByName(targetname)
 
+def deployTargetByName(targetname):
+    """ Deploy a target usin the name found in targets.config """
+    config = readTargetsConfig()
+    
     try:
-        clients = config['clients'][targetname]
+        target = config['clients'][targetname]
     except KeyError as ex:
         print "No client in targets.config defined as %s" % targetname
         return
 
     build_plugin()
-    target = config['clients'][targetname]
     print "Deploying application to %s" % targetname
     deploytarget(target)
 
@@ -252,12 +244,12 @@ def deploytarget(clientconfig):
 if __name__ == "__main__":
     options = [
         optparse.make_option('-o', '--target', dest='target', help='Target to deploy'),
-        optparse.make_option('--with-tests', action='store', help='Enable tests!', \
-                             default=True),
-        optparse.make_option('--with-mssyncing', action='store', help='Use MS SQL Syncing!', \
-                             default=True),
-		optparse.make_option('--with-docs', action='store', help='Build docs', \
-                             default=True)
+        # optparse.make_option('--with-tests', action='store', help='Enable tests!', \
+        #                      default=True),
+        # optparse.make_option('--with-mssyncing', action='store', help='Use MS SQL Syncing!', \
+        #                      default=True),
+		# optparse.make_option('--with-docs', action='store', help='Build docs', \
+  #                            default=True)
     ]
 
     main(extra_options=options)
