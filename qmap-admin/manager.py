@@ -11,7 +11,7 @@ curdir = os.path.abspath(os.path.dirname(__file__))
 pardir = os.path.join(curdir, '..')
 sys.path.append(pardir)
 
-import build
+from src import build
 
 def getForms():
     """ Get all the custom user forms that have been created.

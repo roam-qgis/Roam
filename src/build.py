@@ -11,10 +11,11 @@ import json
 
 APPNAME = "QMap"
 curpath = os.path.dirname(os.path.abspath(__file__))
+curpath = os.path.join(curpath, '..')
 srcopyFilesath = join(curpath, "src", "plugin")
 buildpath = join(curpath, "build", APPNAME)
 deploypath = join(curpath, "build", APPNAME, APPNAME.lower())
-targetspath = join(curpath, 'targets.config')
+targetspath = join(curpath, 'qmap-admin', 'targets.config')
 bootpath = join(curpath, "src", "loader_src")
 dotnetpath = join(curpath, "src", "dotnet")
 
@@ -76,7 +77,7 @@ def compileplugin():
         mssyncpath = os.path.join(dotnetpath, "bin")
         lib = os.path.join(mssyncpath, "libsyncing.dll")
         bin = os.path.join(mssyncpath, "provisioner.exe")
-        clientsetuppath = os.path.join(curpath,"client-manager","client-setup")
+        clientsetuppath = os.path.join(curpath,"qmap-admin","client-setup")
         copyFolder(lib, clientsetuppath)
         copyFolder(bin, clientsetuppath)
 
@@ -194,12 +195,12 @@ def deploytarget(clientconfig):
     mkdir(clientpath)
     copyFiles(buildpath,clientpath)
 
-    projecthome = os.path.join(curpath, 'client-manager', 'projects')
+    projecthome = os.path.join(curpath, 'qmap-admin', 'projects')
     clientpojecthome = os.path.join(clientpath, APPNAME.lower(), 'projects')
 
     print projecthome
 
-    formpath = os.path.join(curpath, 'client-manager', 'entry_forms')
+    formpath = os.path.join(curpath, 'qmap-admin', 'entry_forms')
     clientformpath = os.path.join(clientpath, APPNAME.lower(), 'entry_forms')
 
     print formpath
