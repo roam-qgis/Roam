@@ -218,11 +218,22 @@ public static class Provisioning
         command.CommandText = string.Format(@"CREATE TRIGGER [dbo].[{0}_GEOMSRID_trigger]
                                               ON [dbo].[{0}]
                                               AFTER INSERT, UPDATE
-                                              AS UPDATE [dbo].[{0}] 
-                                              SET [{1}].STSrid = {2}
-                                              FROM [dbo].[{0}]
-                                              JOIN inserted
-                                              ON [dbo].[{0}].{3} = inserted.{3} AND inserted.[{1}] IS NOT NULL", tableName, geometryColumn.UnquotedName, srid.Value, joinColumn.QuotedName);
+                                              AS 
+                                              BEGIN
+                                              		IF CONTEXT_INFO() = 0xFF
+			                                            RETURN
+		                                            SET CONTEXT_INFO 0xFF
+                                              
+                                            UPDATE [dbo].[{0}] 
+                                            SET [{1}].STSrid = {2}
+                                            FROM [dbo].[{0}]
+                                            WHERE {3} IN (SELECT {3} FROM inserted 
+                                                          WHERE inserted.[{1}] IS NOT NULL 
+                                                                AND [{1}].STSrid <> {2}
+                                                          )
+
+                                             SET CONTEXT_INFO 0x00
+                                             END", tableName, geometryColumn.UnquotedName, srid.Value, joinColumn.QuotedName);
         command.ExecuteNonQuery();
 
         // Alter selectedchanges stored procedure to convert geometry to WKT on fly.
