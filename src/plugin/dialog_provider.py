@@ -128,14 +128,14 @@ class DialogProvider(QObject):
         """
         info("Saving values back")
         feature = self.binder.unbindFeature(self.feature, self.update)
-        info("New feature %s" % feature)
+        info("New feature %s" % self.feature)
         for value in self.feature.attributeMap().values():
             info("New value %s" % value.toString())
 
         if self.update:
-            self.layer.updateFeature( feature )
+            self.layer.updateFeature( self.feature )
         else:
-            self.layer.addFeature( feature )
+            self.layer.addFeature( self.feature )
 
         saved = self.layer.commitChanges()
         if not saved:

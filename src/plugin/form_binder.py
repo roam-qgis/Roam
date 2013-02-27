@@ -286,12 +286,6 @@ class FormBinder(QObject):
                 value = QVariant()
                 if isinstance(control, QDateTimeEdit):
                     value = control.dateTime().toString(Qt.ISODate)
-                elif isinstance(control, QListWidget):
-                    item = control.currentItem()
-                    if item:
-                        value = item.text()
-                    else:
-                        return QString("")
                 else:
                     if (self.layer.editType(index) == QgsVectorLayer.UniqueValues and
                        control.isEditable()):
