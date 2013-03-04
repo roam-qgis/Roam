@@ -35,7 +35,7 @@ If you need SQL Server syncing support
 
 - MS SQL Server 2008 (express or greater)
 - .NET 3.5 (or greater)
-- Microsoft Sync Framework
+- Microsoft Sync Framework (http://www.microsoft.com/en-us/download/details.aspx?id=23217)
 
 Syncing Support
 -----------------
