@@ -47,8 +47,8 @@ class EditAction(QAction):
                 
         featuresToForms = {}
         for layer, form in qmap.QMap.layerformmap.iteritems():
-            layer.select( layer.pendingAllAttributesList(), rect, True, True)
-            for feature in layer:
+            rq = QgsFeatureRequest().setFilterRect(rect)
+            for feature in layer.getFeatures(rq):
                 featuresToForms[feature] = (form, layer)
 
         if len(featuresToForms) == 1:
@@ -77,8 +77,8 @@ class EditAction(QAction):
 
         self.band.reset()
         for layer in qmap.QMap.layerformmap.iterkeys():
-            layer.select( [], rect, True, True)    
-            for feature in layer:
+            rq = QgsFeatureRequest().setFilterRect(rect) 
+            for feature in layer.getFeatures(rq):
                 log("Looping feature")
                 if not feature.isValid():
                     continue

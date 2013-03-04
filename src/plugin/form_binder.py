@@ -137,7 +137,6 @@ class FormBinder(QObject):
         self.layer = layer
         self.canvas = canvas
         self.forminstance = formInstance
-        self.fields = self.layer.pendingFields()
         self.fieldtocontrol = {}
         self.actionlist = []
         self.settings = settings
@@ -155,10 +154,11 @@ class FormBinder(QObject):
         """
         self.feature = qgsfeature
         defaults = self.form.getSavedValues()
-
-        for index, value in qgsfeature.attributeMap().items():
-            name = str(self.fields[index].name())
-
+        
+        for index in xrange(qgsfeature.fields().count()):
+            value = qgsfeature[index]
+            name = str(qgsfeature.fields()[index].name())
+            
             try:
                 control = self.getControl(name)
             except ControlNotFound as ex:
@@ -178,7 +178,7 @@ class FormBinder(QObject):
                 try:
                     value = defaults[name]
                 except KeyError:
-                    pass 
+                    pass
 
             try:
                 self.bindValueToControl(control, value, index)
@@ -243,19 +243,19 @@ class FormBinder(QObject):
         if isinstance(control, QDateTimeEdit):
             # Can be removed after http://hub.qgis.org/issues/7013 is fixed.
             control.setDateTime(QDateTime.fromString(value.toString(), Qt.ISODate))
-            button = self.getControl(control.objectName() + "_pick", QPushButton )
+            button = self.getControl(control.objectName() + "_pick", QPushButton)
             if not button:
                 return
 
             button.setIcon(QIcon(":/icons/calender"))
             button.setText("Pick")
-            button.setIconSize(QSize(24,24))
-            button.pressed.connect(partial(self.pickDateTime, control, "DateTime" ))
+            button.setIconSize(QSize(24, 24))
+            button.pressed.connect(partial(self.pickDateTime, control, "DateTime"))
 
         elif isinstance(control, QPushButton):
             if control.text() == "Drawing":
                 control.setIcon(QIcon(":/icons/draw"))
-                control.setIconSize(QSize(24,24))
+                control.setIconSize(QSize(24, 24))
                 control.pressed.connect(partial(self.loadDrawingTool, control))
         else:
             if self.layer.editType(index) == QgsVectorLayer.UniqueValues:
@@ -263,7 +263,6 @@ class FormBinder(QObject):
 
             widget = QgsAttributeEditor.createAttributeEditor(self.forminstance, control, self.layer, index, value)
             wasset = QgsAttributeEditor.setValue(control, self.layer, index, value)
-            log(widget)
 
             try:
                 control.setValidator(None)
@@ -275,13 +274,12 @@ class FormBinder(QObject):
                 # This is to work around http://hub.qgis.org/issues/7012
                 control.setEditable(editable)
 
-    def unbindFeature(self, qgsfeature, editingmode=False):
+    def unbindFeature(self, feature, editingmode=False):
         """
         Unbinds the feature from the form saving the values back to the QgsFeature.
 
-        qgsfeature -- A QgsFeature that will store the new values.
+        feature -- A QgsFeature that will store the new values.
         """
-        savefields = []
         for index, control in self.fieldtocontrol.items():
                 value = QVariant()
                 if isinstance(control, QDateTimeEdit):
@@ -298,19 +296,30 @@ class FormBinder(QObject):
                         modified = QgsAttributeEditor.retrieveValue(control, self.layer, index, value)
 
                 info("Setting value to %s from %s" % (value, control.objectName()))
-                qgsfeature.changeAttribute(index, value)
-
-                # Save the value to the database as a default if it is needed.
-                if self.shouldSaveValue(control):
-                    savefields.append(index)
+                feature[index] = value
 
         if not editingmode:
-            m = qgsfeature.attributeMap()
-            fields_map = self.layer.pendingFields()
-            attr = { str(fields_map[k].name()): str(v.toString()) for k, v in m.items() if k in savefields }
-            self.form.setSavedValues(attr)
+            buttons = self._getSaveButtons()
+            tosave = {}
+            for button in buttons:
+                # Remove persist from button name
+                name = str(button.objectName())        
+                name = name[:-8]
+                
+                if button.isChecked():
+                    index = feature.fieldNameIndex(name)
+                    tosave[name] = str(feature[index].toString())
+                    
+            self.form.setSavedValues(tosave)
 
-        return qgsfeature
+        return feature
+    
+    def _getSaveButtons(self):
+        buttons = self.forminstance.findChildren(QToolButton)
+        for button in buttons:
+            name = str(button.objectName())
+            if name.endswith('_save'):
+                yield button
 
 
     def loadDrawingTool(self, control):
@@ -336,7 +345,7 @@ class FormBinder(QObject):
 
         drawingpad = DrawingPad(imagetoload)
         drawingpad.setWindowState(Qt.WindowFullScreen | Qt.WindowActive)
-        drawingpad.ui.actionMapSnapshot.triggered.connect(partial(self.drawingPadMapSnapshot,drawingpad))
+        drawingpad.ui.actionMapSnapshot.triggered.connect(partial(self.drawingPadMapSnapshot, drawingpad))
         if drawingpad.exec_():
             #Save the image to a temporay location until commit.
             self.images[controlname] = tempimage + ".png"

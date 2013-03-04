@@ -5,6 +5,7 @@ from qgis.gui import *
 import uuid
 import os
 from dialog_provider import DialogProvider
+from utils import log
 
 class AddAction(QAction):
     """
@@ -48,8 +49,11 @@ class AddAction(QAction):
     
         feature = QgsFeature()
         feature.setGeometry( QgsGeometry.fromPoint( point ) )
-
-        for id, field in self.fields.items():
-            feature.addAttribute( id, self.provider.defaultValue( id ) )
+        feature.initAttributes(self.fields.count())
+        feature.setFields(self.fields)
+        
+        for indx in xrange(self.fields.count()):
+            feature[indx] = self.provider.defaultValue( indx )
 
         self.dialogprovider.openDialog( self.form, feature, self.layer, False )
+        
