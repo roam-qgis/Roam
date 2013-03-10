@@ -293,7 +293,6 @@ class FormBinder(QObject):
                         # we are just going to handle ourself.
                         value = control.currentText() 
 
-                info("Setting value to %s from %s" % (value, control.objectName()))
                 feature[index] = value
 
         if not editingmode:

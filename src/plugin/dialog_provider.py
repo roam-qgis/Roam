@@ -6,6 +6,7 @@ from PyQt4.QtGui import *
 from utils import Timer, log, info, warning, error
 import tempfile
 from ui_errorlist import Ui_Dialog
+from qgis.gui import QgsMessageBar
 
 class DialogProvider(QObject):
     """
@@ -51,9 +52,6 @@ class DialogProvider(QObject):
         savebutton.setEnabled(noerrors)
         self.binder.mandatory_group.passed.connect(lambda x = True : savebutton.setEnabled(x))
         self.binder.mandatory_group.failed.connect(lambda x = False : savebutton.setEnabled(x))
-        
-        buttonbox.accepted.connect(self.dialogAccept)
-        buttonbox.accepted.connect(self.accepted)
 
         buttonbox.rejected.connect(self.rejected)
         buttonbox.rejected.connect(self.dialog.reject)
@@ -64,9 +62,28 @@ class DialogProvider(QObject):
         fullscreen = self.dialog.property('fullscreen').toBool()
         
         if fullscreen:
-            self.dialog.showFullScreen()
-        else:
-            self.dialog.show()
+            self.dialog.setWindowState(Qt.WindowFullScreen)
+        
+        if self.dialog.exec_():
+            self.binder.unbindFeature(self.feature, self.update)
+            for value in self.feature.attributes():
+                info("New value %s" % value.toString())
+    
+            if self.update:
+                self.layer.updateFeature( self.feature )
+            else:
+                 self.layer.addFeature( self.feature )
+            
+            saved = self.layer.commitChanges()
+            if not saved:
+                self.iface.messageBar().pushMessage("Error",
+                                                    "Error in saving changes. Contact administrator ", 
+                                                    QgsMessageBar.CRITICAL)
+                for e in self.layer.commitErrors(): error(e)
+            else:
+                self.iface.messageBar().pushMessage("Saved","Changes saved", QgsMessageBar.INFO, 2)
+
+        self.canvas.refresh()
 
     def selectingFromMap(self, message):
         """
@@ -89,61 +106,9 @@ class DialogProvider(QObject):
         self.canvas.scene().removeItem(self.item)
         self.dialog.show()
         self.enableToolbars()
-
-    def validateForm(self):
-        """
-        NOT USED!
-        Validate the users form.  If there are any errors report them to the user.
-
-        @refactor: Should really just return a bool and let the caller handle what happens next.
-                   We should also consider using QValidator for validation.
-        """
-        controls = self.binder.mandatory_group.unchanged()
-        haserrors = len(controls) > 0
         
-        if haserrors:
-            dlg = QDialog()
-            dlg.setWindowFlags( Qt.Tool | Qt.WindowTitleHint )
-            ui = Ui_Dialog()
-            ui.setupUi(dlg)
-            for control in controls:
-                label = self.dialog.findChild(QLabel, control.objectName() + "_label")
-                if not label is None:
-                    name = label.text()
-                elif isinstance(control, QCheckBox):
-                    name = control.text()
-                elif isinstance(control, QGroupBox):
-                    name = control.title()
-
-                name += " is mandatory"
-                item = QListWidgetItem(name)
-                item.setBackground(QBrush(QColor.fromRgb(255,221,48,150)))
-                ui.errorList.addItem(item)
-            dlg.exec_()
-        else:
-            self.dialogAccept()
-            
-    def dialogAccept(self):
-        """
-        Accept the current open dialog and save the new/updated feature 
-        back to the layer.
-        """
-        self.binder.unbindFeature(self.feature, self.update)
-        for value in self.feature.attributes():
-            info("New value %s" % value.toString())
-
-        if self.update:
-            self.layer.updateFeature( self.feature )
-        else:
-             self.layer.addFeature( self.feature )
-
-        saved = self.layer.commitChanges()
-        if not saved:
-            for e in self.layer.commitErrors():
-                error(e)
-
-        self.canvas.refresh()
-
+    def moveImages(self):
+        """ Not currently working """
         # After we commit we have to move the drawing into the correct path.
         # TODO Use a custom field for the id name
         # Images are saved under data/{layername}/images/{id}_{fieldname}
@@ -168,12 +133,6 @@ class DialogProvider(QObject):
             except WindowsError, err:
                 os.remove(imagename)
                 os.rename(image, imagename)
-
-        self.dialog.accept()
-        self.accepted.emit()
-            
-    def deleteDialog(self):
-        del self.dialog
 
     def disableToolbars(self):
         """ 
