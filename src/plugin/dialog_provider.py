@@ -21,40 +21,39 @@ class DialogProvider(QObject):
         self.canvas = canvas
         self.iface = iface
 
-    def openDialog(self, formmodule, feature, layer, forupdate, mandatory_fields=True):
+    def openDialog(self, feature, layer, forupdate, mandatory_fields=True):
         """
         Opens a form for the given feature
 
         @refactor: This really needs to be cleaned up.
         """
         self.update = forupdate
-        self.dialog = formmodule.formInstance(self.iface.mainWindow())
+        self.dialog = self.iface.getFeatureForm(layer, feature)
         self.layer = layer
         self.feature = feature
 
-        self.settings = formmodule.settings()
-
-        self.binder = FormBinder(layer, self.dialog, self.canvas,\
-                                 self.settings, formmodule)
+        self.binder = FormBinder(layer, self.dialog, self.canvas)
         self.binder.beginSelectFeature.connect(self.selectingFromMap)
         self.binder.endSelectFeature.connect(self.featureSelected)
-        self.binder.bindFeature(self.feature, mandatory_fields, \
-                                self.update)
+        self.binder.bindFeature(self.feature, mandatory_fields, self.update)
         self.binder.bindSelectButtons()
 
         buttonbox = self.dialog.findChild(QDialogButtonBox)
-        try:
-            buttonbox.accepted.disconnect()
-            buttonbox.rejected.disconnect()
-        except TypeError:
-            # If there are no signals to disconnect then we get a type error.
-            pass
-
-        if mandatory_fields:
-            buttonbox.accepted.connect(self.validateForm)
-        else:
-            buttonbox.accepted.connect(self.dialogAccept)
-            buttonbox.accepted.connect(self.accepted)
+        
+        buttonbox.setStandardButtons(QDialogButtonBox.Save | QDialogButtonBox.Cancel )
+        savebutton = buttonbox.button(QDialogButtonBox.Save)
+        
+        if forupdate:
+            savebutton.setText("Update")
+        
+        
+        noerrors = len(self.binder.mandatory_group.unchanged()) == 0
+        savebutton.setEnabled(noerrors)
+        self.binder.mandatory_group.passed.connect(lambda x = True : savebutton.setEnabled(x))
+        self.binder.mandatory_group.failed.connect(lambda x = False : savebutton.setEnabled(x))
+        
+        buttonbox.accepted.connect(self.dialogAccept)
+        buttonbox.accepted.connect(self.accepted)
 
         buttonbox.rejected.connect(self.rejected)
         buttonbox.rejected.connect(self.dialog.reject)
@@ -62,7 +61,9 @@ class DialogProvider(QObject):
 
         self.dialog.setModal(True)
         
-        if self.settings.get("fullscreen", False):
+        fullscreen = self.dialog.property('fullscreen').toBool()
+        
+        if fullscreen:
             self.dialog.showFullScreen()
         else:
             self.dialog.show()
@@ -91,6 +92,7 @@ class DialogProvider(QObject):
 
     def validateForm(self):
         """
+        NOT USED!
         Validate the users form.  If there are any errors report them to the user.
 
         @refactor: Should really just return a bool and let the caller handle what happens next.
@@ -126,16 +128,14 @@ class DialogProvider(QObject):
         Accept the current open dialog and save the new/updated feature 
         back to the layer.
         """
-        info("Saving values back")
-        feature = self.binder.unbindFeature(self.feature, self.update)
-        info("New feature %s" % self.feature)
-        for value in self.feature.attributeMap().values():
+        self.binder.unbindFeature(self.feature, self.update)
+        for value in self.feature.attributes():
             info("New value %s" % value.toString())
 
         if self.update:
             self.layer.updateFeature( self.feature )
         else:
-            self.layer.addFeature( self.feature )
+             self.layer.addFeature( self.feature )
 
         saved = self.layer.commitChanges()
         if not saved:

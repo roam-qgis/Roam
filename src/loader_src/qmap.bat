@@ -1,3 +1,3 @@
 @ECHO OFF
 set QGIS_PLUGINPATH=%~dp0
-C:\OSGeo4w\bin\qgis-dev.bat --configpath "./app" --optionspath "./app"
+"C:\Users\Woo\apps\qgis2.0\run.bat" --configpath "./app" --optionspath "./app"

@@ -14,6 +14,7 @@ from utils import log, warning, appdata
 import re
 from qgis.gui import QgsAttributeEditor
 from qgis.core import QgsVectorLayer
+import qmaplayer
 
 
 class BindingError(Exception):
@@ -32,7 +33,8 @@ class ControlNotFound(Exception):
 
 
 class MandatoryGroup(QObject):
-    enable = pyqtSignal()
+    passed = pyqtSignal()
+    failed = pyqtSignal()
     #http://doc.qt.nokia.com/qq/qq11-mandatoryfields.html
 
     def __init__(self):
@@ -111,7 +113,10 @@ class MandatoryGroup(QObject):
 
         if not anyfailed:
             # If we get here then we are right to let the user continue.
-            self.enable.emit()
+            log("ALL GOOD!")
+            self.passed.emit()
+        else:
+            self.failed.emit()
 
     def unchanged(self):
         unchanged = []
@@ -132,17 +137,14 @@ class FormBinder(QObject):
     """
     Handles binding of values to and out of the form.
     """
-    def __init__(self, layer, formInstance, canvas, settings, form):
+    def __init__(self, layer, formInstance, canvas):
         QObject.__init__(self)
         self.layer = layer
         self.canvas = canvas
         self.forminstance = formInstance
         self.fieldtocontrol = {}
-        self.actionlist = []
-        self.settings = settings
         self.images = {}
         self.mandatory_group = MandatoryGroup()
-        self.form = form
 
     def bindFeature(self, qgsfeature, mandatory_fields=True, editing=False):
         """
@@ -153,7 +155,7 @@ class FormBinder(QObject):
         mandatory_fields - True if mandatory fields should be respected (default)
         """
         self.feature = qgsfeature
-        defaults = self.form.getSavedValues()
+        defaults = qmaplayer.getSavedValues(self.layer)
         
         for index in xrange(qgsfeature.fields().count()):
             value = qgsfeature[index]
@@ -190,6 +192,7 @@ class FormBinder(QObject):
             self.fieldtocontrol[index] = control
 
     def createHelpLink(self, control):
+        return
         name = control.objectName()
         helpfile = self.form.getHelpFile(name)
         if helpfile:
@@ -258,21 +261,18 @@ class FormBinder(QObject):
                 control.setIconSize(QSize(24, 24))
                 control.pressed.connect(partial(self.loadDrawingTool, control))
         else:
-            if self.layer.editType(index) == QgsVectorLayer.UniqueValues:
-                editable = control.isEditable()
-
-            widget = QgsAttributeEditor.createAttributeEditor(self.forminstance, control, self.layer, index, value)
-            wasset = QgsAttributeEditor.setValue(control, self.layer, index, value)
+#            if self.layer.editType(index) == QgsVectorLayer.UniqueValues:
+#                editable = control.isEditable()
 
             try:
                 control.setValidator(None)
             except AttributeError:
                 pass
             
-            if self.layer.editType(index) == QgsVectorLayer.UniqueValues:
-                # Set the control back to the editable state the form says it should be.
-                # This is to work around http://hub.qgis.org/issues/7012
-                control.setEditable(editable)
+#            if self.layer.editType(index) == QgsVectorLayer.UniqueValues:
+#                # Set the control back to the editable state the form says it should be.
+#                # This is to work around http://hub.qgis.org/issues/7012
+#                control.setEditable(editable)
 
     def unbindFeature(self, feature, editingmode=False):
         """
@@ -291,9 +291,7 @@ class FormBinder(QObject):
                         # comboxs using QgsAttributeEditor. If the value isn't in the
                         # dataset already it will return null.  Until that bug is fixed
                         # we are just going to handle ourself.
-                        value = control.currentText()
-                    else:
-                        modified = QgsAttributeEditor.retrieveValue(control, self.layer, index, value)
+                        value = control.currentText() 
 
                 info("Setting value to %s from %s" % (value, control.objectName()))
                 feature[index] = value
@@ -310,7 +308,7 @@ class FormBinder(QObject):
                     index = feature.fieldNameIndex(name)
                     tosave[name] = str(feature[index].toString())
                     
-            self.form.setSavedValues(tosave)
+            qmaplayer.setSavedValues(self.layer, tosave)
 
         return feature
     

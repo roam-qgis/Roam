@@ -25,7 +25,7 @@ from gps_action import GPSAction
 from movetool import MoveTool
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
-import forms
+import qmaplayer
 from listmodulesdialog import ListProjectsDialog
 from qgis.core import *
 from qgis.gui import QgsMapToolZoom, QgsMapTool
@@ -86,7 +86,7 @@ class QMap():
         """
         Create all the needed toolbars
         """
-        self.toolbar = QToolBar("SDRC Data Capture", self.mainwindow)
+        self.toolbar = QToolBar("QMap", self.mainwindow)
         self.mainwindow.addToolBar(Qt.TopToolBarArea, self.toolbar)
         self.toolbar.setMovable(False)
 
@@ -258,12 +258,18 @@ class QMap():
             Called when a new project is opened in QGIS.
         """
         layers = dict((str(x.name()), x) for x in QgsMapLayerRegistry.instance().mapLayers().values())
-        self.createFormButtons(layers)
+        
+        path = str(QgsProject.instance().fileName())
+        projectname = os.path.basename(path)[:-4]
+        projectsettings = utils.settings["projects"][projectname]
+        
+        self.createFormButtons(layers, projectsettings)
         self.defaultextent = self.iface.mapCanvas().extent()
+        
         # Enable the raster layers button only if the project contains a raster layer.
         self.toggleRasterAction.setEnabled(self.hasRasterLayers())
 
-    def createFormButtons(self, layers):
+    def createFormButtons(self, projectlayers, projectsettings):
         """
             Create buttons for each form that is definded
         """
@@ -272,26 +278,30 @@ class QMap():
         # Remove all the old buttons
         for action in self.actions:
             self.toolbar.removeAction(action)
-
-        for layername, form in forms.getForms().iteritems():
+            
+        formlayers = projectsettings["layers"]
+        
+        for layer, options in formlayers.iteritems():
             try:
-                layer = layers[layername]    
-            except KeyError:
-                log("Couldn't find layer for form %s" % layername)
-                continue           
-            text = "New %s" % form.nameforform(layername)
-            action = (AddAction(text, self.iface,
-                               form, layer, form.icon()))
-            self.toolbar.insertAction(self.editingmodeaction, action)
-            showgpstools = (functools.partial(self.extraaddtoolbar.showToolbar, 
+                qgslayer = projectlayers[layer]
+                text = options['text']
+                                
+                action = AddAction(text, self.iface, qgslayer, QIcon())
+                
+                self.toolbar.insertAction(self.editingmodeaction, action)
+                
+                showgpstools = (functools.partial(self.extraaddtoolbar.showToolbar, 
                                              action,
                                              None))
-            action.toggled.connect(showgpstools)
-            self.actionGroup.addAction(action)
-            self.actions.append(action)
-            layerstoForms[layer] = form
-
-
+                action.toggled.connect(showgpstools)
+                self.actionGroup.addAction(action)
+                self.actions.append(action)
+                layerstoForms[qgslayer] = None
+                
+            except KeyError:
+                log("Layer not found in project")
+                continue
+            
         QMap.layerformmap = layerstoForms
 
     def rejectProjectDialog(self):
