@@ -45,7 +45,6 @@ class DialogProvider(QObject):
         if forupdate:
             savebutton.setText("Update")
         
-        
         noerrors = len(self.binder.mandatory_group.unchanged()) == 0
         savebutton.setEnabled(noerrors)
         self.binder.mandatory_group.passed.connect(lambda x = True : savebutton.setEnabled(x))

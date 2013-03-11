@@ -87,7 +87,7 @@ class MandatoryGroup(QObject):
             sig = self.signals[type(widget)]
             sig(widget, self.changed)
         except KeyError:
-            log("CAN'T FIND WIDGET")
+            pass
 
         try:
             style = self.stylesheets[type(buddy)]
