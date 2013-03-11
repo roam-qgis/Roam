@@ -286,22 +286,7 @@ class FormBinder(QObject):
             try:
                 feature[str(control.objectName())] = value
             except KeyError:
-                pass
-            
-#        combos = self.forminstance.findChildren(QComboBox)
-#        for control in combos:
-#            index = feature.fieldNameIndex(control.objectName())
-#            if index == -1:
-#                continue
-#            
-#            if (self.layer.editType(index) == QgsVectorLayer.UniqueValues and
-#                control.isEditable()):
-#                # Due to http://hub.qgis.org/issues/7012 we can't have editable
-#                # comboxs using QgsAttributeEditor. If the value isn't in the
-#                # dataset already it will return null.  Until that bug is fixed
-#                # we are just going to handle ourself.
-#                value = control.currentText() 
-#                feature[index] = value                
+                pass              
 
         if not editingmode:
             buttons = self._getSaveButtons()
