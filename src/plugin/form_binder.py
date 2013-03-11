@@ -180,7 +180,7 @@ class FormBinder(QObject):
                     pass
 
             try:
-                self.bindValueToControl(control, value, index)
+                self.bindValueToControl(control, QVariant(value), index)
             except BindingError as er:
                 warning(er.reason)
 
@@ -273,7 +273,7 @@ class FormBinder(QObject):
             except AttributeError:
                 pass
 
-    def unbindFeature(self, feature, editingmode=False):
+    def unbindFeature(self, feature):
         """
         Unbinds the feature from the form saving the values back to the QgsFeature.
 
@@ -288,28 +288,23 @@ class FormBinder(QObject):
             except KeyError:
                 pass              
 
-        if not editingmode:
-            buttons = self._getSaveButtons()
-            tosave = {}
-            for button in buttons:
-                # Remove persist from button name
-                name = str(button.objectName())        
-                name = name[:-8]
-                
-                if button.isChecked():
-                    index = feature.fieldNameIndex(name)
-                    tosave[name] = str(feature[index].toString())
-                    
-            qmaplayer.setSavedValues(self.layer, tosave)
-
         return feature
     
+    def saveValues(self, feature):
+        tosave = {}
+        for field, shouldsave in self._getSaveButtons():
+            if shouldsave:
+                index = feature.fieldNameIndex(field)
+                tosave[field] = str(feature[field].toString())
+                    
+        qmaplayer.setSavedValues(self.layer, tosave)
+        
     def _getSaveButtons(self):
         buttons = self.forminstance.findChildren(QToolButton)
         for button in buttons:
             name = str(button.objectName())
             if name.endswith('_save'):
-                yield button
+                yield name[:-5], button.isChecked()
 
 
     def loadDrawingTool(self, control):

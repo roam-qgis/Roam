@@ -62,14 +62,16 @@ class DialogProvider(QObject):
             self.dialog.setWindowState(Qt.WindowFullScreen)
         
         if self.dialog.exec_():
-            self.binder.unbindFeature(feature, forupdate)
+            self.binder.unbindFeature(feature)
+            
             for value in feature.attributes():
                 info("New value %s" % value.toString())
     
             if forupdate :
-                self.layer.updateFeature( feature )
+                self.layer.updateFeature(feature)
             else:
-                 self.layer.addFeature( feature )
+                 self.layer.addFeature(feature)
+                 self.binder.saveValues(feature)
             
             saved = self.layer.commitChanges()
             if not saved:
@@ -99,7 +101,6 @@ class DialogProvider(QObject):
         """
         Called once a feature has been selected. Shows the dialog back to the user.
         """
-        log('Feature selected')
         self.canvas.scene().removeItem(self.item)
         self.dialog.show()
         self.enableToolbars()
