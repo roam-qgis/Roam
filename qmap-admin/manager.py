@@ -6,6 +6,7 @@ from PyQt4.QtGui import (QDialog, QApplication, QListWidgetItem,
 import sys
 import os
 import json
+import glob
 
 curdir = os.path.abspath(os.path.dirname(__file__))
 pardir = os.path.join(curdir, '..')
@@ -13,23 +14,32 @@ sys.path.append(pardir)
 
 from src import build
 
-def getForms():
-    """ Get all the custom user forms that have been created.
-    Checks for "form" at the start to detect module as custom form
+from collections import namedtuple
 
-    @Returns A list of modules that contain user forms.
-    """
-    formspath = os.path.join(curdir,'entry_forms')
-    for module in os.listdir(formspath):
-        if module[:4] == 'form':
-            if os.path.exists(os.path.join(formspath,module,"settings.config")):
-                yield module
+Project = namedtuple('Project', 'name file splash folder')
 
 def getProjects():
-	projectspath = os.path.join(curdir,'projects')
-	for project in os.listdir(projectspath):
-		if project.endswith(".qgs"):
-			yield project[:-4]
+	projectpath = os.path.join(curdir, 'projects')
+	folders = (sorted( [os.path.join(projectpath, item) 
+                       for item in os.walk(projectpath).next()[1]]))
+    
+	for folder in folders:
+	    # The folder name is the display name
+	    # Grab the first project file
+	    # Look for splash.png
+	    # Path to project folder.
+	    name = os.path.basename(folder)
+	    try:
+	        projectfile = glob.glob(os.path.join(folder, '*.qgs'))[0]
+	    except IndexError:
+	        log("No project file found.")
+	        continue
+	    try:
+	        splash = glob.glob(os.path.join(folder, 'splash.png'))[0]
+	    except IndexError:
+	        splash = ''
+	    
+	    yield Project(name, projectfile, splash, folder )
 
 class QMapManager(QDialog):
 	def __init__(self, config, parent=None):
@@ -48,7 +58,6 @@ class QMapManager(QDialog):
 		self.mapper.setModel(self.model)
 		self.mapper.addMapping(self.installpath, 1)
 		self.config = config
-		self.populateForms()
 		self.populateProjects()
 		self.populateClients()
 		
@@ -70,12 +79,7 @@ class QMapManager(QDialog):
 			item.setCheckState(Qt.Unchecked)
 
 		projects = settings[QString('projects')]
-		forms = settings[QString('forms')]  
-
-		for form in forms:
-			formitem = self.formmodel.findItems(form)[0]
-		 	formitem.setCheckState(Qt.Checked)
-
+		
 		for project in projects:
 			project = project[:-4]
 			projectitem = self.projectsmodel.findItems(project)[0]
@@ -93,18 +97,10 @@ class QMapManager(QDialog):
 
 	def populateProjects(self):
 		row = 0
-		for form in getProjects():
-			projectitem = QStandardItem(form)
+		for project in getProjects():
+			projectitem = QStandardItem(project.name)
 			projectitem.setCheckable(True)
 			self.projectsmodel.insertRow(row, projectitem)
-			row += 1
-
-	def populateForms(self):
-		row = 0
-		for form in getForms():
-			formitem = QStandardItem(form)
-			formitem.setCheckable(True)
-			self.formmodel.insertRow(row, formitem)
 			row += 1
 
 if __name__ == "__main__":

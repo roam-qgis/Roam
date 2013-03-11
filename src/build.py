@@ -187,7 +187,6 @@ def deployTargetByName(targetname):
 
 def deploytarget(clientconfig):
     projects = clientconfig['projects']
-    forms = clientconfig['forms']
     clientpath = os.path.normpath(clientconfig['path'])
 
     print "Deploying application to %s" % clientpath
@@ -197,48 +196,20 @@ def deploytarget(clientconfig):
 
     projecthome = os.path.join(curpath, 'qmap-admin', 'projects')
     clientpojecthome = os.path.join(clientpath, APPNAME.lower(), 'projects')
-
-    print projecthome
-
-    formpath = os.path.join(curpath, 'qmap-admin', 'entry_forms')
-    clientformpath = os.path.join(clientpath, APPNAME.lower(), 'entry_forms')
-
-    print formpath
+    
+    projectfolders = (sorted([os.path.join(projecthome, item) 
+                       for item in os.walk(projecthome).next()[1]]))
+    print projectfolders
 
     mkdir(clientpojecthome)
-    mkdir(clientformpath)
 
     if 'All' in projects:
-        print "Loading all projects"
-        copyFiles(projecthome, clientpojecthome )
+        for folder in projectfolders:
+             copyFolder(folder, clientpojecthome)
     else:
-        for project in projects:
-            if project and project[-4:] == ".qgs":
-                print "Loading project %s" % project
-                path = os.path.join(projecthome, project)
-                newpath = os.path.join(clientpojecthome, project)
-                copyFolder(path, newpath)
-                icon = project[:-4] + ".png"
-                path = os.path.join(projecthome, icon)
-                newpath = os.path.join(clientpojecthome, icon)
-                if os.path.exists(path):
-                    copyFolder(path, newpath)
-                else:
-                    print "No project image. Ignoring"
-
-    if 'All' in forms:
-        print "Loading all forms"
-        copyFiles(formpath, clientformpath )
-    else:
-        for form in forms:
-            if form:
-                print "Loading form %s" % form
-                path = os.path.join(formpath, form)
-                newpath = os.path.join(clientformpath, form)
-                if os.path.exists(newpath):
-                    copyFiles(path, newpath )
-                else:
-                    copyFolder(path, newpath)
+        for folder in projectfolders:
+            if os.path.basename(folder) in projects:
+                copyFolder(folder, clientpojecthome)
 
     print "Remote depoly compelete"
 
