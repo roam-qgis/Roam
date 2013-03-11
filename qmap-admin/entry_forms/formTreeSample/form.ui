@@ -133,7 +133,7 @@ p, li { white-space: pre-wrap; }
      <item row="0" column="1">
       <widget class="QComboBox" name="Asset_Type">
        <property name="editable">
-        <bool>true</bool>
+        <bool>false</bool>
        </property>
        <property name="currentIndex">
         <number>-1</number>
@@ -153,7 +153,7 @@ p, li { white-space: pre-wrap; }
      <item row="1" column="1">
       <widget class="QComboBox" name="Asset_Sub_Type">
        <property name="editable">
-        <bool>true</bool>
+        <bool>false</bool>
        </property>
       </widget>
      </item>

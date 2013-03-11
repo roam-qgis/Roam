@@ -28,15 +28,13 @@ class DialogProvider(QObject):
 
         @refactor: This really needs to be cleaned up.
         """
-        self.update = forupdate
         self.dialog = self.iface.getFeatureForm(layer, feature)
         self.layer = layer
-        self.feature = feature
 
         self.binder = FormBinder(layer, self.dialog, self.canvas)
         self.binder.beginSelectFeature.connect(self.selectingFromMap)
         self.binder.endSelectFeature.connect(self.featureSelected)
-        self.binder.bindFeature(self.feature, mandatory_fields, self.update)
+        self.binder.bindFeature(feature, mandatory_fields, forupdate)
         self.binder.bindSelectButtons()
 
         buttonbox = self.dialog.findChild(QDialogButtonBox)
@@ -55,7 +53,6 @@ class DialogProvider(QObject):
 
         buttonbox.rejected.connect(self.rejected)
         buttonbox.rejected.connect(self.dialog.reject)
-        buttonbox.rejected.connect(self.deleteDialog)
 
         self.dialog.setModal(True)
         
@@ -65,14 +62,14 @@ class DialogProvider(QObject):
             self.dialog.setWindowState(Qt.WindowFullScreen)
         
         if self.dialog.exec_():
-            self.binder.unbindFeature(self.feature, self.update)
-            for value in self.feature.attributes():
+            self.binder.unbindFeature(feature, forupdate)
+            for value in feature.attributes():
                 info("New value %s" % value.toString())
     
-            if self.update:
-                self.layer.updateFeature( self.feature )
+            if forupdate :
+                self.layer.updateFeature( feature )
             else:
-                 self.layer.addFeature( self.feature )
+                 self.layer.addFeature( feature )
             
             saved = self.layer.commitChanges()
             if not saved:

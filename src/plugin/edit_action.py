@@ -79,10 +79,8 @@ class EditAction(QAction):
         for layer in qmap.QMap.layerformmap.iterkeys():
             rq = QgsFeatureRequest().setFilterRect(rect) 
             for feature in layer.getFeatures(rq):
-                log("Looping feature")
                 if not feature.isValid():
                     continue
-                log("Adding to rubber band")
                 self.band.addGeometry(feature.geometry(), None)
 
     def setLayersForms(self,layerforms):
@@ -92,7 +90,7 @@ class EditAction(QAction):
         if not maplayer.isEditable():
             maplayer.startEditing()
 
-        self.dialogprovider.openDialog( formmodule, feature, maplayer, True )
+        self.dialogprovider.openDialog( feature, maplayer, True )
 
     def deactivate(self):
         self.band.hide()

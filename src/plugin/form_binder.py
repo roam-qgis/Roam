@@ -142,7 +142,6 @@ class FormBinder(QObject):
         self.layer = layer
         self.canvas = canvas
         self.forminstance = formInstance
-        self.fieldtocontrol = {}
         self.images = {}
         self.mandatory_group = MandatoryGroup()
 
@@ -173,8 +172,6 @@ class FormBinder(QObject):
                     buddy = self.getBuddy(control)
                     self.mandatory_group.addWidget(control, buddy)
 
-            info("Binding %s to %s" % (control.objectName(), value.toString()))
-
             self.bindSaveValueButton(control, defaults, editingmode=editing)
             if not editing:
                 try:
@@ -188,8 +185,6 @@ class FormBinder(QObject):
                 warning(er.reason)
 
             self.createHelpLink(control)
-
-            self.fieldtocontrol[index] = control
 
     def createHelpLink(self, control):
         return
@@ -261,18 +256,22 @@ class FormBinder(QObject):
                 control.setIconSize(QSize(24, 24))
                 control.pressed.connect(partial(self.loadDrawingTool, control))
         else:
-#            if self.layer.editType(index) == QgsVectorLayer.UniqueValues:
-#                editable = control.isEditable()
-
+            if (isinstance(control, QComboBox) and
+                self.layer.editType(index) == QgsVectorLayer.UniqueValuesEditable):
+                
+                for v in self.layer.dataProvider().uniqueValues(index):
+                    control.addItem(v.toString(), v.toString())
+                
+                editable = control.isEditable()
+                
+                control.setEditText(value.toString())
+                
             try:
+                # Remove the validator because there seems to be a bug with the 
+                # MS SQL layers and validators.
                 control.setValidator(None)
             except AttributeError:
                 pass
-            
-#            if self.layer.editType(index) == QgsVectorLayer.UniqueValues:
-#                # Set the control back to the editable state the form says it should be.
-#                # This is to work around http://hub.qgis.org/issues/7012
-#                control.setEditable(editable)
 
     def unbindFeature(self, feature, editingmode=False):
         """
@@ -280,20 +279,29 @@ class FormBinder(QObject):
 
         feature -- A QgsFeature that will store the new values.
         """
-        for index, control in self.fieldtocontrol.items():
-                value = QVariant()
-                if isinstance(control, QDateTimeEdit):
-                    value = control.dateTime().toString(Qt.ISODate)
-                else:
-                    if (self.layer.editType(index) == QgsVectorLayer.UniqueValues and
-                       control.isEditable()):
-                        # Due to http://hub.qgis.org/issues/7012 we can't have editable
-                        # comboxs using QgsAttributeEditor. If the value isn't in the
-                        # dataset already it will return null.  Until that bug is fixed
-                        # we are just going to handle ourself.
-                        value = control.currentText() 
-
-                feature[index] = value
+        
+        datetimes = self.forminstance.findChildren(QDateTimeEdit)
+        for control in datetimes:
+            value = control.dateTime().toString(Qt.ISODate)
+            try:
+                feature[str(control.objectName())] = value
+            except KeyError:
+                pass
+            
+#        combos = self.forminstance.findChildren(QComboBox)
+#        for control in combos:
+#            index = feature.fieldNameIndex(control.objectName())
+#            if index == -1:
+#                continue
+#            
+#            if (self.layer.editType(index) == QgsVectorLayer.UniqueValues and
+#                control.isEditable()):
+#                # Due to http://hub.qgis.org/issues/7012 we can't have editable
+#                # comboxs using QgsAttributeEditor. If the value isn't in the
+#                # dataset already it will return null.  Until that bug is fixed
+#                # we are just going to handle ourself.
+#                value = control.currentText() 
+#                feature[index] = value                
 
         if not editingmode:
             buttons = self._getSaveButtons()
