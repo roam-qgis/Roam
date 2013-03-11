@@ -4,10 +4,10 @@
     <mapcanvas>
         <units>meters</units>
         <extent>
-            <xmin>405388.832313</xmin>
-            <ymin>6879057.453012</ymin>
-            <xmax>405646.173094</xmax>
-            <ymax>6879236.919004</ymax>
+            <xmin>405196.885915</xmin>
+            <ymin>6878932.978259</ymin>
+            <xmax>405871.074531</xmax>
+            <ymax>6879258.161107</ymax>
         </extent>
         <projections>0</projections>
         <destinationsrs>
@@ -38,7 +38,7 @@
     <projectlayers layercount="2">
         <maplayer minimumScale="0" maximumScale="1e+08" geometry="Polygon" type="vector" hasScaleBasedVisibilityFlag="0">
             <id>sample_data20120922233838099</id>
-            <datasource>dbname='../../../../../../QMap/qmap/projects/sample_data.sqlite' table="sample_data" (GEOMETRY) sql=</datasource>
+            <datasource>dbname='./_data/sample_data.sqlite' table="sample_data" (GEOMETRY) sql=</datasource>
             <title></title>
             <abstract></abstract>
             <layername>sample_data</layername>
@@ -209,9 +209,9 @@
             <excludeAttributesWFS/>
             <attributeactions/>
         </maplayer>
-        <maplayer minimumScale="-4.65661e-10" maximumScale="1e+08" geometry="Point" type="vector" hasScaleBasedVisibilityFlag="0">
+        <maplayer minimumScale="0" maximumScale="1e+08" geometry="Point" type="vector" hasScaleBasedVisibilityFlag="0">
             <id>trees20120923001707500</id>
-            <datasource>dbname='../../../../../../QMap/qmap/projects/sample_data.sqlite' table="trees" (geomm) sql=</datasource>
+            <datasource>dbname='./_data/sample_data.sqlite' table="trees" (geomm) sql=</datasource>
             <title></title>
             <abstract></abstract>
             <layername>trees</layername>
@@ -251,9 +251,9 @@
                 <property key="labeling" value="pal"/>
                 <property key="labeling/addDirectionSymbol" value="false"/>
                 <property key="labeling/angleOffset" value="0"/>
-                <property key="labeling/bufferColorB" value="255"/>
-                <property key="labeling/bufferColorG" value="255"/>
-                <property key="labeling/bufferColorR" value="255"/>
+                <property key="labeling/bufferColorB" value="0"/>
+                <property key="labeling/bufferColorG" value="0"/>
+                <property key="labeling/bufferColorR" value="0"/>
                 <property key="labeling/bufferJoinStyle" value="64"/>
                 <property key="labeling/bufferNoFill" value="false"/>
                 <property key="labeling/bufferSize" value="1"/>
@@ -285,8 +285,8 @@
                 <property key="labeling/displayAll" value="false"/>
                 <property key="labeling/dist" value="0"/>
                 <property key="labeling/distInMapUnits" value="false"/>
-                <property key="labeling/enabled" value="false"/>
-                <property key="labeling/fieldName" value=""/>
+                <property key="labeling/enabled" value="true"/>
+                <property key="labeling/fieldName" value="Asset_Type"/>
                 <property key="labeling/fontCapitals" value="0"/>
                 <property key="labeling/fontFamily" value="MS Shell Dlg 2"/>
                 <property key="labeling/fontItalic" value="false"/>
@@ -294,7 +294,7 @@
                 <property key="labeling/fontLimitPixelSize" value="false"/>
                 <property key="labeling/fontMaxPixelSize" value="10000"/>
                 <property key="labeling/fontMinPixelSize" value="3"/>
-                <property key="labeling/fontSize" value="8.25"/>
+                <property key="labeling/fontSize" value="16.25"/>
                 <property key="labeling/fontSizeInMapUnits" value="false"/>
                 <property key="labeling/fontStrikeout" value="false"/>
                 <property key="labeling/fontUnderline" value="false"/>
@@ -326,9 +326,9 @@
                 <property key="labeling/rightDirectionSymbol" value=">"/>
                 <property key="labeling/scaleMax" value="0"/>
                 <property key="labeling/scaleMin" value="0"/>
-                <property key="labeling/textColorB" value="0"/>
-                <property key="labeling/textColorG" value="0"/>
-                <property key="labeling/textColorR" value="0"/>
+                <property key="labeling/textColorB" value="255"/>
+                <property key="labeling/textColorG" value="255"/>
+                <property key="labeling/textColorR" value="255"/>
                 <property key="labeling/textTransp" value="0"/>
                 <property key="labeling/upsidedownLabels" value="0"/>
                 <property key="labeling/wrapChar" value=""/>
@@ -396,7 +396,7 @@
                 <edittype type="0" name="id"/>
                 <edittype type="0" name="pk"/>
             </edittypes>
-            <editform>../entry_forms/formTreeSample/form.ui</editform>
+            <editform>./trees/form.ui</editform>
             <editforminit></editforminit>
             <annotationform>.</annotationform>
             <editorlayout>uifilelayout</editorlayout>
@@ -455,8 +455,8 @@
             <Automatic type="bool">true</Automatic>
             <DegreeFormat type="QString">D</DegreeFormat>
         </PositionPrecision>
-        <WMSContactPhone type="QString"></WMSContactPhone>
         <WMSServiceCapabilities type="bool">false</WMSServiceCapabilities>
+        <WMSContactPhone type="QString"></WMSContactPhone>
         <WMSServiceAbstract type="QString"></WMSServiceAbstract>
         <WMSAddWktGeometry type="bool">false</WMSAddWktGeometry>
         <Measure>

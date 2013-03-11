@@ -36,10 +36,8 @@ import functools
 import utils
 from floatingtoolbar import FloatingToolBar
 from syncing.syncer import syncproviders
-from collections import namedtuple
 
-Project = namedtuple('Project', 'name file splash folder')
-
+currentproject = None
 
 class QMap():
     layerformmap = {}
@@ -353,6 +351,8 @@ class QMap():
         path -- The path to the .qgs project file.
         """
         self.iface.addProject(project.file)
+        global currentproject
+        currentproject = project
         self.setUIState(True)
 
     def unload(self):

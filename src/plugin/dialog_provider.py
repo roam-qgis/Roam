@@ -7,6 +7,8 @@ from utils import Timer, log, info, warning, error
 import tempfile
 from ui_errorlist import Ui_Dialog
 from qgis.gui import QgsMessageBar
+from qgis.core import QgsVectorLayer
+import qmap
 
 class DialogProvider(QObject):
     """
@@ -28,9 +30,19 @@ class DialogProvider(QObject):
 
         @refactor: This really needs to be cleaned up.
         """
+        
+        # If the layer has a ui file then we need to rewrite to be relative
+        # the current projects->layer folder
+        
+        if layer.editorLayout() == QgsVectorLayer.UiFileLayout:
+            form = os.path.basename(str(layer.editForm()))
+            folder = qmap.currentproject.folder
+            newpath = os.path.join(folder,str(layer.name()),form)
+            layer.setEditForm(newpath)
+            log(str(layer.editForm()))
+            
         self.dialog = self.iface.getFeatureForm(layer, feature)
         self.layer = layer
-
         self.binder = FormBinder(layer, self.dialog, self.canvas)
         self.binder.beginSelectFeature.connect(self.selectingFromMap)
         self.binder.endSelectFeature.connect(self.featureSelected)
