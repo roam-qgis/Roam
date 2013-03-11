@@ -36,6 +36,9 @@ import functools
 import utils
 from floatingtoolbar import FloatingToolBar
 from syncing.syncer import syncproviders
+from collections import namedtuple
+
+Project = namedtuple('Project', 'name file splash folder')
 
 
 class QMap():
@@ -340,17 +343,16 @@ class QMap():
         self.dialog.setModal(True)
         self.dialog.show()
         QCoreApplication.processEvents()
-        curdir = os.path.dirname(__file__)
-        path = os.path.join(curdir, 'projects/')
-        self.dialog.loadProjectList([path])
+        path = os.path.join(os.path.dirname(__file__), 'projects/')
+        self.dialog.loadProjectList(path)
 
-    def loadProject(self, path):
+    def loadProject(self, project):
         """
         Load a project into QGIS.
 
         path -- The path to the .qgs project file.
         """
-        self.iface.addProject(path)
+        self.iface.addProject(project.file)
         self.setUIState(True)
 
     def unload(self):
