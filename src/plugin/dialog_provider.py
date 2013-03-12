@@ -32,7 +32,7 @@ class DialogProvider(QObject):
         """
         
         # If the layer has a ui file then we need to rewrite to be relative
-        # the current projects->layer folder
+        # to the current projects->layer folder
         
         if layer.editorLayout() == QgsVectorLayer.UiFileLayout:
             form = os.path.basename(str(layer.editForm()))
@@ -40,7 +40,7 @@ class DialogProvider(QObject):
             newpath = os.path.join(folder,str(layer.name()),form)
             layer.setEditForm(newpath)
             log(str(layer.editForm()))
-            
+              
         self.dialog = self.iface.getFeatureForm(layer, feature)
         self.layer = layer
         self.binder = FormBinder(layer, self.dialog, self.canvas)

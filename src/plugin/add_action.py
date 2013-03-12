@@ -1,5 +1,5 @@
 from point_tool import PointTool, log
-from PyQt4.QtGui import QAction, QLabel
+from PyQt4.QtGui import QAction, QLabel, QIcon
 from qgis.core import *
 from qgis.gui import *
 import uuid
@@ -16,7 +16,7 @@ class AddAction(QAction):
            DialogProvider and feature creation logic out.
     """
     def __init__(self, name, iface, layer, icon ):
-        QAction.__init__(self, icon, "New %s" % name, iface.mainWindow())
+        QAction.__init__(self, QIcon(icon), "New %s" % name, iface.mainWindow())
         self.iface = iface
         self.layer = layer
         self.toggled.connect(self.setTool)

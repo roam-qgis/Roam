@@ -34,7 +34,7 @@ class EditAction(QAction):
         if not qmap.QMap.layerformmap:
             return
 
-        layer = qmap.QMap.layerformmap.iterkeys().next()
+        layer = qmap.QMap.layerformmap[0]
 
         searchRadius = QgsTolerance.toleranceInMapUnits( 10, layer, \
                                                          self.canvas.mapRenderer(), QgsTolerance.Pixels)
@@ -45,16 +45,16 @@ class EditAction(QAction):
         rect.setYMinimum( point.y() - searchRadius );
         rect.setYMaximum( point.y() + searchRadius );
                 
-        featuresToForms = {}
-        for layer, form in qmap.QMap.layerformmap.iteritems():
+        featuresToForms = []
+        for layer in qmap.QMap.layerformmap:
             rq = QgsFeatureRequest().setFilterRect(rect)
             for feature in layer.getFeatures(rq):
-                featuresToForms[feature] = (form, layer)
+                featuresToForms.append((feature, layer))
 
         if len(featuresToForms) == 1:
-            form, layer = featuresToForms.itervalues().next()
-            feature = featuresToForms.iterkeys().next()
-            self.openForm(form, feature, layer)
+            layer = featuresToForms[0][1]
+            feature = featuresToForms[0][0]
+            self.openForm(feature, layer)
         elif len(featuresToForms) > 0:
             listUi = ListFeaturesForm()
             listUi.loadFeatureList(featuresToForms)
@@ -65,7 +65,7 @@ class EditAction(QAction):
         if not qmap.QMap.layerformmap:
             return
 
-        layer = qmap.QMap.layerformmap.iterkeys().next()
+        layer = qmap.QMap.layerformmap[0]
 
         searchRadius = QgsTolerance.toleranceInMapUnits( 5, layer, \
                                                          self.canvas.mapRenderer(), QgsTolerance.Pixels)
@@ -76,7 +76,7 @@ class EditAction(QAction):
         rect.setYMaximum( point.y() + searchRadius );
 
         self.band.reset()
-        for layer in qmap.QMap.layerformmap.iterkeys():
+        for layer in qmap.QMap.layerformmap:
             rq = QgsFeatureRequest().setFilterRect(rect) 
             for feature in layer.getFeatures(rq):
                 if not feature.isValid():
@@ -86,7 +86,7 @@ class EditAction(QAction):
     def setLayersForms(self,layerforms):
         qmap.QMap.layerformmap = layerforms
     
-    def openForm(self,formmodule,feature,maplayer):
+    def openForm(self,feature,maplayer):
         if not maplayer.isEditable():
             maplayer.startEditing()
 

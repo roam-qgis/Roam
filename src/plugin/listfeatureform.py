@@ -1,8 +1,6 @@
 from PyQt4.QtGui import QDialog, QListWidgetItem, QApplication
 from PyQt4.QtCore import pyqtSignal, Qt
 from qgis.core import QgsFeature, QgsMapLayer
-from forms import Form
-
 from ui_listfeatures import Ui_ListFeatueForm
 
 class ListFeaturesForm(QDialog):

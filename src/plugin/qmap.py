@@ -40,11 +40,10 @@ from syncing.syncer import syncproviders
 currentproject = None
 
 class QMap():
-    layerformmap = {}
+    layerformmap = []
 
     def __init__(self, iface):
         self.iface = iface
-        self.layerstoForms = {}
         self.actions = []
         self.navtoolbar = self.iface.mapNavToolToolBar()
         self.mainwindow = iface.mainWindow()
@@ -259,35 +258,33 @@ class QMap():
             Called when a new project is opened in QGIS.
         """
         layers = dict((str(x.name()), x) for x in QgsMapLayerRegistry.instance().mapLayers().values())
-        
-        path = str(QgsProject.instance().fileName())
-        projectname = os.path.basename(path)[:-4]
-        projectsettings = utils.settings["projects"][projectname]
-        
-        self.createFormButtons(layers, projectsettings)
+                
+        self.createFormButtons(layers)
         self.defaultextent = self.iface.mapCanvas().extent()
         
         # Enable the raster layers button only if the project contains a raster layer.
         self.toggleRasterAction.setEnabled(self.hasRasterLayers())
 
-    def createFormButtons(self, projectlayers, projectsettings):
+    def createFormButtons(self, projectlayers):
         """
             Create buttons for each form that is definded
         """
-        layerstoForms = {}
-
         # Remove all the old buttons
         for action in self.actions:
             self.toolbar.removeAction(action)
-            
-        formlayers = projectsettings["layers"]
         
-        for layer, options in formlayers.iteritems():
+        folder = currentproject.folder
+        layerfolders = ( [os.path.join(folder, item) for item in os.walk(folder).next()[1] 
+                                                    if not item.startswith('_')])
+        
+        for layer in layerfolders:
             try:
-                qgslayer = projectlayers[layer]
-                text = options['text']
-                                
-                action = AddAction(text, self.iface, qgslayer, QIcon())
+                name = os.path.basename(layer)
+                qgslayer = projectlayers[name]
+                text = name
+                icon = os.path.join(layer, 'icon.png')
+                log(icon)               
+                action = AddAction(text, self.iface, qgslayer, icon)
                 
                 self.toolbar.insertAction(self.editingmodeaction, action)
                 
@@ -297,13 +294,11 @@ class QMap():
                 action.toggled.connect(showgpstools)
                 self.actionGroup.addAction(action)
                 self.actions.append(action)
-                layerstoForms[qgslayer] = None
+                QMap.layerformmap.append(qgslayer)
                 
             except KeyError:
                 log("Layer not found in project")
                 continue
-            
-        QMap.layerformmap = layerstoForms
 
     def rejectProjectDialog(self):
         """
@@ -350,9 +345,9 @@ class QMap():
 
         path -- The path to the .qgs project file.
         """
-        self.iface.addProject(project.file)
         global currentproject
         currentproject = project
+        self.iface.addProject(project.file)
         self.setUIState(True)
 
     def unload(self):
