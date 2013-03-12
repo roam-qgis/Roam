@@ -6,7 +6,7 @@
     Nathan Woodrow,
     Damien Smith
 
-:Version: 1.0
+:Version: 2.0
 
 .. |name| replace:: QMap
 .. |f| image:: images/folder.png
@@ -22,9 +22,9 @@ Custom forms are built using Qt Designer and follow a convention based approach 
 
 Requirements
 -------------
-- Latest development QGIS Version (this is due to bug fixes in master)
-- mock (optional to run tests)
+- QGIS 2.0 (latest dev build from OSGeo4W)
 - Qt Designer (part of the qt4-devel package)
+- Microsoft Sync Framework (http://www.microsoft.com/en-us/download/details.aspx?id=23217)
 
 OSGeo4W Packages
 
@@ -36,6 +36,49 @@ If you need SQL Server syncing support
 - MS SQL Server 2008 (express or greater)
 - .NET 3.5 (or greater)
 - Microsoft Sync Framework (http://www.microsoft.com/en-us/download/details.aspx?id=23217)
+
+Projects
+-------------------
+QMap projects are stuctured using a single folder in the qmap-admin/projects folder and deployed
+to the device using QMap Admin tools.
+
+Project stucture is as follows:
+
+	::
+	
+	---projects
+	    +---Project Name
+	        |   splash.png
+	        |   your project.qgs
+	        |
+	        +---layername
+	        |   |   form.ui
+	        |   |   icon.png
+	        |   |
+	        |   \---help
+	        |           column1.html
+	        |           column2.html
+	        |           column3.html
+	        |
+	        \---_data
+	                {extra data your project needs}
+	                
+Each folder inside the project folder will be treated as a editing layer, the 
+name of the folder must match the name in the .qgs project file.  Each layername folder
+may contain a `icon.png` which will be used on the toolbar, and a help folder which
+contains a html file for each column.
+
+`help` folders are optional.  Any folders starting with _ will be ignored by QMap but still
+copied to the device. 
+
+Editing Layers
+--------------
+
+Editing layers in QMap are 
+
+
+
+
 
 Syncing Support
 -----------------
