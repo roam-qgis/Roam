@@ -40,7 +40,7 @@ If you need SQL Server syncing support
 Projects
 -------------------
 QMap projects are stuctured using a single folder in the qmap-admin/projects folder and deployed
-to the device using QMap Admin tools.
+to the device using QMap Admin tool.
 
 Project stucture is as follows:
 
@@ -62,8 +62,12 @@ Project stucture is as follows:
 	        |
 	        \---_data
 	                {extra data your project needs}
+	               
 	                
-Each folder inside the project folder will be treated as a editing layer, the 
+Each project folder must contain a `splash.png`, and a `.qgs` project. One one `.qgs` file is
+supported per project.
+
+Every folder inside the project folder will be treated as an editing layer, the 
 name of the folder must match the name in the .qgs project file.  Each layername folder
 may contain a `icon.png` which will be used on the toolbar, and a help folder which
 contains a html file for each column.
@@ -71,154 +75,69 @@ contains a html file for each column.
 `help` folders are optional.  Any folders starting with _ will be ignored by QMap but still
 copied to the device. 
 
-Editing Layers
+An example project layout is:
+
+	::
+	
+	---projects
+	    +---Firebreak Inspection
+	    |   |   fireinspect.qgs
+	    |   |   splash.png
+	    |   |
+	    |   +---Inspection
+	    |   |       fireform.ui
+	    |   |       icon.png
+	    |   
+	    |   
+	    |   
+	    |   
+	    |
+	    \---Trees (Sample)
+	        |   splash.png
+	        |   Trees (Sample).qgs
+	        |
+	        +---trees
+	        |   |   form.ui
+	        |   |   icon.png
+	        |   |
+	        |   \---help
+	        |           Asset_Type.html
+	        |           Condition.html
+	        |           Species.html
+	        |
+	        \---_data
+	                sample_data.sqlite
+
+QMap Layers
 --------------
 
-Editing layers in QMap are 
+Layers in QMap are defined using plain folders inside the project folder. 
+	
+	.. note::
+	
+	Each layer folder must match the name of the layer in the QGIS project.  
 
+When QMap loads a project it will match each folder name and assign it to the QGIS
+layer of the same name.  QMap will create a new button on the toolbar for each matching
+layer in the project folder.
 
-
-
+The form that QMap will use for each layer is defined 
+in the normal QGIS project using the `Fields` tab. The options are `Autogenerate`, `Drag and Drop`,
+`UI-File`. If using the UI-File option the `.ui` file used should be located in layer folder as per
+the example.
 
 Syncing Support
 -----------------
-Supported sycning providers
+Current supported sycning providers
 
 - MS SQL Server 2008
 
 At the moment syncing of MS SQL 2008 Spatial layers is done using MS SQL Sync Framework.
 
-Syncing support is not a requirement to use QMap, nor is it a requirement to use SQL Server 2008 layers in your projects.  
-
-If syncing support is not needed build.py can take --with-mssyncing=False which will skip the compiling of the .NET syncing library. 
+Syncing support is not a requirement to use QMap, nor is it a requirement to use 
+SQL Server 2008 layers in your projects.
 
 Syncing support for different data sources e.g. PostGIS, SpatiaLite might added later.
-
-Downloading and Running
------------------------
-
-- Download the latest version (highest number wins) of |name| from https://github.com/NathanW2/qmap/tags using the Source Code(.zip).
-- Extact source files
-- Run build.bat - This will compile all the files that QMap needs.  If you don't need SQL syncing pass the --with-mssyncing=False to build.py in build.bat.
-- Add the client settings to targets.config following the below format (inside the "clients section")
-
-  ::
-
-      "{Client Name}": { 
-            "path" : "{Path to client}",
-            "projects" : [{List of Projects}],
-            "forms" : [{List of forms}]
-          },
-
-  an example of a client config is
-
-  ::
-
-      "Sample": {
-        "path" : "C:/",
-        "projects" : ["Trees (Sample).qgs",
-                "Trees (Sample) Multi.qgs"],
-        "forms" : ["formTreeSample"]
-          },
-
-- Run depoly.bat changing --target=Sample to match the {Client Name} in your targets.config.
-  
-
-
-Program Layout
---------------
-There are two parts to |name|.
-- The client program
-and
-- The client manager
-
-Client Program
-!!!!!!!!!!!!!!
-The client program includes a QGIS plugin, a bootloader to load QGIS using
-``--configpath``, and depolyed forms and projects.
-
-The client progam can be depolyed to a client using:
-
-::
-
-    python build.py --target=Touch --with-tests=False deploy
-    
-with ``Touch`` being defined in targets.ini as:
-
-::
-
-    [Touch]
-    client : \\computername\path\to\desktop
-    projects : Water.qgs
-    forms : formWater
-    
-See ``/docs/README`` for more information
-
-The client Manager
-!!!!!!!!!!!!!!!!!!
-The client manager is the side of the program that contains the all depolyable
-forms and projects, tools to build the client project, tools to depoly forms
-and projects to the client/s.
-
-Forms and projects are stored under ``/project-manager/``. Forms should be added
-into the ``/project-manager/entry_forms`` folder and projects into the
-``/project-manager/projects/`` folder.  
-
-Project and forms in the ``/project-manager/`` folder can then be used inside
-targets.ini to depoly different forms and projects to different clients by running:
-
-::
-
-    python build.py --target=Client1 deploy
-    python build.py --target=Client2 deploy
-    python build.py --target=Client4 deploy
-
-With ``Client1``, ``Client2``, ``Client4`` being different devices with different
-forms and projects.
-
-Client Manager and Data
-+++++++++++++++++++++++
-
-|name| takes a hands off approach to data management in that it will not manage, 
-copy, move, or otherwise touch your project data.  Data should be managed by
-the admin of the clients.
-
-The best way to make portable project files is to use a database on the client and
-build a project using a mirror of the database on the admins machine, or else you
-can use relative paths in the project file.
-
-**Example of using relative paths:**
-
-On admin machine in ``/project-manager/projects`` folder:
-
-::
-
-    myproject.qgs
-    data
-      |-- layer1.shp
-      |-- layer2.shp
-      |-- layer3.shp
-      |-- rasterlayer.tiff
-      
-After using:
-
-::
-
-    python build.py --target=Client1 deploy
-    
-The ``myproject.qgs`` file will be depolyed but not the data. Copy the data into
-``{deploypath}/QMap/app/python/plugins/QMap/projects/`` and the project will open
-the data using relative paths.  Provided of course that your project file is saved
-in QGIS with relative paths.
-
-Running the sample
--------------------
-
-- Download the sample data from https://github.com/downloads/NathanW2/qmap/sample_data.sqlite
-- Run make_win.bat in the OSGeo4W shell. Making sure --target is set to Sample.
-- Save sample_data.sqlite into ``C:\QMap\app\python\plugins\QMap\projects``
-- Lauch QMap.bat from inside ``C:\QMap``
-- Load the ``Trees (Sample)`` project from the project list.
 
 License
 --------------
