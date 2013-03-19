@@ -65,21 +65,26 @@ def compileplugin():
     run('pyrcc4', '-o', join(srcopyFilesath,'syncing/resources_rc.py'), join(srcopyFilesath,'syncing/resources.qrc'))
 
     if iswindows:
-        projects = ['libsyncing/libsyncing.csproj', 
-                    'provisioner/provisioner.csproj',
-                    'syncer/syncer.csproj']
-
-        print " - building syncing tools..."
-        for project in projects:
-            run('MSBuild', '/property:Configuration=Release', '/verbosity:m', \
-            join(dotnetpath, project), shell=True, env=env)
-
-        mssyncpath = os.path.join(dotnetpath, "bin")
-        lib = os.path.join(mssyncpath, "libsyncing.dll")
-        bin = os.path.join(mssyncpath, "provisioner.exe")
-        clientsetuppath = os.path.join(curpath,"qmap-admin","client-setup")
-        copyFolder(lib, clientsetuppath)
-        copyFolder(bin, clientsetuppath)
+        try:
+            projects = ['libsyncing/libsyncing.csproj', 
+                        'provisioner/provisioner.csproj',
+                        'syncer/syncer.csproj']
+    
+            print " - building syncing tools..."
+            for project in projects:
+                run('MSBuild', '/property:Configuration=Release', '/verbosity:m', \
+                join(dotnetpath, project), shell=False, env=env)
+    
+            mssyncpath = os.path.join(dotnetpath, "bin")
+            lib = os.path.join(mssyncpath, "libsyncing.dll")
+            bin = os.path.join(mssyncpath, "provisioner.exe")
+            clientsetuppath = os.path.join(curpath,"qmap-admin","client-setup")
+            copyFolder(lib, clientsetuppath)
+            copyFolder(bin, clientsetuppath)
+        except ExecutionError:
+            pass
+        except WindowsError:
+            pass
 
 def docs():
 	print "Generating docs"
@@ -135,8 +140,9 @@ def build_plugin():
         lib = join(mssyncpath, "libsyncing.dll")
         bin = join(mssyncpath, "syncer.exe")
         destmssyncpath = join(deploypath,"syncing")
-        copyFolder(lib, destmssyncpath)
-        copyFolder(bin, destmssyncpath)
+        if os.path.exists(lib) and os.path.exists(bin):
+            copyFolder(lib, destmssyncpath)
+            copyFolder(bin, destmssyncpath)
     # Replace version numbers
     version = getVersion()
     command = 's/version=0.1/version=%s/ "%s"' % (version, join(deploypath, 'metadata.txt'))
