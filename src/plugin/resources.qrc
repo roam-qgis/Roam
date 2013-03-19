@@ -28,5 +28,6 @@
     <file alias="exit">resources/images/exit.png</file>
     <file alias="move">resources/images/move.png</file>
     <file alias="gpsadd">resources/images/addatgps.png</file>
+    <file alias="zoomfull">resources/images/zoomfull.png</file>
   </qresource>
 </RCC>

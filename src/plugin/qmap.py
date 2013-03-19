@@ -98,7 +98,7 @@ class QMap():
         Create all the actions
         """
 
-        self.homeAction = (QAction(self.iface.actionZoomFullExtent().icon(),
+        self.homeAction = (QAction(QIcon(":/icons/zoomfull"),
                                   "Default View", self.mainwindow))
         self.gpsAction = (GPSAction(QIcon(":/icons/gps"), self.iface.mapCanvas(),
                                    self.mainwindow))
