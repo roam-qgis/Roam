@@ -236,6 +236,7 @@ class QMap():
         Update toolbars to have text and icons, change normal QGIS
         icons to new style
         """
+        self.iface.mainWindow().setStyleSheet("QToolBar {background-color:white}")
         toolbars = self.iface.mainWindow().findChildren(QToolBar)
         for toolbar in toolbars:
             toolbar.setToolButtonStyle(Qt.ToolButtonTextUnderIcon)
