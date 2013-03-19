@@ -98,7 +98,7 @@ class QMap():
         Create all the actions
         """
 
-        self.homeAction = (QAction(self.iface.actionZoomFullExtent().icon(),
+        self.homeAction = (QAction(QIcon(":/icons/zoomfull"),
                                   "Default View", self.mainwindow))
         self.gpsAction = (GPSAction(QIcon(":/icons/gps"), self.iface.mapCanvas(),
                                    self.mainwindow))
@@ -236,6 +236,7 @@ class QMap():
         Update toolbars to have text and icons, change normal QGIS
         icons to new style
         """
+        self.iface.mainWindow().findChildren(QMenuBar)[0].setVisible(False)
         self.iface.mainWindow().setStyleSheet("QToolBar {background-color:white}")
         toolbars = self.iface.mainWindow().findChildren(QToolBar)
         for toolbar in toolbars:

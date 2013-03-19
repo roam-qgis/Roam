@@ -26,7 +26,8 @@ class FloatingToolBar(QToolBar):
 				defaultaction.toggle()
 			widget = self.parent().widgetForAction(parentaction)
 			x = self.parent().mapToGlobal(widget.pos()).x()
-			newpoint = QPoint(x, self.rect().height() + 10 )
+			y = self.parent().mapToGlobal(widget.pos()).y()
+			newpoint = QPoint(x, y + self.rect().height())
 			self.move(newpoint)
 		else:
 			action = self.actiongroup.checkedAction()
