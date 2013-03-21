@@ -29,17 +29,44 @@ class InspectionForm():
 		inspectiongroup = self.getControl("InspectionGroup")
 		inspectiongroup.setEnabled(False)
 
+	def loadPhotos(self):
+
+		def loadPhoto(imagefield, visit=1):
+			""" Load the image into the label """
+			image = f[imagefield].toByteArray()
+			if not image:
+				return
+				
+			pix = QPixmap()
+			r = pix.loadFromData(image, 'JPG')
+			label = self.getControl("%s_%s" % (imagefield,visit))
+			label.setScaledContents(True)
+			label.setPixmap(pix)
+
+		photolayer = QgsMapLayerRegistry.instance().mapLayersByName("Photo")[0]
+		ID = str(self.feature['ID'].toString())
+		photolayer.setSubsetString("INSPECTIONID = %s" % ID)
+		features = list(photolayer.getFeatures())
+		f = features[0]
+		loadPhoto('PHOTO1')
+		loadPhoto('PHOTO2')
+		loadPhoto('PHOTO3')
+		try:
+			f = features[1]
+			loadPhoto('PHOTO1',2)
+			loadPhoto('PHOTO2',2)
+			loadPhoto('PHOTO3',2)
+		except IndexError:
+			pass
+
+
 def open(dialog, layer, feature):
 	form = InspectionForm(dialog, layer, feature)
 	form.setAddress()
 
-	# Anything greater then 0 is an existing feature.
-	if feature.id() > 0:
-		form.disableInspectionSection()
+	# # Anything greater then 0 is an existing feature.
+	# if feature.id() > 0:
+	# 	form.disableInspectionSection()
 	
-	# feature = list(layer.getFeatures(QgsFeatureRequest(feature.id())))[0]
-	# image = feature[3].toByteArray()
-	# pix = QPixmap()
-	# r = pix.loadFromData(image, 'jpg')
-	# label = dialog.findChild(QLabel, "PHOTO1")
-	# label.setPixmap(pix)
+	form.loadPhotos()
+
