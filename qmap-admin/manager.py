@@ -32,7 +32,6 @@ def getProjects():
 	    try:
 	        projectfile = glob.glob(os.path.join(folder, '*.qgs'))[0]
 	    except IndexError:
-	        log("No project file found.")
 	        continue
 	    try:
 	        splash = glob.glob(os.path.join(folder, 'splash.png'))[0]
