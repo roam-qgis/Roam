@@ -126,6 +126,8 @@
  </widget>
  <resources>
   <include location="../images.qrc"/>
+  <include location="../images.qrc"/>
+  <include location="../images.qrc"/>
  </resources>
  <connections/>
 </ui>
