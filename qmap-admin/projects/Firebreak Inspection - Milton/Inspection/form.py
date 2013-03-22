@@ -16,19 +16,31 @@ class PictureWidget(baseClass, widgetForm):
 		self.setStyleSheet(":hover {background-color: #dddddd;}")
 		self.selectbutton.setVisible(False)
 		self.deletebutton.setVisible(False)
+		self.selectbutton.clicked.connect(self.selectImage)
+		self.deletebutton.clicked.connect(self.removeImage)
 		self.isDefault = True
 		self.loadImage(data)
 		self.image.mouseReleaseEvent = self.imageClick
+		
+
+	def selectImage(self):
+		# Show the file picker
+		image  = QFileDialog.getOpenFileName(self, "Select Image", "", "Images (*.jpg)")
+		if image.isEmpty():
+			return
+
+		pix = QPixmap(image)
+		self.loadFromPixMap(pix)
+
+	def removeImage(self):
+		pix = QPixmap(":/images/add.png")
+		self.loadFromPixMap(pix)
+		self.image.setScaledContents(False)
+		self.isDefault = True
 
 	def imageClick(self, event):
 		if self.isDefault:
-			# Show the file picker
-			image  = QFileDialog.getOpenFileName(self, "Select Image", "", "Images (*.jpg)")
-			if image is None:
-				return
-
-			pix = QPixmap(image)
-			self.loadFromPixMap(pix)
+			self.selectImage()
 		else:
 			label = QLabel()
 			label.setPixmap(self.image.pixmap())
