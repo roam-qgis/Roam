@@ -16,18 +16,71 @@ class PictureWidget(baseClass, widgetForm):
 		self.setStyleSheet(":hover {background-color: #dddddd;}")
 		self.selectbutton.setVisible(False)
 		self.deletebutton.setVisible(False)
+		self.isDefault = True
 		self.loadImage(data)
+		self.image.mouseReleaseEvent = self.imageClick
+
+	def imageClick(self, event):
+		if self.isDefault:
+			# Show the file picker
+			image  = QFileDialog.getOpenFileName(self, "Select Image", "", "Images (*.jpg)")
+			if image is None:
+				return
+
+			pix = QPixmap(image)
+			self.loadFromPixMap(pix)
+		else:
+			label = QLabel()
+			label.setPixmap(self.image.pixmap())
+			label.setScaledContents(True)
+			dlg = QDialog()
+			dlg.setWindowTitle("Image Viewer")
+			dlg.setLayout(QGridLayout())
+			dlg.layout().setContentsMargins(0,0,0,0)
+			dlg.layout().setSizeConstraint(QLayout.SetNoConstraint)
+			dlg.resize(600,600)
+			dlg.layout().addWidget(label)
+			dlg.exec_()
+
+	def loadFromPixMap(self, pixmap):
+		self.image.setScaledContents(True)
+		self.image.setPixmap(pixmap)
+		self.isDefault = False
 
 	def loadImage(self, data):
-		if data is None:
+		""" 
+			Load the image into the widget using a bytearray 
+
+			An empty picture will result in the default placeholder
+			image.
+		"""
+		if data.isEmpty():
+			self.isDefault = True
 			return
 
 		pix = QPixmap()
 		r = pix.loadFromData(data, 'JPG')
 		self.image.setScaledContents(True)
 		self.image.setPixmap(pix)
+		self.isDefault = False
+
+	def getImage(self):
+		""" Return the loaded image """
+		if self.isDefault:
+			return None
+
+		pix = self.image.pixmap()
+		bytes = QByteArray()
+		buf = QBuffer(bytes)
+		buf.open(QIODevice.WriteOnly)
+		pix.save(buf, "JPG")
+		return bytes
 
 	def enterEvent(self, event):
+		# Don't show the image controls if we are on the default image
+		if self.isDefault:
+			return
+
 		self.selectbutton.setVisible(True)
 		self.deletebutton.setVisible(True)
 		
@@ -64,9 +117,13 @@ class InspectionForm():
 
 	def loadPhotos(self):
 
-		def loadPhoto(imagefield, visit=1):
+		def loadPhotoOrDefault(imagefield, visit=1):
 			""" Load the image into the label """
-			image = f[imagefield].toByteArray()
+			if not f is None:
+				image = f[imagefield].toByteArray()
+			else:
+				image = None
+
 			layout = self.getControl("frame" + str(visit)).layout()
 			picture = PictureWidget(image)
 			picture.setFixedSize(100,100)
@@ -79,28 +136,30 @@ class InspectionForm():
 		
 		try:
 			f = features[0]
-			loadPhoto('PHOTO1')
-			loadPhoto('PHOTO2')
-			loadPhoto('PHOTO3')
 		except IndexError:
-			pass
+			f = None
+
+		loadPhotoOrDefault('PHOTO1')
+		loadPhotoOrDefault('PHOTO2')
+		loadPhotoOrDefault('PHOTO3')
 
 		try:
 			f = features[1]
-			loadPhoto('PHOTO1',2)
-			loadPhoto('PHOTO2',2)
-			loadPhoto('PHOTO3',2)
 		except IndexError:
-			pass
+			f = None
+
+		loadPhotoOrDefault('PHOTO1',2)
+		loadPhotoOrDefault('PHOTO2',2)
+		loadPhotoOrDefault('PHOTO3',2)
 
 
 def open(dialog, layer, feature):
 	form = InspectionForm(dialog, layer, feature)
 	form.setAddress()
 
-	# # Anything greater then 0 is an existing feature.
-	if feature.id() > 0:
-		form.disableInspectionSection()
+	# Anything greater then 0 is an existing feature.
+	# if feature.id() > 0:
+	# 	form.disableInspectionSection()
 	
 	form.loadPhotos()
 
