@@ -42,7 +42,7 @@ class MandatoryGroup(QObject):
         self.widgets = []
         # Mapping of widget type to condition to check.  Condition should return
         # false if value has been completed.
-        self.mapping = {QComboBox: lambda w: w.currentText().isEmpty(),
+        self.mapping = {QComboBox: lambda w: comboboxvalidate(w),
                         QCheckBox: lambda w: w.checkState() == Qt.Unchecked,
                         QLineEdit: lambda w: w.text().isEmpty(),
                         QTextEdit: lambda w: w.toPlainText().isEmpty(),
@@ -64,6 +64,9 @@ class MandatoryGroup(QObject):
                                             "{border-radius: 5px; background-color: rgba(200, 255, 197, 150); }",
 
                            }
+        
+        def comboboxvalidate(w):
+            return w.currentText().isEmpty() or w.currentText() == "(no selection)"
 
         def comboxboxchanges(w, m):
             if w.isEditable():
