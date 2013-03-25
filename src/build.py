@@ -208,7 +208,7 @@ def deploytarget(clientconfig):
     mkdir(clientwidgetspath)
     copyFolder(widgetspath, clientwidgetspath)
 
-    projecthome = os.path.join(curpath, 'qmap-admin', 'projects')
+    projecthome = os.path.join(curpath, 'projects')
     clientpojecthome = os.path.join(clientpath, APPNAME.lower(), 'projects')
     
     projectfolders = (sorted([os.path.join(projecthome, item) 

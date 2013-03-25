@@ -19,7 +19,7 @@ from collections import namedtuple
 Project = namedtuple('Project', 'name file splash folder')
 
 def getProjects():
-	projectpath = os.path.join(curdir, 'projects')
+	projectpath = os.path.join(pardir, 'projects')
 	folders = (sorted( [os.path.join(projectpath, item) 
                        for item in os.walk(projectpath).next()[1]]))
     
