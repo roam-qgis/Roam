@@ -28,7 +28,7 @@ from PyQt4.QtGui import *
 import qmaplayer
 from listmodulesdialog import ListProjectsDialog
 from qgis.core import *
-from qgis.gui import QgsMapToolZoom, QgsMapTool
+from qgis.gui import QgsMapToolZoom, QgsMapTool, QgsMessageBar
 import resources_rc
 from syncing.syncdialog import SyncDialog
 from utils import log
@@ -36,6 +36,8 @@ import functools
 import utils
 from floatingtoolbar import FloatingToolBar
 from syncing.syncer import syncproviders
+import json
+from syncing import replication
 
 currentproject = None
 
@@ -107,6 +109,7 @@ class QMap():
         self.toggleRasterAction = (QAction(QIcon(":/icons/photo"), "Aerial Photos",
                                           self.mainwindow))
         self.syncAction = QAction(QIcon(":/syncing/sync"), "Sync", self.mainwindow)
+        self.syncAction.setVisible(False)
 
         self.editattributesaction = EditAction("Edit Attributes", self.iface)
         self.editattributesaction.setCheckable(True)
@@ -160,7 +163,7 @@ class QMap():
         self.actionGroup.addAction(self.editingmodeaction)
 
         self.homeAction.triggered.connect(self.zoomToDefaultView)
-        self.syncAction.triggered.connect(self.sync)
+        
         self.openProjectAction.triggered.connect(self.showOpenProjectDialog)
         self.toggleRasterAction.triggered.connect(self.toggleRasterLayers)
 
@@ -266,6 +269,8 @@ class QMap():
         
         # Enable the raster layers button only if the project contains a raster layer.
         self.toggleRasterAction.setEnabled(self.hasRasterLayers())
+        
+        self.connectSyncProviders()
 
     def createFormButtons(self, projectlayers):
         """
@@ -354,19 +359,54 @@ class QMap():
 
     def unload(self):
         del self.toolbar
-
-    def sync(self):
-        """
-        Open and run the sync.  Shows the sync dialog.
-
-        notes: Blocking the user while we wait for syncing is not very nice.
-               Maybe we can do it in the background and show the dialog as non
-               model and report pass/fail.
-        """
-        self.syndlg = SyncDialog()
-        self.syndlg.setModal(True)
-        self.syndlg.show()
-        # HACK
-        QCoreApplication.processEvents()
-        self.syndlg.runSync(syncproviders)
-        self.iface.mapCanvas().refresh()
+        
+    def connectSyncProviders(self):
+        projectfolder = currentproject.folder
+        settings = os.path.join(projectfolder, "settings.config")
+        with open(settings,'r') as f:
+            settings = json.load(f)
+        
+        buttontype = settings["buttonstyle"]
+        syncactions = []
+        for name, config in settings["providers"].iteritems():
+            if config['type'] == 'replication':
+                cmd = config['cmd']
+                cmd = os.path.join(projectfolder, cmd)
+                provider = replication.ReplicationSync(name, cmd)          
+                syncactions.append(provider)
+                
+        if buttontype == 'single':
+            self.syncAction.setVisible(True)
+            self.syncAction.triggered.connect(functools.partial(self.syncAll, syncactions))
+                
+    def syncstarted(self):
+        log("Sync started")
+        self.syncwidget = self.iface.messageBar().createMessage("Sync", "Sync in progress")
+        button = QToolButton(self.syncwidget)
+        button.setText("Details")
+        self.syncwidget.layout().addWidget(button)
+        self.iface.messageBar().pushWidget(self.syncwidget, QgsMessageBar.INFO)
+        
+    def synccomplete(self):
+        try:
+            self.iface.messageBar().popWidget(self.syncwidget)
+        except RuntimeError:
+            pass
+        
+        stylesheet = ("QgsMessageBar { background-color: rgb(201, 255, 201); border: 1px solid #b9cfe4; } "
+                     "QLabel,QTextEdit { color: #057f35; } ")
+        
+        self.syncwidget = self.iface.messageBar().createMessage("Sync", "Sync Complete")
+        button = QToolButton(self.syncwidget)
+        button.setText("Sync Report")
+        self.syncwidget.layout().addWidget(button)
+        self.iface.messageBar().pushWidget(self.syncwidget, QgsMessageBar.INFO)
+        self.syncwidget.setStyleSheet(stylesheet)
+        
+    def syncAll(self, providers):
+        log("SYNC ALL")
+        for provider in providers:
+            log(provider.cmd)
+            provider.syncStarted.connect(self.syncstarted)
+            provider.syncComplete.connect(self.synccomplete)
+            provider.startSync()
