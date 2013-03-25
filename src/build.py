@@ -104,9 +104,11 @@ def getVersion():
     month = now.month
     day = now.day
     try:
-		commit = shell('git', 'log', '-1', '--pretty=%h').strip()
+        commit = shell('git', 'log', '-1', '--pretty=%h').strip()
     except WindowsError:
-		commit = ""
+        commit = ""
+    except ExecutionError:
+        commit = ""
     return "{0}.{1}.{2}.{3}".format(year, month, day, commit)
 
 def test():

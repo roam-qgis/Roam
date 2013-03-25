@@ -46,22 +46,22 @@ Project stucture is as follows:
 
 	::
 	
-	---projects
-	    +---Project Name
-	        |   splash.png
-	        |   your project.qgs
-	        |
-	        +---layername
-	        |   |   form.ui
-	        |   |   icon.png
-	        |   |
-	        |   \---help
-	        |           column1.html
-	        |           column2.html
-	        |           column3.html
-	        |
-	        \---_data
-	                {extra data your project needs}
+		---projects
+		    +---Project Name
+		        |   splash.png
+		        |   your project.qgs
+		        |
+		        +---layername
+		        |   |   form.ui
+		        |   |   icon.png
+		        |   |
+		        |   \---help
+		        |           column1.html
+		        |           column2.html
+		        |           column3.html
+		        |
+		        \---_data
+		                {extra data your project needs}
 	               
 	                
 Each project folder must contain a `splash.png`, and a `.qgs` project. One one `.qgs` file is
@@ -79,34 +79,34 @@ An example project layout is:
 
 	::
 	
-	---projects
-	    +---Firebreak Inspection
-	    |   |   fireinspect.qgs
-	    |   |   splash.png
-	    |   |
-	    |   +---Inspection
-	    |   |       fireform.ui
-	    |   |       icon.png
-	    |   
-	    |   
-	    |   
-	    |   
-	    |
-	    \---Trees (Sample)
-	        |   splash.png
-	        |   Trees (Sample).qgs
-	        |
-	        +---trees
-	        |   |   form.ui
-	        |   |   icon.png
-	        |   |
-	        |   \---help
-	        |           Asset_Type.html
-	        |           Condition.html
-	        |           Species.html
-	        |
-	        \---_data
-	                sample_data.sqlite
+		---projects
+		    +---Firebreak Inspection
+		    |   |   fireinspect.qgs
+		    |   |   splash.png
+		    |   |
+		    |   +---Inspection
+		    |   |       fireform.ui
+		    |   |       icon.png
+		    |   
+		    |   
+		    |   
+		    |   
+		    |
+		    \---Trees (Sample)
+		        |   splash.png
+		        |   Trees (Sample).qgs
+		        |
+		        +---trees
+		        |   |   form.ui
+		        |   |   icon.png
+		        |   |
+		        |   \---help
+		        |           Asset_Type.html
+		        |           Condition.html
+		        |           Species.html
+		        |
+		        \---_data
+		                sample_data.sqlite
 
 QMap Layers
 --------------
