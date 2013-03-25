@@ -187,9 +187,8 @@ class FormBinder(QObject):
             self.createHelpLink(control)
 
     def createHelpLink(self, control):
-        return
         name = control.objectName()
-        helpfile = self.form.getHelpFile(name)
+        helpfile = qmaplayer.getHelpFile(self.layer, name)
         if helpfile:
             label = self.getBuddy(control)
             if label is control: return
