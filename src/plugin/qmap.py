@@ -25,6 +25,7 @@ from gps_action import GPSAction
 from movetool import MoveTool
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
+from PyQt4.QtWebKit import QWebView
 import qmaplayer
 from listmodulesdialog import ListProjectsDialog
 from qgis.core import *
@@ -385,7 +386,7 @@ class QMap():
         else:
             self.syncAction.setVisible(False)
                 
-    def syncstarted(self):
+    def syncstarted(self, provider):
         # Remove the old widget if it's still there.
         # I don't really like this. Seems hacky.
         try:
@@ -402,7 +403,23 @@ class QMap():
         self.syncwidget.layout().addWidget(button)
         self.iface.messageBar().pushWidget(self.syncwidget, QgsMessageBar.INFO)
         
-    def synccomplete(self):
+    def synccomplete(self, provider):
+        report = QDialog(self.iface.mainWindow())
+        report.setLayout(QGridLayout())
+        report.layout().setContentsMargins(0, 0, 0, 0)
+        web = QWebView()
+        report.resize(400,400)
+       
+        report.layout().addWidget(web)
+        def openSyncReport(provider, toggle):
+            point = self.iface.messageBar().rect().bottomRight()
+            bar = self.iface.messageBar()
+            newpoint = bar.mapToGlobal(point - QPoint(report.size().width(),0))
+            report.setWindowFlags(Qt.Tool | Qt.FramelessWindowHint | Qt.X11BypassWindowManagerHint)
+            report.move(newpoint)
+            web.setHtml(provider.getReport())
+            report.setVisible(toggle)
+
         try:
             self.iface.messageBar().popWidget(self.syncwidget)
         except RuntimeError:
@@ -413,8 +430,10 @@ class QMap():
         
         self.iface.messageBar().findChildren(QToolButton)[0].setVisible(True)
         self.syncwidget = self.iface.messageBar().createMessage("Syncing", "Sync Complete", QIcon(":/icons/syncdone"))
-        button = QToolButton(self.syncwidget)
+        button = QPushButton(self.syncwidget)
+        button.setCheckable(True)
         button.setText("Sync Report")
+        button.toggled.connect(functools.partial(openSyncReport, provider))
         self.syncwidget.layout().addWidget(button)
         self.iface.messageBar().pushWidget(self.syncwidget)
         self.iface.messageBar().setStyleSheet(stylesheet)
@@ -422,7 +441,11 @@ class QMap():
     def syncProvider(self, provider):
         log(provider.cmd)
         provider.syncStarted.connect(functools.partial(self.syncAction.setEnabled, False))
-        provider.syncStarted.connect(self.syncstarted)
-        provider.syncComplete.connect(self.synccomplete)
+        provider.syncStarted.connect(functools.partial(self.syncstarted, provider ))
+        provider.syncComplete.connect(functools.partial(self.synccomplete, provider))
         provider.syncComplete.connect(functools.partial(self.syncAction.setEnabled, True))
         provider.startSync()
+        
+        
+    
+        
