@@ -428,7 +428,7 @@ class QMap():
         button.setCheckable(True)
         button.setText("Status")
         button.toggled.connect(functools.partial(openSyncReport, provider))
-        self.syncwidget.layout().addWidget(button)
+        #self.syncwidget.layout().addWidget(button)
         self.iface.messageBar().pushWidget(self.syncwidget, QgsMessageBar.INFO)
         
     def synccomplete(self, provider):
@@ -465,6 +465,7 @@ class QMap():
         self.syncwidget.layout().addWidget(button)
         self.iface.messageBar().pushWidget(self.syncwidget)
         self.iface.messageBar().setStyleSheet(stylesheet)
+        self.iface.mapCanvas().refresh()
         
     def syncProvider(self, provider):
         log(provider.cmd)
