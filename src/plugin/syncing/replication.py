@@ -11,9 +11,6 @@ class SyncProvider(QObject):
     def startSync(self):
         pass
     
-    def syncComplete(self):
-        pass
-    
 
 class ReplicationSync(SyncProvider):
     def __init__(self, name, cmd):
