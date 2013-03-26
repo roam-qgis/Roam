@@ -65,7 +65,6 @@ class QMap():
         Set up the main QGIS interface items.  Called after QGIS has loaded
         the plugin.
         """
-        self.iface.mainWindow().setWindowTitle("QMap: A data collection program for QGIS")
         fullscreen = utils.settings["fullscreen"]
         if fullscreen:
             self.iface.mainWindow().showFullScreen()
@@ -263,6 +262,8 @@ class QMap():
         """
             Called when a new project is opened in QGIS.
         """
+        self.iface.mainWindow().setWindowTitle("QMap: QGIS Data Collection")
+        
         layers = dict((str(x.name()), x) for x in QgsMapLayerRegistry.instance().mapLayers().values())
                 
         self.createFormButtons(layers)
