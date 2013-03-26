@@ -34,8 +34,8 @@ class ReplicationSync(SyncProvider):
         if not self.output:
             self.output = self.process.readAllStandardOutput()
         
-        html = """<h2> {0} sync report </h2><br><br>
-                  {1}""".format(self.name, self.output)
+        html = """<h3> {0} sync report </h3>
+                  <pre>{1}</pre>""".format(self.name, self.output)
         log(self.output)
         log(html)
         return html
