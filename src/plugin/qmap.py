@@ -386,11 +386,19 @@ class QMap():
             self.syncAction.setVisible(False)
                 
     def syncstarted(self):
-        self.syncwidget = self.iface.messageBar().createMessage("Syncing", "Sync in progress")
-        closebutton = self.syncwidget.findChild(QWidget, "mCloseMenu")
-        closebutton.setVisible(False)
+        # Remove the old widget if it's still there.
+        # I don't really like this. Seems hacky.
+        try:
+            self.iface.messageBar().popWidget(self.syncwidget)
+        except RuntimeError:
+            pass
+        except AttributeError:
+            pass
+        
+        self.iface.messageBar().findChildren(QToolButton)[0].setVisible(False)        
+        self.syncwidget = self.iface.messageBar().createMessage("Syncing", "Sync in progress", QIcon(":/icons/syncing"))
         button = QToolButton(self.syncwidget)
-        button.setText("Details")
+        button.setText("Status")
         self.syncwidget.layout().addWidget(button)
         self.iface.messageBar().pushWidget(self.syncwidget, QgsMessageBar.INFO)
         
@@ -400,17 +408,16 @@ class QMap():
         except RuntimeError:
             pass
         
-        stylesheet = ("QgsMessageBar { background-color: rgb(201, 255, 201); border: 1px solid #b9cfe4; } "
+        stylesheet = ("QgsMessageBar { background-color: rgba(239, 255, 233); border: 0px solid #b9cfe4; } "
                      "QLabel,QTextEdit { color: #057f35; } ")
         
-        self.syncwidget = self.iface.messageBar().createMessage("Syncing", "Sync Complete")
-        closebutton = self.syncwidget.findChild(QToolButton, "mCloseMenu")
-        closebutton.setVisible(True)
+        self.iface.messageBar().findChildren(QToolButton)[0].setVisible(True)
+        self.syncwidget = self.iface.messageBar().createMessage("Syncing", "Sync Complete", QIcon(":/icons/syncdone"))
         button = QToolButton(self.syncwidget)
         button.setText("Sync Report")
         self.syncwidget.layout().addWidget(button)
-        self.iface.messageBar().pushWidget(self.syncwidget, QgsMessageBar.INFO)
-        self.syncwidget.setStyleSheet(stylesheet)
+        self.iface.messageBar().pushWidget(self.syncwidget)
+        self.iface.messageBar().setStyleSheet(stylesheet)
         
     def syncProvider(self, provider):
         log(provider.cmd)

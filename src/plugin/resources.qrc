@@ -29,5 +29,7 @@
     <file alias="move">resources/images/move.png</file>
     <file alias="gpsadd">resources/images/addatgps.png</file>
     <file alias="zoomfull">resources/images/zoomfull.png</file>
+    <file alias="syncing">resources/images/sync_progress.png</file>
+    <file alias="syncdone">resources/images/sync_complete.png</file>
   </qresource>
 </RCC>
