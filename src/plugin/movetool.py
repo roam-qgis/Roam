@@ -37,7 +37,7 @@ class MoveTool(QgsMapTool):
 			return
 
 		# Stops at the first feature found
-		for layer in qmap.QMap.layerformmap.iterkeys():
+		for layer in qmap.QMap.layerformmap:
 			point = QgsMapTool.toLayerCoordinates(self, layer, event.pos())
 			searchRadius = (QgsTolerance.toleranceInMapUnits( 10, layer,
 															 self.canvas.mapRenderer(), QgsTolerance.Pixels))
@@ -48,9 +48,13 @@ class MoveTool(QgsMapTool):
 			rect.setYMinimum( point.y() - searchRadius );
 			rect.setYMaximum( point.y() + searchRadius );
 			
-			layer.select([], rect, True, True)
-			f = QgsFeature()
-			if layer.nextFeature(f):
+			rq = QgsFeatureRequest().setFilterRect(rect)
+			try:
+				f = layer.getFeatures(rq).next()
+			except StopIteration:
+				continue
+			
+			if f:
 				self.band = self.createRubberBand()
 				self.band.setToGeometry(f.geometry(), layer)
 				self.band.show()
