@@ -388,6 +388,31 @@ class QMap():
             self.syncAction.setVisible(False)
                 
     def syncstarted(self, provider):
+        report = QDialog(self.iface.mainWindow())
+        report.setLayout(QGridLayout())
+        report.layout().setContentsMargins(0, 0, 0, 0)
+        web = QWebView()
+        report.resize(400,400)
+       
+        report.layout().addWidget(web)
+        
+        def updatereport(status):
+            web.setHtml(status)
+        
+        def openSyncReport(provider, toggle):
+            if toggle:
+                provider.syncMessage.connect(updatereport)
+            else:
+                provider.syncMessage.disconnect()
+                
+            point = self.iface.messageBar().rect().bottomRight()
+            bar = self.iface.messageBar()
+            newpoint = bar.mapToGlobal(point - QPoint(report.size().width(),0))
+            report.setWindowFlags(Qt.Tool | Qt.FramelessWindowHint | Qt.X11BypassWindowManagerHint)
+            report.move(newpoint)
+            
+            report.setVisible(toggle)
+            
         # Remove the old widget if it's still there.
         # I don't really like this. Seems hacky.
         try:
@@ -399,8 +424,10 @@ class QMap():
         
         self.iface.messageBar().findChildren(QToolButton)[0].setVisible(False)        
         self.syncwidget = self.iface.messageBar().createMessage("Syncing", "Sync in progress", QIcon(":/icons/syncing"))
-        button = QToolButton(self.syncwidget)
+        button = QPushButton(self.syncwidget)
+        button.setCheckable(True)
         button.setText("Status")
+        button.toggled.connect(functools.partial(openSyncReport, provider))
         self.syncwidget.layout().addWidget(button)
         self.iface.messageBar().pushWidget(self.syncwidget, QgsMessageBar.INFO)
         

@@ -5,7 +5,7 @@ from qmap.utils import log
 class SyncProvider(QObject):
     syncComplete = pyqtSignal()
     syncStarted = pyqtSignal()
-    syncMessage = pyqtSignal()
+    syncMessage = pyqtSignal(str)
     syncError = pyqtSignal()
     
     def startSync(self):
@@ -23,7 +23,7 @@ class ReplicationSync(SyncProvider):
         self.process = QProcess()
         self.process.finished.connect(self.syncComplete)
         self.process.started.connect(self.syncStarted)
-        self.process.readyReadStandardError.connect(self.readOutput)
+        self.process.readyReadStandardOutput.connect(self.readOutput)
         self.output = None
         
     def startSync(self):
@@ -37,9 +37,12 @@ class ReplicationSync(SyncProvider):
         html = """<h3> {0} sync report </h3>
                   <pre>{1}</pre>""".format(self.name, self.output)
         log(self.output)
-        log(html)
         return html
     
     def readOutput(self):
-        line = self.process.readLine() 
-        log("SYNC LINE " + line)
+        output = self.process.readLine()
+        
+        html = """<h3> {0} status report </h3>
+                  <pre>{1}</pre>""".format(self.name, output)
+                  
+        self.syncMessage.emit(html)

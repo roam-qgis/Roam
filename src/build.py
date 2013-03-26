@@ -27,7 +27,7 @@ doc_sources = ['docs/README', 'docs/ClientSetup', 'docs/UserGuide']
 
 path = os.path.dirname(__file__)
 
-flags = '--update -rvp'.split()
+flags = '--update -rp'.split()
 
 iswindows = os.name == 'nt'
 
