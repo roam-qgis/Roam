@@ -363,25 +363,33 @@ class QMap():
     def connectSyncProviders(self):
         projectfolder = currentproject.folder
         settings = os.path.join(projectfolder, "settings.config")
-        with open(settings,'r') as f:
-            settings = json.load(f)
+        try:
+            with open(settings,'r') as f:
+                settings = json.load(f)
+        except IOError:
+            log("No sync providers configured")
+            return
         
-        buttontype = settings["buttonstyle"]
         syncactions = []
         for name, config in settings["providers"].iteritems():
+            cmd = config['cmd']
+            cmd = os.path.join(projectfolder, cmd)
             if config['type'] == 'replication':
-                cmd = config['cmd']
-                cmd = os.path.join(projectfolder, cmd)
                 provider = replication.ReplicationSync(name, cmd)          
                 syncactions.append(provider)
+                log("Add replication provider")
                 
-        if buttontype == 'single':
+        log (len(syncactions))
+        if len(syncactions) == 1: 
+            # If one provider is set then we just show a single button.
+            log ("Enable sync button")
             self.syncAction.setVisible(True)
-            self.syncAction.triggered.connect(functools.partial(self.syncAll, syncactions))
+            self.syncAction.triggered.connect(functools.partial(self.syncProvider, syncactions[0]))
                 
     def syncstarted(self):
-        log("Sync started")
-        self.syncwidget = self.iface.messageBar().createMessage("Sync", "Sync in progress")
+        self.syncwidget = self.iface.messageBar().createMessage("Syncing", "Sync in progress")
+        closebutton = self.syncwidget.findChild(QWidget, "mCloseMenu")
+        closebutton.setVisible(False)
         button = QToolButton(self.syncwidget)
         button.setText("Details")
         self.syncwidget.layout().addWidget(button)
@@ -396,17 +404,19 @@ class QMap():
         stylesheet = ("QgsMessageBar { background-color: rgb(201, 255, 201); border: 1px solid #b9cfe4; } "
                      "QLabel,QTextEdit { color: #057f35; } ")
         
-        self.syncwidget = self.iface.messageBar().createMessage("Sync", "Sync Complete")
+        self.syncwidget = self.iface.messageBar().createMessage("Syncing", "Sync Complete")
+        closebutton = self.syncwidget.findChild(QToolButton, "mCloseMenu")
+        closebutton.setVisible(True)
         button = QToolButton(self.syncwidget)
         button.setText("Sync Report")
         self.syncwidget.layout().addWidget(button)
         self.iface.messageBar().pushWidget(self.syncwidget, QgsMessageBar.INFO)
         self.syncwidget.setStyleSheet(stylesheet)
         
-    def syncAll(self, providers):
-        log("SYNC ALL")
-        for provider in providers:
-            log(provider.cmd)
-            provider.syncStarted.connect(self.syncstarted)
-            provider.syncComplete.connect(self.synccomplete)
-            provider.startSync()
+    def syncProvider(self, provider):
+        log(provider.cmd)
+        provider.syncStarted.connect(functools.partial(self.syncAction.setEnabled, False))
+        provider.syncStarted.connect(self.syncstarted)
+        provider.syncComplete.connect(self.synccomplete)
+        provider.syncComplete.connect(functools.partial(self.syncAction.setEnabled, True))
+        provider.startSync()
