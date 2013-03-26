@@ -377,14 +377,13 @@ class QMap():
             if config['type'] == 'replication':
                 provider = replication.ReplicationSync(name, cmd)          
                 syncactions.append(provider)
-                log("Add replication provider")
                 
-        log (len(syncactions))
         if len(syncactions) == 1: 
             # If one provider is set then we just show a single button.
-            log ("Enable sync button")
             self.syncAction.setVisible(True)
             self.syncAction.triggered.connect(functools.partial(self.syncProvider, syncactions[0]))
+        else:
+            self.syncAction.setVisible(False)
                 
     def syncstarted(self):
         self.syncwidget = self.iface.messageBar().createMessage("Syncing", "Sync in progress")
