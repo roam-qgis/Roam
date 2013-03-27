@@ -3,7 +3,7 @@ from qmap.utils import log
 
 
 class SyncProvider(QObject):
-    syncComplete = pyqtSignal()
+    syncComplete = pyqtSignal(str)
     syncStarted = pyqtSignal()
     syncMessage = pyqtSignal(str)
     syncError = pyqtSignal()
@@ -21,28 +21,40 @@ class ReplicationSync(SyncProvider):
         self.name = name
         self.cmd = cmd
         self.process = QProcess()
-        self.process.finished.connect(self.syncComplete)
+        self.process.finished.connect(self.complete)
         self.process.started.connect(self.syncStarted)
         self.process.readyReadStandardOutput.connect(self.readOutput)
-        self.output = None
+        self._output = ""
         
     def startSync(self):
-        self.data = None
+        self._output = ""
         self.process.start(self.cmd, [])
         
-    def getReport(self):
-        if not self.output:
-            self.output = self.process.readAllStandardOutput()
+    @property
+    def output(self):
+        return self._output
+    
+    @output.setter   
+    def output(self, value):
+        self._output = value
         
+    def error(self, code):
+        pass
+        
+    def complete(self, error, status):   
+        self.output += str(self.process.readAll())    
         html = """<h3> {0} sync report </h3>
                   <pre>{1}</pre>""".format(self.name, self.output)
-        log(self.output)
-        return html
+                         
+        if error > 0:
+            log(status)
+        else:
+            self.syncComplete.emit(html)
     
     def readOutput(self):
-        output = self.process.readLine()
+        self.output += str(self.process.readAll())
         
-        html = """<h3> {0} status report </h3>
-                  <pre>{1}</pre>""".format(self.name, output)
+        html = """<h3> {0} progress report </h3>
+                  <pre>{1}</pre>""".format(self.name, self.output)
                   
         self.syncMessage.emit(html)
