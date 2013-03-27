@@ -25,10 +25,11 @@ from gps_action import GPSAction
 from movetool import MoveTool
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
+from PyQt4.QtWebKit import QWebView, QWebPage
 import qmaplayer
 from listmodulesdialog import ListProjectsDialog
 from qgis.core import *
-from qgis.gui import QgsMapToolZoom, QgsMapTool
+from qgis.gui import QgsMapToolZoom, QgsMapTool, QgsMessageBar
 import resources_rc
 from syncing.syncdialog import SyncDialog
 from utils import log
@@ -36,6 +37,8 @@ import functools
 import utils
 from floatingtoolbar import FloatingToolBar
 from syncing.syncer import syncproviders
+import json
+from syncing import replication
 
 currentproject = None
 
@@ -55,14 +58,14 @@ class QMap():
         # self.editActionGroup.setExclusive(True)
         self.iface.mapCanvas().grabGesture(Qt.PinchGesture)
         self.iface.mapCanvas().viewport().setAttribute(Qt.WA_AcceptTouchEvents)
-        self.movetool = MoveTool(iface.mapCanvas()) 
+        self.movetool = MoveTool(iface.mapCanvas())
+        self.report = SyncReport(self.iface.messageBar())
 
     def setupUI(self):
         """
         Set up the main QGIS interface items.  Called after QGIS has loaded
         the plugin.
         """
-        self.iface.mainWindow().setWindowTitle("QMap: A data collection program for QGIS")
         fullscreen = utils.settings["fullscreen"]
         if fullscreen:
             self.iface.mainWindow().showFullScreen()
@@ -107,6 +110,7 @@ class QMap():
         self.toggleRasterAction = (QAction(QIcon(":/icons/photo"), "Aerial Photos",
                                           self.mainwindow))
         self.syncAction = QAction(QIcon(":/syncing/sync"), "Sync", self.mainwindow)
+        self.syncAction.setVisible(False)
 
         self.editattributesaction = EditAction("Edit Attributes", self.iface)
         self.editattributesaction.setCheckable(True)
@@ -160,7 +164,7 @@ class QMap():
         self.actionGroup.addAction(self.editingmodeaction)
 
         self.homeAction.triggered.connect(self.zoomToDefaultView)
-        self.syncAction.triggered.connect(self.sync)
+        
         self.openProjectAction.triggered.connect(self.showOpenProjectDialog)
         self.toggleRasterAction.triggered.connect(self.toggleRasterLayers)
 
@@ -259,6 +263,8 @@ class QMap():
         """
             Called when a new project is opened in QGIS.
         """
+        self.iface.mainWindow().setWindowTitle("QMap: QGIS Data Collection")
+        
         layers = dict((str(x.name()), x) for x in QgsMapLayerRegistry.instance().mapLayers().values())
                 
         self.createFormButtons(layers)
@@ -266,6 +272,8 @@ class QMap():
         
         # Enable the raster layers button only if the project contains a raster layer.
         self.toggleRasterAction.setEnabled(self.hasRasterLayers())
+        
+        self.connectSyncProviders()
 
     def createFormButtons(self, projectlayers):
         """
@@ -354,19 +362,134 @@ class QMap():
 
     def unload(self):
         del self.toolbar
-
-    def sync(self):
-        """
-        Open and run the sync.  Shows the sync dialog.
-
-        notes: Blocking the user while we wait for syncing is not very nice.
-               Maybe we can do it in the background and show the dialog as non
-               model and report pass/fail.
-        """
-        self.syndlg = SyncDialog()
-        self.syndlg.setModal(True)
-        self.syndlg.show()
-        # HACK
-        QCoreApplication.processEvents()
-        self.syndlg.runSync(syncproviders)
+        
+    def connectSyncProviders(self):
+        projectfolder = currentproject.folder
+        settings = os.path.join(projectfolder, "settings.config")
+        try:
+            with open(settings,'r') as f:
+                settings = json.load(f)
+        except IOError:
+            log("No sync providers configured")
+            return
+        
+        syncactions = []
+        for name, config in settings["providers"].iteritems():
+            cmd = config['cmd']
+            cmd = os.path.join(projectfolder, cmd)
+            if config['type'] == 'replication':
+                provider = replication.ReplicationSync(name, cmd)          
+                syncactions.append(provider)
+                
+        if len(syncactions) == 1: 
+            # If one provider is set then we just show a single button.
+            self.syncAction.setVisible(True)
+            self.syncAction.triggered.connect(functools.partial(self.syncProvider, syncactions[0]))
+        else:
+            self.syncAction.setVisible(False)
+                
+    def syncstarted(self):                   
+        # Remove the old widget if it's still there.
+        # I don't really like this. Seems hacky.
+        try:
+            self.iface.messageBar().popWidget(self.syncwidget)
+        except RuntimeError:
+            pass
+        except AttributeError:
+            pass
+        
+        self.iface.messageBar().findChildren(QToolButton)[0].setVisible(False)        
+        self.syncwidget = self.iface.messageBar().createMessage("Syncing", "Sync in progress", QIcon(":/icons/syncing"))
+        button = QPushButton(self.syncwidget)
+        button.setCheckable(True)
+        button.setText("Status")
+        button.setIcon(QIcon(":/icons/syncinfo"))
+        button.toggled.connect(functools.partial(self.report.setVisible))
+        self.syncwidget.layout().addWidget(button)
+        self.iface.messageBar().pushWidget(self.syncwidget, QgsMessageBar.INFO)
+        
+    def synccomplete(self):
+        try:
+            self.iface.messageBar().popWidget(self.syncwidget)
+        except RuntimeError:
+            pass
+        
+        stylesheet = ("QgsMessageBar { background-color: rgba(239, 255, 233); border: 0px solid #b9cfe4; } "
+                     "QLabel,QTextEdit { color: #057f35; } ")
+        
+        closebutton = self.iface.messageBar().findChildren(QToolButton)[0]
+        closebutton.setVisible(True)
+        closebutton.clicked.connect(functools.partial(self.report.setVisible, False))
+        self.syncwidget = self.iface.messageBar().createMessage("Syncing", "Sync Complete", QIcon(":/icons/syncdone"))
+        button = QPushButton(self.syncwidget)
+        button.setCheckable(True)
+        button.setChecked(self.report.isVisible())
+        button.setText("Sync Report")
+        button.setIcon(QIcon(":/icons/syncinfo"))
+        button.toggled.connect(functools.partial(self.report.setVisible))            
+        self.syncwidget.layout().addWidget(button)
+        self.iface.messageBar().pushWidget(self.syncwidget)
+        self.iface.messageBar().setStyleSheet(stylesheet)
         self.iface.mapCanvas().refresh()
+        
+    def syncerror(self):
+        try:
+            self.iface.messageBar().popWidget(self.syncwidget)
+        except RuntimeError:
+            pass
+        
+        closebutton = self.iface.messageBar().findChildren(QToolButton)[0]
+        closebutton.setVisible(True)
+        closebutton.clicked.connect(functools.partial(self.report.setVisible, False))
+        self.syncwidget = self.iface.messageBar().createMessage("Syncing", "Sync Error", QIcon(":/icons/syncfail"))
+        button = QPushButton(self.syncwidget)
+        button.setCheckable(True)
+        button.setChecked(self.report.isVisible())
+        button.setText("Sync Report")
+        button.setIcon(QIcon(":/icons/syncinfo"))
+        button.toggled.connect(functools.partial(self.report.setVisible))            
+        self.syncwidget.layout().addWidget(button)
+        self.iface.messageBar().pushWidget(self.syncwidget, QgsMessageBar.CRITICAL)
+        self.iface.mapCanvas().refresh()
+        
+    def syncProvider(self, provider):       
+        provider.syncStarted.connect(functools.partial(self.syncAction.setEnabled, False))
+        provider.syncStarted.connect(self.syncstarted)
+        
+        provider.syncComplete.connect(self.synccomplete)
+        provider.syncComplete.connect(functools.partial(self.syncAction.setEnabled, True))
+        provider.syncComplete.connect(functools.partial(self.report.updateHTML))
+        
+        provider.syncMessage.connect(self.report.updateHTML)
+        
+        provider.syncError.connect(self.report.updateHTML)
+        provider.syncError.connect(self.syncerror)
+        
+        provider.startSync()
+        
+class SyncReport(QDialog):
+    def __init__(self, parent=None):
+        super(SyncReport, self).__init__(parent)
+        self.setLayout(QGridLayout())
+        self.layout().setContentsMargins(0, 0, 0, 0)
+        self.web = QWebView()
+        self.resize(400,400)
+        self.layout().addWidget(self.web)
+        self.setWindowFlags(Qt.Tool | Qt.FramelessWindowHint | Qt.X11BypassWindowManagerHint)
+        
+    def updateHTML(self, html):
+        self.web.setHtml(html)
+        self.web.triggerPageAction(QWebPage.MoveToEndOfDocument)
+        
+    def clear(self):
+        self.web.setHtml("No Sync in progress")
+        
+    def updatePosition(self):
+        point = self.parent().rect().bottomRight()
+        newpoint = self.parent().mapToGlobal(point - QPoint(self.size().width(),0))
+        self.setWindowFlags(Qt.Tool | Qt.FramelessWindowHint | Qt.X11BypassWindowManagerHint)
+        self.move(newpoint)
+        
+    def showEvent(self, event):
+        self.updatePosition()
+        

@@ -19,7 +19,7 @@ from collections import namedtuple
 Project = namedtuple('Project', 'name file splash folder')
 
 def getProjects():
-	projectpath = os.path.join(curdir, 'projects')
+	projectpath = os.path.join(pardir, 'projects')
 	folders = (sorted( [os.path.join(projectpath, item) 
                        for item in os.walk(projectpath).next()[1]]))
     
@@ -32,7 +32,6 @@ def getProjects():
 	    try:
 	        projectfile = glob.glob(os.path.join(folder, '*.qgs'))[0]
 	    except IndexError:
-	        log("No project file found.")
 	        continue
 	    try:
 	        splash = glob.glob(os.path.join(folder, 'splash.png'))[0]

@@ -27,7 +27,7 @@ doc_sources = ['docs/README', 'docs/ClientSetup', 'docs/UserGuide']
 
 path = os.path.dirname(__file__)
 
-flags = '--update -rvp'.split()
+flags = '--update -rp'.split()
 
 iswindows = os.name == 'nt'
 
@@ -104,9 +104,11 @@ def getVersion():
     month = now.month
     day = now.day
     try:
-		commit = shell('git', 'log', '-1', '--pretty=%h').strip()
+        commit = shell('git', 'log', '-1', '--pretty=%h').strip()
     except WindowsError:
-		commit = ""
+        commit = ""
+    except ExecutionError:
+        commit = ""
     return "{0}.{1}.{2}.{3}".format(year, month, day, commit)
 
 def test():
@@ -199,8 +201,14 @@ def deploytarget(clientconfig):
     clientpath = os.path.join(clientpath, APPNAME)
     mkdir(clientpath)
     copyFiles(buildpath,clientpath)
+    
+    widgetspath = os.path.join(curpath,"qtcontrols")
+    clientwidgetspath = os.path.join(clientpath,"qtcontrols")
+    
+    mkdir(clientwidgetspath)
+    copyFolder(widgetspath, clientwidgetspath)
 
-    projecthome = os.path.join(curpath, 'qmap-admin', 'projects')
+    projecthome = os.path.join(curpath, 'projects')
     clientpojecthome = os.path.join(clientpath, APPNAME.lower(), 'projects')
     
     projectfolders = (sorted([os.path.join(projecthome, item) 

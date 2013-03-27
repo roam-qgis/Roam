@@ -44,8 +44,8 @@ to the device using QMap Admin tool.
 
 Project stucture is as follows:
 
-	::
-	
+::
+
 	---projects
 	    +---Project Name
 	        |   splash.png
@@ -77,8 +77,8 @@ copied to the device.
 
 An example project layout is:
 
-	::
-	
+::
+
 	---projects
 	    +---Firebreak Inspection
 	    |   |   fireinspect.qgs

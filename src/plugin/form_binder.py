@@ -39,10 +39,10 @@ class MandatoryGroup(QObject):
 
     def __init__(self):
         QObject.__init__(self)
-        self.widgets = []
+        self.widgets = {}
         # Mapping of widget type to condition to check.  Condition should return
         # false if value has been completed.
-        self.mapping = {QComboBox: lambda w: w.currentText().isEmpty(),
+        self.mapping = {QComboBox: lambda w: comboboxvalidate(w),
                         QCheckBox: lambda w: w.checkState() == Qt.Unchecked,
                         QLineEdit: lambda w: w.text().isEmpty(),
                         QTextEdit: lambda w: w.toPlainText().isEmpty(),
@@ -64,6 +64,9 @@ class MandatoryGroup(QObject):
                                             "{border-radius: 5px; background-color: rgba(200, 255, 197, 150); }",
 
                            }
+        
+        def comboboxvalidate(w):
+            return w.currentText().isEmpty() or w.currentText() == "(no selection)"
 
         def comboxboxchanges(w, m):
             if w.isEditable():
@@ -80,12 +83,12 @@ class MandatoryGroup(QObject):
                         }
 
     def addWidget(self, widget, buddy):
-        if widget in self.widgets:
+        if widget in self.widgets.keys():
             return
 
         try:
             sig = self.signals[type(widget)]
-            sig(widget, self.changed)
+            sig(widget, self.validateAll)
         except KeyError:
             pass
 
@@ -96,11 +99,11 @@ class MandatoryGroup(QObject):
             pass
 
         buddy.setProperty("mandatory", True)
-        self.widgets.append((widget, buddy))
+        self.widgets[widget] = buddy
 
-    def changed(self):
+    def validateAll(self):
         anyfailed = False
-        for widget, buddy in self.widgets:
+        for widget, buddy in self.widgets.iteritems():
             failed = self.mapping[type(widget)](widget)
             if failed:
                 buddy.setProperty("ok", False)
@@ -117,18 +120,6 @@ class MandatoryGroup(QObject):
             self.passed.emit()
         else:
             self.failed.emit()
-
-    def unchanged(self):
-        unchanged = []
-        for widget, buddy in self.widgets:
-            failed = self.mapping[type(widget)](widget)
-            if failed:
-                unchanged.append(widget)
-
-        return unchanged
-
-    def remove(self, widget):
-        pass
 
 
 class FormBinder(QObject):
@@ -185,11 +176,11 @@ class FormBinder(QObject):
                 warning(er.reason)
 
             self.createHelpLink(control)
+            self.mandatory_group.validateAll()
 
     def createHelpLink(self, control):
-        return
         name = control.objectName()
-        helpfile = self.form.getHelpFile(name)
+        helpfile = qmaplayer.getHelpFile(self.layer, name)
         if helpfile:
             label = self.getBuddy(control)
             if label is control: return
