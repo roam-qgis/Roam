@@ -388,7 +388,7 @@ class QMap():
         else:
             self.syncAction.setVisible(False)
                 
-    def syncstarted(self, provider):                   
+    def syncstarted(self):                   
         # Remove the old widget if it's still there.
         # I don't really like this. Seems hacky.
         try:
@@ -403,11 +403,12 @@ class QMap():
         button = QPushButton(self.syncwidget)
         button.setCheckable(True)
         button.setText("Status")
+        button.setIcon(QIcon(":/icons/syncinfo"))
         button.toggled.connect(functools.partial(self.report.setVisible))
         self.syncwidget.layout().addWidget(button)
         self.iface.messageBar().pushWidget(self.syncwidget, QgsMessageBar.INFO)
         
-    def synccomplete(self, provider):
+    def synccomplete(self):
         try:
             self.iface.messageBar().popWidget(self.syncwidget)
         except RuntimeError:
@@ -424,19 +425,46 @@ class QMap():
         button.setCheckable(True)
         button.setChecked(self.report.isVisible())
         button.setText("Sync Report")
+        button.setIcon(QIcon(":/icons/syncinfo"))
         button.toggled.connect(functools.partial(self.report.setVisible))            
         self.syncwidget.layout().addWidget(button)
         self.iface.messageBar().pushWidget(self.syncwidget)
         self.iface.messageBar().setStyleSheet(stylesheet)
         self.iface.mapCanvas().refresh()
         
+    def syncerror(self):
+        try:
+            self.iface.messageBar().popWidget(self.syncwidget)
+        except RuntimeError:
+            pass
+        
+        closebutton = self.iface.messageBar().findChildren(QToolButton)[0]
+        closebutton.setVisible(True)
+        closebutton.clicked.connect(functools.partial(self.report.setVisible, False))
+        self.syncwidget = self.iface.messageBar().createMessage("Syncing", "Sync Error", QIcon(":/icons/syncfail"))
+        button = QPushButton(self.syncwidget)
+        button.setCheckable(True)
+        button.setChecked(self.report.isVisible())
+        button.setText("Sync Report")
+        button.setIcon(QIcon(":/icons/syncinfo"))
+        button.toggled.connect(functools.partial(self.report.setVisible))            
+        self.syncwidget.layout().addWidget(button)
+        self.iface.messageBar().pushWidget(self.syncwidget, QgsMessageBar.CRITICAL)
+        self.iface.mapCanvas().refresh()
+        
     def syncProvider(self, provider):       
         provider.syncStarted.connect(functools.partial(self.syncAction.setEnabled, False))
-        provider.syncStarted.connect(functools.partial(self.syncstarted, provider ))
-        provider.syncComplete.connect(functools.partial(self.synccomplete, provider))
+        provider.syncStarted.connect(self.syncstarted)
+        
+        provider.syncComplete.connect(self.synccomplete)
         provider.syncComplete.connect(functools.partial(self.syncAction.setEnabled, True))
         provider.syncComplete.connect(functools.partial(self.report.updateHTML))
+        
         provider.syncMessage.connect(self.report.updateHTML)
+        
+        provider.syncError.connect(self.report.updateHTML)
+        provider.syncError.connect(self.syncerror)
+        
         provider.startSync()
         
 class SyncReport(QDialog):

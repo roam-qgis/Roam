@@ -31,5 +31,7 @@
     <file alias="zoomfull">resources/images/zoomfull.png</file>
     <file alias="syncing">resources/images/sync_progress.png</file>
     <file alias="syncdone">resources/images/sync_complete.png</file>
+    <file alias="syncfail">resources/images/sync_fail.png</file>
+    <file alias="syncinfo">resources/images/sync_info.png</file>
   </qresource>
 </RCC>

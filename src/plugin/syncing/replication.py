@@ -6,7 +6,7 @@ class SyncProvider(QObject):
     syncComplete = pyqtSignal(str)
     syncStarted = pyqtSignal()
     syncMessage = pyqtSignal(str)
-    syncError = pyqtSignal()
+    syncError = pyqtSignal(str)
     
     def startSync(self):
         pass
