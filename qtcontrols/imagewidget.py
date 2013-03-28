@@ -2,7 +2,7 @@ import PyQt4.uic
 import images_rc
 import os
 import PyQt4
-from PyQt4.QtGui import QLabel, QDialog, QFileDialog, QPixmap, QGridLayout
+from PyQt4.QtGui import QLabel, QDialog, QFileDialog, QPixmap, QGridLayout, QLayout
 from PyQt4.QtCore import QByteArray, QBuffer, QIODevice
 
 basepath = os.path.dirname(__file__)
@@ -85,11 +85,11 @@ class QMapImageWidget(baseClass, widgetForm):
 			return None
 
 		pix = self.image.pixmap()
-		bytes = QByteArray()
-		buf = QBuffer(bytes)
+		by = QByteArray()
+		buf = QBuffer(by)
 		buf.open(QIODevice.WriteOnly)
 		pix.save(buf, "JPG")
-		return bytes
+		return by
 
 	def enterEvent(self, event):
 		# Don't show the image controls if we are on the default image
