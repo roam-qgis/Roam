@@ -25,7 +25,7 @@ from gps_action import GPSAction
 from movetool import MoveTool
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
-from PyQt4.QtWebKit import QWebView
+from PyQt4.QtWebKit import QWebView, QWebPage
 import qmaplayer
 from listmodulesdialog import ListProjectsDialog
 from qgis.core import *
@@ -58,7 +58,8 @@ class QMap():
         # self.editActionGroup.setExclusive(True)
         self.iface.mapCanvas().grabGesture(Qt.PinchGesture)
         self.iface.mapCanvas().viewport().setAttribute(Qt.WA_AcceptTouchEvents)
-        self.movetool = MoveTool(iface.mapCanvas()) 
+        self.movetool = MoveTool(iface.mapCanvas())
+        self.report = SyncReport(self.iface.messageBar())
 
     def setupUI(self):
         """
@@ -387,32 +388,7 @@ class QMap():
         else:
             self.syncAction.setVisible(False)
                 
-    def syncstarted(self, provider):
-        report = QDialog(self.iface.mainWindow())
-        report.setLayout(QGridLayout())
-        report.layout().setContentsMargins(0, 0, 0, 0)
-        web = QWebView()
-        report.resize(400,400)
-       
-        report.layout().addWidget(web)
-        
-        def updatereport(status):
-            web.setHtml(status)
-        
-        def openSyncReport(provider, toggle):
-            if toggle:
-                provider.syncMessage.connect(updatereport)
-            else:
-                provider.syncMessage.disconnect()
-                
-            point = self.iface.messageBar().rect().bottomRight()
-            bar = self.iface.messageBar()
-            newpoint = bar.mapToGlobal(point - QPoint(report.size().width(),0))
-            report.setWindowFlags(Qt.Tool | Qt.FramelessWindowHint | Qt.X11BypassWindowManagerHint)
-            report.move(newpoint)
-            
-            report.setVisible(toggle)
-            
+    def syncstarted(self):                   
         # Remove the old widget if it's still there.
         # I don't really like this. Seems hacky.
         try:
@@ -427,27 +403,12 @@ class QMap():
         button = QPushButton(self.syncwidget)
         button.setCheckable(True)
         button.setText("Status")
-        button.toggled.connect(functools.partial(openSyncReport, provider))
+        button.setIcon(QIcon(":/icons/syncinfo"))
+        button.toggled.connect(functools.partial(self.report.setVisible))
         self.syncwidget.layout().addWidget(button)
         self.iface.messageBar().pushWidget(self.syncwidget, QgsMessageBar.INFO)
         
-    def synccomplete(self, provider):
-        report = QDialog(self.iface.mainWindow())
-        report.setLayout(QGridLayout())
-        report.layout().setContentsMargins(0, 0, 0, 0)
-        web = QWebView()
-        report.resize(400,400)
-       
-        report.layout().addWidget(web)
-        def openSyncReport(provider, toggle):
-            point = self.iface.messageBar().rect().bottomRight()
-            bar = self.iface.messageBar()
-            newpoint = bar.mapToGlobal(point - QPoint(report.size().width(),0))
-            report.setWindowFlags(Qt.Tool | Qt.FramelessWindowHint | Qt.X11BypassWindowManagerHint)
-            report.move(newpoint)
-            web.setHtml(provider.getReport())
-            report.setVisible(toggle)
-
+    def synccomplete(self):
         try:
             self.iface.messageBar().popWidget(self.syncwidget)
         except RuntimeError:
@@ -456,25 +417,79 @@ class QMap():
         stylesheet = ("QgsMessageBar { background-color: rgba(239, 255, 233); border: 0px solid #b9cfe4; } "
                      "QLabel,QTextEdit { color: #057f35; } ")
         
-        self.iface.messageBar().findChildren(QToolButton)[0].setVisible(True)
+        closebutton = self.iface.messageBar().findChildren(QToolButton)[0]
+        closebutton.setVisible(True)
+        closebutton.clicked.connect(functools.partial(self.report.setVisible, False))
         self.syncwidget = self.iface.messageBar().createMessage("Syncing", "Sync Complete", QIcon(":/icons/syncdone"))
         button = QPushButton(self.syncwidget)
         button.setCheckable(True)
+        button.setChecked(self.report.isVisible())
         button.setText("Sync Report")
-        button.toggled.connect(functools.partial(openSyncReport, provider))
+        button.setIcon(QIcon(":/icons/syncinfo"))
+        button.toggled.connect(functools.partial(self.report.setVisible))            
         self.syncwidget.layout().addWidget(button)
         self.iface.messageBar().pushWidget(self.syncwidget)
         self.iface.messageBar().setStyleSheet(stylesheet)
         self.iface.mapCanvas().refresh()
         
-    def syncProvider(self, provider):
-        log(provider.cmd)
+    def syncerror(self):
+        try:
+            self.iface.messageBar().popWidget(self.syncwidget)
+        except RuntimeError:
+            pass
+        
+        closebutton = self.iface.messageBar().findChildren(QToolButton)[0]
+        closebutton.setVisible(True)
+        closebutton.clicked.connect(functools.partial(self.report.setVisible, False))
+        self.syncwidget = self.iface.messageBar().createMessage("Syncing", "Sync Error", QIcon(":/icons/syncfail"))
+        button = QPushButton(self.syncwidget)
+        button.setCheckable(True)
+        button.setChecked(self.report.isVisible())
+        button.setText("Sync Report")
+        button.setIcon(QIcon(":/icons/syncinfo"))
+        button.toggled.connect(functools.partial(self.report.setVisible))            
+        self.syncwidget.layout().addWidget(button)
+        self.iface.messageBar().pushWidget(self.syncwidget, QgsMessageBar.CRITICAL)
+        self.iface.mapCanvas().refresh()
+        
+    def syncProvider(self, provider):       
         provider.syncStarted.connect(functools.partial(self.syncAction.setEnabled, False))
-        provider.syncStarted.connect(functools.partial(self.syncstarted, provider ))
-        provider.syncComplete.connect(functools.partial(self.synccomplete, provider))
+        provider.syncStarted.connect(self.syncstarted)
+        
+        provider.syncComplete.connect(self.synccomplete)
         provider.syncComplete.connect(functools.partial(self.syncAction.setEnabled, True))
+        provider.syncComplete.connect(functools.partial(self.report.updateHTML))
+        
+        provider.syncMessage.connect(self.report.updateHTML)
+        
+        provider.syncError.connect(self.report.updateHTML)
+        provider.syncError.connect(self.syncerror)
+        
         provider.startSync()
         
+class SyncReport(QDialog):
+    def __init__(self, parent=None):
+        super(SyncReport, self).__init__(parent)
+        self.setLayout(QGridLayout())
+        self.layout().setContentsMargins(0, 0, 0, 0)
+        self.web = QWebView()
+        self.resize(400,400)
+        self.layout().addWidget(self.web)
+        self.setWindowFlags(Qt.Tool | Qt.FramelessWindowHint | Qt.X11BypassWindowManagerHint)
         
-    
+    def updateHTML(self, html):
+        self.web.setHtml(html)
+        self.web.triggerPageAction(QWebPage.MoveToEndOfDocument)
+        
+    def clear(self):
+        self.web.setHtml("No Sync in progress")
+        
+    def updatePosition(self):
+        point = self.parent().rect().bottomRight()
+        newpoint = self.parent().mapToGlobal(point - QPoint(self.size().width(),0))
+        self.setWindowFlags(Qt.Tool | Qt.FramelessWindowHint | Qt.X11BypassWindowManagerHint)
+        self.move(newpoint)
+        
+    def showEvent(self, event):
+        self.updatePosition()
         
