@@ -46,15 +46,6 @@ class InspectionTool(QgsMapTool):
             "      ++.++     ",
             "       +.+      "]))
 
-
-
-
-    def canvasPressEvent(self, event):
-        pass
-
-    def canvasMoveEvent(self, event):
-        pass
-
     def canvasReleaseEvent(self, event):
         #Get the click
         x = event.pos().x()
