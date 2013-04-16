@@ -19,26 +19,25 @@
  ***************************************************************************/
 """
 import os
-from add_action import AddAction
+import qmaplayer
+import resources_rc
+import functools
+import utils
+import json
+
 from edit_action import EditAction
 from gps_action import GPSAction
-from movetool import MoveTool
+from maptools import MoveTool, PointTool
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 from PyQt4.QtWebKit import QWebView, QWebPage
-import qmaplayer
 from listmodulesdialog import ListProjectsDialog
 from qgis.core import *
-from qgis.gui import QgsMapToolZoom, QgsMapTool, QgsMessageBar
-import resources_rc
-from syncing.syncdialog import SyncDialog
+from qgis.gui import QgsMessageBar
 from utils import log
-import functools
-import utils
 from floatingtoolbar import FloatingToolBar
-from syncing.syncer import syncproviders
-import json
 from syncing import replication
+from dialog_provider import DialogProvider
 
 currentproject = None
 
@@ -54,12 +53,11 @@ class QMap():
         self.iface.initializationCompleted.connect(self.setupUI)
         self.actionGroup = QActionGroup(self.iface.mainWindow())
         self.actionGroup.setExclusive(True)
-        # self.editActionGroup = QActionGroup(self.iface.mainWindow())
-        # self.editActionGroup.setExclusive(True)
         self.iface.mapCanvas().grabGesture(Qt.PinchGesture)
         self.iface.mapCanvas().viewport().setAttribute(Qt.WA_AcceptTouchEvents)
-        self.movetool = MoveTool(iface.mapCanvas())
+        self.movetool = MoveTool(iface.mapCanvas(), QMap.layerformmap )
         self.report = SyncReport(self.iface.messageBar())
+        self.dialogprovider = DialogProvider(iface.mapCanvas(), iface)
 
     def setupUI(self):
         """
@@ -194,7 +192,6 @@ class QMap():
         Add a record at the current GPS location.
         """
         action = self.actionGroup.checkedAction()
-        log(action)
         if action:
             point = self.gpsAction.gpsLocation
             try:
@@ -291,24 +288,53 @@ class QMap():
             try:
                 name = os.path.basename(layer)
                 qgslayer = projectlayers[name]
-                text = name
-                icon = os.path.join(layer, 'icon.png')
-                log(icon)               
-                action = AddAction(text, self.iface, qgslayer, icon)
-                
-                self.toolbar.insertAction(self.editingmodeaction, action)
-                
-                showgpstools = (functools.partial(self.extraaddtoolbar.showToolbar, 
-                                             action,
-                                             None))
-                action.toggled.connect(showgpstools)
-                self.actionGroup.addAction(action)
-                self.actions.append(action)
-                QMap.layerformmap.append(qgslayer)
-                
             except KeyError:
                 log("Layer not found in project")
                 continue
+            
+            text = name
+            icon = os.path.join(layer, 'icon.png')
+                  
+            if qgslayer.geometryType() == QGis.Point:
+                tool = PointTool(self.iface.mapCanvas())
+                add = functools.partial(self.addNewFeature, qgslayer)
+            else:
+                log("Geometry type not supported yet")
+                continue
+            
+            tool.geometryComplete.connect(add)
+                
+            action = QAction(QIcon(icon), text, self.mainwindow)
+            action.setCheckable(True)
+            action.toggled.connect(functools.partial(self.setMapTool, tool))
+            
+            self.toolbar.insertAction(self.editingmodeaction, action)
+            
+            # Connect the GPS tools strip to the action pressed event.                
+            showgpstools = (functools.partial(self.extraaddtoolbar.showToolbar, 
+                                         action,
+                                         None))
+            
+            action.toggled.connect(showgpstools)
+            self.actionGroup.addAction(action)
+            self.actions.append(action)
+            QMap.layerformmap.append(qgslayer)
+            
+    def addNewFeature(self, layer, geometry):
+        fields = layer.pendingFields()
+        
+        if not layer.isEditable():
+            layer.startEditing()
+    
+        feature = QgsFeature()
+        feature.setGeometry( geometry )
+        feature.initAttributes(fields.count())
+        feature.setFields(fields)
+        
+        for indx in xrange(fields.count()):
+            feature[indx] = layer.dataProvider().defaultValue( indx )
+
+        self.dialogprovider.openDialog( feature, layer, False )
 
     def rejectProjectDialog(self):
         """

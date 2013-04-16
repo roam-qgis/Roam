@@ -1,12 +1,11 @@
-from form_binder import FormBinder
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 from qgis.core import *
 from qgis.gui import *
-from utils import log
 
 class PolygonTool(QgsMapTool):
     mouseClicked = pyqtSignal(QgsPoint)
+    geometryComplete = pyqtSignal(QgsGeometry)
 
     def __init__(self, canvas):
         QgsMapTool.__init__(self, canvas)
@@ -92,12 +91,11 @@ class PointTool(QgsMapTool):
     """
     mouseClicked = pyqtSignal(QgsPoint)
     mouseMove = pyqtSignal(QgsPoint)
-
+    geometryComplete = pyqtSignal(QgsGeometry)
+    
     def __init__(self, canvas):
         QgsMapTool.__init__(self, canvas)
         self.canvas = canvas
-        self.m1 = None
-        self.p1 = QgsPoint()
         self.cursor = QCursor(QPixmap(["16 16 3 1",
             "      c None",
             ".     c #FF0000",
@@ -144,10 +142,9 @@ class PointTool(QgsMapTool):
         y = event.pos().y()
 
         point = self.canvas.getCoordinateTransform().toMapCoordinates(x, y)
-        self.p1.setX(point.x())
-        self.p1.setY(point.y())
 
-        self.mouseClicked.emit(self.p1)
+        self.mouseClicked.emit(point)
+        self.geometryComplete.emit(QgsGeometry.fromPoint(point))
         
 
     def activate(self):
@@ -163,8 +160,6 @@ class PointTool(QgsMapTool):
         """
         Deactive the tool.
         """
-        self.canvas.scene().removeItem(self.m1)
-        self.m1 = None
         pass
 
     def isZoomTool(self):

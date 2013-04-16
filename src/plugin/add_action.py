@@ -28,15 +28,6 @@ class AddAction(QAction):
         self.dialogprovider.accepted.connect(self.setTool)
         self.dialogprovider.rejected.connect(self.setTool)
         self.setCheckable(True)
-
-    def setTool(self):
-        """ 
-        Set the current tool as active
-
-        @note: Should be moved out into qmap.py
-        """
-        canvas = self.iface.mapCanvas()
-        canvas.setMapTool(self.tool)
         
     def pointClick(self, point):
         """
