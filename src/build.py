@@ -1,13 +1,21 @@
 #! /usr/bin/python
 ''' Build file that compiles all the needed resources'''
 import os.path
-from os.path import join
 import os
 import sys
 import datetime
-from fabricate import *
 import optparse
 import json
+import fabricate
+
+from os.path import join
+from fabricate import (run, 
+                       ExecutionError, 
+                       shell, 
+                       autoclean)
+
+from distutils.dir_util import (copy_tree,
+                                remove_tree)
 
 APPNAME = "QMap"
 curpath = os.path.dirname(os.path.abspath(__file__))
@@ -25,11 +33,11 @@ ui_sources = ['ui_datatimerpicker', 'ui_listmodules',
 
 doc_sources = ['docs/README', 'docs/ClientSetup', 'docs/UserGuide']
 
-path = os.path.dirname(__file__)
-
-flags = '--update -rp'.split()
-
 iswindows = os.name == 'nt'
+
+# HACK: Might not be the best thing to do but will work for now.
+fabricate._set_default_builder()
+fabricate.default_builder.quiet = True
 
 if iswindows:
     # Add the path to MSBuild to PATH so that subprocess can find it.
@@ -79,21 +87,21 @@ def compileplugin():
             lib = os.path.join(mssyncpath, "libsyncing.dll")
             bin = os.path.join(mssyncpath, "provisioner.exe")
             clientsetuppath = os.path.join(curpath,"qmap-admin","client-setup")
-            copyFolder(lib, clientsetuppath)
-            copyFolder(bin, clientsetuppath)
+            copy_tree(lib, clientsetuppath)
+            copy_tree(bin, clientsetuppath)
         except ExecutionError:
             pass
         except WindowsError:
             pass
 
 def docs():
-	print "Generating docs"
-	for doc in doc_sources:
-		run('python', 'docs/rst2html.py', doc + '.rst', doc + '.html')
+    print "Generating docs"
+    for doc in doc_sources:
+        run('python', 'docs/rst2html.py', doc + '.rst', doc + '.html')
 
 def clean():
     autoclean()
-    msg = shell('rm', '-r', buildpath)
+    remove_tree(buildpath)
 
 def getVersion():
     """
@@ -132,10 +140,9 @@ def build_plugin():
     compileplugin()
     # Copy all the files to the ouput directory
     print "Copying new files..."
-
-    mkdir(deploypath)
-    copyFiles(srcopyFilesath,deploypath)
-    copyFiles(bootpath,buildpath)
+    
+    copy_tree(srcopyFilesath,deploypath)
+    copy_tree(bootpath,buildpath)
 
     if iswindows:
         mssyncpath = join(dotnetpath, "bin")
@@ -143,32 +150,14 @@ def build_plugin():
         bin = join(mssyncpath, "syncer.exe")
         destmssyncpath = join(deploypath,"syncing")
         if os.path.exists(lib) and os.path.exists(bin):
-            copyFolder(lib, destmssyncpath)
-            copyFolder(bin, destmssyncpath)
+            copy_tree(lib, destmssyncpath)
+            copy_tree(bin, destmssyncpath)
     # Replace version numbers
     version = getVersion()
     command = 's/version=0.1/version=%s/ "%s"' % (version, join(deploypath, 'metadata.txt'))
     #run("sed", command)
 
     print "Local build into {0}".format(deploypath)
-
-def copyFiles(src, dest):
-    src = os.path.join(src,'*')
-    if iswindows:
-        src = src.replace('\\','/')
-        dest = dest.replace('\\','/')
-    msg = shell('cp', flags, src , dest, shell=True, silent=False)
-
-def copyFolder(src, dest):
-    if iswindows:
-        src = src.replace('\\','/')
-        dest = dest.replace('\\','/')
-    msg = shell('cp', flags, src, dest, shell=True, silent=False)
-
-def mkdir(path):
-    if iswindows:
-        path = path.replace('\\','/')
-    msg = shell('mkdir', '-p', path, silent=False)
 
 def deploy():
     """ Deploy the target given via the command line """
@@ -193,37 +182,28 @@ def deployTargetByName(targetname):
     print "Deploying application to %s" % targetname
     deploytarget(target)
 
-def deploytarget(clientconfig):
+def deploytarget(clientconfig):    
     projects = clientconfig['projects']
     clientpath = os.path.normpath(clientconfig['path'])
-
+    clientpath = join(clientpath, APPNAME)
+    widgetspath = join(curpath,"qtcontrols")
+    clientwidgetspath = join(clientpath,"qtcontrols")
+    projecthome = join(curpath, 'projects')
+    clientpojecthome = join(clientpath, 'projects')
+    
     print "Deploying application to %s" % clientpath
-    clientpath = os.path.join(clientpath, APPNAME)
-    mkdir(clientpath)
-    copyFiles(buildpath,clientpath)
+    copy_tree(buildpath, clientpath)
+    copy_tree(widgetspath, clientwidgetspath)
     
-    widgetspath = os.path.join(curpath,"qtcontrols")
-    clientwidgetspath = os.path.join(clientpath,"qtcontrols")
-    
-    mkdir(clientwidgetspath)
-    copyFolder(widgetspath, clientwidgetspath)
-
-    projecthome = os.path.join(curpath, 'projects')
-    clientpojecthome = os.path.join(clientpath, 'projects')
-    
-    projectfolders = (sorted([os.path.join(projecthome, item) 
-                       for item in os.walk(projecthome).next()[1]]))
-    print projectfolders
-
-    mkdir(clientpojecthome)
-
     if 'All' in projects:
-        for folder in projectfolders:
-            copyFolder(folder, clientpojecthome)
+        copy_tree(projecthome, clientpojecthome)
     else:
+        projectfolders = (sorted([os.path.join(projecthome, item) 
+                       for item in os.walk(projecthome).next()[1]]))
+        
         for folder in projectfolders:
             if os.path.basename(folder) in projects:
-                copyFolder(folder, clientpojecthome)
+                copy_tree(folder, os.path.join(clientpojecthome, folder))
 
     print "Remote depoly compelete"
 
