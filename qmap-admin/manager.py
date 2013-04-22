@@ -105,7 +105,6 @@ class QMapManager(QDialog):
 if __name__ == "__main__":
 	app = QApplication(sys.argv)
 	config = build.readTargetsConfig()
-	print config
 	manager = QMapManager(config)
 	manager.show()
 	app.exec_()

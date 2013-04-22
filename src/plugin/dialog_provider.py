@@ -24,7 +24,7 @@ class DialogProvider(QObject):
         self.canvas = canvas
         self.iface = iface
 
-    def openDialog(self, feature, layer, forupdate, mandatory_fields=True):
+    def openDialog(self, feature, layer, updatemode, mandatory_fields=True):
         """
         Opens a form for the given feature
 
@@ -46,7 +46,7 @@ class DialogProvider(QObject):
         self.binder = FormBinder(layer, self.dialog, self.canvas)
         self.binder.beginSelectFeature.connect(self.selectingFromMap)
         self.binder.endSelectFeature.connect(self.featureSelected)
-        self.binder.bindFeature(feature, mandatory_fields, forupdate)
+        self.binder.bindFeature(feature, mandatory_fields, updatemode)
         self.binder.bindSelectButtons()
 
         buttonbox = self.dialog.findChild(QDialogButtonBox)
@@ -54,7 +54,7 @@ class DialogProvider(QObject):
         buttonbox.setStandardButtons(QDialogButtonBox.Save | QDialogButtonBox.Cancel )
         savebutton = buttonbox.button(QDialogButtonBox.Save)
         
-        if forupdate:
+        if updatemode:
             savebutton.setText("Update")
             
         self.binder.mandatory_group.passed.connect(lambda x = True : savebutton.setEnabled(x))
@@ -77,13 +77,14 @@ class DialogProvider(QObject):
             for value in feature.attributes():
                 info("New value %s" % value.toString())
     
-            if forupdate :
+            if updatemode :
                 self.layer.updateFeature(feature)
             else:
-                 self.layer.addFeature(feature)
-                 self.binder.saveValues(feature)
+                self.layer.addFeature(feature)
+                self.binder.saveValues(feature)
             
             saved = self.layer.commitChanges()
+            
             if not saved:
                 self.iface.messageBar().pushMessage("Error",
                                                     "Error in saving changes. Contact administrator ", 

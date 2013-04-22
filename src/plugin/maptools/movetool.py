@@ -2,15 +2,15 @@ from qgis.core import *
 from qgis.gui import *
 from PyQt4.QtCore import Qt
 from PyQt4.QtGui import QColor
-import qmap
 
 class MoveTool(QgsMapTool):
-	def __init__(self, canvas):
+	def __init__(self, canvas, layers):
 		QgsMapTool.__init__(self, canvas)
 		self.band = None
 		self.feature = None
 		self.startcoord = None
 		self.canvas = canvas
+		self.layers = layers
 
 	def canvasMoveEvent(self, event):
 		"""
@@ -33,11 +33,11 @@ class MoveTool(QgsMapTool):
 		self.layer = None
 		self.feature = None
 
-		if not qmap.QMap.layerformmap:
+		if not self.layers:
 			return
 
 		# Stops at the first feature found
-		for layer in qmap.QMap.layerformmap:
+		for layer in self.layers:
 			point = QgsMapTool.toLayerCoordinates(self, layer, event.pos())
 			searchRadius = (QgsTolerance.toleranceInMapUnits( 10, layer,
 															 self.canvas.mapRenderer(), QgsTolerance.Pixels))

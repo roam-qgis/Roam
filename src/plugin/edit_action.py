@@ -1,4 +1,4 @@
-from point_tool import PointTool, log
+from maptools import PointTool
 from PyQt4.QtGui import QAction, QIcon, QColor
 from PyQt4.QtCore import Qt
 from qgis.core import *
