@@ -107,7 +107,7 @@ class QMap():
                                          self.mainwindow))
         self.toggleRasterAction = (QAction(QIcon(":/icons/photo"), "Aerial Photos",
                                           self.mainwindow))
-        self.syncAction = QAction(QIcon(":/syncing/sync"), "Sync", self.mainwindow)
+        self.syncAction = QAction(QIcon(":/icons/sync"), "Sync", self.mainwindow)
         self.syncAction.setVisible(False)
 
         self.editattributesaction = EditAction("Edit Attributes", self.iface)

@@ -1,5 +1,6 @@
 #! /usr/bin/python
 ''' Build file that compiles all the needed resources'''
+
 import os.path
 import os
 import sys
