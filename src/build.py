@@ -209,7 +209,7 @@ def deploytarget(clientconfig):
     copyFolder(widgetspath, clientwidgetspath)
 
     projecthome = os.path.join(curpath, 'projects')
-    clientpojecthome = os.path.join(clientpath, APPNAME.lower(), 'projects')
+    clientpojecthome = os.path.join(clientpath, 'projects')
     
     projectfolders = (sorted([os.path.join(projecthome, item) 
                        for item in os.walk(projecthome).next()[1]]))
@@ -219,7 +219,7 @@ def deploytarget(clientconfig):
 
     if 'All' in projects:
         for folder in projectfolders:
-             copyFolder(folder, clientpojecthome)
+            copyFolder(folder, clientpojecthome)
     else:
         for folder in projectfolders:
             if os.path.basename(folder) in projects:

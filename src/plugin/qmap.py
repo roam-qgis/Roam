@@ -372,7 +372,7 @@ class QMap():
         self.dialog.setModal(True)
         self.dialog.show()
         QCoreApplication.processEvents()
-        path = os.path.join(os.path.dirname(__file__), 'projects/')
+        path = os.path.join(os.path.dirname(__file__), '..' , 'projects/')
         self.dialog.loadProjectList(path)
 
     def loadProject(self, project):
