@@ -13,7 +13,7 @@ for %%f in ("%OSGEO4W_ROOT%\etc\ini\*.bat") do call "%%f"
 rem List available o4w programs
 rem but only if osgeo4w called without parameters
 @echo on
-SET PYTHONPATH=.\qtcontrols
-SET PYQTDESIGNERPATH=.\qtcontrols
+SET PYTHONPATH=src\qmap\qtcontrols
+SET PYQTDESIGNERPATH=src\qmap\qtcontrols
 START C:\OSGeo4W\bin\designer.exe
 

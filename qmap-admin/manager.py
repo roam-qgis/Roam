@@ -12,7 +12,7 @@ curdir = os.path.abspath(os.path.dirname(__file__))
 pardir = os.path.join(curdir, '..')
 sys.path.append(pardir)
 
-from src import build
+import build
 
 from collections import namedtuple
 
