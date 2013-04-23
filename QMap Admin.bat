@@ -1,6 +1,6 @@
 @ECHO OFF
 
-call src\setenv.bat
+call qmap-admin\setenv.bat
 
 cd %~dp0
 

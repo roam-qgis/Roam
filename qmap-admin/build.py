@@ -21,7 +21,7 @@ from distutils.dir_util import (copy_tree,
 APPNAME = "QMap"
 curpath = os.path.dirname(os.path.abspath(__file__))
 curpath = os.path.join(curpath, '..')
-srcopyFilesath = join(curpath, "src", "plugin")
+srcopyFilesath = join(curpath, "src", "qmap")
 buildpath = join(curpath, "build", APPNAME)
 deploypath = join(curpath, "build", APPNAME, APPNAME.lower())
 targetspath = join(curpath, 'qmap-admin', 'targets.config')
@@ -187,14 +187,11 @@ def deploytarget(clientconfig):
     projects = clientconfig['projects']
     clientpath = os.path.normpath(clientconfig['path'])
     clientpath = join(clientpath, APPNAME)
-    widgetspath = join(curpath,"qtcontrols")
-    clientwidgetspath = join(clientpath,"qtcontrols")
     projecthome = join(curpath, 'projects')
     clientpojecthome = join(clientpath, 'projects')
     
     print "Deploying application to %s" % clientpath
     copy_tree(buildpath, clientpath)
-    copy_tree(widgetspath, clientwidgetspath)
     
     if 'All' in projects:
         copy_tree(projecthome, clientpojecthome)
