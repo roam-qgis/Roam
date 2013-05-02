@@ -396,7 +396,9 @@ class QMap():
 
         fileinfo = QFileInfo(project.file)
         QgsProject.instance().read(fileinfo)
-
+        
+        self.iface.mapCanvas().updateScale()
+        
         self.iface.projectRead.emit()
         self.setUIState(True)
 
