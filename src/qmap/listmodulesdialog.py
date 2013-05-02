@@ -58,7 +58,8 @@ class ListProjectsDialog(QDialog):
     def openProject(self, item):
         self.setDisabled(True)
         project = item.data(QListWidgetItem.UserType).toPyObject()
-        self.requestOpenProject.emit(project)
+        self.selectedProject = project
+        self.accept()
         
 
 

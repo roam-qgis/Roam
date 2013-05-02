@@ -14,6 +14,6 @@ rem List available o4w programs
 rem but only if osgeo4w called without parameters
 @echo on
 SET PYTHONPATH=src\qmap\qtcontrols
-SET PYQTDESIGNERPATH=src\qmap\qtcontrols
+SET PYQTDESIGNERPATH=src\qmap\qtcontrols\plugins
 START C:\OSGeo4W\bin\designer.exe
 
