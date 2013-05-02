@@ -271,6 +271,12 @@ class QMap():
         self.toggleRasterAction.setEnabled(self.hasRasterLayers())
         
         self.connectSyncProviders()
+        
+        for layer in QgsMapLayerRegistry.instance().mapLayers().itervalues():
+            form = layer.editForm()
+            if not form.endsWith(".ui"): 
+                continue
+            self.iface.preloadForm(form)
 
     def createFormButtons(self, projectlayers):
         """
@@ -361,19 +367,20 @@ class QMap():
         Show the project selection dialog.
         """
         self.setUIState(False)
-        self.dialog = ListProjectsDialog()
-        self.dialog.requestOpenProject.connect(self.loadProject)
-        self.dialog.requestOpenProject.connect(self.dialog.close)
-        self.dialog.rejected.connect(self.rejectProjectDialog)
-        self.dialog.resize(self.iface.mapCanvas().size())
+        dialog = ListProjectsDialog()
+        path = os.path.join(os.path.dirname(__file__), '..' , 'projects/')
+        dialog.loadProjectList(path)
+        dialog.resize(self.iface.mapCanvas().size())
         point = self.iface.mapCanvas().geometry().topLeft()
         point = self.iface.mapCanvas().mapToGlobal(point)
-        self.dialog.move(point)
-        self.dialog.setModal(True)
-        self.dialog.show()
-        QCoreApplication.processEvents()
-        path = os.path.join(os.path.dirname(__file__), '..' , 'projects/')
-        self.dialog.loadProjectList(path)
+        dialog.move(point)
+        dialog.setModal(True)
+        dialog.show()
+        
+        if dialog.exec_():
+            self.loadProject(dialog.selectedProject)
+        else:
+            self.setUIState(True)   
 
     def loadProject(self, project):
         """
@@ -381,9 +388,16 @@ class QMap():
 
         path -- The path to the .qgs project file.
         """
+
+        self.iface.newProject(False)
+        
         global currentproject
         currentproject = project
-        self.iface.addProject(project.file)
+
+        fileinfo = QFileInfo(project.file)
+        QgsProject.instance().read(fileinfo)
+
+        self.iface.projectRead.emit()
         self.setUIState(True)
 
     def unload(self):

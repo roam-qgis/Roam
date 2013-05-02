@@ -44,3 +44,4 @@ pip-log.txt
 
 #Mr Developer
 .mr.developer.cfg
+ui_*.py
