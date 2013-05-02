@@ -4,6 +4,7 @@ import os
 import PyQt4
 from PyQt4.QtGui import QLabel, QDialog, QFileDialog, QPixmap, QGridLayout, QLayout
 from PyQt4.QtCore import QByteArray, QBuffer, QIODevice
+from qmap.utils import log
 
 basepath = os.path.dirname(__file__)
 uipath = os.path.join(basepath,'imagewidget.ui')
@@ -75,6 +76,8 @@ class QMapImageWidget(baseClass, widgetForm):
 
 		pix = QPixmap()
 		r = pix.loadFromData(data, 'JPG')
+		log(data.data())
+		log("Loaded from pixmap " + str(r) )
 		self.image.setScaledContents(True)
 		self.image.setPixmap(pix)
 		self.isDefault = False
@@ -89,6 +92,7 @@ class QMapImageWidget(baseClass, widgetForm):
 		buf = QBuffer(by)
 		buf.open(QIODevice.WriteOnly)
 		pix.save(buf, "JPG")
+		log(by.data())
 		return by
 
 	def enterEvent(self, event):

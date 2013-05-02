@@ -2,6 +2,9 @@ import tempfile
 import uuid
 import os.path
 import os
+import re
+import qmaplayer
+
 from PyQt4.QtGui import *
 from PyQt4.QtCore import *
 from utils import log, info, warning
@@ -11,10 +14,10 @@ from datatimerpickerwidget import DateTimePickerDialog
 from drawingpad import DrawingPad
 from helpviewdialog import HelpViewDialog
 from utils import log, warning, appdata
-import re
+from qtcontrols.imagewidget import QMapImageWidget
 from qgis.gui import QgsAttributeEditor
 from qgis.core import QgsVectorLayer
-import qmaplayer
+
 
 
 class BindingError(Exception):
@@ -116,7 +119,6 @@ class MandatoryGroup(QObject):
 
         if not anyfailed:
             # If we get here then we are right to let the user continue.
-            log("ALL GOOD!")
             self.passed.emit()
         else:
             self.failed.emit()
@@ -135,6 +137,7 @@ class FormBinder(QObject):
         self.forminstance = formInstance
         self.images = {}
         self.mandatory_group = MandatoryGroup()
+        self.boundControls = []
 
     def bindFeature(self, qgsfeature, mandatory_fields=True, editing=False):
         """
@@ -240,12 +243,22 @@ class FormBinder(QObject):
             button.setText("Pick")
             button.setIconSize(QSize(24, 24))
             button.pressed.connect(partial(self.pickDateTime, control, "DateTime"))
+            self.boundControls.append(control)
 
         elif isinstance(control, QPushButton):
             if control.text() == "Drawing":
                 control.setIcon(QIcon(":/icons/draw"))
                 control.setIconSize(QSize(24, 24))
                 control.pressed.connect(partial(self.loadDrawingTool, control))
+                self.boundControls.append(control)
+                
+        elif hasattr(control, 'loadImage'):
+            image = value.toByteArray()
+            log("IMAGE FROM FIELD")
+            log(image)
+            control.loadImage(image)
+            self.boundControls.append(control)
+            
         else:
             if (isinstance(control, QComboBox) and
                 self.layer.editType(index) == QgsVectorLayer.UniqueValuesEditable):
@@ -256,6 +269,7 @@ class FormBinder(QObject):
                 editable = control.isEditable()
                 
                 control.setEditText(value.toString())
+                self.boundControls.append(control)
                 
             try:
                 # Remove the validator because there seems to be a bug with the 
@@ -270,15 +284,24 @@ class FormBinder(QObject):
 
         feature -- A QgsFeature that will store the new values.
         """
-        
-        datetimes = self.forminstance.findChildren(QDateTimeEdit)
-        for control in datetimes:
-            value = control.dateTime().toString(Qt.ISODate)
-            try:
-                feature[str(control.objectName())] = value
-            except KeyError:
-                pass              
-
+        for control in self.boundControls:
+            name = str(control.objectName())
+            if isinstance(control, QDateTimeEdit):
+                value = control.dateTime().toString(Qt.ISODate)
+                try:
+                    feature[name] = value
+                except KeyError:
+                    continue
+                
+            elif hasattr(control, 'getImage'):
+                image = control.getImage()
+                value = QVariant(image)
+                try:
+                    feature[name] = value
+                except KeyError:
+                    log("No field named " + name)
+                    pass  
+                   
         return feature
     
     def saveValues(self, feature):

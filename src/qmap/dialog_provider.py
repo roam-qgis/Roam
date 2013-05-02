@@ -39,7 +39,6 @@ class DialogProvider(QObject):
             folder = qmap.currentproject.folder
             newpath = os.path.join(folder,str(layer.name()),form)
             layer.setEditForm(newpath)
-            log(str(layer.editForm()))
               
         self.dialog = self.iface.getFeatureForm(layer, feature)
         self.layer = layer
