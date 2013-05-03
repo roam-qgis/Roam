@@ -30,7 +30,7 @@ dotnetpath = join(curpath, "src", "dotnet")
 
 ui_sources = ['ui_datatimerpicker', 'ui_listmodules',
               'syncing/ui_sync', 'ui_listfeatures', 'ui_errorlist',
-              'ui_helpviewer']
+              'ui_helpviewer','ui_drawingpad']
 
 doc_sources = ['docs/README', 'docs/ClientSetup', 'docs/UserGuide']
 
