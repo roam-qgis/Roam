@@ -132,7 +132,7 @@ border-radius: 5px;
       </font>
      </property>
      <property name="text">
-      <string>Select project to load</string>
+      <string>Projects</string>
      </property>
      <property name="scaledContents">
       <bool>true</bool>
