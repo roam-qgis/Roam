@@ -260,8 +260,6 @@ class QMap():
         """
             Called when a new project is opened in QGIS.
         """
-        self.iface.mainWindow().setWindowTitle("QMap: QGIS Data Collection")
-        
         layers = dict((str(x.name()), x) for x in QgsMapLayerRegistry.instance().mapLayers().values())
                 
         self.createFormButtons(layers)
@@ -393,11 +391,18 @@ class QMap():
         
         global currentproject
         currentproject = project
+        
+        self.iface.mapCanvas().freeze()
 
         fileinfo = QFileInfo(project.file)
         QgsProject.instance().read(fileinfo)
         
         self.iface.mapCanvas().updateScale()
+        
+        self.iface.mapCanvas().freeze(False)
+        self.iface.mapCanvas().refresh()
+        
+        self.iface.mainWindow().setWindowTitle("QMap: QGIS Data Collection")
         
         self.iface.projectRead.emit()
         self.setUIState(True)
