@@ -4,7 +4,7 @@ from qgis.core import QgsFeature, QgsMapLayer
 from ui_listfeatures import Ui_ListFeatueForm
 
 class ListFeaturesForm(QDialog):
-    openFeatureForm = pyqtSignal(object, QgsFeature, QgsMapLayer)
+    openFeatureForm = pyqtSignal(QgsFeature, QgsMapLayer)
 
     def __init__(self):
         QDialog.__init__(self)
@@ -15,39 +15,24 @@ class ListFeaturesForm(QDialog):
         scr = QApplication.desktop().screenGeometry(0)
         self.move( scr.center() - self.rect().center() )
 
-    def loadFeatureList(self, featureDict):
-        for feature, formAndLayer in featureDict.items():
-
-            #TODO We don't handle default forms just yet
-            if formAndLayer[0] == "Default":
-                continue
-                
-            featureitem = FeatureItem( feature, formAndLayer[0], formAndLayer[1] )
+    def loadFeatureList(self, featuresmaps):
+        for feature, layer  in featuresmaps:               
+            featureitem = FeatureItem( feature, layer )
             self.ui.featureList.addItem( featureitem )
 
     def openForm(self, item):
-        form = item.editForm
         feature = item.qgsFeature
         layer = item.layer
         self.close()
-        self.openFeatureForm.emit(form, feature, layer)
+        self.openFeatureForm.emit(feature, layer)
         
 class FeatureItem(QListWidgetItem):
-    def __init__(self, feature, form, layer):
+    def __init__(self, feature, layer):
         QListWidgetItem.__init__(self)
-        self.editform = form
         self.feature = feature
         self._layer = layer
-        formname = "Default"''
-        if not form == "Default":
-            formname = "Edit %s" % form.nameforform(str(layer.name()))
-
-        self.setText("%s for item no. %s" % ( formname , str(self.feature.id()) ))
+        self.setText("%s on %s" % ( feature.id() , str(layer.name())))
         
-    @property
-    def editForm(self):
-        return self.editform
-
     @property
     def qgsFeature(self):
         return self.feature

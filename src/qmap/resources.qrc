@@ -35,4 +35,7 @@
     <file alias="syncinfo">resources/images/sync_info.png</file>
     <file alias="sync">resources/images/sync.png</file>
   </qresource>
+  <qresource prefix="branding">
+    <file alias="logo">resources/branding/logo.png</file>
+  </qresource>
 </RCC>
