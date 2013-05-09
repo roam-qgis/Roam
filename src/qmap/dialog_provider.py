@@ -92,7 +92,7 @@ class DialogProvider(QObject):
             else:
                 self.iface.messageBar().pushMessage("Saved","Changes saved", QgsMessageBar.INFO, 2)
 
-        self.canvas.refresh()
+            self.canvas.refresh()
 
     def selectingFromMap(self, message):
         """

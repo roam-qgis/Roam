@@ -86,7 +86,7 @@ class EditAction(QAction):
     def setLayersForms(self,layerforms):
         qmap.QMap.layerformmap = layerforms
     
-    def openForm(self,feature,maplayer):
+    def openForm(self, feature, maplayer):
         if not maplayer.isEditable():
             maplayer.startEditing()
 
