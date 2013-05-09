@@ -126,6 +126,8 @@ class QMap():
         Create all the icons and setup the tool bars.  Called by QGIS when
         loading. This is called before setupUI.
         """
+        
+        QApplication.setWindowIcon(QIcon(":/branding/logo"))
 
         def createSpacer():
             widget = QWidget()
