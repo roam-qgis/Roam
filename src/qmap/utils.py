@@ -1,20 +1,25 @@
 import time
-from PyQt4 import uic
-from qgis.core import QgsMessageLog
 import logging
 import os
-from PyQt4.QtCore import QSettings
 import json
+import inspect
+
+from PyQt4 import uic
 
 LOG_FILENAME = 'main.log'
 uic.uiparser.logger.setLevel(logging.INFO)
 uic.properties.logger.setLevel(logging.INFO)
 logging.basicConfig(filename=LOG_FILENAME,level=logging.NOTSET)
 
-log = lambda msg: logging.debug(msg)
-info = lambda msg: logging.info(msg)
-warning = lambda msg: logging.warning(msg)
-error = lambda msg: logging.error(msg)
+def _getCallerLogger():
+    caller = inspect.currentframe().f_back
+    logger = logging.getLogger(caller.f_globals['__name__'])
+    return logger
+
+log = lambda msg : _getCallerLogger().debug(msg)
+info = lambda msg: _getCallerLogger().info(msg)
+warning = lambda msg: _getCallerLogger().warning(msg)
+error = lambda msg: _getCallerLogger().error(msg)
 
 curdir = os.path.dirname(__file__)
 settingspath = os.path.join(curdir,'settings.config')
