@@ -53,6 +53,8 @@ class QMap():
         self.iface.initializationCompleted.connect(self.setupUI)
         self.actionGroup = QActionGroup(self.iface.mainWindow())
         self.actionGroup.setExclusive(True)
+        self.menuGroup = QActionGroup(self.iface.mainWindow())
+        self.menuGroup.setExclusive(True)
         self.iface.mapCanvas().grabGesture(Qt.PinchGesture)
         self.iface.mapCanvas().viewport().setAttribute(Qt.WA_AcceptTouchEvents)
         self.movetool = MoveTool(iface.mapCanvas(), QMap.layerformmap )
@@ -91,6 +93,10 @@ class QMap():
         self.mainwindow.addToolBar(Qt.TopToolBarArea, self.toolbar)
         self.toolbar.setMovable(False)
 
+        self.menutoolbar = QToolBar("Menu", self.mainwindow)
+        self.mainwindow.addToolBar(Qt.LeftToolBarArea, self.menutoolbar)
+        self.menutoolbar.setMovable(False)
+    
         self.editingtoolbar = FloatingToolBar("Editing", self.toolbar)
         self.extraaddtoolbar = FloatingToolBar("Extra Add Tools", self.toolbar)
 
@@ -103,7 +109,7 @@ class QMap():
                                   "Default View", self.mainwindow))
         self.gpsAction = (GPSAction(QIcon(":/icons/gps"), self.iface.mapCanvas(),
                                    self.mainwindow))
-        self.openProjectAction = (QAction(QIcon(":/icons/open"), "Open Project",
+        self.openProjectAction = (QAction(QIcon(":/icons/open"), "Projects",
                                          self.mainwindow))
         self.toggleRasterAction = (QAction(QIcon(":/icons/photo"), "Aerial Photos",
                                           self.mainwindow))
@@ -152,11 +158,9 @@ class QMap():
         self.addatgpsaction.setEnabled(self.gpsAction.isConnected)
         self.gpsAction.gpsfixed.connect(self.addatgpsaction.setEnabled)
 
-        self.menu = QMenu()
-        self.exitaction = self.menu.addAction("Exit")
-        self.exitaction.setIcon(QIcon(":/icons/exit"))
-        self.exitaction.triggered.connect(self.iface.actionExit().trigger)
-        self.openProjectAction.setMenu(self.menu)
+#        self.exitaction = self.menu.addAction("Exit")
+#        self.exitaction.setIcon(QIcon(":/icons/exit"))
+#        self.exitaction.triggered.connect(self.iface.actionExit().trigger)
 
         self.editingtoolbar.addToActionGroup(self.editattributesaction)
         self.editingtoolbar.addToActionGroup(self.moveaction)
@@ -172,7 +176,7 @@ class QMap():
         self.navtoolbar.insertAction(self.iface.actionTouch(), self.homeAction)
         self.navtoolbar.insertAction(self.iface.actionTouch(), self.iface.actionZoomFullExtent())
         self.navtoolbar.insertAction(self.homeAction, self.iface.actionZoomFullExtent())
-        self.navtoolbar.insertAction(self.iface.actionZoomFullExtent(), self.openProjectAction)
+#        self.navtoolbar.insertAction(self.iface.actionZoomFullExtent(), self.openProjectAction)
 
         self.navtoolbar.addAction(self.toggleRasterAction)
         self.navtoolbar.insertWidget(self.iface.actionZoomFullExtent(), spacewidget)
@@ -186,6 +190,19 @@ class QMap():
 
         self.editingtoolbar.addAction(self.editattributesaction)
         self.editingtoolbar.addAction(self.moveaction)
+        
+        map = QAction("Map", self.menutoolbar)
+        map.setCheckable(True)
+        help = QAction("Help", self.menutoolbar)
+        help.setCheckable(True)
+        
+        self.menuGroup.addAction(map)
+        self.menuGroup.addAction(self.openProjectAction)
+        self.menuGroup.addAction(help)
+        
+        self.menutoolbar.addAction(map)
+        self.menutoolbar.addAction(self.openProjectAction)
+        self.menutoolbar.addAction(help)
 
         self.setupIcons()
 
