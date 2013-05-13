@@ -74,8 +74,6 @@ class QMap():
 
         self.navtoolbar.setMovable(False)
         self.navtoolbar.setAllowedAreas(Qt.TopToolBarArea)
-        self.menutoolbar.setMovable(False)
-        self.menutoolbar.setAllowedAreas(Qt.TopToolBarArea)
         
         self.mainwindow.insertToolBar(self.toolbar, self.navtoolbar)
         self.openProjectAction.trigger()
@@ -92,14 +90,17 @@ class QMap():
         """
         Create all the needed toolbars
         """
+        
+        self.menutoolbar = QToolBar("Menu", self.mainwindow)
+        self.menutoolbar.setMovable(False)
+        self.menutoolbar.setMovable(False)
+        self.menutoolbar.setAllowedAreas(Qt.LeftToolBarArea)
+        self.mainwindow.addToolBar(Qt.LeftToolBarArea, self.menutoolbar)
+        
         self.toolbar = QToolBar("QMap", self.mainwindow)
         self.mainwindow.addToolBar(Qt.TopToolBarArea, self.toolbar)
         self.toolbar.setMovable(False)
 
-        self.menutoolbar = QToolBar("Menu", self.mainwindow)
-        self.mainwindow.addToolBar(Qt.LeftToolBarArea, self.menutoolbar)
-        self.menutoolbar.setMovable(False)
-    
         self.editingtoolbar = FloatingToolBar("Editing", self.toolbar)
         self.extraaddtoolbar = FloatingToolBar("Extra Add Tools", self.toolbar)
 
@@ -131,6 +132,11 @@ class QMap():
 
         self.addatgpsaction = QAction(QIcon(":/icons/gpsadd"), "Add at GPS", self.mainwindow)
 
+    def handleHelpLink(self, url):
+        log(url.path().endsWith("exit_qmap"))
+        if url.path().endsWith("exit_qmap"):
+            self.iface.actionExit().trigger()
+            
     def initGui(self):
         """
         Create all the icons and setup the tool bars.  Called by QGIS when
@@ -146,6 +152,8 @@ class QMap():
         layout.addWidget(self.stack)
         
         self.helppage = QWebView()
+        self.helppage.page().setLinkDelegationPolicy(QWebPage.DelegateAllLinks)
+        self.helppage.linkClicked.connect(self.handleHelpLink)
         helppath = os.path.join(os.path.dirname(__file__) , 'help',"help.html")
         self.helppage.load(QUrl.fromLocalFile(helppath))
         
@@ -178,10 +186,6 @@ class QMap():
         self.addatgpsaction.triggered.connect(self.addAtGPS)
         self.addatgpsaction.setEnabled(self.gpsAction.isConnected)
         self.gpsAction.gpsfixed.connect(self.addatgpsaction.setEnabled)
-
-#        self.exitaction = self.menu.addAction("Exit")
-#        self.exitaction.setIcon(QIcon(":/icons/exit"))
-#        self.exitaction.triggered.connect(self.iface.actionExit().trigger)
 
         self.editingtoolbar.addToActionGroup(self.editattributesaction)
         self.editingtoolbar.addToActionGroup(self.moveaction)
