@@ -134,6 +134,17 @@ class QMap():
         """
         
         QApplication.setWindowIcon(QIcon(":/branding/logo"))
+        
+        widget = self.iface.mainWindow().centralWidget()
+        layout = widget.layout()
+        layout.removeWidget(self.iface.mapCanvas())
+        self.stack = QStackWidget()
+        layout.addWidget(self.stack)
+        
+        self.projectwidget = ProjectsWidget()   
+        self.projectwidget.requestOpenProject.connect(self.loadProject)
+        self.stack.insertWidget(0,self.iface.mapCanvas())     
+        self.stack.stackedWidget.insertWidget(1,self.projectwidget)
 
         def createSpacer():
             widget = QWidget()
