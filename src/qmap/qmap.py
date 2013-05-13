@@ -31,7 +31,7 @@ from maptools import MoveTool, PointTool
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 from PyQt4.QtWebKit import QWebView, QWebPage
-from listmodulesdialog import ListProjectsDialog
+from listmodulesdialog import ProjectsWidget
 from qgis.core import *
 from qgis.gui import QgsMessageBar
 from utils import log
@@ -53,6 +53,8 @@ class QMap():
         self.iface.initializationCompleted.connect(self.setupUI)
         self.actionGroup = QActionGroup(self.iface.mainWindow())
         self.actionGroup.setExclusive(True)
+        self.menuGroup = QActionGroup(self.iface.mainWindow())
+        self.menuGroup.setExclusive(True)
         self.iface.mapCanvas().grabGesture(Qt.PinchGesture)
         self.iface.mapCanvas().viewport().setAttribute(Qt.WA_AcceptTouchEvents)
         self.movetool = MoveTool(iface.mapCanvas(), QMap.layerformmap )
@@ -72,12 +74,15 @@ class QMap():
 
         self.navtoolbar.setMovable(False)
         self.navtoolbar.setAllowedAreas(Qt.TopToolBarArea)
+        self.menutoolbar.setMovable(False)
+        self.menutoolbar.setAllowedAreas(Qt.TopToolBarArea)
+        
         self.mainwindow.insertToolBar(self.toolbar, self.navtoolbar)
-        self.showOpenProjectDialog()
+        self.openProjectAction.trigger()
 
     def setMapTool(self, tool):
         """
-        Set the current map canvas tool
+        Set the current mapview canvas tool
 
         tool -- The QgsMapTool to set
         """
@@ -91,6 +96,10 @@ class QMap():
         self.mainwindow.addToolBar(Qt.TopToolBarArea, self.toolbar)
         self.toolbar.setMovable(False)
 
+        self.menutoolbar = QToolBar("Menu", self.mainwindow)
+        self.mainwindow.addToolBar(Qt.LeftToolBarArea, self.menutoolbar)
+        self.menutoolbar.setMovable(False)
+    
         self.editingtoolbar = FloatingToolBar("Editing", self.toolbar)
         self.extraaddtoolbar = FloatingToolBar("Extra Add Tools", self.toolbar)
 
@@ -103,8 +112,9 @@ class QMap():
                                   "Default View", self.mainwindow))
         self.gpsAction = (GPSAction(QIcon(":/icons/gps"), self.iface.mapCanvas(),
                                    self.mainwindow))
-        self.openProjectAction = (QAction(QIcon(":/icons/open"), "Open Project",
+        self.openProjectAction = (QAction(QIcon(":/icons/open"), "Projects",
                                          self.mainwindow))
+        self.openProjectAction.setCheckable(True)
         self.toggleRasterAction = (QAction(QIcon(":/icons/photo"), "Aerial Photos",
                                           self.mainwindow))
         self.syncAction = QAction(QIcon(":/icons/sync"), "Sync", self.mainwindow)
@@ -128,6 +138,22 @@ class QMap():
         """
         
         QApplication.setWindowIcon(QIcon(":/branding/logo"))
+        
+        widget = self.iface.mainWindow().centralWidget()
+        layout = widget.layout()
+        layout.removeWidget(self.iface.mapCanvas())
+        self.stack = QStackedWidget()
+        layout.addWidget(self.stack)
+        
+        self.helppage = QWebView()
+        helppath = os.path.join(os.path.dirname(__file__) , 'help',"help.html")
+        self.helppage.load(QUrl.fromLocalFile(helppath))
+        
+        self.projectwidget = ProjectsWidget()   
+        self.projectwidget.requestOpenProject.connect(self.loadProject)
+        self.stack.addWidget(self.iface.mapCanvas())     
+        self.stack.addWidget(self.projectwidget)
+        self.stack.addWidget(self.helppage)
 
         def createSpacer():
             widget = QWidget()
@@ -138,6 +164,7 @@ class QMap():
         self.createActions()
 
         spacewidget = createSpacer()
+        spacewidget.setMinimumWidth(60)
         gpsspacewidget = createSpacer()
         gpsspacewidget.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
 
@@ -152,11 +179,9 @@ class QMap():
         self.addatgpsaction.setEnabled(self.gpsAction.isConnected)
         self.gpsAction.gpsfixed.connect(self.addatgpsaction.setEnabled)
 
-        self.menu = QMenu()
-        self.exitaction = self.menu.addAction("Exit")
-        self.exitaction.setIcon(QIcon(":/icons/exit"))
-        self.exitaction.triggered.connect(self.iface.actionExit().trigger)
-        self.openProjectAction.setMenu(self.menu)
+#        self.exitaction = self.menu.addAction("Exit")
+#        self.exitaction.setIcon(QIcon(":/icons/exit"))
+#        self.exitaction.triggered.connect(self.iface.actionExit().trigger)
 
         self.editingtoolbar.addToActionGroup(self.editattributesaction)
         self.editingtoolbar.addToActionGroup(self.moveaction)
@@ -166,13 +191,16 @@ class QMap():
         self.homeAction.triggered.connect(self.zoomToDefaultView)
         
         self.openProjectAction.triggered.connect(self.showOpenProjectDialog)
+        self.openProjectAction.triggered.connect(functools.partial(self.stack.setCurrentIndex, 1))
+        self.openProjectAction.triggered.connect(functools.partial(self.setUIState, False))
+        
         self.toggleRasterAction.triggered.connect(self.toggleRasterLayers)
 
         self.navtoolbar.insertAction(self.iface.actionZoomIn(), self.iface.actionTouch())
         self.navtoolbar.insertAction(self.iface.actionTouch(), self.homeAction)
         self.navtoolbar.insertAction(self.iface.actionTouch(), self.iface.actionZoomFullExtent())
         self.navtoolbar.insertAction(self.homeAction, self.iface.actionZoomFullExtent())
-        self.navtoolbar.insertAction(self.iface.actionZoomFullExtent(), self.openProjectAction)
+#        self.navtoolbar.insertAction(self.iface.actionZoomFullExtent(), self.openProjectAction)
 
         self.navtoolbar.addAction(self.toggleRasterAction)
         self.navtoolbar.insertWidget(self.iface.actionZoomFullExtent(), spacewidget)
@@ -186,6 +214,25 @@ class QMap():
 
         self.editingtoolbar.addAction(self.editattributesaction)
         self.editingtoolbar.addAction(self.moveaction)
+        
+        self.mapview = QAction(QIcon(":/icons/map"), "Map", self.menutoolbar)
+        self.mapview.setCheckable(True)
+        self.mapview.triggered.connect(functools.partial(self.stack.setCurrentIndex, 0))
+        self.mapview.triggered.connect(functools.partial(self.setUIState, True))
+        self.mapview.triggered.connect(functools.partial(log, "MAP CLICKED"))
+        
+        self.help = QAction(QIcon(":/icons/help"), "Help", self.menutoolbar)
+        self.help.setCheckable(True)
+        self.help.triggered.connect(functools.partial(self.stack.setCurrentIndex, 2))
+        self.help.triggered.connect(functools.partial(self.setUIState, False))
+        
+        self.menuGroup.addAction(self.mapview)
+        self.menuGroup.addAction(self.openProjectAction)
+        self.menuGroup.addAction(self.help)
+        
+        self.menutoolbar.addAction(self.mapview)
+        self.menutoolbar.addAction(self.openProjectAction)
+        self.menutoolbar.addAction(self.help)
 
         self.setupIcons()
 
@@ -203,7 +250,7 @@ class QMap():
 
     def zoomToDefaultView(self):
         """
-        Zoom the map canvas to the extents the project was opened at i.e. the
+        Zoom the mapview canvas to the extents the project was opened at i.e. the
         default extent.
         """
         self.iface.mapCanvas().setExtent(self.defaultextent)
@@ -342,16 +389,6 @@ class QMap():
 
         self.dialogprovider.openDialog( feature, layer, False )
 
-    def rejectProjectDialog(self):
-        """
-        Handler for rejected open project dialog.
-        """
-        if QgsProject.instance().fileName() is None:
-            self.setUIState(False)
-            self.openProjectAction.setEnabled(True)
-        else:
-            self.setUIState(True)
-
     def setUIState(self, enabled):
         """
         Enable or disable the toolbar.
@@ -360,35 +397,28 @@ class QMap():
         """
         toolbars = self.iface.mainWindow().findChildren(QToolBar)
         for toolbar in toolbars:
+            if toolbar == self.menutoolbar:
+                continue
             toolbar.setEnabled(enabled)
 
     def showOpenProjectDialog(self):
         """
         Show the project selection dialog.
         """
+        self.stack.setCurrentIndex(1)
         self.setUIState(False)
-        dialog = ListProjectsDialog()
         path = os.path.join(os.path.dirname(__file__), '..' , 'projects/')
-        dialog.loadProjectList(path)
-        dialog.resize(self.iface.mapCanvas().size())
-        point = self.iface.mapCanvas().geometry().topLeft()
-        point = self.iface.mapCanvas().mapToGlobal(point)
-        dialog.move(point)
-        dialog.setModal(True)
-        dialog.show()
+        self.projectwidget.loadProjectList(path)
         
-        if dialog.exec_():
-            self.loadProject(dialog.selectedProject)
-        else:
-            self.setUIState(True)   
-
     def loadProject(self, project):
         """
         Load a project into QGIS.
 
         path -- The path to the .qgs project file.
         """
-
+     
+        self.mapview.trigger()
+        
         self.iface.newProject(False)
         
         global currentproject
@@ -407,8 +437,7 @@ class QMap():
         self.iface.mainWindow().setWindowTitle("QMap: QGIS Data Collection")
         
         self.iface.projectRead.emit()
-        self.setUIState(True)
-
+        
     def unload(self):
         del self.toolbar
         

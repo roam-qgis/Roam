@@ -34,19 +34,16 @@ def getProjects(projectpath):
     
 
 # create the dialog for zoom to point
-class ListProjectsDialog(QDialog):
+class ProjectsWidget(QWidget):
     requestOpenProject = pyqtSignal(Project)
     def __init__(self):
-        QDialog.__init__(self )
+        QWidget.__init__(self )
         self.ui = Ui_ListModules()
         self.ui.setupUi(self)
         self.ui.moduleList.itemClicked.connect(self.openProject)
-        self.setWindowFlags(Qt.FramelessWindowHint)
-        self.ui.pushButton.clicked.connect(self.reject)
-        scr = QApplication.desktop().screenGeometry(0)
-        self.move( scr.center() - self.rect().center() )
 
     def loadProjectList(self, path):
+        self.ui.moduleList.clear()
         for project in getProjects(path):
             item = QListWidgetItem(project.name, self.ui.moduleList, QListWidgetItem.UserType)
             item.setData(QListWidgetItem.UserType, project)
@@ -56,11 +53,10 @@ class ListProjectsDialog(QDialog):
             self.ui.moduleList.addItem( item )
                               
     def openProject(self, item):
-        self.setDisabled(True)
+#        self.setDisabled(True)
         project = item.data(QListWidgetItem.UserType).toPyObject()
         self.selectedProject = project
-        self.accept()
+        self.requestOpenProject.emit(project)
         
-
-
+        
 
