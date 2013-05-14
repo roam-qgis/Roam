@@ -24,6 +24,7 @@ import resources_rc
 import functools
 import utils
 import json
+import sys
 
 from edit_action import EditAction
 from gps_action import GPSAction
@@ -34,10 +35,12 @@ from PyQt4.QtWebKit import QWebView, QWebPage
 from listmodulesdialog import ProjectsWidget
 from qgis.core import *
 from qgis.gui import QgsMessageBar
-from utils import log
+from utils import log, critical
 from floatingtoolbar import FloatingToolBar
 from syncing import replication
 from dialog_provider import DialogProvider
+import traceback
+from PyQt4.uic import loadUi
 
 currentproject = None
 
@@ -60,6 +63,17 @@ class QMap():
         self.movetool = MoveTool(iface.mapCanvas(), QMap.layerformmap )
         self.report = SyncReport(self.iface.messageBar())
         self.dialogprovider = DialogProvider(iface.mapCanvas(), iface)
+        
+    def excepthook(self, type, value, tb):           
+        msg = ''.join(traceback.format_tb(tb))
+        msg += '{0}: {1}'.format(type, value)
+        critical(msg)
+        self.errorpage.errordetails.setText(msg)
+        self.stack.setCurrentIndex(3)
+        
+    
+    def installErrorHook(self):
+        sys.excepthook = self.excepthook
 
     def setupUI(self):
         """
@@ -92,7 +106,6 @@ class QMap():
         """
         
         self.menutoolbar = QToolBar("Menu", self.mainwindow)
-        self.menutoolbar.setMovable(False)
         self.menutoolbar.setMovable(False)
         self.menutoolbar.setAllowedAreas(Qt.LeftToolBarArea)
         self.mainwindow.addToolBar(Qt.LeftToolBarArea, self.menutoolbar)
@@ -157,11 +170,16 @@ class QMap():
         helppath = os.path.join(os.path.dirname(__file__) , 'help',"help.html")
         self.helppage.load(QUrl.fromLocalFile(helppath))
         
+        errorui = os.path.join(os.path.dirname(__file__) ,"ui_error.ui")
+        self.errorpage = loadUi(errorui)
         self.projectwidget = ProjectsWidget()   
         self.projectwidget.requestOpenProject.connect(self.loadProject)
         self.stack.addWidget(self.iface.mapCanvas())     
         self.stack.addWidget(self.projectwidget)
         self.stack.addWidget(self.helppage)
+        self.stack.addWidget(self.errorpage)
+        
+        self.installErrorHook()
 
         def createSpacer():
             widget = QWidget()

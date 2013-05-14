@@ -20,6 +20,7 @@ log = lambda msg : _getCallerLogger().debug(msg)
 info = lambda msg: _getCallerLogger().info(msg)
 warning = lambda msg: _getCallerLogger().warning(msg)
 error = lambda msg: _getCallerLogger().error(msg)
+critical = lambda msg: _getCallerLogger().critical(msg)
 
 curdir = os.path.dirname(__file__)
 settingspath = os.path.join(curdir,'settings.config')
