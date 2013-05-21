@@ -46,4 +46,3 @@ def getHelpFile(layer, fieldname):
         return None
 
 
-
