@@ -12,8 +12,9 @@ uic.properties.logger.setLevel(logging.INFO)
 logging.basicConfig(filename=LOG_FILENAME,level=logging.NOTSET)
 
 def _getCallerLogger():
-    caller = inspect.currentframe().f_back
-    logger = logging.getLogger(caller.f_globals['__name__'])
+    caller = inspect.currentframe().f_back.f_back
+    name = "{}-{}".format(caller.f_globals['__name__'], caller.f_code.co_name )
+    logger = logging.getLogger(name)
     return logger
 
 log = lambda msg : _getCallerLogger().debug(msg)
