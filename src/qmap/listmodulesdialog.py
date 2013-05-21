@@ -1,41 +1,11 @@
-from PyQt4.QtCore import *
-from PyQt4.QtGui import *
-import os
-import glob
+from PyQt4.QtCore import pyqtSignal
+from PyQt4.QtGui import QWidget, QListWidgetItem, QPixmap, QIcon
 from ui_listmodules import Ui_ListModules
-from utils import log
-import qmap
-
-from collections import namedtuple
-
-Project = namedtuple('Project', 'name file splash folder')
- 
-def getProjects(projectpath):
-    folders = (sorted( [os.path.join(projectpath, item) 
-                       for item in os.walk(projectpath).next()[1]]))
-    
-    for folder in folders:
-        # The folder name is the display name
-        # Grab the first project file
-        # Look for splash.png
-        # Path to project folder.
-        name = os.path.basename(folder)
-        try:
-            projectfile = glob.glob(os.path.join(folder, '*.qgs'))[0]
-        except IndexError:
-            log("No project file found.")
-            continue
-        try:
-            splash = glob.glob(os.path.join(folder, 'splash.png'))[0]
-        except IndexError:
-            splash = ''
-        
-        yield Project(name, projectfile, splash, folder )
-    
+from project import QMapProject, getProjects  
 
 # create the dialog for zoom to point
 class ProjectsWidget(QWidget):
-    requestOpenProject = pyqtSignal(Project)
+    requestOpenProject = pyqtSignal(QMapProject)
     def __init__(self):
         QWidget.__init__(self )
         self.ui = Ui_ListModules()
@@ -45,6 +15,8 @@ class ProjectsWidget(QWidget):
     def loadProjectList(self, path):
         self.ui.moduleList.clear()
         for project in getProjects(path):
+            if not project.vaild:
+                continue
             item = QListWidgetItem(project.name, self.ui.moduleList, QListWidgetItem.UserType)
             item.setData(QListWidgetItem.UserType, project)
             pix = QPixmap(project.splash)

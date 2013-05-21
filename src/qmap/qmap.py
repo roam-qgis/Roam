@@ -41,6 +41,7 @@ from syncing import replication
 from dialog_provider import DialogProvider
 import traceback
 from PyQt4.uic import loadUi
+from project import QMapProject
 
 currentproject = None
 
@@ -222,7 +223,6 @@ class QMap():
         self.navtoolbar.insertAction(self.iface.actionTouch(), self.homeAction)
         self.navtoolbar.insertAction(self.iface.actionTouch(), self.iface.actionZoomFullExtent())
         self.navtoolbar.insertAction(self.homeAction, self.iface.actionZoomFullExtent())
-#        self.navtoolbar.insertAction(self.iface.actionZoomFullExtent(), self.openProjectAction)
 
         self.navtoolbar.addAction(self.toggleRasterAction)
         self.navtoolbar.insertWidget(self.iface.actionZoomFullExtent(), spacewidget)
@@ -331,22 +331,23 @@ class QMap():
         """
             Called when a new project is opened in QGIS.
         """
-        layers = dict((str(x.name()), x) for x in QgsMapLayerRegistry.instance().mapLayers().values())
-                
-        self.createFormButtons(layers)
-        self.defaultextent = self.iface.mapCanvas().extent()
-        
-        # Enable the raster layers button only if the project contains a raster layer.
-        self.toggleRasterAction.setEnabled(self.hasRasterLayers())
-        
-        self.connectSyncProviders()
-        
+        projectpath = str(QgsProject.instance().fileName())
+        project = QMapProject(os.path.dirname(projectpath))
+        global currentproject
+        currentproject = project
+        layers = {}
         for layer in QgsMapLayerRegistry.instance().mapLayers().itervalues():
             form = layer.editForm()
-            if not form.endsWith(".ui"): 
-                continue
-            self.iface.preloadForm(form)
+            if form.endsWith(".ui"):
+                self.iface.preloadForm(form)
+            layers[str(layer.name())] = layer
 
+        # Enable the raster layers button only if the project contains a raster layer.
+        self.toggleRasterAction.setEnabled(self.hasRasterLayers())
+        self.createFormButtons(layers)
+        self.defaultextent = self.iface.mapCanvas().extent()
+        self.connectSyncProviders()
+        
     def createFormButtons(self, projectlayers):
         """
             Create buttons for each form that is definded
@@ -354,22 +355,16 @@ class QMap():
         # Remove all the old buttons
         for action in self.actions:
             self.toolbar.removeAction(action)
-        
-        folder = currentproject.folder
-        layerfolders = ( [os.path.join(folder, item) for item in os.walk(folder).next()[1] 
-                                                    if not item.startswith('_')])
-        
-        for layer in layerfolders:
+                    
+        for layer in  currentproject.getConfiguredLayers():
             try:
-                name = os.path.basename(layer)
-                qgslayer = projectlayers[name]
+                qgslayer = projectlayers[layer.name]
             except KeyError:
                 log("Layer not found in project")
                 continue
             
-            text = name
-            icon = os.path.join(layer, 'icon.png')
-                  
+            text = layer.name
+                              
             if qgslayer.geometryType() == QGis.Point:
                 tool = PointTool(self.iface.mapCanvas())
                 add = functools.partial(self.addNewFeature, qgslayer)
@@ -379,7 +374,7 @@ class QMap():
             
             tool.geometryComplete.connect(add)
                 
-            action = QAction(QIcon(icon), text, self.mainwindow)
+            action = QAction(QIcon(layer.icon), text, self.mainwindow)
             action.setCheckable(True)
             action.toggled.connect(functools.partial(self.setMapTool, tool))
             
@@ -435,29 +430,21 @@ class QMap():
     def loadProject(self, project):
         """
         Load a project into QGIS.
-
-        path -- The path to the .qgs project file.
         """
-     
+        utils.log(project)
+        utils.log(project.name)
+        utils.log(project.projectfile)
+        utils.log(project.vaild)
+        
         self.mapview.trigger()
-        
-        self.iface.newProject(False)
-        
-        global currentproject
-        currentproject = project
-        
+        self.iface.newProject(False)        
         self.iface.mapCanvas().freeze()
-
-        fileinfo = QFileInfo(project.file)
+        fileinfo = QFileInfo(project.projectfile)
         QgsProject.instance().read(fileinfo)
-        
         self.iface.mapCanvas().updateScale()
-        
         self.iface.mapCanvas().freeze(False)
         self.iface.mapCanvas().refresh()
-        
         self.iface.mainWindow().setWindowTitle("QMap: QGIS Data Collection")
-        
         self.iface.projectRead.emit()
         
     def unload(self):
