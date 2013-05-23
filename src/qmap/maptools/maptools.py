@@ -7,11 +7,12 @@ class PolygonTool(QgsMapTool):
     mouseClicked = pyqtSignal(QgsPoint)
     geometryComplete = pyqtSignal(QgsGeometry)
 
-    def __init__(self, canvas):
-        QgsMapTool.__init__(self, canvas)
-        self.canvas = canvas
+    def __init__(self):
+        QgsMapTool.__init__(self)
+        raise NotImplementedError
+    
         self.points = []
-        self.band = QgsRubberBand(self.canvas, True)
+        self.band = QgsRubberBand(self.canvas(), True)
         self.band.setColor(QColor.fromRgb(224,162,16))
         self.band.setWidth(5)
         self.capturing = False
@@ -44,7 +45,7 @@ class PolygonTool(QgsMapTool):
         x = event.pos().x()
         y = event.pos().y()
 
-        point = self.canvas.getCoordinateTransform().toMapCoordinates(x, y)
+        point = self.canvas().getCoordinateTransform().toMapCoordinates(x, y)
         return point
 
     def canvasMoveEvent(self, event):
@@ -95,7 +96,6 @@ class PointTool(QgsMapTool):
     
     def __init__(self, canvas):
         QgsMapTool.__init__(self, canvas)
-        self.canvas = canvas
         self.cursor = QCursor(QPixmap(["16 16 3 1",
             "      c None",
             ".     c #FF0000",
@@ -126,22 +126,15 @@ class PointTool(QgsMapTool):
 
         @note: Should be moved out into qmap.py
         """
-        self.canvas.setMapTool(self)
+        self.canvas().setMapTool(self)
 
     def canvasMoveEvent(self, event):
-        x = event.pos().x()
-        y = event.pos().y()
-
-        point = self.canvas.getCoordinateTransform().toMapCoordinates(x, y)
+        point = self.toMapCoordinates(event.pos())
 
         self.mouseMove.emit(point)
 
     def canvasReleaseEvent(self, event):
-        #Get the click
-        x = event.pos().x()
-        y = event.pos().y()
-
-        point = self.canvas.getCoordinateTransform().toMapCoordinates(x, y)
+        point = self.toMapCoordinates(event.pos())
 
         self.mouseClicked.emit(point)
         self.geometryComplete.emit(QgsGeometry.fromPoint(point))
@@ -154,7 +147,7 @@ class PointTool(QgsMapTool):
         @note: Should be moved out into qmap.py 
                and just expose a cursor to be used
         """
-        self.canvas.setCursor(self.cursor)
+        self.canvas().setCursor(self.cursor)
 
     def deactivate(self):
         """

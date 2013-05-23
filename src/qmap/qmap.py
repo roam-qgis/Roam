@@ -41,7 +41,7 @@ from syncing import replication
 from dialog_provider import DialogProvider
 import traceback
 from PyQt4.uic import loadUi
-from project import QMapProject
+from project import QMapProject, NoMapToolConfigured
 
 currentproject = None
 
@@ -59,9 +59,11 @@ class QMap():
         self.actionGroup.setExclusive(True)
         self.menuGroup = QActionGroup(self.iface.mainWindow())
         self.menuGroup.setExclusive(True)
+        # Enable pinch zoom in QGIS on Windows 7 and 8
         self.iface.mapCanvas().grabGesture(Qt.PinchGesture)
         self.iface.mapCanvas().viewport().setAttribute(Qt.WA_AcceptTouchEvents)
-        self.movetool = MoveTool(iface.mapCanvas(), QMap.layerformmap )
+        
+        self.movetool = MoveTool(self.iface.mapCanvas(), QMap.layerformmap)
         self.report = SyncReport(self.iface.messageBar())
         self.dialogprovider = DialogProvider(iface.mapCanvas(), iface)
         
@@ -364,18 +366,19 @@ class QMap():
                 continue
             
             text = layer.icontext
-#            tool = layer.maptool
-
-            
-            if qgslayer.geometryType() == QGis.Point:
-                tool = PointTool(self.iface.mapCanvas())
-                add = functools.partial(self.addNewFeature, qgslayer)
-            else:
-                log("Geometry type not supported yet")
+            try:
+                tool = layer.getMaptool(self.iface.mapCanvas())
+            except NoMapToolConfigured:
+                log("No map tool configured")
                 continue
             
-            tool.geometryComplete.connect(add)
-                
+            # Hack until I fix it later
+            if isinstance(tool, PointTool):
+                add = functools.partial(self.addNewFeature, qgslayer)
+                tool.geometryComplete.connect(add)
+            else:
+                tool.finished.connect(self.openForm)
+     
             action = QAction(QIcon(layer.icon), text, self.mainwindow)
             action.setCheckable(True)
             action.toggled.connect(functools.partial(self.setMapTool, tool))
@@ -392,6 +395,12 @@ class QMap():
             self.actions.append(action)
             QMap.layerformmap.append(qgslayer)
             
+    def openForm(self, layer, feature):
+        if not layer.isEditable():
+            layer.startEditing()
+            
+        self.dialogprovider.openDialog(feature=feature, layer=layer)
+            
     def addNewFeature(self, layer, geometry):
         fields = layer.pendingFields()
         
@@ -404,9 +413,9 @@ class QMap():
         feature.setFields(fields)
         
         for indx in xrange(fields.count()):
-            feature[indx] = layer.dataProvider().defaultValue( indx )
+            feature[indx] = layer.dataProvider().defaultValue(indx)
 
-        self.dialogprovider.openDialog( feature, layer, False )
+        self.dialogprovider.openDialog(feature=feature, layer=layer)
 
     def setUIState(self, enabled):
         """

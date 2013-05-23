@@ -2,6 +2,22 @@ import os
 import glob
 import utils
 import json
+import functools
+from maptools import PointTool, InspectionTool
+from qgis.core import QgsMapLayerRegistry, QGis
+
+class NoMapToolConfigured(Exception):
+    """ 
+        Raised when no map tool has been configured
+        for the layer
+    """
+    pass
+
+class ErrorInMapTool(Exception):
+    """
+        Raised when there is an error in configuring the map tool  
+    """
+    pass
 
 def getProjects(projectpath):
     folders = (sorted( [os.path.join(projectpath, item) 
@@ -45,13 +61,47 @@ class QMapLayer(object):
     @QGISLayer.setter
     def QGISLayer(self, layer):
         self._qgslayer = layer
-
-    @property
-    def mapTool(self):
+        
+    def _getLayer(self, name):
+        try:
+            return QgsMapLayerRegistry.instance().mapLayersByName(name)[0]
+        except IndexError as e:
+            utils.log(e)
+            return None
+        
+    def getMaptool(self, canvas):
         """
             Returns the map tool configured for this layer.
         """
-        raise NotImplementedError
+        
+        def _getInsectionTool():
+            try:
+                sourcelayername = toolsettings["sourcelayer"]
+                sourcelayer = self._getLayer(sourcelayername)
+                destlayername = toolsettings["destlayer"]
+                destlayer = self._getLayer(destlayername)
+                fieldmapping = toolsettings["mapping"]
+                if destlayer is None or sourcelayer is None:
+                    raise ErrorInMapTool("{} or {} not found in project".format(sourcelayername, destlayername))
+                
+                return InspectionTool(canvas=canvas, layerfrom=sourcelayer, 
+                                      layerto=destlayer, mapping=fieldmapping  )
+            except KeyError as e:
+                utils.log(e)
+                raise ErrorInMapTool(e)
+                
+        try:
+            toolsettings = self.project.layersettings[self.name]["maptool"]
+            tooltype = toolsettings["type"]
+            if tooltype == "inspection":
+                return _getInsectionTool()
+        except KeyError:
+            pass
+        
+        if self.QGISLayer.geometryType() == QGis.Point:
+            return PointTool(canvas)
+        
+        raise NoMapToolConfigured
         
 
 class QMapProject(object):

@@ -237,13 +237,13 @@ class FormBinder(QObject):
             control.setDateTime(QDateTime.fromString(value.toString(), Qt.ISODate))
             try:
                 button = self.getControl(control.objectName() + "_pick", QPushButton)
+                button.setIcon(QIcon(":/icons/calender"))
+                button.setText("Pick")
+                button.setIconSize(QSize(24, 24))
+                button.pressed.connect(partial(self.pickDateTime, control, "DateTime"))
             except ControlNotFound:
-                return
-
-            button.setIcon(QIcon(":/icons/calender"))
-            button.setText("Pick")
-            button.setIconSize(QSize(24, 24))
-            button.pressed.connect(partial(self.pickDateTime, control, "DateTime"))
+                pass
+            
             self.boundControls.append(control)
 
         elif isinstance(control, QPushButton):
@@ -287,11 +287,14 @@ class FormBinder(QObject):
         """
         for control in self.boundControls:
             name = str(control.objectName())
+            log(name)
             if isinstance(control, QDateTimeEdit):
                 value = control.dateTime().toString(Qt.ISODate)
+                log(value)
                 try:
                     feature[name] = value
-                except KeyError:
+                except KeyError as e:
+                    log(e)
                     continue
                 
             elif hasattr(control, 'getImage'):

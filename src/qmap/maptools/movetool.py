@@ -9,7 +9,6 @@ class MoveTool(QgsMapTool):
 		self.band = None
 		self.feature = None
 		self.startcoord = None
-		self.canvas = canvas
 		self.layers = layers
 
 	def canvasMoveEvent(self, event):
@@ -17,7 +16,7 @@ class MoveTool(QgsMapTool):
 		Override of QgsMapTool mouse move event
 		"""
 		if self.band:
-			point = QgsMapTool.toMapCoordinates(self, event.pos())
+			point = self.toMapCoordinates(event.pos())
 			offsetX = point.x() - self.startcoord.x()
 			offsetY = point.y() - self.startcoord.y()
 			self.band.setTranslationOffset(offsetX, offsetY)
@@ -38,9 +37,9 @@ class MoveTool(QgsMapTool):
 
 		# Stops at the first feature found
 		for layer in self.layers:
-			point = QgsMapTool.toLayerCoordinates(self, layer, event.pos())
+			point = self.toLayerCoordinates(layer, event.pos())
 			searchRadius = (QgsTolerance.toleranceInMapUnits( 10, layer,
-															 self.canvas.mapRenderer(), QgsTolerance.Pixels))
+															 self.canvas().mapRenderer(), QgsTolerance.Pixels))
 
 			rect = QgsRectangle()                                                 
 			rect.setXMinimum( point.x() - searchRadius );
@@ -58,7 +57,7 @@ class MoveTool(QgsMapTool):
 				self.band = self.createRubberBand()
 				self.band.setToGeometry(f.geometry(), layer)
 				self.band.show()
-				self.startcoord = QgsMapTool.toMapCoordinates(self, event.pos())
+				self.startcoord = self.toMapCoordinates(event.pos())
 				self.feature = f
 				self.layer = layer
 				self.layer.startEditing()
@@ -77,8 +76,8 @@ class MoveTool(QgsMapTool):
 		if not self.feature:
 			return
 
-		startpoint = QgsMapTool.toLayerCoordinates(self, self.layer, self.startcoord)
-		endpoint = QgsMapTool.toLayerCoordinates(self, self.layer, event.pos())
+		startpoint = self.toLayerCoordinates(self.layer, self.startcoord)
+		endpoint = self.toLayerCoordinates(self.layer, event.pos())
 
 		dx = endpoint.x() - startpoint.x()
 		dy = endpoint.y() - startpoint.y()
@@ -88,7 +87,7 @@ class MoveTool(QgsMapTool):
 		self.band.hide()
 		self.band = None
 		self.layer.commitChanges()
-		self.canvas.refresh()
+		self.canvas().refresh()
 
 	def deactivate(self):
 		"""
@@ -100,7 +99,7 @@ class MoveTool(QgsMapTool):
 		"""
 		Creates a new rubber band.
 		"""
-		band = QgsRubberBand(self.canvas)
+		band = QgsRubberBand(self.canvas())
 		band.setColor(QColor.fromRgb(237,85,9))
 		band.setWidth(6)
 		return band
