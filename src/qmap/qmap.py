@@ -241,7 +241,6 @@ class QMap():
         self.mapview.setCheckable(True)
         self.mapview.triggered.connect(functools.partial(self.stack.setCurrentIndex, 0))
         self.mapview.triggered.connect(functools.partial(self.setUIState, True))
-        self.mapview.triggered.connect(functools.partial(log, "MAP CLICKED"))
         
         self.help = QAction(QIcon(":/icons/help"), "Help", self.menutoolbar)
         self.help.setCheckable(True)
