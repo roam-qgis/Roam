@@ -1,9 +1,4 @@
 import os.path
-from PyQt4.QtCore import QSettings,QString
-from PyQt4.QtGui import QIcon
-from PyQt4.uic import loadUi
-import os
-import imp
 import json
 import utils
 import os

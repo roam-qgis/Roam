@@ -356,15 +356,18 @@ class QMap():
         for action in self.actions:
             self.toolbar.removeAction(action)
                     
-        for layer in  currentproject.getConfiguredLayers():
+        for layer in currentproject.getConfiguredLayers():
             try:
                 qgslayer = projectlayers[layer.name]
+                layer.QGISLayer = qgslayer
             except KeyError:
                 log("Layer not found in project")
                 continue
             
-            text = layer.name
-                              
+            text = layer.icontext
+#            tool = layer.maptool
+
+            
             if qgslayer.geometryType() == QGis.Point:
                 tool = PointTool(self.iface.mapCanvas())
                 add = functools.partial(self.addNewFeature, qgslayer)
