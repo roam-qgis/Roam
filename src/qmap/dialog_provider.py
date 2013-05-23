@@ -24,7 +24,7 @@ class DialogProvider(QObject):
         self.canvas = canvas
         self.iface = iface
 
-    def openDialog(self, feature, layer, updatemode, mandatory_fields=True):
+    def openDialog(self, feature, layer, mandatory_fields=True):
         """
         Opens a form for the given feature
 
@@ -39,6 +39,8 @@ class DialogProvider(QObject):
             folder = qmap.currentproject.folder
             newpath = os.path.join(folder,str(layer.name()),form)
             layer.setEditForm(newpath)
+            
+        updatemode = feature.id() > 0
               
         self.dialog = self.iface.getFeatureForm(layer, feature)
         self.layer = layer
