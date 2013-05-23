@@ -1,6 +1,7 @@
 import os
 import glob
 import utils
+import json
 
 def getProjects(projectpath):
     folders = (sorted( [os.path.join(projectpath, item) 
@@ -17,18 +18,41 @@ class QMapLayer(object):
     """
     A QMap layer represented as a folder on the disk.
     """
-    def __init__(self, rootfolder):
+    def __init__(self, rootfolder, project):
         self.folder = rootfolder
+        self.project = project
         
     @property
     def name(self):
         return os.path.basename(self.folder)
-
+    
+    @property
+    def icontext(self):
+        try:
+            return self.project.layersettings[self.name]["label"]
+        except KeyError:
+            return self.name
+        
     @property
     def icon(self):
         utils.log(os.path.join(self.folder, 'icon.png'))
         return os.path.join(self.folder, 'icon.png')
+    
+    @property
+    def QGISLayer(self):
+        return self._qgslayer
+    
+    @QGISLayer.setter
+    def QGISLayer(self, layer):
+        self._qgslayer = layer
 
+    @property
+    def mapTool(self):
+        """
+            Returns the map tool configured for this layer.
+        """
+        raise NotImplementedError
+        
 
 class QMapProject(object):
     """
@@ -77,9 +101,22 @@ class QMapProject(object):
             if layerfolder.startswith('_'):
                 continue
             
-            yield QMapLayer(os.path.join(self.folder, layerfolder))
+            yield QMapLayer(os.path.join(self.folder, layerfolder), self)
     
-    
+    @property
+    def settings(self):
+        settings = os.path.join(self.folder, "settings.config")
+        try:
+            with open(settings,'r') as f:
+                return json.load(f)
+        except IOError as e:
+            utils.warning(e)
+            return None
+        
+    @property
+    def layersettings(self):
+        return self.settings["layers"]
+        
     
     
     
