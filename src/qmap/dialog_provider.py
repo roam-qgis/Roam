@@ -95,6 +95,8 @@ class DialogProvider(QObject):
                 self.iface.messageBar().pushMessage("Saved","Changes saved", QgsMessageBar.INFO, 2)
 
             self.canvas.refresh()
+        else:
+            self.layer.rollBack()
 
     def selectingFromMap(self, message):
         """
