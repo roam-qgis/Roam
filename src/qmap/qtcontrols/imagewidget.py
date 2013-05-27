@@ -2,8 +2,10 @@ import PyQt4.uic
 import images_rc
 import os
 import PyQt4
-from PyQt4.QtGui import QLabel, QDialog, QFileDialog, QPixmap, QGridLayout, QLayout
-from PyQt4.QtCore import QByteArray, QBuffer, QIODevice
+from PyQt4.QtGui import (QLabel, QDialog, QFileDialog, QPixmap, QGridLayout, 
+						QLayout, QWidget)
+from PyQt4.QtCore import QByteArray, QBuffer, QIODevice, QEvent, QObject
+import logging
 
 basepath = os.path.dirname(__file__)
 uipath = os.path.join(basepath,'imagewidget.ui')
@@ -21,7 +23,14 @@ class QMapImageWidget(baseClass, widgetForm):
 		self.isDefault = True
 		self.loadImage(data)
 		self.image.mouseReleaseEvent = self.imageClick
+		self.installEventFilter(self)
 		
+	def eventFilter(self, parent, event):
+		""" Handle mouse click events for disabled widget state """
+		if event.type() == QEvent.MouseButtonRelease:
+			self.openImageViewer()
+		
+		return QObject.eventFilter(self, parent, event)
 	def selectImage(self):
 		# Show the file picker
 		image  = QFileDialog.getOpenFileName(self, "Select Image", "", "Images (*.jpg)")
@@ -38,6 +47,9 @@ class QMapImageWidget(baseClass, widgetForm):
 		self.isDefault = True
 
 	def openImageViewer(self):
+		if self.isDefault:
+			return
+		
 		label = QLabel()
 		label.setPixmap(self.image.pixmap())
 		label.setScaledContents(True)
@@ -93,7 +105,8 @@ class QMapImageWidget(baseClass, widgetForm):
 
 	def enterEvent(self, event):
 		# Don't show the image controls if we are on the default image
-		if self.isDefault:
+		# or in a disabled state
+		if self.isDefault or not self.isEnabled():
 			return
 
 		self.selectbutton.setVisible(True)
