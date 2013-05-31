@@ -49,15 +49,16 @@ def timeit(method):
         return result
     
 def openImageViewer(pixmap):
-        label = QLabel()
-        label.setPixmap(pixmap)
-        label.setScaledContents(True)
         dlg = QDialog()
         dlg.setWindowTitle("Image Viewer")
         dlg.setLayout(QGridLayout())
         dlg.layout().setContentsMargins(0,0,0,0)
         dlg.layout().setSizeConstraint(QLayout.SetNoConstraint)
         dlg.resize(600,600)
+        label = QLabel()
+        label.mouseReleaseEvent = lambda x: dlg.accept()
+        label.setPixmap(pixmap)
+        label.setScaledContents(True)
         dlg.layout().addWidget(label)
         dlg.exec_()
 
