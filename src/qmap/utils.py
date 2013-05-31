@@ -5,6 +5,7 @@ import json
 import inspect
 
 from PyQt4 import uic
+from PyQt4.QtGui import (QLabel, QDialog, QGridLayout, QLayout)
 
 LOG_FILENAME = 'main.log'
 uic.uiparser.logger.setLevel(logging.INFO)
@@ -46,6 +47,19 @@ def timeit(method):
 
        # log("% r (% r,% r)% 2.2f seconds " % (method.__name__, args, kw, th-ts))
         return result
+    
+def openImageViewer(pixmap):
+        label = QLabel()
+        label.setPixmap(pixmap)
+        label.setScaledContents(True)
+        dlg = QDialog()
+        dlg.setWindowTitle("Image Viewer")
+        dlg.setLayout(QGridLayout())
+        dlg.layout().setContentsMargins(0,0,0,0)
+        dlg.layout().setSizeConstraint(QLayout.SetNoConstraint)
+        dlg.resize(600,600)
+        dlg.layout().addWidget(label)
+        dlg.exec_()
 
 def _pluralstring(text='', num=0):
     return "%d %s%s" % (num, text, "s"[num==1:])

@@ -2,10 +2,13 @@ import PyQt4.uic
 import images_rc
 import os
 import PyQt4
-from PyQt4.QtGui import (QLabel, QDialog, QFileDialog, QPixmap, QGridLayout, 
-						QLayout, QWidget)
-from PyQt4.QtCore import QByteArray, QBuffer, QIODevice, QEvent, QObject
+from PyQt4.QtGui import (QLabel, QDialog, QFileDialog, 
+						QPixmap, QGridLayout, QLayout, 
+						QWidget)
+from PyQt4.QtCore import (QByteArray, QBuffer, 
+						QIODevice, QEvent, QObject)
 import logging
+from qmap.utils import openImageViewer
 
 basepath = os.path.dirname(__file__)
 uipath = os.path.join(basepath,'imagewidget.ui')
@@ -28,7 +31,9 @@ class QMapImageWidget(baseClass, widgetForm):
 	def eventFilter(self, parent, event):
 		""" Handle mouse click events for disabled widget state """
 		if event.type() == QEvent.MouseButtonRelease:
-			self.openImageViewer()
+			if self.isDefault:
+				return
+			openImageViewer(self.image.pixmap())
 		
 		return QObject.eventFilter(self, parent, event)
 	def selectImage(self):
@@ -45,28 +50,12 @@ class QMapImageWidget(baseClass, widgetForm):
 		self.loadFromPixMap(pix)
 		self.image.setScaledContents(False)
 		self.isDefault = True
-
-	def openImageViewer(self):
-		if self.isDefault:
-			return
 		
-		label = QLabel()
-		label.setPixmap(self.image.pixmap())
-		label.setScaledContents(True)
-		dlg = QDialog()
-		dlg.setWindowTitle("Image Viewer")
-		dlg.setLayout(QGridLayout())
-		dlg.layout().setContentsMargins(0,0,0,0)
-		dlg.layout().setSizeConstraint(QLayout.SetNoConstraint)
-		dlg.resize(600,600)
-		dlg.layout().addWidget(label)
-		dlg.exec_()
-
 	def imageClick(self, event):
 		if self.isDefault:
 			self.selectImage()
 		else:
-			self.openImageViewer()
+			openImageViewer(self.image.pixmap())
 			
 
 	def loadFromPixMap(self, pixmap):
