@@ -32,7 +32,7 @@ class QMapImageWidget(baseClass, widgetForm):
 		""" Handle mouse click events for disabled widget state """
 		if event.type() == QEvent.MouseButtonRelease:
 			if self.isDefault:
-				return
+				return QObject.eventFilter(self, parent, event)
 			openImageViewer(self.image.pixmap())
 		
 		return QObject.eventFilter(self, parent, event)
