@@ -45,6 +45,26 @@ from project import QMapProject, NoMapToolConfigured
 
 currentproject = None
 
+# Patch QgsFeature to allow . lookup and setting of attributes.
+def __setattr__(feature, name, value):
+    if feature.fieldNameIndex(name) == -1:
+        # Try replacing underscores with spaces
+        if feature.fieldNameIndex(name.replace('_', ' ')) == -1:
+            QgsFeature.__setattr__(feature, name, value)
+            
+    feature[name] = value
+
+def __getattr__(feature, name):
+    if feature.fieldNameIndex(name) == -1:
+        # Try replacing underscores with spaces
+        if feature.fieldNameIndex(name.replace('_', ' ')) == -1:
+            raise AttributeError
+    return feature[name]
+
+from types import MethodType
+QgsFeature.__getattr__ = MethodType(__getattr__, None, QgsFeature)
+QgsFeature.__setattr__ = MethodType(__setattr__, None, QgsFeature)
+
 class QMap():
     layerformmap = []
 
