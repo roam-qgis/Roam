@@ -181,11 +181,21 @@ class QMap():
         
         QApplication.setWindowIcon(QIcon(":/branding/logo"))
         
-        widget = self.iface.mainWindow().centralWidget()
-        layout = widget.layout()
-        layout.removeWidget(self.iface.mapCanvas())
+        mainwidget = self.iface.mainWindow().centralWidget()
+        mainwidget.setLayout(QGridLayout())
+        mainwidget.layout().setContentsMargins(0,0,0,0)
+        
+        newlayout = QGridLayout()
+        newlayout.setContentsMargins(0,0,0,0)
+        newlayout.addWidget(self.iface.mapCanvas(), 0,0,2,1)
+        newlayout.addWidget(self.iface.messageBar(), 0,0,1,1)
+        
+        wid = QWidget()
+        wid.setLayout(newlayout)
+        
         self.stack = QStackedWidget()
-        layout.addWidget(self.stack)
+        mainwidget.layout().addWidget(self.stack)
+        self.stack.addWidget(wid)
         
         self.helppage = QWebView()
         self.helppage.page().setLinkDelegationPolicy(QWebPage.DelegateAllLinks)
@@ -197,7 +207,6 @@ class QMap():
         self.errorpage = loadUi(errorui)
         self.projectwidget = ProjectsWidget()   
         self.projectwidget.requestOpenProject.connect(self.loadProject)
-        self.stack.addWidget(self.iface.mapCanvas())     
         self.stack.addWidget(self.projectwidget)
         self.stack.addWidget(self.helppage)
         self.stack.addWidget(self.errorpage)
