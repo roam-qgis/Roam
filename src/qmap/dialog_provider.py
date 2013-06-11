@@ -35,9 +35,9 @@ class DialogProvider(QObject):
         # to the current projects->layer folder
         
         if layer.editorLayout() == QgsVectorLayer.UiFileLayout:
-            form = os.path.basename(str(layer.editForm()))
+            form = os.path.basename(layer.editForm())
             folder = qmap.currentproject.folder
-            newpath = os.path.join(folder,str(layer.name()),form)
+            newpath = os.path.join(folder, layer.name(), form)
             layer.setEditForm(newpath)
             
         updatemode = feature.id() > 0
@@ -67,7 +67,7 @@ class DialogProvider(QObject):
 
         self.dialog.setModal(True)
         
-        fullscreen = self.dialog.property('fullscreen').toBool()
+        fullscreen = self.dialog.property('fullscreen')
         
         if fullscreen:
             self.dialog.setWindowState(Qt.WindowFullScreen)
@@ -76,7 +76,7 @@ class DialogProvider(QObject):
             self.binder.unbindFeature(feature)
             
             for value in feature.attributes():
-                info("New value %s" % value.toString())
+                info("New value {}".format(value))
     
             if updatemode :
                 self.layer.updateFeature(feature)
@@ -106,7 +106,7 @@ class DialogProvider(QObject):
         """
         self.dialog.hide()
         label = QLabel()
-        label.setText(QString(message))
+        label.setText(message)
         label.setStyleSheet('font: 75 30pt "MS Shell Dlg 2";color: rgb(231, 175, 62);')
         self.item = self.canvas.scene().addWidget(label)
         self.disableToolbars()
@@ -124,6 +124,8 @@ class DialogProvider(QObject):
         # After we commit we have to move the drawing into the correct path.
         # TODO Use a custom field for the id name
         # Images are saved under data/{layername}/images/{id}_{fieldname}
+        raise NotImplementedError
+    
         for image in self.binder.images.itervalues():
             curdir = os.path.dirname(__file__)
             id = self.feature.attributeMap()[self.layer.fieldNameIndex("UniqueID")].toString().toUpper()
