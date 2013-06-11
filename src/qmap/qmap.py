@@ -45,26 +45,6 @@ from project import QMapProject, NoMapToolConfigured
 
 currentproject = None
 
-# Patch QgsFeature to allow . lookup and setting of attributes.
-def __setattr__(feature, name, value):
-    if feature.fieldNameIndex(name) == -1:
-        # Try replacing underscores with spaces
-        if feature.fieldNameIndex(name.replace('_', ' ')) == -1:
-            QgsFeature.__setattr__(feature, name, value)
-            
-    feature[name] = value
-
-def __getattr__(feature, name):
-    if feature.fieldNameIndex(name) == -1:
-        # Try replacing underscores with spaces
-        if feature.fieldNameIndex(name.replace('_', ' ')) == -1:
-            raise AttributeError
-    return feature[name]
-
-from types import MethodType
-QgsFeature.__getattr__ = MethodType(__getattr__, None, QgsFeature)
-QgsFeature.__setattr__ = MethodType(__setattr__, None, QgsFeature)
-
 class QMap():
     layerformmap = []
 
@@ -169,8 +149,8 @@ class QMap():
         self.addatgpsaction = QAction(QIcon(":/icons/gpsadd"), "Add at GPS", self.mainwindow)
 
     def handleHelpLink(self, url):
-        log(url.path().endsWith("exit_qmap"))
-        if url.path().endsWith("exit_qmap"):
+        log(url.path().endswith("exit_qmap"))
+        if url.path().endswith("exit_qmap"):
             self.iface.actionExit().trigger()
             
     def initGui(self):
@@ -368,9 +348,9 @@ class QMap():
         layers = {}
         for layer in QgsMapLayerRegistry.instance().mapLayers().itervalues():
             form = layer.editForm()
-            if form.endsWith(".ui"):
+            if form.endswith(".ui"):
                 self.iface.preloadForm(form)
-            layers[str(layer.name())] = layer
+            layers[layer.name()] = layer
 
         # Enable the raster layers button only if the project contains a raster layer.
         self.toggleRasterAction.setEnabled(self.hasRasterLayers())

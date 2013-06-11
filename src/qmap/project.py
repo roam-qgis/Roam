@@ -23,11 +23,7 @@ def getProjects(projectpath):
     folders = (sorted( [os.path.join(projectpath, item) 
                        for item in os.walk(projectpath).next()[1]]))
     
-    for folder in folders:
-        # The folder name is the display name
-        # Grab the first project file
-        # Look for splash.png
-        # Path to project folder.       
+    for folder in folders:      
         yield QMapProject(folder)
         
 class QMapLayer(object):

@@ -31,7 +31,7 @@ class FeatureItem(QListWidgetItem):
         QListWidgetItem.__init__(self)
         self.feature = feature
         self._layer = layer
-        self.setText("%s on %s" % ( feature.id() , str(layer.name())))
+        self.setText("{} on {}".format(feature.id(), layer.name()))
         
     @property
     def qgsFeature(self):

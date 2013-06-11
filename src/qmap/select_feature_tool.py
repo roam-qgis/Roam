@@ -1,11 +1,11 @@
 from qgis.core import *
 from qgis.gui import QgsMapToolEmitPoint, QgsRubberBand
-from PyQt4.QtCore import pyqtSignal, QVariant, Qt
+from PyQt4.QtCore import pyqtSignal, Qt
 from PyQt4.QtGui import QAction, QCursor, QPixmap
 from utils import log
 
 class SelectFeatureTool(QgsMapToolEmitPoint):
-    foundFeature = pyqtSignal(QgsFeature, QVariant, str)
+    foundFeature = pyqtSignal(QgsFeature, object, str)
     
     def __init__(self, canvas, layer, column, bindto, radius ):
         QgsMapToolEmitPoint.__init__(self, canvas)
@@ -58,7 +58,7 @@ class SelectFeatureTool(QgsMapToolEmitPoint):
         self.layer.nextFeature(feature)
         try:
             index = self.layer.fieldNameIndex(self.column)
-            value = feature.attributeMap()[index].toString()
+            value = feature.attributeMap()[index]
             self.foundFeature.emit(feature, value, self.bindto)
         except KeyError:
             return

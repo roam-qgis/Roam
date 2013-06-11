@@ -25,14 +25,14 @@ class BindingError(Exception):
         Exception.__init__(self)
         self.control = control
         self.value = value
-        self.message = "Couldn't bind %s to %s" % (control.objectName(), value)
+        self.message = "Couldn't bind {} to {}".format(control.objectName(), value)
         self.reason = reason
 
 
 class ControlNotFound(Exception):
     def __init__(self, control_name):
         Exception.__init__(self)
-        self.message = "Can't find control called %s" % (control_name)
+        self.message = "Can't find control called {}".format(control_name)
 
 
 class MandatoryGroup(QObject):
@@ -47,8 +47,8 @@ class MandatoryGroup(QObject):
         # false if value has been completed.
         self.mapping = {QComboBox: lambda w: comboboxvalidate(w),
                         QCheckBox: lambda w: w.checkState() == Qt.Unchecked,
-                        QLineEdit: lambda w: w.text().isEmpty(),
-                        QTextEdit: lambda w: w.toPlainText().isEmpty(),
+                        QLineEdit: lambda w: not w.text(),
+                        QTextEdit: lambda w: not w.toPlainText(),
                         QDateTimeEdit: lambda w: w.dateTime() == \
                                          QDateTime(2000, 1, 1, 00, 00, 00, 0),
                        }
@@ -69,7 +69,7 @@ class MandatoryGroup(QObject):
                            }
         
         def comboboxvalidate(w):
-            return w.currentText().isEmpty() or w.currentText() == "(no selection)"
+            return not w.currentText() or w.currentText() == "(no selection)"
 
         def comboxboxchanges(w, m):
             if w.isEditable():
@@ -161,7 +161,7 @@ class FormBinder(QObject):
                 continue
 
             if mandatory_fields:
-                mandatory = control.property("mandatory").toBool()
+                mandatory = control.property("mandatory")
                 if mandatory:
                     buddy = self.getBuddy(control)
                     self.mandatory_group.addWidget(control, buddy)
@@ -174,7 +174,7 @@ class FormBinder(QObject):
                     pass
 
             try:
-                self.bindValueToControl(control, QVariant(value), index)
+                self.bindValueToControl(control, value, index)
             except BindingError as er:
                 warning(er.reason)
 
@@ -188,7 +188,7 @@ class FormBinder(QObject):
             label = self.getBuddy(control)
             if label is control: return
             if label is None: return
-            text = '<a href="%s">%s<a>' % (helpfile, label.text())
+            text = '<a href="{}">{}<a>'.format(helpfile, label.text())
             label.setText(text)
             label.linkActivated.connect(self.showHelp)
     
@@ -234,7 +234,7 @@ class FormBinder(QObject):
         """
         if isinstance(control, QDateTimeEdit):
             # Can be removed after http://hub.qgis.org/issues/7013 is fixed.
-            control.setDateTime(QDateTime.fromString(value.toString(), Qt.ISODate))
+            control.setDateTime(QDateTime.fromString(value, Qt.ISODate))
             try:
                 button = self.getControl(control.objectName() + "_pick", QPushButton)
                 button.setIcon(QIcon(":/icons/calender"))
@@ -254,7 +254,7 @@ class FormBinder(QObject):
                 self.boundControls.append(control)
                 
         elif hasattr(control, 'loadImage'):
-            image = value.toByteArray()
+            image = value
             log("IMAGE FROM FIELD")
             log(image)
             control.loadImage(image)
@@ -265,11 +265,11 @@ class FormBinder(QObject):
                 self.layer.editType(index) == QgsVectorLayer.UniqueValuesEditable):
                 
                 for v in self.layer.dataProvider().uniqueValues(index):
-                    control.addItem(v.toString(), v.toString())
+                    control.addItem(v, v)
                 
                 editable = control.isEditable()
                 
-                control.setEditText(value.toString())
+                control.setEditText(value)
                 self.boundControls.append(control)
                 
             try:
@@ -286,8 +286,7 @@ class FormBinder(QObject):
         feature -- A QgsFeature that will store the new values.
         """
         for control in self.boundControls:
-            name = str(control.objectName())
-            log(name)
+            name = control.objectName()
             if isinstance(control, QDateTimeEdit):
                 value = control.dateTime().toString(Qt.ISODate)
                 log(value)
@@ -299,7 +298,7 @@ class FormBinder(QObject):
                 
             elif hasattr(control, 'getImage'):
                 image = control.getImage()
-                value = QVariant(image)
+                value = image
                 try:
                     feature[name] = value
                 except KeyError:
@@ -313,14 +312,14 @@ class FormBinder(QObject):
         for field, shouldsave in self._getSaveButtons():
             if shouldsave:
                 index = feature.fieldNameIndex(field)
-                tosave[field] = str(feature[field].toString())
+                tosave[field] = feature[field]
                     
         qmaplayer.setSavedValues(self.layer, tosave)
         
     def _getSaveButtons(self):
         buttons = self.forminstance.findChildren(QToolButton)
         for button in buttons:
-            name = str(button.objectName())
+            name = button.objectName()
             if name.endswith('_save'):
                 yield name[:-5], button.isChecked()
 
@@ -332,12 +331,14 @@ class FormBinder(QObject):
         control - The control (QWidget) who owns this drawing.  Its name is used
                   in the naming of the final image.
         """
-        controlname = str(control.objectName())
+        raise NotImplementedError
+    
+        controlname = control.objectName()
         self.forminstance.hide()
         curdir = os.path.dirname(__file__)
-        id = self.feature.attributeMap()[self.layer.fieldNameIndex("UniqueID")].toString()
+        id = self.feature.attributeMap()[self.layer.fieldNameIndex("UniqueID")]
         savedname = str(id) + "_" + controlname + ".jpg"
-        imagename = os.path.join(curdir, "data", str(self.layer.name()), "images", \
+        imagename = os.path.join(curdir, "data", self.layer.name(), "images", \
                                 savedname)
 
         tempname = "drawingFor_{0}".format(controlname)
@@ -399,7 +400,7 @@ class FormBinder(QObject):
         return button.isChecked()
 
     def bindSaveValueButton(self, control, defaults, editingmode=False):
-        name = str(control.objectName())
+        name = control.objectName()
         try:
             button = self.getControl(name + "_save", QToolButton)
         except ControlNotFound:
@@ -416,9 +417,7 @@ class FormBinder(QObject):
         Binds all the buttons on the form that need a select from map action.
         """
         tools = self.forminstance.findChildren(QToolButton, QRegExp('.*_mapselect'))
-        log(tools)
-        layers = {QString(l.name()): l for l in self.canvas.layers()}
-        log(layers)
+        layers = {l.name(): l for l in self.canvas.layers()}
         for tool in tools:
             try:
                 control = self.getControl(tool.objectName()[:-10])
@@ -433,22 +432,22 @@ class FormBinder(QObject):
                 tool.setEnabled(False)
                 continue
 
-            layer_name = tool.property('from_layer').toString()
-            column_name = tool.property('using_column').toString()
+            layer_name = tool.property('from_layer')
+            column_name = tool.property('using_column')
 
             layer = None
             try:
-                layer = layers[QString(layer_name)]
+                layer = layers[layer_name]
             except KeyError:
                 warning('layer not found in list')
                 tool.setEnabled(False)
                 continue
 
-            message = tool.property('message').toString()
+            message = tool.property('message')
             if message.isEmpty():
                 message = "Please select a feature in the map"
 
-            radius, valid = tool.property('radius').toInt()
+            radius, valid = tool.property('radius')
             if not valid:
                 radius = 5
 

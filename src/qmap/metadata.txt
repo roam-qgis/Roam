@@ -10,7 +10,7 @@
 
 [general]
 name= QMap
-qgisMinimumVersion=1.8
+qgisMinimumVersion=2.0
 description= A QGIS based field data collection application 
 version=0.1
 

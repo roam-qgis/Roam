@@ -26,7 +26,7 @@ class ProjectsWidget(QWidget):
                               
     def openProject(self, item):
 #        self.setDisabled(True)
-        project = item.data(QListWidgetItem.UserType).toPyObject()
+        project = item.data(QListWidgetItem.UserType)
         self.selectedProject = project
         self.requestOpenProject.emit(project)
         
