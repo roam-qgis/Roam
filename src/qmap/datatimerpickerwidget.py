@@ -1,5 +1,5 @@
 from PyQt4.QtGui import QDialog,QApplication, QButtonGroup
-from PyQt4.QtCore import QTime, Qt, QDateTime, QString
+from PyQt4.QtCore import QTime, Qt, QDateTime
 from ui_datatimerpicker import Ui_datatimerpicker
 from qgis.core import *
 from utils import log

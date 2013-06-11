@@ -39,7 +39,7 @@ class QMapImageWidget(baseClass, widgetForm):
 	def selectImage(self):
 		# Show the file picker
 		image  = QFileDialog.getOpenFileName(self, "Select Image", "", "Images (*.jpg)")
-		if image is None or image.isEmpty():
+		if image is None or not image:
 			return
 
 		pix = QPixmap(image)
@@ -70,7 +70,7 @@ class QMapImageWidget(baseClass, widgetForm):
 			An empty picture will result in the default placeholder
 			image.
 		"""
-		if data is None or data.isEmpty():
+		if data is None or not data:
 			self.isDefault = True
 			return
 

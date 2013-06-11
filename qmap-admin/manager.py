@@ -1,5 +1,9 @@
+import sip
+sip.setapi("QVariant", 2)
+sip.setapi("QString", 2)
+
 import PyQt4.uic
-from PyQt4.QtCore import QAbstractItemModel, Qt, QString
+from PyQt4.QtCore import QAbstractItemModel, Qt
 from PyQt4.QtGui import (QDialog, QApplication, QListWidgetItem, 
 						QStandardItemModel, QStandardItem, QDataWidgetMapper,
 						QItemSelectionModel)
@@ -64,20 +68,20 @@ class QMapManager(QDialog):
 		index = self.clientlist.selectionModel().currentIndex()
 		item = self.model.itemFromIndex(index)
 		print "Deploying to " + item.text()
-		build.deployTargetByName(str(item.text()))
+		build.deployTargetByName(item.text())
 
 	def update(self, selected, deselected ):
 		index = selected.indexes()[0]
 		self.mapper.setCurrentModelIndex(index)
 		item = self.model.itemFromIndex(index)
-		settings = item.data().toPyObject()
+		settings = item.data()
 
 		for row in xrange(0,self.projectsmodel.rowCount()):
 			index = self.projectsmodel.index(row, 0)
 			item = self.projectsmodel.itemFromIndex(index)
 			item.setCheckState(Qt.Unchecked)
 
-		projects = settings[QString('projects')]
+		projects = settings['projects']
 		
 		for project in projects:
 			project = project[:-4]
