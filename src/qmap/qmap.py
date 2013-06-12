@@ -26,9 +26,8 @@ import utils
 import json
 import sys
 
-from edit_action import EditAction
 from gps_action import GPSAction
-from maptools import MoveTool, PointTool
+from maptools import MoveTool, PointTool, EditTool
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 from PyQt4.QtWebKit import QWebView, QWebPage
@@ -46,8 +45,6 @@ from project import QMapProject, NoMapToolConfigured
 currentproject = None
 
 class QMap():
-    layerformmap = []
-
     def __init__(self, iface):
         self.iface = iface
         self.actions = []
@@ -63,9 +60,12 @@ class QMap():
         self.iface.mapCanvas().grabGesture(Qt.PinchGesture)
         self.iface.mapCanvas().viewport().setAttribute(Qt.WA_AcceptTouchEvents)
         
-        self.movetool = MoveTool(self.iface.mapCanvas(), QMap.layerformmap)
+        self.movetool = MoveTool(self.iface.mapCanvas(), [])
         self.report = SyncReport(self.iface.messageBar())
         self.dialogprovider = DialogProvider(iface.mapCanvas(), iface)
+        
+        self.edittool = EditTool(self.iface.mapCanvas(),[])
+        self.edittool.finished.connect(self.openForm)
         
     def excepthook(self, type, value, tb):           
         msg = ''.join(traceback.format_tb(tb))
@@ -137,8 +137,9 @@ class QMap():
         self.syncAction = QAction(QIcon(":/icons/sync"), "Sync", self.mainwindow)
         self.syncAction.setVisible(False)
 
-        self.editattributesaction = EditAction("Edit Attributes", self.iface)
+        self.editattributesaction = QAction(QIcon(":/icons/edit"), "Edit Attributes", self.mainwindow)
         self.editattributesaction.setCheckable(True)
+        self.editattributesaction.toggled.connect(functools.partial(self.setMapTool, self.edittool))
 
         self.moveaction = QAction(QIcon(":/icons/move"), "Move Feature", self.mainwindow)
         self.moveaction.setCheckable(True)
@@ -364,8 +365,11 @@ class QMap():
         """
         # Remove all the old buttons
         for action in self.actions:
+            self.actionGroup.removeAction(action)
             self.toolbar.removeAction(action)
-                    
+                
+        self.edittool.layers = []
+        self.movetool.layers = []
         for layer in currentproject.getConfiguredLayers():
             try:
                 qgslayer = projectlayers[layer.name]
@@ -404,7 +408,13 @@ class QMap():
                 
             self.actionGroup.addAction(action)
             self.actions.append(action)
-            QMap.layerformmap.append(qgslayer)
+            # TODO Use snapping options from project
+            radius = (QgsTolerance.toleranceInMapUnits( 10, qgslayer,
+                                                        self.iface.mapCanvas().mapRenderer(), 
+                                                        QgsTolerance.Pixels))
+            self.edittool.layers.append(qgslayer)
+            self.edittool.searchRadius = radius
+            self.movetool.layers.append(qgslayer)
             
     def openForm(self, layer, feature):
         if not layer.isEditable():
