@@ -113,7 +113,7 @@ class QMap():
         self.menutoolbar.setAllowedAreas(Qt.LeftToolBarArea)
         self.mainwindow.addToolBar(Qt.LeftToolBarArea, self.menutoolbar)
         
-        self.toolbar = QToolBar("QMap", self.mainwindow)
+        self.toolbar = QToolBar("Raom", self.mainwindow)
         self.mainwindow.addToolBar(Qt.TopToolBarArea, self.toolbar)
         self.toolbar.setMovable(False)
 
@@ -476,7 +476,7 @@ class QMap():
         self.iface.mapCanvas().updateScale()
         self.iface.mapCanvas().freeze(False)
         self.iface.mapCanvas().refresh()
-        self.iface.mainWindow().setWindowTitle("QMap: QGIS Data Collection")
+        self.iface.mainWindow().setWindowTitle("IntraMaps Roam: Moblie Data Collection")
         self.iface.projectRead.emit()
         
     def unload(self):
