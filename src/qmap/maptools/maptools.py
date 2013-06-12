@@ -162,4 +162,4 @@ class PointTool(QgsMapTool):
         return False
 
     def isEditTool(self):
-        return True
+        return False

@@ -1,10 +1,10 @@
 from PyQt4.QtGui import QDialog, QListWidgetItem, QApplication
 from PyQt4.QtCore import pyqtSignal, Qt
-from qgis.core import QgsFeature, QgsMapLayer
+from qgis.core import QgsFeature, QgsVectorLayer
 from ui_listfeatures import Ui_ListFeatueForm
 
 class ListFeaturesForm(QDialog):
-    openFeatureForm = pyqtSignal(QgsFeature, QgsMapLayer)
+    openFeatureForm = pyqtSignal(QgsVectorLayer, QgsFeature)
 
     def __init__(self):
         QDialog.__init__(self)
@@ -24,7 +24,7 @@ class ListFeaturesForm(QDialog):
         feature = item.qgsFeature
         layer = item.layer
         self.close()
-        self.openFeatureForm.emit(feature, layer)
+        self.openFeatureForm.emit(layer, feature)
         
 class FeatureItem(QListWidgetItem):
     def __init__(self, feature, layer):
