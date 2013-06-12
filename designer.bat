@@ -1,19 +1,8 @@
-@echo off
-rem Root OSGEO4W home dir to the same directory this script exists in
+@ECHO OFF
 set OSGEO4W_ROOT=C:\OSGeo4W
-rem Convert double backslashes to single
-set OSGEO4W_ROOT=%OSGEO4W_ROOT:\\=\%
-echo. & echo OSGEO4W home is %OSGEO4W_ROOT% & echo.
-
-set PATH=%OSGEO4W_ROOT%\bin;%PATH%
-
-rem Add application-specific environment settings
-for %%f in ("%OSGEO4W_ROOT%\etc\ini\*.bat") do call "%%f"
-
-rem List available o4w programs
-rem but only if osgeo4w called without parameters
-@echo on
-SET PYTHONPATH=src\qmap\qtcontrols;%PYTHONPATH%;%~dp0\src
+set PATH=%OSGEO4W_ROOT%\bin;%OSGEO4W_ROOT%\apps\qgis-dev\bin;%PATH%
+SET PYTHONHOME=%OSGEO4W_ROOT%\apps\Python27
+set PYTHONPATH=%OSGEO4W_ROOT%\apps\qgis-dev\python;src\qmap\qtcontrols;%~dp0\src;%PYTHONPATH%
 SET PYQTDESIGNERPATH=src\qmap\qtcontrols\plugins
+set QGIS_PREFIX_PATH=%OSGEO4W_ROOT%\apps\qgis-dev\
 START C:\OSGeo4W\bin\designer.exe
-
