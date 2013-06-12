@@ -1,8 +1,6 @@
 import os.path
 import json
 import utils
-import os
-import qmap
 
 values_file = os.path.join(os.environ['APPDATA'], "QMap")
 
@@ -31,10 +29,9 @@ def setSavedValues(layer, values):
 
 
 def getHelpFile(layer, fieldname):
-    folder = qmap.currentproject.folder
-    newpath = os.path.join(folder,str(layer.name()))
-    filename = "%s.html" % str(fieldname)
-    filepath = os.path.join(newpath,"help", filename )
+    folder = os.path.dirname(layer.editForm())
+    filename = "%s.html" % fieldname
+    filepath = os.path.join(folder, "help", filename )
     if os.path.exists(filepath):
         return filepath
     else:

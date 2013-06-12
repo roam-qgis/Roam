@@ -44,24 +44,8 @@ class DialogProvider(QObject):
               
         self.dialog = self.iface.getFeatureForm(layer, feature)
         self.layer = layer
-        self.binder = FormBinder(layer, self.dialog, self.canvas)
-        self.binder.beginSelectFeature.connect(self.selectingFromMap)
-        self.binder.endSelectFeature.connect(self.featureSelected)
-        self.binder.bindFeature(feature, mandatory_fields, updatemode)
-        self.binder.bindSelectButtons()
-
+        
         buttonbox = self.dialog.findChild(QDialogButtonBox)
-        
-        buttonbox.setStandardButtons(QDialogButtonBox.Save | QDialogButtonBox.Cancel )
-        savebutton = buttonbox.button(QDialogButtonBox.Save)
-        
-        if updatemode:
-            savebutton.setText("Update")
-            
-        self.binder.mandatory_group.passed.connect(lambda x = True : savebutton.setEnabled(x))
-        self.binder.mandatory_group.failed.connect(lambda x = False : savebutton.setEnabled(x))
-        self.binder.mandatory_group.validateAll()
-
         buttonbox.rejected.connect(self.rejected)
         buttonbox.rejected.connect(self.dialog.reject)
 
@@ -72,9 +56,7 @@ class DialogProvider(QObject):
         if fullscreen:
             self.dialog.setWindowState(Qt.WindowFullScreen)
         
-        if self.dialog.exec_():
-            self.binder.unbindFeature(feature)
-            
+        if self.dialog.exec_():            
             for value in feature.attributes():
                 info("New value {}".format(value))
     
@@ -82,7 +64,6 @@ class DialogProvider(QObject):
                 self.layer.updateFeature(feature)
             else:
                 self.layer.addFeature(feature)
-                self.binder.saveValues(feature)
             
             saved = self.layer.commitChanges()
             
