@@ -19,8 +19,6 @@ class EditAction(QAction):
         
         self.setIcon(QIcon(":/icons/edit"))
         self.dialogprovider = DialogProvider(self.canvas, iface)
-        self.dialogprovider.accepted.connect(self.setTool)
-        self.dialogprovider.rejected.connect(self.setTool)
         self.setCheckable(True)
         self.band = QgsRubberBand(self.canvas)
         self.band.setColor(QColor.fromRgb(224,162,16))

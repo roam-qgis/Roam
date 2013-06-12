@@ -17,16 +17,6 @@
  ***************************************************************************/
  This script initializes the plugin, making it known to QGIS.
 """
-def name():
-    return "QMap"
-def description():
-    return "A QGIS based field data collection application "
-def version():
-    return "Version 0.1"
-def icon():
-    return "icon.png"
-def qgisMinimumVersion():
-    return "1.8"
 def classFactory(iface):
     from qmap import QMap
     return QMap(iface)

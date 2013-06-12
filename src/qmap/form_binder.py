@@ -13,12 +13,9 @@ from functools import partial
 from datatimerpickerwidget import DateTimePickerDialog
 from drawingpad import DrawingPad
 from helpviewdialog import HelpViewDialog
-from utils import log, warning, appdata
-from qtcontrols.imagewidget import QMapImageWidget
-from qgis.gui import QgsAttributeEditor
 from qgis.core import QgsVectorLayer
-
-
+from qgis.gui import QgsAttributeEditor
+import resources_rc
 
 class BindingError(Exception):
     def __init__(self, control, value, reason=''):
@@ -122,7 +119,31 @@ class MandatoryGroup(QObject):
             self.passed.emit()
         else:
             self.failed.emit()
+            
+def bindForm(dialog, layer, feature, canvas):
+    def dialogaccept():
+        log("Dialog Accept")
+        binder.unbindFeature(feature)
+        binder.saveValues(feature)
+        
+    binder = FormBinder(layer, dialog, canvas)
+    updatemode = feature.id() > 0
+    binder.bindFeature(feature, mandatory_fields=True, editing=updatemode)
+    buttonbox = dialog.findChild(QDialogButtonBox)
+    buttonbox.accepted.connect(dialogaccept)
+        
+    buttonbox.setStandardButtons(QDialogButtonBox.Save | QDialogButtonBox.Cancel )
+    savebutton = buttonbox.button(QDialogButtonBox.Save)
+    
+    if updatemode:
+        savebutton.setText("Update")
 
+    if not layer.isEditable():
+        savebutton.hide()
+
+    binder.mandatory_group.passed.connect(lambda x = True : savebutton.setEnabled(x))
+    binder.mandatory_group.failed.connect(lambda x = False : savebutton.setEnabled(x))
+    binder.mandatory_group.validateAll()
 
 class FormBinder(QObject):
     beginSelectFeature = pyqtSignal(str)
@@ -152,7 +173,7 @@ class FormBinder(QObject):
         
         for index in xrange(qgsfeature.fields().count()):
             value = qgsfeature[index]
-            name = str(qgsfeature.fields()[index].name())
+            name = qgsfeature.fields()[index].name()
             
             try:
                 control = self.getControl(name)
@@ -184,6 +205,8 @@ class FormBinder(QObject):
     def createHelpLink(self, control):
         name = control.objectName()
         helpfile = qmaplayer.getHelpFile(self.layer, name)
+        log(helpfile)
+        log(name)
         if helpfile:
             label = self.getBuddy(control)
             if label is control: return
@@ -255,8 +278,6 @@ class FormBinder(QObject):
                 
         elif hasattr(control, 'loadImage'):
             image = value
-            log("IMAGE FROM FIELD")
-            log(image)
             control.loadImage(image)
             self.boundControls.append(control)
             
@@ -266,9 +287,7 @@ class FormBinder(QObject):
                 
                 for v in self.layer.dataProvider().uniqueValues(index):
                     control.addItem(v, v)
-                
-                editable = control.isEditable()
-                
+                                    
                 control.setEditText(value)
                 self.boundControls.append(control)
                 
@@ -278,6 +297,8 @@ class FormBinder(QObject):
                 control.setValidator(None)
             except AttributeError:
                 pass
+            
+            QgsAttributeEditor.setValue(control, self.layer, index, value)
 
     def unbindFeature(self, feature):
         """
@@ -310,8 +331,9 @@ class FormBinder(QObject):
     def saveValues(self, feature):
         tosave = {}
         for field, shouldsave in self._getSaveButtons():
+            log(field)
+            log(shouldsave)
             if shouldsave:
-                index = feature.fieldNameIndex(field)
                 tosave[field] = feature[field]
                     
         qmaplayer.setSavedValues(self.layer, tosave)
@@ -402,7 +424,7 @@ class FormBinder(QObject):
     def bindSaveValueButton(self, control, defaults, editingmode=False):
         name = control.objectName()
         try:
-            button = self.getControl(name + "_save", QToolButton)
+            button = self.getControl("{}_save".format(name), QToolButton)
         except ControlNotFound:
             return
 
