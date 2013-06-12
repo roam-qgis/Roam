@@ -394,12 +394,14 @@ class QMap():
             
             self.toolbar.insertAction(self.editingmodeaction, action)
             
-            # Connect the GPS tools strip to the action pressed event.                
-            showgpstools = (functools.partial(self.extraaddtoolbar.showToolbar, 
-                                         action,
-                                         None))
-            
-            action.toggled.connect(showgpstools)
+            if not tool.isEditTool():
+                # Connect the GPS tools strip to the action pressed event.                
+                showgpstools = (functools.partial(self.extraaddtoolbar.showToolbar, 
+                                             action,
+                                             None))
+                
+                action.toggled.connect(showgpstools)
+                
             self.actionGroup.addAction(action)
             self.actions.append(action)
             QMap.layerformmap.append(qgslayer)

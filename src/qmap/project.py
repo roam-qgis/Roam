@@ -3,7 +3,7 @@ import glob
 import utils
 import json
 import functools
-from maptools import PointTool, InspectionTool
+from maptools import PointTool, InspectionTool, EditTool
 from qgis.core import QgsMapLayerRegistry, QGis
 
 class NoMapToolConfigured(Exception):
@@ -69,6 +69,8 @@ class QMapLayer(object):
         """
             Returns the map tool configured for this layer.
         """
+        def _getEditTool():
+            return EditTool(canvas = canvas, layers = [self.QGISLayer])
         
         def _getInsectionTool():
             try:
@@ -85,12 +87,16 @@ class QMapLayer(object):
             except KeyError as e:
                 utils.log(e)
                 raise ErrorInMapTool(e)
+            
+        tools = {
+                 "inspection" : _getInsectionTool,
+                 "edit" : _getEditTool
+                 }
                 
         try:
             toolsettings = self.project.layersettings[self.name]["maptool"]
             tooltype = toolsettings["type"]
-            if tooltype == "inspection":
-                return _getInsectionTool()
+            return tools[tooltype]()
         except KeyError:
             pass
         
