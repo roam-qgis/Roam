@@ -4,7 +4,7 @@ import utils
 import json
 import functools
 from maptools import PointTool, InspectionTool, EditTool
-from qgis.core import QgsMapLayerRegistry, QGis
+from qgis.core import QgsMapLayerRegistry, QGis, QgsTolerance
 
 class NoMapToolConfigured(Exception):
     """ 
@@ -70,7 +70,12 @@ class QMapLayer(object):
             Returns the map tool configured for this layer.
         """
         def _getEditTool():
-            return EditTool(canvas = canvas, layers = [self.QGISLayer])
+            radius = (QgsTolerance.toleranceInMapUnits( 10, self.QGISLayer,
+                                                        canvas.mapRenderer(), 
+                                                        QgsTolerance.Pixels))
+            tool = EditTool(canvas = canvas, layers = [self.QGISLayer])
+            tool.searchRadius = radius
+            return tool
         
         def _getInsectionTool():
             try:

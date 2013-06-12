@@ -14,12 +14,11 @@ class EditTool(QgsMapTool):
     
     finished = pyqtSignal(QgsVectorLayer, QgsFeature)
     
-    def __init__(self, canvas, layers):
+    def __init__(self, canvas, layers, snapradius = 2):
         QgsMapTool.__init__(self, canvas)
         self.canvas = canvas
         self.layers = layers
-        self.searchRadius = (QgsTolerance.toleranceInMapUnits( 10, layers[0],
-                                                               self.canvas.mapRenderer(), QgsTolerance.Pixels))
+        self.searchRadius = snapradius
         
         self.band = QgsRubberBand(self.canvas)
         self.band.setColor(QColor.fromRgb(224,162,16))
