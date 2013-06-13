@@ -41,8 +41,18 @@ from dialog_provider import DialogProvider
 import traceback
 from PyQt4.uic import loadUi
 from project import QMapProject, NoMapToolConfigured
+from ui_helppage import Ui_apphelpwidget
 
 currentproject = None
+
+class HelpPage(QWidget):
+    def __init__(self, parent=None):
+        super(HelpPage, self).__init__(parent)
+        self.ui = Ui_apphelpwidget()
+        self.ui.setupUi(self)
+        
+    def setHelpPage(self, helppath):
+        self.ui.webView.load(QUrl.fromLocalFile(helppath))
 
 class QMap():
     def __init__(self, iface):
@@ -149,11 +159,6 @@ class QMap():
 
         self.addatgpsaction = QAction(QIcon(":/icons/gpsadd"), "Add at GPS", self.mainwindow)
 
-    def handleHelpLink(self, url):
-        log(url.path().endswith("exit_qmap"))
-        if url.path().endswith("exit_qmap"):
-            self.iface.actionExit().trigger()
-            
     def initGui(self):
         """
         Create all the icons and setup the tool bars.  Called by QGIS when
@@ -178,11 +183,10 @@ class QMap():
         mainwidget.layout().addWidget(self.stack)
         self.stack.addWidget(wid)
         
-        self.helppage = QWebView()
-        self.helppage.page().setLinkDelegationPolicy(QWebPage.DelegateAllLinks)
-        self.helppage.linkClicked.connect(self.handleHelpLink)
+        self.helppage = HelpPage()
         helppath = os.path.join(os.path.dirname(__file__) , 'help',"help.html")
-        self.helppage.load(QUrl.fromLocalFile(helppath))
+        self.helppage.setHelpPage(helppath)
+        self.helppage.ui.pushButton.pressed.connect(self.iface.actionExit().trigger)
         
         errorui = os.path.join(os.path.dirname(__file__) ,"ui_error.ui")
         self.errorpage = loadUi(errorui)
