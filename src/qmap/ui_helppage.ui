@@ -51,7 +51,7 @@
       <string notr="true">background-color: rgb(255, 226, 139);</string>
      </property>
      <property name="text">
-      <string>Exit QMap</string>
+      <string>Exit Roam</string>
      </property>
     </widget>
    </item>
