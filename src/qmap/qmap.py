@@ -352,6 +352,9 @@ class QMap():
         currentproject = project
         layers = {}
         for layer in QgsMapLayerRegistry.instance().mapLayers().itervalues():
+            if layer.type() == QgsMapLayer.RasterLayer:
+                continue
+            
             form = layer.editForm()
             if form.endswith(".ui"):
                 self.iface.preloadForm(form)
