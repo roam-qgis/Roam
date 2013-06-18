@@ -14,7 +14,7 @@
 import sys, os
 
 rst_epilog = """
-.. |name| replace:: QMap
+.. |name| replace:: IntraMaps Roam
 """
 
 # If extensions (or modules to document with autodoc) are in another directory,
