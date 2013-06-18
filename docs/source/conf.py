@@ -13,9 +13,8 @@
 
 import sys, os
 
-rst_epilog = """
-.. |name| replace:: IntraMaps Roam
-"""
+rst_prolog = """
+.. |name| replace:: IntraMaps Roam"""
 
 # If extensions (or modules to document with autodoc) are in another directory,
 # add these directories to sys.path here. If the directory is relative to the
