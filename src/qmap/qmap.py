@@ -66,10 +66,7 @@ class QMap():
         self.actionGroup.setExclusive(True)
         self.menuGroup = QActionGroup(self.mainwindow)
         self.menuGroup.setExclusive(True)
-        # Enable pinch zoom in QGIS on Windows 7 and 8
-        self.iface.mapCanvas().grabGesture(Qt.PinchGesture)
-        self.iface.mapCanvas().viewport().setAttribute(Qt.WA_AcceptTouchEvents)
-        
+                
         self.movetool = MoveTool(self.iface.mapCanvas(), [])
         self.report = SyncReport(self.iface.messageBar())
         self.dialogprovider = DialogProvider(iface.mapCanvas(), iface)
