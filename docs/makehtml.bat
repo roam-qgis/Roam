@@ -1,2 +1,3 @@
-make html
+@ECHO OFF
+call make html
 pause
