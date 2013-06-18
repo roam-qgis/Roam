@@ -44,7 +44,7 @@ source_suffix = '.rst'
 master_doc = 'index'
 
 # General information about the project.
-project = u'QMap'
+project = u'IntraMaps Roam'
 copyright = u'2013, Nathan Woodrow'
 
 # The version info for the project you're documenting, acts as replacement for
