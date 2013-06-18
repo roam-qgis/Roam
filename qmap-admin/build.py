@@ -18,7 +18,7 @@ from fabricate import (run,
 from distutils.dir_util import (copy_tree,
                                 remove_tree)
 
-APPNAME = "QMap"
+APPNAME = "IntraMaps Roam"
 curpath = os.path.dirname(os.path.abspath(__file__))
 curpath = os.path.join(curpath, '..')
 srcopyFilesath = join(curpath, "src", "qmap")
