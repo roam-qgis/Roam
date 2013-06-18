@@ -59,17 +59,14 @@ class QMap():
         self.iface = iface
         self.actions = []
         self.navtoolbar = self.iface.mapNavToolToolBar()
-        self.mainwindow = iface.mainWindow()
+        self.mainwindow = self.iface.mainWindow()
         self.iface.projectRead.connect(self.projectOpened)
         self.iface.initializationCompleted.connect(self.setupUI)
-        self.actionGroup = QActionGroup(self.iface.mainWindow())
+        self.actionGroup = QActionGroup(self.mainwindow)
         self.actionGroup.setExclusive(True)
-        self.menuGroup = QActionGroup(self.iface.mainWindow())
+        self.menuGroup = QActionGroup(self.mainwindow)
         self.menuGroup.setExclusive(True)
-        # Enable pinch zoom in QGIS on Windows 7 and 8
-        self.iface.mapCanvas().grabGesture(Qt.PinchGesture)
-        self.iface.mapCanvas().viewport().setAttribute(Qt.WA_AcceptTouchEvents)
-        
+                
         self.movetool = MoveTool(self.iface.mapCanvas(), [])
         self.report = SyncReport(self.iface.messageBar())
         self.dialogprovider = DialogProvider(iface.mapCanvas(), iface)
@@ -95,9 +92,9 @@ class QMap():
         """
         fullscreen = utils.settings["fullscreen"]
         if fullscreen:
-            self.iface.mainWindow().showFullScreen()
+            self.mainwindow.showFullScreen()
         else:
-            self.iface.mainWindow().showMaximized()
+            self.mainwindow.showMaximized()
 
         self.navtoolbar.setMovable(False)
         self.navtoolbar.setAllowedAreas(Qt.TopToolBarArea)
@@ -167,7 +164,7 @@ class QMap():
         
         QApplication.setWindowIcon(QIcon(":/branding/logo"))
         
-        mainwidget = self.iface.mainWindow().centralWidget()
+        mainwidget = self.mainwindow.centralWidget()
         mainwidget.setLayout(QGridLayout())
         mainwidget.layout().setContentsMargins(0,0,0,0)
         
@@ -323,9 +320,9 @@ class QMap():
         Update toolbars to have text and icons, change normal QGIS
         icons to new style
         """
-        self.iface.mainWindow().findChildren(QMenuBar)[0].setVisible(False)
-        self.iface.mainWindow().setStyleSheet("QToolBar {background-color:white}")
-        toolbars = self.iface.mainWindow().findChildren(QToolBar)
+        self.mainwindow.findChildren(QMenuBar)[0].setVisible(False)
+        self.mainwindow.setStyleSheet("QToolBar {background-color:white}")
+        toolbars = self.mainwindow.findChildren(QToolBar)
         for toolbar in toolbars:
             toolbar.setToolButtonStyle(Qt.ToolButtonTextUnderIcon)
             toolbar.setIconSize(QSize(32, 32))
@@ -451,7 +448,7 @@ class QMap():
 
         enabled -- True to enable all the toolbar icons.
         """
-        toolbars = self.iface.mainWindow().findChildren(QToolBar)
+        toolbars = self.mainwindow.findChildren(QToolBar)
         for toolbar in toolbars:
             if toolbar == self.menutoolbar:
                 continue
@@ -483,7 +480,7 @@ class QMap():
         self.iface.mapCanvas().updateScale()
         self.iface.mapCanvas().freeze(False)
         self.iface.mapCanvas().refresh()
-        self.iface.mainWindow().setWindowTitle("IntraMaps Roam: Moblie Data Collection")
+        self.mainwindow.setWindowTitle("IntraMaps Roam: Moblie Data Collection")
         self.iface.projectRead.emit()
         
     def unload(self):
