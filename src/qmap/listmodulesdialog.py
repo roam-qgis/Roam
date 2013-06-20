@@ -1,7 +1,7 @@
 from PyQt4.QtCore import pyqtSignal
 from PyQt4.QtGui import QWidget, QListWidgetItem, QPixmap, QIcon
 from ui_listmodules import Ui_ListModules
-from project import QMapProject, getProjects  
+from project import QMapProject  
 
 # create the dialog for zoom to point
 class ProjectsWidget(QWidget):
@@ -12,9 +12,9 @@ class ProjectsWidget(QWidget):
         self.ui.setupUi(self)
         self.ui.moduleList.itemClicked.connect(self.openProject)
 
-    def loadProjectList(self, path):
+    def loadProjectList(self, projects):
         self.ui.moduleList.clear()
-        for project in getProjects(path):
+        for project in projects:
             if not project.vaild:
                 continue
             item = QListWidgetItem(project.name, self.ui.moduleList, QListWidgetItem.UserType)
