@@ -48,7 +48,6 @@ class DialogProvider(QObject):
                 self.layer.updateFeature(feature)
             else:
                 self.layer.addFeature(feature)
-                self.binder.saveValues(feature)
             
             saved = self.layer.commitChanges()
             
