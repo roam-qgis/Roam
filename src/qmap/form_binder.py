@@ -257,7 +257,10 @@ class FormBinder(QObject):
         """
         if isinstance(control, QDateTimeEdit):
             # Can be removed after http://hub.qgis.org/issues/7013 is fixed.
-            control.setDateTime(QDateTime.fromString(value, Qt.ISODate))
+            if isinstance(value, QDateTime):
+                 control.setDateTime(value)
+            else:
+                control.setDateTime(QDateTime.fromString(value, Qt.ISODate))
             try:
                 button = self.getControl(control.objectName() + "_pick", QPushButton)
                 button.setIcon(QIcon(":/icons/calender"))
