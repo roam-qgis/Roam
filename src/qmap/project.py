@@ -4,7 +4,8 @@ import utils
 import json
 import functools
 from maptools import PointTool, InspectionTool, EditTool
-from qgis.core import QgsMapLayerRegistry, QGis, QgsTolerance
+from qgis.core import QgsMapLayerRegistry, QGis, QgsTolerance, QgsVectorLayer
+from utils import log
 
 class NoMapToolConfigured(Exception):
     """ 
@@ -19,12 +20,16 @@ class ErrorInMapTool(Exception):
     """
     pass
 
-def getProjects(projectpath):
+def getProjects(projectpath, iface=None):
+    """
+    Return QMapProjects inside the set path.  
+    Each folder will be considered a QMap project
+    """
     folders = (sorted( [os.path.join(projectpath, item) 
                        for item in os.walk(projectpath).next()[1]]))
     
     for folder in folders:      
-        yield QMapProject(folder)
+        yield QMapProject(folder, iface)
         
 class QMapLayer(object):
     """
@@ -56,6 +61,14 @@ class QMapLayer(object):
     
     @QGISLayer.setter
     def QGISLayer(self, layer):
+        # If the layer has a ui file then we need to rewrite to be relative
+        # to the current projects->layer folder as QGIS doesn't support that yet.
+        if layer.editorLayout() == QgsVectorLayer.UiFileLayout:
+            form = os.path.basename(layer.editForm())
+            newpath = os.path.join(self.folder, form)
+            layer.setEditForm(newpath)
+            self.project.iface.preloadForm(newpath)
+
         self._qgslayer = layer
         
     def _getLayer(self, name):
@@ -114,13 +127,15 @@ class QMapLayer(object):
 class QMapProject(object):
     """
         A QMap project represented as a folder on the disk.  Each project folder
-        can contain a single QGIS project, a splash icon, name, and a list of layer folders.
+        can contain a single QGIS project, a splash icon, name, 
+        and a list of layer represented as folders.
     """
-    def __init__(self, rootfolder):
+    def __init__(self, rootfolder, iface):
         self.folder = rootfolder
         self._project = None
         self._splash = None 
         self._isVaild = True
+        self.iface = iface
         
     @property
     def name(self):

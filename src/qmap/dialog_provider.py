@@ -1,14 +1,9 @@
 import os.path
 import os
-from form_binder import FormBinder
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
-from utils import Timer, log, info, warning, error
-import tempfile
-from ui_errorlist import Ui_Dialog
+from utils import log, info, warning, error
 from qgis.gui import QgsMessageBar
-from qgis.core import QgsVectorLayer
-import qmap
 
 class DialogProvider(QObject):
     """
@@ -29,19 +24,8 @@ class DialogProvider(QObject):
         Opens a form for the given feature
 
         @refactor: This really needs to be cleaned up.
-        """
+        """            
         
-        # If the layer has a ui file then we need to rewrite to be relative
-        # to the current projects->layer folder
-        
-        if layer.editorLayout() == QgsVectorLayer.UiFileLayout:
-            form = os.path.basename(layer.editForm())
-            folder = qmap.currentproject.folder
-            newpath = os.path.join(folder, layer.name(), form)
-            layer.setEditForm(newpath)
-            
-        updatemode = feature.id() > 0
-              
         self.dialog = self.iface.getFeatureForm(layer, feature)
         self.layer = layer
         
@@ -60,7 +44,7 @@ class DialogProvider(QObject):
             for value in feature.attributes():
                 info("New value {}".format(value))
     
-            if updatemode :
+            if feature.id() > 0:
                 self.layer.updateFeature(feature)
             else:
                 self.layer.addFeature(feature)

@@ -40,10 +40,8 @@ from syncing import replication
 from dialog_provider import DialogProvider
 import traceback
 from PyQt4.uic import loadUi
-from project import QMapProject, NoMapToolConfigured
+from project import QMapProject, NoMapToolConfigured, getProjects
 from ui_helppage import Ui_apphelpwidget
-
-currentproject = None
 
 class HelpPage(QWidget):
     def __init__(self, parent=None):
@@ -74,17 +72,21 @@ class QMap():
         self.edittool = EditTool(self.iface.mapCanvas(),[])
         self.edittool.finished.connect(self.openForm)
         
-    def excepthook(self, type, value, tb):           
+    @property
+    def _mapLayers(self):
+        return QgsMapLayerRegistry.instance().mapLayers()
+        
+    def excepthook(self, type, value, tb):
+        """ 
+        Custom exception hook so that we can handle errors in a
+        nicer way
+        """
         msg = ''.join(traceback.format_tb(tb))
         msg += '{0}: {1}'.format(type, value)
         critical(msg)
         self.errorpage.errordetails.setText(msg)
         self.stack.setCurrentIndex(3)
         
-    
-    def installErrorHook(self):
-        sys.excepthook = self.excepthook
-
     def setupUI(self):
         """
         Set up the main QGIS interface items.  Called after QGIS has loaded
@@ -163,6 +165,8 @@ class QMap():
         """
         
         QApplication.setWindowIcon(QIcon(":/branding/logo"))
+        self.mainwindow.findChildren(QMenuBar)[0].setVisible(False)
+        self.mainwindow.setStyleSheet("QToolBar {background-color:white}")
         
         mainwidget = self.mainwindow.centralWidget()
         mainwidget.setLayout(QGridLayout())
@@ -193,7 +197,7 @@ class QMap():
         self.stack.addWidget(self.helppage)
         self.stack.addWidget(self.errorpage)
         
-        self.installErrorHook()
+        sys.excepthook = self.excepthook
 
         def createSpacer():
             widget = QWidget()
@@ -297,31 +301,18 @@ class QMap():
         legend = self.iface.legendInterface()
         #Freeze the canvas to save on UI refresh
         self.iface.mapCanvas().freeze()
-        for layer in QgsMapLayerRegistry.instance().mapLayers().values():
+        for layer in self._mapLayers.values():
             if layer.type() == QgsMapLayer.RasterLayer:
                 isvisible = legend.isLayerVisible(layer)
                 legend.setLayerVisible(layer, not isvisible)
         self.iface.mapCanvas().freeze(False)
         self.iface.mapCanvas().refresh()
 
-    def hasRasterLayers(self):
-        """
-        Check if the project has any raster layers.
-
-        Returns: True if there is a raster layer, else False.
-        """
-        for layer in QgsMapLayerRegistry.instance().mapLayers().values():
-            if layer.type() == QgsMapLayer.RasterLayer:
-                return True
-        return False
-
     def setupIcons(self):
         """
         Update toolbars to have text and icons, change normal QGIS
         icons to new style
         """
-        self.mainwindow.findChildren(QMenuBar)[0].setVisible(False)
-        self.mainwindow.setStyleSheet("QToolBar {background-color:white}")
         toolbars = self.mainwindow.findChildren(QToolBar)
         for toolbar in toolbars:
             toolbar.setToolButtonStyle(Qt.ToolButtonTextUnderIcon)
@@ -343,25 +334,17 @@ class QMap():
         """
             Called when a new project is opened in QGIS.
         """
-        projectpath = str(QgsProject.instance().fileName())
-        project = QMapProject(os.path.dirname(projectpath))
-        global currentproject
-        currentproject = project
-        layers = {}
-        for layer in QgsMapLayerRegistry.instance().mapLayers().itervalues():
-            if layer.type() == QgsMapLayer.RasterLayer:
-                continue
-            
-            form = layer.editForm()
-            if form.endswith(".ui"):
-                self.iface.preloadForm(form)
-            layers[layer.name()] = layer
-
+        projectpath = QgsProject.instance().fileName()
+        project = QMapProject(os.path.dirname(projectpath), self.iface)
+        self.createFormButtons(projectlayers = project.getConfiguredLayers())
+        
         # Enable the raster layers button only if the project contains a raster layer.
-        self.toggleRasterAction.setEnabled(self.hasRasterLayers())
-        self.createFormButtons(layers)
+        hasrasters = any(layer.type() for layer in self._mapLayers.values())
+        self.toggleRasterAction.setEnabled(hasrasters)
         self.defaultextent = self.iface.mapCanvas().extent()
-        self.connectSyncProviders()
+        
+        settings = os.path.join(project.folder, "settings.config")
+        self.connectSyncProviders(settings = settings, basefolder = project.folder)
         
     def createFormButtons(self, projectlayers):
         """
@@ -374,9 +357,13 @@ class QMap():
                 
         self.edittool.layers = []
         self.movetool.layers = []
-        for layer in currentproject.getConfiguredLayers():
+        for layer in projectlayers:
             try:
-                qgslayer = projectlayers[layer.name]
+                qgslayer = QgsMapLayerRegistry.instance().mapLayersByName(layer.name)[0]
+                if qgslayer.type() == QgsMapLayer.RasterLayer:
+                    log("We can't support raster layers for data entry")
+                    continue
+                       
                 layer.QGISLayer = qgslayer
             except KeyError:
                 log("Layer not found in project")
@@ -461,7 +448,8 @@ class QMap():
         self.stack.setCurrentIndex(1)
         self.setUIState(False)
         path = os.path.join(os.path.dirname(__file__), '..' , 'projects/')
-        self.projectwidget.loadProjectList(path)
+        projects = getProjects(path, self.iface)
+        self.projectwidget.loadProjectList(projects)
         
     def loadProject(self, project):
         """
@@ -486,9 +474,7 @@ class QMap():
     def unload(self):
         del self.toolbar
         
-    def connectSyncProviders(self):
-        projectfolder = currentproject.folder
-        settings = os.path.join(projectfolder, "settings.config")
+    def connectSyncProviders(self, settings, basefolder):
         try:
             with open(settings,'r') as f:
                 settings = json.load(f)
@@ -499,11 +485,13 @@ class QMap():
         syncactions = []
         for name, config in settings["providers"].iteritems():
             cmd = config['cmd']
-            cmd = os.path.join(projectfolder, cmd)
+            cmd = os.path.join(basefolder, cmd)
             if config['type'] == 'replication':
                 provider = replication.ReplicationSync(name, cmd)          
                 syncactions.append(provider)
                 
+        #TODO Add support to allow more then one sync button.
+        
         if len(syncactions) == 1: 
             # If one provider is set then we just show a single button.
             self.syncAction.setVisible(True)
