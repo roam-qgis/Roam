@@ -174,6 +174,20 @@ class QMapProject(object):
                 continue
             
             yield QMapLayer(os.path.join(self.folder, layerfolder), self)
+
+    def getPanels(self):
+        import imp
+        log("getPanels")
+        for module in glob.iglob(os.path.join(self.folder, "_panels", '*.py')):
+            modulename = os.path.splitext(os.path.basename(module))[0]
+            log(module)
+            try:
+                panelmod = imp.load_source(modulename, module)
+                yield panelmod.createPanel(self.iface)
+            except ImportError as err:
+                log("Panel import error {}".format(err))
+            except AttributeError:
+                log("No createPanel defined on module {}".format(module))
     
     @property
     def settings(self):
