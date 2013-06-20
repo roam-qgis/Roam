@@ -56,6 +56,7 @@ class QMap():
     def __init__(self, iface):
         self.iface = iface
         self.actions = []
+        self.panels= []
         self.navtoolbar = self.iface.mapNavToolToolBar()
         self.mainwindow = self.iface.mainWindow()
         self.iface.projectRead.connect(self.projectOpened)
@@ -196,7 +197,7 @@ class QMap():
         self.stack.addWidget(self.projectwidget)
         self.stack.addWidget(self.helppage)
         self.stack.addWidget(self.errorpage)
-        
+                
         sys.excepthook = self.excepthook
 
         def createSpacer():
@@ -232,7 +233,6 @@ class QMap():
         
         self.openProjectAction.triggered.connect(self.showOpenProjectDialog)
         self.openProjectAction.triggered.connect(functools.partial(self.stack.setCurrentIndex, 1))
-        self.openProjectAction.triggered.connect(functools.partial(self.setUIState, False))
         
         self.toggleRasterAction.triggered.connect(self.toggleRasterLayers)
 
@@ -257,13 +257,11 @@ class QMap():
         self.mapview = QAction(QIcon(":/icons/map"), "Map", self.menutoolbar)
         self.mapview.setCheckable(True)
         self.mapview.triggered.connect(functools.partial(self.stack.setCurrentIndex, 0))
-        self.mapview.triggered.connect(functools.partial(self.setUIState, True))
         
         self.help = QAction(QIcon(":/icons/help"), "Help", self.menutoolbar)
         self.help.setCheckable(True)
         self.help.triggered.connect(functools.partial(self.stack.setCurrentIndex, 2))
-        self.help.triggered.connect(functools.partial(self.setUIState, False))
-        
+
         self.menuGroup.addAction(self.mapview)
         self.menuGroup.addAction(self.openProjectAction)
         self.menuGroup.addAction(self.help)
@@ -273,6 +271,27 @@ class QMap():
         self.menutoolbar.addAction(self.help)
 
         self.setupIcons()
+        self.stack.currentChanged.connect(self.updateUIState)
+        
+    def updateUIState(self, page):
+        """
+        Update the UI state to reflect the currently selected
+        page in the stacked widget
+        """
+        def setToolbarsActive(enabled):
+            toolbars = self.mainwindow.findChildren(QToolBar)
+            for toolbar in toolbars:
+                if toolbar == self.menutoolbar:
+                    continue
+                toolbar.setEnabled(enabled)
+        
+        def setPanelsVisible(visible):
+            for panel in self.panels:
+                panel.setVisible(visible)
+                
+        ismapview = page == 0
+        setToolbarsActive(ismapview)
+        setPanelsVisible(ismapview)
 
     def addAtGPS(self):
         """
@@ -334,6 +353,10 @@ class QMap():
         """
             Called when a new project is opened in QGIS.
         """
+        for panel in self.panels:
+            self.mainwindow.removeDockWidget(panel)
+            del panel
+
         projectpath = QgsProject.instance().fileName()
         project = QMapProject(os.path.dirname(projectpath), self.iface)
         self.createFormButtons(projectlayers = project.getConfiguredLayers())
@@ -342,9 +365,13 @@ class QMap():
         hasrasters = any(layer.type() for layer in self._mapLayers.values())
         self.toggleRasterAction.setEnabled(hasrasters)
         self.defaultextent = self.iface.mapCanvas().extent()
-        
         settings = os.path.join(project.folder, "settings.config")
         self.connectSyncProviders(settings = settings, basefolder = project.folder)
+        
+        # Show panels
+        self.panels = list(project.getPanels())
+        for panel in self.panels:
+            self.mainwindow.addDockWidget(Qt.BottomDockWidgetArea , panel)
         
     def createFormButtons(self, projectlayers):
         """
@@ -429,24 +456,11 @@ class QMap():
 
         self.dialogprovider.openDialog(feature=feature, layer=layer)
 
-    def setUIState(self, enabled):
-        """
-        Enable or disable the toolbar.
-
-        enabled -- True to enable all the toolbar icons.
-        """
-        toolbars = self.mainwindow.findChildren(QToolBar)
-        for toolbar in toolbars:
-            if toolbar == self.menutoolbar:
-                continue
-            toolbar.setEnabled(enabled)
-
     def showOpenProjectDialog(self):
         """
         Show the project selection dialog.
         """
         self.stack.setCurrentIndex(1)
-        self.setUIState(False)
         path = os.path.join(os.path.dirname(__file__), '..' , 'projects/')
         projects = getProjects(path, self.iface)
         self.projectwidget.loadProjectList(projects)
