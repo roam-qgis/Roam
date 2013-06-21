@@ -71,7 +71,7 @@ class QMapImageWidget(baseClass, widgetForm):
 			image.
 		"""
 		if data is None or not data:
-			self.isDefault = True
+			self.removeImage()
 			return
 
 		pix = QPixmap()
