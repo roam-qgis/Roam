@@ -474,9 +474,11 @@ class QMap():
         utils.log(project.projectfile)
         utils.log(project.vaild)
         
-        if not project.onProjectLoad():
-            log("Not allowed!!!")
-            self.iface.messageBar().pushMessage("Not allowed")
+        (passed, message) = project.onProjectLoad()
+        
+        if not passed:
+            QMessageBox.warning(self.mainwindow, "Project Load Rejected", 
+                                "Project couldn't be loaded because {}".format(message))
             return
         
         self.mapview.trigger()

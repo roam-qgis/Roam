@@ -207,13 +207,13 @@ class QMapProject(object):
             module = importlib.import_module("projects.{}".format(self.name))
         except ImportError as err:
             log(err)
-            return True
+            return True, None
             
         try:
             return module.onProjectLoad()
         except AttributeError:
             log("Not onProjectLoad attribute found")
-            return True
+            return True, None
         
     @property
     def settings(self):
