@@ -126,6 +126,10 @@ def bindForm(dialog, layer, feature, canvas):
         binder.unbindFeature(feature)
         binder.saveValues(feature)
         
+        log("ON ACCCPT")
+        for attr in feature.attributes():
+            log(attr)
+        
     binder = FormBinder(layer, dialog, canvas)
     updatemode = feature.id() > 0
     binder.bindFeature(feature, mandatory_fields=True, editing=updatemode)
@@ -258,7 +262,7 @@ class FormBinder(QObject):
         if isinstance(control, QDateTimeEdit):
             # Can be removed after http://hub.qgis.org/issues/7013 is fixed.
             if isinstance(value, QDateTime):
-                 control.setDateTime(value)
+                control.setDateTime(value)
             else:
                 control.setDateTime(QDateTime.fromString(value, Qt.ISODate))
             try:
@@ -313,7 +317,6 @@ class FormBinder(QObject):
             name = control.objectName()
             if isinstance(control, QDateTimeEdit):
                 value = control.dateTime().toString(Qt.ISODate)
-                log(value)
                 try:
                     feature[name] = value
                 except KeyError as e:

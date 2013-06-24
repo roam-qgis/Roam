@@ -6,6 +6,7 @@ import functools
 from maptools import PointTool, InspectionTool, EditTool
 from qgis.core import QgsMapLayerRegistry, QGis, QgsTolerance, QgsVectorLayer
 from utils import log
+from syncing import replication
 
 class NoMapToolConfigured(Exception):
     """ 
@@ -163,6 +164,13 @@ class QMapProject(object):
                 self._splash = ''
             
         return self._splash
+    
+    def getSyncProviders(self):
+        for name, config in self.settings["providers"].iteritems():
+            cmd = config['cmd']
+            cmd = os.path.join(self.folder, cmd)
+            if config['type'] == 'replication':
+                yield replication.ReplicationSync(name, cmd)
     
     def getConfiguredLayers(self):
         """
