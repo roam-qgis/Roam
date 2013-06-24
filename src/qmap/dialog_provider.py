@@ -49,7 +49,7 @@ class DialogProvider(QObject):
             else:
                 self.layer.addFeature(feature)
             
-            saved = self.layer.commitChanges()
+            saved = self.layer.commitChanges()        
             
             if not saved:
                 self.iface.messageBar().pushMessage("Error",
@@ -62,6 +62,8 @@ class DialogProvider(QObject):
             self.canvas.refresh()
         else:
             self.layer.rollBack()
+            
+        self.layer.startEditing()
 
     def selectingFromMap(self, message):
         """
