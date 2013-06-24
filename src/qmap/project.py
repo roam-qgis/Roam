@@ -7,6 +7,8 @@ from maptools import PointTool, InspectionTool, EditTool
 from qgis.core import QgsMapLayerRegistry, QGis, QgsTolerance, QgsVectorLayer
 from utils import log
 from syncing import replication
+import imp
+import importlib
 
 class NoMapToolConfigured(Exception):
     """ 
@@ -184,7 +186,6 @@ class QMapProject(object):
             yield QMapLayer(os.path.join(self.folder, layerfolder), self)
 
     def getPanels(self):
-        import imp
         log("getPanels")
         for module in glob.iglob(os.path.join(self.folder, "_panels", '*.py')):
             modulename = os.path.splitext(os.path.basename(module))[0]
@@ -196,7 +197,24 @@ class QMapProject(object):
                 log("Panel import error {}".format(err))
             except AttributeError:
                 log("No createPanel defined on module {}".format(module))
-    
+                
+    def onProjectLoad(self):
+        """
+            Call the projects onProjectLoad method defined in projects __init__ module.
+            Returns True if the user is able to load the project, else False
+        """
+        try:
+            module = importlib.import_module("projects.{}".format(self.name))
+        except ImportError as err:
+            log(err)
+            return True
+            
+        try:
+            return module.onProjectLoad()
+        except AttributeError:
+            log("Not onProjectLoad attribute found")
+            return True
+        
     @property
     def settings(self):
         settings = os.path.join(self.folder, "settings.config")

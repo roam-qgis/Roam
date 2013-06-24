@@ -474,6 +474,11 @@ class QMap():
         utils.log(project.projectfile)
         utils.log(project.vaild)
         
+        if not project.onProjectLoad():
+            log("Not allowed!!!")
+            self.iface.messageBar().pushMessage("Not allowed")
+            return
+        
         self.mapview.trigger()
         self.iface.newProject(False)        
         self.iface.mapCanvas().freeze()
