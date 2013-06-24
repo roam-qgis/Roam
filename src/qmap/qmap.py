@@ -36,7 +36,6 @@ from qgis.core import *
 from qgis.gui import QgsMessageBar
 from utils import log, critical
 from floatingtoolbar import FloatingToolBar
-from syncing import replication
 from dialog_provider import DialogProvider
 import traceback
 from PyQt4.uic import loadUi
@@ -129,6 +128,8 @@ class QMap():
 
         self.editingtoolbar = FloatingToolBar("Editing", self.toolbar)
         self.extraaddtoolbar = FloatingToolBar("Extra Add Tools", self.toolbar)
+        self.syncactionstoolbar = FloatingToolBar("Syncing", self.toolbar)
+        self.syncactionstoolbar.setOrientation(Qt.Vertical)
 
     def createActions(self):
         """
@@ -146,7 +147,7 @@ class QMap():
                                           self.mainwindow))
         self.syncAction = QAction(QIcon(":/icons/sync"), "Sync", self.mainwindow)
         self.syncAction.setVisible(False)
-
+        
         self.editattributesaction = QAction(QIcon(":/icons/edit"), "Edit Attributes", self.mainwindow)
         self.editattributesaction.setCheckable(True)
         self.editattributesaction.toggled.connect(functools.partial(self.setMapTool, self.edittool))
@@ -365,8 +366,7 @@ class QMap():
         hasrasters = any(layer.type() for layer in self._mapLayers.values())
         self.toggleRasterAction.setEnabled(hasrasters)
         self.defaultextent = self.iface.mapCanvas().extent()
-        settings = os.path.join(project.folder, "settings.config")
-        self.connectSyncProviders(settings = settings, basefolder = project.folder)
+        self.connectSyncProviders(project)
         
         # Show panels
         self.panels = list(project.getPanels())
@@ -488,31 +488,45 @@ class QMap():
     def unload(self):
         del self.toolbar
         
-    def connectSyncProviders(self, settings, basefolder):
-        try:
-            with open(settings,'r') as f:
-                settings = json.load(f)
-        except IOError:
-            log("No sync providers configured")
+    def connectSyncProviders(self, project):
+        self.syncactionstoolbar.clear()
+        
+        syncactions = list(project.getSyncProviders())
+        
+        # Don't show the sync button if there is no sync providers
+        if not syncactions:
+            self.syncAction.setVisible(False)
             return
         
-        syncactions = []
-        for name, config in settings["providers"].iteritems():
-            cmd = config['cmd']
-            cmd = os.path.join(basefolder, cmd)
-            if config['type'] == 'replication':
-                provider = replication.ReplicationSync(name, cmd)          
-                syncactions.append(provider)
-                
-        #TODO Add support to allow more then one sync button.
+        self.syncAction.setVisible(True)
         
-        if len(syncactions) == 1: 
-            # If one provider is set then we just show a single button.
-            self.syncAction.setVisible(True)
+        for provider in syncactions:
+            action = QAction(QIcon(":/icons/sync"), "Sync {}".format(provider.name), self.mainwindow)
+            action.triggered.connect(functools.partial(self.syncProvider, provider))
+            self.syncactionstoolbar.addAction(action)
+        
+        try:
+            self.syncAction.toggled.disconnect()
+        except TypeError:
+            pass
+        try:
+            self.syncAction.triggered.disconnect()
+        except TypeError:
+            pass
+        
+        if len(syncactions) == 1:
+            # If one provider is set then we just connect the main button.    
+            self.syncAction.setCheckable(False)
+            self.syncAction.setText("Sync")
             self.syncAction.triggered.connect(functools.partial(self.syncProvider, syncactions[0]))
         else:
-            self.syncAction.setVisible(False)
-                
+            # the sync button because a sync menu
+            self.syncAction.setCheckable(True)
+            self.syncAction.setText("Sync Menu")
+            showsyncoptions = (functools.partial(self.syncactionstoolbar.showToolbar, 
+                                                 self.syncAction, None))
+            self.syncAction.toggled.connect(showsyncoptions)
+
     def syncstarted(self):                   
         # Remove the old widget if it's still there.
         # I don't really like this. Seems hacky.
