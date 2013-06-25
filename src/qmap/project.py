@@ -86,9 +86,7 @@ class QMapLayer(object):
             Returns the map tool configured for this layer.
         """
         def _getEditTool():
-            radius = (QgsTolerance.toleranceInMapUnits( 10, self.QGISLayer,
-                                                        canvas.mapRenderer(), 
-                                                        QgsTolerance.Pixels))
+            radius = 10
             tool = EditTool(canvas = canvas, layers = [self.QGISLayer])
             tool.searchRadius = radius
             return tool
@@ -142,7 +140,10 @@ class QMapProject(object):
         
     @property
     def name(self):
-        return os.path.basename(self.folder)
+        try:
+            return self.settings["title"]
+        except KeyError:
+            return os.path.basename(self.folder)
     
     @property
     def projectfile(self):
