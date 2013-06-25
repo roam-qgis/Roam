@@ -1,9 +1,9 @@
 from PyQt4.QtCore import pyqtSignal
-from PyQt4.QtGui import QCursor, QPixmap
+from PyQt4.QtGui import QCursor, QPixmap, QColor
 from qgis.core import (QgsPoint, QgsRectangle, QgsTolerance, 
                        QgsFeatureRequest, QgsFeature, QgsGeometry,
-                       QgsVectorLayer)
-from qgis.gui import QgsMapTool
+                       QgsVectorLayer, QGis)
+from qgis.gui import QgsMapTool, QgsRubberBand
 
 class InspectionTool(QgsMapTool):
     """
@@ -22,9 +22,10 @@ class InspectionTool(QgsMapTool):
         self.layerfrom = layerfrom
         self.layerto = layerto
         self.fields = mapping
-        self.searchRadius = (QgsTolerance.toleranceInMapUnits( 10, layerfrom,
-                                                               self.canvas().mapRenderer(), QgsTolerance.Pixels))
-
+        self.band = QgsRubberBand(canvas, QGis.Polygon )
+        self.band.setColor(QColor.fromRgb(255,0,0))
+        self.band.setWidth(5)
+        
         self.cursor = QCursor(QPixmap(["16 16 3 1",
             "      c None",
             ".     c #FF0000",
@@ -47,13 +48,16 @@ class InspectionTool(QgsMapTool):
             "       +.+      "]))
 
     def canvasReleaseEvent(self, event):
+        searchRadius = (QgsTolerance.toleranceInMapUnits( 5, self.layerfrom,
+                                                           self.canvas().mapRenderer(), QgsTolerance.Pixels))
+
         point = self.toMapCoordinates(event.pos())
 
         rect = QgsRectangle()                                                 
-        rect.setXMinimum(point.x() - self.searchRadius)
-        rect.setXMaximum(point.x() + self.searchRadius)
-        rect.setYMinimum(point.y() - self.searchRadius)
-        rect.setYMaximum(point.y() + self.searchRadius)
+        rect.setXMinimum(point.x() - searchRadius)
+        rect.setXMaximum(point.x() + searchRadius)
+        rect.setYMinimum(point.y() - searchRadius)
+        rect.setYMaximum(point.y() + searchRadius)
         
         rq = QgsFeatureRequest().setFilterRect(rect)
         
@@ -62,6 +66,7 @@ class InspectionTool(QgsMapTool):
         try:
             feature = self.layerto.getFeatures(rq).next()
             self.finished.emit(self.layerto, feature)
+            self.band.setToGeometry(feature.geometry(), self.layerto)
             return
         except StopIteration:
             pass
@@ -71,6 +76,8 @@ class InspectionTool(QgsMapTool):
             # Only supports the first feature
             # TODO build picker to select which feature to inspect
             feature = self.layerfrom.getFeatures(rq).next()
+            self.band.setToGeometry(feature.geometry(), self.layerfrom)
+            
             fields = self.layerto.pendingFields()
             newfeature = QgsFeature(fields)
             newfeature.setGeometry(QgsGeometry(feature.geometry()))
@@ -82,11 +89,11 @@ class InspectionTool(QgsMapTool):
             # Assign the old values to the new feature
             for fieldfrom, fieldto in self.fields.iteritems():      
                 newfeature[fieldto] = feature[fieldfrom]
-                
+            
+            
             self.finished.emit(self.layerto, newfeature)
         except StopIteration:
             pass
-        
 
     def activate(self):
         """
