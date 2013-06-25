@@ -211,7 +211,7 @@ class QMapProject(object):
             
         try:
             return module.onProjectLoad()
-        except AttributeError:
+        except AttributeError as err:
             log("Not onProjectLoad attribute found")
             return True, None
         
