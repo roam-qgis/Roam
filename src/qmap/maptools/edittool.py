@@ -18,7 +18,7 @@ class EditTool(QgsMapTool):
         QgsMapTool.__init__(self, canvas)
         self.canvas = canvas
         self.layers = layers
-        self.searchRadius = snapradius
+        self.radius = snapradius
         
         self.band = QgsRubberBand(self.canvas)
         self.band.setColor(QColor.fromRgb(224,162,16))
@@ -46,13 +46,16 @@ class EditTool(QgsMapTool):
             "       +.+      "]))
         
     def getFeatures(self, point):
+        searchRadius = (QgsTolerance.toleranceInMapUnits( self.radius, self.layers[0],
+                                                        self.canvas.mapRenderer(), 
+                                                        QgsTolerance.Pixels))
         point = self.toMapCoordinates(point)
 
         rect = QgsRectangle()                                                 
-        rect.setXMinimum(point.x() - self.searchRadius)
-        rect.setXMaximum(point.x() + self.searchRadius)
-        rect.setYMinimum(point.y() - self.searchRadius)
-        rect.setYMaximum(point.y() + self.searchRadius)
+        rect.setXMinimum(point.x() - searchRadius)
+        rect.setXMaximum(point.x() + searchRadius)
+        rect.setYMinimum(point.y() - searchRadius)
+        rect.setYMaximum(point.y() + searchRadius)
         
         rq = QgsFeatureRequest().setFilterRect(rect)
 
