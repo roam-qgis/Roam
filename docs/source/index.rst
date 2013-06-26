@@ -9,11 +9,22 @@ Welcome to |name|'s documentation!
 
 .. toctree::
    :maxdepth: 2
+   :numbered: 
+   
+   install/install_qgis
+   
+Client Site Install
+++++++++++++++++++++++++++++++++++   
+
+.. toctree::
+   :maxdepth: 2
+   :numbered: 
+
+   install/melton_install
 
 Indices and tables
 ==================
 
 * :ref:`genindex`
-* :ref:`modindex`
 * :ref:`search`
 

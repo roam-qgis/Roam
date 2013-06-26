@@ -1,1 +1,1 @@
-git checkout-index -f -a --prefix="../Intramaps Roam/"
+git checkout-index -f -a --prefix="../Intramaps Roam Admin/"

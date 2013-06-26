@@ -8,7 +8,7 @@
 
 :Version: 2.0
 
-.. |name| replace:: QMap
+.. |name| replace:: IntraMaps Roam
 .. |f| image:: images/folder.png
 
 .. contents::
