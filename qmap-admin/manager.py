@@ -82,11 +82,17 @@ class QMapManager(QDialog):
 		projects = settings['projects']
 		
 		for project in projects:
-			project = project[:-4]
-			projectitem = self.projectsmodel.findItems(projsect)[0]
+			if project == "All":
+				i = 0
+				while self.projectsmodel.item(i):
+					item = self.projectsmodel.item(i)
+					item.setCheckState(Qt.Checked)
+					i += 1
+				break
+			
+			projectitem = self.projectsmodel.findItems(project)[0]
 		 	projectitem.setCheckState(Qt.Checked)
 				
-
 	def populateClients(self):
 		row = 0
 		for client, settings in self.config['clients'].iteritems():
