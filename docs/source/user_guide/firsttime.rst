@@ -1,5 +1,5 @@
 =================================
-|name| First Time Oerview
+|name| Quickstart
 =================================
 
 Interface overview
@@ -64,9 +64,84 @@ Navigating the map
 
 .. note:: |name| also provides touch panning and Pinch-To-Zoom while the :guilabel:`Pan` tools is selected
 
+Enable/Disable Aerial Photos
++++++++++++++++++++++++++++++
 
+If the project contains aerial photos that can be enabled or disabled by clicking the :guilabel:`Aerial Photos` |btnAerialPhotos| button.  
 
+Editing attribute values
++++++++++++++++++++++++++
 
+Editing attributes is only supported on configured layers.  These layers will be configured by the |name| admin.
+
+1. Select the :guilabel:`Edit Tools` |btnEditTools| menu. 
+2. A pop out menu will be presented
+
+ |btnEditMenu|
+
+3. :guilabel:`Edit Attributes` |btnEditAttributes| will be selected by default
+4. Hover over the feature on the map for editing.  The feature will be highlighted in orange.
+
+	.. image:: ../_static/editselect.png
+	
+5. Single click the feature.
+
+If more the one feature is under the click point you will be presented with a feature selection screen.
+	
+	.. image:: ../_static/editlist.png
+
+5a. Select the feature to edit from the list.
+6. The edit form will open
+
+.. important:: All actions in |name| auto save the feature after they are completed.
+
+Moving Features
+++++++++++++++++++++++++
+
+Editing attributes is only supported on configured layers.  These layers will be configured by the |name| admin.
+
+1. Select the :guilabel:`Edit Tools` |btnEditTools| menu.
+2. A pop out menu will be presented
+
+ |btnEditMenu|
+
+3. Select :guilabel:`Move Feature` |btnMoveFeature|.
+4. Click and drag the feature on the map
+5. Release to finsihed the move.
+
+.. important:: All actions in |name| auto save the feature after they are completed.
+
+Syncing Data Changes
+++++++++++++++++++++++++
+
+Each project can be configured with its own syncing options.  
+The syncing menu will different based on the current project that is loading.
+
+If the project has more then one sync option these will be presented in the
+:guilabel:`Sync Menu` as menu options.
+
+.. image:: ../_static/btnSyncMenu.png
+
+If the project only has a single option the :guilabel:`Sync` button will revert to a single button that
+will start the sync process.
+
+Enable/Disable GPS
+++++++++++++++++++++
+
+**To Enable**
+
+1. Select the :guilabel:`Enable GPS` |btnGPSEnable| button.
+2. The GPS will be enabled and a marker shown on the map
+
+.. note:: 
+	
+	The map view will keep the GPS in view at all times.  
+	The map will automatically pan when the GPS moves out of view.  
+	If you would like to stop this just disable the GPS.
+
+**To Disable**
+
+1. Select the :guilabel:`Disable GPS` |btnGPSDisable| button.
 
 
 

@@ -15,7 +15,13 @@ import sys, os
 
 rst_prolog = """
 .. |name| replace:: IntraMaps Roam
-.. |btnProjects| image:: ../_static/btnProjects.png"""
+.. |btnProjects| image:: ../_static/btnProjects.png
+.. |btnAerialPhotos| image:: ../_static/btnAerialPhotos.png
+.. |btnEditTools| image:: ../_static/btnEditTools.png
+.. |btnEditMenu| image:: ../_static/btnEditMenu.png
+.. |btnEditAttributes| image:: ../_static/btnEditAttributes.png
+.. |btnMoveFeature| image:: ../_static/btnMoveFeature.png
+"""
 
 # If extensions (or modules to document with autodoc) are in another directory,
 # add these directories to sys.path here. If the directory is relative to the
