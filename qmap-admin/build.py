@@ -196,13 +196,11 @@ def deploytarget(clientconfig):
     if 'All' in projects:
         copy_tree(projecthome, clientpojecthome)
     else:
-        projectfolders = (sorted([os.path.join(projecthome, item) 
-                       for item in os.walk(projecthome).next()[1]]))
-        
-        for folder in projectfolders:
-            if os.path.basename(folder) in projects:
-                copy_tree(folder, os.path.join(clientpojecthome, folder))
-
+        for project in projects:
+            source = os.path.join(projecthome, project)
+            dest = os.path.join(clientpojecthome, project)
+            copy_tree(source, dest)
+            
     print "Remote depoly compelete"
 
 if __name__ == "__main__":
