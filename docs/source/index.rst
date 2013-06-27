@@ -13,7 +13,7 @@ Welcome to |name|'s documentation!
    
    install/install_qgis
    
-Client Site Install
+Client Site
 ++++++++++++++++++++++++++++++++++   
 
 .. toctree::
@@ -21,6 +21,26 @@ Client Site Install
    :numbered: 
 
    install/melton_install
+   user_guide/melton_user
+   
+User Guides
+++++++++++++++++++++++++++++++++++ 
+
+.. toctree::
+   :maxdepth: 2
+   :numbered: 
+
+   user_guide/firsttime
+   user_guide/melton_user
+   
+Help and Support
+==================================  
+|name| is fully supported by Digital Mapping Solutions.  
+
+This collection of documents outline the installation, configuration, and user guides for the application.  
+
+Further support and technical queries can be sent to Digital Mapping Solutions for assistance.  
+Please email support@mapsolutions.com.au. 
 
 Indices and tables
 ==================
