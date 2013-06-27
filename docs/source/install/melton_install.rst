@@ -12,50 +12,24 @@ The Melton Firebreak module is a custom module built on the IntraMaps Roam platf
 
 This document is intended for system admins and is to be used as guide when installing |name| for Melton Firebreak.
 
+.. attention::
+	
+	IntraMaps Roam comes in two parts:
+	
+		* **IntraMaps Roam Admin** - The admin tool used to create projects.  Installed on the admin PC
+		* **IntraMaps Roam** - The client data collection application.  Created and installed on the device by **IntraMaps Raom Admin** or the user.
+		
+		**IntraMaps Raom Admin** can be used to manage which projects get installed on which device when installed.
+
 Admin Tool Install
 ==================
 
 1. Install QGIS by following :doc:`install_qgis`
-2. Extract `IntraMaps Roam Admin` into `C:\\IntraMaps Roam Admin`
+2. Extract ``IntraMaps Roam Admin`` into ``C:\IntraMaps Roam Admin``
+
 
 Device Install
-==============+
-
-1. Install QGIS on the device by following :doc:`install_qgis`
-
-.. note:: 
-
-	The following step is only needed if you have a network share on the device.  
-	Having a network share will allow the |name| Admin Tool to install directly on the device
-
-**With network share**
-
-2. Edit `qmap-admin\\targets.config` in the `C:\\IntraMaps Roam Admin` directory to include the path to the network share for `Device 1 Network Share Install`
-
-.. code-block:: json
-	
-	{
-		"clients": {
-			"Device 1 Network Share Install": {
-				"path" : "\\devicename\\share",
-				"projects" : [melton_firebreak]
-			},
-			"Local Install": {
-				"path" : "C:/",
-				"projects" : [melton_firebreak]
-			}
-		}
-	}
-		
-3. Run `Raom Admin.bat` from `C:\\IntraMaps Roam Admin`
-4. Install on the client by:
-	4a. If the device has a network share select **Device 1 Network Share Install** from the **Clients** list
-		1. Select **Install**
-	4b. If no network access or share select **Local Install** from the **Clients** list
-		1. Select **Install**
-		2. Copy the `C:\\IntraMaps Roam` folder onto the device.  Normally `C:\IntraMaps Roam` is a good place but it doesn't matter.
-	
-5. Create a shortcut to `C:\\IntraMaps Roam\Roam.bat` on the device desktop.
+==================
 
 Installing SQL Server Express
 +++++++++++++++++++++++++++++
@@ -90,19 +64,19 @@ Database Creation
 
 Make sure the laptop is connected to the network before doing the following tasks:
 
-1.	Load `GenerateFirePreventionDB.sql` in Management Studio and run/execute the script. This will do the following
+1.	Load ``GenerateFirePreventionDB.sql`` in Management Studio and run/execute the script. This will do the following
 
-	a.	Create the database structure and stored procedures
-	b.	Create fire user with password fire
-	c.	Create linked server to MEL-57
+	*	Create the database structure and stored procedures
+	*	Create fire user with password fire
+	*	Create linked server to MEL-57
 
 After the above script is ran check to see if tables, views, stored procedure, user, and linked server has been created, see next 2 screen shots).
 
-2.	In SQL Management Studio populate the FirePrevention database by running the following: `exec FirePrevention.dbo.refresh_lookup_data`.
+2.	In SQL Management Studio populate the FirePrevention database by running the following: ``exec FirePrevention.dbo.refresh_lookup_data``.
 
 	a.	Open new query window, 
 	b.	select Fire Prevention Database 
-	c.	copy and paste exec FirePrevention.dbo.refresh_lookup_data
+	c.	copy and paste ``exec FirePrevention.dbo.refresh_lookup_data``
 	d.	execute procedure
 
 
@@ -117,12 +91,12 @@ In SQL Management Studio create the subscription.  To do this:
 4.	Select the FirePrevention Database and Publication.  Click Next. 
 5.	Select Run each agent as its Subscriber (pull subscriptions).  Click Next.  
 6.	Select the Subscription Database on the laptop.  Click Next.  
-7.	Click on … 
+7.	Click on ``…``
 8.	Use the following options:
 9.	Use SQL server login 
 
-	* Login: `Fire`
-	* Password: `F1re`
+	* Login: ``Fire``
+	* Password: ``F1re``
 	
 10.	Click Next and accept all defaults.  Click Next again.  
 11.	Tick on Initialize At first synchronisation.   Click Next.  
@@ -134,7 +108,7 @@ l3.	Click Next and then Finish to complete the process.
 Connection String Setup
 ++++++++++++++++++++++++++++++++
 
-Roam needs the connection string configured in different places in order to connect to the server correctly.
+Roam needs the connection string to the local and remote server configured in different places in order to connect correctly.
 
 These places include:
 
@@ -142,16 +116,61 @@ These places include:
 	* Replication Scripts
 	
 ODBC DSN Connection	
-~~~~~~~~~~~~~~~~~~~~
+--------------------
 
-This connection is used by both QGIS and the custom Melton form in order to connect to the database.
+This connection is used by both QGIS and the custom form in order to connect to the local database on the device.
 
-1. Open `C:\\IntraMaps Roam Admin\\projects\\melton_firebreak\\install\\FirePreventionDSN32bit.reg` in text editor
+1. Open ``C:\IntraMaps Roam Admin\projects\melton_firebreak\install\FirePreventionDSN32bit.reg`` in text editor
 
-.. note:: Use FirePreventionDSN64bit.reg if running on a 64bit platform.
+	.. note:: Use FirePreventionDSN64bit.reg if running on a 64bit platform.
 
-2. Replace `"Server"="nathan-dms\\express08"` with the local server install.
+2. Replace ``"Server"="nathan-dms\\express08"`` with the local server install.
 
-.. note:: If defaults were used in the SQL installer `localhost` should also work here.
+	.. note:: If defaults were used in the SQL installer `localhost` should also work here.
 
-3. Run `FirePreventionDSN32bit.reg` to add those entries to the registry
+3. Run ``FirePreventionDSN32bit.reg`` to add those entries to the registry
+
+Replication Connection
+----------------------
+
+1. Open 
+
+Installing IntraMaps Roam
++++++++++++++++++++++++++
+
+1. Install QGIS on the device by following :doc:`install_qgis`
+
+.. note:: 
+
+	The following step is only needed if you have a network share on the device.  
+	Having a network share will allow the |name| Admin Tool to install directly on the device
+
+**With network share**
+
+2. Edit ``qmap-admin\\targets.config`` in the ``C:\IntraMaps Roam Admin`` directory to 
+include the path to the network share for ``Device 1 Network Share Install``
+
+.. code-block:: json
+	
+	{
+		"clients": {
+			"Device 1 Network Share Install": {
+				"path" : "\\devicename\\share",
+				"projects" : [melton_firebreak]
+			},
+			"Local Install": {
+				"path" : "C:/",
+				"projects" : [melton_firebreak]
+			}
+		}
+	}
+		
+3. Run `Raom Admin.bat` from `C:\IntraMaps Roam Admin`
+4. Install on the client by:
+	4a. If the device has a network share select **Device 1 Network Share Install** from the **Clients** list
+		1. Select **Install**
+	4b. If no network access or share select **Local Install** from the **Clients** list
+		1. Select **Install**
+		2. Copy the `C:\IntraMaps Roam` folder onto the device.  Normally `C:\IntraMaps Roam` is a good place but it doesn't matter.
+	
+5. Create a shortcut to `C:\IntraMaps Roam\Roam.bat` on the device desktop.
