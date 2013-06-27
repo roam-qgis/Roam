@@ -6,12 +6,6 @@
 
 Welcome to |name|'s documentation!
 ===================================
-
-.. toctree::
-   :maxdepth: 2
-   :numbered: 
-   
-   install/install_qgis
    
 Client Site
 ++++++++++++++++++++++++++++++++++   
@@ -30,6 +24,7 @@ User Guides
    :maxdepth: 2
    :numbered: 
 
+   install/install_qgis
    user_guide/firsttime
    user_guide/melton_user
    
