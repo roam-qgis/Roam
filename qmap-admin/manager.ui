@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>QMap Admin</string>
+   <string>IntraMaps Roam Admin</string>
   </property>
   <layout class="QGridLayout" name="gridLayout_2">
    <item row="1" column="2">
