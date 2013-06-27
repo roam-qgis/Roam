@@ -51,9 +51,7 @@ class QMapManager(QDialog):
 		PyQt4.uic.loadUi(os.path.join(curdir,'manager.ui'), self)
 		self.model = QStandardItemModel()
 		self.projectsmodel = QStandardItemModel()
-		self.formmodel = QStandardItemModel()
 		self.projectlist.setModel(self.projectsmodel)
-		self.formlist.setModel(self.formmodel)
 		self.clientlist.setModel(self.model)
 		self.clientlist.selectionModel().selectionChanged.connect(self.update)
 		self.installbutton.pressed.connect(self.installToClient)
@@ -85,7 +83,7 @@ class QMapManager(QDialog):
 		
 		for project in projects:
 			project = project[:-4]
-			projectitem = self.projectsmodel.findItems(project)[0]
+			projectitem = self.projectsmodel.findItems(projsect)[0]
 		 	projectitem.setCheckState(Qt.Checked)
 				
 
