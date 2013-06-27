@@ -12,7 +12,6 @@ Client Site
 
 .. toctree::
    :maxdepth: 2
-   :numbered: 
 
    install/melton_install
    user_guide/melton_user
@@ -22,7 +21,6 @@ User Guides
 
 .. toctree::
    :maxdepth: 2
-   :numbered: 
 
    install/install_qgis
    user_guide/firsttime

@@ -181,7 +181,7 @@ Synchronisation of first data
 ++++++++++++++++++++++++++++++
 
 Before we open Roam on the device we nned to populate the database with the data from the server.  
-Some of this information was already downloaded in :ref:`Database Creation` but the other half will need to be downloaded using replication.
+Some of this information was already downloaded in :ref:`Database Creation <Database Creation>` but the other half will need to be downloaded using replication.
 
 To download the inspection data using replication:
 
