@@ -25,8 +25,7 @@ Admin Tool Install
 ==================
 
 1. Install QGIS by following :doc:`install_qgis`
-2. Extract ``IntraMaps Roam Admin`` into ``C:\IntraMaps Roam Admin``
-
+2. Extract ``IntraMaps Roam Admin.zip`` into ``C:\IntraMaps Roam Admin``
 
 Device Install
 ==================
@@ -148,13 +147,6 @@ Installing IntraMaps Roam
 
 1. Install QGIS on the device by following :doc:`install_qgis`
 
-.. note:: 
-
-	The following step is only needed if you have a network share on the device.  
-	Having a network share will allow the |name| Admin Tool to install directly on the device
-
-**With network share**
-
 2. Edit ``qmap-admin\\targets.config`` in the ``C:\IntraMaps Roam Admin`` directory to 
 include the path to the network share for ``Device 1 Network Share Install``
 
@@ -164,14 +156,16 @@ include the path to the network share for ``Device 1 Network Share Install``
 		"clients": {
 			"Device 1 Network Share Install": {
 				"path" : "\\devicename\\share",
-				"projects" : [melton_firebreak]
+				"projects" : ["melton_firebreak"]
 			},
 			"Local Install": {
 				"path" : "C:/",
-				"projects" : [melton_firebreak]
+				"projects" : ["melton_firebreak"]
 			}
 		}
 	}
+	
+	.. note:: If you don't have a network install you can just leave this setting and use Local Install in the later steps
 		
 3. Run `Raom Admin.bat` from `C:\IntraMaps Roam Admin`
 4. Install on the client by:
