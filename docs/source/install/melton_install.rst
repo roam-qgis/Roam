@@ -169,9 +169,9 @@ include the path to the network share for ``Device 1 Network Share Install``
 		
 3. Run `Raom Admin.bat` from `C:\IntraMaps Roam Admin`
 4. Install on the client by:
-	4a. If the device has a network share select **Device 1 Network Share Install** from the **Clients** list
+	4a. If the device has a network share select **Device 1 Network Share Install** from the **Install Configurations** list
 		1. Select **Install**
-	4b. If no network access or share select **Local Install** from the **Clients** list
+	4b. If no network access or share select **Local Install** from the **Install Configurations** list
 		1. Select **Install**
 		2. Copy the `C:\IntraMaps Roam` folder onto the device.  Normally `C:\IntraMaps Roam` is a good place but it doesn't matter.
 	
