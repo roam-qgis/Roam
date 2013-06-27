@@ -133,7 +133,15 @@ This connection is used by both QGIS and the custom form in order to connect to 
 Replication Connection
 ----------------------
 
-1. Open 
+1. Open ``C:\IntraMaps Roam Admin\projects\melton_firebreak\Sync-All.bat``
+2. Change ``nathan-dms\express08`` to local SQL Server instance
+3. Open ``C:\IntraMaps Roam Admin\projects\melton_firebreak\Sync-Inspections.bat``
+2. Change::
+
+	@SET Publisher=DMSAPP01
+	@SET Subscriber=nathan-dms\express08
+
+``Publisher`` should be set to the remote server. ``Subscriber`` to the local SQL Server instance.
 
 Installing IntraMaps Roam
 +++++++++++++++++++++++++
