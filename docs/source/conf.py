@@ -21,6 +21,10 @@ rst_prolog = """
 .. |btnEditMenu| image:: ../_static/btnEditMenu.png
 .. |btnEditAttributes| image:: ../_static/btnEditAttributes.png
 .. |btnMoveFeature| image:: ../_static/btnMoveFeature.png
+.. |btnPick| image:: ../_static/btnPick.png
+.. |btnAddPhoto| image:: ../_static/btnAddPhoto.png
+.. |btnReplacePhoto| image:: ../_static/btnReplacePhoto.png
+.. |btnDeletePhoto| image:: ../_static/btnDeletePhoto.png
 """
 
 # If extensions (or modules to document with autodoc) are in another directory,
@@ -104,7 +108,7 @@ pygments_style = 'sphinx'
 
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
-html_theme = 'nature'
+html_theme = 'sphinxdoc'
 
 # Theme options are theme-specific and customize the look and feel of a theme
 # further.  For a list of options available for each theme, see the

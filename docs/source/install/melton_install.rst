@@ -25,7 +25,7 @@ Admin Tool Install
 ==================
 
 1. Install QGIS by following :doc:`install_qgis`
-2. Extract ``IntraMaps Roam Admin.zip`` into ``C:\IntraMaps Roam Admin``
+2. Extract :file:`IntraMaps Roam Admin.zip` into :file:`C:\IntraMaps Roam Admin`
 
 Device Install
 ==================
@@ -121,7 +121,7 @@ ODBC DSN Connection
 
 This connection is used by both QGIS and the custom form in order to connect to the local database on the device.
 
-1. Open ``C:\IntraMaps Roam Admin\projects\melton_firebreak\install\FirePreventionDSN32bit.reg`` in text editor
+1. Open :file:`C:\IntraMaps Roam Admin\projects\melton_firebreak\install\FirePreventionDSN32bit.reg` in text editor
 
 	.. note:: Use FirePreventionDSN64bit.reg if running on a 64bit platform.
 
@@ -129,15 +129,16 @@ This connection is used by both QGIS and the custom form in order to connect to 
 
 	.. note:: If defaults were used in the SQL installer `localhost` should also work here.
 
-3. Run ``FirePreventionDSN32bit.reg`` to add those entries to the registry
+3. Run :file:`FirePreventionDSN32bit.reg` to add those entries to the registry
 
 Replication Connection
 ----------------------
 
-1. Open ``C:\IntraMaps Roam Admin\projects\melton_firebreak\Sync-All.bat``
+1. Open :file:`C:\IntraMaps Roam Admin\projects\melton_firebreak\Sync-All.bat`
 2. Change ``nathan-dms\express08`` to local SQL Server instance
-3. Open ``C:\IntraMaps Roam Admin\projects\melton_firebreak\Sync-Inspections.bat``
-4. Change::
+
+1. Open :file:`C:\IntraMaps Roam Admin\projects\melton_firebreak\Sync-Inspections.bat`
+2. Change::
 
 	@SET Publisher=DMSAPP01
 	@SET Subscriber=nathan-dms\express08
@@ -148,7 +149,7 @@ Installing IntraMaps Roam
 +++++++++++++++++++++++++
 
 1. Install QGIS on the device by following :doc:`install_qgis`
-2. Edit ``qmap-admin\targets.config`` in the ``C:\IntraMaps Roam Admin`` directory to include the path to the network share for ``Device 1 Network Share Install``
+2. Edit ``qmap-admin\targets.config`` in the :file:`C:\IntraMaps Roam Admin` directory to include the path to the network share for ``Device 1 Network Share Install``
 
 	.. code-block:: json
 		
@@ -167,13 +168,13 @@ Installing IntraMaps Roam
 	
 	.. note:: If you don't have a network install you can just leave this setting and use Local Install in the later steps
 		
-3. Run ``Raom Admin.bat`` from ``C:\IntraMaps Roam Admin``
+3. Run :file:`Raom Admin.bat` from :file:`C:\IntraMaps Roam Admin`
 4. Install on the client by:
 	4a. If the device has a network share select **Device 1 Network Share Install** from the **Install Configurations** list
 		1. Select **Install**
 	4b. If no network access or share select **Local Install** from the **Install Configurations** list
 		1. Select **Install**
-		2. Copy the `C:\IntraMaps Roam` folder onto the device.  Normally `C:\IntraMaps Roam` is a good place but it doesn't matter.
+		2. Copy the :file:`C:\IntraMaps Roam` folder onto the device.  Normally :file:`C:\IntraMaps Roam` is a good place but it doesn't matter.
 	
 5. Create a shortcut to `C:\IntraMaps Roam\Roam.bat` on the device desktop.
 
@@ -185,7 +186,7 @@ Some of this information was already downloaded in :ref:`Database Creation <Data
 
 To download the inspection data using replication:
 
-1. Run ``C:\IntraMaps Roam\projects\melton_firebreak\Sync-Inspections.bat``
+1. Run :file:`C:\IntraMaps Roam\projects\melton_firebreak\Sync-Inspections.bat`
 
 The first sync will take longer than others than any further syncs for that client. Specifically due to having to replicate the Inspection table.
 
