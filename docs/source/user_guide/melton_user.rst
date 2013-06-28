@@ -26,7 +26,7 @@ Conducting Inspections
 ============================
 
 Undertaking a New Inspection
-+++++++++++++++++++++++++++
+++++++++++++++++++++++++++++++
 
 1. Select :guilabel:`Record Firebreak Inspection` from the top menu
 
@@ -40,6 +40,7 @@ Undertaking a New Inspection
 4. The inspection form will open
 
 	.. image:: ../_static/melton_inspectionform.png
+		:scale: 50%
 
 .. _propertyselect:	
 
@@ -253,7 +254,6 @@ Synchronising Inspections Only
 +++++++++++++++++++++++++++++++
 
 1. Select :guilabel:`Sync Inspections` from the :guilabel:`Sync Menu`. This will run a background operation which automatically uploads all inspection data you have created into the master database.
-
 2. Syncing progress will be shown in a message bar above the map
 	
 	.. image:: ../_static/syncinprogress.png
@@ -264,3 +264,14 @@ Synchronising Inspections Only
 
 Synchronising Property and Owner Data
 ++++++++++++++++++++++++++++++++++++++
+
+If you want to refresh the property and owner information.
+
+1. Select the :guilabel:`Sync Property Information` menu option.
+2. Syncing progress will be shown in a message bar above the map
+	
+	.. image:: ../_static/syncinprogress.png
+
+3. The message bar will report success once the sync is complete.
+
+	.. image:: ../_static/synccomplete.png
