@@ -1,6 +1,10 @@
 ====================================
-|name| Melton Firebreak User Guide
+Melton |name| Firebreak User Guide
 ====================================
+
+.. |btnNewInspection| image::  ../_static/melton_btnNewInspection.png
+.. |btnDeleteInspection| image::  ../_static/melton_btnDeleteInspection.png
+.. |btnFollowUp| image:: ../_static/btnFollowUp.png
 
 Introduction
 ============
@@ -36,7 +40,9 @@ Undertaking a New Inspection
 4. The inspection form will open
 
 	.. image:: ../_static/melton_inspectionform.png
-	
+
+.. _propertyselect:	
+
 Undertaking a revist Inspection
 +++++++++++++++++++++++++++++++
 
@@ -60,8 +66,6 @@ If you wish to create a new inspection for the selected property.
 1. Click the :guilabel:`New Inspection` |btnNewInspection| button.
 
 	.. image:: ../_static/melton_btnNewInspectionSection.png
-	
-.. |btnNewInspection| image::  ../_static/melton_btnNewInspection.png
 
 Clicking the :guilabel:`New Inspection` button will archive the exsiting record and reopen an empty form.
 	
@@ -70,7 +74,7 @@ Clicking the :guilabel:`New Inspection` button will archive the exsiting record 
 Property Deatails
 +++++++++++++++++++++++++++
 
-When a new inspection is created the property details section of the inspection form will be populated with information from 
+When a new inspection is created, the property details section of the inspection form will be populated with information from 
 the property and rating system.
 
 .. image:: ../_static/melton_propertydetails.png
@@ -105,6 +109,7 @@ boxes under the work required. The options are:
 
 Any combination of the options for the required works can be selected.  For the Bare Earth and Slash Break 
 selections a distance is to be added into the Distance text box. The default is 3m.
+
 The works compliance date will be populated with the date + 16 days from the current date. The user has the 
 ability to override this by selecting the |btnPick| pick calendar icon next to the field and choosing the date from the date 
 selector. 
@@ -115,6 +120,8 @@ Comments
 ~~~~~~~~~~~~~~~~~~~~~~~~
 
 Comments can be entered in the comments box at the bottom of the form.
+
+.. _attachphotos:
 
 Attaching Photos
 ~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -127,7 +134,7 @@ Each inspection can have up to three (3) photographs assigned to it.
 2. Select the image in the Windows File picker
 3. The image will be added
 
-	.. image:: ../_static/melton_image.png
+	.. image:: ../_static/melton_image1.png
 	
 **To replace a photo**:
 
@@ -135,7 +142,7 @@ Each inspection can have up to three (3) photographs assigned to it.
 
 	.. image:: ../_static/melton_photohover.png
 	
-2. The |btnReplacePhoto| and |btnDeletePhoto| will be shown.
+2. The |btnReplacePhoto| and |btnDeletePhoto| buttons will be shown.
 3. Select |btnReplacePhoto|
 4. Select the image in the Windows File picker
 5. The image will be added
@@ -157,32 +164,74 @@ Each inspection can have up to three (3) photographs assigned to it.
 
 	.. image:: ../_static/melton_photohover.png
 	
-2. The |btnReplacePhoto| and |btnDeletePhoto| will be shown.
+2. The |btnReplacePhoto| and |btnDeletePhoto| buttons will be shown.
 3. Select |btnDeletePhoto|
 4. The image will be removed
 
 	|btnAddPhoto|
+	
+Saving Inspections
+~~~~~~~~~~~~~~~~~~
+
+Simply click the :guilabel:`Save` button at the bottom of the form to save the inspection data.
+
+.. image:: ../_static/melton_save.png
+
+The inspection data will be saved and the map will be updated to reflect the state of the property under inspection.
+
+.. image:: ../_static/savemessage.png
+
+.. image:: ../_static/melton_savedinspection.png
+
+Cancelling Inspection
+~~~~~~~~~~~~~~~~~~~~~~~
+
+If you which to cancel the data entry done on an inspection. Simple click the :guilabel:`Cancel` button
+at the bottom of the form.
+
+.. image:: ../_static/melton_cancel.png
+
+Deleting Inspection Data
+~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The active inpsection data can be deleted using the :guilabel:`Delete Inspection` |btnDeleteInspection| buttton.  A warning will be 
+presented before any data is deleted
+
+.. image:: ../_static/melton_delete.png
 
 
+Conducting Follow up Inspections
+=================================
 
+A follow-up inspection may need to be completed to ensure properties are compliant.  This can be done selecting the :guilabel:`Follow Up` |btnFollowUp| 
+tab and filling in the relivent information when an inspection form is open.
 
+1. Select a property as outlined in :ref:`propertyselect`
+2. Select the :guilabel:`Follow Up` |btnFollowUp| tab
+3. Click the :guilabel:`Add Follow Up` button to add follow up information to an inspection
 
+.. image:: ../_static/melton_followup.png
 
+If the property is still non-compliant at the follow up inspection, this can be flagged by checking the box.  For 
+these properties, a contractor can be chosen from the drop down list of approved contractors and a date 
+chosen from the date picker.
 
+Any comments can be added to the ‘Comments’ box. 
 
+Photos can be also be added in the same manner as for the initial inspection. See :ref:`attachphotos`
 
+Viewing Inspection History
+=================================
 
+Properties that have had multiple inspections over time will show a single record for each inspection in the history panel on the side
+of the inspection form.
 
+.. image:: ../_static/melton_history.png
 
+1. Single click on a item in the list to view the history
 
-
-
-
-
-
-
-
-
-
+	.. image:: ../_static/melton_historyview.png
+	
+.. note:: Images can be viewed in a larger viewer by clicking the image in the report.
 
 

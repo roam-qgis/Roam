@@ -20,7 +20,7 @@ User Guides
 ++++++++++++++++++++++++++++++++++ 
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 3
 
    install/install_qgis
    user_guide/firsttime

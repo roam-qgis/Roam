@@ -1,5 +1,5 @@
 =================================
-|name| Melton Firebreak Install
+Melton |name| Firebreak Install
 =================================
 
 .. toctree::
