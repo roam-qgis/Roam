@@ -111,6 +111,8 @@ Editing attributes is only supported on configured layers.  These layers will be
 
 .. important:: All actions in |name| auto save the feature after they are completed.
 
+.. _syncing:
+
 Syncing Data Changes
 ++++++++++++++++++++++++
 
@@ -124,6 +126,10 @@ If the project has more then one sync option these will be presented in the
 
 If the project only has a single option the :guilabel:`Sync` button will revert to a single button that
 will start the sync process.
+
+A sync progress report can also be viewed by clicking the :guilabel:`Status` button
+
+.. image:: ../_static/syncreport.png
 
 Enable/Disable GPS
 ++++++++++++++++++++

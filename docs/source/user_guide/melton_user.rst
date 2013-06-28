@@ -234,4 +234,33 @@ of the inspection form.
 	
 .. note:: Images can be viewed in a larger viewer by clicking the image in the report.
 
+Syncing Data Changes
+=================================
 
+.. seealso:: :ref:`syncing` for a general overview of the syncing process.
+
+Data Transfer must be completed both at night **after** performing the inspections and again in the morning
+**before** going out into the field.
+
+If errors are encountered, please contact your System Administrator
+
+.. important:: 
+	
+	Please ensure you are connected to the **office network**.  This is important so that a connection
+	to the master database server can be established
+	
+Synchronising Inspections Only
++++++++++++++++++++++++++++++++
+
+1. Select :guilabel:`Sync Inspections` from the :guilabel:`Sync Menu`. This will run a background operation which automatically uploads all inspection data you have created into the master database.
+
+2. Syncing progress will be shown in a message bar above the map
+	
+	.. image:: ../_static/syncinprogress.png
+
+3. The message bar will report success once the sync is complete.
+
+	.. image:: ../_static/synccomplete.png
+
+Synchronising Property and Owner Data
+++++++++++++++++++++++++++++++++++++++

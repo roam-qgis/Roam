@@ -25,6 +25,7 @@ rst_prolog = """
 .. |btnAddPhoto| image:: ../_static/btnAddPhoto.png
 .. |btnReplacePhoto| image:: ../_static/btnReplacePhoto.png
 .. |btnDeletePhoto| image:: ../_static/btnDeletePhoto.png
+.. |btnGPSEnable| image:: ../_static/btnGPSEnable.png
 """
 
 # If extensions (or modules to document with autodoc) are in another directory,
