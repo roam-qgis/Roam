@@ -68,6 +68,8 @@ class QMap():
         self.movetool = MoveTool(self.iface.mapCanvas(), [])
         self.report = SyncReport(self.iface.messageBar())
         self.dialogprovider = DialogProvider(iface.mapCanvas(), iface)
+        self.dialogprovider.accepted.connect(self.clearToolRubberBand)
+        self.dialogprovider.rejected.connect(self.clearToolRubberBand)
         
         self.edittool = EditTool(self.iface.mapCanvas(),[])
         self.edittool.finished.connect(self.openForm)
@@ -75,6 +77,14 @@ class QMap():
     @property
     def _mapLayers(self):
         return QgsMapLayerRegistry.instance().mapLayers()
+        
+    def clearToolRubberBand(self):
+        tool = self.iface.mapCanvas().mapTool()
+        try:
+            tool.clearBand()
+        except AttributeError:
+            # No clearBand method found, but that's cool.
+            pass
         
     def excepthook(self, type, value, tb):
         """ 

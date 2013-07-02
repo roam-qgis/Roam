@@ -46,6 +46,9 @@ class InspectionTool(QgsMapTool):
             "    ++.....+    ",
             "      ++.++     ",
             "       +.+      "]))
+        
+    def clearBand(self):
+        self.band.reset()
 
     def canvasReleaseEvent(self, event):
         searchRadius = (QgsTolerance.toleranceInMapUnits( 5, self.layerfrom,

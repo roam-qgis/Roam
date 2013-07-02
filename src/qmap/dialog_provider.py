@@ -29,9 +29,8 @@ class DialogProvider(QObject):
         self.dialog = self.iface.getFeatureForm(layer, feature)
         self.layer = layer
         
-        buttonbox = self.dialog.findChild(QDialogButtonBox)
-        buttonbox.rejected.connect(self.rejected)
-        buttonbox.rejected.connect(self.dialog.reject)
+        self.dialog.accepted.connect(self.accepted)
+        self.dialog.rejected.connect(self.rejected)
 
         self.dialog.setModal(True)
         
