@@ -6,7 +6,7 @@ import os
 import sys
 import datetime
 import optparse
-import json
+import src.qmap.yaml as yaml
 import fabricate
 
 from os.path import join
@@ -48,7 +48,7 @@ if iswindows:
 def readTargetsConfig():
     try:
         with open(targetspath,'r') as f:
-            config = json.load(f)
+            config = yaml.load(f)
             return config
     except IOError:
         print "Failed to open %s" % targetspath
