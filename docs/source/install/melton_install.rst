@@ -63,7 +63,7 @@ Database Creation
 
 Make sure the laptop is connected to the network before doing the following tasks:
 
-1.	Load ``GenerateFirePreventionDB.sql`` in Management Studio and run/execute the script. This will do the following
+1.	Load ``C:\\IntraMaps Roam Admin\\projects\\melton_firebreak\\_install\\GenerateFirePreventionDB.sql`` in Management Studio and run/execute the script. This will do the following
 
 	*	Create the database structure and stored procedures
 	*	Create fire user with password fire
@@ -121,7 +121,7 @@ ODBC DSN Connection
 
 This connection is used by both QGIS and the custom form in order to connect to the local database on the device.
 
-1. Open :file:`C:\\IntraMaps Roam Admin\\projects\\melton_firebreak\\install\\FirePreventionDSN32bit.reg` in text editor
+1. Open :file:`C:\\IntraMaps Roam Admin\\projects\\melton_firebreak\\_install\\FirePreventionDSN32bit.reg` in text editor
 
 	.. note:: Use FirePreventionDSN64bit.reg if running on a 64bit platform.
 
