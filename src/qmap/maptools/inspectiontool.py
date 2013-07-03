@@ -68,8 +68,8 @@ class InspectionTool(QgsMapTool):
         # then we emit that back to qmap.
         try:
             feature = self.layerto.getFeatures(rq).next()
-            self.finished.emit(self.layerto, feature)
             self.band.setToGeometry(feature.geometry(), self.layerto)
+            self.finished.emit(self.layerto, feature)
             return
         except StopIteration:
             pass
