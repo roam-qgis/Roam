@@ -1,3 +1,10 @@
+import sys
+import os
+
+curdir = os.path.abspath(os.path.dirname(__file__))
+pardir = os.path.join(curdir, '..')
+sys.path.append(pardir)
+
 import sip
 sip.setapi("QVariant", 2)
 sip.setapi("QString", 2)
@@ -7,18 +14,10 @@ from PyQt4.QtCore import QAbstractItemModel, Qt
 from PyQt4.QtGui import (QDialog, QApplication, QListWidgetItem, 
 						QStandardItemModel, QStandardItem, QDataWidgetMapper,
 						QItemSelectionModel)
-import sys
-import os
-import json
-import glob
-
-curdir = os.path.abspath(os.path.dirname(__file__))
-pardir = os.path.join(curdir, '..')
-sys.path.append(pardir)
-
-import build
-
 from collections import namedtuple
+
+import glob
+import build
 
 Project = namedtuple('Project', 'name file splash folder')
 

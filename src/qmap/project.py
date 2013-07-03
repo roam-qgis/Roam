@@ -1,7 +1,7 @@
 import os
 import glob
 import utils
-import json
+import yaml
 import functools
 from maptools import PointTool, InspectionTool, EditTool
 from qgis.core import QgsMapLayerRegistry, QGis, QgsTolerance, QgsVectorLayer
@@ -221,7 +221,7 @@ class QMapProject(object):
         settings = os.path.join(self.folder, "settings.config")
         try:
             with open(settings,'r') as f:
-                return json.load(f)
+                return yaml.load(f)
         except IOError as e:
             utils.warning(e)
             return None
@@ -231,15 +231,3 @@ class QMapProject(object):
         return self.settings["layers"]
         
     
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-        

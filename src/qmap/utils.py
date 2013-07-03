@@ -3,6 +3,7 @@ import logging
 import os
 import json
 import inspect
+import yaml
 
 from PyQt4 import uic
 from PyQt4.QtGui import (QLabel, QDialog, QGridLayout, QLayout)
@@ -27,7 +28,7 @@ critical = lambda msg: _getCallerLogger().critical(msg)
 curdir = os.path.dirname(__file__)
 settingspath = os.path.join(curdir,'..','settings.config')
 with open(settingspath,'r') as f:
-    settings = json.load(f)
+    settings = yaml.load(f)
 
 appdata = os.path.join(os.environ['APPDATA'], "QMap")
 
