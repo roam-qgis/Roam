@@ -621,6 +621,7 @@ class QMap():
         provider.syncError.connect(self.report.updateHTML)
         provider.syncError.connect(self.syncerror)
         
+        self.syncactionstoolbar.hide()
         provider.startSync()
         
 class SyncReport(QDialog):
