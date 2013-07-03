@@ -25,7 +25,7 @@ error = lambda msg: _getCallerLogger().error(msg)
 critical = lambda msg: _getCallerLogger().critical(msg)
 
 curdir = os.path.dirname(__file__)
-settingspath = os.path.join(curdir,'settings.config')
+settingspath = os.path.join(curdir,'..','settings.config')
 with open(settingspath,'r') as f:
     settings = json.load(f)
 
