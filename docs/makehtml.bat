@@ -1,3 +1,3 @@
 @ECHO OFF
-call make html
-pause
+cd %~dp0
+call make.bat html
