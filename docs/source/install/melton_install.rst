@@ -151,20 +151,24 @@ Installing IntraMaps Roam
 1. Install QGIS on the device by following :doc:`install_qgis`
 2. Edit ``qmap-admin\targets.config`` in the :file:`C:\\IntraMaps Roam Admin` directory to include the path to the network share for ``Device 1 Network Share Install``
 
-	.. code-block:: json
+	.. code-block:: yaml
 		
-		{
-			"clients": {
-				"Device 1 Network Share Install": {
-					"path" : "\\devicename\\share",
-					"projects" : ["melton_firebreak"]
-				},
-				"Local Install": {
-					"path" : "C:/",
-					"projects" : ["melton_firebreak"]
-				}
-			}
-		}
+		# Config file listing each client how what and where Roam will be installed
+	
+		clients:
+		    Device 1 Network Share Install:
+		        # The install path
+		        path : \\devicename\share
+		
+		        # List of project that will be installed
+		        projects: 
+		            - melton_firebreak
+		
+		    Local Install:
+		        path : C:\
+		        projects:
+		            - melton_firebreak
+
 	
 	.. note:: If you don't have a network install you can just leave this setting and use Local Install in step 4.
 		
@@ -176,7 +180,7 @@ Installing IntraMaps Roam
 		1. Select **Install**
 		2. Copy the :file:`C:\\IntraMaps Roam` folder onto the device.  Normally :file:`C:\\IntraMaps Roam` is a good place but it doesn't matter.
 	
-5. Create a shortcut to `C:\\IntraMaps Roam\Roam.bat` on the device desktop.
+5. Create a shortcut to `C:\\IntraMaps Roam\\Roam.bat` on the device desktop.
 
 Synchronisation of first data 
 ++++++++++++++++++++++++++++++
