@@ -608,7 +608,8 @@ class QMap():
         self.iface.messageBar().pushWidget(self.syncwidget, QgsMessageBar.CRITICAL)
         self.iface.mapCanvas().refresh()
         
-    def syncProvider(self, provider):       
+    def syncProvider(self, provider):
+        self.syncAction.toggle()
         provider.syncStarted.connect(functools.partial(self.syncAction.setEnabled, False))
         provider.syncStarted.connect(self.syncstarted)
         
@@ -621,7 +622,6 @@ class QMap():
         provider.syncError.connect(self.report.updateHTML)
         provider.syncError.connect(self.syncerror)
         
-        self.syncactionstoolbar.hide()
         provider.startSync()
         
 class SyncReport(QDialog):
