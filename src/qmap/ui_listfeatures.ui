@@ -19,13 +19,16 @@
   <property name="windowOpacity">
    <double>1.000000000000000</double>
   </property>
+  <property name="styleSheet">
+   <string notr="true">background-color: rgb(255, 255, 255);</string>
+  </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
     <widget class="QLabel" name="label">
      <property name="font">
       <font>
-       <family>Tahoma</family>
-       <pointsize>23</pointsize>
+       <family>Calibri</family>
+       <pointsize>32</pointsize>
        <weight>75</weight>
        <bold>true</bold>
        <underline>false</underline>
@@ -34,7 +37,7 @@
       </font>
      </property>
      <property name="text">
-      <string>Select asset</string>
+      <string>Select feature</string>
      </property>
      <property name="scaledContents">
       <bool>true</bool>
