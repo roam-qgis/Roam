@@ -54,6 +54,70 @@ Installing SQL Server Express
 		
 			i.	Right mouse click the connection
 			ii.	Select “Restart”
+			
+Connection String Setup
+++++++++++++++++++++++++++++++++
+
+Roam needs the connection string to the local and remote server configured in different places in order to connect correctly.
+
+These places include:
+
+	* :ref:`databasesetup`
+	* :ref:`dnsconnections`
+	* :ref:`replicationconnections`
+	
+.. _databasesetup:	
+	
+Database Setup Scripts
+-----------------------
+
+1.	Open :file:`C:\\IntraMaps Roam Admin\\projects\\melton_firebreak\\_install\\setupdb.bat` in text editor 
+2.	Replace::
+
+		nathan-dms\express08
+	
+	with the local SQL Server install
+3.  Open :file:`C:\\IntraMaps Roam Admin\\projects\\melton_firebreak\\_install\\linkedserver.sql` in text editor
+4.	Replace::
+
+		SET @servername = N'DMSAPP01'
+	
+	with the remote server
+
+.. _dnsconnections:	
+	
+ODBC DSN Connections
+--------------------
+
+This connection is used by both QGIS and the custom form in order to connect to the local database on the device.
+
+1. Open :file:`C:\\IntraMaps Roam Admin\\projects\\melton_firebreak\\_install\\FirePreventionDSN32bit.reg` in text editor
+
+	.. note:: Use FirePreventionDSN64bit.reg if running on a 64bit platform.
+
+2. Replace ``"Server"="nathan-dms\\express08"`` with the local server install.
+
+	.. note:: If defaults were used in the SQL installer `localhost` should also work here.
+
+3. Run :file:`FirePreventionDSN32bit.reg` to add those entries to the registry
+
+.. _replicationconnections:	
+
+Replication Connections
+-----------------------
+
+1.	Open :file:`C:\\IntraMaps Roam Admin\\projects\\melton_firebreak\\Sync-All.bat`
+2.	Change
+
+		``nathan-dms\express08`` 
+	to local SQL Server instance
+1. 	Open :file:`C:\\IntraMaps Roam Admin\\projects\\melton_firebreak\\Sync-Inspections.bat`
+2. 	Change::
+
+		@SET Publisher=DMSAPP01
+		@SET Subscriber=nathan-dms\express08
+
+	``Publisher`` should be set to the remote server. ``Subscriber`` to the local SQL Server instance.
 
 SQL Server Configuration
 +++++++++++++++++++++++++++++++++
@@ -63,23 +127,42 @@ Database Creation
 
 Make sure the laptop is connected to the network before doing the following tasks:
 
-1.	Load ``C:\\IntraMaps Roam Admin\\projects\\melton_firebreak\\_install\\GenerateFirePreventionDB.sql`` in Management Studio and run/execute the script. This will do the following
-
+1.	Run :file:`C:\\IntraMaps Roam Admin\\projects\\melton_firebreak\\_install\\setupdb.bat`
+	
+	It will
+	
 	*	Create the database structure and stored procedures
 	*	Create fire user with password fire
-	*	Create linked server to MEL-57
+	*	Create linked server to @servername
+	
+	The script progress will be reported::
+	
+		Changed database context to 'master'.
+		Changed database context to 'master'.
+		Changed database context to 'FirePrevention2'.
+		Creating tables...
+		 -> [Contractor]...
+		 -> [Status]...
+		 -> [Users]...
+		 -> [Property]...
+		Creating views....
+		 -> [vw_cadastre_unique]...
+		Creating procedures....
+		 -> [refresh_lookup_data]...
+		Database install complete
 
-After the above script is ran check to see if tables, views, stored procedure, user, and linked server has been created, see next 2 screen shots).
+After the above script is ran check to see if tables, views, stored procedure, user, and linked server has been created.
+
+.. image:: ../_static/melton_databaseinstall.png
 
 .. _Database Creation:
 
-2.	In SQL Management Studio populate the FirePrevention database by running the following: ``exec FirePrevention.dbo.refresh_lookup_data``.
+In order to populate the the tables we need to run the ``refresh_lookup_data`` procedure. 
+We also need to extract the cadastre layer from SQL Server into shapefile for faster map rendering
 
-	a.	Open new query window, 
-	b.	select Fire Prevention Database 
-	c.	copy and paste ``exec FirePrevention.dbo.refresh_lookup_data``
-	d.	execute procedure
+To update the tables and extract the cadastre:
 
+1.	Run :file:`C:\\IntraMaps Roam Admin\\projects\\melton_firebreak\\Sync-All.bat`
 
 Replication
 ------------
@@ -105,45 +188,6 @@ In SQL Management Studio create the subscription.  To do this:
 l3.	Click Next and then Finish to complete the process.  
 
 .. note:: If you need to setup the subscription again, remember to delete the client subscription and delete at published also. 
-
-Connection String Setup
-++++++++++++++++++++++++++++++++
-
-Roam needs the connection string to the local and remote server configured in different places in order to connect correctly.
-
-These places include:
-
-	* DSN for data entry form
-	* Replication Scripts
-	
-ODBC DSN Connection	
---------------------
-
-This connection is used by both QGIS and the custom form in order to connect to the local database on the device.
-
-1. Open :file:`C:\\IntraMaps Roam Admin\\projects\\melton_firebreak\\_install\\FirePreventionDSN32bit.reg` in text editor
-
-	.. note:: Use FirePreventionDSN64bit.reg if running on a 64bit platform.
-
-2. Replace ``"Server"="nathan-dms\\express08"`` with the local server install.
-
-	.. note:: If defaults were used in the SQL installer `localhost` should also work here.
-
-3. Run :file:`FirePreventionDSN32bit.reg` to add those entries to the registry
-
-Replication Connection
-----------------------
-
-1. Open :file:`C:\\IntraMaps Roam Admin\\projects\\melton_firebreak\\Sync-All.bat`
-2. Change ``nathan-dms\express08`` to local SQL Server instance
-
-1. Open :file:`C:\\IntraMaps Roam Admin\\projects\\melton_firebreak\\Sync-Inspections.bat`
-2. Change::
-
-	@SET Publisher=DMSAPP01
-	@SET Subscriber=nathan-dms\express08
-
-``Publisher`` should be set to the remote server. ``Subscriber`` to the local SQL Server instance.
 
 Installing IntraMaps Roam
 +++++++++++++++++++++++++
