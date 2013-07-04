@@ -23,8 +23,10 @@ class ReplicationSync(SyncProvider):
         self.process = QProcess()
         self.process.finished.connect(self.complete)
         self.process.started.connect(self.syncStarted)
+        self.process.readyReadStandardError.connect(self.error)
         self.process.readyReadStandardOutput.connect(self.readOutput)
         self._output = ""
+        self.haserror = False
         
     def startSync(self):
         self._output = ""
@@ -38,16 +40,18 @@ class ReplicationSync(SyncProvider):
     def output(self, value):
         self._output = value
         
-    def error(self, code):
-        pass
+    def error(self):
+        self.haserror = True
         
     def complete(self, error, status):   
         self.output += str(self.process.readAll())    
         html = """<h3> {0} sync report </h3>
                   <pre>{1}</pre>""".format(self.name, self.output)
                          
-        if error > 0:
-            log(status)
+        if error > 0 or self.haserror:
+            html = """<h3> {0} Error </h3>
+                  <pre>{1}</pre>""".format(self.name, self.output)
+            self.syncError.emit("Error with sync")
         else:
             self.syncComplete.emit(html)
     
