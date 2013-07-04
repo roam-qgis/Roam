@@ -1,6 +1,6 @@
 @ECHO OFF
 
-call setenv.bat
+call %~dp0setenv.bat
 
-python build.py
+python %~dp0build.py *%
 pause
