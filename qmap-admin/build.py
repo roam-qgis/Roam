@@ -214,4 +214,4 @@ if __name__ == "__main__":
   #                            default=True)
     ]
 
-    main(extra_options=options)
+    fabricate.main(extra_options=options)
