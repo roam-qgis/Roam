@@ -2,5 +2,4 @@
 
 call %~dp0setenv.bat
 
-python %~dp0build.py *%
-pause
+python %~dp0build.py --target %1 deploy
