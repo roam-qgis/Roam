@@ -1,0 +1,7 @@
+MSSpatialEngineWS\bin\Templates\new.map
+MSSpatialEngineWS\bin\Templates\symbols.sym
+MSSpatialEngineWS\bin\gdal18.dll
+MSSpatialEngineWS\bin\libmap.dll
+MSSpatialEngineWS\bin\MSMapEngine.dll
+MSSpatialEngineWS\bin\MSSpatialEngineWS.dll
+
