@@ -18,6 +18,11 @@ move /Y "%PROJECT%\_install" export\_install
 
 (
 	ECHO @ECHO OFF
+	ECHO cscript %%~dp0_install\shortcut.vbs
+) > export\install.bat
+
+(
+	ECHO @ECHO OFF
 	ECHO python %%~dp0_install\update_connections.py
 	ECHO pause
 ) > export\updateconnections.bat
