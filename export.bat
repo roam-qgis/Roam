@@ -4,7 +4,15 @@
 
 CD %~dp0
 call qmap-admin\build.bat "Melton Install"
-xcopy /S /Y projects\melton_firebreak\_install export\_install\
+
+: Over write the project file with the template one
+
+SET PROJECT=export\IntraMaps Roam\projects\melton_firebreak
+move /Y "%PROJECT%\fireinspect.qgs.tmpl" "%PROJECT%\fireinspect.qgs"
+move /Y "%PROJECT%\Sync-All.bat.tmpl" "%PROJECT%\Sync-All.bat"
+move /Y "%PROJECT%\Sync-Inspections.bat.tmpl" "%PROJECT%\Sync-Inspections.bat"
+
+move /Y "%PROJECT%\_install" export\_install
 
 : Write the update connection batch file
 
