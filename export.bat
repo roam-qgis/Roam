@@ -19,12 +19,12 @@ move /Y "%PROJECT%\_install" "%HOME%\_install"
 
 (
 	ECHO @ECHO OFF
-	ECHO cscript %%~dp0_install\shortcut.vbs
+	ECHO cscript "%%~dp0_install\shortcut.vbs"
 ) > "%HOME%\createshorcut.bat"
 
 (
 	ECHO @ECHO OFF
-	ECHO python %%~dp0_install\update_connections.py
+	ECHO python "%%~dp0_install\update_connections.py"
 	ECHO pause
 ) > "%HOME%\updateconnections.bat"
 
