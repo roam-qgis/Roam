@@ -24,14 +24,9 @@ move /Y "%PROJECT%\_install" "%HOME%\_install"
 
 (
 	ECHO @ECHO OFF
-	ECHO python "%%~dp0_install\update_connections.py"
+	ECHO : Set to the address of the local and remote server
+	ECHO Set REMOTESERVER=
+	ECHO Set LOCALSERVER=
+	ECHO python "%%~dp0_install\update_connections.py" %%REMOTESERVER%% %%LOCALSERVER%%
 	ECHO pause
 ) > "%HOME%\updateconnections.bat"
-
-: Write connections settings file used by update_connections.py
-
-(
-	echo # Replace with remote server and local server path
-    echo RemoteServer: PATH TO SERVER
-    echo LocalServer: PATH TO LOCAL SERVER
-) > "%HOME%\connectionstrings.txt"
