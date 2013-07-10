@@ -5,25 +5,19 @@
 @echo off
 
 
-if "%1"=="" GOTO Usage
+if %1=="" GOTO Usage
 
 
 set path="C:\Program Files\WINRAR";%path%
-@rem if "%2"=="" GOTO run
-@rem cd "%2"
 :run
-winrar a -r -sfx %1 -zC:\Projects\vcsharp2008\IntraMaps75\sfx.cfg ^
- -iimgC:\Projects\vcsharp2008\IntraMaps75\DMS.bmp^
- -iiconC:\Projects\vcsharp2008\IntraMaps75\IntraMaps.ico^
- -ibck @C:\Projects\vcsharp2008\IntraMaps75\file.txt
+cd %2
+winrar a -r -sfx %1 -z"%~dp0sfx.cfg" -iimg"%~dp0logo.bmp" -iicon"%~dp0icon.ico"
 
 GOTO Exit
-
 
 :Usage
 echo Usage:
 echo     makesfx ^<sfxname^> [working_folder]
 echo. 
-
 
 :Exit
