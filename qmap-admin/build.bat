@@ -1,6 +1,5 @@
 @ECHO OFF
 
-call setenv.bat
+call %~dp0setenv.bat
 
-python build.py
-pause
+python %~dp0build.py --target %1 deploy
