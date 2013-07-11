@@ -11,7 +11,10 @@ Client Site
 ++++++++++++++++++++++++++++++++++   
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 3
+
+   install/install_qgis
+   user_guide/firsttime
 
    install/melton_install
    user_guide/melton_user

@@ -7,7 +7,7 @@ import qmaplayer
 
 from PyQt4.QtGui import *
 from PyQt4.QtCore import *
-from utils import log, info, warning
+from utils import log, info, warning, openImageViewer
 from select_feature_tool import SelectFeatureTool
 from functools import partial
 from datatimerpickerwidget import DateTimePickerDialog
@@ -133,6 +133,11 @@ def bindForm(dialog, layer, feature, canvas):
     binder = FormBinder(layer, dialog, canvas)
     updatemode = feature.id() > 0
     binder.bindFeature(feature, mandatory_fields=True, editing=updatemode)
+    
+    for control in dialog.findChildren(QWidget):
+        if hasattr(control, 'openRequest'):
+            control.openRequest.connect(openImageViewer)
+            
     buttonbox = dialog.findChild(QDialogButtonBox)
     buttonbox.accepted.connect(dialogaccept)
         
