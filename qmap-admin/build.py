@@ -162,7 +162,7 @@ def build_plugin():
 
 def deploy():
     """ Deploy the target given via the command line """
-    targetname = main.options.target
+    targetname = fabricate.main.options.target
     if targetname is None:
         print "No target name given depolying All target"
         targetname = 'All'
@@ -214,4 +214,4 @@ if __name__ == "__main__":
   #                            default=True)
     ]
 
-    main(extra_options=options)
+    fabricate.main(extra_options=options)
