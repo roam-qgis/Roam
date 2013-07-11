@@ -6,15 +6,16 @@ from PyQt4.QtGui import (QLabel, QDialog, QFileDialog,
 						QPixmap, QGridLayout, QLayout, 
 						QWidget)
 from PyQt4.QtCore import (QByteArray, QBuffer, 
-						QIODevice, QEvent, QObject)
+						QIODevice, QEvent, QObject, pyqtSignal)
 import logging
-from qmap.utils import openImageViewer
 
 basepath = os.path.dirname(__file__)
 uipath = os.path.join(basepath,'imagewidget.ui')
 widgetForm, baseClass= PyQt4.uic.loadUiType(uipath)
 
 class QMapImageWidget(baseClass, widgetForm):
+	openRequest = pyqtSignal(QPixmap)
+	
 	def __init__(self, data=None, parent=None):
 		super(QMapImageWidget, self).__init__(parent)
 		self.setupUi(self)
@@ -33,7 +34,7 @@ class QMapImageWidget(baseClass, widgetForm):
 		if event.type() == QEvent.MouseButtonRelease:
 			if self.isDefault:
 				return QObject.eventFilter(self, parent, event)
-			openImageViewer(self.image.pixmap())
+			self.openRequest.emit(self.image.pixmap())
 		
 		return QObject.eventFilter(self, parent, event)
 	def selectImage(self):
@@ -55,9 +56,8 @@ class QMapImageWidget(baseClass, widgetForm):
 		if self.isDefault:
 			self.selectImage()
 		else:
-			openImageViewer(self.image.pixmap())
+			self.openRequest.emit(self.image.pixmap())
 			
-
 	def loadFromPixMap(self, pixmap):
 		self.image.setScaledContents(True)
 		self.image.setPixmap(pixmap)
