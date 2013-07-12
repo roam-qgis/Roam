@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>815</width>
+    <width>787</width>
     <height>440</height>
    </rect>
   </property>
@@ -20,7 +20,44 @@
    <string>Form</string>
   </property>
   <property name="styleSheet">
-   <string notr="true">QPushButton { font: 75 20pt &quot;Tahoma&quot;; }
+   <string notr="true">QCheckBox::indicator {
+     width: 40px;
+     height: 40px;
+ }
+
+* {
+	font: 20px &quot;Calibri&quot; ;
+font: bold;
+}
+
+QLabel {
+	color: #4f4f4f;
+}
+
+QWidget#datatimerpicker { background-color: rgb(255, 255, 255); }
+
+QPushButton { 
+	border: 1px solid #e1e1e1;
+     padding: 6px;
+	color: #4f4f4f;
+ }
+
+QPushButton:hover { 
+	border: 1px solid #e1e1e1;
+     padding: 6px;
+	background-color: rgb(211, 228, 255);
+ }
+
+QPushButton:checked  { 
+	border: 1px solid #e1e1e1;
+     padding: 6px;
+	background-color: rgb(203, 203, 203);
+ }
+
+QCheckBox {
+	color: #4f4f4f;
+}
+
 </string>
   </property>
   <layout class="QGridLayout" name="gridLayout_2">
@@ -28,11 +65,11 @@
     <widget class="QPushButton" name="setasnowbutton">
      <property name="font">
       <font>
-       <family>Tahoma</family>
-       <pointsize>20</pointsize>
-       <weight>9</weight>
+       <family>Calibri</family>
+       <pointsize>-1</pointsize>
+       <weight>75</weight>
        <italic>false</italic>
-       <bold>false</bold>
+       <bold>true</bold>
       </font>
      </property>
      <property name="text">
@@ -44,7 +81,11 @@
     <widget class="QLabel" name="label">
      <property name="font">
       <font>
-       <pointsize>20</pointsize>
+       <family>Calibri</family>
+       <pointsize>-1</pointsize>
+       <weight>75</weight>
+       <italic>false</italic>
+       <bold>true</bold>
       </font>
      </property>
      <property name="text">
@@ -62,7 +103,11 @@
      </property>
      <property name="font">
       <font>
-       <pointsize>14</pointsize>
+       <family>Calibri</family>
+       <pointsize>-1</pointsize>
+       <weight>75</weight>
+       <italic>false</italic>
+       <bold>true</bold>
       </font>
      </property>
     </widget>
@@ -79,11 +124,11 @@
        </property>
        <property name="font">
         <font>
-         <family>Tahoma</family>
-         <pointsize>16</pointsize>
-         <weight>9</weight>
+         <family>Calibri</family>
+         <pointsize>-1</pointsize>
+         <weight>75</weight>
          <italic>false</italic>
-         <bold>false</bold>
+         <bold>true</bold>
         </font>
        </property>
        <property name="styleSheet">
@@ -161,7 +206,11 @@
        </property>
        <property name="font">
         <font>
-         <pointsize>16</pointsize>
+         <family>Calibri</family>
+         <pointsize>-1</pointsize>
+         <weight>75</weight>
+         <italic>false</italic>
+         <bold>true</bold>
         </font>
        </property>
        <item>
@@ -253,7 +302,7 @@
        </property>
        <property name="minimumSize">
         <size>
-         <width>0</width>
+         <width>100</width>
          <height>100</height>
         </size>
        </property>
@@ -275,7 +324,7 @@
        </property>
        <property name="minimumSize">
         <size>
-         <width>0</width>
+         <width>100</width>
          <height>100</height>
         </size>
        </property>
@@ -302,15 +351,15 @@
      </item>
     </layout>
    </item>
-   <item row="2" column="0" colspan="2">
+   <item row="2" column="0" colspan="3">
     <widget class="QDialogButtonBox" name="buttonBox">
      <property name="font">
       <font>
-       <family>Tahoma</family>
-       <pointsize>12</pointsize>
-       <weight>50</weight>
+       <family>Calibri</family>
+       <pointsize>-1</pointsize>
+       <weight>75</weight>
        <italic>false</italic>
-       <bold>false</bold>
+       <bold>true</bold>
       </font>
      </property>
      <property name="layoutDirection">
