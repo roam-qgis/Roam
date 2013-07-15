@@ -1,7 +1,7 @@
 @ECHO OFF
 
-cd /D %~dp0
+cd /D %~dp0\qmap-admin
 
-call qmap-admin\setenv.bat
-call python qmap-admin\manager.py
+call setenv.bat
+call python manager.py
 pause
