@@ -9,5 +9,6 @@ PATH=%OSGEO4W_ROOT%\bin;%PATH%
 SET PYTHONHOME=%OSGEO4W_ROOT%\apps\Python27
 SET PATH=%PATH%;%OSGEO4W_ROOT%\apps\Python27\Scripts
 
+TITLE IntraMaps Roam Installer
 python "%~dp0_install\postinstall.py" %REMOTESERVER% %LOCALSERVER%
 pause
