@@ -52,6 +52,7 @@ def main(remoteserver, localserver):
             continue
 
 if __name__ == "__main__":
+    print '{0:=^50}'.format('IntraMaps Roam Installer')
     try:
         remoteserver = sys.argv[1]
         localserver = sys.argv[2]
