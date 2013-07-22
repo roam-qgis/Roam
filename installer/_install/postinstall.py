@@ -46,7 +46,11 @@ def main(remoteserver, localserver):
             for filename in postinstall_mod.replace_files:
                 if not os.path.exists(filename):
                     filename = os.path.join(root, '..', filename)
-                replaceconnections(filename, remoteserver, localserver )
+                try:
+                    replaceconnections(filename, remoteserver, localserver )
+                except IOError:
+                    print "Error reading file"
+                    print filename
         except AttributeError:
             print "No replace files found in {}.".format(postinstall)
             continue
