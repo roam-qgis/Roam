@@ -3,12 +3,8 @@
 Set REMOTESERVER=
 Set LOCALSERVER=
 
-
-SET OSGEO4W_ROOT=C:\OSGeo4W
-PATH=%OSGEO4W_ROOT%\bin;%PATH%
-SET PYTHONHOME=%OSGEO4W_ROOT%\apps\Python27
-SET PATH=%PATH%;%OSGEO4W_ROOT%\apps\Python27\Scripts
+CALL setenv.bat
 
 TITLE IntraMaps Roam Installer
-python "%~dp0_install\postinstall.py" %REMOTESERVER% %LOCALSERVER%
+python "%~dp0_install\postinstall.py" --remote_server %REMOTESERVER% --local_server %LOCALSERVER%
 pause
