@@ -1,15 +1,15 @@
 from qgis.core import *
 from qgis.gui import *
-from PyQt4.QtCore import Qt
+from PyQt4.QtCore import Qt, pyqtSignal
 from PyQt4.QtGui import QColor
+from maptool import MapTool
 
-class MoveTool(QgsMapTool):
+class MoveTool(MapTool):
 	def __init__(self, canvas, layers):
-		QgsMapTool.__init__(self, canvas)
+		MapTool.__init__(self, canvas, layers)
 		self.band = None
 		self.feature = None
 		self.startcoord = None
-		self.layers = layers
 
 	def canvasMoveEvent(self, event):
 		"""

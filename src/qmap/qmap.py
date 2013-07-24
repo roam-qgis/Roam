@@ -169,6 +169,20 @@ class QMap():
         self.editingmodeaction.setCheckable(True)
 
         self.addatgpsaction = QAction(QIcon(":/icons/gpsadd"), "Add at GPS", self.mainwindow)
+        
+        self.edittool.layersupdated.connect(self.editattributesaction.setVisible)
+        self.movetool.layersupdated.connect(self.moveaction.setVisible)
+        self.edittool.layersupdated.connect(self.updateEditTools)
+        self.movetool.layersupdated.connect(self.updateEditTools)
+        
+    def updateEditTools(self, *args):
+        """
+            Show or hide the Editing Tools button based on the sub tools.
+        """
+        if self.edittool.layers and self.movetool.layers:  
+            self.editingmodeaction.setVisible(True)
+        else:
+            self.editingmodeaction.setVisible(False)
 
     def initGui(self):
         """
@@ -225,7 +239,6 @@ class QMap():
         gpsspacewidget.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
 
         self.moveaction.toggled.connect(functools.partial(self.setMapTool, self.movetool))
-        
         showediting = (functools.partial(self.editingtoolbar.showToolbar, 
                                          self.editingmodeaction,
                                          self.editattributesaction))
@@ -406,43 +419,48 @@ class QMap():
                 log("Layer not found in project")
                 continue
             
-            text = layer.icontext
-            try:
-                tool = layer.getMaptool(self.iface.mapCanvas())
-            except NoMapToolConfigured:
-                log("No map tool configured")
-                continue
-            
-            # Hack until I fix it later
-            if isinstance(tool, PointTool):
-                add = functools.partial(self.addNewFeature, qgslayer)
-                tool.geometryComplete.connect(add)
-            else:
-                tool.finished.connect(self.openForm)
-     
-            action = QAction(QIcon(layer.icon), text, self.mainwindow)
-            action.setCheckable(True)
-            action.toggled.connect(functools.partial(self.setMapTool, tool))
-            
-            self.toolbar.insertAction(self.editingmodeaction, action)
-            
-            if not tool.isEditTool():
-                # Connect the GPS tools strip to the action pressed event.                
-                showgpstools = (functools.partial(self.extraaddtoolbar.showToolbar, 
-                                             action,
-                                             None))
+            if 'capture' in layer.capabilities:
+                text = layer.icontext
+                try:
+                    tool = layer.getMaptool(self.iface.mapCanvas())
+                except NoMapToolConfigured:
+                    log("No map tool configured")
+                    continue
                 
-                action.toggled.connect(showgpstools)
+                # Hack until I fix it later
+                if isinstance(tool, PointTool):
+                    add = functools.partial(self.addNewFeature, qgslayer)
+                    tool.geometryComplete.connect(add)
+                else:
+                    tool.finished.connect(self.openForm)
+         
+                action = QAction(QIcon(layer.icon), text, self.mainwindow)
+                action.setCheckable(True)
+                action.toggled.connect(functools.partial(self.setMapTool, tool))
                 
-            self.actionGroup.addAction(action)
-            self.actions.append(action)
-            # TODO Use snapping options from project
-            radius = (QgsTolerance.toleranceInMapUnits( 10, qgslayer,
-                                                        self.iface.mapCanvas().mapRenderer(), 
-                                                        QgsTolerance.Pixels))
-            self.edittool.layers.append(qgslayer)
-            self.edittool.searchRadius = radius
-            self.movetool.layers.append(qgslayer)
+                self.toolbar.insertAction(self.editingmodeaction, action)
+                
+                if not tool.isEditTool():
+                    # Connect the GPS tools strip to the action pressed event.                
+                    showgpstools = (functools.partial(self.extraaddtoolbar.showToolbar, 
+                                                 action,
+                                                 None))
+                    
+                    action.toggled.connect(showgpstools)
+                    
+                self.actionGroup.addAction(action)
+                self.actions.append(action)
+            
+            if 'edit' in layer.capabilities:
+                # TODO Use snapping options from project
+                radius = (QgsTolerance.toleranceInMapUnits( 10, qgslayer,
+                                                            self.iface.mapCanvas().mapRenderer(), 
+                                                            QgsTolerance.Pixels))
+                self.edittool.addLayer(qgslayer)
+                self.edittool.searchRadius = radius
+                
+            if 'move' in layer.capabilities:
+                self.movetool.addLayer(qgslayer)
             
     def openForm(self, layer, feature):
         if not layer.isEditable():
