@@ -123,6 +123,17 @@ class QMapLayer(object):
             return PointTool(canvas)
         
         raise NoMapToolConfigured
+    
+    @property
+    def capabilities(self):
+        """
+            The configured capabilities for this layer.
+        """
+        try:
+            rights = self.project.layersettings[self.name]["capabilities"]
+            return rights
+        except KeyError:
+            return ['capture', 'edit', 'move']
         
 
 class QMapProject(object):

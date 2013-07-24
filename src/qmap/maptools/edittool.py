@@ -5,8 +5,9 @@ from qgis.core import (QgsRectangle, QgsTolerance,
                        QgsVectorLayer)
 from qgis.gui import QgsMapTool, QgsRubberBand
 from qmap.listfeatureform import ListFeaturesForm
+from maptool import MapTool
 
-class EditTool(QgsMapTool):
+class EditTool(MapTool):
     """
         Inspection tool which copies the feature to a new layer
         and copies selected data from the underlying feature.
@@ -15,9 +16,8 @@ class EditTool(QgsMapTool):
     finished = pyqtSignal(QgsVectorLayer, QgsFeature)
     
     def __init__(self, canvas, layers, snapradius = 2):
-        QgsMapTool.__init__(self, canvas)
+        MapTool.__init__(self, canvas, layers)
         self.canvas = canvas
-        self.layers = layers
         self.radius = snapradius
         
         self.band = QgsRubberBand(self.canvas)
