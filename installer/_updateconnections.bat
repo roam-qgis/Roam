@@ -1,7 +1,7 @@
 @ECHO OFF
 : Set to the address of the local and remote server
-Set REMOTESERVER=
-Set LOCALSERVER=
+Set REMOTESERVER=None
+Set LOCALSERVER=None
 
 CALL setenv.bat
 

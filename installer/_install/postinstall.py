@@ -1,5 +1,5 @@
 """
-    Find and run all postinstall scripts for all the projects.
+    Post install script for IntraMaps Roam
 """
 
 import imp
@@ -12,7 +12,7 @@ pardir = os.path.join(curdir, '..')
 projectdir = os.path.join(pardir, "projects")
 
 # List of files with connection information for update
-replace_files = ['setenv.bat']
+replace_files = []
 
 def installscripts():
     """
@@ -22,31 +22,39 @@ def installscripts():
         for filename in fnmatch.filter(filenames, 'postinstall.py'):
             yield root, filename
             
-def replaceconnections(filename, **mappings ):
+def replace_tokens(filename, tokens ):
+    """
+        Replace all the tokens in the file 
+        Tokens given as keyword args
+    """
     with open(filename, 'r+') as f:
-        name = os.path.basename(filename)
-        print "Updating {}".format(name)
         text = f.read()
-        for token, value in mappings.items():
-            text = text.replace('{{0}}'.format(token), value)
+        for token, value in tokens.items():
+            token = '{{{0}}}'.format(token)
+            text = text.replace(token, value)
         f.seek(0)
         f.write(text)
         f.truncate()
         
-def replace_files(root, files, **mappings):
+        
+def replace_tokens_in_files(root, files, tokens):
+    """
+        Replace all the tokens in the given files.
+    """
     # Get all the files which need to have their connection strings updated
     for filename in files:
         if not os.path.exists(filename):
             filename = os.path.join(root, '..', filename)
         try:
-            replaceconnections(filename, mappings )
+            replace_tokens(filename, tokens )
+            print "Updated {}".format(os.path.basename(filename))
         except IOError:
             print "Error reading file"
             print filename
     
-def main(**mappings):
+def main(**tokens):
     # Replace the files in root first
-    replace_files(pardir, replace_files, **mappings)
+    replace_tokens_in_files(pardir, replace_files, tokens)
     
     # Run the post install scripts for each installed project.
     for root, postinstall in installscripts():
@@ -61,7 +69,7 @@ def main(**mappings):
             
         try:
             # Get all the files that need values replaced.
-            replace_files(root, postinstall_mod.replace_files, **mappings)
+            replace_tokens_in_files(root, postinstall_mod.replace_files, tokens)
         except AttributeError:
             print "No replace files found in {}.".format(postinstall)
             continue
@@ -75,7 +83,7 @@ if __name__ == "__main__":
     
     args = parser.parse_args()
     
-    if args.remote_server is None or args.local_server is None:
+    if args.remote_server == 'None' or args.local_server == 'None':
         print "Some of the installer options are missing."
         print "You need to tell me what they are before IntraMaps Roam"
         print "can be installed correctly"
