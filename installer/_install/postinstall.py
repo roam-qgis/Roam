@@ -67,9 +67,7 @@ def main(**mappings):
             continue
 
 if __name__ == "__main__":
-    print '{0:=^50}'.format('IntraMaps Roam Installer')
-    default_qgis_path = os.path.join(pardir, "QGIS")
-    
+    print '{0:=^50}'.format('IntraMaps Roam Installer')  
     import argparse
     parser = argparse.ArgumentParser()
     parser.add_argument("--remote_server", help="Path to the remove server")
