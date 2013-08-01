@@ -2,8 +2,8 @@
 
 SET OSGEO4W_ROOT=C:\OSGeo4W
 PATH="%OSGEO4W_ROOT%\bin";%PATH%
-SET PYTHONHOME=%OSGEO4W_ROOT%\apps\Python27
-SET PATH=%PATH%;%OSGEO4W_ROOT%\apps\Python27\Scripts
+for %%f in ("%OSGEO4W_ROOT%\etc\ini\*.bat") do call "%%f"
+
 SET QGIS_PLUGINPATH=%~dp0
 SET PYTHONPATH=%~dp0qmap\qtcontrols;%~dp0;%PYTHONPATH%
 SET PYQTDESIGNERPATH=%~dp0qmap\qtcontrols\plugins
