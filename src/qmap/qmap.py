@@ -39,8 +39,16 @@ from floatingtoolbar import FloatingToolBar
 from dialog_provider import DialogProvider
 import traceback
 from PyQt4.uic import loadUi
-from project import QMapProject, NoMapToolConfigured, getProjects
+from project import QMapProject, NoMapToolConfigured, getProjects, ErrorInMapTool
 from ui_helppage import Ui_apphelpwidget
+
+class BadLayerHandler( QgsProjectBadLayerHandler):
+    def __init__( self, callback ):
+        super(BadLayerHandler, self).__init__()
+        self.callback = callback
+
+    def handleBadLayers( self, domNodes, domDocument ):
+        self.callback(domNodes)
 
 class HelpPage(QWidget):
     def __init__(self, parent=None):
@@ -66,14 +74,15 @@ class QMap():
         self.menuGroup.setExclusive(True)
                 
         self.movetool = MoveTool(self.iface.mapCanvas(), [])
-        self.report = SyncReport(self.iface.messageBar())
+        self.report = PopDownReport(self.iface.messageBar())
+        
         self.dialogprovider = DialogProvider(iface.mapCanvas(), iface)
         self.dialogprovider.accepted.connect(self.clearToolRubberBand)
         self.dialogprovider.rejected.connect(self.clearToolRubberBand)
         
         self.edittool = EditTool(self.iface.mapCanvas(),[])
         self.edittool.finished.connect(self.openForm)
-        
+
     @property
     def _mapLayers(self):
         return QgsMapLayerRegistry.instance().mapLayers()
@@ -86,16 +95,53 @@ class QMap():
             # No clearBand method found, but that's cool.
             pass
         
-    def excepthook(self, type, value, tb):
+    def missingLayers(self, layers):
+        def showError():
+            self.errorreport.updateHTML("Missing Layers")
+        
+        message = "Seems like {} didn't load correctly".format(utils._pluralstring('layer', len(layers)))
+            
+        self.widget = self.messageBar.createMessage("Missing Layers", 
+                                                 message, 
+                                                 QIcon(":/icons/sad"))
+        button = QPushButton(self.widget)
+        button.setCheckable(True)
+        button.setChecked(self.errorreport.isVisible())
+        button.setText("Show missing layers")
+        button.toggled.connect(showError)
+        button.toggled.connect(functools.partial(self.errorreport.setVisible))
+        self.widget.layout().addWidget(button)
+        self.messageBar.pushWidget(self.widget, QgsMessageBar.WARNING)
+        
+    def excepthook(self, ex_type, value, tb):
         """ 
         Custom exception hook so that we can handle errors in a
         nicer way
         """
-        msg = ''.join(traceback.format_tb(tb))
-        msg += '{0}: {1}'.format(type, value)
+        where = ''.join(traceback.format_tb(tb))
+        msg = '{}'.format(value)
         critical(msg)
-        self.errorpage.errordetails.setText(msg)
-        self.stack.setCurrentIndex(3)
+        
+        def showError():
+            html = """
+                <html>
+                <body bgcolor="#FFEDED">
+                <p><b>{}</b></p>
+                <p align="left"><small>{}</small></p>
+                </body>
+                </html>
+            """.format(msg, where)
+            self.errorreport.updateHTML(html)
+        
+        self.widget = self.messageBar.createMessage("oops", "Looks like an error occurred", QIcon(":/icons/sad"))
+        button = QPushButton(self.widget)
+        button.setCheckable(True)
+        button.setChecked(self.errorreport.isVisible())
+        button.setText("Show error")
+        button.toggled.connect(showError)
+        button.toggled.connect(functools.partial(self.errorreport.setVisible))
+        self.widget.layout().addWidget(button)
+        self.messageBar.pushWidget(self.widget, QgsMessageBar.CRITICAL)
         
     def setupUI(self):
         """
@@ -189,7 +235,6 @@ class QMap():
         Create all the icons and setup the tool bars.  Called by QGIS when
         loading. This is called before setupUI.
         """
-        
         QApplication.setWindowIcon(QIcon(":/branding/logo"))
         self.mainwindow.findChildren(QMenuBar)[0].setVisible(False)
         self.mainwindow.setStyleSheet("QToolBar {background-color:white}")
@@ -207,21 +252,23 @@ class QMap():
         wid.setLayout(newlayout)
         
         self.stack = QStackedWidget()
-        mainwidget.layout().addWidget(self.stack)
-        self.stack.addWidget(wid)
+        self.messageBar = QgsMessageBar(wid)
+        self.messageBar.setSizePolicy( QSizePolicy.Minimum, QSizePolicy.Fixed )
+        self.errorreport = PopDownReport(self.messageBar)
+        
+        mainwidget.layout().addWidget(self.stack, 0,0,2,1)
+        mainwidget.layout().addWidget(self.messageBar, 0,0,1,1)
         
         self.helppage = HelpPage()
         helppath = os.path.join(os.path.dirname(__file__) , 'help',"help.html")
         self.helppage.setHelpPage(helppath)
         self.helppage.ui.pushButton.pressed.connect(self.iface.actionExit().trigger)
         
-        errorui = os.path.join(os.path.dirname(__file__) ,"ui_error.ui")
-        self.errorpage = loadUi(errorui)
         self.projectwidget = ProjectsWidget()   
         self.projectwidget.requestOpenProject.connect(self.loadProject)
+        self.stack.addWidget(wid)
         self.stack.addWidget(self.projectwidget)
         self.stack.addWidget(self.helppage)
-        self.stack.addWidget(self.errorpage)
                 
         sys.excepthook = self.excepthook
 
@@ -426,7 +473,10 @@ class QMap():
                 except NoMapToolConfigured:
                     log("No map tool configured")
                     continue
-                
+                except ErrorInMapTool as error:
+                    self.messageBar.pushMessage("Error configuring map tool", error.message, level=QgsMessageBar.WARNING)
+                    continue
+                    
                 # Hack until I fix it later
                 if isinstance(tool, PointTool):
                     add = functools.partial(self.addNewFeature, qgslayer)
@@ -513,7 +563,11 @@ class QMap():
         self.iface.newProject(False)        
         self.iface.mapCanvas().freeze()
         fileinfo = QFileInfo(project.projectfile)
+        self.badLayerHandler = BadLayerHandler(callback=self.missingLayers)
+        QgsProject.instance().setBadLayerHandler( self.badLayerHandler )
+        
         QgsProject.instance().read(fileinfo)
+        
         self.iface.mapCanvas().updateScale()
         self.iface.mapCanvas().freeze(False)
         self.iface.mapCanvas().refresh()
@@ -642,9 +696,9 @@ class QMap():
         
         provider.startSync()
         
-class SyncReport(QDialog):
+class PopDownReport(QDialog):
     def __init__(self, parent=None):
-        super(SyncReport, self).__init__(parent)
+        super(PopDownReport, self).__init__(parent)
         self.setLayout(QGridLayout())
         self.layout().setContentsMargins(0, 0, 0, 0)
         self.web = QWebView()
