@@ -1,5 +1,4 @@
 import PyQt4.uic
-import images_rc
 import os
 import PyQt4
 from PyQt4.QtGui import (QLabel, QDialog, QFileDialog, 
@@ -8,6 +7,7 @@ from PyQt4.QtGui import (QLabel, QDialog, QFileDialog,
 from PyQt4.QtCore import (QByteArray, QBuffer, 
 						QIODevice, QEvent, QObject, pyqtSignal)
 import logging
+import images_rc
 
 basepath = os.path.dirname(__file__)
 uipath = os.path.join(basepath,'imagewidget.ui')
@@ -47,7 +47,7 @@ class QMapImageWidget(baseClass, widgetForm):
 		self.loadFromPixMap(pix)
 
 	def removeImage(self):
-		pix = QPixmap(":/images/add.png")
+		pix = QPixmap(":/images/images/add.png")
 		self.loadFromPixMap(pix)
 		self.image.setScaledContents(False)
 		self.isDefault = True
