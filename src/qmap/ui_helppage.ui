@@ -38,23 +38,6 @@
      </property>
     </widget>
    </item>
-   <item row="1" column="0">
-    <widget class="QPushButton" name="pushButton">
-     <property name="font">
-      <font>
-       <pointsize>17</pointsize>
-       <weight>75</weight>
-       <bold>true</bold>
-      </font>
-     </property>
-     <property name="styleSheet">
-      <string notr="true">background-color: rgb(255, 226, 139);</string>
-     </property>
-     <property name="text">
-      <string>Exit QMap</string>
-     </property>
-    </widget>
-   </item>
   </layout>
  </widget>
  <customwidgets>

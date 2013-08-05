@@ -36,6 +36,7 @@
     <file alias="sync">resources/images/sync.png</file>
     <file alias="help">resources/images/help.png</file>
     <file alias="sad">resources/images/sad.png</file>
+    <file alias="quit">resources/images/quit.png</file>
   </qresource>
   <qresource prefix="branding">
     <file alias="logo">resources/branding/logo.png</file>
