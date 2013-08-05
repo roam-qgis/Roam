@@ -48,7 +48,8 @@ class BadLayerHandler( QgsProjectBadLayerHandler):
         self.callback = callback
 
     def handleBadLayers( self, domNodes, domDocument ):
-        self.callback(domNodes)
+        layers = [node.namedItem("layername").toElement().text() for node in domNodes]
+        self.callback(layers)
 
 class HelpPage(QWidget):
     def __init__(self, parent=None):
@@ -97,7 +98,12 @@ class QMap():
         
     def missingLayers(self, layers):
         def showError():
-            self.errorreport.updateHTML("Missing Layers")
+            html = ["<h1>Missing Layers</h1>", "<ul>"]
+            for layer in layers:
+                html.append("<li>{}</li>".format(layer))
+            html.append("</ul>")
+            
+            self.errorreport.updateHTML("".join(html))
         
         message = "Seems like {} didn't load correctly".format(utils._pluralstring('layer', len(layers)))
             
