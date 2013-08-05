@@ -268,7 +268,6 @@ class QMap():
         self.helppage = HelpPage()
         helppath = os.path.join(os.path.dirname(__file__) , 'help',"help.html")
         self.helppage.setHelpPage(helppath)
-        self.helppage.ui.pushButton.pressed.connect(self.iface.actionExit().trigger)
         
         self.projectwidget = ProjectsWidget()   
         self.projectwidget.requestOpenProject.connect(self.loadProject)
@@ -278,16 +277,15 @@ class QMap():
                 
         sys.excepthook = self.excepthook
 
-        def createSpacer():
+        def createSpacer(width=30):
             widget = QWidget()
-            widget.setMinimumWidth(30)
+            widget.setMinimumWidth(width)
             return widget
 
         self.createToolBars()
         self.createActions()
 
-        spacewidget = createSpacer()
-        spacewidget.setMinimumWidth(60)
+        spacewidget = createSpacer(60)
         gpsspacewidget = createSpacer()
         gpsspacewidget.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
 
@@ -338,6 +336,9 @@ class QMap():
         self.help = QAction(QIcon(":/icons/help"), "Help", self.menutoolbar)
         self.help.setCheckable(True)
         self.help.triggered.connect(functools.partial(self.stack.setCurrentIndex, 2))
+        
+        self.quit = QAction(QIcon(":/icons/quit"), "Quit", self.menutoolbar)
+        self.quit.triggered.connect(self.iface.actionExit().trigger)
 
         self.menuGroup.addAction(self.mapview)
         self.menuGroup.addAction(self.openProjectAction)
@@ -346,6 +347,12 @@ class QMap():
         self.menutoolbar.addAction(self.mapview)
         self.menutoolbar.addAction(self.openProjectAction)
         self.menutoolbar.addAction(self.help)
+        self.menutoolbar.addAction(self.quit)
+        
+        quitspacewidget = createSpacer()
+        quitspacewidget.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
+        
+        self.menutoolbar.insertWidget(self.quit, quitspacewidget)       
 
         self.setupIcons()
         self.stack.currentChanged.connect(self.updateUIState)
