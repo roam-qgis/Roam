@@ -47,7 +47,7 @@
       <enum>Qt::RichText</enum>
      </property>
      <property name="pixmap">
-      <pixmap>:/images/add.png</pixmap>
+      <pixmap resource="images.qrc">:/images/images/add.png</pixmap>
      </property>
      <property name="alignment">
       <set>Qt::AlignCenter</set>
@@ -88,8 +88,8 @@
       <string/>
      </property>
      <property name="icon">
-      <iconset>
-       <normaloff>:/images/reload.png</normaloff>:/images/reload.png</iconset>
+      <iconset resource="images.qrc">
+       <normaloff>:/images/images/reload.png</normaloff>:/images/images/reload.png</iconset>
      </property>
      <property name="flat">
       <bool>true</bool>
@@ -114,8 +114,8 @@
       <string/>
      </property>
      <property name="icon">
-      <iconset>
-       <normaloff>:/images/delete.png</normaloff>:/images/delete.png</iconset>
+      <iconset resource="images.qrc">
+       <normaloff>:/images/images/delete.png</normaloff>:/images/images/delete.png</iconset>
      </property>
      <property name="flat">
       <bool>true</bool>
