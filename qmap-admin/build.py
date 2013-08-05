@@ -70,6 +70,7 @@ def compileplugin():
         run(pyuic, '-o', source + '.py', source + '.ui')
 
     print " - building resource files..."
+    run('pyrcc4', '-o', join(srcopyFilesath,'qtcontrols','images_rc.py'), join(srcopyFilesath,'qtcontrols','images.qrc'))
     run('pyrcc4', '-o', join(srcopyFilesath,'resources_rc.py'), join(srcopyFilesath,'resources.qrc'))
     run('pyrcc4', '-o', join(srcopyFilesath,'syncing/resources_rc.py'), join(srcopyFilesath,'syncing/resources.qrc'))
 
