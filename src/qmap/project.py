@@ -52,7 +52,7 @@ class QMapLayer(object):
             return self.project.layersettings[self.name]["label"]
         except KeyError:
             return self.name
-        
+         
     @property
     def icon(self):
         utils.log(os.path.join(self.folder, 'icon.png'))
@@ -155,6 +155,13 @@ class QMapProject(object):
             return self.settings["title"]
         except KeyError:
             return os.path.basename(self.folder)
+        
+    @property
+    def description(self):
+        try:
+            return self.settings["description"]
+        except KeyError:
+            return ''
     
     @property
     def projectfile(self):
