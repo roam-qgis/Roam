@@ -34,7 +34,7 @@ from PyQt4.QtWebKit import QWebView, QWebPage
 from listmodulesdialog import ProjectsWidget
 from qgis.core import *
 from qgis.gui import QgsMessageBar
-from utils import log, critical
+from utils import log, critical, warning
 from floatingtoolbar import FloatingToolBar
 from dialog_provider import DialogProvider
 import traceback
@@ -106,6 +106,9 @@ class QMap():
             self.errorreport.updateHTML("".join(html))
         
         message = "Seems like {} didn't load correctly".format(utils._pluralstring('layer', len(layers)))
+        
+        warning("Missing layers")
+        map(warning, layers)
             
         self.widget = self.messageBar.createMessage("Missing Layers", 
                                                  message, 
