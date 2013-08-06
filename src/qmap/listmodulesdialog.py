@@ -32,6 +32,15 @@ class ProjectWidget(widgetForm, baseClass):
         self.descriptionlabel.setText(value)
         
     @property
+    def version(self):
+        return self._version
+    
+    @version.setter
+    def version(self, value):
+        self._version = value
+        self.versionlabel.setText("Version: {}".format(value))
+        
+    @property
     def image(self):
         return self.imagelabel.pixmap()
     
@@ -63,6 +72,7 @@ class ProjectsWidget(QWidget):
             projectwidget.image = QPixmap(project.splash)
             projectwidget.name = project.name
             projectwidget.description = project.description
+            projectwidget.version = project.version
             
 #             pix = QPixmap(project.splash)
 #             icon = QIcon(pix.scaled(200,200))
