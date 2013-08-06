@@ -20,7 +20,43 @@
    <double>1.000000000000000</double>
   </property>
   <property name="styleSheet">
-   <string notr="true">background-color: rgb(255, 255, 255);</string>
+   <string notr="true">QCheckBox::indicator {
+     width: 40px;
+     height: 40px;
+ }
+
+* {
+	font: 20px &quot;Calibri&quot; ;
+font: bold;
+}
+
+QLabel {
+	color: #4f4f4f;
+}
+
+QPushButton { 
+	border: 1px solid #e1e1e1;
+     padding: 6px;
+	color: #4f4f4f;
+ }
+
+QPushButton:hover { 
+	border: 1px solid #e1e1e1;
+     padding: 6px;
+	background-color: rgb(211, 228, 255);
+ }
+
+QPushButton:checked  { 
+	border: 1px solid #e1e1e1;
+     padding: 6px;
+	background-color: rgb(203, 203, 203);
+ }
+
+QCheckBox {
+	color: #4f4f4f;
+}
+
+</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
@@ -28,12 +64,10 @@
      <property name="font">
       <font>
        <family>Calibri</family>
-       <pointsize>32</pointsize>
+       <pointsize>-1</pointsize>
        <weight>75</weight>
+       <italic>false</italic>
        <bold>true</bold>
-       <underline>false</underline>
-       <stylestrategy>PreferAntialias</stylestrategy>
-       <kerning>false</kerning>
       </font>
      </property>
      <property name="text">
@@ -57,7 +91,11 @@
     <widget class="QListWidget" name="featureList">
      <property name="font">
       <font>
-       <pointsize>14</pointsize>
+       <family>Calibri</family>
+       <pointsize>-1</pointsize>
+       <weight>75</weight>
+       <italic>false</italic>
+       <bold>true</bold>
       </font>
      </property>
      <property name="styleSheet">
@@ -93,8 +131,11 @@
     <widget class="QPushButton" name="pushButton">
      <property name="font">
       <font>
-       <family>Tahoma</family>
-       <pointsize>20</pointsize>
+       <family>Calibri</family>
+       <pointsize>-1</pointsize>
+       <weight>75</weight>
+       <italic>false</italic>
+       <bold>true</bold>
       </font>
      </property>
      <property name="text">
