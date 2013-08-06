@@ -243,7 +243,24 @@ class QMap():
         """
         QApplication.setWindowIcon(QIcon(":/branding/logo"))
         self.mainwindow.findChildren(QMenuBar)[0].setVisible(False)
-        self.mainwindow.setStyleSheet("QToolBar {background-color:white}")
+        self.mainwindow.setContextMenuPolicy(Qt.PreventContextMenu)
+        
+        s = """
+        QToolButton { 
+            padding: 6px;
+            color: #4f4f4f;
+         }
+        
+        QToolButton:hover { 
+            padding: 6px;
+            background-color: rgb(211, 228, 255);
+         }
+         
+        QToolBar {
+         background: white;
+        }
+        """
+        self.mainwindow.setStyleSheet(s)
         
         mainwidget = self.mainwindow.centralWidget()
         mainwidget.setLayout(QGridLayout())
