@@ -243,6 +243,8 @@ class QMap():
         """
         QApplication.setWindowIcon(QIcon(":/branding/logo"))
         self.mainwindow.findChildren(QMenuBar)[0].setVisible(False)
+        self.mainwindow.setContextMenuPolicy(Qt.PreventContextMenu)
+        
         s = """
         QToolButton { 
             padding: 6px;
