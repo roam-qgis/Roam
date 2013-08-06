@@ -7,11 +7,50 @@
     <x>0</x>
     <y>0</y>
     <width>400</width>
-    <height>300</height>
+    <height>304</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Form</string>
+  </property>
+  <property name="styleSheet">
+   <string notr="true">QCheckBox::indicator {
+     width: 40px;
+     height: 40px;
+ }
+
+* {
+	font: 20px &quot;Calibri&quot; ;
+font: bold;
+}
+
+QLabel {
+	color: #4f4f4f;
+}
+
+QPushButton { 
+	border: 1px solid #e1e1e1;
+     padding: 6px;
+	color: #4f4f4f;
+ }
+
+QPushButton:hover { 
+	border: 1px solid #e1e1e1;
+     padding: 6px;
+	background-color: rgb(211, 228, 255);
+ }
+
+QPushButton:checked  { 
+	border: 1px solid #e1e1e1;
+     padding: 6px;
+	background-color: rgb(203, 203, 203);
+ }
+
+QCheckBox {
+	color: #4f4f4f;
+}
+
+</string>
   </property>
   <layout class="QGridLayout" name="gridLayout">
    <property name="leftMargin">
