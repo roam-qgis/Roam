@@ -162,6 +162,13 @@ class QMapProject(object):
             return self.settings["description"]
         except KeyError:
             return ''
+        
+    @property
+    def version(self):
+        try:
+            return self.settings["version"]
+        except KeyError:
+            return 1
     
     @property
     def projectfile(self):
