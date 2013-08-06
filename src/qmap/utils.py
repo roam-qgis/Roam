@@ -11,19 +11,15 @@ from PyQt4.QtGui import (QLabel, QDialog, QGridLayout, QLayout)
 LOG_FILENAME = 'main.log'
 uic.uiparser.logger.setLevel(logging.INFO)
 uic.properties.logger.setLevel(logging.INFO)
-logging.basicConfig(filename=LOG_FILENAME,level=logging.NOTSET)
+log_format = '%(asctime)s - %(module)s-%(funcName)s:%(lineno)d - %(levelname)s - %(message)s'
+logging.basicConfig(filename=LOG_FILENAME,level=logging.NOTSET, format=log_format)
 
-def _getCallerLogger():
-    caller = inspect.currentframe().f_back.f_back
-    name = "{}-{}".format(caller.f_globals['__name__'], caller.f_code.co_name )
-    logger = logging.getLogger(name)
-    return logger
-
-log = lambda msg : _getCallerLogger().debug(msg)
-info = lambda msg: _getCallerLogger().info(msg)
-warning = lambda msg: _getCallerLogger().warning(msg)
-error = lambda msg: _getCallerLogger().error(msg)
-critical = lambda msg: _getCallerLogger().critical(msg)
+logger = logging.getLogger("qmap")
+log = logger.debug
+info = logger.info 
+warning = logger.warning
+error = logger.error
+critical = logger.critical
 
 curdir = os.path.dirname(__file__)
 settingspath = os.path.join(curdir,'..','settings.config')
