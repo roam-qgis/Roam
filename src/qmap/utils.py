@@ -11,7 +11,7 @@ from PyQt4.QtGui import (QLabel, QDialog, QGridLayout, QLayout)
 LOG_FILENAME = 'main.log'
 uic.uiparser.logger.setLevel(logging.INFO)
 uic.properties.logger.setLevel(logging.INFO)
-log_format = '%(asctime)s - %(module)s-%(funcName)s:%(lineno)d - %(levelname)s - %(message)s'
+log_format = '%(levelname)s - %(asctime)s - %(module)s-%(funcName)s:%(lineno)d - %(message)s'
 logging.basicConfig(filename=LOG_FILENAME, filemode='at',level=logging.NOTSET, format=log_format)
 
 logger = logging.getLogger("qmap")
