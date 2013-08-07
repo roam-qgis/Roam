@@ -48,10 +48,7 @@ class QMapLayer(object):
     
     @property
     def icontext(self):
-        try:
-            return self.project.layersettings[self.name]["label"]
-        except KeyError:
-            return self.name
+        return self.settings.get("label", self.name)
          
     @property
     def icon(self):
@@ -113,7 +110,7 @@ class QMapLayer(object):
                  }
                 
         try:
-            toolsettings = self.project.layersettings[self.name]["maptool"]
+            toolsettings = self.settings["maptool"]
             tooltype = toolsettings["type"]
             return tools[tooltype]()
         except KeyError:
@@ -129,11 +126,12 @@ class QMapLayer(object):
         """
             The configured capabilities for this layer.
         """
-        try:
-            rights = self.project.layersettings[self.name]["capabilities"]
-            return rights
-        except KeyError:
-            return ['capture', 'edit', 'move']
+        default = ['capture', 'edit', 'move']
+        return self.settings.get("capabilities", default)
+    
+    @property
+    def settings(self):
+        return self.project.layersettings[self.name]
         
 
 class QMapProject(object):
@@ -151,24 +149,16 @@ class QMapProject(object):
         
     @property
     def name(self):
-        try:
-            return self.settings["title"]
-        except KeyError:
-            return os.path.basename(self.folder)
+        default = os.path.basename(self.folder)
+        return self.settings.get("title", default)
         
     @property
     def description(self):
-        try:
-            return self.settings["description"]
-        except KeyError:
-            return ''
+        return self.settings.get("description", '')
         
     @property
     def version(self):
-        try:
-            return self.settings["version"]
-        except KeyError:
-            return 1
+        return self.settings.get("version", 1.00)
     
     @property
     def projectfile(self):
