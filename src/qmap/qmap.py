@@ -265,6 +265,39 @@ class QMap():
         QToolBar {
          background: white;
         }
+        
+        QCheckBox::indicator {
+             width: 40px;
+             height: 40px;
+         }
+        
+        QLabel {
+            color: #4f4f4f;
+        }
+        
+        QDialog { background-color: rgb(255, 255, 255); }
+        
+        QPushButton { 
+            border: 1px solid #e1e1e1;
+             padding: 6px;
+            color: #4f4f4f;
+         }
+        
+        QPushButton:hover { 
+            border: 1px solid #e1e1e1;
+             padding: 6px;
+            background-color: rgb(211, 228, 255);
+         }
+        
+        QCheckBox {
+            color: #4f4f4f;
+        }
+        
+        QComboBox::drop-down {
+            width: 30px;
+        }
+
+
         """
         self.mainwindow.setStyleSheet(s)
         
