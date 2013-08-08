@@ -248,6 +248,9 @@ class QMap():
         self.mainwindow.findChildren(QMenuBar)[0].setVisible(False)
         self.mainwindow.setContextMenuPolicy(Qt.PreventContextMenu)
         
+        # Disable QGIS logging window popups. We do our own logging
+        QgsMessageLog.instance().messageReceived.disconnect()
+        
         s = """
         QToolButton { 
             padding: 6px;
