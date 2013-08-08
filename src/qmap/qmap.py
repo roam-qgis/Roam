@@ -438,13 +438,15 @@ class QMap():
         Add a record at the current GPS location.
         """
         action = self.actionGroup.checkedAction()
-        if action:
-            point = self.gpsAction.gpsLocation
-            try:
-                action.pointClick(point)
-            except AttributeError:
-                pass
-
+        if not action:
+            return
+        layer = action.data()
+        if not layer:
+            return
+        
+        point = self.gpsAction.position
+        self.addNewFeature(layer=layer, geometry=point)
+        
     def zoomToDefaultView(self):
         """
         Zoom the mapview canvas to the extents the project was opened at i.e. the
@@ -554,6 +556,7 @@ class QMap():
                     tool.finished.connect(self.openForm)
          
                 action = QAction(QIcon(layer.icon), text, self.mainwindow)
+                action.setData(layer)
                 action.setCheckable(True)
                 action.toggled.connect(functools.partial(self.setMapTool, tool))
                 

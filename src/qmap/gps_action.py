@@ -50,6 +50,10 @@ class GPSAction(QAction):
             self.detector.advance()
         else:
             self.disconnectGPS()
+            
+    @property
+    def position(self):
+        return self._position
 
     @property
     def isConnected(self):
@@ -125,6 +129,7 @@ class GPSAction(QAction):
 
         self.marker.show()
         self.marker.setCenter(map_pos)
+        self._position = map_pos
 
 
 class GPSMarker(QgsMapCanvasItem):
