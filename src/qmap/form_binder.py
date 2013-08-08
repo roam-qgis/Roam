@@ -159,6 +159,8 @@ class FormBinder(QObject):
     endSelectFeature = pyqtSignal()
     """
     Handles binding of values to and out of the form.
+    
+    TODO: This whole class is really messy and needs a good clean up.
     """
     def __init__(self, layer, formInstance, canvas):
         QObject.__init__(self)
@@ -270,12 +272,19 @@ class FormBinder(QObject):
                 control.setDateTime(value)
             else:
                 control.setDateTime(QDateTime.fromString(value, Qt.ISODate))
+                
             try:
                 button = self.getControl(control.objectName() + "_pick", QPushButton)
                 button.setIcon(QIcon(":/icons/calender"))
                 button.setText("Pick")
                 button.setIconSize(QSize(24, 24))
-                button.pressed.connect(partial(self.pickDateTime, control, "DateTime"))
+                log("{} : {}".format(control.objectName(), type(control) is QDateEdit))
+                if type(control) is QDateEdit:
+                    log("Type is QDateEdit")
+                    button.pressed.connect(partial(self.pickDateTime, control, "Date"))
+                else:
+                    button.pressed.connect(partial(self.pickDateTime, control, "DateTime"))
+                    
             except ControlNotFound:
                 pass
             
@@ -410,6 +419,7 @@ class FormBinder(QObject):
 
         control - The control that will recive the user set date time.
         """
+        log(mode)
         dlg = DateTimePickerDialog(mode)
         dlg.setWindowTitle("Select a date")
         if control.dateTime() == QDateTime(2000, 1, 1, 00, 00, 00, 0):
