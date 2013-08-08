@@ -14,6 +14,7 @@ class DateTimePickerDialog(QDialog):
         # Set up the user interface from Designer.
         self.ui = Ui_datatimerpicker()
         self.ui.setupUi(self)
+        self.mode = mode
         self.group = QButtonGroup()
         self.group.setExclusive(True)
         self.group.addButton(self.ui.ambutton)
@@ -31,17 +32,25 @@ class DateTimePickerDialog(QDialog):
         self.setWindowFlags(Qt.Dialog | Qt.CustomizeWindowHint)
 
         if mode == "Date":
-            self.ui.hourpicker.hide()
-            self.ui.minutepicker.hide()
-            self.ui.ampmbutton.hide()
+            self.ui.timesection.hide()
+            self.ui.setasnowbutton.setText("Set as current date")
         elif mode == "Time":
             self.ui.datepicker.hide()
+            self.ui.setasnowbutton.setText("Set as current time")
 
     def isDirty(self, *args):
         date = self.getSelectedDate()
         time = self.getSelectedTime()
+        
         datetime = QDateTime(date, time)
-        value = datetime.toString("ddd d MMM yyyy 'at' h:m ap")
+        
+        if self.mode == "Date":
+            value = datetime.toString("ddd d MMM yyyy")
+        elif self.mode == "Time":
+            value = datetime.toString("h:m ap") 
+        else:   
+            value = datetime.toString("ddd d MMM yyyy 'at' h:m ap")
+            
         self.ui.label.setText(value)
 
     def setDateTime(self, datetime):
