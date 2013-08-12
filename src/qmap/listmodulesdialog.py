@@ -1,16 +1,11 @@
 from PyQt4.QtCore import pyqtSignal, QSize
-from PyQt4.QtGui import QWidget, QListWidgetItem, QPixmap, QIcon
-from ui_listmodules import Ui_ListModules
-from project import QMapProject  
-from PyQt4 import uic
-import os
+from PyQt4.QtGui import QListWidgetItem, QPixmap
 
+from project import QMapProject
+from uifiles import (project_widget, project_base,
+                     modules_widget, modules_base)
 
-basepath = os.path.dirname(__file__)
-uipath = os.path.join(basepath,'ui_projectwidget.ui')
-widgetForm, baseClass= uic.loadUiType(uipath)
-
-class ProjectWidget(widgetForm, baseClass):
+class ProjectWidget(project_widget, project_base):
     def __init__(self, parent):
         super(ProjectWidget, self).__init__(parent)
         self.setupUi(self)
@@ -49,36 +44,31 @@ class ProjectWidget(widgetForm, baseClass):
         pix = QPixmap(value)
         self.imagelabel.setPixmap(pix)
 
-# create the dialog for zoom to point
-class ProjectsWidget(QWidget):
+class ProjectsWidget(modules_widget, modules_base):
     requestOpenProject = pyqtSignal(QMapProject)
-    def __init__(self):
-        QWidget.__init__(self )
-        self.ui = Ui_ListModules()
-        self.ui.setupUi(self)
-        self.ui.moduleList.itemClicked.connect(self.openProject)
+    def __init__(self, parent = None):
+        super(ProjectsWidget, self).__init__(parent)
+        self.setupUi(self)
+        self.moduleList.itemClicked.connect(self.openProject)
 
     def loadProjectList(self, projects):
-        self.ui.moduleList.clear()
+        self.moduleList.clear()
         for project in projects:
             if not project.vaild:
                 continue
             
-            item = QListWidgetItem(self.ui.moduleList, QListWidgetItem.UserType)
+            item = QListWidgetItem(self.moduleList, QListWidgetItem.UserType)
             item.setData(QListWidgetItem.UserType, project)
             item.setSizeHint(QSize(200, 200))
             
-            projectwidget = ProjectWidget(self.ui.moduleList)
+            projectwidget = ProjectWidget(self.moduleList)
             projectwidget.image = QPixmap(project.splash)
             projectwidget.name = project.name
             projectwidget.description = project.description
             projectwidget.version = project.version
             
-#             pix = QPixmap(project.splash)
-#             icon = QIcon(pix.scaled(200,200))
-#             item.setIcon(icon)
-            self.ui.moduleList.addItem(item)
-            self.ui.moduleList.setItemWidget(item, projectwidget)
+            self.moduleList.addItem(item)
+            self.moduleList.setItemWidget(item, projectwidget)
                               
     def openProject(self, item):
 #        self.setDisabled(True)
