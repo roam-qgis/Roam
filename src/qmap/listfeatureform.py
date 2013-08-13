@@ -1,16 +1,16 @@
 from PyQt4.QtGui import QDialog, QListWidgetItem, QApplication
 from PyQt4.QtCore import pyqtSignal, Qt
 from qgis.core import QgsFeature, QgsVectorLayer
-from ui_listfeatures import Ui_ListFeatueForm
 
-class ListFeaturesForm(QDialog):
+from uifiles import features_widget, features_base
+
+class ListFeaturesForm(features_widget, features_base):
     openFeatureForm = pyqtSignal(QgsVectorLayer, QgsFeature)
 
     def __init__(self):
-        QDialog.__init__(self)
-        self.ui = Ui_ListFeatueForm()
-        self.ui.setupUi(self)
-        self.ui.featureList.itemClicked.connect(self.openForm)
+        super(ListFeaturesForm, self).__init__()
+        self.setupUi(self)
+        self.featureList.itemClicked.connect(self.openForm)
         self.setWindowFlags(Qt.FramelessWindowHint)
         scr = QApplication.desktop().screenGeometry(0)
         self.move( scr.center() - self.rect().center() )
@@ -18,7 +18,7 @@ class ListFeaturesForm(QDialog):
     def loadFeatureList(self, featuresmaps):
         for feature, layer  in featuresmaps:               
             featureitem = FeatureItem( feature, layer )
-            self.ui.featureList.addItem( featureitem )
+            self.featureList.addItem( featureitem )
 
     def openForm(self, item):
         feature = item.qgsFeature
