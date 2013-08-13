@@ -28,12 +28,14 @@ from PyQt4.QtGui import (QIcon, QWidget,
 
 from gps_action import GPSAction
 from maptools import MoveTool, PointTool, EditTool
-from listmodulesdialog import ProjectsWidget
+
 from floatingtoolbar import FloatingToolBar
 from dialog_provider import DialogProvider
 from project import QMapProject, NoMapToolConfigured, getProjects, ErrorInMapTool
-from ui_helppage import Ui_apphelpwidget
+
+from listmodulesdialog import ProjectsWidget
 from popdialog import PopDownReport
+from helpviewdialog import HelpPage
 
 class BadLayerHandler( QgsProjectBadLayerHandler):
     def __init__( self, callback ):
@@ -43,15 +45,6 @@ class BadLayerHandler( QgsProjectBadLayerHandler):
     def handleBadLayers( self, domNodes, domDocument ):
         layers = [node.namedItem("layername").toElement().text() for node in domNodes]
         self.callback(layers)
-
-class HelpPage(QWidget):
-    def __init__(self, parent=None):
-        super(HelpPage, self).__init__(parent)
-        self.ui = Ui_apphelpwidget()
-        self.ui.setupUi(self)
-        
-    def setHelpPage(self, helppath):
-        self.ui.webView.load(QUrl.fromLocalFile(helppath))
 
 class QMap():
     def __init__(self, iface):

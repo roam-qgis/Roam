@@ -1,10 +1,12 @@
 import os.path
-from ui_drawingpad import Ui_DrawingWindow
-from PyQt4 import QtCore, QtGui
 import functools
+
+from PyQt4 import QtCore, QtGui
+
+from uifiles import drawing_widget, drawing_base
 from utils import log
 
-class ScribbleArea(QtGui.QWidget):
+class ScribbleArea(drawing_widget, drawing_base):
     def __init__(self, parent=None):
         super(ScribbleArea, self).__init__(parent)
 

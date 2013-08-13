@@ -1,13 +1,24 @@
-from  ui_helpviewer import Ui_HelpViewer
-from PyQt4 import QtCore, QtGui
+from PyQt4.QtGui import QDialog
+from PyQt4.QtCore import QUrl
 
-class HelpViewDialog(QtGui.QDialog):
+from uifiles import (helpviewer_widget, helpviewer_base,
+                     helppage_widget, helppage_widget)
+
+class HelpViewDialog(helpviewer_widget, helpviewer_base):
     def __init__(self, startimage=None):
-        QtGui.QDialog.__init__(self)
-        self.ui = Ui_HelpViewer()
-        self.ui.setupUi(self)
+        super(HelpViewDialog, self).__init__()
+        QDialog.__init__(self)
+        self.setupUi(self)
         
     def loadFile(self, htmlfile):
-        self.ui.webView.load(QtCore.QUrl.fromLocalFile(htmlfile))
+        self.webView.load(QUrl.fromLocalFile(htmlfile))
+        
+class HelpPage(helppage_widget, helppage_widget):
+    def __init__(self, parent=None):
+        super(HelpPage, self).__init__(parent)
+        self.setupUi(self)
+        
+    def setHelpPage(self, helppath):
+        self.webView.load(QUrl.fromLocalFile(helppath))
 
         
