@@ -5,13 +5,12 @@ import utils
 from uifiles import datepicker_widget, datepicker_base
 
 
-class DateTimePickerDialog(datepicker_widget, datepicker_base):
+class DateTimePickerDialog(datepicker_widget, QDialog):
     """
     A custom date picker with a time and date picker
     """
     def __init__(self, mode="DateTime"):
         QDialog.__init__(self)
-        # Set up the user interface from Designer.
         self.setupUi(self)
         self.mode = mode
         self.group = QButtonGroup()

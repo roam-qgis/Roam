@@ -32,6 +32,8 @@ ui_sources = ['ui_datatimerpicker', 'ui_listmodules',
               'syncing/ui_sync', 'ui_listfeatures', 'ui_errorlist',
               'ui_helpviewer','ui_drawingpad', "ui_helppage"]
 
+ui_sources = []
+
 doc_sources = ['docs/README', 'docs/ClientSetup', 'docs/UserGuide']
 
 iswindows = os.name == 'nt'
