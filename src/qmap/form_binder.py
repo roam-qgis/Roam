@@ -11,7 +11,6 @@ from utils import log, info, warning, openImageViewer
 from select_feature_tool import SelectFeatureTool
 from functools import partial
 from datatimerpickerwidget import DateTimePickerDialog
-from drawingpad import DrawingPad
 from helpviewdialog import HelpViewDialog
 from qgis.core import QgsVectorLayer
 from qgis.gui import QgsAttributeEditor

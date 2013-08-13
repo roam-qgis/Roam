@@ -1,3 +1,5 @@
+import resources_rc
+
 from PyQt4.QtGui import QDialog, QListWidgetItem, QApplication
 from PyQt4.QtCore import pyqtSignal, Qt
 from qgis.core import QgsFeature, QgsVectorLayer

@@ -1,4 +1,5 @@
 import os
+import resources_rc
 
 from PyQt4 import uic
 
@@ -13,4 +14,4 @@ features_widget, features_base = create_ui('ui_listfeatures.ui')
 helpviewer_widget, helpviewer_base = create_ui('ui_helpviewer.ui')
 helppage_widget, helppage_base = create_ui('ui_helppage.ui')
 datepicker_widget, datepicker_base = create_ui('ui_datatimerpicker.ui')
-drawing_widget, drawing_base = create_ui('ui_drawingpad.ui')
+# drawing_widget, drawing_base = create_ui('ui_drawingpad.ui')

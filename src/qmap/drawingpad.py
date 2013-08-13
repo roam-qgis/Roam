@@ -1,5 +1,6 @@
 import os.path
 import functools
+import resources_rc
 
 from PyQt4 import QtCore, QtGui
 

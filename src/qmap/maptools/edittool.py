@@ -1,9 +1,11 @@
+
 from PyQt4.QtCore import pyqtSignal
 from PyQt4.QtGui import QCursor, QPixmap, QColor
 from qgis.core import (QgsRectangle, QgsTolerance, 
                        QgsFeatureRequest, QgsFeature,
                        QgsVectorLayer)
 from qgis.gui import QgsMapTool, QgsRubberBand
+
 from qmap.listfeatureform import ListFeaturesForm
 from maptool import MapTool
 
