@@ -23,7 +23,7 @@ from PyQt4.QtGui import (QIcon, QWidget,
                          QApplication, QMenuBar,
                          QGridLayout, QStackedWidget,
                          QSizePolicy, QMessageBox,
-                         QToolButton,
+                         QToolButton, QProgressBar
                          )
 
 from gps_action import GPSAction
@@ -691,6 +691,10 @@ class QMap():
         button.setText("Status")
         button.setIcon(QIcon(":/icons/syncinfo"))
         button.toggled.connect(functools.partial(self.report.setVisible))
+        pro = QProgressBar()
+        pro.setMaximum(0)
+        pro.setMinimum(0)
+        self.syncwidget.layout().addWidget(pro)
         self.syncwidget.layout().addWidget(button)
         self.iface.messageBar().pushWidget(self.syncwidget, QgsMessageBar.INFO)
         
@@ -712,7 +716,11 @@ class QMap():
         button.setChecked(self.report.isVisible())
         button.setText("Sync Report")
         button.setIcon(QIcon(":/icons/syncinfo"))
-        button.toggled.connect(functools.partial(self.report.setVisible))            
+        button.toggled.connect(functools.partial(self.report.setVisible))      
+        pro = QProgressBar()
+        pro.setMaximum(100)
+        pro.setValue(100)
+        self.syncwidget.layout().addWidget(pro)      
         self.syncwidget.layout().addWidget(button)
         self.iface.messageBar().pushWidget(self.syncwidget)
         self.iface.messageBar().setStyleSheet(stylesheet)
