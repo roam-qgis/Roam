@@ -1,46 +1,41 @@
 """
-/***************************************************************************
- QMap
-                                 A QGIS plugin
- Data collection software for QGIS
-                              -------------------
-        begin                : 2012-03-21
-        copyright            : (C) 2012 by Nathan Woodrow @ SDRC
-        email                : nathan.woodrow@southerndowns.qld.gov.au
- ***************************************************************************/
-
-/***************************************************************************
- *                                                                         *
- *   This program is free software; you can redistribute it and/or modify  *
- *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 2 of the License, or     *
- *   (at your option) any later version.                                   *
- *                                                                         *
- ***************************************************************************/
+    Main plugin code for QMap
 """
+
 import os
-import qmaplayer
 import resources_rc
 import functools
 import utils
-import json
 import sys
+import traceback
+
+from qgis.core import (QgsProjectBadLayerHandler, QgsMapLayerRegistry,
+                       QgsMessageLog, QgsMapLayer, 
+                       QgsProject, QgsTolerance, 
+                       QgsFeature
+                       )
+from qgis.gui import QgsMessageBar
+
+from PyQt4.QtCore import QUrl, Qt, QSize, QFileInfo 
+from PyQt4.QtGui import (QIcon, QWidget, 
+                         QActionGroup, QPushButton, 
+                         QToolBar, QAction, 
+                         QApplication, QMenuBar,
+                         QGridLayout, QStackedWidget,
+                         QSizePolicy, QMessageBox,
+                         QToolButton, QProgressBar
+                         )
 
 from gps_action import GPSAction
 from maptools import MoveTool, PointTool, EditTool
-from PyQt4.QtCore import *
-from PyQt4.QtGui import *
-from PyQt4.QtWebKit import QWebView, QWebPage
-from listmodulesdialog import ProjectsWidget
-from qgis.core import *
-from qgis.gui import QgsMessageBar
-from utils import log, critical, warning
+
 from floatingtoolbar import FloatingToolBar
 from dialog_provider import DialogProvider
-import traceback
-from PyQt4.uic import loadUi
 from project import QMapProject, NoMapToolConfigured, getProjects, ErrorInMapTool
-from ui_helppage import Ui_apphelpwidget
+
+from listmodulesdialog import ProjectsWidget
+from popdialog import PopDownReport
+from helpviewdialog import HelpPage
 
 class BadLayerHandler( QgsProjectBadLayerHandler):
     def __init__( self, callback ):
@@ -50,15 +45,6 @@ class BadLayerHandler( QgsProjectBadLayerHandler):
     def handleBadLayers( self, domNodes, domDocument ):
         layers = [node.namedItem("layername").toElement().text() for node in domNodes]
         self.callback(layers)
-
-class HelpPage(QWidget):
-    def __init__(self, parent=None):
-        super(HelpPage, self).__init__(parent)
-        self.ui = Ui_apphelpwidget()
-        self.ui.setupUi(self)
-        
-    def setHelpPage(self, helppath):
-        self.ui.webView.load(QUrl.fromLocalFile(helppath))
 
 class QMap():
     def __init__(self, iface):
@@ -107,8 +93,8 @@ class QMap():
         
         message = "Seems like {} didn't load correctly".format(utils._pluralstring('layer', len(layers)))
         
-        warning("Missing layers")
-        map(warning, layers)
+        utils.warning("Missing layers")
+        map(utils.warning, layers)
             
         self.widget = self.messageBar.createMessage("Missing Layers", 
                                                  message, 
@@ -129,7 +115,7 @@ class QMap():
         """
         where = ''.join(traceback.format_tb(tb))
         msg = '{}'.format(value)
-        critical(msg)
+        utils.critical(msg)
         
         def showError():
             html = """
@@ -187,7 +173,7 @@ class QMap():
         self.menutoolbar.setAllowedAreas(Qt.LeftToolBarArea)
         self.mainwindow.addToolBar(Qt.LeftToolBarArea, self.menutoolbar)
         
-        self.toolbar = QToolBar("Raom", self.mainwindow)
+        self.toolbar = QToolBar("QMap", self.mainwindow)
         self.mainwindow.addToolBar(Qt.TopToolBarArea, self.toolbar)
         self.toolbar.setMovable(False)
 
@@ -529,12 +515,12 @@ class QMap():
             try:
                 qgslayer = QgsMapLayerRegistry.instance().mapLayersByName(layer.name)[0]
                 if qgslayer.type() == QgsMapLayer.RasterLayer:
-                    log("We can't support raster layers for data entry")
+                    utils.log("We can't support raster layers for data entry")
                     continue
                        
                 layer.QGISLayer = qgslayer
             except KeyError:
-                log("Layer not found in project")
+                utils.log("Layer not found in project")
                 continue
             
             if 'capture' in layer.capabilities:
@@ -542,7 +528,7 @@ class QMap():
                 try:
                     tool = layer.getMaptool(self.iface.mapCanvas())
                 except NoMapToolConfigured:
-                    log("No map tool configured")
+                    utils.log("No map tool configured")
                     continue
                 except ErrorInMapTool as error:
                     self.messageBar.pushMessage("Error configuring map tool", error.message, level=QgsMessageBar.WARNING)
@@ -643,7 +629,7 @@ class QMap():
         self.iface.mapCanvas().updateScale()
         self.iface.mapCanvas().freeze(False)
         self.iface.mapCanvas().refresh()
-        self.mainwindow.setWindowTitle("IntraMaps Roam: Moblie Data Collection")
+        self.mainwindow.setWindowTitle("QMap: QGIS Data Collection")
         self.iface.projectRead.emit()
         
     def unload(self):
@@ -730,11 +716,11 @@ class QMap():
         button.setChecked(self.report.isVisible())
         button.setText("Sync Report")
         button.setIcon(QIcon(":/icons/syncinfo"))
-        button.toggled.connect(functools.partial(self.report.setVisible))
+        button.toggled.connect(functools.partial(self.report.setVisible))      
         pro = QProgressBar()
         pro.setMaximum(100)
         pro.setValue(100)
-        self.syncwidget.layout().addWidget(pro)
+        self.syncwidget.layout().addWidget(pro)      
         self.syncwidget.layout().addWidget(button)
         self.iface.messageBar().pushWidget(self.syncwidget)
         self.iface.messageBar().setStyleSheet(stylesheet)
@@ -775,30 +761,4 @@ class QMap():
         provider.syncError.connect(self.syncerror)
         
         provider.startSync()
-        
-class PopDownReport(QDialog):
-    def __init__(self, parent=None):
-        super(PopDownReport, self).__init__(parent)
-        self.setLayout(QGridLayout())
-        self.layout().setContentsMargins(0, 0, 0, 0)
-        self.web = QWebView()
-        self.resize(400,400)
-        self.layout().addWidget(self.web)
-        self.setWindowFlags(Qt.Tool | Qt.FramelessWindowHint | Qt.X11BypassWindowManagerHint)
-        
-    def updateHTML(self, html):
-        self.web.setHtml(html)
-        self.web.triggerPageAction(QWebPage.MoveToEndOfDocument)
-        
-    def clear(self):
-        self.web.setHtml("No Sync in progress")
-        
-    def updatePosition(self):
-        point = self.parent().rect().bottomRight()
-        newpoint = self.parent().mapToGlobal(point - QPoint(self.size().width(),0))
-        self.setWindowFlags(Qt.Tool | Qt.FramelessWindowHint | Qt.X11BypassWindowManagerHint)
-        self.move(newpoint)
-        
-    def showEvent(self, event):
-        self.updatePosition()
         
