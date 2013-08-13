@@ -23,7 +23,7 @@ from PyQt4.QtGui import (QIcon, QWidget,
                          QApplication, QMenuBar,
                          QGridLayout, QStackedWidget,
                          QSizePolicy, QMessageBox,
-                         QToolButton,
+                         QToolButton, QProgressBar
                          )
 
 from gps_action import GPSAction
@@ -173,7 +173,7 @@ class QMap():
         self.menutoolbar.setAllowedAreas(Qt.LeftToolBarArea)
         self.mainwindow.addToolBar(Qt.LeftToolBarArea, self.menutoolbar)
         
-        self.toolbar = QToolBar("Raom", self.mainwindow)
+        self.toolbar = QToolBar("QMap", self.mainwindow)
         self.mainwindow.addToolBar(Qt.TopToolBarArea, self.toolbar)
         self.toolbar.setMovable(False)
 
@@ -629,7 +629,7 @@ class QMap():
         self.iface.mapCanvas().updateScale()
         self.iface.mapCanvas().freeze(False)
         self.iface.mapCanvas().refresh()
-        self.mainwindow.setWindowTitle("IntraMaps Roam: Moblie Data Collection")
+        self.mainwindow.setWindowTitle("QMap: QGIS Data Collection")
         self.iface.projectRead.emit()
         
     def unload(self):
@@ -716,11 +716,11 @@ class QMap():
         button.setChecked(self.report.isVisible())
         button.setText("Sync Report")
         button.setIcon(QIcon(":/icons/syncinfo"))
-        button.toggled.connect(functools.partial(self.report.setVisible))
+        button.toggled.connect(functools.partial(self.report.setVisible))      
         pro = QProgressBar()
         pro.setMaximum(100)
         pro.setValue(100)
-        self.syncwidget.layout().addWidget(pro)
+        self.syncwidget.layout().addWidget(pro)      
         self.syncwidget.layout().addWidget(button)
         self.iface.messageBar().pushWidget(self.syncwidget)
         self.iface.messageBar().setStyleSheet(stylesheet)
