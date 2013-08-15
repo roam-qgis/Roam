@@ -23,7 +23,7 @@ class InspectionTool(QgsMapTool):
         self.layerto = layerto
         self.fields = mapping
         self.band = QgsRubberBand(canvas, QGis.Polygon )
-        self.band.setColor(QColor.fromRgb(255,0,0))
+        self.band.setColor(QColor.fromRgb(255,0,0, 65))
         self.band.setWidth(5)
         
         self.cursor = QCursor(QPixmap(["16 16 3 1",
