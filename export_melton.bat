@@ -11,6 +11,7 @@ call baseexport.bat
 SET PROJECT=%HOME%\projects\melton_firebreak
 move /Y "%PROJECT%\fireinspect.qgs.tmpl" "%PROJECT%\fireinspect.qgs"
 move /Y "%PROJECT%\Sync-All.bat.tmpl" "%PROJECT%\Sync-All.bat"
+move /Y "%PROJECT%\export_shp.bat.tmpl" "%PROJECT%\export_shp.bat"
 move /Y "%PROJECT%\Sync-Inspections.bat.tmpl" "%PROJECT%\Sync-Inspections.bat"
 move /Y "%PROJECT%\_docs\*" "%HOME%\docs\"
 
