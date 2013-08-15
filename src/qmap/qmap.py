@@ -154,7 +154,7 @@ class QMap():
         
         self.mainwindow.insertToolBar(self.toolbar, self.navtoolbar)
         self.openProjectAction.trigger()
-
+            
     def setMapTool(self, tool):
         """
         Set the current mapview canvas tool
@@ -499,6 +499,8 @@ class QMap():
         self.panels = list(project.getPanels())
         for panel in self.panels:
             self.mainwindow.addDockWidget(Qt.BottomDockWidgetArea , panel)
+            
+        self.iface.messageBar().popWidget()
         
     def createFormButtons(self, projectlayers):
         """
@@ -624,6 +626,7 @@ class QMap():
         self.badLayerHandler = BadLayerHandler(callback=self.missingLayers)
         QgsProject.instance().setBadLayerHandler( self.badLayerHandler )
         
+        self.iface.messageBar().pushMessage("Project Loading","", QgsMessageBar.INFO)
         QgsProject.instance().read(fileinfo)
         
         self.iface.mapCanvas().updateScale()
