@@ -378,6 +378,7 @@ class QMap():
         self.help = QAction(QIcon(":/icons/help"), "Help", self.menutoolbar)
         self.help.setCheckable(True)
         self.help.triggered.connect(functools.partial(self.stack.setCurrentIndex, 2))
+        self.help.setVisible(False)
         
         self.quit = QAction(QIcon(":/icons/quit"), "Quit", self.menutoolbar)
         self.quit.triggered.connect(self.iface.actionExit().trigger)
