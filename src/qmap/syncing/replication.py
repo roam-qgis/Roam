@@ -51,7 +51,7 @@ class ReplicationSync(SyncProvider):
         if error > 0 or self.haserror:
             html = """<h3> {0} Error </h3>
                   <pre>{1}</pre>""".format(self.name, self.output)
-            self.syncError.emit("Error with sync")
+            self.syncError.emit(html)
         else:
             self.syncComplete.emit(html)
     
