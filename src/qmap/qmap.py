@@ -765,6 +765,7 @@ class QMap():
         
         provider.syncError.connect(self.report.updateHTML)
         provider.syncError.connect(self.syncerror)
+        provider.syncComplete.connect(functools.partial(self.syncAction.setEnabled, True))
         
         provider.startSync()
         
