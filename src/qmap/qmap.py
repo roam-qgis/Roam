@@ -633,7 +633,7 @@ class QMap():
         self.iface.mapCanvas().updateScale()
         self.iface.mapCanvas().freeze(False)
         self.iface.mapCanvas().refresh()
-        self.mainwindow.setWindowTitle("QMap: QGIS Data Collection")
+        self.mainwindow.setWindowTitle("IntraMaps Roam: Mobile Data Collection")
         self.iface.projectRead.emit()
         
     def unload(self):
