@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>670</width>
-    <height>165</height>
+    <width>471</width>
+    <height>125</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -53,14 +53,20 @@ QLabel#versionlabel {
    <item row="0" column="0" rowspan="2">
     <widget class="QLabel" name="imagelabel">
      <property name="sizePolicy">
-      <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+      <sizepolicy hsizetype="MinimumExpanding" vsizetype="Expanding">
        <horstretch>0</horstretch>
        <verstretch>0</verstretch>
       </sizepolicy>
      </property>
+     <property name="minimumSize">
+      <size>
+       <width>0</width>
+       <height>0</height>
+      </size>
+     </property>
      <property name="maximumSize">
       <size>
-       <width>200</width>
+       <width>300</width>
        <height>200</height>
       </size>
      </property>
@@ -131,6 +137,9 @@ QLabel#versionlabel {
     <spacer name="horizontalSpacer">
      <property name="orientation">
       <enum>Qt::Horizontal</enum>
+     </property>
+     <property name="sizeType">
+      <enum>QSizePolicy::MinimumExpanding</enum>
      </property>
      <property name="sizeHint" stdset="0">
       <size>
