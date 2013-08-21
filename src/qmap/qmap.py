@@ -119,6 +119,7 @@ class QMap():
         button.setText("Show missing layers")
         button.toggled.connect(showError)
         button.toggled.connect(functools.partial(self.errorreport.setVisible))
+        self.widget.destroyed.connect(self.hideReports)
         self.widget.layout().addWidget(button)
         self.messageBar.pushWidget(self.widget, QgsMessageBar.WARNING)
         
@@ -149,9 +150,14 @@ class QMap():
         button.setText("Show error")
         button.toggled.connect(showError)
         button.toggled.connect(functools.partial(self.errorreport.setVisible))
+        self.widget.destroyed.connect(self.hideReports)
         self.widget.layout().addWidget(button)
         self.messageBar.pushWidget(self.widget, QgsMessageBar.CRITICAL)
-        
+    
+    def hideReports(self):
+        self.errorreport.setVisible(False)
+        self.report.setVisible(False)
+    
     def setupUI(self):
         """
         Set up the main QGIS interface items.  Called after QGIS has loaded
@@ -247,6 +253,7 @@ class QMap():
         QApplication.setWindowIcon(QIcon(":/branding/logo"))
         self.mainwindow.findChildren(QMenuBar)[0].setVisible(False)
         self.mainwindow.setContextMenuPolicy(Qt.PreventContextMenu)
+        self.mainwindow.setWindowTitle("IntraMaps Roam: Mobile Data Collection")
         
         # Disable QGIS logging window popups. We do our own logging
         QgsMessageLog.instance().messageReceived.disconnect()
@@ -317,7 +324,7 @@ class QMap():
         self.messageBar = QgsMessageBar(wid)
         self.messageBar.setSizePolicy( QSizePolicy.Minimum, QSizePolicy.Fixed )
         self.errorreport = PopDownReport(self.messageBar)
-        
+         
         mainwidget.layout().addWidget(self.stack, 0,0,2,1)
         mainwidget.layout().addWidget(self.messageBar, 0,0,1,1)
         
