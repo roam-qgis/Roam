@@ -14,4 +14,8 @@ SET PROJECT=%HOME%\projects\pool_sample
 move /Y "%PROJECT%\Pool (Sample).qgs.tmpl" "%PROJECT%\Pool (Sample).qgs"
 move /Y "%PROJECT%\Sync-Inspections.bat.tmpl" "%PROJECT%\Sync-Inspections.bat"
 
+SET PROJECT=%HOME%\projects\septic_tank_audit
+move /Y "%PROJECT%\Septic Tank Audit.qgs.tmpl" "%PROJECT%\Septic Tank Audit.qgs"
+move /Y "%PROJECT%\Sync-Inspections.bat.tmpl" "%PROJECT%\Sync-Inspections.bat"
+
 pause
