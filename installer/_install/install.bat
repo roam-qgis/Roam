@@ -3,8 +3,8 @@
 Set REMOTESERVER=None
 Set LOCALSERVER=None
 
-CALL setenv.bat
+CALL ..\setenv.bat
 
 TITLE IntraMaps Roam Installer
-python "%~dp0_install\postinstall.py" --remote_server %REMOTESERVER% --local_server %LOCALSERVER%
+python "%~dp0postinstall.py" --remote_server %REMOTESERVER% --local_server %LOCALSERVER%
 pause
