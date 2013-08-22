@@ -6,22 +6,31 @@ import imp
 import os
 import fnmatch
 import sys
+import shutil
+import logging
 
 curdir = os.path.abspath(os.path.dirname(__file__))
 pardir = os.path.join(curdir, '..')
-projectdir = os.path.join(pardir, "projects")
 
-# List of files with connection information for update
-replace_files = []
-
-def installscripts():
+def installscripts(rootfolder):
     """
         Return the post install scripts for each installed project.
     """
-    for root, _, filenames in os.walk(projectdir):
+    for root, _, filenames in os.walk(rootfolder):
         for filename in fnmatch.filter(filenames, 'postinstall.py'):
             yield root, filename
             
+def templatefiles(rootfolder):
+    """
+        Return the template files and new name for each tmpl in a 
+        given rootfolder.
+    """
+    for root, _, filenames in os.walk(rootfolder):
+        for filename in fnmatch.filter(filenames, '*.tmpl'):
+            template = os.path.join(root, filename)
+            newfile = os.path.splitext(template)[0]       
+            yield template, newfile
+    
 def replace_tokens(filename, tokens ):
     """
         Replace all the tokens in the file 
@@ -36,7 +45,6 @@ def replace_tokens(filename, tokens ):
         f.write(text)
         f.truncate()
         
-        
 def replace_tokens_in_files(root, files, tokens):
     """
         Replace all the tokens in the given files.
@@ -47,35 +55,52 @@ def replace_tokens_in_files(root, files, tokens):
             filename = os.path.join(root, '..', filename)
         try:
             replace_tokens(filename, tokens )
-            print "Updated {}".format(os.path.basename(filename))
-        except IOError:
+        except IOError as err:
             print "Error reading file"
             print filename
+            print err
     
-def main(**tokens):
-    # Replace the files in root first
-    replace_tokens_in_files(pardir, replace_files, tokens)
-    
+def main(**tokens):   
+    projectdir = os.path.join(pardir, "projects")
+
+    logger.info('{0:=^50}'.format('Copying template files'))
+    # Create a real file for each template file in project file.
+    for template, newfile in templatefiles(projectdir):
+        shutil.copy2(template, newfile)
+        replace_tokens(newfile, tokens )
+        logger.info("Updated {}".format(os.path.basename(newfile)))
+     
+    logger.info('{0:=^50}'.format('Running post install scripts'))
     # Run the post install scripts for each installed project.
-    for root, postinstall in installscripts():
+    for root, postinstall in installscripts(projectdir):
         modulename = os.path.splitext(postinstall)[0]
         try:
             # Loading the source and run what ever code is in the module
             filepath = os.path.join(root, postinstall)
             postinstall_mod = imp.load_source(modulename, filepath)
         except ImportError as err:
-            print "{}".format(err)
-            continue
-            
-        try:
-            # Get all the files that need values replaced.
-            replace_tokens_in_files(root, postinstall_mod.replace_files, tokens)
-        except AttributeError:
-            print "No replace files found in {}.".format(postinstall)
+            logger.error("{}".format(err))
             continue
 
 if __name__ == "__main__":
-    print '{0:=^50}'.format('IntraMaps Roam Installer')  
+    
+    logger = logging.getLogger()
+    logger.setLevel(logging.DEBUG)
+    
+    consolelogger = logging.StreamHandler()
+    consolelogger.setLevel(logging.INFO)
+    consolelogger_format = logging.Formatter('%(message)s')
+    consolelogger.setFormatter(consolelogger_format)
+    logger.addHandler(consolelogger)
+    
+    filelogger = logging.FileHandler("installer.log")
+    filelogger.setLevel(logging.DEBUG)
+    filelogger_format = logging.Formatter('%(asctime)s - %(levelname)-8s - %(message)s')
+    filelogger.setFormatter(filelogger_format)
+    logger.addHandler(filelogger)
+    
+    logger.info('{0:=^50}'.format('IntraMaps Roam Installer'))
+    
     import argparse
     parser = argparse.ArgumentParser()
     parser.add_argument("--remote_server", help="Path to the remove server")
@@ -94,10 +119,10 @@ if __name__ == "__main__":
         remoteserver = args.remote_server
         localserver = args.local_server
     
-    print '{0:=^50}'.format('Using the following settings')
-    print remoteserver
-    print localserver
-    print '{0:=^50}'.format('=')
+    logger.info('{0:=^50}'.format('Using the following settings'))
+    logger.info(remoteserver)
+    logger.info(localserver)
+    logger.info('{0:=^50}'.format('='))
         
     main(REMOTESERVER=remoteserver, LOCALSERVER=localserver)
     
