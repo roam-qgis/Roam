@@ -8,6 +8,7 @@ import functools
 import utils
 import sys
 import traceback
+import getpass
 
 from qgis.core import (QgsProjectBadLayerHandler, QgsMapLayerRegistry,
                        QgsMessageLog, QgsMapLayer, 
@@ -23,8 +24,8 @@ from PyQt4.QtGui import (QIcon, QWidget,
                          QApplication, QMenuBar,
                          QGridLayout, QStackedWidget,
                          QSizePolicy, QMessageBox,
-                         QToolButton, QProgressBar
-                         )
+                         QToolButton, QProgressBar,
+                         QLabel)
 
 from gps_action import GPSAction
 from maptools import MoveTool, PointTool, EditTool
@@ -387,6 +388,14 @@ class QMap():
         self.help.triggered.connect(functools.partial(self.stack.setCurrentIndex, 2))
         self.help.setVisible(False)
         
+        self.userlabel = QLabel("Current User <br> {user}".format(user=getpass.getuser()))
+        self.userlabel.setAlignment(Qt.AlignCenter)
+        self.userlabel.setStyleSheet("""
+            QLabel {
+                    color: #8c8c8c;
+                    font: 10px "Calibri" ;
+                    }""")
+        
         self.quit = QAction(QIcon(":/icons/quit"), "Quit", self.menutoolbar)
         self.quit.triggered.connect(self.iface.actionExit().trigger)
 
@@ -402,8 +411,9 @@ class QMap():
         quitspacewidget = createSpacer()
         quitspacewidget.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
         
-        self.menutoolbar.insertWidget(self.quit, quitspacewidget)       
-
+        labelaction = self.menutoolbar.insertWidget(self.quit, self.userlabel)
+        self.menutoolbar.insertWidget(labelaction, quitspacewidget)
+        
         self.setupIcons()
         self.stack.currentChanged.connect(self.updateUIState)
         
