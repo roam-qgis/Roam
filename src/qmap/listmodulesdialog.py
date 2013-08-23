@@ -59,7 +59,7 @@ class ProjectsWidget(modules_widget, modules_base):
             
             item = QListWidgetItem(self.moduleList, QListWidgetItem.UserType)
             item.setData(QListWidgetItem.UserType, project)
-            item.setSizeHint(QSize(200, 200))
+            item.setSizeHint(QSize(150, 150))
             
             projectwidget = ProjectWidget(self.moduleList)
             projectwidget.image = QPixmap(project.splash)
