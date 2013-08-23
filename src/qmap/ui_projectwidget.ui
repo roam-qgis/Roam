@@ -33,7 +33,7 @@
 
 * {
 	font: 20px &quot;Calibri&quot; ;
-font: bold;
+	font: bold;
 }
 
 QLabel {
@@ -41,7 +41,7 @@ QLabel {
 }
 
 QLabel#descriptionlabel {
-	font: italic;
+   	font: 14px &quot;Calibri&quot; ;
 }
 
 QLabel#versionlabel {
@@ -66,7 +66,7 @@ QLabel#versionlabel {
      </property>
      <property name="maximumSize">
       <size>
-       <width>300</width>
+       <width>200</width>
        <height>200</height>
       </size>
      </property>
@@ -106,7 +106,7 @@ QLabel#versionlabel {
          <family>Calibri</family>
          <pointsize>-1</pointsize>
          <weight>50</weight>
-         <italic>true</italic>
+         <italic>false</italic>
          <bold>false</bold>
         </font>
        </property>
