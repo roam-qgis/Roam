@@ -6,7 +6,7 @@ from qgis.core import QgsFeature, QgsVectorLayer
 
 from uifiles import features_widget, features_base
 
-class ListFeaturesForm(features_widget, features_base):
+class ListFeaturesForm(features_widget, QDialog):
     openFeatureForm = pyqtSignal(QgsVectorLayer, QgsFeature)
 
     def __init__(self):
