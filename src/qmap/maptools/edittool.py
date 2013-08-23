@@ -48,9 +48,8 @@ class EditTool(MapTool):
             "       +.+      "]))
         
     def getFeatures(self, point):
-        searchRadius = (QgsTolerance.toleranceInMapUnits( self.radius, self.layers[0],
-                                                        self.canvas.mapRenderer(), 
-                                                        QgsTolerance.Pixels))
+        searchRadius =  self.canvas.extent().width() * ( self.radius / 100.0 )
+
         point = self.toMapCoordinates(point)
 
         rect = QgsRectangle()                                                 
