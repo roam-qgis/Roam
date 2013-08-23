@@ -580,12 +580,8 @@ class QMap():
                 self.actions.append(action)
             
             if 'edit' in layer.capabilities:
-                # TODO Use snapping options from project
-                radius = (QgsTolerance.toleranceInMapUnits( 10, qgslayer,
-                                                            self.iface.mapCanvas().mapRenderer(), 
-                                                            QgsTolerance.Pixels))
                 self.edittool.addLayer(qgslayer)
-                self.edittool.searchRadius = radius
+                self.edittool.searchRadius = 10
                 
             if 'move' in layer.capabilities:
                 self.movetool.addLayer(qgslayer)
