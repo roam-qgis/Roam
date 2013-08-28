@@ -8,9 +8,12 @@ import fnmatch
 import sys
 import shutil
 import logging
+import re
+import qmap.yaml
 
 curdir = os.path.abspath(os.path.dirname(__file__))
 pardir = os.path.join(curdir, '..')
+projectdir = os.path.join(pardir, "projects")
 
 def installscripts(rootfolder):
     """
@@ -45,6 +48,16 @@ def replace_tokens(filename, tokens ):
         f.write(text)
         f.truncate()
         
+def get_tokens(filename):
+    """
+    Return the tokens in the file that can be used by the installer
+    to update the files.
+    """
+    with open(filename, 'r') as f:
+        text = f.read()
+    
+    return set(re.findall('{(.*?)}', text))
+        
 def replace_tokens_in_files(root, files, tokens):
     """
         Replace all the tokens in the given files.
@@ -60,16 +73,14 @@ def replace_tokens_in_files(root, files, tokens):
             print filename
             print err
     
-def main(**tokens):   
-    projectdir = os.path.join(pardir, "projects")
-
+def main(tokens):
     logger.info('{0:=^50}'.format('Copying template files'))
     # Create a real file for each template file in project file.
     for template, newfile in templatefiles(projectdir):
         shutil.copy2(template, newfile)
         replace_tokens(newfile, tokens )
         logger.info("Updated {}".format(os.path.basename(newfile)))
-     
+      
     logger.info('{0:=^50}'.format('Running post install scripts'))
     # Run the post install scripts for each installed project.
     for root, postinstall in installscripts(projectdir):
@@ -103,27 +114,37 @@ if __name__ == "__main__":
     
     import argparse
     parser = argparse.ArgumentParser()
-    parser.add_argument("--remote_server", help="Path to the remove server")
-    parser.add_argument("--local_server", help="Path to the remove server")
+    parser.add_argument("--save", 
+                        action='store_true', 
+                        help="Save the values after the installer has been completed")
     
     args = parser.parse_args()
     
-    if args.remote_server == 'None' or args.local_server == 'None':
-        print "Some of the installer options are missing."
-        print "You need to tell me what they are before IntraMaps Roam"
-        print "can be installed correctly"
-        print
-        remoteserver = raw_input("Remote Server: ")
-        localserver = raw_input("Local Server: ")
-    else:
-        remoteserver = args.remote_server
-        localserver = args.local_server
+    tokens = set()
+    for templatefile, _ in templatefiles(projectdir):
+        filetokens = get_tokens(templatefile)
+        tokens.update(filetokens)
     
+    print 
+    logger.info('{0:=^50}'.format('Values for installer'))
+    map(logger.info, tokens)
+        
+    print 
+    logger.info('{0:=^50}'.format('Please update each installer value'))
+    updatedtokens = {}
+    for token in tokens:
+        value = raw_input("{}: ".format(token))
+        updatedtokens[token] = value
+    
+    print 
     logger.info('{0:=^50}'.format('Using the following settings'))
-    logger.info(remoteserver)
-    logger.info(localserver)
+    for key, value in updatedtokens.items():
+        logger.info("{} = {}".format(key, value))
     logger.info('{0:=^50}'.format('='))
         
-    main(REMOTESERVER=remoteserver, LOCALSERVER=localserver)
+    main(updatedtokens)
     
-    
+    if args.save:
+        path = os.path.join(curdir, 'installervalues.txt')
+        with open(path, 'w') as f:
+            qmap.yaml.dump(data=updatedtokens, stream=f, default_flow_style=False)
