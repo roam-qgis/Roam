@@ -8,6 +8,7 @@ import datetime
 import optparse
 import src.qmap.yaml as yaml
 import fabricate
+import shutil
 
 from os.path import join
 from fabricate import (run, 
@@ -204,6 +205,8 @@ def deploytarget(clientconfig):
             dest = os.path.join(clientpojecthome, project)
             copy_tree(source, dest)
             
+    shutil.copy2(os.path.join(projecthome, '__init__.py'), 
+                               os.path.join(clientpojecthome, '__init__.py')) 
     print "Remote depoly compelete"
 
 if __name__ == "__main__":
