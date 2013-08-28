@@ -220,7 +220,8 @@ class QMapProject(object):
             Returns True if the user is able to load the project, else False
         """
         try:
-            module = importlib.import_module("projects.{}".format(self.name))
+            name = os.path.basename(self.folder)
+            module = importlib.import_module("projects.{}".format(name))
         except ImportError as err:
             log(err)
             return True, None
