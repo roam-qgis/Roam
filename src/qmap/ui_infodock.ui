@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>InfoDock</class>
+ <widget class="QDockWidget" name="InfoDock">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>261</width>
+    <height>422</height>
+   </rect>
+  </property>
+  <property name="styleSheet">
+   <string notr="true"> QDockWidget::title {
+     text-align: left; /* align the text to the left */
+     background: lightgray;
+     padding-left: 5px;
+ }</string>
+  </property>
+  <property name="floating">
+   <bool>false</bool>
+  </property>
+  <property name="allowedAreas">
+   <set>Qt::LeftDockWidgetArea|Qt::RightDockWidgetArea</set>
+  </property>
+  <property name="windowTitle">
+   <string>INFO</string>
+  </property>
+  <widget class="QWidget" name="dockWidgetContents">
+   <layout class="QGridLayout" name="gridLayout">
+    <property name="margin">
+     <number>0</number>
+    </property>
+    <property name="spacing">
+     <number>0</number>
+    </property>
+    <item row="0" column="0" colspan="2">
+     <widget class="QComboBox" name="layerList"/>
+    </item>
+    <item row="1" column="0" colspan="2">
+     <widget class="QTableWidget" name="attributeTable">
+      <property name="styleSheet">
+       <string notr="true">QHeaderView::section
+{
+    background-color: #efefef;
+    border: 1px solid #dedede;
+    padding-right: 6px;
+}
+
+QTableView::item::hover
+{
+	background-color: #dee8f1;
+}</string>
+      </property>
+      <property name="editTriggers">
+       <set>QAbstractItemView::NoEditTriggers</set>
+      </property>
+      <property name="selectionMode">
+       <enum>QAbstractItemView::NoSelection</enum>
+      </property>
+      <property name="selectionBehavior">
+       <enum>QAbstractItemView::SelectRows</enum>
+      </property>
+      <property name="gridStyle">
+       <enum>Qt::DashLine</enum>
+      </property>
+      <property name="sortingEnabled">
+       <bool>false</bool>
+      </property>
+      <attribute name="horizontalHeaderVisible">
+       <bool>false</bool>
+      </attribute>
+      <column>
+       <property name="text">
+        <string/>
+       </property>
+      </column>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>
