@@ -57,6 +57,23 @@ def get_tokens(filename):
         text = f.read()
     
     return set(re.findall('{(.*?)}', text))
+
+def get_project_tokens(folder):
+    tokens = set()
+    for templatefile, _ in templatefiles(folder):
+        filetokens = get_tokens(templatefile)
+        tokens.update(filetokens)
+    return tokens
+
+def sort_tokens(tokens):
+    def token_key(token):
+        try:
+            order = token.split()
+            return int(order[0])
+        except ValueError:
+            return token
+        
+    return sorted(tokens, key=token_key)
         
 def replace_tokens_in_files(root, files, tokens):
     """
@@ -120,10 +137,7 @@ if __name__ == "__main__":
     
     args = parser.parse_args()
     
-    tokens = set()
-    for templatefile, _ in templatefiles(projectdir):
-        filetokens = get_tokens(templatefile)
-        tokens.update(filetokens)
+    tokens = sort_tokens(get_project_tokens(projectdir))
     
     print 
     logger.info('{0:=^50}'.format('Values for installer'))
