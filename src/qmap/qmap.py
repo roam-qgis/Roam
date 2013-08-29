@@ -28,7 +28,8 @@ from PyQt4.QtGui import (QIcon, QWidget,
                          QLabel)
 
 from gps_action import GPSAction
-from maptools import MoveTool, PointTool, EditTool
+from maptools import (MoveTool, PointTool, 
+                      EditTool, InfoTool)
 
 from floatingtoolbar import FloatingToolBar
 from dialog_provider import DialogProvider
@@ -37,6 +38,7 @@ from project import QMapProject, NoMapToolConfigured, getProjects, ErrorInMapToo
 from listmodulesdialog import ProjectsWidget
 from popdialog import PopDownReport
 from helpviewdialog import HelpPage
+from infodock import InfoDock
 
 class BadLayerHandler( QgsProjectBadLayerHandler):
     def __init__( self, callback ):
@@ -62,6 +64,9 @@ class QMap():
         self.menuGroup.setExclusive(True)
                 
         self.movetool = MoveTool(self.iface.mapCanvas(), [])
+        self.infotool = InfoTool(self.iface.mapCanvas())
+        self.infotool.infoResults.connect(self.showInfoResults)
+        
         self.report = PopDownReport(self.iface.messageBar())
         
         self.dialogprovider = DialogProvider(iface.mapCanvas(), iface)
@@ -70,7 +75,17 @@ class QMap():
         
         self.edittool = EditTool(self.iface.mapCanvas(),[])
         self.edittool.finished.connect(self.openForm)
-
+        
+        self.infodock = InfoDock(self.iface.mainWindow())
+        self.iface.addDockWidget(Qt.RightDockWidgetArea, self.infodock)
+        self.infodock.hide()
+        
+    def showInfoResults(self, results):
+        self.infodock.clearResults()
+        for result in results:
+            self.infodock.addResult(result)
+        self.infodock.show()
+        
     @property
     def _mapLayers(self):
         return QgsMapLayerRegistry.instance().mapLayers()
@@ -215,6 +230,9 @@ class QMap():
 
         self.editingmodeaction = QAction(QIcon(":/icons/edittools"), "Editing Tools", self.mainwindow)
         self.editingmodeaction.setCheckable(True)
+        
+        self.infoaction = QAction(QIcon(":/icons/info"), "Info", self.mainwindow)
+        self.infoaction.setCheckable(True)
 
         self.addatgpsaction = QAction(QIcon(":/icons/gpsadd"), "Add at GPS", self.mainwindow)
         
@@ -340,6 +358,8 @@ class QMap():
         gpsspacewidget.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
 
         self.moveaction.toggled.connect(functools.partial(self.setMapTool, self.movetool))
+        self.infoaction.toggled.connect(functools.partial(self.setMapTool, self.infotool))
+        
         showediting = (functools.partial(self.editingtoolbar.showToolbar, 
                                          self.editingmodeaction,
                                          self.editattributesaction))
@@ -353,6 +373,7 @@ class QMap():
         self.editingtoolbar.addToActionGroup(self.moveaction)
 
         self.actionGroup.addAction(self.editingmodeaction)
+        self.actionGroup.addAction(self.infoaction)
 
         self.homeAction.triggered.connect(self.zoomToDefaultView)
         
@@ -368,6 +389,7 @@ class QMap():
 
         self.navtoolbar.addAction(self.toggleRasterAction)
         self.navtoolbar.insertWidget(self.iface.actionZoomFullExtent(), spacewidget)
+        self.toolbar.addAction(self.infoaction)
         self.toolbar.addAction(self.editingmodeaction)
         self.toolbar.addAction(self.syncAction)
         self.toolbar.addAction(self.gpsAction)
