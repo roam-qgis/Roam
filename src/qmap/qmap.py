@@ -85,6 +85,7 @@ class QMap():
         for result in results:
             self.infodock.addResult(result)
         self.infodock.show()
+        self.infodock.repaint()
         
     @property
     def _mapLayers(self):
