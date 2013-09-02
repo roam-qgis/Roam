@@ -29,16 +29,9 @@ class InfoDock(infodock_widget, infodock_base):
             
         rows = ''.join(items)
         html = html.format(TITLE=layer.name(), ROWS=rows)
-        import tempfile
-        with tempfile.TemporaryFile(mode='at', delete=False) as f:
-            f.write(html)
-            name = f.name +  ".html"
-            
-        import utils
-        utils.log(name) 
         base = os.path.dirname(os.path.abspath(__file__))
-        baseurl = QUrl.fromLocalFile(name)
-        self.attributesView.load(baseurl)
+        baseurl = QUrl.fromLocalFile(base + '\\')
+        self.attributesView.setHtml(html, baseurl)
         
     def clearResults(self):
         self.layerList.clear()
