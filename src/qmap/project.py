@@ -184,7 +184,8 @@ class QMapProject(object):
         return self._splash
     
     def getSyncProviders(self):
-        for name, config in self.settings["providers"].iteritems():
+        providers = self.settings.get("providers", {})
+        for name, config in providers.iteritems():
             cmd = config['cmd']
             cmd = os.path.join(self.folder, cmd)
             if config['type'] == 'replication':
