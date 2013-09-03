@@ -37,6 +37,7 @@ from project import QMapProject, NoMapToolConfigured, getProjects, ErrorInMapToo
 from listmodulesdialog import ProjectsWidget
 from popdialog import PopDownReport
 from helpviewdialog import HelpPage
+from settingswidget import SettingsWidget
 
 class BadLayerHandler( QgsProjectBadLayerHandler):
     def __init__( self, callback ):
@@ -201,6 +202,11 @@ class QMap():
         self.openProjectAction = (QAction(QIcon(":/icons/open"), "Projects",
                                          self.mainwindow))
         self.openProjectAction.setCheckable(True)
+        
+        self.configAction = (QAction(QIcon(":/icons/config"), "Settings",
+                                         self.mainwindow))
+        self.configAction.setCheckable(True)
+        
         self.toggleRasterAction = (QAction(QIcon(":/icons/photo"), "Aerial Photos",
                                           self.mainwindow))
         self.syncAction = QAction(QIcon(":/icons/sync"), "Sync", self.mainwindow)
@@ -290,8 +296,10 @@ class QMap():
         QComboBox::drop-down {
             width: 30px;
         }
-
-
+        
+        QStackedWidget {
+             background-color: rgb(255, 255, 255);
+        }
         """
         self.mainwindow.setStyleSheet(s)
         
@@ -307,7 +315,7 @@ class QMap():
         wid = QWidget()
         wid.setLayout(newlayout)
         
-        self.stack = QStackedWidget()
+        self.stack = QStackedWidget(self.mainwindow)
         self.messageBar = QgsMessageBar(wid)
         self.messageBar.setSizePolicy( QSizePolicy.Minimum, QSizePolicy.Fixed )
         self.errorreport = PopDownReport(self.messageBar)
@@ -319,11 +327,14 @@ class QMap():
         helppath = os.path.join(os.path.dirname(__file__) , 'help',"help.html")
         self.helppage.setHelpPage(helppath)
         
+        self.settingswidget = SettingsWidget()
+        
         self.projectwidget = ProjectsWidget()   
         self.projectwidget.requestOpenProject.connect(self.loadProject)
         self.stack.addWidget(wid)
         self.stack.addWidget(self.projectwidget)
         self.stack.addWidget(self.helppage)
+        self.stack.addWidget(self.settingswidget)
                 
         sys.excepthook = self.excepthook
 
@@ -358,6 +369,8 @@ class QMap():
         
         self.openProjectAction.triggered.connect(self.showOpenProjectDialog)
         self.openProjectAction.triggered.connect(functools.partial(self.stack.setCurrentIndex, 1))
+        
+        self.configAction.triggered.connect(functools.partial(self.stack.setCurrentIndex, 3))
         
         self.toggleRasterAction.triggered.connect(self.toggleRasterLayers)
 
@@ -402,16 +415,19 @@ class QMap():
         self.menuGroup.addAction(self.mapview)
         self.menuGroup.addAction(self.openProjectAction)
         self.menuGroup.addAction(self.help)
+        self.menuGroup.addAction(self.configAction)
         
         self.menutoolbar.addAction(self.mapview)
         self.menutoolbar.addAction(self.openProjectAction)
         self.menutoolbar.addAction(self.help)
+        self.menutoolbar.addAction(self.configAction)
         self.menutoolbar.addAction(self.quit)
         
         quitspacewidget = createSpacer()
         quitspacewidget.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
         
-        labelaction = self.menutoolbar.insertWidget(self.quit, self.userlabel)
+        labelaction = self.menutoolbar.insertWidget(self.configAction, self.userlabel)
+        
         self.menutoolbar.insertWidget(labelaction, quitspacewidget)
         
         self.setupIcons()
