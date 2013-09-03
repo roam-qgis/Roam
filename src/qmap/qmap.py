@@ -82,8 +82,7 @@ class QMap():
         
     def showInfoResults(self, results):
         self.infodock.clearResults()
-        for result in results:
-            self.infodock.addResult(result)
+        self.infodock.setResults(results)
         self.infodock.show()
         self.infodock.repaint()
         
@@ -636,6 +635,7 @@ class QMap():
         Show the project selection dialog.
         """
         self.stack.setCurrentIndex(1)
+        self.infodock.hide()
         path = os.path.join(os.path.dirname(__file__), '..' , 'projects/')
         projects = getProjects(path, self.iface)
         self.projectwidget.loadProjectList(projects)
@@ -659,6 +659,7 @@ class QMap():
         self.mapview.trigger()
         self.iface.newProject(False)        
         self.iface.mapCanvas().freeze()
+        self.infodock.clearResults()
         fileinfo = QFileInfo(project.projectfile)
         self.badLayerHandler = BadLayerHandler(callback=self.missingLayers)
         QgsProject.instance().setBadLayerHandler( self.badLayerHandler )
