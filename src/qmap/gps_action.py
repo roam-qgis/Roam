@@ -33,6 +33,13 @@ class GPSAction(QAction):
         if os.name == 'nt':
             self.power = PowerState(self.parent())
             self.power.poweroff.connect(self.disconnectGPS)
+            
+        utils.settings_notify.settings_changed.connect(self.updateGPSPort)
+            
+    def updateGPSPort(self):
+        if self.isConnected:
+            self.disconnectGPS()
+            self.connectGPS()
 
     def connectGPS(self):
         if not self.isConnected:

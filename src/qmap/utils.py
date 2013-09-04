@@ -6,6 +6,7 @@ import inspect
 import yaml
 
 from PyQt4 import uic
+from PyQt4.QtCore import QObject, pyqtSignal
 from PyQt4.QtGui import (QLabel, QDialog, QGridLayout, QLayout)
 
 LOG_FILENAME = 'main.log'
@@ -23,8 +24,39 @@ critical = logger.critical
 
 curdir = os.path.dirname(__file__)
 settingspath = os.path.join(curdir,'..','settings.config')
+
+class Settings(dict):
+    class Emitter(QObject):
+        settings_changed = pyqtSignal()
+        def __init__(self):
+            super(Settings.Emitter, self).__init__()
+        
+    def __init__(self, path, *arg,**kwargs):
+        super(Settings, self).__init__(*arg, **kwargs)
+        self.settingspath = path
+        self._emitter = Settings.Emitter()
+        self.settings_changed = self._emitter.settings_changed
+        
+    def loadSettings(self): 
+        with open(self.settingspath,'r') as f:
+            settings = yaml.load(f)
+            
+    def saveSettings(self):
+        with open(self.settingspath, 'w') as f:
+            yaml.dump(data=self, stream=f, default_flow_style=False)
+              
+        self.settings_changed.emit()
+      
+settings_notify = Settings(settingspath)
+
 with open(settingspath,'r') as f:
     settings = yaml.load(f)
+            
+def saveSettings():
+    with open(settingspath, 'w') as f:
+        yaml.dump(data=settings, stream=f, default_flow_style=False)
+          
+    settings_notify.settings_changed.emit()
 
 appdata = os.path.join(os.environ['APPDATA'], "QMap")
 
