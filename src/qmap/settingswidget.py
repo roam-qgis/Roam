@@ -1,6 +1,8 @@
 import os
 from qgis.core import QgsGPSDetector
 
+import utils
+
 from uifiles import settings_widget, settings_base
 from utils import settings, curdir
 
@@ -8,6 +10,14 @@ class SettingsWidget(settings_widget, settings_base):
     def __init__(self, parent=None):
         super(SettingsWidget, self).__init__(parent)
         self.setupUi(self)
+        self.fullScreenCheck.stateChanged.connect(self.fullScreenCheck_stateChanged)
+        self.gpsPortCombo.currentIndexChanged.connect(self.gpsPortCombo_currentIndexChanged)
+        
+    def fullScreenCheck_stateChanged(self, state):
+        utils.log("fullscreen changed")
+        state = bool(state)
+        settings["fullscreen"] = state
+        settings.saveSettings()
         
     def gpsPortCombo_currentIndexChanged(self, index):
         port = self.gpsPortCombo.itemData(index)

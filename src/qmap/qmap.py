@@ -152,6 +152,7 @@ class QMap():
         the plugin.
         """
         self.updateAppSize()
+        
         utils.settings.settings_changed.connect(self.updateAppSize)
 
         self.navtoolbar.setMovable(False)

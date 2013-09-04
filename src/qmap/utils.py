@@ -31,10 +31,10 @@ class Settings(dict):
         def __init__(self):
             super(Settings.Emitter, self).__init__()
         
-    def __init__(self, path):
+    def __init__(self, path, *arg,**kwargs):
+        super(Settings, self).__init__(*arg, **kwargs)
         self.settingspath = path
-        self._emitter = QObject()
-        self._emitter.settings_changed = pyqtSignal()
+        self._emitter = Settings.Emitter()
         self.settings_changed = self._emitter.settings_changed
         
     def loadSettings(self): 
@@ -44,7 +44,7 @@ class Settings(dict):
     def saveSettings(self):
         with open(self.settingspath, 'w') as f:
             yaml.dump(data=self, stream=f, default_flow_style=False)
-            
+              
         self.settings_changed.emit()
       
 settings = Settings(settingspath)  
