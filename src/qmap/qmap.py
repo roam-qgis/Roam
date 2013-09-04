@@ -297,6 +297,10 @@ class QMap():
             width: 30px;
         }
         
+        QComboBox {
+            border: 1px solid #d3d3d3;
+        }
+
         QStackedWidget {
              background-color: rgb(255, 255, 255);
         }
@@ -327,7 +331,9 @@ class QMap():
         helppath = os.path.join(os.path.dirname(__file__) , 'help',"help.html")
         self.helppage.setHelpPage(helppath)
         
-        self.settingswidget = SettingsWidget()
+        self.settingswidget = SettingsWidget(self.stack)
+        self.settingswidget.populateControls()
+        self.settingswidget.readSettings()
         
         self.projectwidget = ProjectsWidget()   
         self.projectwidget.requestOpenProject.connect(self.loadProject)
