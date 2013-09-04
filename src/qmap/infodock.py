@@ -1,6 +1,8 @@
 import os
 import collections
 
+from string import Template
+
 from PyQt4.QtGui import (QPixmap,
                          QImageReader)
 
@@ -22,7 +24,7 @@ images = {}
 formats = [f.data() for f in QImageReader.supportedImageFormats()]
 
 with open(htmlpath) as f:
-    template = f.read()
+    template = Template(f.read())
     
 def image_handler(key, value, **kwargs):
     imageblock = '''
@@ -128,7 +130,7 @@ class InfoDock(infodock_widget, infodock_base):
             items.append(item)
             
         rows = ''.join(items)
-        html = template.format(TITLE=layer.name(), ROWS=rows)
+        html = template.safe_substitute(TITLE=layer.name(), ROWS=rows)
         base = os.path.dirname(os.path.abspath(__file__))
         baseurl = QUrl.fromLocalFile(base + '\\')
         self.attributesView.setHtml(html, baseurl)
