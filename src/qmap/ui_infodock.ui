@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>245</width>
-    <height>455</height>
+    <width>307</width>
+    <height>448</height>
    </rect>
   </property>
   <property name="styleSheet">
@@ -31,13 +31,14 @@ width: 30px;
 
 QLabel {
 	color: #4f4f4f;
-}</string>
+}
+</string>
   </property>
   <property name="floating">
    <bool>false</bool>
   </property>
   <property name="features">
-   <set>QDockWidget::DockWidgetClosable|QDockWidget::DockWidgetMovable</set>
+   <set>QDockWidget::DockWidgetMovable</set>
   </property>
   <property name="allowedAreas">
    <set>Qt::LeftDockWidgetArea|Qt::RightDockWidgetArea</set>
@@ -56,7 +57,10 @@ QLabel {
     <item row="0" column="0" colspan="2">
      <widget class="QComboBox" name="layerList"/>
     </item>
-    <item row="2" column="0">
+    <item row="1" column="0" colspan="2">
+     <widget class="QComboBox" name="featureList"/>
+    </item>
+    <item row="2" column="0" colspan="2">
      <widget class="QWebView" name="attributesView">
       <property name="baseSize">
        <size>
@@ -71,8 +75,31 @@ QLabel {
       </property>
      </widget>
     </item>
-    <item row="1" column="0">
-     <widget class="QComboBox" name="featureList"/>
+    <item row="3" column="0">
+     <spacer name="horizontalSpacer">
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
+      </property>
+      <property name="sizeHint" stdset="0">
+       <size>
+        <width>40</width>
+        <height>20</height>
+       </size>
+      </property>
+     </spacer>
+    </item>
+    <item row="3" column="1">
+     <widget class="QPushButton" name="pushButton">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+      <property name="text">
+       <string>Close Panel</string>
+      </property>
+     </widget>
     </item>
    </layout>
   </widget>
@@ -84,6 +111,29 @@ QLabel {
    <header>QtWebKit/QWebView</header>
   </customwidget>
  </customwidgets>
+ <tabstops>
+  <tabstop>layerList</tabstop>
+  <tabstop>featureList</tabstop>
+  <tabstop>attributesView</tabstop>
+  <tabstop>pushButton</tabstop>
+ </tabstops>
  <resources/>
- <connections/>
+ <connections>
+  <connection>
+   <sender>pushButton</sender>
+   <signal>clicked()</signal>
+   <receiver>InfoDock</receiver>
+   <slot>hide()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>214</x>
+     <y>439</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>89</x>
+     <y>430</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
 </ui>
