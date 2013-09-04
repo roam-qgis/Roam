@@ -1,10 +1,11 @@
 import os
 import collections
 
-from PyQt4.QtGui import QTableWidgetItem
+from PyQt4.QtGui import QTableWidgetItem, QPixmap
 from PyQt4.QtCore import (Qt, QUrl, 
                           QByteArray, QDate,
                           QDateTime, QTime)
+from PyQt4.QtWebKit import QWebPage
 
 from qgis.core import (QgsExpression, QgsFeature, 
                        QgsMapLayer)
@@ -15,6 +16,8 @@ from uifiles import (infodock_widget, infodock_base)
 
 htmlpath = os.path.join(os.path.dirname(__file__) , "info.html")
 
+images = {}
+
 with open(htmlpath) as f:
     template = f.read()
     
@@ -23,6 +26,8 @@ def image_handler(key, value):
                     <a href="{}" class="thumbnail">
                       <img width="200" height="200" src="data:image/png;base64,${}"\>
                     </a>'''
+    global images
+    images[key] = value
     return imageblock.format(key, value.toBase64())
 
 def default_handler(key, value):
@@ -43,6 +48,8 @@ class InfoDock(infodock_widget, infodock_base):
         self.results = collections.defaultdict(list)
         self.layerList.currentIndexChanged.connect(self.layerIndexChanged)
         self.featureList.currentIndexChanged.connect(self.featureIndexChanged)
+        self.attributesView.linkClicked.connect(self.openimage)
+        self.attributesView.page().setLinkDelegationPolicy(QWebPage.DelegateAllLinks)
         
     def featureIndexChanged(self, index):
         feature = self.featureList.itemData(index)
@@ -87,6 +94,8 @@ class InfoDock(infodock_widget, infodock_base):
         self.results[layer].append(QgsFeature(result.mFeature))
         
     def update(self, layer, feature):
+        global image
+        images = {}
         fields = [field.name() for field in feature.fields()]
         data = dict(zip(fields, feature.attributes()))
         items = []
@@ -116,3 +125,13 @@ class InfoDock(infodock_widget, infodock_base):
         name = layer.name()
         if self.layerList.findData(layer) == -1:
             self.layerList.addItem(name, layer)
+    
+    def openimage(self, url):
+        key = url.toString().lstrip('file://')
+        try:
+            data = images[os.path.basename(key)]
+        except KeyError:
+            return
+        pix = QPixmap()
+        pix.loadFromData(data)
+        utils.openImageViewer(pix)
