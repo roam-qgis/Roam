@@ -151,17 +151,21 @@ class QMap():
         Set up the main QGIS interface items.  Called after QGIS has loaded
         the plugin.
         """
-        fullscreen = utils.settings["fullscreen"]
-        if fullscreen:
-            self.mainwindow.showFullScreen()
-        else:
-            self.mainwindow.showMaximized()
+        self.updateAppSize()
+        utils.settings.settings_changed.connect(self.updateAppSize)
 
         self.navtoolbar.setMovable(False)
         self.navtoolbar.setAllowedAreas(Qt.TopToolBarArea)
         
         self.mainwindow.insertToolBar(self.toolbar, self.navtoolbar)
         self.openProjectAction.trigger()
+        
+    def updateAppSize(self):
+        fullscreen = utils.settings.get("fullscreen", False)
+        if fullscreen:
+            self.mainwindow.showFullScreen()
+        else:
+            self.mainwindow.showMaximized()
             
     def setMapTool(self, tool):
         """
@@ -199,6 +203,7 @@ class QMap():
                                   "Default View", self.mainwindow))
         self.gpsAction = (GPSAction(QIcon(":/icons/gps"), self.iface.mapCanvas(),
                                    self.mainwindow))
+        
         self.openProjectAction = (QAction(QIcon(":/icons/open"), "Projects",
                                          self.mainwindow))
         self.openProjectAction.setCheckable(True)
