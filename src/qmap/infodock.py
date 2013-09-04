@@ -4,7 +4,7 @@ import collections
 from PyQt4.QtGui import QTableWidgetItem
 from PyQt4.QtCore import Qt, QUrl
 
-from qgis.core import QgsExpression, QgsFeature
+from qgis.core import QgsExpression, QgsFeature, QgsMapLayer
 
 import utils
 
@@ -59,6 +59,8 @@ class InfoDock(infodock_widget, infodock_base):
             
     def _addResult(self, result):
         layer = result.mLayer
+        if layer.type() == QgsMapLayer.RasterLayer:
+            return
         self.addLayer(layer)
         utils.log(result.mFeature.id())
         self.results[layer].append(QgsFeature(result.mFeature))
