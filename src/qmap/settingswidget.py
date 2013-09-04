@@ -10,8 +10,10 @@ class SettingsWidget(settings_widget, settings_base):
     def __init__(self, parent=None):
         super(SettingsWidget, self).__init__(parent)
         self.setupUi(self)
+        self.populated = False
         self.fullScreenCheck.stateChanged.connect(self.fullScreenCheck_stateChanged)
         self.gpsPortCombo.currentIndexChanged.connect(self.gpsPortCombo_currentIndexChanged)
+        self.refreshPortsButton.pressed.connect(self.refreshPortsButton_pressed)
         
     def fullScreenCheck_stateChanged(self, state):
         utils.log("fullscreen changed")
@@ -23,7 +25,20 @@ class SettingsWidget(settings_widget, settings_base):
         port = self.gpsPortCombo.itemData(index)
         settings["gpsport"] = port
         utils.saveSettings()
-         
+        
+    def refreshPortsButton_pressed(self):
+        self.updateCOMPorts()
+        
+    def updateCOMPorts(self):
+        # First item is the local gpsd so skip that. 
+        ports = QgsGPSDetector.availablePorts()[1:]
+        self.blockSignals(True)
+        self.gpsPortCombo.clear()
+        self.gpsPortCombo.addItem('scan', 'scan')
+        for port, name in ports:
+            self.gpsPortCombo.addItem(name, port)
+        self.blockSignals(False)
+        
     def readSettings(self):
         fullscreen = settings.get("fullscreen", False)
         gpsport = settings.get("gpsport", 'scan')
@@ -38,13 +53,10 @@ class SettingsWidget(settings_widget, settings_base):
         self.blockSignals(False)
         
     def populateControls(self):
-        # First item is the local gpsd so skip that. 
-        ports = QgsGPSDetector.availablePorts()[1:]
-        self.blockSignals(True)
-        self.gpsPortCombo.addItem('scan', 'scan')
-        for port, name in ports:
-            self.gpsPortCombo.addItem(name, port)
-        self.blockSignals(False)   
+        if self.populated:
+            return
+        
+        self.updateCOMPorts()
         # Read version
         try:
             with open(os.path.join(curdir, 'version.txt')) as f:
@@ -53,3 +65,4 @@ class SettingsWidget(settings_widget, settings_base):
             version = 'unknown'
             
         self.versionLabel.setText(version)
+        self.populated = True
