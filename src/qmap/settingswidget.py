@@ -17,12 +17,12 @@ class SettingsWidget(settings_widget, settings_base):
         utils.log("fullscreen changed")
         state = bool(state)
         settings["fullscreen"] = state
-        settings.saveSettings()
+        utils.saveSettings()
         
     def gpsPortCombo_currentIndexChanged(self, index):
         port = self.gpsPortCombo.itemData(index)
         settings["gpsport"] = port
-        settings.saveSettings()
+        utils.saveSettings()
          
     def readSettings(self):
         fullscreen = settings.get("fullscreen", False)
@@ -40,10 +40,11 @@ class SettingsWidget(settings_widget, settings_base):
     def populateControls(self):
         # First item is the local gpsd so skip that. 
         ports = QgsGPSDetector.availablePorts()[1:]
+        self.blockSignals(True)
         self.gpsPortCombo.addItem('scan', 'scan')
         for port, name in ports:
             self.gpsPortCombo.addItem(name, port)
-            
+        self.blockSignals(False)   
         # Read version
         try:
             with open(os.path.join(curdir, 'version.txt')) as f:

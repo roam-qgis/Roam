@@ -153,7 +153,7 @@ class QMap():
         """
         self.updateAppSize()
         
-        utils.settings.settings_changed.connect(self.updateAppSize)
+        utils.settings_notify.settings_changed.connect(self.updateAppSize)
 
         self.navtoolbar.setMovable(False)
         self.navtoolbar.setAllowedAreas(Qt.TopToolBarArea)
@@ -338,8 +338,6 @@ class QMap():
         self.helppage.setHelpPage(helppath)
         
         self.settingswidget = SettingsWidget(self.stack)
-        self.settingswidget.populateControls()
-        self.settingswidget.readSettings()
         
         self.projectwidget = ProjectsWidget()   
         self.projectwidget.requestOpenProject.connect(self.loadProject)
@@ -383,6 +381,8 @@ class QMap():
         self.openProjectAction.triggered.connect(functools.partial(self.stack.setCurrentIndex, 1))
         
         self.configAction.triggered.connect(functools.partial(self.stack.setCurrentIndex, 3))
+        self.configAction.triggered.connect(self.settingswidget.populateControls)
+        self.configAction.triggered.connect(self.settingswidget.readSettings)
         
         self.toggleRasterAction.triggered.connect(self.toggleRasterLayers)
 

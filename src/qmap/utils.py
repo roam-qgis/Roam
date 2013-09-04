@@ -39,7 +39,7 @@ class Settings(dict):
         
     def loadSettings(self): 
         with open(self.settingspath,'r') as f:
-            self = yaml.load(f)
+            settings = yaml.load(f)
             
     def saveSettings(self):
         with open(self.settingspath, 'w') as f:
@@ -47,7 +47,16 @@ class Settings(dict):
               
         self.settings_changed.emit()
       
-settings = Settings(settingspath)  
+settings_notify = Settings(settingspath)
+
+with open(settingspath,'r') as f:
+    settings = yaml.load(f)
+            
+def saveSettings():
+    with open(settingspath, 'w') as f:
+        yaml.dump(data=settings, stream=f, default_flow_style=False)
+          
+    settings_notify.settings_changed.emit()
 
 appdata = os.path.join(os.environ['APPDATA'], "QMap")
 

@@ -34,7 +34,9 @@ class GPSAction(QAction):
             self.power = PowerState(self.parent())
             self.power.poweroff.connect(self.disconnectGPS)
             
-    def updateGPSPort(self, port):
+        utils.settings_notify.settings_changed.connect(self.updateGPSPort)
+            
+    def updateGPSPort(self):
         if self.isConnected:
             self.disconnectGPS()
             self.connectGPS()
