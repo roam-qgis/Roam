@@ -2,9 +2,10 @@ import os
 import collections
 
 from PyQt4.QtGui import QTableWidgetItem
-from PyQt4.QtCore import Qt, QUrl
+from PyQt4.QtCore import Qt, QUrl, QByteArray
 
-from qgis.core import QgsExpression, QgsFeature, QgsMapLayer
+from qgis.core import (QgsExpression, QgsFeature, 
+                       QgsMapLayer)
 
 import utils
 
@@ -14,6 +15,11 @@ htmlpath = os.path.join(os.path.dirname(__file__) , "info.html")
 
 with open(htmlpath) as f:
     template = f.read()
+    
+imageblock = '''
+                <a href="{}" class="thumbnail">
+                  <img width="200" height="200" src="data:image/png;base64,${}"\>
+                </a>'''
 
 class InfoDock(infodock_widget, infodock_base):
     def __init__(self, parent):
@@ -70,7 +76,16 @@ class InfoDock(infodock_widget, infodock_base):
         data = dict(zip(fields, feature.attributes()))
         items = []
         for key, value in data.iteritems():
-            item = "<tr><th>{}</th> <td>{}</td></tr>".format(key, value)
+            block = value
+            utils.log(type(value))
+            if isinstance(value, QByteArray):
+                block = imageblock.format(key, value.toBase64())
+            
+            try:
+                item = "<tr><th>{}</th> <td>{}</td></tr>".format(key, block)
+            except UnicodeEncodeError:
+                item = "<tr><th>{}</th> <td>{}</td></tr>".format(key, '{IMAGE}')
+                
             items.append(item)
             
         rows = ''.join(items)
