@@ -86,7 +86,7 @@ QLabel[class=&quot;small&quot;]  {  font: 12px &quot;Calibri&quot; ; }</string>
          <widget class="QComboBox" name="gpsPortCombo"/>
         </item>
         <item>
-         <widget class="QPushButton" name="pushButton">
+         <widget class="QPushButton" name="refreshPortsButton">
           <property name="text">
            <string>Refresh List</string>
           </property>
