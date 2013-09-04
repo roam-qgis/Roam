@@ -2,7 +2,9 @@ import os
 import collections
 
 from PyQt4.QtGui import QTableWidgetItem
-from PyQt4.QtCore import Qt, QUrl, QByteArray
+from PyQt4.QtCore import (Qt, QUrl, 
+                          QByteArray, QDate,
+                          QDateTime, QTime)
 
 from qgis.core import (QgsExpression, QgsFeature, 
                        QgsMapLayer)
@@ -16,10 +18,23 @@ htmlpath = os.path.join(os.path.dirname(__file__) , "info.html")
 with open(htmlpath) as f:
     template = f.read()
     
-imageblock = '''
-                <a href="{}" class="thumbnail">
-                  <img width="200" height="200" src="data:image/png;base64,${}"\>
-                </a>'''
+def image_handler(key, value):
+    imageblock = '''
+                    <a href="{}" class="thumbnail">
+                      <img width="200" height="200" src="data:image/png;base64,${}"\>
+                    </a>'''
+    return imageblock.format(key, value.toBase64())
+
+def default_handler(key, value):
+    return value
+
+def date_handler(key, value):
+    return value.toString()
+
+blocks = {QByteArray: image_handler,
+          QDate: date_handler,
+          QDateTime: date_handler,
+          QTime: date_handler}
 
 class InfoDock(infodock_widget, infodock_base):
     def __init__(self, parent):
@@ -76,11 +91,8 @@ class InfoDock(infodock_widget, infodock_base):
         data = dict(zip(fields, feature.attributes()))
         items = []
         for key, value in data.iteritems():
-            block = value
-            utils.log(type(value))
-            if isinstance(value, QByteArray):
-                block = imageblock.format(key, value.toBase64())
-            
+            handler = blocks.get(type(value), default_handler)
+            block = handler(key, value)
             try:
                 item = "<tr><th>{}</th> <td>{}</td></tr>".format(key, block)
             except UnicodeEncodeError:
