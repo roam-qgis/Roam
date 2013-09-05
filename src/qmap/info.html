@@ -4,15 +4,28 @@
     <title>Info</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="bootstrap/css/bootstrap.css" rel="stylesheet">
+    <script src="bootstrap/js/jquery-1.9.1.js"></script>
+       <script src="bootstrap/js/bootstrap.min.js"></script>
+    <script type="text/javascript">
+        function init() {
+            $(document).ready(function () {
+                $("th:contains('_')").each(function () {
+                    $(this).text($(this).text().replace(new RegExp("_", "g"), " "));
+                });
+                $("th").each(function () {
+                    $(this).text($(this).text().toLowerCase());
+                });
+                $("th").css("text-transform", "capitalize");
+            });
+        }
+    </script>
   </head>
-  <body>
-  	<script src="bootstrap/js/jquery-1.9.1.js"></script>
-  	<script src="bootstrap/js/bootstrap.min.js"></script>
+  <body onload="init()">
     <div class="container-fluid">
       <div class="row-fluid">
-      	<div class="text-center">
-      		 <h4>$TITLE Info</h4>
-      	</div>
+      <div class="text-center">
+               <h4>$TITLE Info</h4>
+      </div>
         <div class="text-center">
               <table class="table table-condensed table-hover">
                 $ROWS
