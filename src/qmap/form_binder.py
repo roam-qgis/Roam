@@ -329,7 +329,11 @@ class FormBinder(QObject):
         for control in self.boundControls:
             name = control.objectName()
             if isinstance(control, QDateTimeEdit):
-                value = control.dateTime().toString(Qt.ISODate)
+                if control.dateTime() == QDateTime(2000, 1, 1, 0, 0):
+                    value = None
+                else:
+                    value = control.dateTime().toString(Qt.ISODate)
+                
                 try:
                     feature[name] = value
                 except KeyError as e:
