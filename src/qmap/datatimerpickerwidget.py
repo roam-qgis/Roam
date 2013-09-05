@@ -35,6 +35,9 @@ class DateTimePickerDialog(datepicker_widget, QDialog):
         elif mode == "Time":
             self.datepicker.hide()
             self.setasnowbutton.setText("Set as current time")
+            
+    def setMinValue(self, mindate):
+        self.datepicker.setMinimumDate(mindate)
 
     def isDirty(self, *args):
         date = self.getSelectedDate()
