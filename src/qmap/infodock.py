@@ -2,6 +2,7 @@ import os
 import collections
 
 from string import Template
+from collections import OrderedDict
 
 from PyQt4.QtGui import (QPixmap,
                          QImageReader)
@@ -117,7 +118,10 @@ class InfoDock(infodock_widget, infodock_base):
         global image
         images = {}
         fields = [field.name() for field in feature.fields()]
-        data = dict(zip(fields, feature.attributes()))
+        data = OrderedDict()
+        for field, value in zip(fields, f.attributes()):
+            data[field] = value
+            
         items = []
         for key, value in data.iteritems():
             handler = blocks.get(type(value), default_handler)
