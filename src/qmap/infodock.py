@@ -119,7 +119,7 @@ class InfoDock(infodock_widget, infodock_base):
         images = {}
         fields = [field.name() for field in feature.fields()]
         data = OrderedDict()
-        for field, value in zip(fields, f.attributes()):
+        for field, value in zip(fields, feature.attributes()):
             data[field] = value
             
         items = []
