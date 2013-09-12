@@ -90,19 +90,14 @@ class InspectionTool(QgsMapTool):
             rect.setYMinimum(point.y() - searchRadius)
             rect.setYMaximum(point.y() + searchRadius)
         else:
-            utils.log("Using dragged area")
             geometry = self.selectband.asGeometry()
             rect = geometry.boundingBox()
-            utils.log(rect.toString())
             
         self.dragging = False
         self.selectband.reset(QGis.Polygon)
         
         rq = QgsFeatureRequest().setFilterRect(rect)
         
-        for f in self.layerto.getFeatures(rq):
-            print f
-
         # Look for an existing feature first. If there is one
         # then we emit that back to qmap.
         try:
