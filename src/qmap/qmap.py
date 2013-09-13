@@ -589,8 +589,8 @@ class QMap():
                     continue
                        
                 layer.QGISLayer = qgslayer
-            except KeyError:
-                utils.log("Layer not found in project")
+            except IndexError:
+                utils.log("Layer {} not found in project".format(layer.name))
                 continue
             
             if 'capture' in layer.capabilities:
