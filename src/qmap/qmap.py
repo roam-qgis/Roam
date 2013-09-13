@@ -240,7 +240,7 @@ class QMap():
         self.moveaction = QAction(QIcon(":/icons/move"), "Move Feature", self.mainwindow)
         self.moveaction.setCheckable(True)
 
-        self.editingmodeaction = QAction(QIcon(":/icons/edittools"), "Editing Tools", self.mainwindow)
+        self.editingmodeaction = QAction(QIcon(":/icons/edittools"), "Edit", self.mainwindow)
         self.editingmodeaction.setCheckable(True)
         
         self.infoaction = QAction(QIcon(":/icons/info"), "Info", self.mainwindow)
@@ -257,7 +257,7 @@ class QMap():
         """
             Show or hide the Editing Tools button based on the sub tools.
         """
-        if self.edittool.layers and self.movetool.layers:  
+        if self.edittool.layers or self.movetool.layers:  
             self.editingmodeaction.setVisible(True)
         else:
             self.editingmodeaction.setVisible(False)
@@ -589,8 +589,8 @@ class QMap():
                     continue
                        
                 layer.QGISLayer = qgslayer
-            except KeyError:
-                utils.log("Layer not found in project")
+            except IndexError:
+                utils.log("Layer {} not found in project".format(layer.name))
                 continue
             
             if 'capture' in layer.capabilities:
@@ -610,6 +610,7 @@ class QMap():
                     tool.geometryComplete.connect(add)
                 else:
                     tool.finished.connect(self.openForm)
+                    tool.error.connect(functools.partial(self.showToolError, text))
          
                 action = QAction(QIcon(layer.icon), text, self.mainwindow)
                 action.setData(layer)
@@ -635,6 +636,9 @@ class QMap():
                 
             if 'move' in layer.capabilities:
                 self.movetool.addLayer(qgslayer)
+                
+    def showToolError(self, label, message):
+        self.messageBar.pushMessage(label, message, QgsMessageBar.WARNING)
             
     def openForm(self, layer, feature):
         if not layer.isEditable():

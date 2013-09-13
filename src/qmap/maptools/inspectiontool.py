@@ -1,11 +1,10 @@
-from PyQt4.QtCore import pyqtSignal, QRect, QRectF, Qt
+from PyQt4.QtCore import pyqtSignal, Qt
 from PyQt4.QtGui import QCursor, QPixmap, QColor
 from qgis.core import (QgsPoint, QgsRectangle, QgsTolerance, 
                        QgsFeatureRequest, QgsFeature, QgsGeometry,
                        QgsVectorLayer, QGis)
 from qgis.gui import QgsMapTool, QgsRubberBand
 
-import maptoolutils
 import qmap.utils as utils
 
 class InspectionTool(QgsMapTool):
@@ -15,9 +14,10 @@ class InspectionTool(QgsMapTool):
     """
     
     finished = pyqtSignal(QgsVectorLayer, QgsFeature)
+    error = pyqtSignal(str)
     
     def __init__(self, canvas, layerfrom, layerto, 
-                        mapping, defer_logic):
+                        mapping, validation_method):
         """
             mapping - A dict of field - field mapping with values to
                             copy to the new layer
@@ -26,14 +26,10 @@ class InspectionTool(QgsMapTool):
         self.layerfrom = layerfrom
         self.layerto = layerto
         self.fields = mapping
+        self.validation_method = validation_method
         self.band = QgsRubberBand(canvas, QGis.Polygon )
         self.band.setColor(QColor.fromRgb(255,0,0, 65))
         self.band.setWidth(5)
-        
-        self.selectband = None
-        
-        self.selectrect = QRect()
-        self.dragging = False
         
         self.cursor = QCursor(QPixmap(["16 16 3 1",
             "      c None",
@@ -58,56 +54,20 @@ class InspectionTool(QgsMapTool):
         
     def clearBand(self):
         self.band.reset()
-
-    def canvasPressEvent(self, event):
-        self.selectrect.setRect( 0, 0, 0, 0 )
         
-        self.selectband = QgsRubberBand(self.canvas(), QGis.Polygon )
-        self.selectband.setColor(QColor.fromRgb(0,0,255, 65))
-        self.selectband.setWidth(5)
-        
-    def canvasMoveEvent(self, event):
-        if not event.buttons() == Qt.LeftButton:
-            return
-        
-        if not self.dragging:
-            self.dragging = True
-            self.selectrect.setTopLeft(event.pos())
-        self.selectrect.setBottomRight(event.pos())
-        
-        maptoolutils.setRubberBand(self.canvas(), self.selectrect, self.selectband)
-
     def canvasReleaseEvent(self, event):
-        if not self.dragging:
-            searchRadius = (QgsTolerance.toleranceInMapUnits( 5, self.layerfrom,
-                                                               self.canvas().mapRenderer(), QgsTolerance.Pixels))
-    
-            point = self.toMapCoordinates(event.pos())
-    
-            rect = QgsRectangle()                                                 
-            rect.setXMinimum(point.x() - searchRadius)
-            rect.setXMaximum(point.x() + searchRadius)
-            rect.setYMinimum(point.y() - searchRadius)
-            rect.setYMaximum(point.y() + searchRadius)
-        else:
-            geometry = self.selectband.asGeometry()
-            rect = geometry.boundingBox()
-            
-        self.dragging = False
-        self.selectband.reset(QGis.Polygon)
+        searchRadius = (QgsTolerance.toleranceInMapUnits( 5, self.layerfrom,
+                                                           self.canvas().mapRenderer(), QgsTolerance.Pixels))
+
+        point = self.toMapCoordinates(event.pos())
+
+        rect = QgsRectangle()                                                 
+        rect.setXMinimum(point.x() - searchRadius)
+        rect.setXMaximum(point.x() + searchRadius)
+        rect.setYMinimum(point.y() - searchRadius)
+        rect.setYMaximum(point.y() + searchRadius)
         
         rq = QgsFeatureRequest().setFilterRect(rect)
-        
-        # Look for an existing feature first. If there is one
-        # then we emit that back to qmap.
-        try:
-            feature = self.layerto.getFeatures(rq).next()
-            self.band.setToGeometry(feature.geometry(), self.layerto)
-            self.finished.emit(self.layerto, feature)
-            return
-        except StopIteration:
-            pass
-         
          
         try:
             # Only supports the first feature
@@ -117,7 +77,10 @@ class InspectionTool(QgsMapTool):
              
             fields = self.layerto.pendingFields()
             newfeature = QgsFeature(fields)
-            newfeature.setGeometry(QgsGeometry(feature.geometry()))
+            if self.layerto.geometryType() == QGis.Point:
+                newfeature.setGeometry(QgsGeometry.fromPoint(point))
+            else:
+                newfeature.setGeometry(QgsGeometry(feature.geometry()))
              
             #Set the default values
             for indx in xrange(fields.count()):
@@ -126,9 +89,16 @@ class InspectionTool(QgsMapTool):
             # Assign the old values to the new feature
             for fieldfrom, fieldto in self.fields.iteritems():      
                 newfeature[fieldto] = feature[fieldfrom]
-             
-             
-            self.finished.emit(self.layerto, newfeature)
+            
+            passed, message = self.validation_method(feature=newfeature,
+                                                     layerto=self.layerto)
+            
+            if passed:
+                self.finished.emit(self.layerto, newfeature)
+            else:
+                self.band.reset()
+                self.error.emit(message)
+                
         except StopIteration:
             pass
 

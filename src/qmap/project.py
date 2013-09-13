@@ -89,17 +89,44 @@ class QMapLayer(object):
             return tool
         
         def _getInsectionTool():
+            """
+
+
+            :return: :raise:
+            """
             try:
                 sourcelayername = toolsettings["sourcelayer"]
                 sourcelayer = self._getLayer(sourcelayername)
                 destlayername = toolsettings["destlayer"]
                 destlayer = self._getLayer(destlayername)
                 fieldmapping = toolsettings["mapping"]
+                validation = toolsettings.get("validation", None)
                 if destlayer is None or sourcelayer is None:
                     raise ErrorInMapTool("{} or {} not found in project".format(sourcelayername, destlayername))
-                
+
+                modulename, method = os.path.splitext(validation)
+                method = method[1:]
+
+                try:
+                    projectfolder = os.path.basename(self.project.folder)
+                    name = "projects.{project}.{layer}.{module}".format(project=projectfolder,
+                                                                        module=modulename,
+                                                                        layer=self.name)
+                    validationmod = importlib.import_module(name)
+                    log(dir(validationmod))
+                    validation_method = getattr(validationmod, method)
+                except ImportError as err:
+                    error = "Validation import error {}".format(err)
+                    log(error)
+                    raise ErrorInMapTool(error)
+                except AttributeError:
+                    error = "No method in {} called {} found".format(modulename, method)
+                    log(error)
+                    raise ErrorInMapTool(error)
+
                 return InspectionTool(canvas=canvas, layerfrom=sourcelayer, 
-                                      layerto=destlayer, mapping=fieldmapping  )
+                                      layerto=destlayer, mapping=fieldmapping, 
+                                      validation_method=validation_method)
             except KeyError as e:
                 utils.log(e)
                 raise ErrorInMapTool(e)
@@ -127,7 +154,9 @@ class QMapLayer(object):
             The configured capabilities for this layer.
         """
         default = ['capture', 'edit', 'move']
-        return self.settings.get("capabilities", default)
+        capabilities = self.settings.get("capabilities", default)
+        utils.log(capabilities)
+        return capabilities
     
     @property
     def settings(self):
