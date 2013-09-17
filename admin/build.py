@@ -25,7 +25,7 @@ curpath = os.path.join(curpath, '..')
 srcopyFilesath = join(curpath, "src", "qmap")
 buildpath = join(curpath, "build", APPNAME)
 deploypath = join(curpath, "build", APPNAME, "qmap")
-targetspath = join(curpath, 'qmap-admin', 'targets.config')
+targetspath = join(curpath, 'admin', 'targets.config')
 bootpath = join(curpath, "src", "loader_src")
 dotnetpath = join(curpath, "src", "dotnet")
 
@@ -91,7 +91,7 @@ def compileplugin():
             mssyncpath = os.path.join(dotnetpath, "bin")
             lib = os.path.join(mssyncpath, "libsyncing.dll")
             bin = os.path.join(mssyncpath, "provisioner.exe")
-            clientsetuppath = os.path.join(curpath,"qmap-admin","client-setup")
+            clientsetuppath = os.path.join(curpath, "","client-setup")
             copy_tree(lib, clientsetuppath)
             copy_tree(bin, clientsetuppath)
         except ExecutionError:
