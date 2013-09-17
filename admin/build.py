@@ -6,7 +6,7 @@ import os
 import sys
 import datetime
 import optparse
-import src.qmap.yaml as yaml
+import yaml
 import fabricate
 import shutil
 
