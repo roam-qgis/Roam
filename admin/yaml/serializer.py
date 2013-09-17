@@ -1,15 +1,9 @@
 
 __all__ = ['Serializer', 'SerializerError']
 
-<<<<<<< HEAD
-from admin.yaml.error import YAMLError
-from admin.yaml.events import *
-from admin.yaml.nodes import *
-=======
 from error import YAMLError
 from events import *
 from nodes import *
->>>>>>> dms
 
 class SerializerError(YAMLError):
     pass

@@ -1,18 +1,10 @@
 
 __all__ = ['BaseResolver', 'Resolver']
 
-<<<<<<< HEAD
-import re
-
-from error import *
-from admin.yaml.nodes import *
-
-=======
 from error import *
 from nodes import *
 
 import re
->>>>>>> dms
 
 class ResolverError(YAMLError):
     pass

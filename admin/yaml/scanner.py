@@ -26,13 +26,8 @@
 
 __all__ = ['Scanner', 'ScannerError']
 
-<<<<<<< HEAD
-from admin.yaml.error import MarkedYAMLError
-from admin.yaml.tokens import *
-=======
 from error import MarkedYAMLError
 from tokens import *
->>>>>>> dms
 
 class ScannerError(MarkedYAMLError):
     pass
