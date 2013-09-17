@@ -11,7 +11,7 @@ def moduleInformation():
     return "imagewidget", ("QMapImageWidget", )
 
 from PyQt4 import QtGui, QtDesigner
-from qmap.qtcontrols.imagewidget import QMapImageWidget
+from imagewidget import QMapImageWidget
 
 class QMapImageWidgetPlugin(QtDesigner.QPyDesignerCustomWidgetPlugin):
     def __init__(self, parent = None):
