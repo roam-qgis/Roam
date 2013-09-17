@@ -1,3 +1,2 @@
-SET PYTHONPATH=src\qmap\qtcontrols;%~dp0\src;\%PYTHONPATH%;%~dp0\src\qmap;
-SET PYQTDESIGNERPATH=src\qmap\qtcontrols\plugins
-"C:\OSGeo4W\bin\qgis-dev.bat" --noplugins %*
+call %~dp0setenv.bat
+"%OSGEO4W_ROOT%\bin\qgis-dev.bat" --noplugins %*

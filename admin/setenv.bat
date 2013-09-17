@@ -1,9 +1,11 @@
 @ECHO OFF
 
-set OSGEO4W_ROOT=C:\OSGeo4W
-PATH=%OSGEO4W_ROOT%\bin;%PATH%
-for %%f in (%OSGEO4W_ROOT%\etc\ini\*.bat) do call %%f
+SET OSGEO4W_ROOT=C:\OSGeo4W
 
-set PYTHONPATH=C:\OSGeo4W\apps\qgis-dev\python;%~dp0\src;
-Set PATH=C:\OSGeo4W\apps\qgis-dev\bin;%PATH%
-set QGISHOME=C:\OSGeo4W\apps\qgis-dev\
+PATH="%OSGEO4W_ROOT%\bin";%PATH%
+for %%f in ("%OSGEO4W_ROOT%\etc\ini\*.bat") do call "%%f"
+
+SET QGIS_PLUGINPATH=%~dp0
+set QGISHOME="%OSGEO4W_ROOT%\apps\qgis-dev\"
+SET PYTHONPATH=%~dp0qtcontrols;%~dp0;%PYTHONPATH%
+SET PYQTDESIGNERPATH=%~dp0qtcontrols\plugins
