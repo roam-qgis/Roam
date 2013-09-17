@@ -2,12 +2,13 @@
 __all__ = ['BaseRepresenter', 'SafeRepresenter', 'Representer',
     'RepresenterError']
 
-from error import *
-from nodes import *
-
 import datetime
+import copy_reg
+import types
 
-import sys, copy_reg, types
+from error import *
+from admin.yaml.nodes import *
+
 
 class RepresenterError(YAMLError):
     pass

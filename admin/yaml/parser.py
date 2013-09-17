@@ -61,10 +61,10 @@
 
 __all__ = ['Parser', 'ParserError']
 
-from error import MarkedYAMLError
-from tokens import *
-from events import *
-from scanner import *
+from admin.yaml.error import MarkedYAMLError
+from admin.yaml.tokens import *
+from admin.yaml.events import *
+
 
 class ParserError(MarkedYAMLError):
     pass

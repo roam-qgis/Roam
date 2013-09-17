@@ -1,10 +1,11 @@
 
 __all__ = ['BaseResolver', 'Resolver']
 
-from error import *
-from nodes import *
-
 import re
+
+from error import *
+from admin.yaml.nodes import *
+
 
 class ResolverError(YAMLError):
     pass

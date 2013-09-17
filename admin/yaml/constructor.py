@@ -2,12 +2,15 @@
 __all__ = ['BaseConstructor', 'SafeConstructor', 'Constructor',
     'ConstructorError']
 
-from error import *
-from nodes import *
-
 import datetime
+import binascii
+import re
+import sys
+import types
 
-import binascii, re, sys, types
+from error import *
+from admin.yaml.nodes import *
+
 
 class ConstructorError(MarkedYAMLError):
     pass
