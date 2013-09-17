@@ -22,9 +22,9 @@ from distutils.dir_util import (copy_tree,
 APPNAME = "IntraMaps Roam"
 curpath = os.path.dirname(os.path.abspath(__file__))
 curpath = os.path.join(curpath, '..')
-srcopyFilesath = join(curpath, "src", "qmap")
+srcopyFilesath = join(curpath, "src")
+appsrcopyFilesath = join(curpath, "src", 'qmap')
 buildpath = join(curpath, "build", APPNAME)
-deploypath = join(curpath, "build", APPNAME, "qmap")
 targetspath = join(curpath, 'admin', 'targets.config')
 
 doc_sources = ['docs/README', 'docs/ClientSetup', 'docs/UserGuide']
@@ -50,9 +50,9 @@ def build():
 
 def compileplugin():
     print " - building resource files..."
-    run('pyrcc4', '-o', join(srcopyFilesath,'qtcontrols','images_rc.py'), join(srcopyFilesath,'qtcontrols','images.qrc'))
-    run('pyrcc4', '-o', join(srcopyFilesath,'resources_rc.py'), join(srcopyFilesath,'resources.qrc'))
-    run('pyrcc4', '-o', join(srcopyFilesath,'syncing/resources_rc.py'), join(srcopyFilesath,'syncing/resources.qrc'))
+    run('pyrcc4', '-o', join(appsrcopyFilesath,'qtcontrols','images_rc.py'), join(appsrcopyFilesath,'qtcontrols','images.qrc'))
+    run('pyrcc4', '-o', join(appsrcopyFilesath,'resources_rc.py'), join(appsrcopyFilesath,'resources.qrc'))
+    run('pyrcc4', '-o', join(appsrcopyFilesath,'syncing/resources_rc.py'), join(appsrcopyFilesath,'syncing/resources.qrc'))
 
 def docs():
     print "Generating docs"
@@ -101,14 +101,9 @@ def build_plugin():
     # Copy all the files to the ouput directory
     print "Copying new files..."
     
-    copy_tree(srcopyFilesath,deploypath)
+    copy_tree(srcopyFilesath, buildpath)
 
-    # Replace version numbers
-    version = getVersion()
-    command = 's/version=0.1/version=%s/ "%s"' % (version, join(deploypath, 'metadata.txt'))
-    #run("sed", command)
-
-    print "Local build into {0}".format(deploypath)
+    print "Local build into {0}".format(buildpath)
 
 def deploy():
     """ Deploy the target given via the command line """
