@@ -3,7 +3,7 @@ import os
 import PyQt4
 from PyQt4.QtGui import (QLabel, QDialog, QFileDialog, 
 						QPixmap, QGridLayout, QLayout, 
-						QWidget)
+						QWidget, QApplication)
 from PyQt4.QtCore import (QByteArray, QBuffer, 
 						QIODevice, QEvent, QObject, pyqtSignal)
 import logging
@@ -104,3 +104,9 @@ class QMapImageWidget(baseClass, widgetForm):
 	def leaveEvent(self, event):
 		self.selectbutton.setVisible(False)
 		self.deletebutton.setVisible(False)
+
+if __name__ == "__main__":
+    app = QApplication([])
+    w = QMapImageWidget()
+    w.show()
+    app.exec_()

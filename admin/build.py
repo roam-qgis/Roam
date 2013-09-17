@@ -26,27 +26,12 @@ srcopyFilesath = join(curpath, "src", "qmap")
 buildpath = join(curpath, "build", APPNAME)
 deploypath = join(curpath, "build", APPNAME, "qmap")
 targetspath = join(curpath, 'admin', 'targets.config')
-bootpath = join(curpath, "src", "loader_src")
-dotnetpath = join(curpath, "src", "dotnet")
-
-ui_sources = ['ui_datatimerpicker', 'ui_listmodules',
-              'syncing/ui_sync', 'ui_listfeatures', 'ui_errorlist',
-              'ui_helpviewer','ui_drawingpad', "ui_helppage"]
-
-ui_sources = []
 
 doc_sources = ['docs/README', 'docs/ClientSetup', 'docs/UserGuide']
-
-iswindows = os.name == 'nt'
 
 # HACK: Might not be the best thing to do but will work for now.
 fabricate._set_default_builder()
 fabricate.default_builder.quiet = True
-
-if iswindows:
-    # Add the path to MSBuild to PATH so that subprocess can find it.
-    env = os.environ.copy()
-    env['PATH'] += ";c:\\WINDOWS\\Microsoft.NET\Framework\\v3.5"
 
 def readTargetsConfig():
     try:
@@ -64,40 +49,10 @@ def build():
     build_plugin()
 
 def compileplugin():
-    print " - building UI files..."
-    for source in ui_sources:
-        pyuic = 'pyuic4'
-        if iswindows:
-            pyuic += '.bat'
-        source = join(srcopyFilesath, source)
-        run(pyuic, '-o', source + '.py', source + '.ui')
-
     print " - building resource files..."
     run('pyrcc4', '-o', join(srcopyFilesath,'qtcontrols','images_rc.py'), join(srcopyFilesath,'qtcontrols','images.qrc'))
     run('pyrcc4', '-o', join(srcopyFilesath,'resources_rc.py'), join(srcopyFilesath,'resources.qrc'))
     run('pyrcc4', '-o', join(srcopyFilesath,'syncing/resources_rc.py'), join(srcopyFilesath,'syncing/resources.qrc'))
-
-    if iswindows:
-        try:
-            projects = ['libsyncing/libsyncing.csproj', 
-                        'provisioner/provisioner.csproj',
-                        'syncer/syncer.csproj']
-    
-            print " - building syncing tools..."
-            for project in projects:
-                run('MSBuild', '/property:Configuration=Release', '/verbosity:m', \
-                join(dotnetpath, project), shell=False, env=env)
-    
-            mssyncpath = os.path.join(dotnetpath, "bin")
-            lib = os.path.join(mssyncpath, "libsyncing.dll")
-            bin = os.path.join(mssyncpath, "provisioner.exe")
-            clientsetuppath = os.path.join(curpath, "","client-setup")
-            copy_tree(lib, clientsetuppath)
-            copy_tree(bin, clientsetuppath)
-        except ExecutionError:
-            pass
-        except WindowsError:
-            pass
 
 def docs():
     print "Generating docs"
@@ -147,16 +102,7 @@ def build_plugin():
     print "Copying new files..."
     
     copy_tree(srcopyFilesath,deploypath)
-    copy_tree(bootpath,buildpath)
 
-    if iswindows:
-        mssyncpath = join(dotnetpath, "bin")
-        lib = join(mssyncpath, "libsyncing.dll")
-        bin = join(mssyncpath, "syncer.exe")
-        destmssyncpath = join(deploypath,"syncing")
-        if os.path.exists(lib) and os.path.exists(bin):
-            copy_tree(lib, destmssyncpath)
-            copy_tree(bin, destmssyncpath)
     # Replace version numbers
     version = getVersion()
     command = 's/version=0.1/version=%s/ "%s"' % (version, join(deploypath, 'metadata.txt'))
@@ -212,12 +158,6 @@ def deploytarget(clientconfig):
 if __name__ == "__main__":
     options = [
         optparse.make_option('-o', '--target', dest='target', help='Target to deploy'),
-        # optparse.make_option('--with-tests', action='store', help='Enable tests!', \
-        #                      default=True),
-        # optparse.make_option('--with-mssyncing', action='store', help='Use MS SQL Syncing!', \
-        #                      default=True),
-		# optparse.make_option('--with-docs', action='store', help='Build docs', \
-  #                            default=True)
     ]
 
     fabricate.main(extra_options=options)

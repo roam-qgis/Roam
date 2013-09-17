@@ -2,6 +2,7 @@
 __all__ = ['BaseConstructor', 'SafeConstructor', 'Constructor',
     'ConstructorError']
 
+<<<<<<< HEAD
 import datetime
 import binascii
 import re
@@ -11,6 +12,14 @@ import types
 from error import *
 from admin.yaml.nodes import *
 
+=======
+from error import *
+from nodes import *
+
+import datetime
+
+import binascii, re, sys, types
+>>>>>>> dms
 
 class ConstructorError(MarkedYAMLError):
     pass

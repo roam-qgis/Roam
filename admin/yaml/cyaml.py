@@ -4,12 +4,21 @@ __all__ = ['CBaseLoader', 'CSafeLoader', 'CLoader',
 
 from _yaml import CParser, CEmitter
 
+<<<<<<< HEAD
 from admin.yaml.constructor import *
 
 from admin.yaml.serializer import *
 from representer import *
 
 from admin.yaml.resolver import *
+=======
+from constructor import *
+
+from serializer import *
+from representer import *
+
+from resolver import *
+>>>>>>> dms
 
 class CBaseLoader(CParser, BaseConstructor, BaseResolver):
 

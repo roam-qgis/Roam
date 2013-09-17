@@ -11,7 +11,7 @@ def moduleInformation():
     return "imagewidget", ("QMapImageWidget", )
 
 from PyQt4 import QtGui, QtDesigner
-from qmap.qtcontrols.imagewidget import QMapImageWidget
+from imagewidget import QMapImageWidget
 
 class QMapImageWidgetPlugin(QtDesigner.QPyDesignerCustomWidgetPlugin):
     def __init__(self, parent = None):
@@ -19,40 +19,40 @@ class QMapImageWidgetPlugin(QtDesigner.QPyDesignerCustomWidgetPlugin):
         self.initialized = False
 
     def initialize(self, core):
-    	if self.initialized:
-    		return
+        if self.initialized:
+            return
 
-    	self.initialized = True
+        self.initialized = True
 
     def isInitialized(self):
         return self.initialized
 
     def createWidget(self, parent):
-    	return QMapImageWidget(parent=parent)
+        return QMapImageWidget(parent=parent)
 
     def name(self):
-    	return "QMapImageWidget"
+        return "QMapImageWidget"
 
     def group(self):
-    	return "QMap"
+        return "QMap"
 
     def icon(self):
-    	return QtGui.QIcon()
+        return QtGui.QIcon()
 
     def toolTip(self):
-    	return ""
+        return ""
 
     def whatsThis(self):
-    	return ""
+        return ""
 
     def isContainer(self):
-    	return False
+        return False
 
-	def domXml(self):
-	    return '<widget class="QMapImageWidget" name="imagewidget" header="imagewidget" />\n'
+    def domXml(self):
+        return '<widget class="QMapImageWidget" name="imagewidget" header="imagewidget" />\n'
 
-	def includeFile(self):
-		return "imagewidget"
+    def includeFile(self):
+        return "imagewidget"
 
 
 

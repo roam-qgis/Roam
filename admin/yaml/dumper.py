@@ -1,10 +1,17 @@
 
 __all__ = ['BaseDumper', 'SafeDumper', 'Dumper']
 
+<<<<<<< HEAD
 from admin.yaml.emitter import *
 from admin.yaml.serializer import *
 from admin.yaml.representer import *
 from admin.yaml.resolver import *
+=======
+from emitter import *
+from serializer import *
+from representer import *
+from resolver import *
+>>>>>>> dms
 
 class BaseDumper(Emitter, Serializer, BaseRepresenter, BaseResolver):
 

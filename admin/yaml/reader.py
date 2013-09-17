@@ -17,10 +17,16 @@
 
 __all__ = ['Reader', 'ReaderError']
 
+<<<<<<< HEAD
 import codecs
 import re
 
 from admin.yaml.error import YAMLError, Mark
+=======
+from error import YAMLError, Mark
+
+import codecs, re
+>>>>>>> dms
 
 class ReaderError(YAMLError):
 

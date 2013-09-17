@@ -9,7 +9,11 @@
 __all__ = ['Emitter', 'EmitterError']
 
 from error import YAMLError
+<<<<<<< HEAD
 from admin.yaml.events import *
+=======
+from events import *
+>>>>>>> dms
 
 class EmitterError(YAMLError):
     pass

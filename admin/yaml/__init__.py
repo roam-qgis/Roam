@@ -1,4 +1,5 @@
 
+<<<<<<< HEAD
 from admin.yaml.error import *
 
 from admin.yaml.tokens import *
@@ -7,11 +8,25 @@ from admin.yaml.nodes import *
 
 from admin.yaml.loader import *
 from admin.yaml.dumper import *
+=======
+from error import *
+
+from tokens import *
+from events import *
+from nodes import *
+
+from loader import *
+from dumper import *
+>>>>>>> dms
 
 __version__ = '3.10'
 
 try:
+<<<<<<< HEAD
     from admin.yaml.cyaml import *
+=======
+    from cyaml import *
+>>>>>>> dms
     __with_libyaml__ = True
 except ImportError:
     __with_libyaml__ = False
