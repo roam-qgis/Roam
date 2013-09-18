@@ -1,6 +1,7 @@
 from functools import partial
 
-from PyQt4.QtGui import QSizePolicy, QWidget, QPushButton
+from PyQt4.QtGui import (QSizePolicy, QWidget, QPushButton, QDialog,
+                         QTextEdit, QPushButton)
 from PyQt4.QtCore import Qt
 
 from htmlviewer import showHTMLReport
