@@ -1,6 +1,6 @@
 @ECHO OFF
 
-SET OSGEO4W_ROOT=C:\OSGeo4W
+SET OSGEO4W_ROOT=F:\qgis_install\QGIS Weekly
 
 :: Uncomment the following line if QGIS is installed in the
 :: current folder.  
