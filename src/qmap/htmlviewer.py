@@ -40,6 +40,9 @@ def string_handler(key, value):
 def date_handler(key, value):
     return value.toString()
 
+def none_handler(key, value):
+    return ''
+
 def updateTemplate(data, template):
     data = dict(data)
     for key, value in data.iteritems():
@@ -60,9 +63,6 @@ def openimage(url):
     else:
         pix.load(data)
     utils.openImageViewer(pix)
-
-def none_handler(value):
-    return ''
 
 blocks = {QByteArray: image_handler,
           QDate: date_handler,
