@@ -4,11 +4,10 @@ import collections
 from string import Template
 from collections import OrderedDict
 
-from PyQt4.QtGui import (QPixmap,
-                         QImageReader)
+from PyQt4.QtGui import (QImageReader)
 
 from PyQt4.QtCore import (Qt, QUrl, 
-                          QByteArray, QDate,
+                          QDate,
                           QDateTime, QTime)
 from PyQt4.QtWebKit import QWebPage
 
@@ -16,51 +15,14 @@ from qgis.core import (QgsExpression, QgsFeature,
                        QgsMapLayer)
 
 import utils
+from htmlviewer import updateTemplate, openimage
 
 from uifiles import (infodock_widget, infodock_base)
 
 htmlpath = os.path.join(os.path.dirname(__file__) , "info.html")
 
-images = {}
-formats = [f.data() for f in QImageReader.supportedImageFormats()]
-
 with open(htmlpath) as f:
     template = Template(f.read())
-    
-def image_handler(key, value, **kwargs):
-    imageblock = '''
-                    <a href="{}" class="thumbnail">
-                      <img width="200" height="200" src="{}"\>
-                    </a>'''
-    
-    imagetype = kwargs.get('imagetype', 'base64' )
-    global images
-    images[key] = (value, imagetype)
-    if imagetype == 'base64':
-        src = 'data:image/png;base64,${}'.format(value.toBase64())
-    else:
-        src = value
-    return imageblock.format(key, src)
-
-def default_handler(key, value):
-    return value
-
-def string_handler(key, value):
-    _, extension = os.path.splitext(value)
-    if extension[1:] in formats:
-        return image_handler(key, value, imagetype='file')
-    
-    return value
-
-def date_handler(key, value):
-    return value.toString()
-
-blocks = {QByteArray: image_handler,
-          QDate: date_handler,
-          QDateTime: date_handler,
-          QTime: date_handler,
-          str: string_handler,
-          unicode: string_handler }
 
 class InfoDock(infodock_widget, infodock_base):
     def __init__(self, parent):
@@ -69,7 +31,7 @@ class InfoDock(infodock_widget, infodock_base):
         self.results = collections.defaultdict(list)
         self.layerList.currentIndexChanged.connect(self.layerIndexChanged)
         self.featureList.currentIndexChanged.connect(self.featureIndexChanged)
-        self.attributesView.linkClicked.connect(self.openimage)
+        self.attributesView.linkClicked.connect(openimage)
         self.attributesView.page().setLinkDelegationPolicy(QWebPage.DelegateAllLinks)
         
     def featureIndexChanged(self, index):
@@ -79,7 +41,7 @@ class InfoDock(infodock_widget, infodock_base):
             return 
         
         self.update(layer, feature)
-        
+
     def layerIndexChanged(self, index):
         self.featureList.clear()
         layer = self.layerList.itemData(index)
@@ -119,22 +81,18 @@ class InfoDock(infodock_widget, infodock_base):
         images = {}
         fields = [field.name() for field in feature.fields()]
         data = OrderedDict()
+
+        items = []
         for field, value in zip(fields, feature.attributes()):
             data[field] = value
-            
-        items = []
-        for key, value in data.iteritems():
-            handler = blocks.get(type(value), default_handler)
-            block = handler(key, value)
-            try:
-                item = "<tr><th>{}</th> <td>{}</td></tr>".format(key, block)
-            except UnicodeEncodeError:
-                item = "<tr><th>{}</th> <td>{}</td></tr>".format(key, '{IMAGE}')
-                
+            item = "<tr><th>{0}</th> <td>${{{0}}}</td></tr>".format(field)
             items.append(item)
-            
-        rows = ''.join(items)
-        html = template.safe_substitute(TITLE=layer.name(), ROWS=rows)
+        rowtemple = Template(''.join(items))
+        rowshtml = updateTemplate(data, rowtemple)
+        info = {}
+        info['TITLE'] = layer.name()
+        info['ROWS'] = rowshtml
+        html = updateTemplate(info, template)
         base = os.path.dirname(os.path.abspath(__file__))
         baseurl = QUrl.fromLocalFile(base + '\\')
         self.attributesView.setHtml(html, baseurl)
@@ -149,16 +107,3 @@ class InfoDock(infodock_widget, infodock_base):
         name = layer.name()
         if self.layerList.findData(layer) == -1:
             self.layerList.addItem(name, layer)
-    
-    def openimage(self, url):
-        key = url.toString().lstrip('file://')
-        try:
-            data, imagetype = images[os.path.basename(key)]
-        except KeyError:
-            return
-        pix = QPixmap()
-        if imagetype == 'base64':
-            pix.loadFromData(data)
-        else:
-            pix.load(data)
-        utils.openImageViewer(pix)
