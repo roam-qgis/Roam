@@ -751,14 +751,14 @@ class QMap():
         # Remove the old widget if it's still there.
         # I don't really like this. Seems hacky.
         try:
-            self.iface.messageBar().popWidget(self.syncwidget)
+            self.messageBar.popWidget(self.syncwidget)
         except RuntimeError:
             pass
         except AttributeError:
             pass
         
-        self.iface.messageBar().findChildren(QToolButton)[0].setVisible(False)        
-        self.syncwidget = self.iface.messageBar().createMessage("Syncing", "Sync in progress", QIcon(":/icons/syncing"))
+        self.messageBar.findChildren(QToolButton)[0].setVisible(False)
+        self.syncwidget = self.messageBar.createMessage("Syncing", "Sync in progress", QIcon(":/icons/syncing"))
         button = QPushButton(self.syncwidget)
         button.setCheckable(True)
         button.setText("Status")
@@ -769,21 +769,21 @@ class QMap():
         pro.setMinimum(0)
         self.syncwidget.layout().addWidget(pro)
         self.syncwidget.layout().addWidget(button)
-        self.iface.messageBar().pushWidget(self.syncwidget, QgsMessageBar.INFO)
+        self.messageBar.pushWidget(self.syncwidget, QgsMessageBar.INFO)
         
     def synccomplete(self):
         try:
-            self.iface.messageBar().popWidget(self.syncwidget)
+            self.messageBar.popWidget(self.syncwidget)
         except RuntimeError:
             pass
         
         stylesheet = ("QgsMessageBar { background-color: rgba(239, 255, 233); border: 0px solid #b9cfe4; } "
                      "QLabel,QTextEdit { color: #057f35; } ")
         
-        closebutton = self.iface.messageBar().findChildren(QToolButton)[0]
+        closebutton = self.messageBar.findChildren(QToolButton)[0]
         closebutton.setVisible(True)
         closebutton.clicked.connect(functools.partial(self.report.setVisible, False))
-        self.syncwidget = self.iface.messageBar().createMessage("Syncing", "Sync Complete", QIcon(":/icons/syncdone"))
+        self.syncwidget = self.messageBar.createMessage("Syncing", "Sync Complete", QIcon(":/icons/syncdone"))
         button = QPushButton(self.syncwidget)
         button.setCheckable(True)
         button.setChecked(self.report.isVisible())
@@ -795,20 +795,20 @@ class QMap():
         pro.setValue(100)
         self.syncwidget.layout().addWidget(pro)      
         self.syncwidget.layout().addWidget(button)
-        self.iface.messageBar().pushWidget(self.syncwidget)
-        self.iface.messageBar().setStyleSheet(stylesheet)
+        self.messageBar.pushWidget(self.syncwidget)
+        self.messageBar.setStyleSheet(stylesheet)
         self.iface.mapCanvas().refresh()
         
     def syncerror(self):
         try:
-            self.iface.messageBar().popWidget(self.syncwidget)
+            self.messageBar.popWidget(self.syncwidget)
         except RuntimeError:
             pass
         
-        closebutton = self.iface.messageBar().findChildren(QToolButton)[0]
+        closebutton = self.messageBar.findChildren(QToolButton)[0]
         closebutton.setVisible(True)
         closebutton.clicked.connect(functools.partial(self.report.setVisible, False))
-        self.syncwidget = self.iface.messageBar().createMessage("Syncing", "Sync Error", QIcon(":/icons/syncfail"))
+        self.syncwidget = self.messageBar.createMessage("Syncing", "Sync Error", QIcon(":/icons/syncfail"))
         button = QPushButton(self.syncwidget)
         button.setCheckable(True)
         button.setChecked(self.report.isVisible())
@@ -816,7 +816,7 @@ class QMap():
         button.setIcon(QIcon(":/icons/syncinfo"))
         button.toggled.connect(functools.partial(self.report.setVisible))            
         self.syncwidget.layout().addWidget(button)
-        self.iface.messageBar().pushWidget(self.syncwidget, QgsMessageBar.CRITICAL)
+        self.messageBar.pushWidget(self.syncwidget, QgsMessageBar.CRITICAL)
         self.iface.mapCanvas().refresh()
         
     def syncProvider(self, provider):
@@ -832,7 +832,7 @@ class QMap():
         
         provider.syncError.connect(self.report.updateHTML)
         provider.syncError.connect(self.syncerror)
-        provider.syncComplete.connect(functools.partial(self.syncAction.setEnabled, True))
+        provider.syncError.connect(functools.partial(self.syncAction.setEnabled, True))
         
         provider.startSync()
         
