@@ -2,7 +2,7 @@ import resources_rc
 
 from PyQt4.QtGui import QDialog, QListWidgetItem, QApplication
 from PyQt4.QtCore import pyqtSignal, Qt
-from qgis.core import QgsFeature, QgsVectorLayer
+from qgis.core import QgsFeature, QgsVectorLayer, QgsExpression
 
 from uifiles import features_widget, features_base
 
@@ -33,7 +33,12 @@ class FeatureItem(QListWidgetItem):
         QListWidgetItem.__init__(self)
         self.feature = feature
         self._layer = layer
-        self.setText("{} on {}".format(feature.id(), layer.name()))
+        index = layer.fieldNameIndex(layer.displayField())
+        if index < 0:
+            display = QgsExpression.replaceExpressionText(layer.displayField(), feature, layer )
+        else:
+            display = feature[index]
+        self.setText("{0} ({1})".format(display, layer.name()))
         
     @property
     def qgsFeature(self):
