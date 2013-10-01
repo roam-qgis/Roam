@@ -22,7 +22,7 @@ Export Scripts
 -------------------------------
 
 ``admin\exports`` contains a bunch of export scripts for different project setups.  Each Roam deployment can be different
-so different scripts are used to export just what is needed.
+so different scripts are used to export just what is needed for that setup.
 
 An example export script is::
 
@@ -32,11 +32,8 @@ An example export script is::
 
     call baseexport.bat
 
-    REM SET PROJECT=%HOME%\projects\Busselton Install
-    REM move /Y "%PROJECT%\_docs\*" "%HOME%\docs\"
-
 The ``NAME`` variable must be set in order to export the right projects for the deployment.  These settings are found in
-``targets.config`` an example config is::
+``targets.config``. An example config is::
 
     clients:
         Busselton Install:
@@ -46,5 +43,29 @@ The ``NAME`` variable must be set in order to export the right projects for the 
 
 All config files in Roam use YAML as the format.  YAML is sensitive to tab so always use space when indenting
 
-Creating an installer
--------------------------------
+Roam deployments can also be bundled into a self extracting installer.  This is done using one of the ``bundle_xxx`` batch
+files.  A example of a bundle batch file is::
+
+    call export_busselton.bat
+    call %~dp0bundle.bat
+
+This will call the ``export_busselton.bat`` file and then call the bundle process.  The bundle process takes the output
+for the deployment in export and creates a self extracting zip file.
+
+The build process
+-------------------------------------
+The build process is done using Python (fabricate) and batch files.  All the build logic is inside ``admin\build.py``
+and is kept as simple as possible.  Most of ``build.py`` takes care of copying the src files out to the build folder and
+then moving the project into the export folder for that setup.
+
+
+
+
+
+
+
+
+
+
+
+
