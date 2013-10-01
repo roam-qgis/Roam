@@ -240,7 +240,7 @@ class QMap():
         self.moveaction = QAction(QIcon(":/icons/move"), "Move Feature", self.mainwindow)
         self.moveaction.setCheckable(True)
 
-        self.editingmodeaction = QAction(QIcon(":/icons/edittools"), "Edit", self.mainwindow)
+        self.editingmodeaction = QAction(QIcon(":/icons/edittools"), "Edit Tools", self.mainwindow)
         self.editingmodeaction.setCheckable(True)
         
         self.infoaction = QAction(QIcon(":/icons/info"), "Info", self.mainwindow)
@@ -250,18 +250,8 @@ class QMap():
         
         self.edittool.layersupdated.connect(self.editattributesaction.setVisible)
         self.movetool.layersupdated.connect(self.moveaction.setVisible)
-        self.edittool.layersupdated.connect(self.updateEditTools)
-        self.movetool.layersupdated.connect(self.updateEditTools)
+        self.movetool.layersupdated.connect(self.editingmodeaction.setVisible)
         
-    def updateEditTools(self, *args):
-        """
-            Show or hide the Editing Tools button based on the sub tools.
-        """
-        if self.edittool.layers or self.movetool.layers:  
-            self.editingmodeaction.setVisible(True)
-        else:
-            self.editingmodeaction.setVisible(False)
-
     def initGui(self):
         """
         Create all the icons and setup the tool bars.  Called by QGIS when
@@ -383,17 +373,17 @@ class QMap():
         
         showediting = (functools.partial(self.editingtoolbar.showToolbar, 
                                          self.editingmodeaction,
-                                         self.editattributesaction))
+                                         self.moveaction))
         self.editingmodeaction.toggled.connect(showediting)
 
         self.addatgpsaction.triggered.connect(self.addAtGPS)
         self.addatgpsaction.setEnabled(self.gpsAction.isConnected)
         self.gpsAction.gpsfixed.connect(self.addatgpsaction.setEnabled)
 
-        self.editingtoolbar.addToActionGroup(self.editattributesaction)
         self.editingtoolbar.addToActionGroup(self.moveaction)
 
         self.actionGroup.addAction(self.editingmodeaction)
+        self.actionGroup.addAction(self.editattributesaction)
         self.actionGroup.addAction(self.infoaction)
 
         self.homeAction.triggered.connect(self.zoomToDefaultView)
@@ -416,6 +406,7 @@ class QMap():
         self.navtoolbar.insertWidget(self.iface.actionZoomFullExtent(), spacewidget)
         self.toolbar.addAction(self.infoaction)
         self.toolbar.addAction(self.editingmodeaction)
+        self.toolbar.addAction(self.editattributesaction)
         self.toolbar.addAction(self.syncAction)
         self.toolbar.addAction(self.gpsAction)
         self.toolbar.insertWidget(self.syncAction, gpsspacewidget)
@@ -423,7 +414,6 @@ class QMap():
 
         self.extraaddtoolbar.addAction(self.addatgpsaction)
 
-        self.editingtoolbar.addAction(self.editattributesaction)
         self.editingtoolbar.addAction(self.moveaction)
         
         self.mapview = QAction(QIcon(":/icons/map"), "Map", self.menutoolbar)
