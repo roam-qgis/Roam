@@ -567,7 +567,44 @@ class QMap():
             self.mainwindow.addDockWidget(Qt.BottomDockWidgetArea , panel)
             
         self.iface.messageBar().popWidget()
-        
+
+    def captureLayer(self, layer):
+        text = layer.icontext
+        tool = layer.getMaptool(self.iface.mapCanvas())
+
+        # Hack until I fix it later
+        if isinstance(tool, PointTool):
+            add = functools.partial(self.addNewFeature, qgslayer)
+            tool.geometryComplete.connect(add)
+        else:
+            tool.finished.connect(self.openForm)
+            tool.error.connect(functools.partial(self.showToolError, text))
+
+        action = QAction(QIcon(layer.icon), text, self.mainwindow)
+        action.setData(layer)
+        action.setCheckable(True)
+        action.toggled.connect(functools.partial(self.setMapTool, tool))
+
+        self.toolbar.insertAction(self.editingmodeaction, action)
+
+        if not tool.isEditTool():
+            # Connect the GPS tools strip to the action pressed event.
+            showgpstools = (functools.partial(self.extraaddtoolbar.showToolbar,
+                                         action,
+                                         None))
+
+            action.toggled.connect(showgpstools)
+
+        self.actionGroup.addAction(action)
+        self.actions.append(action)
+
+    def editLayer(self, layer):
+        self.edittool.addLayer(layer.QGISLayer)
+        self.edittool.searchRadius = 10
+
+    def moveLayer(self, layer):
+        self.movetool.addLayer(layer.QGISLayer)
+
     def createFormButtons(self, projectlayers):
         """
             Create buttons for each form that is definded
@@ -579,6 +616,10 @@ class QMap():
                 
         self.edittool.layers = []
         self.movetool.layers = []
+        capabilitityhandlers = { "capture" : self.captureLayer,
+                                 "edit" : self.editLayer,
+                                 "move" : self.moveLayer}
+
         for layer in projectlayers:
             try:
                 qgslayer = QgsMapLayerRegistry.instance().mapLayersByName(layer.name)[0]
@@ -590,51 +631,17 @@ class QMap():
             except IndexError:
                 utils.log("Layer {} not found in project".format(layer.name))
                 continue
-            
-            if 'capture' in layer.capabilities:
-                text = layer.icontext
+
+            for capability in layer.capabilities:
                 try:
-                    tool = layer.getMaptool(self.iface.mapCanvas())
+                    capabilitityhandlers[capability](layer)
                 except NoMapToolConfigured:
                     utils.log("No map tool configured")
                     continue
                 except ErrorInMapTool as error:
                     self.messageBar.pushMessage("Error configuring map tool", error.message, level=QgsMessageBar.WARNING)
                     continue
-                    
-                # Hack until I fix it later
-                if isinstance(tool, PointTool):
-                    add = functools.partial(self.addNewFeature, qgslayer)
-                    tool.geometryComplete.connect(add)
-                else:
-                    tool.finished.connect(self.openForm)
-                    tool.error.connect(functools.partial(self.showToolError, text))
-         
-                action = QAction(QIcon(layer.icon), text, self.mainwindow)
-                action.setData(layer)
-                action.setCheckable(True)
-                action.toggled.connect(functools.partial(self.setMapTool, tool))
-                
-                self.toolbar.insertAction(self.editingmodeaction, action)
-                
-                if not tool.isEditTool():
-                    # Connect the GPS tools strip to the action pressed event.                
-                    showgpstools = (functools.partial(self.extraaddtoolbar.showToolbar, 
-                                                 action,
-                                                 None))
-                    
-                    action.toggled.connect(showgpstools)
-                    
-                self.actionGroup.addAction(action)
-                self.actions.append(action)
-            
-            if 'edit' in layer.capabilities:
-                self.edittool.addLayer(qgslayer)
-                self.edittool.searchRadius = 10
-                
-            if 'move' in layer.capabilities:
-                self.movetool.addLayer(qgslayer)
-                
+
     def showToolError(self, label, message):
         self.messageBar.pushMessage(label, message, QgsMessageBar.WARNING)
             
