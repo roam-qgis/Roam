@@ -15,9 +15,9 @@ from qgis.core import (QgsProjectBadLayerHandler, QgsMapLayerRegistry,
                        QgsProject, QgsTolerance, 
                        QgsFeature
                        )
-from qgis.gui import QgsMessageBar
+from qgis.gui import QgsMessageBar, QgsRubberBand
 
-from PyQt4.QtCore import QUrl, Qt, QSize, QFileInfo 
+from PyQt4.QtCore import QUrl, Qt, QSize, QFileInfo
 from PyQt4.QtGui import (QIcon, QWidget, 
                          QActionGroup, QPushButton, 
                          QToolBar, QAction, 
@@ -25,7 +25,7 @@ from PyQt4.QtGui import (QIcon, QWidget,
                          QGridLayout, QStackedWidget,
                          QSizePolicy, QMessageBox,
                          QToolButton, QProgressBar,
-                         QLabel)
+                         QLabel, QColor )
 
 from gps_action import GPSAction
 from maptools import (MoveTool, PointTool, 
@@ -82,6 +82,11 @@ class QMap():
         self.infodock = InfoDock(self.iface.mainWindow())
         self.iface.addDockWidget(Qt.RightDockWidgetArea, self.infodock)
         self.infodock.hide()
+
+        self.band = QgsRubberBand(self.iface.mapCanvas())
+        self.band.setIconSize(20)
+        self.band.setWidth(10)
+        self.band.setColor(QColor(186, 93, 212, 76))
 
     def showFeatureSelection(self, features):
         listUi = ListFeaturesForm(self.mainwindow)
@@ -648,15 +653,14 @@ class QMap():
     def openForm(self, layer, feature):
         if not layer.isEditable():
             layer.startEditing()
-            
+
+        self.band.setToGeometry(feature.geometry(), layer)
         self.dialogprovider.openDialog(feature=feature, layer=layer)
-            
+        self.band.reset()
+
     def addNewFeature(self, layer, geometry):
         fields = layer.pendingFields()
         
-        if not layer.isEditable():
-            layer.startEditing()
-    
         feature = QgsFeature()
         feature.setGeometry( geometry )
         feature.initAttributes(fields.count())
@@ -665,7 +669,7 @@ class QMap():
         for indx in xrange(fields.count()):
             feature[indx] = layer.dataProvider().defaultValue(indx)
 
-        self.dialogprovider.openDialog(feature=feature, layer=layer)
+        self.openForm(layer, feature)
 
     def showOpenProjectDialog(self):
         """
