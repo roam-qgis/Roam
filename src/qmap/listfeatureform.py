@@ -9,12 +9,12 @@ from uifiles import features_widget, features_base
 class ListFeaturesForm(features_widget, QDialog):
     openFeatureForm = pyqtSignal(QgsVectorLayer, QgsFeature)
 
-    def __init__(self):
-        super(ListFeaturesForm, self).__init__()
+    def __init__(self, parent):
+        super(ListFeaturesForm, self).__init__(parent)
         self.setupUi(self)
         self.featureList.itemClicked.connect(self.openForm)
         self.setWindowFlags(Qt.FramelessWindowHint)
-        scr = QApplication.desktop().screenGeometry(0)
+        scr = parent.geometry()
         self.move( scr.center() - self.rect().center() )
 
     def loadFeatureList(self, featuresmaps):

@@ -5,7 +5,6 @@ from qgis.core import (QgsRectangle, QgsTolerance,
                        QgsVectorLayer, QGis)
 from qgis.gui import QgsMapTool, QgsRubberBand
 
-from qmap.listfeatureform import ListFeaturesForm
 from maptool import MapTool
 import maptoolutils
 
@@ -16,7 +15,8 @@ class EditTool(MapTool):
     """
     
     finished = pyqtSignal(QgsVectorLayer, QgsFeature)
-    
+    featuresfound = pyqtSignal(list)
+
     def __init__(self, canvas, layers, snapradius = 2):
         MapTool.__init__(self, canvas, layers)
         self.canvas = canvas
@@ -108,11 +108,9 @@ class EditTool(MapTool):
             feature = features[0]
             self.finished.emit(feature[1], feature[0])
         elif len(features) > 0:
-            listUi = ListFeaturesForm()
-            listUi.loadFeatureList(features)
-            listUi.openFeatureForm.connect(self.finished)
-            listUi.exec_()
-        
+            self.featuresfound.emit(features)
+
+
     def activate(self):
         """
         Set the tool as the active tool in the canvas. 
@@ -121,12 +119,13 @@ class EditTool(MapTool):
                and just expose a cursor to be used
         """
         self.canvas.setCursor(self.cursor)
+        super(EditTool, self).activate()
 
     def deactivate(self):
         """
         Deactive the tool.
         """
-        pass
+        super(EditTool, self).deactivate()
 
     def isZoomTool(self):
         return False

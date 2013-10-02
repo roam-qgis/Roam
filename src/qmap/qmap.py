@@ -35,6 +35,7 @@ from floatingtoolbar import FloatingToolBar
 from dialog_provider import DialogProvider
 from project import QMapProject, NoMapToolConfigured, getProjects, ErrorInMapTool
 
+from listfeatureform import ListFeaturesForm
 from listmodulesdialog import ProjectsWidget
 from popdialog import PopDownReport
 from helpviewdialog import HelpPage
@@ -76,11 +77,18 @@ class QMap():
         
         self.edittool = EditTool(self.iface.mapCanvas(),[])
         self.edittool.finished.connect(self.openForm)
-        
+        self.edittool.featuresfound.connect(self.showFeatureSelection)
+
         self.infodock = InfoDock(self.iface.mainWindow())
         self.iface.addDockWidget(Qt.RightDockWidgetArea, self.infodock)
         self.infodock.hide()
-        
+
+    def showFeatureSelection(self, features):
+        listUi = ListFeaturesForm(self.mainwindow)
+        listUi.loadFeatureList(features)
+        listUi.openFeatureForm.connect(self.openForm)
+        listUi.exec_()
+
     def showInfoResults(self, results):
         self.infodock.clearResults()
         self.infodock.setResults(results)
@@ -337,10 +345,10 @@ class QMap():
         self.messageBar = QgsMessageBar(wid)
         self.messageBar.setSizePolicy( QSizePolicy.Minimum, QSizePolicy.Fixed )
         self.errorreport = PopDownReport(self.messageBar)
-         
+
         mainwidget.layout().addWidget(self.stack, 0,0,2,1)
         mainwidget.layout().addWidget(self.messageBar, 0,0,1,1)
-        
+
         self.helppage = HelpPage()
         helppath = os.path.join(os.path.dirname(__file__) , 'help',"help.html")
         self.helppage.setHelpPage(helppath)
