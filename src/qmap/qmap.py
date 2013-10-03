@@ -698,13 +698,17 @@ class QMap():
         self.iface.newProject(False)        
         self.iface.mapCanvas().freeze()
         self.infodock.clearResults()
-        fileinfo = QFileInfo(project.projectfile)
+        # No idea why we have to set this each time.  Maybe QGIS deletes it for
+        # some reason.
         self.badLayerHandler = BadLayerHandler(callback=self.missingLayers)
         QgsProject.instance().setBadLayerHandler( self.badLayerHandler )
         
         self.iface.messageBar().pushMessage("Project Loading","", QgsMessageBar.INFO)
+        QApplication.processEvents()
+
+        fileinfo = QFileInfo(project.projectfile)
         QgsProject.instance().read(fileinfo)
-        
+
         self.iface.mapCanvas().updateScale()
         self.iface.mapCanvas().freeze(False)
         self.iface.mapCanvas().refresh()
