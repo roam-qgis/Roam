@@ -168,7 +168,7 @@ class QMap():
         button.toggled.connect(functools.partial(self.errorreport.setVisible))
         self.widget.destroyed.connect(self.hideReports)
         self.widget.layout().addWidget(button)
-        self.iface.messageBar().pushWidget(self.widget, QgsMessageBar.CRITICAL)
+        self.messageBar.pushWidget(self.widget, QgsMessageBar.CRITICAL)
     
     def hideReports(self):
         self.errorreport.setVisible(False)
@@ -347,9 +347,12 @@ class QMap():
         wid.setLayout(newlayout)
         
         self.stack = QStackedWidget(self.mainwindow)
-        self.errorreport = PopDownReport(self.iface.messageBar())
+        self.messageBar = QgsMessageBar(wid)
+        self.messageBar.setSizePolicy( QSizePolicy.Minimum, QSizePolicy.Fixed )
+        self.errorreport = PopDownReport(self.messageBar)
 
         mainwidget.layout().addWidget(self.stack, 0,0,2,1)
+        mainwidget.layout().addWidget(self.messageBar, 0,0,1,1)
 
         self.helppage = HelpPage()
         helppath = os.path.join(os.path.dirname(__file__) , 'help',"help.html")
@@ -486,6 +489,7 @@ class QMap():
         ismapview = page == 0
         setToolbarsActive(ismapview)
         setPanelsVisible(ismapview)
+        self.infodock.hide()
 
     def addAtGPS(self):
         """
