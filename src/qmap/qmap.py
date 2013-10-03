@@ -126,7 +126,7 @@ class QMap():
         utils.warning("Missing layers")
         map(utils.warning, layers)
             
-        self.widget = self.messageBar.createMessage("Missing Layers", 
+        self.widget = self.iface.messageBar().createMessage("Missing Layers",
                                                  message, 
                                                  QIcon(":/icons/sad"))
         button = QPushButton(self.widget)
@@ -137,7 +137,7 @@ class QMap():
         button.toggled.connect(functools.partial(self.errorreport.setVisible))
         self.widget.destroyed.connect(self.hideReports)
         self.widget.layout().addWidget(button)
-        self.messageBar.pushWidget(self.widget, QgsMessageBar.WARNING)
+        self.iface.messageBar().pushWidget(self.widget, QgsMessageBar.WARNING)
         
     def excepthook(self, ex_type, value, tb):
         """ 
@@ -159,7 +159,7 @@ class QMap():
             """.format(msg, where)
             self.errorreport.updateHTML(html)
         
-        self.widget = self.messageBar.createMessage("oops", "Looks like an error occurred", QIcon(":/icons/sad"))
+        self.widget = self.iface.messageBar().createMessage("oops", "Looks like an error occurred", QIcon(":/icons/sad"))
         button = QPushButton(self.widget)
         button.setCheckable(True)
         button.setChecked(self.errorreport.isVisible())
@@ -168,7 +168,7 @@ class QMap():
         button.toggled.connect(functools.partial(self.errorreport.setVisible))
         self.widget.destroyed.connect(self.hideReports)
         self.widget.layout().addWidget(button)
-        self.messageBar.pushWidget(self.widget, QgsMessageBar.CRITICAL)
+        self.iface.messageBar().pushWidget(self.widget, QgsMessageBar.CRITICAL)
     
     def hideReports(self):
         self.errorreport.setVisible(False)
@@ -347,12 +347,9 @@ class QMap():
         wid.setLayout(newlayout)
         
         self.stack = QStackedWidget(self.mainwindow)
-        self.messageBar = QgsMessageBar(wid)
-        self.messageBar.setSizePolicy( QSizePolicy.Minimum, QSizePolicy.Fixed )
-        self.errorreport = PopDownReport(self.messageBar)
+        self.errorreport = PopDownReport(self.iface.messageBar())
 
         mainwidget.layout().addWidget(self.stack, 0,0,2,1)
-        mainwidget.layout().addWidget(self.messageBar, 0,0,1,1)
 
         self.helppage = HelpPage()
         helppath = os.path.join(os.path.dirname(__file__) , 'help',"help.html")
@@ -644,11 +641,11 @@ class QMap():
                     utils.log("No map tool configured")
                     continue
                 except ErrorInMapTool as error:
-                    self.messageBar.pushMessage("Error configuring map tool", error.message, level=QgsMessageBar.WARNING)
+                    self.iface.messageBar().pushMessage("Error configuring map tool", error.message, level=QgsMessageBar.WARNING)
                     continue
 
     def showToolError(self, label, message):
-        self.messageBar.pushMessage(label, message, QgsMessageBar.WARNING)
+        self.iface.messageBar().pushMessage(label, message, QgsMessageBar.WARNING)
             
     def openForm(self, layer, feature):
         if not layer.isEditable():
@@ -760,14 +757,14 @@ class QMap():
         # Remove the old widget if it's still there.
         # I don't really like this. Seems hacky.
         try:
-            self.messageBar.popWidget(self.syncwidget)
+            self.iface.messageBar().popWidget(self.syncwidget)
         except RuntimeError:
             pass
         except AttributeError:
             pass
         
-        self.messageBar.findChildren(QToolButton)[0].setVisible(False)
-        self.syncwidget = self.messageBar.createMessage("Syncing", "Sync in progress", QIcon(":/icons/syncing"))
+        self.iface.messageBar().findChildren(QToolButton)[0].setVisible(False)
+        self.syncwidget = self.iface.messageBar().createMessage("Syncing", "Sync in progress", QIcon(":/icons/syncing"))
         button = QPushButton(self.syncwidget)
         button.setCheckable(True)
         button.setText("Status")
@@ -778,21 +775,21 @@ class QMap():
         pro.setMinimum(0)
         self.syncwidget.layout().addWidget(pro)
         self.syncwidget.layout().addWidget(button)
-        self.messageBar.pushWidget(self.syncwidget, QgsMessageBar.INFO)
+        self.iface.messageBar().pushWidget(self.syncwidget, QgsMessageBar.INFO)
         
     def synccomplete(self):
         try:
-            self.messageBar.popWidget(self.syncwidget)
+            self.iface.messageBar().popWidget(self.syncwidget)
         except RuntimeError:
             pass
         
         stylesheet = ("QgsMessageBar { background-color: rgba(239, 255, 233); border: 0px solid #b9cfe4; } "
                      "QLabel,QTextEdit { color: #057f35; } ")
         
-        closebutton = self.messageBar.findChildren(QToolButton)[0]
+        closebutton = self.iface.messageBar().findChildren(QToolButton)[0]
         closebutton.setVisible(True)
         closebutton.clicked.connect(functools.partial(self.report.setVisible, False))
-        self.syncwidget = self.messageBar.createMessage("Syncing", "Sync Complete", QIcon(":/icons/syncdone"))
+        self.syncwidget = self.iface.messageBar().createMessage("Syncing", "Sync Complete", QIcon(":/icons/syncdone"))
         button = QPushButton(self.syncwidget)
         button.setCheckable(True)
         button.setChecked(self.report.isVisible())
@@ -804,20 +801,20 @@ class QMap():
         pro.setValue(100)
         self.syncwidget.layout().addWidget(pro)      
         self.syncwidget.layout().addWidget(button)
-        self.messageBar.pushWidget(self.syncwidget)
-        self.messageBar.setStyleSheet(stylesheet)
+        self.iface.messageBar().pushWidget(self.syncwidget)
+        self.iface.messageBar().setStyleSheet(stylesheet)
         self.iface.mapCanvas().refresh()
         
     def syncerror(self):
         try:
-            self.messageBar.popWidget(self.syncwidget)
+            self.iface.messageBar().popWidget(self.syncwidget)
         except RuntimeError:
             pass
         
-        closebutton = self.messageBar.findChildren(QToolButton)[0]
+        closebutton = self.iface.messageBar().findChildren(QToolButton)[0]
         closebutton.setVisible(True)
         closebutton.clicked.connect(functools.partial(self.report.setVisible, False))
-        self.syncwidget = self.messageBar.createMessage("Syncing", "Sync Error", QIcon(":/icons/syncfail"))
+        self.syncwidget = self.iface.messageBar().createMessage("Syncing", "Sync Error", QIcon(":/icons/syncfail"))
         button = QPushButton(self.syncwidget)
         button.setCheckable(True)
         button.setChecked(self.report.isVisible())
@@ -825,7 +822,7 @@ class QMap():
         button.setIcon(QIcon(":/icons/syncinfo"))
         button.toggled.connect(functools.partial(self.report.setVisible))            
         self.syncwidget.layout().addWidget(button)
-        self.messageBar.pushWidget(self.syncwidget, QgsMessageBar.CRITICAL)
+        self.iface.messageBar().pushWidget(self.syncwidget, QgsMessageBar.CRITICAL)
         self.iface.mapCanvas().refresh()
         
     def syncProvider(self, provider):

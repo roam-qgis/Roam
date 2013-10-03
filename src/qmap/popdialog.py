@@ -3,7 +3,7 @@ from PyQt4.QtGui import QDialog, QGridLayout
 from PyQt4.QtWebKit import QWebPage, QWebView
 
 class PopDownReport(QDialog):
-    def __init__(self, parent=None):
+    def __init__(self, parent):
         super(PopDownReport, self).__init__(parent)
         self.setLayout(QGridLayout())
         self.layout().setContentsMargins(0, 0, 0, 0)
@@ -11,7 +11,7 @@ class PopDownReport(QDialog):
         self.resize(400,400)
         self.layout().addWidget(self.web)
         self.setWindowFlags(Qt.Tool | Qt.FramelessWindowHint | Qt.X11BypassWindowManagerHint)
-        
+
     def updateHTML(self, html):
         self.web.setHtml(html)
         self.web.triggerPageAction(QWebPage.MoveToEndOfDocument)
@@ -22,9 +22,7 @@ class PopDownReport(QDialog):
     def updatePosition(self):
         point = self.parent().rect().bottomRight()
         newpoint = self.parent().mapToGlobal(point - QPoint(self.size().width(),0))
-        self.setWindowFlags(Qt.Tool | Qt.FramelessWindowHint | Qt.X11BypassWindowManagerHint)
         self.move(newpoint)
-        
+
     def showEvent(self, event):
         self.updatePosition()
-        
