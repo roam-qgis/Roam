@@ -438,7 +438,15 @@ class QMap():
         self.help.triggered.connect(functools.partial(self.stack.setCurrentIndex, 2))
         self.help.setVisible(False)
         
-        self.userlabel = QLabel("Current User <br> {user}".format(user=getpass.getuser()))
+        self.projectlabel = QLabel("Project: <br> None")
+        self.projectlabel.setAlignment(Qt.AlignCenter)
+        self.projectlabel.setStyleSheet("""
+            QLabel {
+                    color: #8c8c8c;
+                    font: 10px "Calibri" ;
+                    }""")
+
+        self.userlabel = QLabel("User: <br> {user}".format(user=getpass.getuser()))
         self.userlabel.setAlignment(Qt.AlignCenter)
         self.userlabel.setStyleSheet("""
             QLabel {
@@ -466,7 +474,7 @@ class QMap():
         labelaction = self.menutoolbar.insertWidget(self.configAction, self.userlabel)
         
         self.menutoolbar.insertWidget(labelaction, quitspacewidget)
-        
+        self.menutoolbar.insertWidget(labelaction, self.projectlabel)
         self.setupIcons()
         self.stack.currentChanged.connect(self.updateUIState)
         
@@ -559,6 +567,7 @@ class QMap():
 
         projectpath = QgsProject.instance().fileName()
         project = QMapProject(os.path.dirname(projectpath), self.iface)
+        self.projectlabel.setText("Project: <br> {}".format(project.name))
         self.createFormButtons(projectlayers = project.getConfiguredLayers())
         
         # Enable the raster layers button only if the project contains a raster layer.
