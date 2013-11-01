@@ -5,8 +5,6 @@ from qgis.core import (QgsPoint, QgsRectangle, QgsTolerance,
                        QgsVectorLayer, QGis)
 from qgis.gui import QgsMapTool, QgsRubberBand
 
-import qmap.utils as utils
-
 class InspectionTool(QgsMapTool):
     """
         Inspection tool which copies the feature to a new layer

@@ -1,5 +1,4 @@
 from PyQt4.QtCore import pyqtSignal, QProcess, QObject
-from qmap.utils import log
 
 
 class SyncProvider(QObject):

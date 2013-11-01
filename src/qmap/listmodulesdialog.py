@@ -1,7 +1,6 @@
 from PyQt4.QtCore import pyqtSignal, QSize
 from PyQt4.QtGui import QListWidgetItem, QPixmap
 
-from project import QMapProject
 from uifiles import (project_widget, project_base,
                      modules_widget, modules_base)
 
@@ -45,7 +44,7 @@ class ProjectWidget(project_widget, project_base):
         self.imagelabel.setPixmap(pix)
 
 class ProjectsWidget(modules_widget, modules_base):
-    requestOpenProject = pyqtSignal(QMapProject)
+    requestOpenProject = pyqtSignal(object)
     def __init__(self, parent = None):
         super(ProjectsWidget, self).__init__(parent)
         self.setupUi(self)

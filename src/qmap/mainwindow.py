@@ -1,9 +1,12 @@
 from PyQt4.QtCore import Qt
 from PyQt4.QtGui import QActionGroup
 from qgis.core import QgsPalLabeling
-from uifiles import mainwindow_widget, mainwindow_base
 
 import sys
+import os
+
+from uifiles import mainwindow_widget, mainwindow_base
+from listmodulesdialog import ProjectsWidget
 
 
 class MainWindow(mainwindow_widget, mainwindow_base):
@@ -26,6 +29,11 @@ class MainWindow(mainwindow_widget, mainwindow_base):
 
         self.menuGroup.triggered.connect(self.updatePage)
 
+        self.projectwidget = ProjectsWidget(self)
+        self.project_page.layout().addWidget(self.projectwidget)
+
+    def loadProjectList(self, projects):
+        self.projectwidget.loadProjectList(projects)
 
     def updatePage(self, action):
         page = self.actionpages[action]

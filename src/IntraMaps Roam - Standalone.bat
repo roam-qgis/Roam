@@ -12,4 +12,5 @@ set QGIS_DEBUG=0
 set QGIS_LOG_FILE=qgis.log
 set QGIS_DEBUG_FILE=qgis-debug.log
 
-python qmap
+python qmap ..\projects
+pause
