@@ -6,12 +6,12 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>800</width>
-    <height>600</height>
+    <width>976</width>
+    <height>613</height>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>MainWindow</string>
+   <string>IntraMaps Roam: Moblie Data Collection</string>
   </property>
   <property name="styleSheet">
    <string notr="true">QToolButton { 
@@ -70,7 +70,7 @@
     <item row="0" column="0">
      <widget class="QStackedWidget" name="stackedWidget">
       <property name="currentIndex">
-       <number>1</number>
+       <number>0</number>
       </property>
       <widget class="QWidget" name="canvas_page">
        <layout class="QGridLayout" name="gridLayout_2">
@@ -108,9 +108,9 @@
    </layout>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
-  <widget class="QToolBar" name="toolBar">
+  <widget class="QToolBar" name="menutoolbar">
    <property name="windowTitle">
-    <string>toolBar</string>
+    <string>sidetoolbar</string>
    </property>
    <property name="movable">
     <bool>false</bool>
@@ -138,9 +138,9 @@
    <addaction name="actionSettings"/>
    <addaction name="actionQuit"/>
   </widget>
-  <widget class="QToolBar" name="toolBar_2">
+  <widget class="QToolBar" name="projecttoolbar">
    <property name="windowTitle">
-    <string>toolBar_2</string>
+    <string>projecttoolbar</string>
    </property>
    <property name="movable">
     <bool>false</bool>
@@ -163,7 +163,7 @@
    <attribute name="toolBarBreak">
     <bool>false</bool>
    </attribute>
-   <addaction name="actionHome_Viiew"/>
+   <addaction name="actionHome"/>
    <addaction name="actionDefault_View"/>
    <addaction name="actionPan"/>
    <addaction name="actionZoom_In"/>
@@ -173,6 +173,7 @@
    <addaction name="actionEdit_Tools"/>
    <addaction name="actionEdit_Attributes"/>
    <addaction name="separator"/>
+   <addaction name="actionSync"/>
    <addaction name="actionEnable_GPS"/>
   </widget>
   <action name="actionMap">
@@ -220,7 +221,7 @@
     <string>Quit</string>
    </property>
   </action>
-  <action name="actionHome_Viiew">
+  <action name="actionHome">
    <property name="icon">
     <iconset resource="resources.qrc">
      <normaloff>:/icons/home</normaloff>:/icons/home</iconset>
@@ -311,6 +312,15 @@
    </property>
    <property name="text">
     <string>Enable GPS</string>
+   </property>
+  </action>
+  <action name="actionSync">
+   <property name="icon">
+    <iconset resource="resources.qrc">
+     <normaloff>:/icons/sync</normaloff>:/icons/sync</iconset>
+   </property>
+   <property name="text">
+    <string>Sync</string>
    </property>
   </action>
  </widget>
