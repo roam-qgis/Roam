@@ -13,6 +13,13 @@
   <property name="windowTitle">
    <string>IntraMaps Roam: Moblie Data Collection</string>
   </property>
+  <property name="windowIcon">
+   <iconset resource="resources.qrc">
+    <normaloff>:/branding/logo</normaloff>:/branding/logo</iconset>
+  </property>
+  <property name="windowOpacity">
+   <double>1.000000000000000</double>
+  </property>
   <property name="styleSheet">
    <string notr="true">QToolButton { 
             padding: 6px;
@@ -70,7 +77,7 @@
     <item row="0" column="0">
      <widget class="QStackedWidget" name="stackedWidget">
       <property name="currentIndex">
-       <number>0</number>
+       <number>1</number>
       </property>
       <widget class="QWidget" name="canvas_page">
        <layout class="QGridLayout" name="gridLayout_2">
@@ -109,6 +116,9 @@
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
   <widget class="QToolBar" name="menutoolbar">
+   <property name="contextMenuPolicy">
+    <enum>Qt::PreventContextMenu</enum>
+   </property>
    <property name="windowTitle">
     <string>sidetoolbar</string>
    </property>
@@ -139,6 +149,9 @@
    <addaction name="actionQuit"/>
   </widget>
   <widget class="QToolBar" name="projecttoolbar">
+   <property name="contextMenuPolicy">
+    <enum>Qt::PreventContextMenu</enum>
+   </property>
    <property name="windowTitle">
     <string>projecttoolbar</string>
    </property>

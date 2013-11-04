@@ -6,7 +6,7 @@ SET GDAL_DRIVER_PATH=%OSGEO4W_ROOT%\bin\gdalplugins
 
 set PATH=%OSGEO4W_ROOT%\bin;%OSGEO4W_ROOT%\apps\qgis-dev\bin;%PATH%
 SET PYTHONHOME=%OSGEO4W_ROOT%\apps\Python27
-set PYTHONPATH=%OSGEO4W_ROOT%\apps\qgis-dev\python
+set PYTHONPATH=%~dp0;%OSGEO4W_ROOT%\apps\qgis-dev\python
 set QGIS_PREFIX_PATH=%OSGEO4W_ROOT%\apps\qgis-dev\
 set QGIS_DEBUG=0
 set QGIS_LOG_FILE=qgis.log

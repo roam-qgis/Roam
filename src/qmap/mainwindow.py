@@ -5,9 +5,9 @@ from qgis.core import QgsPalLabeling
 import sys
 import os
 
-from uifiles import mainwindow_widget, mainwindow_base
-from listmodulesdialog import ProjectsWidget
-
+from qmap.uifiles import mainwindow_widget, mainwindow_base
+from qmap.listmodulesdialog import ProjectsWidget
+import qmap.utils
 
 class MainWindow(mainwindow_widget, mainwindow_base):
     def __init__(self):
@@ -45,27 +45,25 @@ class MainWindow(mainwindow_widget, mainwindow_base):
         self.projecttoolbar.insertWidget(self.actionSync, gpsspacewidget)
         self.projecttoolbar.insertWidget(self.actionHome, spacewidget)
 
-        self.projectlabel, self.userlabel = self._createSideLabels()
+        self.projectlabel = self._createSideLabel("Project: <br> {project}")
+        self.userlabel = self._createSideLabel("User: <br> {user}")
 
         labelaction = self.menutoolbar.insertWidget(self.actionSettings, self.userlabel)
 
         self.menutoolbar.insertWidget(labelaction, sidespacewidget)
         self.menutoolbar.insertWidget(labelaction, self.projectlabel)
 
-    def _createSideLabels(self):
+    def _createSideLabel(self, text):
         style = """
             QLabel {
                     color: #8c8c8c;
                     font: 10px "Calibri" ;
                     }"""
-        projectlabel = QLabel("Project: <br> None")
-        projectlabel.setAlignment(Qt.AlignCenter)
-        projectlabel.setStyleSheet(style)
+        label = QLabel(text)
+        label.setAlignment(Qt.AlignCenter)
+        label.setStyleSheet(style)
 
-        userlabel = QLabel("User: <br> {user}")
-        userlabel.setAlignment(Qt.AlignCenter)
-        userlabel.setStyleSheet(style)
-        return projectlabel, userlabel
+        return label
 
     def loadProjectList(self, projects):
         self.projectwidget.loadProjectList(projects)
@@ -73,3 +71,21 @@ class MainWindow(mainwindow_widget, mainwindow_base):
     def updatePage(self, action):
         page = self.actionpages[action]
         self.stackedWidget.setCurrentIndex(page)
+
+    def show(self):
+        fullscreen = qmap.utils.settings.get("fullscreen", False)
+        if fullscreen:
+            self.showFullScreen()
+        else:
+            self.showMaximized()
+
+
+
+
+
+
+
+
+
+
+

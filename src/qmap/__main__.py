@@ -7,15 +7,19 @@ from qgis.core import QgsApplication
 
 import sys
 
-from mainwindow import MainWindow
-import project
+from qmap.mainwindow import MainWindow
+import qmap.project as project
+import qmap.utils
 
 app = QgsApplication(sys.argv, True)
 QgsApplication.initQgis()
+
 window = MainWindow()
-projectfolder = sys.argv[1]
-projects = project.getProjects(projectfolder)
+projects = project.getProjects(sys.argv[1])
 window.loadProjectList(projects)
+qmap.utils.settings_notify.settings_changed.connect(window.show)
+
+window.actionProject.toggle()
 window.show()
 app.exec_()
 QgsApplication.exitQgis()

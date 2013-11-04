@@ -174,8 +174,7 @@ class QMapProject(object):
         self._project = None
         self._splash = None 
         self._isVaild = True
-        self.iface = iface
-        
+
     @property
     def name(self):
         default = os.path.basename(self.folder)
@@ -231,14 +230,13 @@ class QMapProject(object):
             
             yield QMapLayer(os.path.join(self.folder, layerfolder), self)
 
-    def getPanels(self):
+    def getPanels(self, iface):
         log("getPanels")
         for module in glob.iglob(os.path.join(self.folder, "_panels", '*.py')):
             modulename = os.path.splitext(os.path.basename(module))[0]
-            log(module)
             try:
                 panelmod = imp.load_source(modulename, module)
-                yield panelmod.createPanel(self.iface)
+                yield panelmod.createPanel(iface)
             except ImportError as err:
                 log("Panel import error {}".format(err))
             except AttributeError:

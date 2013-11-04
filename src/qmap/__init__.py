@@ -4,7 +4,7 @@ from PyQt4.QtGui import (QSizePolicy, QWidget, QPushButton, QDialog,
                          QTextEdit, QPushButton)
 from PyQt4.QtCore import Qt
 
-from htmlviewer import showHTMLReport
+from qmap.htmlviewer import showHTMLReport
 from qgis.gui import QgsMessageBar
 
 class BaseForm(object):
