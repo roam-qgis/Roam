@@ -10,6 +10,12 @@
     <height>448</height>
    </rect>
   </property>
+  <property name="sizePolicy">
+   <sizepolicy hsizetype="Ignored" vsizetype="Ignored">
+    <horstretch>0</horstretch>
+    <verstretch>0</verstretch>
+   </sizepolicy>
+  </property>
   <property name="styleSheet">
    <string notr="true"> QDockWidget::title {
      text-align: left; /* align the text to the left */

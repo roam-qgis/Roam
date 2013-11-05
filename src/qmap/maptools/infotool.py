@@ -36,7 +36,7 @@ class InfoTool(QgsMapToolIdentify):
             "       +.+      "]))
                      
     def canvasReleaseEvent(self, event):
-        results = self.identify( event.x(), event.y() )
+        results = self.identify(event.x(), event.y(), QgsMapToolIdentify.TopDownAll)
         self.infoResults.emit(results)
            
     def activate(self):

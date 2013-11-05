@@ -14,6 +14,9 @@ from qmap.listmodulesdialog import ProjectsWidget
 from qmap.settingswidget import SettingsWidget
 from qmap.projectparser import ProjectParser
 from qmap.project import QMapProject
+from qmap.maptools import MoveTool, InfoTool, EditTool
+from qmap.listfeatureform import ListFeaturesForm
+from qmap.infodock import InfoDock
 
 import qmap.messagebaritems
 import qmap.utils
@@ -75,6 +78,10 @@ class MainWindow(mainwindow_widget, mainwindow_base):
         self.actionSettings.toggled.connect(self.settingswidget.populateControls)
         self.actionSettings.toggled.connect(self.settingswidget.readSettings)
 
+        self.infodock = InfoDock(self)
+        self.addDockWidget(Qt.RightDockWidgetArea, self.infodock)
+        self.infodock.hide()
+
         def createSpacer(width):
             widget = QWidget()
             widget.setMinimumWidth(width)
@@ -92,7 +99,7 @@ class MainWindow(mainwindow_widget, mainwindow_base):
             style = """
                 QLabel {
                         color: #706565;
-                        font: 12px "Calibri" ;
+                        font: 14px "Calibri" ;
                         }"""
             label = QLabel(text)
             #label.setAlignment(Qt.AlignCenter)
@@ -109,7 +116,6 @@ class MainWindow(mainwindow_widget, mainwindow_base):
         self.stackedWidget.currentChanged.connect(self.updateUIState)
 
         self.panels = []
-        self.infodock = QWidget()
 
         self.connectButtons()
 
@@ -131,14 +137,47 @@ class MainWindow(mainwindow_widget, mainwindow_base):
         self.zoomInTool = QgsMapToolZoom(self.canvas, False)
         self.zoomOutTool  = QgsMapToolZoom(self.canvas, True)
         self.panTool = QgsMapToolTouch(self.canvas)
+        self.moveTool = MoveTool(self.canvas, [])
+        self.infoTool = InfoTool(self.canvas)
+        self.editTool = EditTool(self.canvas, [])
 
         connectAction(self.actionZoom_In, self.zoomInTool)
         connectAction(self.actionZoom_Out, self.zoomOutTool)
         connectAction(self.actionPan, self.panTool)
+        connectAction(self.actionMove, self.moveTool)
+        connectAction(self.actionInfo, self.infoTool)
+        connectAction(self.actionEdit_Attributes, self.editTool)
+
+        self.infoTool.infoResults.connect(self.showInfoResults)
+
+        self.editTool.finished.connect(self.openForm)
+        self.editTool.featuresfound.connect(self.showFeatureSelection)
+
         self.actionHome.triggered.connect(self.zoomToDefaultView)
         self.actionDefault.triggered.connect(self.canvas.zoomToFullExtent)
 
+    def openForm(self):
+        pass
+
+    def showInfoResults(self, results):
+        print results
+        self.infodock.clearResults()
+        self.infodock.setResults(results)
+        self.infodock.show()
+
+    def showFeatureSelection(self, features):
+        """
+        Show a list of features for user selection.
+        """
+        listUi = ListFeaturesForm(self)
+        listUi.loadFeatureList(features)
+        listUi.openFeatureForm.connect(self.openForm)
+        listUi.exec_()
+
     def missingLayers(self, layers):
+        """
+        Called when layers have failed to load from the current project
+        """
         qmap.utils.warning("Missing layers")
         map(qmap.utils.warning, layers)
 
@@ -189,6 +228,7 @@ class MainWindow(mainwindow_widget, mainwindow_base):
         setPanelsVisible(ismapview)
         self.infodock.hide()
 
+    @qmap.utils.timeit
     def _readProject(self, doc):
         """
         readProject is called by QgsProject once the map layer has been
@@ -206,6 +246,7 @@ class MainWindow(mainwindow_widget, mainwindow_base):
         self.projectOpened()
         self.stackedWidget.setCurrentIndex(0)
 
+    @qmap.utils.timeit
     def projectOpened(self):
         """
             Called when a new project is opened in QGIS.
@@ -229,6 +270,7 @@ class MainWindow(mainwindow_widget, mainwindow_base):
             self.mainwindow.addDockWidget(Qt.BottomDockWidgetArea , panel)
             self.panels.append(panel)
 
+    @qmap.utils.timeit
     def loadProject(self, project):
         """
         Load a project into the application .
@@ -248,8 +290,8 @@ class MainWindow(mainwindow_widget, mainwindow_base):
         self.actionMap.trigger()
         self.closeProject()
         self.canvas.freeze()
-        # TODO: Fix info dock
-        #self.infodock.clearResults()
+        self.infodock.clearResults()
+
         # No idea why we have to set this each time.  Maybe QGIS deletes it for
         # some reason.
         self.badLayerHandler = BadLayerHandler(callback=self.missingLayers)

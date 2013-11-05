@@ -12,7 +12,9 @@ from qgis.core import QgsApplication
 from qmap.mainwindow import MainWindow
 import qmap.project as project
 import qmap.utils
+import time
 
+start = time.time()
 app = QgsApplication(sys.argv, True)
 QgsApplication.initQgis()
 
@@ -24,5 +26,6 @@ qmap.utils.settings_notify.settings_changed.connect(window.show)
 window.actionProject.toggle()
 window.updateUIState(1)
 window.show()
+print time.time() - start
 app.exec_()
 QgsApplication.exitQgis()

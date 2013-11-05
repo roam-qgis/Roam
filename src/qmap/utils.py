@@ -71,12 +71,14 @@ class Timer():
 def timeit(method):
     def wrapper(*args, **kwargs):
         ts = time.time ()
-        result = method (*args, **kwargs)
+        result = method(*args, **kwargs)
         th = time.time ()
 
-       # log("% r (% r,% r)% 2.2f seconds " % (method.__name__, args, kw, th-ts))
+        message = "%r %2.2f seconds " % (method.__name__, th-ts)
+        print message
         return result
-    
+    return wrapper
+
 def openImageViewer(pixmap):
         dlg = QDialog()
         dlg.setWindowTitle("Image Viewer")
