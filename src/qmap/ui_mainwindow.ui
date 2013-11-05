@@ -84,13 +84,32 @@
         <property name="margin">
          <number>0</number>
         </property>
-        <item row="0" column="0">
+        <property name="spacing">
+         <number>0</number>
+        </property>
+        <item row="1" column="0">
          <widget class="QgsMapCanvas" name="canvas" native="true">
           <property name="focusPolicy">
            <enum>Qt::NoFocus</enum>
           </property>
           <property name="styleSheet">
            <string notr="true">background-color: rgb(183, 212, 255);</string>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="0">
+         <widget class="QgsMessageBar" name="messageBar">
+          <property name="contextMenuPolicy">
+           <enum>Qt::ActionsContextMenu</enum>
+          </property>
+          <property name="styleSheet">
+           <string notr="true">background-color: rgb(255, 21, 24);</string>
+          </property>
+          <property name="frameShape">
+           <enum>QFrame::StyledPanel</enum>
+          </property>
+          <property name="frameShadow">
+           <enum>QFrame::Raised</enum>
           </property>
          </widget>
         </item>
@@ -200,6 +219,9 @@
    <property name="text">
     <string>Map</string>
    </property>
+   <property name="page" stdset="0">
+    <number>0</number>
+   </property>
   </action>
   <action name="actionProject">
    <property name="checkable">
@@ -212,6 +234,9 @@
    <property name="text">
     <string>Project</string>
    </property>
+   <property name="page" stdset="0">
+    <number>1</number>
+   </property>
   </action>
   <action name="actionSettings">
    <property name="checkable">
@@ -223,6 +248,9 @@
    </property>
    <property name="text">
     <string>Settings</string>
+   </property>
+   <property name="page" stdset="0">
+    <number>2</number>
    </property>
   </action>
   <action name="actionQuit">
@@ -253,6 +281,9 @@
    </property>
   </action>
   <action name="actionPan">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
    <property name="icon">
     <iconset resource="resources.qrc">
      <normaloff>:/icons/pan</normaloff>:/icons/pan</iconset>
@@ -262,6 +293,9 @@
    </property>
   </action>
   <action name="actionZoom_In">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
    <property name="icon">
     <iconset resource="resources.qrc">
      <normaloff>:/icons/in</normaloff>:/icons/in</iconset>
@@ -271,6 +305,9 @@
    </property>
   </action>
   <action name="actionZoom_Out">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
    <property name="icon">
     <iconset resource="resources.qrc">
      <normaloff>:/icons/out</normaloff>:/icons/out</iconset>
@@ -289,6 +326,9 @@
    </property>
   </action>
   <action name="actionInfo">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
    <property name="icon">
     <iconset resource="resources.qrc">
      <normaloff>:/icons/info</normaloff>:/icons/info</iconset>
@@ -310,6 +350,9 @@
    </property>
   </action>
   <action name="actionEdit_Attributes">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
    <property name="icon">
     <iconset resource="resources.qrc">
      <normaloff>:/icons/edit</normaloff>:/icons/edit</iconset>
@@ -341,6 +384,12 @@
   <customwidget>
    <class>QgsMapCanvas</class>
    <extends>QWidget</extends>
+   <header>qgis.gui</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>QgsMessageBar</class>
+   <extends>QFrame</extends>
    <header>qgis.gui</header>
    <container>1</container>
   </customwidget>
