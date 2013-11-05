@@ -155,6 +155,10 @@ class MainWindow(mainwindow_widget, mainwindow_base):
 
         self.actionHome.triggered.connect(self.zoomToDefaultView)
         self.actionDefault.triggered.connect(self.canvas.zoomToFullExtent)
+        self.actionQuit.triggered.connect(self.exit)
+
+    def exit(self):
+        QApplication.exit(0)
 
     def openForm(self):
         pass
