@@ -1,7 +1,8 @@
 from PyQt4.QtCore import Qt, QFileInfo, QDir
-from PyQt4.QtGui import QActionGroup, QWidget, QSizePolicy, QLabel, QApplication
+from PyQt4.QtGui import (QActionGroup, QWidget, QSizePolicy, QLabel, QApplication,
+                         QPixmap)
 from qgis.core import (QgsProjectBadLayerHandler, QgsPalLabeling, QgsMapLayerRegistry,
-                        QgsProject)
+                        QgsProject, QgsMapLayer)
 from qgis.gui import (QgsMessageBar, QgsMapToolZoom, QgsMapToolTouch)
 
 from functools import partial
@@ -11,6 +12,7 @@ import os
 from qmap.uifiles import mainwindow_widget, mainwindow_base
 from qmap.listmodulesdialog import ProjectsWidget
 from qmap.projectparser import ProjectParser
+from qmap.project import QMapProject
 
 import qmap.messagebaritems
 import qmap.utils
@@ -51,9 +53,6 @@ class MainWindow(mainwindow_widget, mainwindow_base):
         self.menuGroup.addAction(self.actionMap)
         self.menuGroup.addAction(self.actionProject)
         self.menuGroup.addAction(self.actionSettings)
-        self.actionpages = {self.actionMap: 0,
-                            self.actionProject: 1,
-                            self.actionSettings: 2}
 
         self.editgroup = QActionGroup(self)
         self.editgroup.setExclusive(True)
@@ -109,12 +108,20 @@ class MainWindow(mainwindow_widget, mainwindow_base):
         self.panels = []
         self.infodock = QWidget()
 
-        self.createMapTools()
+        self.connectButtons()
 
     def setMapTool(self, tool, *args):
         self.canvas.setMapTool(tool)
 
-    def createMapTools(self):
+    def zoomToDefaultView(self):
+        """
+        Zoom the mapview canvas to the extents the project was opened at i.e. the
+        default extent.
+        """
+        self.canvas.setExtent(self.defaultextent)
+        self.canvas.refresh()
+
+    def connectButtons(self):
         def connectAction(action, tool):
             action.toggled.connect(partial(self.setMapTool, tool))
 
@@ -125,6 +132,7 @@ class MainWindow(mainwindow_widget, mainwindow_base):
         connectAction(self.actionZoom_In, self.zoomInTool)
         connectAction(self.actionZoom_Out, self.zoomOutTool)
         connectAction(self.actionPan, self.panTool)
+        self.actionHome.triggered.connect(self.zoomToDefaultView)
 
     def missingLayers(self, layers):
         qmap.utils.warning("Missing layers")
@@ -172,7 +180,7 @@ class MainWindow(mainwindow_widget, mainwindow_base):
             for panel in self.panels:
                 panel.setVisible(visible)
 
-        ismapview = page == self.actionpages[self.actionMap]
+        ismapview = page == 0
         setToolbarsActive(ismapview)
         setPanelsVisible(ismapview)
         self.infodock.hide()
@@ -190,6 +198,32 @@ class MainWindow(mainwindow_widget, mainwindow_base):
         self.canvas.updateScale()
         self.canvas.freeze(False)
         self.canvas.refresh()
+
+        self.projectOpened()
+        self.stackedWidget.setCurrentIndex(0)
+
+    def projectOpened(self):
+        """
+            Called when a new project is opened in QGIS.
+        """
+        projectpath = QgsProject.instance().fileName()
+        project = QMapProject(os.path.dirname(projectpath))
+        self.projectlabel.setText("Project: <br> {}".format(project.name))
+        # TODO create form buttons
+        #self.createFormButtons(projectlayers = project.getConfiguredLayers())
+
+        # Enable the raster layers button only if the project contains a raster layer.
+        layers = QgsMapLayerRegistry.instance().mapLayers().values()
+        hasrasters = any(layer.type() == QgsMapLayer.RasterLayer for layer in layers)
+        self.actionRaster.setEnabled(hasrasters)
+        self.defaultextent = self.canvas.extent()
+        # TODO Connect sync providers
+        #self.connectSyncProviders(project)
+
+        # Show panels
+        for panel in project.getPanels():
+            self.mainwindow.addDockWidget(Qt.BottomDockWidgetArea , panel)
+            self.panels.append(panel)
 
     def loadProject(self, project):
         """
@@ -217,7 +251,10 @@ class MainWindow(mainwindow_widget, mainwindow_base):
         self.badLayerHandler = BadLayerHandler(callback=self.missingLayers)
         QgsProject.instance().setBadLayerHandler( self.badLayerHandler )
 
-        self.messageBar.pushMessage("Project Loading","", QgsMessageBar.INFO)
+        #self.messageBar.pushMessage("Project Loading","", QgsMessageBar.INFO)
+        self.stackedWidget.setCurrentIndex(3)
+        self.projectloading_label.setText("Project {} Loading".format(project.name))
+        self.projectimage.setPixmap(QPixmap(project.splash))
         QApplication.processEvents()
 
         fileinfo = QFileInfo(project.projectfile)
@@ -232,6 +269,9 @@ class MainWindow(mainwindow_widget, mainwindow_base):
         QgsMapLayerRegistry.instance().removeAllMapLayers()
         self.canvas.clear()
         self.canvas.freeze(False)
+        for panel in self.panels:
+            self.removeDockWidget(panel)
+            del panel
         self.panels = []
 
 

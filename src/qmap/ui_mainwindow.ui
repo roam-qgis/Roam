@@ -129,6 +129,88 @@
         </property>
        </layout>
       </widget>
+      <widget class="QWidget" name="loadin_page">
+       <layout class="QVBoxLayout" name="verticalLayout">
+        <item>
+         <spacer name="verticalSpacer_2">
+          <property name="orientation">
+           <enum>Qt::Vertical</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>20</width>
+            <height>40</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item>
+         <widget class="QLabel" name="projectimage">
+          <property name="text">
+           <string>TextLabel</string>
+          </property>
+          <property name="scaledContents">
+           <bool>true</bool>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLabel" name="projectloading_label">
+          <property name="font">
+           <font>
+            <pointsize>32</pointsize>
+           </font>
+          </property>
+          <property name="styleSheet">
+           <string notr="true"/>
+          </property>
+          <property name="text">
+           <string>Project {} Loading</string>
+          </property>
+          <property name="scaledContents">
+           <bool>true</bool>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLabel" name="label_2">
+          <property name="font">
+           <font>
+            <pointsize>24</pointsize>
+           </font>
+          </property>
+          <property name="text">
+           <string>Please wait....</string>
+          </property>
+          <property name="scaledContents">
+           <bool>true</bool>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <spacer name="verticalSpacer">
+          <property name="orientation">
+           <enum>Qt::Vertical</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>20</width>
+            <height>40</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+       </layout>
+      </widget>
      </widget>
     </item>
    </layout>
@@ -200,7 +282,7 @@
    <addaction name="actionPan"/>
    <addaction name="actionZoom_In"/>
    <addaction name="actionZoom_Out"/>
-   <addaction name="actionAerial_Photo"/>
+   <addaction name="actionRaster"/>
    <addaction name="actionInfo"/>
    <addaction name="actionEdit_Tools"/>
    <addaction name="actionEdit_Attributes"/>
@@ -316,7 +398,7 @@
     <string>Zoom Out</string>
    </property>
   </action>
-  <action name="actionAerial_Photo">
+  <action name="actionRaster">
    <property name="icon">
     <iconset resource="resources.qrc">
      <normaloff>:/icons/photo</normaloff>:/icons/photo</iconset>

@@ -23,7 +23,7 @@ class ErrorInMapTool(Exception):
     """
     pass
 
-def getProjects(projectpath, iface=None):
+def getProjects(projectpath):
     """
     Return QMapProjects inside the set path.  
     Each folder will be considered a QMap project
@@ -32,7 +32,7 @@ def getProjects(projectpath, iface=None):
                        for item in os.walk(projectpath).next()[1]]))
     
     for folder in folders:      
-        yield QMapProject(folder, iface)
+        yield QMapProject(folder)
         
 class QMapLayer(object):
     """
@@ -169,7 +169,7 @@ class QMapProject(object):
         can contain a single QGIS project, a splash icon, name, 
         and a list of layer represented as folders.
     """
-    def __init__(self, rootfolder, iface):
+    def __init__(self, rootfolder):
         self.folder = rootfolder
         self._project = None
         self._splash = None 
@@ -230,13 +230,13 @@ class QMapProject(object):
             
             yield QMapLayer(os.path.join(self.folder, layerfolder), self)
 
-    def getPanels(self, iface):
+    def getPanels(self):
         log("getPanels")
         for module in glob.iglob(os.path.join(self.folder, "_panels", '*.py')):
             modulename = os.path.splitext(os.path.basename(module))[0]
             try:
                 panelmod = imp.load_source(modulename, module)
-                yield panelmod.createPanel(iface)
+                yield panelmod.createPanel()
             except ImportError as err:
                 log("Panel import error {}".format(err))
             except AttributeError:
