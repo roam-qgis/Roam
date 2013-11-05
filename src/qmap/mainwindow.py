@@ -11,6 +11,7 @@ import os
 
 from qmap.uifiles import mainwindow_widget, mainwindow_base
 from qmap.listmodulesdialog import ProjectsWidget
+from qmap.settingswidget import SettingsWidget
 from qmap.projectparser import ProjectParser
 from qmap.project import QMapProject
 
@@ -53,6 +54,7 @@ class MainWindow(mainwindow_widget, mainwindow_base):
         self.menuGroup.addAction(self.actionMap)
         self.menuGroup.addAction(self.actionProject)
         self.menuGroup.addAction(self.actionSettings)
+        self.menuGroup.triggered.connect(self.updatePage)
 
         self.editgroup = QActionGroup(self)
         self.editgroup.setExclusive(True)
@@ -63,12 +65,15 @@ class MainWindow(mainwindow_widget, mainwindow_base):
         self.editgroup.addAction(self.actionEdit_Tools)
         self.editgroup.addAction(self.actionEdit_Attributes)
 
-        self.menuGroup.triggered.connect(self.updatePage)
-
         self.projectwidget = ProjectsWidget(self)
         self.projectwidget.requestOpenProject.connect(self.loadProject)
         QgsProject.instance().readProject.connect(self._readProject)
         self.project_page.layout().addWidget(self.projectwidget)
+
+        self.settingswidget = SettingsWidget(self)
+        self.settings_page.layout().addWidget(self.settingswidget)
+        self.actionSettings.toggled.connect(self.settingswidget.populateControls)
+        self.actionSettings.toggled.connect(self.settingswidget.readSettings)
 
         def createSpacer(width):
             widget = QWidget()
