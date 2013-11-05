@@ -6,9 +6,15 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>976</width>
-    <height>613</height>
+    <width>833</width>
+    <height>679</height>
    </rect>
+  </property>
+  <property name="sizePolicy">
+   <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+    <horstretch>0</horstretch>
+    <verstretch>0</verstretch>
+   </sizepolicy>
   </property>
   <property name="windowTitle">
    <string>IntraMaps Roam: Moblie Data Collection</string>
@@ -130,6 +136,12 @@
        </layout>
       </widget>
       <widget class="QWidget" name="loadin_page">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Ignored" vsizetype="Ignored">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
        <layout class="QVBoxLayout" name="verticalLayout">
         <item>
          <spacer name="verticalSpacer_2">
@@ -146,8 +158,14 @@
         </item>
         <item>
          <widget class="QLabel" name="projectimage">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
           <property name="text">
-           <string>TextLabel</string>
+           <string/>
           </property>
           <property name="scaledContents">
            <bool>true</bool>
@@ -278,7 +296,7 @@
     <bool>false</bool>
    </attribute>
    <addaction name="actionHome"/>
-   <addaction name="actionDefault_View"/>
+   <addaction name="actionDefault"/>
    <addaction name="actionPan"/>
    <addaction name="actionZoom_In"/>
    <addaction name="actionZoom_Out"/>
@@ -353,7 +371,7 @@
     <string>Home Viiew</string>
    </property>
   </action>
-  <action name="actionDefault_View">
+  <action name="actionDefault">
    <property name="icon">
     <iconset resource="resources.qrc">
      <normaloff>:/icons/zoomfull</normaloff>:/icons/zoomfull</iconset>

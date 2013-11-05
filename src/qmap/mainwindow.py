@@ -91,23 +91,21 @@ class MainWindow(mainwindow_widget, mainwindow_base):
         def _createSideLabel(text):
             style = """
                 QLabel {
-                        color: #8c8c8c;
-                        font: 10px "Calibri" ;
+                        color: #706565;
+                        font: 12px "Calibri" ;
                         }"""
             label = QLabel(text)
-            label.setAlignment(Qt.AlignCenter)
+            #label.setAlignment(Qt.AlignCenter)
             label.setStyleSheet(style)
 
             return label
 
-        self.projectlabel = _createSideLabel("Project: <br> {project}")
-        self.userlabel = _createSideLabel("User: <br> {user}")
+        self.projectlabel = _createSideLabel("Project: {project}")
+        self.userlabel = _createSideLabel("User: {user}")
+        self.statusbar.addWidget(self.projectlabel)
+        self.statusbar.addWidget(self.userlabel)
 
-        labelaction = self.menutoolbar.insertWidget(self.actionSettings, self.userlabel)
-
-        self.menutoolbar.insertWidget(labelaction, sidespacewidget)
-        self.menutoolbar.insertWidget(labelaction, self.projectlabel)
-
+        self.menutoolbar.insertWidget(self.actionSettings, sidespacewidget)
         self.stackedWidget.currentChanged.connect(self.updateUIState)
 
         self.panels = []
@@ -138,6 +136,7 @@ class MainWindow(mainwindow_widget, mainwindow_base):
         connectAction(self.actionZoom_Out, self.zoomOutTool)
         connectAction(self.actionPan, self.panTool)
         self.actionHome.triggered.connect(self.zoomToDefaultView)
+        self.actionDefault.triggered.connect(self.canvas.zoomToFullExtent)
 
     def missingLayers(self, layers):
         qmap.utils.warning("Missing layers")
@@ -213,7 +212,7 @@ class MainWindow(mainwindow_widget, mainwindow_base):
         """
         projectpath = QgsProject.instance().fileName()
         project = QMapProject(os.path.dirname(projectpath))
-        self.projectlabel.setText("Project: <br> {}".format(project.name))
+        self.projectlabel.setText("Project: {}".format(project.name))
         # TODO create form buttons
         #self.createFormButtons(projectlayers = project.getConfiguredLayers())
 
