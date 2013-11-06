@@ -17,7 +17,7 @@ class GPSAction(QAction):
     gpsfixed = pyqtSignal(bool)
 
     def __init__(self, icon, canvas, parent):
-        QAction.__init__(self, icon, "Enable GPS", parent)
+        QAction.__init__(self, QIcon(icon), "Enable GPS", parent)
         self.canvas = canvas
         self.triggered.connect(self.connectGPS)
         self.gpsConn = None

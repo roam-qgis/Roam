@@ -1,14 +1,16 @@
 from PyQt4.QtCore import Qt, QFileInfo, QDir, QSize
 from PyQt4.QtGui import (QActionGroup, QWidget, QSizePolicy, QLabel, QApplication,
-                         QPixmap)
+                         QPixmap, QColor)
 from qgis.core import (QgsProjectBadLayerHandler, QgsPalLabeling, QgsMapLayerRegistry,
-                        QgsProject, QgsMapLayer)
-from qgis.gui import (QgsMessageBar, QgsMapToolZoom, QgsMapToolTouch)
+                        QgsProject, QgsMapLayer, QgsFeature)
+from qgis.gui import (QgsMessageBar, QgsMapToolZoom, QgsMapToolTouch, QgsRubberBand)
 
 from functools import partial
 import sys
 import os
 
+from qmap.gps_action import GPSAction
+from qmap.dialog_provider import DialogProvider
 from qmap.uifiles import mainwindow_widget, mainwindow_base
 from qmap.listmodulesdialog import ProjectsWidget
 from qmap.floatingtoolbar import FloatingToolBar
@@ -69,6 +71,10 @@ class MainWindow(mainwindow_widget, mainwindow_base):
         self.editgroup.addAction(self.actionInfo)
         self.editgroup.addAction(self.actionEdit_Tools)
         self.editgroup.addAction(self.actionEdit_Attributes)
+
+        #TODO Extract GPS out into a service and remove UI stuff
+        self.actionGPS = GPSAction(":/icons/gps", self.canvas, self)
+        self.projecttoolbar.addAction(self.actionGPS)
 
         self.projectwidget = ProjectsWidget(self)
         self.projectwidget.requestOpenProject.connect(self.loadProject)
@@ -136,6 +142,11 @@ class MainWindow(mainwindow_widget, mainwindow_base):
 
         self.connectButtons()
 
+        self.band = QgsRubberBand(self.iface.mapCanvas())
+        self.band.setIconSize(20)
+        self.band.setWidth(10)
+        self.band.setColor(QColor(186, 93, 212, 76))
+
     def setMapTool(self, tool, *args):
         self.canvas.setMapTool(tool)
 
@@ -176,6 +187,8 @@ class MainWindow(mainwindow_widget, mainwindow_base):
         self.moveTool.layersupdated.connect(self.actionMove.setVisible)
         self.moveTool.layersupdated.connect(self.actionEdit_Tools.setVisible)
 
+        self.extraaddtoolbar.addAction(self.actionGPSFeature)
+
         self.edittoolbar.addAction(self.actionMove)
         self.edittoolbar.addToActionGroup(self.actionMove)
 
@@ -185,9 +198,74 @@ class MainWindow(mainwindow_widget, mainwindow_base):
 
         self.actionEdit_Tools.toggled.connect(showediting)
 
+        self.actionGPSFeature.triggered.connect(self.addFeatureAtGPS)
+        self.actionGPSFeature.setEnabled(self.actionGPS.isConnected)
+        self.actionGPS.gpsfixed.connect(self.actionGPSFeature.setEnabled)
+
         self.actionHome.triggered.connect(self.zoomToDefaultView)
         self.actionDefault.triggered.connect(self.canvas.zoomToFullExtent)
         self.actionQuit.triggered.connect(self.exit)
+
+    def addAtGPS(self):
+        """
+        Add a record at the current GPS location.
+        """
+        action = self.editgroup.checkedAction()
+        if not action:
+            return
+        layer = action.data()
+        if not layer:
+            return
+
+        point = self.actionGPS.position
+        self.addNewFeature(layer=layer, geometry=point)
+
+    def clearToolRubberBand(self):
+        """
+        Clear the rubber band of the active tool if it has one
+        """
+        tool = self.canvas.mapTool()
+        try:
+            tool.clearBand()
+        except AttributeError:
+            # No clearBand method found, but that's cool.
+            pass
+
+    def openForm(self, layer, feature):
+        if not layer.isEditable():
+            layer.startEditing()
+
+        def featureSaved():
+            self.messageBar.pushMessage("Saved",
+                                        "Changes Saved",
+                                        QgsMessageBar.INFO,
+                                        2)
+        def failSave():
+            self.messageBar.pushMessage("Error",
+                                        "Error with saving changes.",
+                                        QgsMessageBar.CRITICAL)
+
+        self.band.setToGeometry(feature.geometry(), layer)
+        provider = DialogProvider(self.canvas)
+        provider.featuresaved.connect(featureSaved)
+        provider.failedsave.connect(failSave)
+
+        provider.openDialog(feature=feature, layer=layer)
+        self.band.reset()
+        self.clearToolRubberBand()
+
+    def addNewFeature(self, layer, geometry):
+        fields = layer.pendingFields()
+
+        feature = QgsFeature()
+        feature.setGeometry( geometry )
+        feature.initAttributes(fields.count())
+        feature.setFields(fields)
+
+        for indx in xrange(fields.count()):
+            feature[indx] = layer.dataProvider().defaultValue(indx)
+
+        self.openForm(layer, feature)
 
     def exit(self):
         QApplication.exit(0)
@@ -214,15 +292,15 @@ class MainWindow(mainwindow_widget, mainwindow_base):
         """
         Toggle all raster layers on or off.
         """
-        #Freeze the canvas to save on UI refresh
         if not self.canvaslayers:
             return
 
+        #Freeze the canvas to save on UI refresh
         self.canvas.freeze()
         for layer in self.canvaslayers:
             if layer.layer().type() == QgsMapLayer.RasterLayer:
                 layer.setVisible(not layer.isVisible())
-        # Really!? We have to reload the whole layer set everytime?
+        # Really!? We have to reload the whole layer set every time?
         # WAT?
         self.canvas.setLayerSet(self.canvaslayers)
         self.canvas.freeze(False)

@@ -311,7 +311,6 @@ QToolButton:hover {
    <addaction name="actionEdit_Attributes"/>
    <addaction name="separator"/>
    <addaction name="actionSync"/>
-   <addaction name="actionEnable_GPS"/>
   </widget>
   <action name="actionMap">
    <property name="checkable">
@@ -494,6 +493,15 @@ QToolButton:hover {
    </property>
    <property name="text">
     <string>Move Feature</string>
+   </property>
+  </action>
+  <action name="actionGPSFeature">
+   <property name="icon">
+    <iconset resource="resources.qrc">
+     <normaloff>:/icons/gpsadd</normaloff>:/icons/gpsadd</iconset>
+   </property>
+   <property name="text">
+    <string>Feature at GPS</string>
    </property>
   </action>
  </widget>

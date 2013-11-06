@@ -2,8 +2,9 @@ import os.path
 import os
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
-from utils import log, info, warning, error
-from qgis.gui import QgsMessageBar
+from qmap.utils import log, info, warning, error
+from qgis.core import QgsDistanceArea
+from qgis.gui import QgsMessageBar, QgsAttributeDialog
 
 class DialogProvider(QObject):
     """
@@ -13,11 +14,13 @@ class DialogProvider(QObject):
     """
     accepted = pyqtSignal()
     rejected = pyqtSignal()
+    featuresaved = pyqtSignal()
+    failedsave = pyqtSignal()
     
-    def __init__(self, canvas, iface):
+    def __init__(self, canvas):
         QObject.__init__(self)
         self.canvas = canvas
-        self.iface = iface
+        self.iface = None
 
     def openDialog(self, feature, layer, mandatory_fields=True):
         """
@@ -25,8 +28,10 @@ class DialogProvider(QObject):
 
         @refactor: This really needs to be cleaned up.
         """            
-        
-        self.dialog = self.iface.getFeatureForm(layer, feature)
+        distancearea = QgsDistanceArea()
+        distancearea.setSourceCrs(l.crs().srid())
+
+        dialog = QgsAttributeDialog(layer, feature, false, distancearea )
         self.layer = layer
         
         self.dialog.accepted.connect(self.accepted)
@@ -49,14 +54,12 @@ class DialogProvider(QObject):
                 self.layer.addFeature(feature)
             
             saved = self.layer.commitChanges()        
-            
+
             if not saved:
-                self.iface.messageBar().pushMessage("Error",
-                                                    "Error in saving changes. Contact administrator ", 
-                                                    QgsMessageBar.CRITICAL)
+                self.failedsave.emit()
                 for e in self.layer.commitErrors(): error(e)
             else:
-                self.iface.messageBar().pushMessage("Saved","Changes saved", QgsMessageBar.INFO, 2)
+                self.featuresaved.emit()
 
             self.canvas.refresh()
         else:
