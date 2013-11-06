@@ -31,6 +31,11 @@
             padding: 6px;
             color: #4f4f4f;
          }
+
+QToolButton:hover { 
+            padding: 6px;
+            background-color: rgb(211, 228, 255);
+         }
         
         QToolBar, QStatusBar {
          background: white;
@@ -480,6 +485,9 @@
    </property>
   </action>
   <action name="actionMove">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
    <property name="icon">
     <iconset resource="resources.qrc">
      <normaloff>:/icons/move</normaloff>:/icons/move</iconset>

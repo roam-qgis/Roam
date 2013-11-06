@@ -1,4 +1,4 @@
-from PyQt4.QtCore import Qt, QFileInfo, QDir
+from PyQt4.QtCore import Qt, QFileInfo, QDir, QSize
 from PyQt4.QtGui import (QActionGroup, QWidget, QSizePolicy, QLabel, QApplication,
                          QPixmap)
 from qgis.core import (QgsProjectBadLayerHandler, QgsPalLabeling, QgsMapLayerRegistry,
@@ -11,6 +11,7 @@ import os
 
 from qmap.uifiles import mainwindow_widget, mainwindow_base
 from qmap.listmodulesdialog import ProjectsWidget
+from qmap.floatingtoolbar import FloatingToolBar
 from qmap.settingswidget import SettingsWidget
 from qmap.projectparser import ProjectParser
 from qmap.project import QMapProject
@@ -47,6 +48,7 @@ class MainWindow(mainwindow_widget, mainwindow_base):
     def __init__(self):
         super(MainWindow, self).__init__()
         self.setupUi(self)
+        self.canvaslayers = []
         self.canvas.setCanvasColor(Qt.white)
         self.canvas.enableAntiAliasing(True)
         pal = QgsPalLabeling()
@@ -117,6 +119,21 @@ class MainWindow(mainwindow_widget, mainwindow_base):
 
         self.panels = []
 
+        self.edittoolbar = FloatingToolBar("Editing", self.projecttoolbar)
+        self.extraaddtoolbar = FloatingToolBar("Feature Tools", self.projecttoolbar)
+        self.syncactionstoolbar = FloatingToolBar("Syncing", self.projecttoolbar)
+        self.syncactionstoolbar.setOrientation(Qt.Vertical)
+
+        size = QSize(32,32)
+        self.edittoolbar.setIconSize(size)
+        self.extraaddtoolbar.setIconSize(size)
+        self.syncactionstoolbar.setIconSize(size)
+
+        style = Qt.ToolButtonTextUnderIcon
+        self.edittoolbar.setToolButtonStyle(style)
+        self.extraaddtoolbar.setToolButtonStyle(style)
+        self.syncactionstoolbar.setToolButtonStyle(style)
+
         self.connectButtons()
 
     def setMapTool(self, tool, *args):
@@ -148,10 +165,25 @@ class MainWindow(mainwindow_widget, mainwindow_base):
         connectAction(self.actionInfo, self.infoTool)
         connectAction(self.actionEdit_Attributes, self.editTool)
 
+        self.actionRaster.triggered.connect(self.toggleRasterLayers)
+
         self.infoTool.infoResults.connect(self.showInfoResults)
 
         self.editTool.finished.connect(self.openForm)
         self.editTool.featuresfound.connect(self.showFeatureSelection)
+
+        self.editTool.layersupdated.connect(self.actionEdit_Attributes.setVisible)
+        self.moveTool.layersupdated.connect(self.actionMove.setVisible)
+        self.moveTool.layersupdated.connect(self.actionEdit_Tools.setVisible)
+
+        self.edittoolbar.addAction(self.actionMove)
+        self.edittoolbar.addToActionGroup(self.actionMove)
+
+        showediting = (partial(self.edittoolbar.showToolbar,
+                                 self.actionEdit_Tools,
+                                 self.actionMove))
+
+        self.actionEdit_Tools.toggled.connect(showediting)
 
         self.actionHome.triggered.connect(self.zoomToDefaultView)
         self.actionDefault.triggered.connect(self.canvas.zoomToFullExtent)
@@ -177,6 +209,24 @@ class MainWindow(mainwindow_widget, mainwindow_base):
         listUi.loadFeatureList(features)
         listUi.openFeatureForm.connect(self.openForm)
         listUi.exec_()
+
+    def toggleRasterLayers(self):
+        """
+        Toggle all raster layers on or off.
+        """
+        #Freeze the canvas to save on UI refresh
+        if not self.canvaslayers:
+            return
+
+        self.canvas.freeze()
+        for layer in self.canvaslayers:
+            if layer.layer().type() == QgsMapLayer.RasterLayer:
+                layer.setVisible(not layer.isVisible())
+        # Really!? We have to reload the whole layer set everytime?
+        # WAT?
+        self.canvas.setLayerSet(self.canvaslayers)
+        self.canvas.freeze(False)
+        self.canvas.refresh()
 
     def missingLayers(self, layers):
         """
@@ -241,8 +291,8 @@ class MainWindow(mainwindow_widget, mainwindow_base):
         parser = ProjectParser(doc)
         canvasnode = parser.canvasnode
         self.canvas.mapRenderer().readXML(canvasnode)
-        canvaslayers = parser.canvaslayers()
-        self.canvas.setLayerSet(canvaslayers)
+        self.canvaslayers = parser.canvaslayers()
+        self.canvas.setLayerSet(self.canvaslayers)
         self.canvas.updateScale()
         self.canvas.freeze(False)
         self.canvas.refresh()

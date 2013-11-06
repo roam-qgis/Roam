@@ -8,6 +8,7 @@ from __future__ import absolute_import
 import sys
 
 from qgis.core import QgsApplication
+from PyQt4.QtGui import QApplication
 
 from qmap.mainwindow import MainWindow
 import qmap.project as project
@@ -15,8 +16,10 @@ import qmap.utils
 import time
 
 start = time.time()
+
 app = QgsApplication(sys.argv, True)
 QgsApplication.initQgis()
+QApplication.setStyle("Plastique")
 
 window = MainWindow()
 projects = project.getProjects(sys.argv[1])
