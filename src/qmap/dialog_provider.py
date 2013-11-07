@@ -3,6 +3,7 @@ import os
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 from qmap.utils import log, info, warning, error
+from qmap.featuredialog import FeatureForm
 from qgis.core import QgsDistanceArea
 from qgis.gui import QgsMessageBar, QgsAttributeDialog
 
@@ -28,44 +29,30 @@ class DialogProvider(QObject):
 
         @refactor: This really needs to be cleaned up.
         """            
-        distancearea = QgsDistanceArea()
-        distancearea.setSourceCrs(l.crs().srid())
+        dialog = FeatureForm.fromLayer(layer)
 
-        dialog = QgsAttributeDialog(layer, feature, false, distancearea )
-        self.layer = layer
-        
-        self.dialog.accepted.connect(self.accepted)
-        self.dialog.rejected.connect(self.rejected)
-
-        self.dialog.setModal(True)
-        
-        fullscreen = self.dialog.property('fullscreen')
-        
-        if fullscreen:
-            self.dialog.setWindowState(Qt.WindowFullScreen)
-        
-        if self.dialog.exec_():            
+        if dialog.exec_():
             for value in feature.attributes():
                 info("New value {}".format(value))
     
             if feature.id() > 0:
-                self.layer.updateFeature(feature)
+                layer.updateFeature(feature)
             else:
-                self.layer.addFeature(feature)
+                layer.addFeature(feature)
             
-            saved = self.layer.commitChanges()        
+            saved = layer.commitChanges()
 
             if not saved:
                 self.failedsave.emit()
-                for e in self.layer.commitErrors(): error(e)
+                for e in layer.commitErrors(): error(e)
             else:
                 self.featuresaved.emit()
 
             self.canvas.refresh()
         else:
-            self.layer.rollBack()
+            layer.rollBack()
             
-        self.layer.startEditing()
+        layer.startEditing()
 
     def selectingFromMap(self, message):
         """

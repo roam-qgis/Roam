@@ -3,12 +3,16 @@ import glob
 import utils
 import yaml
 import functools
-from maptools import PointTool, InspectionTool, EditTool
-from qgis.core import QgsMapLayerRegistry, QGis, QgsTolerance, QgsVectorLayer
-from utils import log
-from syncing import replication
 import imp
 import importlib
+
+from PyQt4.QtGui import QAction, QIcon
+
+from qgis.core import QgsMapLayerRegistry, QGis, QgsTolerance, QgsVectorLayer, QgsMapLayer
+
+from qmap.maptools import PointTool, InspectionTool, EditTool
+from qmap.utils import log
+from qmap.syncing import replication
 
 class NoMapToolConfigured(Exception):
     """ 
@@ -57,20 +61,17 @@ class QMapLayer(object):
     
     @property
     def QGISLayer(self):
-        return self._qgslayer
-    
-    @QGISLayer.setter
-    def QGISLayer(self, layer):
         # If the layer has a ui file then we need to rewrite to be relative
         # to the current projects->layer folder as QGIS doesn't support that yet.
+        layer = self._getLayer(self.name)
         if layer.editorLayout() == QgsVectorLayer.UiFileLayout:
             form = os.path.basename(layer.editForm())
             newpath = os.path.join(self.folder, form)
             layer.setEditForm(newpath)
-            self.project.iface.preloadForm(newpath)
+            #self.project.iface.preloadForm(newpath)
 
-        self._qgslayer = layer
-        
+        return layer
+
     def _getLayer(self, name):
         try:
             return QgsMapLayerRegistry.instance().mapLayersByName(name)[0]
@@ -90,9 +91,6 @@ class QMapLayer(object):
         
         def _getInsectionTool():
             """
-
-
-            :return: :raise:
             """
             try:
                 sourcelayername = toolsettings["sourcelayer"]
@@ -147,7 +145,17 @@ class QMapLayer(object):
             return PointTool(canvas)
         
         raise NoMapToolConfigured
-    
+
+    @property
+    def action(self):
+        """
+        The GUI action that can be used for this layer
+        """
+        action = QAction(QIcon(self.icon), self.icontext, None)
+        action.setData(self)
+        action.setCheckable(True)
+        return action
+
     @property
     def capabilities(self):
         """
@@ -161,6 +169,18 @@ class QMapLayer(object):
     @property
     def settings(self):
         return self.project.layersettings[self.name]
+
+    @property
+    def valid(self):
+        """
+        Check if this layer is a valid project layer
+        """
+        if self.QGISLayer is None:
+            return False, "Layer {} not found in project".format(self.name)
+        elif self.QGISLayer.type() == QgsMapLayer.RasterLayer:
+            return False, "We don't support raster layers for data entry"
+        else:
+            return True, None
         
 
 class QMapProject(object):
@@ -252,12 +272,14 @@ class QMapProject(object):
             module = importlib.import_module("projects.{}".format(name))
         except ImportError as err:
             log(err)
+            print err
             return True, None
             
         try:
             return module.onProjectLoad()
         except AttributeError as err:
             log("Not onProjectLoad attribute found")
+            print "No onProjectLoad attribute found"
             return True, None
         
     @property

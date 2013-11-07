@@ -7,7 +7,7 @@ from __future__ import absolute_import
 
 import sys
 
-from qgis.core import QgsApplication
+from qgis.core import QgsApplication, QgsPythonRunner
 from PyQt4.QtGui import QApplication
 
 from qmap.mainwindow import MainWindow

@@ -10,11 +10,12 @@ pluginType = 0
 def moduleInformation():
     return "imagewidget", ("QMapImageWidget", )
 
+
 from PyQt4 import QtGui, QtDesigner
-from imagewidget import QMapImageWidget
+from qtcontrols.imagewidget import QMapImageWidget
 
 class QMapImageWidgetPlugin(QtDesigner.QPyDesignerCustomWidgetPlugin):
-    def __init__(self, parent = None):
+    def __init__(self, parent=None):
         QtDesigner.QPyDesignerCustomWidgetPlugin.__init__(self, parent)
         self.initialized = False
 
@@ -49,7 +50,7 @@ class QMapImageWidgetPlugin(QtDesigner.QPyDesignerCustomWidgetPlugin):
         return False
 
     def domXml(self):
-        return '<widget class="QMapImageWidget" name="imagewidget" header="imagewidget" />\n'
+        return '<widget class="QMapImageWidget" name="imagewidget" />\n'
 
     def includeFile(self):
         return "imagewidget"

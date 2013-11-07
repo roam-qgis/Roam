@@ -1,11 +1,13 @@
 from PyQt4.QtCore import Qt, QFileInfo, QDir, QSize
 from PyQt4.QtGui import (QActionGroup, QWidget, QSizePolicy, QLabel, QApplication,
-                         QPixmap, QColor)
+                         QPixmap, QColor, QMessageBox)
 from qgis.core import (QgsProjectBadLayerHandler, QgsPalLabeling, QgsMapLayerRegistry,
                         QgsProject, QgsMapLayer, QgsFeature)
 from qgis.gui import (QgsMessageBar, QgsMapToolZoom, QgsMapToolTouch, QgsRubberBand)
 
 from functools import partial
+
+import getpass
 import sys
 import os
 
@@ -16,8 +18,8 @@ from qmap.listmodulesdialog import ProjectsWidget
 from qmap.floatingtoolbar import FloatingToolBar
 from qmap.settingswidget import SettingsWidget
 from qmap.projectparser import ProjectParser
-from qmap.project import QMapProject
-from qmap.maptools import MoveTool, InfoTool, EditTool
+from qmap.project import QMapProject, NoMapToolConfigured, ErrorInMapTool
+from qmap.maptools import MoveTool, InfoTool, EditTool, PointTool
 from qmap.listfeatureform import ListFeaturesForm
 from qmap.infodock import InfoDock
 
@@ -51,6 +53,7 @@ class MainWindow(mainwindow_widget, mainwindow_base):
         super(MainWindow, self).__init__()
         self.setupUi(self)
         self.canvaslayers = []
+        self.layerbuttons = []
         self.canvas.setCanvasColor(Qt.white)
         self.canvas.enableAntiAliasing(True)
         pal = QgsPalLabeling()
@@ -116,7 +119,7 @@ class MainWindow(mainwindow_widget, mainwindow_base):
             return label
 
         self.projectlabel = _createSideLabel("Project: {project}")
-        self.userlabel = _createSideLabel("User: {user}")
+        self.userlabel = _createSideLabel("User: {user}".format(user=getpass.getuser()))
         self.statusbar.addWidget(self.projectlabel)
         self.statusbar.addWidget(self.userlabel)
 
@@ -142,7 +145,7 @@ class MainWindow(mainwindow_widget, mainwindow_base):
 
         self.connectButtons()
 
-        self.band = QgsRubberBand(self.iface.mapCanvas())
+        self.band = QgsRubberBand(self.canvas)
         self.band.setIconSize(20)
         self.band.setWidth(10)
         self.band.setColor(QColor(186, 93, 212, 76))
@@ -182,6 +185,7 @@ class MainWindow(mainwindow_widget, mainwindow_base):
 
         self.editTool.finished.connect(self.openForm)
         self.editTool.featuresfound.connect(self.showFeatureSelection)
+        self.editTool.radius = 10
 
         self.editTool.layersupdated.connect(self.actionEdit_Attributes.setVisible)
         self.moveTool.layersupdated.connect(self.actionMove.setVisible)
@@ -206,7 +210,73 @@ class MainWindow(mainwindow_widget, mainwindow_base):
         self.actionDefault.triggered.connect(self.canvas.zoomToFullExtent)
         self.actionQuit.triggered.connect(self.exit)
 
-    def addAtGPS(self):
+    def showToolError(self, label, message):
+        self.messageBar.pushMessage(label, message, QgsMessageBar.WARNING)
+
+    def createCaptureFeature(self, layer):
+        tool = layer.getMaptool(self.canvas)
+        action = layer.action
+        action.toggled.connect(partial(self.setMapTool, tool))
+
+        # Hack until I fix it latemessageBarr
+        if isinstance(tool, PointTool):
+            add = partial(self.addNewFeature, layer.QGISLayer)
+            tool.geometryComplete.connect(add)
+        else:
+            tool.finished.connect(self.openForm)
+            tool.error.connect(partial(self.showToolError, layer.icontext))
+
+        self.projecttoolbar.insertAction(self.actionEdit_Tools, action)
+
+        if not tool.isEditTool():
+            # Connect the GPS tools strip to the action pressed event.
+            showgpstools = (partial(self.extraaddtoolbar.showToolbar,
+                                     action,
+                                     None))
+
+            action.toggled.connect(showgpstools)
+
+        self.editgroup.addAction(action)
+        self.layerbuttons.append(action)
+
+    def createFormButtons(self, projectlayers):
+        """
+            Create buttons for each form that is defined
+        """
+        # TODO Refactor me!
+
+        self.editTool.reset()
+        self.moveTool.reset()
+
+        def editFeature(layer):
+            self.editTool.addLayer(layer.QGISLayer)
+
+        def moveFeature(layer):
+            self.moveTool.addLayer(layer.QGISLayer)
+
+        capabilitityhandlers = { "capture" : self.createCaptureFeature,
+                                 "edit" : editFeature,
+                                 "move" : moveFeature}
+
+        for layer in projectlayers:
+            valid, reason = layer.valid
+            if not valid:
+                qmap.utils.log("Layer is invalid for data entry because {}".format(reason))
+                continue
+
+            for capability in layer.capabilities:
+                try:
+                    capabilitityhandlers[capability](layer)
+                except NoMapToolConfigured:
+                    qmap.utils.log("No map tool configured")
+                    continue
+                except ErrorInMapTool as error:
+                    self.messageBar.pushMessage("Error configuring map tool",
+                                                error.message,
+                                                level=QgsMessageBar.WARNING)
+                    continue
+
+    def addFeatureAtGPS(self):
         """
         Add a record at the current GPS location.
         """
@@ -232,6 +302,9 @@ class MainWindow(mainwindow_widget, mainwindow_base):
             pass
 
     def openForm(self, layer, feature):
+        """
+        Open the form that is assigned to the layer
+        """
         if not layer.isEditable():
             layer.startEditing()
 
@@ -255,6 +328,9 @@ class MainWindow(mainwindow_widget, mainwindow_base):
         self.clearToolRubberBand()
 
     def addNewFeature(self, layer, geometry):
+        """
+        Add a new new feature to the given layer
+        """
         fields = layer.pendingFields()
 
         feature = QgsFeature()
@@ -268,10 +344,10 @@ class MainWindow(mainwindow_widget, mainwindow_base):
         self.openForm(layer, feature)
 
     def exit(self):
+        """
+        Exit the application.
+        """
         QApplication.exit(0)
-
-    def openForm(self):
-        pass
 
     def showInfoResults(self, results):
         print results
@@ -366,6 +442,7 @@ class MainWindow(mainwindow_widget, mainwindow_base):
         readProject is called by QgsProject once the map layer has been
         populated with all the layers
         """
+        print "_readProject"
         parser = ProjectParser(doc)
         canvasnode = parser.canvasnode
         self.canvas.mapRenderer().readXML(canvasnode)
@@ -386,8 +463,7 @@ class MainWindow(mainwindow_widget, mainwindow_base):
         projectpath = QgsProject.instance().fileName()
         project = QMapProject(os.path.dirname(projectpath))
         self.projectlabel.setText("Project: {}".format(project.name))
-        # TODO create form buttons
-        #self.createFormButtons(projectlayers = project.getConfiguredLayers())
+        self.createFormButtons(projectlayers = project.getConfiguredLayers())
 
         # Enable the raster layers button only if the project contains a raster layer.
         layers = QgsMapLayerRegistry.instance().mapLayers().values()
@@ -402,6 +478,7 @@ class MainWindow(mainwindow_widget, mainwindow_base):
             self.mainwindow.addDockWidget(Qt.BottomDockWidgetArea , panel)
             self.panels.append(panel)
 
+    #noinspection PyArgumentList
     @qmap.utils.timeit
     def loadProject(self, project):
         """
@@ -435,9 +512,11 @@ class MainWindow(mainwindow_widget, mainwindow_base):
         self.projectimage.setPixmap(QPixmap(project.splash))
         QApplication.processEvents()
 
-        fileinfo = QFileInfo(project.projectfile)
         QDir.setCurrent(os.path.dirname(project.projectfile))
+        fileinfo = QFileInfo(project.projectfile)
         QgsProject.instance().read(fileinfo)
+        print project.projectfile
+        print QgsProject.instance().error()
 
     def closeProject(self):
         """
@@ -450,6 +529,10 @@ class MainWindow(mainwindow_widget, mainwindow_base):
         for panel in self.panels:
             self.removeDockWidget(panel)
             del panel
+        # Remove all the old buttons
+        for action in self.layerbuttons:
+            self.editgroup.removeAction(action)
+            self.projecttoolbar.removeAction(action)
         self.panels = []
 
 

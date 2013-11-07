@@ -22,3 +22,6 @@ class MapTool(QgsMapToolTouch):
     def addLayer(self, layer):
         self.layers.append(layer)
         self.layersupdated.emit(True)
+
+    def reset(self):
+        self.layers = []
