@@ -29,9 +29,9 @@ class DialogProvider(QObject):
 
         @refactor: This really needs to be cleaned up.
         """            
-        dialog = FeatureForm.fromLayer(layer)
-
-        if dialog.exec_():
+        form = FeatureForm.fromLayer(layer)
+        feature, accepted = form.openForm(feature)
+        if accepted:
             for value in feature.attributes():
                 info("New value {}".format(value))
     

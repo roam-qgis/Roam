@@ -265,6 +265,11 @@ class FormBinder(QObject):
         control - QWidget based control that takes the new value
         value - A QVariant holding the value
         """
+        editor = EditorRegistry.editorForWidget(control, index)
+        if editor:
+            editor.setValue(value)
+        return
+
         if isinstance(control, QDateTimeEdit):
             # Can be removed after http://hub.qgis.org/issues/7013 is fixed.
             if isinstance(value, QDateTime):

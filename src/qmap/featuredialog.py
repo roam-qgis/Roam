@@ -10,9 +10,17 @@ class FeatureForm(object):
         widget = uic.loadUi(uifile)
         return cls(widget)
 
-    def exec_(self):
+    def openForm(self, feature):
         fullscreen = self.widget.property('fullscreen')
         if fullscreen:
             self.widget.setWindowState(Qt.WindowFullScreen)
 
-        return self.widget.exec_()
+        self.bindFeature(feature)
+        accepted = self.widget.exec_()
+        return self.getFeature(), accepted
+
+    def bindFeature(self, feature):
+        pass
+
+    def getFeature(self):
+        pass
