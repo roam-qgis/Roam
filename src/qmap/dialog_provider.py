@@ -2,10 +2,11 @@ import os.path
 import os
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
+
 from qmap.utils import log, info, warning, error
 from qmap.featuredialog import FeatureForm
 from qgis.core import QgsDistanceArea
-from qgis.gui import QgsMessageBar, QgsAttributeDialog
+from qgis.gui import QgsMessageBar
 
 class DialogProvider(QObject):
     """
@@ -23,17 +24,20 @@ class DialogProvider(QObject):
         self.canvas = canvas
         self.iface = None
 
-    def openDialog(self, feature, layer, mandatory_fields=True):
+    def openDialog(self, feature, layer, settings, mandatory_fields=True):
         """
         Opens a form for the given feature
 
         @refactor: This really needs to be cleaned up.
-        """            
-        form = FeatureForm.fromLayer(layer)
-        feature, accepted = form.openForm(feature)
+        """
+        layerconfig = settings[layer.name()]
+        form = FeatureForm.fromLayer(layer, layerconfig)
+        form.bindFeature(feature)
+        accepted = form.openForm()
         if accepted:
+            feature = form.updateFeature(feature)
             for value in feature.attributes():
-                info("New value {}".format(value))
+                print("New value {}".format(value))
     
             if feature.id() > 0:
                 layer.updateFeature(feature)

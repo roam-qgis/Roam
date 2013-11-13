@@ -54,6 +54,7 @@ class MainWindow(mainwindow_widget, mainwindow_base):
         self.setupUi(self)
         self.canvaslayers = []
         self.layerbuttons = []
+        self.project = None
         self.canvas.setCanvasColor(Qt.white)
         self.canvas.enableAntiAliasing(True)
         pal = QgsPalLabeling()
@@ -323,7 +324,9 @@ class MainWindow(mainwindow_widget, mainwindow_base):
         provider.featuresaved.connect(featureSaved)
         provider.failedsave.connect(failSave)
 
-        provider.openDialog(feature=feature, layer=layer)
+        provider.openDialog(feature=feature,
+                            layer=layer,
+                            settings=self.project.layersettings)
         self.band.reset()
         self.clearToolRubberBand()
 
@@ -461,9 +464,9 @@ class MainWindow(mainwindow_widget, mainwindow_base):
             Called when a new project is opened in QGIS.
         """
         projectpath = QgsProject.instance().fileName()
-        project = QMapProject(os.path.dirname(projectpath))
-        self.projectlabel.setText("Project: {}".format(project.name))
-        self.createFormButtons(projectlayers = project.getConfiguredLayers())
+        self.project = QMapProject(os.path.dirname(projectpath))
+        self.projectlabel.setText("Project: {}".format(self.project.name))
+        self.createFormButtons(projectlayers = self.project.getConfiguredLayers())
 
         # Enable the raster layers button only if the project contains a raster layer.
         layers = QgsMapLayerRegistry.instance().mapLayers().values()
@@ -474,7 +477,7 @@ class MainWindow(mainwindow_widget, mainwindow_base):
         #self.connectSyncProviders(project)
 
         # Show panels
-        for panel in project.getPanels():
+        for panel in self.project.getPanels():
             self.mainwindow.addDockWidget(Qt.BottomDockWidgetArea , panel)
             self.panels.append(panel)
 
@@ -534,7 +537,7 @@ class MainWindow(mainwindow_widget, mainwindow_base):
             self.editgroup.removeAction(action)
             self.projecttoolbar.removeAction(action)
         self.panels = []
-
+        self.project = None
 
 
 
