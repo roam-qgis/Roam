@@ -15,6 +15,9 @@ class WidgetsRegistry(object):
 
     @staticmethod
     def createwidget(widgettype, layer, field, widget, config, parent=None):
+        if not widgettype in WidgetsRegistry.widgets:
+            return None
+
         factory = WidgetsRegistry.widgets[widgettype]
         widgetwrapper = factory.createWidget(layer, field, widget, parent)
         widgetwrapper.config = config
@@ -41,7 +44,7 @@ class WidgetFactory(object):
 
 class EditorWidget(QObject):
     def __init__(self, layer, field, widget, parent=None):
-        super(EditorWidget, self).__init__()
+        super(EditorWidget, self).__init__(parent)
         self._config = {}
         self.widget = widget
         self.layer = None
@@ -56,7 +59,7 @@ class EditorWidget(QObject):
     @property
     def widget(self):
         if not self._widget:
-            self._widget = self.createWidget(self.parent)
+            self._widget = self.createWidget(self.parent())
             self.initWidget(self._widget)
         return self._widget
 

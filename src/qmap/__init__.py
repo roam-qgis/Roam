@@ -2,10 +2,16 @@ from functools import partial
 
 from PyQt4.QtGui import (QSizePolicy, QWidget, QPushButton, QDialog,
                          QTextEdit, QPushButton)
-from PyQt4.QtCore import Qt
+from PyQt4.QtCore import Qt, QPyNullVariant
 
 from qmap.htmlviewer import showHTMLReport
 from qgis.gui import QgsMessageBar
+
+def nullcheck(value):
+    if isinstance(value, QPyNullVariant):
+        return None
+    else:
+        return value
 
 class BaseForm(object):
     def __init__(self, dialog, layer, feature):

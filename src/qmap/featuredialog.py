@@ -2,6 +2,7 @@ from PyQt4 import uic
 from PyQt4.QtGui import QWidget, QDialogButtonBox
 
 from qmap.editorwidgets.core import WidgetsRegistry
+from qmap import nullcheck
 
 class FeatureForm(object):
     def __init__(self, widget, layer, layerconfig):
@@ -39,7 +40,13 @@ class FeatureForm(object):
             widgettype = config.keys()[0]
             widgetconfig = config[widgettype]
             widgetwrapper = WidgetsRegistry.createwidget(widgettype, self.layer, field, widget, widgetconfig)
-            widgetwrapper.setvalue(feature[field])
+            if widgetwrapper is None:
+                print("No widget found for {}".format(widgettype))
+                continue
+
+            print widgetwrapper, feature[field]
+            value = nullcheck(feature[field])
+            widgetwrapper.setvalue(value)
             self.boundwidgets.append(widgetwrapper)
 
     def updateFeature(self, feature):
