@@ -4,8 +4,8 @@ from qmap.editorwidgets.core import WidgetFactory, EditorWidget
 from qmap import nullcheck
 
 class TextWidget(EditorWidget):
-    def __init__(self, layer, field, widget, parent=None):
-        super(TextWidget, self).__init__(layer, field, widget, parent)
+    def __init__(self, *args):
+        super(TextWidget, self).__init__(*args)
 
     def createWidget(self, parent):
         return QLineEdit(parent)

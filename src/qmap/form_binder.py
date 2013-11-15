@@ -268,7 +268,6 @@ class FormBinder(QObject):
         editor = EditorRegistry.editorForWidget(control, index)
         if editor:
             editor.setValue(value)
-        return
 
         if isinstance(control, QDateTimeEdit):
             # Can be removed after http://hub.qgis.org/issues/7013 is fixed.
@@ -284,7 +283,6 @@ class FormBinder(QObject):
                 button.setIconSize(QSize(24, 24))
                 log("{} : {}".format(control.objectName(), type(control) is QDateEdit))
                 if type(control) is QDateEdit:
-                    log("Type is QDateEdit")
                     button.pressed.connect(partial(self.pickDateTime, control, "Date"))
                 else:
                     button.pressed.connect(partial(self.pickDateTime, control, "DateTime"))

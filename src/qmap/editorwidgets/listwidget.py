@@ -6,8 +6,8 @@ from qmap.editorwidgets.core import WidgetFactory, WidgetsRegistry, EditorWidget
 from qmap import nullcheck
 
 class ListWidget(EditorWidget):
-    def __init__(self, layer, field, widget, parent=None):
-        super(ListWidget, self).__init__(layer, field, widget, parent)
+    def __init__(self, *args):
+        super(ListWidget, self).__init__(*args)
 
     def createWidget(self, parent):
         return QComboBox(parent)

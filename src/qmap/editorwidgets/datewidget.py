@@ -16,8 +16,8 @@ class DateUiWidget(widget, base):
 
 
 class DateWidget(EditorWidget):
-    def __init__(self, layer, field, widget, parent=None):
-        super(DateWidget, self).__init__(layer, field, widget, parent)
+    def __init__(self, *args):
+        super(DateWidget, self).__init__(*args)
 
     def createWidget(self, parent):
         return DateUiWidget(parent)
