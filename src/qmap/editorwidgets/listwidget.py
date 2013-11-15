@@ -82,7 +82,6 @@ class ListWidget(EditorWidget):
 
 
     def initWidget(self, widget):
-        print "initWidget"
         if 'list' in self.config:
             listconfig = self.config['list']
             self._buildfromlist(widget, listconfig)
@@ -90,17 +89,28 @@ class ListWidget(EditorWidget):
             layerconfig = self.config['layer']
             self._buildfromlayer(widget, layerconfig)
 
+        if widget.isEditable():
+            widget.editTextChanged.connect(self.validate)
+
+        widget.currentIndexChanged.connect(self.validate)
+
+    def validate(self, *args):
+        if (not self.config['allownull'] and (not self.widget.currentText() or
+            self.widget.currentText() == "(no selection)")):
+            self.raisevalidationupdate(False)
+        else:
+            self.raisevalidationupdate(True)
+
     def setvalue(self, value):
-        print "Set Value {}".format(value)
         index = self.widget.findData(value)
+        self.widget.setCurrentIndex(index)
         if index == -1 and self.widget.isEditable():
             if value is None and not self.config['allownull']:
                 return
 
             self.widget.addItem(value)
             index = self.widget.count() - 1
-        print index
-        self.widget.setCurrentIndex(index)
+            self.widget.setCurrentIndex(index)
 
     def value(self):
         index = self.widget.currentIndex()

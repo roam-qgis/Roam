@@ -10,6 +10,15 @@ class TextWidget(EditorWidget):
     def createWidget(self, parent):
         return QLineEdit(parent)
 
+    def initWidget(self, widget):
+        widget.textChanged.connect(self.validate)
+
+    def validate(self, *args):
+        if not self.value():
+            self.raisevalidationupdate(False)
+        else:
+            self.raisevalidationupdate(True)
+
     def setvalue(self, value):
         # Not the best way but should cover most use cases
         # for now
@@ -22,6 +31,6 @@ class TextWidget(EditorWidget):
         try:
             return self.widget.toPlainText()
         except AttributeError:
-            self.widget.text()
+            return self.widget.text()
 
 factory = WidgetFactory("Text", TextWidget, None)

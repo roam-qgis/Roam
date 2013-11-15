@@ -43,7 +43,7 @@ class WidgetFactory(object):
 
 
 class EditorWidget(QObject):
-    statechanged = pyqtSignal(bool)
+    validationupdate = pyqtSignal(str, bool)
     def __init__(self, layer=None, field=None, widget=None, label=None, parent=None):
         super(EditorWidget, self).__init__(parent)
         self._config = {}
@@ -51,14 +51,12 @@ class EditorWidget(QObject):
         self.layer = layer
         self.field = field
         self.label = label
-        self.requiredpassstyle = ''
-        self.requiredfailstyle = ''
-
-    def setvalue(self, value):
-        pass
-
-    def value(self):
-        pass
+        self.validationstyle = """QLabel[required=true]
+                                {border-radius: 5px; background-color: rgba(255, 221, 48,150);}
+                                QLabel[ok=true]
+                                { border-radius: 5px; background-color: rgba(200, 255, 197, 150); }"""
+        self.buddywidget.setStyleSheet(self.validationstyle)
+        self.validationupdate.connect(self.updatecontrolstate)
 
     @classmethod
     def forWidget(cls, layer, field, widget, label, parent=None):
@@ -70,8 +68,31 @@ class EditorWidget(QObject):
             widget = cls().createWidget(parent)
 
         editor = cls(layer, field, widget, label, parent)
-        editor.initWidget(widget)
         return editor
+
+    def raisevalidationupdate(self, passed):
+        self.validationupdate.emit(self.field, passed)
+
+    def updatecontrolstate(self, field, passed):
+        self.buddywidget.setProperty('ok', passed)
+        self.buddywidget.style().unpolish(self.buddywidget)
+        self.buddywidget.style().polish(self.buddywidget)
+
+    def setrequired(self):
+        self.buddywidget.setProperty('required', True)
+
+    @property
+    def buddywidget(self):
+        if not self.label is None:
+            return self.label
+        else:
+            return self.widget
+
+    def setvalue(self, value):
+        pass
+
+    def value(self):
+        pass
 
     @property
     def config(self):
@@ -80,8 +101,7 @@ class EditorWidget(QObject):
     @config.setter
     def config(self, value):
         self._config = value
-        if not self.widget is None:
-            self.initWidget(self.widget)
+        self.initWidget(self.widget)
 
     def createWidget(self, parent):
         pass
@@ -92,7 +112,4 @@ class EditorWidget(QObject):
     def setEnabled(self, enabled):
         if not self.widget is None:
             self.widget.setEnabled(enabled)
-
-    def updatestatus(self):
-        pass
 
