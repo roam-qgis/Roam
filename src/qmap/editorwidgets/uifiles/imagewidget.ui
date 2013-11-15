@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>Form</class>
- <widget class="QWidget" name="Form">
+ <class>imagewidget</class>
+ <widget class="QWidget" name="imagewidget">
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
     <width>94</width>
-    <height>89</height>
+    <height>114</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -78,6 +78,12 @@
       <iconset resource="images.qrc">
        <normaloff>:/images/images/reload.png</normaloff>:/images/images/reload.png</iconset>
      </property>
+     <property name="iconSize">
+      <size>
+       <width>24</width>
+       <height>242</height>
+      </size>
+     </property>
      <property name="flat">
       <bool>true</bool>
      </property>
@@ -103,6 +109,12 @@
      <property name="icon">
       <iconset resource="images.qrc">
        <normaloff>:/images/images/delete.png</normaloff>:/images/images/delete.png</iconset>
+     </property>
+     <property name="iconSize">
+      <size>
+       <width>24</width>
+       <height>24</height>
+      </size>
      </property>
      <property name="flat">
       <bool>true</bool>

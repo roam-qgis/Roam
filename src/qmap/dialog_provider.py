@@ -31,7 +31,7 @@ class DialogProvider(QObject):
         @refactor: This really needs to be cleaned up.
         """
         layerconfig = settings[layer.name()]
-        form = FeatureForm.fromLayer(layer, layerconfig)
+        form = FeatureForm.from_layer(layer, layerconfig)
         form.bindFeature(feature)
         accepted = form.openForm()
         if accepted:

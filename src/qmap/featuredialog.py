@@ -14,11 +14,10 @@ class FeatureForm(QObject):
         self.layer = layer
         self.boundwidgets = []
         self.requiredfields = {}
-
         self.statusbar = self.widget.findChild(QStatusBar)
 
     @classmethod
-    def fromLayer(cls, layer, layerconfig):
+    def from_layer(cls, layer, layerconfig):
         uifile = layer.editForm()
         widget = uic.loadUi(uifile)
 
@@ -55,7 +54,7 @@ class FeatureForm(QObject):
 
     def updaterequired(self, field, passed):
         self.requiredfields[field] = passed
-        passed = all(valid == True for valid in self.requiredfields.values())
+        passed = all(valid for valid in self.requiredfields.values())
         if not passed:
             self.statusbar.showMessage('Required fields missing')
         else:

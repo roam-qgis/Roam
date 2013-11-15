@@ -4,18 +4,20 @@ from PyQt4.QtGui import QPushButton, QDateTimeEdit, QIcon, QDateEdit
 from PyQt4.QtCore import QDateTime, Qt, QSize
 
 from qmap.editorwidgets.core import WidgetFactory, EditorWidget
-from qmap import nullcheck
 from qmap.editorwidgets.uifiles import create_ui
 from qmap.datatimerpickerwidget import DateTimePickerDialog
 
 widget, base = create_ui("datewidget.ui")
 
+
 class DateUiWidget(widget, base):
     def __init__(self, parent=None):
         super(DateUiWidget, self).__init__(parent)
+        self.setupUi(self)
 
 
 class DateWidget(EditorWidget):
+    DEFAULTDATE = QDateTime(2000, 1, 1, 00, 00, 00, 0)
     def __init__(self, *args):
         super(DateWidget, self).__init__(*args)
 
@@ -27,27 +29,37 @@ class DateWidget(EditorWidget):
         pickbutton.setIcon(QIcon(":/icons/calender"))
         pickbutton.setText("Select")
         pickbutton.setIconSize(QSize(24, 24))
-        self.datewidget = widget.findChild(QDateTimeEdit)
 
-        if pickbutton is None:
-            return
+        if not pickbutton is None:
+            pickbutton.pressed.connect(self.showpickdialog)
 
-        if type(self.datewidget) is QDateEdit:
-            datetype = "Date"
+        self.datewidget.dateTimeChanged.connect(self.validate)
+
+    @property
+    def datewidget(self):
+        return self.widget.findChild(QDateTimeEdit)
+
+    def validate(self, *args):
+        if self.value() is None:
+            self.raisevalidationupdate(False)
         else:
-            datetype = "DateTime"
+            self.raisevalidationupdate(True)
 
-        pickbutton.pressed.connect(partial(self.showpickdialog, datetype))
-
-    def showpickdialog(self, mode):
+    def showpickdialog(self):
         """
         Open the date time picker dialog
 
         control - The control that will recive the user set date time.
         """
+
+        if type(self.datewidget) is QDateEdit:
+            mode = "Date"
+        else:
+            mode = "DateTime"
+
         dlg = DateTimePickerDialog(mode)
         dlg.setWindowTitle("Select a date")
-        if self.datewidget.dateTime() == QDateTime(2000, 1, 1, 00, 00, 00, 0):
+        if self.datewidget.dateTime() == DateWidget.DEFAULTDATE:
             dlg.setAsNow()
         else:
             dlg.setDateTime(self.datewidget.dateTime())
@@ -70,7 +82,7 @@ class DateWidget(EditorWidget):
             self.datewidget.setTime(value.time())
 
     def value(self):
-        if self.datewidget.dateTime() == QDateTime(2000, 1, 1, 00, 00, 00, 0):
+        if self.datewidget.dateTime() == DateWidget.DEFAULTDATE:
             return None
         else:
             self.datewidget.dateTime().toString(Qt.ISODate)

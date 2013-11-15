@@ -23,6 +23,7 @@ class WidgetsRegistry(object):
         widgetwrapper.config = config
         return widgetwrapper
 
+
 class WidgetFactory(object):
     def __init__(self, name, editorwidget, configwidget):
         self.name = name
@@ -32,7 +33,7 @@ class WidgetFactory(object):
         self.configwidget = configwidget
 
     def createWidget(self, layer, field, widget, label, parent=None):
-        return self.editorwidget.forWidget(layer, field, widget, label, parent)
+        return self.editorwidget.for_widget(layer, field, widget, label, parent)
 
     def readwidgetconfig(self, configwidget):
         widgetconfig = configwidget.getconfig()
@@ -44,6 +45,7 @@ class WidgetFactory(object):
 
 class EditorWidget(QObject):
     validationupdate = pyqtSignal(str, bool)
+
     def __init__(self, layer=None, field=None, widget=None, label=None, parent=None):
         super(EditorWidget, self).__init__(parent)
         self._config = {}
@@ -59,7 +61,7 @@ class EditorWidget(QObject):
         self.validationupdate.connect(self.updatecontrolstate)
 
     @classmethod
-    def forWidget(cls, layer, field, widget, label, parent=None):
+    def for_widget(cls, layer, field, widget, label, parent=None):
         """
         Create a new editor wrapper for the given widget.
         If no widget is given then the wrapper will create the widget it needs.
