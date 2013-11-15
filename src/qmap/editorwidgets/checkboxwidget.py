@@ -6,9 +6,25 @@ from qmap import nullcheck
 class CheckboxWidget(EditorWidget):
     def __init__(self, *args):
         super(CheckboxWidget, self).__init__(*args)
+        self.validationstyle = """QCheckBox[required=true]
+                                {border-radius: 5px; background-color: rgba(255, 221, 48,150);}
+                                QCheckBox[ok=true]
+                                {border-radius: 5px; background-color: rgba(200, 255, 197, 150); }
+                                QGroupBox::title[required=true]
+                                {border-radius: 5px; background-color: rgba(255, 221, 48,150);}
+                                QGroupBox::title[ok=true]
+                                { border-radius: 5px; background-color: rgba(200, 255, 197, 150); }"""
+
+        self.buddywidget.setStyleSheet(self.validationstyle)
 
     def createWidget(self, parent):
         return QCheckBox(parent)
+
+    def initWidget(self, widget):
+        widget.toggled.connect(self.validate)
+
+    def validate(self, *args):
+        self.raisevalidationupdate(self.widget.isChecked())
 
     def setvalue(self, value):
         checkedvalue = self.config['checkedvalue']

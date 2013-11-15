@@ -94,6 +94,9 @@ class EditorWidget(QObject):
     def value(self):
         pass
 
+    def validate(self, *args):
+        pass
+
     @property
     def config(self):
         return self._config
