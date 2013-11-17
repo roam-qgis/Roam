@@ -18,10 +18,9 @@ class QMapImageWidget(ui_imagewidget.Ui_imagewidget, QWidget):
         self.setStyleSheet(":hover {background-color: #dddddd;}")
         self.selectbutton.clicked.connect(self.selectImage)
         self.deletebutton.clicked.connect(self.removeImage)
-        self.isDefault = True
-        self.loadImage(None)
         self.image.mouseReleaseEvent = self.imageClick
         self.installEventFilter(self)
+        self.removeImage()
 
     def eventFilter(self, parent, event):
         """ Handle mouse click events for disabled widget state """
@@ -53,6 +52,10 @@ class QMapImageWidget(ui_imagewidget.Ui_imagewidget, QWidget):
             self.openRequest.emit(self.image.pixmap())
 
     def loadFromPixMap(self, pixmap):
+        if pixmap.isNull():
+            self.removeImage()
+            return
+
         self.image.setScaledContents(True)
         self.image.setPixmap(pixmap)
         self.isDefault = False
@@ -80,6 +83,7 @@ class QMapImageWidget(ui_imagewidget.Ui_imagewidget, QWidget):
 
     @isDefault.setter
     def isDefault(self, value):
+        self._isdefault = value
         if value:
             self.imageloaded.emit()
         else:

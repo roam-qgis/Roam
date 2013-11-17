@@ -80,8 +80,8 @@
      </property>
      <property name="iconSize">
       <size>
-       <width>24</width>
-       <height>242</height>
+       <width>18</width>
+       <height>18</height>
       </size>
      </property>
      <property name="flat">
@@ -112,8 +112,8 @@
      </property>
      <property name="iconSize">
       <size>
-       <width>24</width>
-       <height>24</height>
+       <width>18</width>
+       <height>18</height>
       </size>
      </property>
      <property name="flat">
