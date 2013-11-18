@@ -3,12 +3,6 @@
 
 SET OSGEO4W_ROOT=C:\Program Files\QGIS Dufour
 SET QGIS=%OSGEO4W_ROOT%\apps\qgis
-
-IF NOT EXIST %QGIS% (
-    SET OSGEO4W_ROOT=C:\OSGeo4W
-    SET QGIS=%OSGEO4W_ROOT%\apps\qgis
-)
-
 set QGIS_PREFIX_PATH=%QGIS%
 
 : GDAL Setup
@@ -28,3 +22,4 @@ set QT_PLUGIN_PATH=%OSGEO4W_ROOT%\apps\Qt4\plugins
 :: set QGIS_DEBUG_FILE=qgis-debug.log
 
 python qmap "%~dp0\projects"
+
