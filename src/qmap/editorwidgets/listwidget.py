@@ -80,7 +80,6 @@ class ListWidget(EditorWidget):
         for pair in values:
             widget.addItem(pair[1], pair[0])
 
-
     def initWidget(self, widget):
         if 'list' in self.config:
             listconfig = self.config['list']
@@ -108,7 +107,7 @@ class ListWidget(EditorWidget):
             if value is None and not self.config['allownull']:
                 return
 
-            self.widget.addItem(value)
+            self.widget.addItem(str(value))
             index = self.widget.count() - 1
             self.widget.setCurrentIndex(index)
 

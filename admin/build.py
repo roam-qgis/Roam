@@ -50,7 +50,8 @@ def build():
 
 def compileplugin():
     print " - building resource files..."
-    run('pyrcc4', '-o', join(appsrcopyFilesath,'qtcontrols','images_rc.py'), join(appsrcopyFilesath,'qtcontrols','images.qrc'))
+    path = join(appsrcopyFilesath, 'editorwidgets', "uifiles")
+    run('pyrcc4', '-o', join(path, 'images_rc.py'), join(path, 'images.qrc'))
     run('pyrcc4', '-o', join(appsrcopyFilesath,'resources_rc.py'), join(appsrcopyFilesath,'resources.qrc'))
     run('pyrcc4', '-o', join(appsrcopyFilesath,'syncing/resources_rc.py'), join(appsrcopyFilesath,'syncing/resources.qrc'))
 

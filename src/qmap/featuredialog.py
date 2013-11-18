@@ -1,13 +1,15 @@
 import os
+import json
+
 from functools import partial
 
 from PyQt4 import uic
-from PyQt4.QtCore import pyqtSignal, QObject
-from PyQt4.QtGui import QWidget, QDialogButtonBox, QStatusBar, QLabel, QGridLayout
+from PyQt4.QtCore import pyqtSignal, QObject, QSize
+from PyQt4.QtGui import QWidget, QDialogButtonBox, QStatusBar, QLabel, QGridLayout, QToolButton, QIcon
 
 from qmap.editorwidgets.core import WidgetsRegistry
 from qmap.helpviewdialog import HelpViewDialog
-from qmap import nullcheck
+from qmap import nullcheck, utils
 
 style = """
             QCheckBox::indicator {
@@ -50,6 +52,35 @@ style = """
             }
 """
 
+values_file = os.path.join(os.environ['APPDATA'], "Roam")
+
+
+def loadsavedvalues(layer):
+    attr = {}
+    id = str(layer.id())
+    savedvaluesfile = os.path.join(values_file, "%s.json" % id)
+    try:
+        utils.log(savedvaluesfile)
+        with open(savedvaluesfile, 'r') as f:
+            attr = json.loads(f.read())
+    except IOError:
+        utils.log('No saved values found for %s' % id)
+    except ValueError:
+        utils.log('No saved values found for %s' % id)
+    return attr
+
+
+def savevalues(layer, values):
+    savedvaluesfile = os.path.join(values_file, "%s.json" % str(layer.id()))
+    print savedvaluesfile
+    folder = os.path.dirname(savedvaluesfile)
+    if not os.path.exists(folder):
+        os.makedirs(folder)
+
+    with open(savedvaluesfile, 'w') as f:
+        json.dump(values, f)
+
+
 class FeatureForm(QObject):
     requiredfieldsupdated = pyqtSignal(bool)
 
@@ -63,13 +94,18 @@ class FeatureForm(QObject):
         self.requiredfields = {}
         self.statusbar = self.widget.findChild(QStatusBar)
 
+        buttonbox = widget.findChildren(QDialogButtonBox)[0]
+
+        if buttonbox:
+            buttonbox.accepted.connect(self.accept)
+            buttonbox.rejected.connect(self.reject)
+
     @classmethod
     def from_layer(cls, layer, layerconfig, qmaplayer):
         formconfig = layerconfig['form']
         formtype = formconfig['type']
         if formtype == 'custom':
             uifile = os.path.join(qmaplayer.folder, "form.ui")
-            print uifile
             widget = uic.loadUi(uifile)
         else:
             raise NotImplemented('Other form types not supported yet')
@@ -86,11 +122,15 @@ class FeatureForm(QObject):
         else:
             layout.addWidget(statusbar)
 
-        buttonbox = widget.findChildren(QDialogButtonBox)[0]
-        buttonbox.accepted.connect(widget.accept)
-        buttonbox.rejected.connect(widget.reject)
-
         return cls(widget, layer, layerconfig, qmaplayer)
+
+    def accept(self):
+        #TODO Call form module accept method
+        self.widget.accept()
+
+    def reject(self):
+        #TODO Call form module reject method
+        self.widget.reject()
 
     def openform(self):
         fullscreen = self.widget.property('fullscreen')
@@ -118,8 +158,13 @@ class FeatureForm(QObject):
         if self.acceptbutton():
             self.acceptbutton().setEnabled(passed)
 
-    def bindfeature(self, feature):
+    def validateall(self, widgetwrappers):
+        for wrapper in widgetwrappers:
+            wrapper.validate()
+
+    def bindfeature(self, feature, defaults={}):
         fieldsconfig = self.layerconfig['fields']
+
         for field, config in fieldsconfig.iteritems():
             widget = self.widget.findChild(QWidget, field)
             label = self.widget.findChild(QLabel, "{}_label".format(field))
@@ -137,14 +182,30 @@ class FeatureForm(QObject):
                 widgetwrapper.setrequired()
                 widgetwrapper.validationupdate.connect(self.updaterequired)
 
-            value = nullcheck(feature[field])
+            value = defaults.get(field, nullcheck(feature[field]))
             widgetwrapper.setvalue(value)
+            self.bindsavebutton(field, defaults, feature.id() > 0)
             self.boundwidgets.append(widgetwrapper)
 
-        for label in self.widget.findChildren(QLabel):
-            self.createHelpLink(label, self.qmaplayer.folder)
+        self.validateall(self.boundwidgets)
+        self.createhelplinks(self.widget)
 
-    def createHelpLink(self, label, folder):
+    def bindsavebutton(self, field, defaults, editmode):
+        button = self.widget.findChild(QToolButton, "{}_save".format(field))
+        if not button:
+            return
+
+        button.setCheckable(not editmode)
+        button.setIcon(QIcon(":/icons/save_default"))
+        button.setIconSize(QSize(24, 24))
+        button.setChecked(field in defaults)
+        button.setVisible(not editmode)
+
+    def createhelplinks(self, widget):
+        for label in widget.findChildren(QLabel):
+            self.createhelplink(label, self.qmaplayer.folder)
+
+    def createhelplink(self, label, folder):
         def showhelp(url):
             """
             Show the help viewer for the given field
@@ -161,7 +222,6 @@ class FeatureForm(QObject):
                 name = name[:-6]
             filename = "{}.html".format(name)
             filepath = os.path.join(folder, "help", filename)
-            print filepath
             if os.path.exists(filepath):
                 return filepath
             else:
@@ -177,8 +237,16 @@ class FeatureForm(QObject):
             label.linkActivated.connect(partial(showhelp))
 
     def updatefeature(self, feature):
+        def shouldsave(field):
+            button = self.widget.findChild(QToolButton, "{}_save".format(field))
+            if button:
+                return button.isChecked()
+
+        savedvalues = {}
         for wrapper in self.boundwidgets:
             value = wrapper.value()
             field = wrapper.field
+            if shouldsave(field):
+                savedvalues[field] = value
             feature[field] = value
-        return feature
+        return feature, savedvalues

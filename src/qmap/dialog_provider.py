@@ -4,9 +4,10 @@ from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 
 from qmap.utils import log, info, warning, error
-from qmap.featuredialog import FeatureForm
 from qgis.core import QgsDistanceArea
 from qgis.gui import QgsMessageBar
+
+from qmap import featuredialog
 
 class DialogProvider(QObject):
     """
@@ -31,18 +32,19 @@ class DialogProvider(QObject):
         @refactor: This really needs to be cleaned up.
         """
         layerconfig = settings[layer.name()]
-        form = FeatureForm.from_layer(layer, layerconfig, qmaplayer)
-        form.bindfeature(feature)
-        accepted = form.openform()
-        if accepted:
-            feature = form.updatefeature(feature)
-            for value in feature.attributes():
-                print("New value {}".format(value))
-    
+        form = featuredialog.FeatureForm.from_layer(layer, layerconfig, qmaplayer)
+        defaults = featuredialog.loadsavedvalues(layer)
+        print defaults
+        form.bindfeature(feature, defaults)
+        if form.openform():
+            feature, savedvalues = form.updatefeature(feature)
+            print feature.attributes()
+
             if feature.id() > 0:
                 layer.updateFeature(feature)
             else:
                 layer.addFeature(feature)
+                featuredialog.savevalues(layer, savedvalues)
             
             saved = layer.commitChanges()
 
