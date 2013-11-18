@@ -3,11 +3,12 @@ import os
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 
-from qmap.utils import log, info, warning, error
 from qgis.core import QgsDistanceArea
 from qgis.gui import QgsMessageBar
 
+from qmap.utils import log, info, warning, error
 from qmap import featuredialog
+
 
 class DialogProvider(QObject):
     """
@@ -28,8 +29,6 @@ class DialogProvider(QObject):
     def openDialog(self, feature, layer, settings, qmaplayer):
         """
         Opens a form for the given feature
-
-        @refactor: This really needs to be cleaned up.
         """
         layerconfig = settings[layer.name()]
         form = featuredialog.FeatureForm.from_layer(layer, layerconfig, qmaplayer)

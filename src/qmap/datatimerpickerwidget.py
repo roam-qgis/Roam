@@ -1,8 +1,8 @@
 from PyQt4.QtGui import QDialog,QApplication, QButtonGroup
 from PyQt4.QtCore import QTime, Qt, QDateTime
 
-import utils
-from uifiles import datepicker_widget, datepicker_base
+from qmap import utils
+from qmap.uifiles import datepicker_widget, datepicker_base
 
 
 class DateTimePickerDialog(datepicker_widget, QDialog):

@@ -3,6 +3,7 @@ from PyQt4.QtGui import *
 from qgis.core import *
 from qgis.gui import *
 
+
 class PolygonTool(QgsMapTool):
     mouseClicked = pyqtSignal(QgsPoint)
     geometryComplete = pyqtSignal(QgsGeometry)

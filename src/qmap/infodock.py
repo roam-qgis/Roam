@@ -14,15 +14,15 @@ from PyQt4.QtWebKit import QWebPage
 from qgis.core import (QgsExpression, QgsFeature, 
                        QgsMapLayer)
 
-import utils
-from htmlviewer import updateTemplate, openimage
-
-from uifiles import (infodock_widget, infodock_base)
+from qmap import utils
+from qmap.htmlviewer import updateTemplate, openimage
+from qmap.uifiles import (infodock_widget, infodock_base)
 
 htmlpath = os.path.join(os.path.dirname(__file__) , "info.html")
 
 with open(htmlpath) as f:
     template = Template(f.read())
+
 
 class InfoDock(infodock_widget, infodock_base):
     def __init__(self, parent):

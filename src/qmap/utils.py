@@ -25,6 +25,7 @@ critical = logger.critical
 curdir = os.path.dirname(__file__)
 settingspath = os.path.join(curdir,'..','settings.config')
 
+
 class Settings(dict):
     class Emitter(QObject):
         settings_changed = pyqtSignal()
@@ -51,7 +52,8 @@ settings_notify = Settings(settingspath)
 
 with open(settingspath,'r') as f:
     settings = yaml.load(f)
-            
+
+
 def saveSettings():
     with open(settingspath, 'w') as f:
         yaml.dump(data=settings, stream=f, default_flow_style=False)
@@ -60,6 +62,7 @@ def saveSettings():
 
 appdata = os.path.join(os.environ['APPDATA'], "QMap")
 
+
 class Timer():
     def __init__(self, message=""):
         self.message = message
@@ -67,6 +70,7 @@ class Timer():
         self.start = time.time()
     def __exit__(self, *args):
         log(self.message + " " + str(time.time() - self.start))
+
 
 def timeit(method):
     def wrapper(*args, **kwargs):
@@ -78,6 +82,7 @@ def timeit(method):
         print message
         return result
     return wrapper
+
 
 def openImageViewer(pixmap):
         dlg = QDialog()
@@ -92,6 +97,7 @@ def openImageViewer(pixmap):
         label.setScaledContents(True)
         dlg.layout().addWidget(label)
         dlg.exec_()
+
 
 def _pluralstring(text='', num=0):
     return "%d %s%s" % (num, text, "s"[num==1:])

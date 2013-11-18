@@ -1,5 +1,5 @@
-from maptools import PointTool, PolygonTool
-from inspectiontool import InspectionTool
-from movetool import MoveTool
-from edittool import EditTool
-from infotool import InfoTool
+from qmap.maptools.maptools import PointTool, PolygonTool
+from qmap.maptools.inspectiontool import InspectionTool
+from qmap.maptools.movetool import MoveTool
+from qmap.maptools.edittool import EditTool
+from qmap.maptools.infotool import InfoTool

@@ -1,6 +1,7 @@
 from PyQt4.QtGui import QToolBar, QActionGroup
 from PyQt4.QtCore import Qt, QPoint
-from utils import log
+
+from qmap.utils import log
 
 
 class FloatingToolBar(QToolBar):

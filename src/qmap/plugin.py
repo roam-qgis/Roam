@@ -1,5 +1,6 @@
 """
     Main plugin code for QMap
+    #HACK This is OLD code. Ignore me.  Will be deleted once the port is done.
 """
 
 import os

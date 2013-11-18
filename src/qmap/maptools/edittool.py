@@ -5,8 +5,9 @@ from qgis.core import (QgsRectangle, QgsTolerance,
                        QgsVectorLayer, QGis)
 from qgis.gui import QgsMapTool, QgsRubberBand
 
-from maptool import MapTool
-import maptoolutils
+from qmap.maptools.maptool import MapTool
+from qmap.maptools import maptoolutils
+
 
 class EditTool(MapTool):
     """

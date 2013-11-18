@@ -1,6 +1,7 @@
 from PyQt4.QtCore import pyqtSignal
 from qgis.gui import QgsMapTool, QgsMapToolTouch
 
+
 class MapTool(QgsMapToolTouch):
     """
         Base map tool.

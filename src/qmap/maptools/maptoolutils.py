@@ -1,5 +1,6 @@
 from qgis.core import QGis, QgsPoint
-    
+
+
 def setRubberBand(canvas, selectRect, rubberBand):
     transform = canvas.getCoordinateTransform()
     lowerleft = transform.toMapCoordinates( selectRect.left(), selectRect.bottom() )

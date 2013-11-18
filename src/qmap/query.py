@@ -1,9 +1,10 @@
 import sys
 import os
 import itertools
-from qgis.utils import iface
+
 from qgis.core import QgsExpression, QgsFeatureRequest, QgsMapLayerRegistry
-    
+
+
 class Where(object):
     """
         Object to filter result set by a where expression or function
@@ -33,6 +34,7 @@ class Where(object):
             if func(f):
                 yield f
 
+
 def query(*args, **kwargs):
     """
         Create a new query based on the given layer.
@@ -59,6 +61,7 @@ def query(*args, **kwargs):
     else:
         return Query(*args, **kwargs)
 
+
 class Query(object):
     """
         Query object used to build and execute a query against a vector layer
@@ -73,7 +76,6 @@ class Query(object):
         args[0] = QgsMapLayerRegistry.instance().mapLayersByName(name)[0]
         return cls(*args, **kwargs)
     
-    MapView = iface.mapCanvas().extent
     def __init__(self, layer, DEBUG=False):
         self.layer = layer
         self.wheres = []

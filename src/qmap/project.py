@@ -14,6 +14,7 @@ from qmap.maptools import PointTool, InspectionTool, EditTool
 from qmap.utils import log
 from qmap.syncing import replication
 
+
 class NoMapToolConfigured(Exception):
     """ 
         Raised when no map tool has been configured
@@ -21,11 +22,13 @@ class NoMapToolConfigured(Exception):
     """
     pass
 
+
 class ErrorInMapTool(Exception):
     """
         Raised when there is an error in configuring the map tool  
     """
     pass
+
 
 def getProjects(projectpath):
     """
@@ -37,7 +40,8 @@ def getProjects(projectpath):
     
     for folder in folders:      
         yield QMapProject(folder)
-        
+
+
 class QMapLayer(object):
     """
     A QMap layer represented as a folder on the disk.

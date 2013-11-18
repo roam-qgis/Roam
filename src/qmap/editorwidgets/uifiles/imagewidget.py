@@ -6,6 +6,7 @@ from PyQt4.QtCore import (QByteArray, QBuffer,
 
 from qmap.editorwidgets.uifiles import create_ui, images_rc, ui_imagewidget
 
+
 class QMapImageWidget(ui_imagewidget.Ui_imagewidget, QWidget):
     openRequest = pyqtSignal(QPixmap)
     imageloaded = pyqtSignal()

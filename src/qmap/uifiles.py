@@ -1,7 +1,9 @@
 import os
-import resources_rc
 
 from PyQt4 import uic
+
+from qmap import resources_rc
+
 
 def create_ui(filename):
     basepath = os.path.dirname(__file__)

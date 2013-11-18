@@ -7,11 +7,13 @@ from PyQt4.QtCore import Qt, QPyNullVariant
 from qmap.htmlviewer import showHTMLReport
 from qgis.gui import QgsMessageBar
 
+
 def nullcheck(value):
     if isinstance(value, QPyNullVariant):
         return None
     else:
         return value
+
 
 class BaseForm(object):
     def __init__(self, dialog, layer, feature):
@@ -64,9 +66,4 @@ class BaseForm(object):
         button.pressed.connect(partial(showdialog))
         self.errorwidget.layout().addWidget(button)
         self.bar.pushWidget(self.errorwidget, level=QgsMessageBar.CRITICAL)
-
-
-def classFactory(iface):
-    from qmap import QMap
-    return QMap(iface)
 

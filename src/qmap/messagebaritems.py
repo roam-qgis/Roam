@@ -4,8 +4,9 @@ from qgis.gui import QgsMessageBarItem, QgsMessageBar
 
 from qmap.popdialog import PopDownReport
 
-import resources_rc
+from qmap import resources_rc
 import qmap.utils
+
 
 class MissingLayerItem(QgsMessageBarItem):
     def __init__(self, layers, parent=None):

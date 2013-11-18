@@ -7,10 +7,12 @@ from PyQt4.QtGui import (QDialog, QWidget, QGridLayout, QPixmap,
                          QImageReader)
 from PyQt4.QtWebKit import QWebView, QWebPage
 
-import utils
+from qmap import utils
+
 
 images = {}
 formats = [f.data() for f in QImageReader.supportedImageFormats()]
+
 
 def image_handler(key, value, **kwargs):
     imageblock = '''
@@ -27,8 +29,10 @@ def image_handler(key, value, **kwargs):
         src = value
     return imageblock.format(key, src)
 
+
 def default_handler(key, value):
     return value
+
 
 def string_handler(key, value):
     _, extension = os.path.splitext(value)
@@ -37,11 +41,14 @@ def string_handler(key, value):
 
     return value
 
+
 def date_handler(key, value):
     return value.toString()
 
+
 def none_handler(key, value):
     return ''
+
 
 def updateTemplate(data, template):
     data = dict(data)
@@ -50,6 +57,7 @@ def updateTemplate(data, template):
         block = handler(key, value)
         data[key] = block
     return template.safe_substitute(**data)
+
 
 def openimage(url):
     key = url.toString().lstrip('file://')
@@ -72,10 +80,12 @@ blocks = {QByteArray: image_handler,
           unicode: string_handler,
           NoneType: none_handler}
 
+
 def showHTMLReport(title, html,  data):
     dialog = HtmlViewerDialog(title)
     dialog.showHTML(html, data)
     dialog.exec_()
+
 
 class HtmlViewerDialog(QDialog):
     def __init__(self, title, parent=None):
@@ -88,6 +98,7 @@ class HtmlViewerDialog(QDialog):
         
     def showHTML(self, html, data):
         self.htmlviewer.showHTML(html, data)
+
 
 class HtmlViewerWidget(QWidget):
     def __init__(self, parent):

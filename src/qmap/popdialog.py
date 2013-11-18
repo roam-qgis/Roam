@@ -2,13 +2,14 @@ from PyQt4.QtCore import Qt, QPoint
 from PyQt4.QtGui import QDialog, QGridLayout
 from PyQt4.QtWebKit import QWebPage, QWebView
 
+
 class PopDownReport(QDialog):
     def __init__(self, parent):
         super(PopDownReport, self).__init__(parent)
         self.setLayout(QGridLayout())
         self.layout().setContentsMargins(0, 0, 0, 0)
         self.web = QWebView()
-        self.resize(400,400)
+        self.resize(400, 400)
         self.layout().addWidget(self.web)
         self.setWindowFlags(Qt.Tool | Qt.FramelessWindowHint | Qt.X11BypassWindowManagerHint)
 

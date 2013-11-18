@@ -1,10 +1,11 @@
 import os
 from qgis.core import QgsGPSDetector
 
-import utils
+from qmap import utils
 
-from uifiles import settings_widget, settings_base
-from utils import settings, curdir
+from qmap.uifiles import settings_widget, settings_base
+from qmap.utils import settings, curdir
+
 
 class SettingsWidget(settings_widget, settings_base):            
     def __init__(self, parent=None):

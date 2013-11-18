@@ -1,13 +1,14 @@
+import os
 
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 from PyQt4.QtSvg import QSvgRenderer
+
 from qgis.core import *
 from qgis.gui import *
-import resources_rc
-import utils
-from utils import log
-import os
+
+from qmap import resources_rc, utils
+from qmap.utils import log
 
 if os.name == 'nt':
     from power import PowerState

@@ -1,8 +1,9 @@
 from PyQt4.QtGui import QDialog
 from PyQt4.QtCore import QUrl
 
-from uifiles import (helpviewer_widget, helpviewer_base,
+from qmap.uifiles import (helpviewer_widget, helpviewer_base,
                      helppage_widget, helppage_base)
+
 
 class HelpViewDialog(helpviewer_widget, helpviewer_base):
     def __init__(self, startimage=None):
@@ -12,7 +13,8 @@ class HelpViewDialog(helpviewer_widget, helpviewer_base):
         
     def loadFile(self, htmlfile):
         self.webView.load(QUrl.fromLocalFile(htmlfile))
-        
+
+
 class HelpPage(helppage_widget, helppage_base):
     def __init__(self, parent=None):
         super(HelpPage, self).__init__(parent)

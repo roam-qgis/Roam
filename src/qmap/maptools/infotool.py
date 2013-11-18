@@ -3,6 +3,7 @@ from PyQt4.QtGui import QCursor, QPixmap
 
 from qgis.gui import QgsMapToolIdentify
 
+
 class InfoTool(QgsMapToolIdentify):
     """
         Inspection tool which copies the feature to a new layer

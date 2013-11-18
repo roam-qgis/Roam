@@ -1,10 +1,13 @@
 from PyQt4.QtXml import QDomDocument
+
 from qgis.gui import QgsMapCanvasLayer
 from qgis.core import QgsVectorLayer, QgsRasterLayer, QgsMapLayerRegistry
+
 
 def iternodes(nodes):
     for index in xrange(nodes.length()):
         yield nodes.at(index).toElement()
+
 
 class ProjectParser(object):
     def __init__(self, xmldoc):

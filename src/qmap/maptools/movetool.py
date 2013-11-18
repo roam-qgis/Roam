@@ -4,6 +4,7 @@ from PyQt4.QtCore import Qt, pyqtSignal
 from PyQt4.QtGui import QColor
 from maptool import MapTool
 
+
 class MoveTool(MapTool):
 	def __init__(self, canvas, layers):
 		MapTool.__init__(self, canvas, layers)

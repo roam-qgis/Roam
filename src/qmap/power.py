@@ -1,12 +1,14 @@
 #! /usr/bin/python
 
+import sys
 import win32gui
 import win32con
 import win32api
+
 from PyQt4.QtGui import QApplication, QWidget
 from PyQt4.QtCore import QObject, pyqtSignal
-import sys
-from utils import log
+
+from qmap.utils import log
 
 
 class PowerState(QObject):
