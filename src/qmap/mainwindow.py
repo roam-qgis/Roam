@@ -324,9 +324,13 @@ class MainWindow(mainwindow_widget, mainwindow_base):
         provider.featuresaved.connect(featureSaved)
         provider.failedsave.connect(failSave)
 
+        qmaplayer = self.project.layer(layer.name())
+
         provider.openDialog(feature=feature,
                             layer=layer,
-                            settings=self.project.layersettings)
+                            settings=self.project.layersettings,
+                            qmaplayer=qmaplayer)
+
         self.band.reset()
         self.clearToolRubberBand()
 

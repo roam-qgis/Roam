@@ -4,6 +4,7 @@ import utils
 
 values_file = os.path.join(os.environ['APPDATA'], "QMap")
 
+
 def getSavedValues(layer):
     attr = {}
     id = str(layer.id())
@@ -18,6 +19,7 @@ def getSavedValues(layer):
         utils.log('No saved values found for %s' % id)
     return attr
 
+
 def setSavedValues(layer, values):
     savedvaluesfile = os.path.join(values_file, "%s.json" % str(layer.id()))
     path = os.path.dirname(savedvaluesfile)
@@ -28,13 +30,6 @@ def setSavedValues(layer, values):
         json.dump(values,f)
 
 
-def getHelpFile(layer, fieldname):
-    folder = os.path.dirname(layer.editForm())
-    filename = "%s.html" % fieldname
-    filepath = os.path.join(folder, "help", filename )
-    if os.path.exists(filepath):
-        return filepath
-    else:
-        return None
+
 
 

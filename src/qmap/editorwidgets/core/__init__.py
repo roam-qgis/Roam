@@ -53,6 +53,7 @@ class EditorWidget(QObject):
         self.layer = layer
         self.field = field
         self.label = label
+        self.required = False
         self.validationstyle = """QLabel[required=true]
                                 {border-radius: 5px; background-color: rgba(255, 221, 48,150);}
                                 QLabel[ok=true]
@@ -76,12 +77,14 @@ class EditorWidget(QObject):
         self.validationupdate.emit(self.field, passed)
 
     def updatecontrolstate(self, field, passed):
-        self.buddywidget.setProperty('ok', passed)
-        self.buddywidget.style().unpolish(self.buddywidget)
-        self.buddywidget.style().polish(self.buddywidget)
+        if self.required:
+            self.buddywidget.setProperty('ok', passed)
+            self.buddywidget.style().unpolish(self.buddywidget)
+            self.buddywidget.style().polish(self.buddywidget)
 
     def setrequired(self):
         self.buddywidget.setProperty('required', True)
+        self.required = True
 
     @property
     def buddywidget(self):

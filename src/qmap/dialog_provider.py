@@ -24,18 +24,18 @@ class DialogProvider(QObject):
         self.canvas = canvas
         self.iface = None
 
-    def openDialog(self, feature, layer, settings, mandatory_fields=True):
+    def openDialog(self, feature, layer, settings, qmaplayer):
         """
         Opens a form for the given feature
 
         @refactor: This really needs to be cleaned up.
         """
         layerconfig = settings[layer.name()]
-        form = FeatureForm.from_layer(layer, layerconfig)
-        form.bindFeature(feature)
-        accepted = form.openForm()
+        form = FeatureForm.from_layer(layer, layerconfig, qmaplayer)
+        form.bindfeature(feature)
+        accepted = form.openform()
         if accepted:
-            feature = form.updateFeature(feature)
+            feature = form.updatefeature(feature)
             for value in feature.attributes():
                 print("New value {}".format(value))
     

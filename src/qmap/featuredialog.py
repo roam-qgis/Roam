@@ -1,15 +1,62 @@
+import os
+from functools import partial
+
 from PyQt4 import uic
 from PyQt4.QtCore import pyqtSignal, QObject
 from PyQt4.QtGui import QWidget, QDialogButtonBox, QStatusBar, QLabel, QGridLayout
 
 from qmap.editorwidgets.core import WidgetsRegistry
+from qmap.helpviewdialog import HelpViewDialog
 from qmap import nullcheck
+
+style = """
+            QCheckBox::indicator {
+                 width: 40px;
+                 height: 40px;
+             }
+
+            * {
+                font: 20px "Calibri" ;
+            }
+
+            QLabel {
+                color: #4f4f4f;
+            }
+
+            QDialog { background-color: rgb(255, 255, 255); }
+
+            QPushButton {
+                border: 1px solid #e1e1e1;
+                 padding: 6px;
+                color: #4f4f4f;
+             }
+
+            QPushButton:hover {
+                border: 1px solid #e1e1e1;
+                 padding: 6px;
+                background-color: rgb(211, 228, 255);
+             }
+
+            QCheckBox {
+                color: #4f4f4f;
+            }
+
+            QComboBox {
+                border: 1px solid #d3d3d3;
+            }
+
+            QComboBox::drop-down {
+            width: 30px;
+            }
+"""
 
 class FeatureForm(QObject):
     requiredfieldsupdated = pyqtSignal(bool)
-    def __init__(self, widget, layer, layerconfig):
+
+    def __init__(self, widget, layer, layerconfig, qmaplayer):
         super(FeatureForm, self).__init__()
         self.widget = widget
+        self.qmaplayer = qmaplayer
         self.layerconfig = layerconfig
         self.layer = layer
         self.boundwidgets = []
@@ -17,9 +64,17 @@ class FeatureForm(QObject):
         self.statusbar = self.widget.findChild(QStatusBar)
 
     @classmethod
-    def from_layer(cls, layer, layerconfig):
-        uifile = layer.editForm()
-        widget = uic.loadUi(uifile)
+    def from_layer(cls, layer, layerconfig, qmaplayer):
+        formconfig = layerconfig['form']
+        formtype = formconfig['type']
+        if formtype == 'custom':
+            uifile = os.path.join(qmaplayer.folder, "form.ui")
+            print uifile
+            widget = uic.loadUi(uifile)
+        else:
+            raise NotImplemented('Other form types not supported yet')
+
+        widget.setStyleSheet(style)
 
         statusbar = QStatusBar()
         statusbar.setSizeGripEnabled(False)
@@ -35,9 +90,9 @@ class FeatureForm(QObject):
         buttonbox.accepted.connect(widget.accept)
         buttonbox.rejected.connect(widget.reject)
 
-        return cls(widget, layer, layerconfig)
+        return cls(widget, layer, layerconfig, qmaplayer)
 
-    def openForm(self):
+    def openform(self):
         fullscreen = self.widget.property('fullscreen')
         if fullscreen:
             self.widget.setWindowState(Qt.WindowFullScreen)
@@ -63,7 +118,7 @@ class FeatureForm(QObject):
         if self.acceptbutton():
             self.acceptbutton().setEnabled(passed)
 
-    def bindFeature(self, feature):
+    def bindfeature(self, feature):
         fieldsconfig = self.layerconfig['fields']
         for field, config in fieldsconfig.iteritems():
             widget = self.widget.findChild(QWidget, field)
@@ -86,7 +141,42 @@ class FeatureForm(QObject):
             widgetwrapper.setvalue(value)
             self.boundwidgets.append(widgetwrapper)
 
-    def updateFeature(self, feature):
+        for label in self.widget.findChildren(QLabel):
+            self.createHelpLink(label, self.qmaplayer.folder)
+
+    def createHelpLink(self, label, folder):
+        def showhelp(url):
+            """
+            Show the help viewer for the given field
+            """
+            dlg = HelpViewDialog()
+            dlg.loadFile(url)
+            dlg.exec_()
+
+        def getHelpFile():
+            # TODO We could just use the tooltip from the control to show help
+            # rather then having to save out a html file.
+            name = label.objectName()
+            if name.endswith("_label"):
+                name = name[:-6]
+            filename = "{}.html".format(name)
+            filepath = os.path.join(folder, "help", filename)
+            print filepath
+            if os.path.exists(filepath):
+                return filepath
+            else:
+                return None
+
+        if label is None:
+            return
+
+        helpfile = getHelpFile()
+        if helpfile:
+            text = '<a href="{}">{}<a>'.format(helpfile, label.text())
+            label.setText(text)
+            label.linkActivated.connect(partial(showhelp))
+
+    def updatefeature(self, feature):
         for wrapper in self.boundwidgets:
             value = wrapper.value()
             field = wrapper.field

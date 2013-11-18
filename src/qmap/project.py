@@ -58,18 +58,12 @@ class QMapLayer(object):
     def icon(self):
         utils.log(os.path.join(self.folder, 'icon.png'))
         return os.path.join(self.folder, 'icon.png')
-    
+
     @property
     def QGISLayer(self):
         # If the layer has a ui file then we need to rewrite to be relative
         # to the current projects->layer folder as QGIS doesn't support that yet.
         layer = self._getLayer(self.name)
-        if layer.editorLayout() == QgsVectorLayer.UiFileLayout:
-            form = os.path.basename(layer.editForm())
-            newpath = os.path.join(self.folder, form)
-            layer.setEditForm(newpath)
-            #self.project.iface.preloadForm(newpath)
-
         return layer
 
     def _getLayer(self, name):
@@ -249,6 +243,11 @@ class QMapProject(object):
                 continue
             
             yield QMapLayer(os.path.join(self.folder, layerfolder), self)
+
+    def layer(self, layername):
+        for layer in self.getConfiguredLayers():
+            if layer.name == layername:
+                return layer
 
     def getPanels(self):
         log("getPanels")

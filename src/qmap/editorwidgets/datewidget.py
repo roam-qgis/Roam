@@ -26,11 +26,11 @@ class DateWidget(EditorWidget):
 
     def initWidget(self, widget):
         pickbutton = widget.findChild(QPushButton)
-        pickbutton.setIcon(QIcon(":/icons/calender"))
-        pickbutton.setText("Select")
-        pickbutton.setIconSize(QSize(24, 24))
 
         if not pickbutton is None:
+            pickbutton.setIcon(QIcon(":/icons/calender"))
+            pickbutton.setText("Select")
+            pickbutton.setIconSize(QSize(24, 24))
             pickbutton.pressed.connect(self.showpickdialog)
 
         self.datewidget.dateTimeChanged.connect(self.validate)
