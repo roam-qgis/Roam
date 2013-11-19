@@ -28,7 +28,7 @@ set QT_PLUGIN_PATH=!OSGEO4W_ROOT!\apps\Qt4\plugins
 :: set QGIS_LOG_FILE=qgis.log
 :: set QGIS_DEBUG_FILE=qgis-debug.log
 
-python qmap "%~dp0\..\projects"
+python qmap "%~dp0\projects"
 
 pause
 
