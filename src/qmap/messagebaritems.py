@@ -39,20 +39,23 @@ class MessageBar(QgsMessageBar):
     def showEvent(self, event):
         self.resize(QSize(self.parent().geometry().size().width(), 40))
 
+    def pushMessage(self, title, text=None, level=QgsMessageBar.INFO, duration=0):
+        item = ClickableMessage(title, text, level, duration)
+        self.pushItem(item)
 
-class ErrorMessage(QgsMessageBarItem):
-    def __init__(self, execinfo=None, parent=None):
-        super(ErrorMessage, self).__init__(parent)
-        self.setIcon(QIcon(":/icons/sad"))
-        self.setText('Opps something seems to have gone wrong. Click bar for more details')
-        self.setLevel(QgsMessageBar.CRITICAL)
+
+class ClickableMessage(QgsMessageBarItem):
+    def __init__(self, title=None, text=None, level=QgsMessageBar.INFO, duration=0, parent=None):
+        super(ClickableMessage, self).__init__(title, text, level, duration, parent)
         self.installEventFilter(self)
         self.setCursor(Qt.PointingHandCursor)
-        self.execinfo = execinfo
+        self.updatefilters()
 
+    def updatefilters(self):
         for child in self.findChildren(QWidget):
             if isinstance(child, QPushButton):
                 continue
+
             child.setCursor(Qt.PointingHandCursor)
             child.installEventFilter(self)
 
@@ -65,6 +68,19 @@ class ErrorMessage(QgsMessageBarItem):
         return QObject.eventFilter(self, parent, event)
 
     def showmessage(self):
+        pass
+
+
+class ErrorMessage(ClickableMessage):
+    def __init__(self, execinfo=None, parent=None):
+        super(ErrorMessage, self).__init__(parent=parent)
+        self.setIcon(QIcon(":/icons/sad"))
+        self.setText('Opps something seems to have gone wrong. Click bar for more details')
+        self.setLevel(QgsMessageBar.CRITICAL)
+        self.execinfo = execinfo
+        self.updatefilters()
+
+    def showmessage(self):
         data = {"ERROR": "<br>".join(traceback.format_exception(*self.execinfo))}
         qmap.htmlviewer.showHTMLReport(title='Error',
                                        html=htmlpath,
@@ -72,33 +88,23 @@ class ErrorMessage(QgsMessageBarItem):
                                        parent=self.parent())
 
 
-class MissingLayerItem(QgsMessageBarItem):
+class MissingLayerItem(ClickableMessage):
     def __init__(self, layers, parent=None):
-        super(MissingLayerItem, self).__init__("Missing Layers")
+        super(MissingLayerItem, self).__init__(parent=parent)
         self.setIcon(QIcon(":/icons/sad"))
         message = "Seems like {} didn't load correctly".format(qmap.utils._pluralstring('layer', len(layers)))
         self.setText(message)
         self.setLevel(QgsMessageBar.WARNING)
         self.layers = layers
-        self.report = PopDownReport(parent)
-        self.button = QPushButton(self)
-        self.button.setCheckable(True)
-        self.button.setChecked(self.report.isVisible())
-        self.button.setText("Show missing layers")
-        self.button.toggled.connect(self.showError)
-        self.button.toggled.connect(self.report.setVisible)
-        self.setWidget(self.button)
+        self.updatefilters()
 
-    def hideEvent(self, event):
-        self.report.hide()
-
-    def showError(self):
+    def showmessage(self):
         html = ["<h1>Missing Layers</h1>", "<ul>"]
         for layer in self.layers:
             html.append("<li>{}</li>".format(layer))
         html.append("</ul>")
-
-        self.report.updateHTML("".join(html))
+        html = "".join(html)
+        qmap.htmlviewer.showHTMLReport(title='Missing Layers', html=html, parent=self.parent())
 
 
 

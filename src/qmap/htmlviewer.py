@@ -81,7 +81,7 @@ blocks = {QByteArray: image_handler,
           NoneType: none_handler}
 
 
-def showHTMLReport(title, html, data, parent=None):
+def showHTMLReport(title, html, data={}, parent=None):
     dialog = HtmlViewerDialog(title)
     dialog.showHTML(html, data)
     dialog.exec_()

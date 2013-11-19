@@ -152,6 +152,7 @@ class MainWindow(mainwindow_widget, mainwindow_base):
         self.band.setColor(QColor(186, 93, 212, 76))
 
         self.bar = qmap.messagebaritems.MessageBar(self)
+        self.messageBar = qmap.messagebaritems.MessageBar(self.canvas_page)
 
     def raiseerror(self, exctype, value, traceback):
         item = qmap.messagebaritems.ErrorMessage(execinfo=(exctype, value, traceback))

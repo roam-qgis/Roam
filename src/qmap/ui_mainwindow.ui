@@ -98,29 +98,13 @@ QToolButton:hover {
         <property name="spacing">
          <number>0</number>
         </property>
-        <item row="1" column="0">
+        <item row="0" column="0">
          <widget class="QgsMapCanvas" name="canvas" native="true">
           <property name="focusPolicy">
            <enum>Qt::NoFocus</enum>
           </property>
           <property name="styleSheet">
            <string notr="true">background-color: rgb(183, 212, 255);</string>
-          </property>
-         </widget>
-        </item>
-        <item row="0" column="0">
-         <widget class="QgsMessageBar" name="messageBar">
-          <property name="contextMenuPolicy">
-           <enum>Qt::ActionsContextMenu</enum>
-          </property>
-          <property name="styleSheet">
-           <string notr="true">background-color: rgb(255, 21, 24);</string>
-          </property>
-          <property name="frameShape">
-           <enum>QFrame::StyledPanel</enum>
-          </property>
-          <property name="frameShadow">
-           <enum>QFrame::Raised</enum>
           </property>
          </widget>
         </item>
@@ -509,12 +493,6 @@ QToolButton:hover {
   <customwidget>
    <class>QgsMapCanvas</class>
    <extends>QWidget</extends>
-   <header>qgis.gui</header>
-   <container>1</container>
-  </customwidget>
-  <customwidget>
-   <class>QgsMessageBar</class>
-   <extends>QFrame</extends>
    <header>qgis.gui</header>
    <container>1</container>
   </customwidget>
