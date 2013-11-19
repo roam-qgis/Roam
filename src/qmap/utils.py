@@ -4,26 +4,43 @@ import os
 import json
 import inspect
 import yaml
+import sys
 
 from PyQt4 import uic
 from PyQt4.QtCore import QObject, pyqtSignal
 from PyQt4.QtGui import (QLabel, QDialog, QGridLayout, QLayout)
 
-LOG_FILENAME = 'main.log'
 uic.uiparser.logger.setLevel(logging.INFO)
 uic.properties.logger.setLevel(logging.INFO)
-log_format = '%(levelname)s - %(asctime)s - %(module)s-%(funcName)s:%(lineno)d - %(message)s'
-logging.basicConfig(filename=LOG_FILENAME, filemode='at',level=logging.NOTSET, format=log_format)
 
-logger = logging.getLogger("qmap")
+LOG_FILENAME = 'roam.log'
+log_format = '%(levelname)s - %(asctime)s - %(module)s-%(funcName)s:%(lineno)d - %(message)s'
+console_format = '%(levelname)s %(module)s-%(funcName)s:%(lineno)d - %(message)s'
+formater = logging.Formatter(log_format)
+console_formater = logging.Formatter(console_format)
+
+filehandler = logging.FileHandler('roam.log', mode='at')
+filehandler.setLevel(logging.INFO)
+filehandler.setFormatter(formater)
+
+stream = logging.StreamHandler(stream=sys.stdout)
+stream.setLevel(logging.DEBUG)
+stream.setFormatter(console_formater)
+
+logger = logging.getLogger("roam")
+logger.addHandler(stream)
+logger.addHandler(filehandler)
+logger.setLevel(logging.DEBUG)
+
 log = logger.debug
+debug = logger.debug
 info = logger.info 
 warning = logger.warning
 error = logger.error
 critical = logger.critical
 
 curdir = os.path.dirname(__file__)
-settingspath = os.path.join(curdir,'..','settings.config')
+settingspath = os.path.join(curdir, '..', 'settings.config')
 
 
 class Settings(dict):
@@ -64,12 +81,16 @@ appdata = os.path.join(os.environ['APPDATA'], "QMap")
 
 
 class Timer():
-    def __init__(self, message=""):
+    def __init__(self, message="", logging=log):
         self.message = message
+        self.logging = logging
+
     def __enter__(self):
         self.start = time.time()
+
     def __exit__(self, *args):
-        log(self.message + " " + str(time.time() - self.start))
+        message = self.message + " " + str(time.time() - self.start)
+        self.logging(message)
 
 
 def timeit(method):
@@ -79,7 +100,7 @@ def timeit(method):
         th = time.time ()
 
         message = "%r %2.2f seconds " % (method.__name__, th-ts)
-        print message
+        info(message)
         return result
     return wrapper
 

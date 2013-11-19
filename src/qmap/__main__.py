@@ -5,6 +5,7 @@ The MainWindow object handles everything from there on in.
 """
 from __future__ import absolute_import
 
+import time
 import sys
 
 from qgis.core import QgsApplication, QgsPythonRunner
@@ -13,22 +14,24 @@ from PyQt4.QtGui import QApplication
 from qmap.mainwindow import MainWindow
 import qmap.project as project
 import qmap.utils
-import time
 
 start = time.time()
 
-app = QgsApplication(sys.argv, True)
-QgsApplication.initQgis()
-QApplication.setStyle("Plastique")
+qmap.utils.info("Loading Roam")
 
-window = MainWindow()
-projects = project.getProjects(sys.argv[1])
-window.loadProjectList(projects)
-qmap.utils.settings_notify.settings_changed.connect(window.show)
+with qmap.utils.Timer("Load time:", logging=qmap.utils.info):
+    app = QgsApplication(sys.argv, True)
+    QgsApplication.initQgis()
+    QApplication.setStyle("Plastique")
 
-window.actionProject.toggle()
-window.updateUIState(1)
-window.show()
-print time.time() - start
+    window = MainWindow()
+    projects = project.getProjects(sys.argv[1])
+    window.loadProjectList(projects)
+    qmap.utils.settings_notify.settings_changed.connect(window.show)
+
+    window.actionProject.toggle()
+    window.updateUIState(1)
+    window.show()
+
 app.exec_()
 QgsApplication.exitQgis()
