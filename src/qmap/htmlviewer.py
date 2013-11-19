@@ -81,7 +81,7 @@ blocks = {QByteArray: image_handler,
           NoneType: none_handler}
 
 
-def showHTMLReport(title, html,  data):
+def showHTMLReport(title, html, data, parent=None):
     dialog = HtmlViewerDialog(title)
     dialog.showHTML(html, data)
     dialog.exec_()
@@ -104,15 +104,20 @@ class HtmlViewerWidget(QWidget):
     def __init__(self, parent):
         super(HtmlViewerWidget, self).__init__(parent)
         self.setLayout(QGridLayout())
-        self.layout().setContentsMargins(0,0,0,0)
+        self.layout().setContentsMargins(0, 0, 0, 0)
         self.view = QWebView(linkClicked=openimage)
         self.view.page().setLinkDelegationPolicy(QWebPage.DelegateAllLinks)
         self.layout().addWidget(self.view)
         
-    def showHTML(self, htmlfile, data):
+    def showHTML(self, html, data):
         base = os.path.dirname(os.path.abspath(__file__))
         baseurl = QUrl.fromLocalFile(base + '\\')
-        templte = Template(htmlfile)
+        if os.path.isfile(html):
+            html = open(html).read()
+
+        html = html.replace(r'\n', '<br>')
+        templte = Template(html)
         html = updateTemplate(data, templte)
+        utils.debug(html)
         self.view.setHtml(html, baseurl)
 

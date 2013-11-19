@@ -35,7 +35,7 @@ def getProjects(projectpath):
     Return QMapProjects inside the set path.  
     Each folder will be considered a QMap project
     """
-    folders = (sorted( [os.path.join(projectpath, item) 
+    folders = (sorted( [os.path.join(projectpath, item)
                        for item in os.walk(projectpath).next()[1]]))
     
     for folder in folders:      
