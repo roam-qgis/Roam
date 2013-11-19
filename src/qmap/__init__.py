@@ -1,3 +1,6 @@
+# Import QGIS first so that the SIP version is set to API V2
+import qgis
+
 from functools import partial
 
 from PyQt4.QtGui import (QSizePolicy, QWidget, QPushButton, QDialog,
