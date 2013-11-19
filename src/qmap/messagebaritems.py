@@ -1,8 +1,8 @@
 import os
 import traceback
 
-from PyQt4.QtGui import QPushButton, QIcon, QWidget, QDialog
-from PyQt4.QtCore import QEvent, QObject, Qt
+from PyQt4.QtGui import QPushButton, QIcon, QWidget, QDialog, QToolButton, QFont
+from PyQt4.QtCore import QEvent, QObject, Qt, QSize
 
 from qgis.gui import QgsMessageBarItem, QgsMessageBar
 
@@ -12,19 +12,44 @@ from qmap import resources_rc
 import qmap.htmlviewer
 import qmap.utils
 
+style = """QPushButton {
+        border: 1px solid #e1e1e1;
+         padding: 6px;
+        color: #4f4f4f;
+     }
+
+    QPushButton:hover {
+        border: 1px solid #e1e1e1;
+         padding: 6px;
+        background-color: rgb(211, 228, 255);
+     }"""
 
 htmlpath = os.path.join(os.path.dirname(__file__), "error.html")
+
+
+class MessageBar(QgsMessageBar):
+    def __init__(self, parent=None):
+        super(MessageBar, self).__init__(parent)
+
+        closebutton = self.findChild(QToolButton)
+        closebutton.setText('Dismiss')
+        closebutton.setToolButtonStyle(Qt.ToolButtonTextOnly)
+        closebutton.setStyleSheet(style)
+
+    def showEvent(self, event):
+        self.resize(QSize(self.parent().geometry().size().width(), 40))
 
 
 class ErrorMessage(QgsMessageBarItem):
     def __init__(self, execinfo=None, parent=None):
         super(ErrorMessage, self).__init__(parent)
-        self.setIcon(QIcon(":/icon/sad"))
+        self.setIcon(QIcon(":/icons/sad"))
         self.setText('Opps something seems to have gone wrong. Click bar for more details')
         self.setLevel(QgsMessageBar.CRITICAL)
         self.installEventFilter(self)
         self.setCursor(Qt.PointingHandCursor)
-        self.exxinfo = execinfo
+        self.execinfo = execinfo
+
         for child in self.findChildren(QWidget):
             if isinstance(child, QPushButton):
                 continue
@@ -35,11 +60,12 @@ class ErrorMessage(QgsMessageBarItem):
         """ Handle mouse click events for disabled widget state """
         if event.type() == QEvent.MouseButtonRelease:
             self.showmessage()
+            event.accept()
 
         return QObject.eventFilter(self, parent, event)
 
     def showmessage(self):
-        data = {"ERROR": "<br>".join(traceback.format_exception(*self.exxinfo))}
+        data = {"ERROR": "<br>".join(traceback.format_exception(*self.execinfo))}
         qmap.htmlviewer.showHTMLReport(title='Error',
                                        html=htmlpath,
                                        data=data,

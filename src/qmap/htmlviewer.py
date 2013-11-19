@@ -118,6 +118,5 @@ class HtmlViewerWidget(QWidget):
         html = html.replace(r'\n', '<br>')
         templte = Template(html)
         html = updateTemplate(data, templte)
-        utils.debug(html)
         self.view.setHtml(html, baseurl)
 

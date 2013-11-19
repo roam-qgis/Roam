@@ -151,13 +151,9 @@ class MainWindow(mainwindow_widget, mainwindow_base):
         self.band.setWidth(10)
         self.band.setColor(QColor(186, 93, 212, 76))
 
-        self.bar = QgsMessageBar(self)
+        self.bar = qmap.messagebaritems.MessageBar(self)
 
     def raiseerror(self, exctype, value, traceback):
-        self.bar.resize(QSize(self.geometry().size().width(), 40))
-        if not self.bar.isVisible():
-            self.bar.show()
-
         item = qmap.messagebaritems.ErrorMessage(execinfo=(exctype, value, traceback))
         self.bar.pushItem(item)
 
