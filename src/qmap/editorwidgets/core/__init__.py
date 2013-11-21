@@ -58,7 +58,6 @@ class EditorWidget(QObject):
                                 {border-radius: 5px; background-color: rgba(255, 221, 48,150);}
                                 QLabel[ok=true]
                                 { border-radius: 5px; background-color: rgba(200, 255, 197, 150); }"""
-        self.buddywidget.setStyleSheet(self.validationstyle)
         self.validationupdate.connect(self.updatecontrolstate)
 
     @classmethod
@@ -74,7 +73,8 @@ class EditorWidget(QObject):
         return editor
 
     def raisevalidationupdate(self, passed):
-        self.validationupdate.emit(self.field, passed)
+        if self.required:
+            self.validationupdate.emit(self.field, passed)
 
     def updatecontrolstate(self, field, passed):
         if self.required:
@@ -83,6 +83,7 @@ class EditorWidget(QObject):
             self.buddywidget.style().polish(self.buddywidget)
 
     def setrequired(self):
+        self.buddywidget.setStyleSheet(self.validationstyle)
         self.buddywidget.setProperty('required', True)
         self.required = True
 

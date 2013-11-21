@@ -18,7 +18,7 @@ SET GDAL_DRIVER_PATH=!OSGEO4W_ROOT!\bin\gdalplugins
 : Python Setup
 set PATH=!OSGEO4W_ROOT!\bin;!QGIS!\bin;%~dp0;!PATH!
 SET PYTHONHOME=!OSGEO4W_ROOT!\apps\Python27
-set PYTHONPATH=%~dp0;!QGIS!\python;!~dp0qmap\editorwidgets\uifiles\;!PYTHONPATH!
+set PYTHONPATH=%~dp0;!QGIS!\python;%~dp0qmap\editorwidgets\uifiles\;!PYTHONPATH!
 
 : QT Setup
 set QT_PLUGIN_PATH=!OSGEO4W_ROOT!\apps\Qt4\plugins

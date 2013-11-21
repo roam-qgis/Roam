@@ -1,11 +1,25 @@
 import os
+import subprocess
+import types
 import json
 
 from functools import partial
 
 from PyQt4 import uic
-from PyQt4.QtCore import pyqtSignal, QObject, QSize
-from PyQt4.QtGui import QWidget, QDialogButtonBox, QStatusBar, QLabel, QGridLayout, QToolButton, QIcon
+from PyQt4.QtCore import pyqtSignal, QObject, QSize, QEvent, QProcess, Qt
+from PyQt4.QtGui import (QWidget,
+                         QDialogButtonBox,
+                         QStatusBar,
+                         QLabel,
+                         QGridLayout,
+                         QToolButton,
+                         QIcon,
+                         QLineEdit,
+                         QPlainTextEdit,
+                         QComboBox,
+                         QDateTimeEdit)
+
+from qgis.core import QgsFields
 
 from qmap.editorwidgets.core import WidgetsRegistry
 from qmap.helpviewdialog import HelpViewDialog
@@ -18,7 +32,7 @@ style = """
              }
 
             * {
-                font: 20px "Calibri" ;
+                font: 20px "Segoe UI" ;
             }
 
             QLabel {
@@ -26,6 +40,7 @@ style = """
             }
 
             QDialog { background-color: rgb(255, 255, 255); }
+            QScrollArea { background-color: rgb(255, 255, 255); }
 
             QPushButton {
                 border: 1px solid #e1e1e1;
@@ -83,6 +98,7 @@ def savevalues(layer, values):
 
 class FeatureForm(QObject):
     requiredfieldsupdated = pyqtSignal(bool)
+    formvalidation = pyqtSignal(bool)
 
     def __init__(self, widget, layer, layerconfig, qmaplayer):
         super(FeatureForm, self).__init__()
@@ -92,16 +108,10 @@ class FeatureForm(QObject):
         self.layer = layer
         self.boundwidgets = []
         self.requiredfields = {}
-        self.statusbar = self.widget.findChild(QStatusBar)
-
-        buttonbox = widget.findChildren(QDialogButtonBox)[0]
-
-        if buttonbox:
-            buttonbox.accepted.connect(self.accept)
-            buttonbox.rejected.connect(self.reject)
+        self.feature = None
 
     @classmethod
-    def from_layer(cls, layer, layerconfig, qmaplayer):
+    def from_layer(cls, layer, layerconfig, qmaplayer, parent=None):
         formconfig = layerconfig['form']
         formtype = formconfig['type']
         if formtype == 'custom':
@@ -112,32 +122,32 @@ class FeatureForm(QObject):
 
         widget.setStyleSheet(style)
 
-        statusbar = QStatusBar()
-        statusbar.setSizeGripEnabled(False)
-        layout = widget.layout()
-        if isinstance(layout, QGridLayout):
-            rows = layout.rowCount()
-            columns = layout.columnCount()
-            layout.addWidget(statusbar, rows, 0, 1, columns)
-        else:
-            layout.addWidget(statusbar)
+        form = cls(widget, layer, layerconfig, qmaplayer)
+        widgettypes = [QLineEdit, QPlainTextEdit, QDateTimeEdit]
+        map(form._installeventfilters, widgettypes)
+        widget.setProperty('featureform', form)
 
-        return cls(widget, layer, layerconfig, qmaplayer)
+        return form
+
+    def _installeventfilters(self, widgettype):
+        for widget in self.widget.findChildren(widgettype):
+            widget.installEventFilter(self)
+
+    def eventFilter(self, parent, event):
+        """ Handle mouse click events for disabled widget state """
+        if event.type() == QEvent.FocusIn:
+            cmd = r'C:\Program Files\Common Files\Microsoft Shared\ink\TabTip.exe'
+            os.startfile(cmd)
+
+        return QObject.eventFilter(self, parent, event)
 
     def accept(self):
         #TODO Call form module accept method
-        self.widget.accept()
+        return True
 
     def reject(self):
         #TODO Call form module reject method
-        self.widget.reject()
-
-    def openform(self):
-        fullscreen = self.widget.property('fullscreen')
-        if fullscreen:
-            self.widget.setWindowState(Qt.WindowFullScreen)
-
-        return self.widget.exec_()
+        return True
 
     def acceptbutton(self):
         try:
@@ -150,13 +160,7 @@ class FeatureForm(QObject):
     def updaterequired(self, field, passed):
         self.requiredfields[field] = passed
         passed = all(valid for valid in self.requiredfields.values())
-        if not passed:
-            self.statusbar.showMessage('Required fields missing')
-        else:
-            self.statusbar.clearMessage()
-
-        if self.acceptbutton():
-            self.acceptbutton().setEnabled(passed)
+        self.formvalidation.emit(passed)
 
     def validateall(self, widgetwrappers):
         for wrapper in widgetwrappers:
@@ -164,6 +168,9 @@ class FeatureForm(QObject):
 
     def bindfeature(self, feature, defaults={}):
         fieldsconfig = self.layerconfig['fields']
+        self.feature = feature
+        # Ummm why do the fields go out of scope :S
+        self.fields = QgsFields(self.feature.fields())
 
         for field, config in fieldsconfig.iteritems():
             widget = self.widget.findChild(QWidget, field)
@@ -236,17 +243,19 @@ class FeatureForm(QObject):
             label.setText(text)
             label.linkActivated.connect(partial(showhelp))
 
-    def updatefeature(self, feature):
+    def getupdatedfeature(self):
         def shouldsave(field):
             button = self.widget.findChild(QToolButton, "{}_save".format(field))
             if button:
                 return button.isChecked()
 
+        self.feature.setFields(self.fields)
         savedvalues = {}
         for wrapper in self.boundwidgets:
             value = wrapper.value()
             field = wrapper.field
             if shouldsave(field):
                 savedvalues[field] = value
-            feature[field] = value
-        return feature, savedvalues
+            self.feature[field] = value
+
+        return self.feature, savedvalues

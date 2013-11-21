@@ -10,7 +10,7 @@ import time
 import sys
 
 from qgis.core import QgsApplication, QgsPythonRunner
-from PyQt4.QtGui import QApplication
+from PyQt4.QtGui import QApplication, QFont
 
 from qmap.mainwindow import MainWindow
 import qmap.project as project
@@ -30,6 +30,7 @@ with qmap.utils.Timer("Load time:", logging=qmap.utils.info):
     app = QgsApplication(sys.argv, True)
     QgsApplication.initQgis()
     QApplication.setStyle("Plastique")
+    QApplication.setFont(QFont('Segoe UI'))
 
     window = MainWindow()
     sys.excepthook = partial(excepthook, window.raiseerror)
@@ -39,6 +40,7 @@ with qmap.utils.Timer("Load time:", logging=qmap.utils.info):
     qmap.utils.settings_notify.settings_changed.connect(window.show)
 
     window.actionProject.toggle()
+    window.viewprojects()
     window.updateUIState(1)
     window.show()
 

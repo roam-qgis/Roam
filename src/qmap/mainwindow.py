@@ -2,7 +2,7 @@ from PyQt4.QtCore import Qt, QFileInfo, QDir, QSize
 from PyQt4.QtGui import (QActionGroup, QWidget, QSizePolicy, QLabel, QApplication,
                          QPixmap, QColor, QMessageBox)
 from qgis.core import (QgsProjectBadLayerHandler, QgsPalLabeling, QgsMapLayerRegistry,
-                        QgsProject, QgsMapLayer, QgsFeature)
+                        QgsProject, QgsMapLayer, QgsFeature, QgsFields)
 from qgis.gui import (QgsMessageBar, QgsMapToolZoom, QgsMapToolTouch, QgsRubberBand)
 
 from functools import partial
@@ -90,22 +90,18 @@ class MainWindow(mainwindow_widget, mainwindow_base):
         self.actionSettings.toggled.connect(self.settingswidget.populateControls)
         self.actionSettings.toggled.connect(self.settingswidget.readSettings)
 
-        self.infodock = InfoDock(self)
-        self.addDockWidget(Qt.RightDockWidgetArea, self.infodock)
-        self.infodock.hide()
+        self.infodock = InfoDock(self.canvas)
 
         def createSpacer(width):
             widget = QWidget()
             widget.setMinimumWidth(width)
             return widget
 
-        spacewidget = createSpacer(60)
         gpsspacewidget = createSpacer(30)
         sidespacewidget = createSpacer(30)
         sidespacewidget.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
         gpsspacewidget.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
-        self.projecttoolbar.insertWidget(self.actionSync, gpsspacewidget)
-        self.projecttoolbar.insertWidget(self.actionHome, spacewidget)
+        self.topspaceraction = self.projecttoolbar.insertWidget(self.actionSync, gpsspacewidget)
 
         def _createSideLabel(text):
             style = """
@@ -152,7 +148,9 @@ class MainWindow(mainwindow_widget, mainwindow_base):
         self.band.setColor(QColor(186, 93, 212, 76))
 
         self.bar = qmap.messagebaritems.MessageBar(self)
-        self.messageBar = qmap.messagebaritems.MessageBar(self.canvas_page)
+        self.messageBar = qmap.messagebaritems.MessageBar(self.canvas)
+
+        self.canvas_page.layout().insertWidget(0, self.projecttoolbar)
 
     def raiseerror(self, exctype, value, traceback):
         item = qmap.messagebaritems.ErrorMessage(execinfo=(exctype, value, traceback))
@@ -234,7 +232,7 @@ class MainWindow(mainwindow_widget, mainwindow_base):
             tool.finished.connect(self.openForm)
             tool.error.connect(partial(self.showToolError, layer.icontext))
 
-        self.projecttoolbar.insertAction(self.actionEdit_Tools, action)
+        self.projecttoolbar.insertAction(self.topspaceraction, action)
 
         if not tool.isEditTool():
             # Connect the GPS tools strip to the action pressed event.
@@ -321,10 +319,15 @@ class MainWindow(mainwindow_widget, mainwindow_base):
                                         "Changes Saved",
                                         QgsMessageBar.INFO,
                                         2)
+            self.band.reset()
+            self.clearToolRubberBand()
+
         def failSave():
             self.messageBar.pushMessage("Error",
                                         "Error with saving changes.",
                                         QgsMessageBar.CRITICAL)
+            self.band.reset()
+            self.clearToolRubberBand()
 
         self.band.setToGeometry(feature.geometry(), layer)
         provider = DialogProvider(self.canvas)
@@ -336,10 +339,8 @@ class MainWindow(mainwindow_widget, mainwindow_base):
         provider.openDialog(feature=feature,
                             layer=layer,
                             settings=self.project.layersettings,
-                            qmaplayer=qmaplayer)
-
-        self.band.reset()
-        self.clearToolRubberBand()
+                            qmaplayer=qmaplayer,
+                            parent=self)
 
     def addNewFeature(self, layer, geometry):
         """
@@ -433,6 +434,9 @@ class MainWindow(mainwindow_widget, mainwindow_base):
         else:
             self.showMaximized()
 
+    def viewprojects(self):
+        self.stackedWidget.setCurrentIndex(1)
+
     def updateUIState(self, page):
         """
         Update the UI state to reflect the currently selected
@@ -440,6 +444,7 @@ class MainWindow(mainwindow_widget, mainwindow_base):
         """
         def setToolbarsActive(enabled):
           self.projecttoolbar.setEnabled(enabled)
+          self.extraaddtoolbar.setVisible(enabled)
 
         def setPanelsVisible(visible):
             for panel in self.panels:

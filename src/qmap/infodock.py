@@ -4,11 +4,11 @@ import collections
 from string import Template
 from collections import OrderedDict
 
-from PyQt4.QtGui import (QImageReader)
+from PyQt4.QtGui import (QImageReader, QWidget, QFrame, QDialog)
 
 from PyQt4.QtCore import (Qt, QUrl, 
                           QDate,
-                          QDateTime, QTime)
+                          QDateTime, QTime, QPoint, QSize)
 from PyQt4.QtWebKit import QWebPage
 
 from qgis.core import (QgsExpression, QgsFeature, 
@@ -18,13 +18,13 @@ from qmap import utils
 from qmap.htmlviewer import updateTemplate, openimage
 from qmap.uifiles import (infodock_widget, infodock_base)
 
-htmlpath = os.path.join(os.path.dirname(__file__) , "info.html")
+htmlpath = os.path.join(os.path.dirname(__file__), "info.html")
 
 with open(htmlpath) as f:
     template = Template(f.read())
 
 
-class InfoDock(infodock_widget, infodock_base):
+class InfoDock(infodock_widget, QWidget):
     def __init__(self, parent):
         super(InfoDock, self).__init__(parent)
         self.setupUi(self)
@@ -33,7 +33,12 @@ class InfoDock(infodock_widget, infodock_base):
         self.featureList.currentIndexChanged.connect(self.featureIndexChanged)
         self.attributesView.linkClicked.connect(openimage)
         self.attributesView.page().setLinkDelegationPolicy(QWebPage.DelegateAllLinks)
-        
+
+    def showEvent(self, event):
+        self.resize(QSize(self.geometry().width(), self.parent().geometry().size().height()))
+        topright = self.parent().geometry().topRight()
+        self.move(topright - QPoint(self.geometry().width(), 0))
+
     def featureIndexChanged(self, index):
         feature = self.featureList.itemData(index)
         layer = self.layerList.itemData(self.layerList.currentIndex())

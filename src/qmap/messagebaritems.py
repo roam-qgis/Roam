@@ -37,7 +37,7 @@ class MessageBar(QgsMessageBar):
         closebutton.setStyleSheet(style)
 
     def showEvent(self, event):
-        self.resize(QSize(self.parent().geometry().size().width(), 40))
+        self.resize(QSize(self.parent().geometry().size().width(), 50))
 
     def pushMessage(self, title, text=None, level=QgsMessageBar.INFO, duration=0):
         item = ClickableMessage(title, text, level, duration)

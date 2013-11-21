@@ -27,19 +27,29 @@
    <double>1.000000000000000</double>
   </property>
   <property name="styleSheet">
-   <string notr="true">QToolButton { 
-            padding: 6px;
+   <string notr="true">        QStackedWidget QScrollArea {
+             background-color: rgb(255, 255, 255);
+        }		
+
+		QToolButton { 
+            padding: 4px;
             color: #4f4f4f;
          }
 
-QToolButton:hover { 
-            padding: 6px;
+		QToolButton:hover { 
+            padding: 4px;
             background-color: rgb(211, 228, 255);
          }
         
         QToolBar, QStatusBar {
-         background: white;
+			font: 75 14pt &quot;Calibri&quot;;
+			background: white;
+			border: none;
         }
+
+		QStatusBar::item {
+					border: none;
+		}
         
         QCheckBox::indicator {
              width: 40px;
@@ -49,8 +59,6 @@ QToolButton:hover {
         QLabel {
             color: #4f4f4f;
         }
-        
-        QDialog { background-color: rgb(255, 255, 255); }
         
         QPushButton { 
             border: 1px solid #e1e1e1;
@@ -76,41 +84,41 @@ QToolButton:hover {
             border: 1px solid #d3d3d3;
         }
 
-        QStackedWidget {
-             background-color: rgb(255, 255, 255);
-        }</string>
+	</string>
+  </property>
+  <property name="iconSize">
+   <size>
+    <width>32</width>
+    <height>32</height>
+   </size>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <layout class="QGridLayout" name="gridLayout">
+   <layout class="QHBoxLayout" name="horizontalLayout_2">
     <property name="margin">
      <number>0</number>
     </property>
-    <item row="1" column="0">
+    <item>
      <widget class="QStackedWidget" name="stackedWidget">
       <property name="currentIndex">
-       <number>1</number>
+       <number>0</number>
       </property>
       <widget class="QWidget" name="canvas_page">
-       <layout class="QGridLayout" name="gridLayout_2">
+       <property name="styleSheet">
+        <string notr="true">background-color: rgb(255, 255, 255);</string>
+       </property>
+       <layout class="QVBoxLayout" name="verticalLayout_3">
         <property name="margin">
          <number>0</number>
         </property>
-        <property name="spacing">
-         <number>0</number>
-        </property>
-        <item row="0" column="0">
-         <widget class="QgsMapCanvas" name="canvas" native="true">
-          <property name="focusPolicy">
-           <enum>Qt::NoFocus</enum>
-          </property>
-          <property name="styleSheet">
-           <string notr="true">background-color: rgb(183, 212, 255);</string>
-          </property>
-         </widget>
+        <item>
+         <widget class="QgsMapCanvas" name="canvas" native="true"/>
         </item>
        </layout>
       </widget>
       <widget class="QWidget" name="project_page">
+       <property name="styleSheet">
+        <string notr="true"/>
+       </property>
        <layout class="QGridLayout" name="gridLayout_3">
         <property name="margin">
          <number>0</number>
@@ -118,6 +126,9 @@ QToolButton:hover {
        </layout>
       </widget>
       <widget class="QWidget" name="settings_page">
+       <property name="styleSheet">
+        <string notr="true">background-color: rgb(255, 255, 255);</string>
+       </property>
        <layout class="QGridLayout" name="gridLayout_4">
         <property name="margin">
          <number>0</number>
@@ -215,6 +226,217 @@ QToolButton:hover {
            </size>
           </property>
          </spacer>
+        </item>
+       </layout>
+      </widget>
+      <widget class="QWidget" name="widgetpage">
+       <property name="styleSheet">
+        <string notr="true">QWidget#widgetpage {
+	background-color: rgb(255, 255, 255);
+}</string>
+       </property>
+       <layout class="QGridLayout" name="gridLayout_5">
+        <property name="leftMargin">
+         <number>3</number>
+        </property>
+        <property name="topMargin">
+         <number>0</number>
+        </property>
+        <property name="rightMargin">
+         <number>3</number>
+        </property>
+        <property name="bottomMargin">
+         <number>0</number>
+        </property>
+        <item row="2" column="0" colspan="7">
+         <widget class="QScrollArea" name="scrollArea">
+          <property name="styleSheet">
+           <string notr="true">QScrollBar {
+	width: 30px; 
+}
+
+* {
+	background-color: rgb(255, 255, 255);
+}</string>
+          </property>
+          <property name="frameShape">
+           <enum>QFrame::NoFrame</enum>
+          </property>
+          <property name="verticalScrollBarPolicy">
+           <enum>Qt::ScrollBarAlwaysOn</enum>
+          </property>
+          <property name="horizontalScrollBarPolicy">
+           <enum>Qt::ScrollBarAlwaysOn</enum>
+          </property>
+          <property name="widgetResizable">
+           <bool>true</bool>
+          </property>
+          <widget class="QWidget" name="scrollAreaWidgetContents">
+           <property name="geometry">
+            <rect>
+             <x>0</x>
+             <y>0</y>
+             <width>734</width>
+             <height>501</height>
+            </rect>
+           </property>
+           <property name="styleSheet">
+            <string notr="true"/>
+           </property>
+           <layout class="QVBoxLayout" name="verticalLayout_2">
+            <property name="margin">
+             <number>0</number>
+            </property>
+            <item>
+             <spacer name="verticalSpacer_3">
+              <property name="orientation">
+               <enum>Qt::Vertical</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>20</width>
+                <height>40</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+           </layout>
+          </widget>
+         </widget>
+        </item>
+        <item row="0" column="0" colspan="7">
+         <layout class="QHBoxLayout" name="horizontalLayout">
+          <property name="spacing">
+           <number>3</number>
+          </property>
+          <property name="topMargin">
+           <number>0</number>
+          </property>
+          <property name="rightMargin">
+           <number>0</number>
+          </property>
+          <item>
+           <widget class="QLabel" name="missingfieldsLabel">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="font">
+             <font>
+              <pointsize>8</pointsize>
+              <weight>75</weight>
+              <bold>true</bold>
+             </font>
+            </property>
+            <property name="text">
+             <string>Looks like some fields are missing. Check any fields mark in </string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="yellowLabel">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="font">
+             <font>
+              <weight>75</weight>
+              <bold>true</bold>
+             </font>
+            </property>
+            <property name="styleSheet">
+             <string notr="true">border-radius: 5px; 
+background-color: rgba(255, 221, 48,150);</string>
+            </property>
+            <property name="text">
+             <string>yellow</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <spacer name="horizontalSpacer">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>40</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+          <item>
+           <widget class="QPushButton" name="cancelButton">
+            <property name="text">
+             <string>Don't Save</string>
+            </property>
+            <property name="icon">
+             <iconset resource="resources.qrc">
+              <normaloff>:/icons/cancel</normaloff>:/icons/cancel</iconset>
+            </property>
+            <property name="iconSize">
+             <size>
+              <width>24</width>
+              <height>24</height>
+             </size>
+            </property>
+            <property name="flat">
+             <bool>false</bool>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <spacer name="horizontalSpacer_2">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeType">
+             <enum>QSizePolicy::Fixed</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>10</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+          <item>
+           <widget class="QPushButton" name="savedataButton">
+            <property name="enabled">
+             <bool>true</bool>
+            </property>
+            <property name="styleSheet">
+             <string notr="true">QPushButton { 
+	background-color: rgb(223, 255, 213, 250);
+}
+
+QPushButton[enabled=&quot;false&quot;] {
+	background-color: none;
+}</string>
+            </property>
+            <property name="text">
+             <string>Save</string>
+            </property>
+            <property name="icon">
+             <iconset resource="resources.qrc">
+              <normaloff>:/icons/save</normaloff>:/icons/save</iconset>
+            </property>
+            <property name="iconSize">
+             <size>
+              <width>48</width>
+              <height>48</height>
+             </size>
+            </property>
+           </widget>
+          </item>
+         </layout>
         </item>
        </layout>
       </widget>

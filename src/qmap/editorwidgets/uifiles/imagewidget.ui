@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>94</width>
-    <height>114</height>
+    <height>84</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -23,7 +23,10 @@
    <string>Form</string>
   </property>
   <property name="styleSheet">
-   <string notr="true"/>
+   <string notr="true">QPushButton 
+{
+ border: none;
+}</string>
   </property>
   <layout class="QGridLayout" name="gridLayout">
    <property name="margin">
@@ -71,6 +74,9 @@
        <height>50</height>
       </size>
      </property>
+     <property name="styleSheet">
+      <string notr="true">border-color: none;</string>
+     </property>
      <property name="text">
       <string/>
      </property>
@@ -102,6 +108,9 @@
        <width>40</width>
        <height>50</height>
       </size>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">border-color: none;</string>
      </property>
      <property name="text">
       <string/>

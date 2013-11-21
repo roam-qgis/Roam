@@ -9,6 +9,7 @@ from qgis.gui import QgsMessageBar
 from qmap.utils import log, info, warning, error
 from qmap import featuredialog
 
+form = None
 
 class DialogProvider(QObject):
     """
@@ -24,39 +25,76 @@ class DialogProvider(QObject):
     def __init__(self, canvas):
         QObject.__init__(self)
         self.canvas = canvas
-        self.iface = None
 
-    def openDialog(self, feature, layer, settings, qmaplayer):
+    def openDialog(self, feature, layer, settings, qmaplayer, parent=None):
         """
         Opens a form for the given feature
         """
-        layerconfig = settings[layer.name()]
-        form = featuredialog.FeatureForm.from_layer(layer, layerconfig, qmaplayer)
-        defaults = featuredialog.loadsavedvalues(layer)
-        print defaults
-        form.bindfeature(feature, defaults)
-        if form.openform():
-            feature, savedvalues = form.updatefeature(feature)
-            print feature.attributes()
+        def accept():
+            if not form.accept():
+                return
 
+            feature, savedvalues = form.getupdatedfeature()
+            print feature.id()
             if feature.id() > 0:
                 layer.updateFeature(feature)
             else:
                 layer.addFeature(feature)
                 featuredialog.savevalues(layer, savedvalues)
-            
+
             saved = layer.commitChanges()
 
             if not saved:
                 self.failedsave.emit()
-                for e in layer.commitErrors(): error(e)
+                map(error, layer.commitErrors())
             else:
                 self.featuresaved.emit()
 
             self.canvas.refresh()
-        else:
+            parent.stackedWidget.setCurrentIndex(0)
+
+        def reject():
+            if not form.reject():
+                return
+
             layer.rollBack()
-            
+            #clearcurrentwidget()
+            parent.stackedWidget.setCurrentIndex(0)
+
+        def formvalidation(passed):
+            msg = None
+            if not passed:
+                msg = "Looks like some fields are missing. Check any fields marked in"
+            parent.missingfieldsLabel.setText(msg)
+            parent.savedataButton.setEnabled(passed)
+            parent.yellowLabel.setVisible(not passed)
+
+        def clearcurrentwidget():
+            item = parent.scrollAreaWidgetContents.layout().itemAt(0)
+            if item and item.widget():
+                item.widget().setParent(None)
+
+        # None of this saving logic belongs here.
+        parent.savedataButton.pressed.connect(accept)
+        parent.cancelButton.pressed.connect(reject)
+
+        layerconfig = settings[layer.name()]
+
+        defaults = featuredialog.loadsavedvalues(layer)
+
+        form = featuredialog.FeatureForm.from_layer(layer, layerconfig, qmaplayer, parent)
+        form.formvalidation.connect(formvalidation)
+
+        for field in feature.fields():
+            print field.name()
+
+        form.bindfeature(feature, defaults)
+
+        widget = form.widget
+        clearcurrentwidget()
+
+        parent.scrollAreaWidgetContents.layout().insertWidget(0, widget)
+        parent.stackedWidget.setCurrentIndex(4)
         layer.startEditing()
 
     def selectingFromMap(self, message):
