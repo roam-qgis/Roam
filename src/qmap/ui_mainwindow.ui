@@ -304,7 +304,7 @@
              <x>0</x>
              <y>0</y>
              <width>701</width>
-             <height>458</height>
+             <height>441</height>
             </rect>
            </property>
            <property name="styleSheet">
@@ -563,7 +563,7 @@ QToolButton {
     </size>
    </property>
    <property name="toolButtonStyle">
-    <enum>Qt::ToolButtonIconOnly</enum>
+    <enum>Qt::ToolButtonTextUnderIcon</enum>
    </property>
    <property name="floatable">
     <bool>false</bool>
@@ -575,7 +575,6 @@ QToolButton {
     <bool>false</bool>
    </attribute>
    <addaction name="actionHome"/>
-   <addaction name="actionDefault"/>
    <addaction name="actionPan"/>
    <addaction name="actionZoom_In"/>
    <addaction name="actionZoom_Out"/>
@@ -653,15 +652,6 @@ QToolButton {
    </property>
    <property name="text">
     <string>Home Viiew</string>
-   </property>
-  </action>
-  <action name="actionDefault">
-   <property name="icon">
-    <iconset resource="resources.qrc">
-     <normaloff>:/icons/zoomfull</normaloff>:/icons/zoomfull</iconset>
-   </property>
-   <property name="text">
-    <string>Default View</string>
    </property>
   </action>
   <action name="actionPan">

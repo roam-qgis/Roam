@@ -10,7 +10,9 @@ from PyQt4.QtGui import (QActionGroup
                         ,QStandardItemModel
                         ,QStandardItem
                         ,QItemSelectionModel
-                        ,QIcon)
+                        ,QIcon
+                        ,QToolBar
+                        ,QComboBox)
 from qgis.core import (QgsProjectBadLayerHandler
                         ,QgsPalLabeling
                         ,QgsMapLayerRegistry
@@ -168,13 +170,13 @@ class MainWindow(mainwindow_widget, mainwindow_base):
         self.bar = qmap.messagebaritems.MessageBar(self)
         self.messageBar = qmap.messagebaritems.MessageBar(self.canvas)
 
-        from PyQt4.QtGui import QToolBar, QComboBox
-
         self.canvas_page.layout().insertWidget(2, self.projecttoolbar)
         self.toolbar = QToolBar()
-        self.toolbar.setIconSize(QSize(48, 48))
+        iconsize = QSize(48, 48)
+        self.toolbar.setIconSize(iconsize)
         self.dataentrymodel = QStandardItemModel(self)
         self.dataentrycombo = QComboBox()
+        self.dataentrycombo.setIconSize(iconsize)
         self.dataentrycombo.setSizeAdjustPolicy(QComboBox.AdjustToContents)
         self.dataentrycombo.setModel(self.dataentrymodel)
         self.dataentrycombo.currentIndexChanged.connect(self.dataentrychanged)
@@ -182,6 +184,8 @@ class MainWindow(mainwindow_widget, mainwindow_base):
         self.canvas_page.layout().insertWidget(3, self.toolbar)
 
         self.centralwidget.layout().addWidget(self.statusbar)
+
+        self.actionGPSFeature.setProperty('dataentry', True)
 
         self.infodock = InfoDock(self.canvas)
 
@@ -203,7 +207,7 @@ class MainWindow(mainwindow_widget, mainwindow_base):
     def setMapTool(self, tool, *args):
         self.canvas.setMapTool(tool)
 
-    def zoomToDefaultView(self):
+    def homeview(self):
         """
         Zoom the mapview canvas to the extents the project was opened at i.e. the
         default extent.
@@ -241,7 +245,6 @@ class MainWindow(mainwindow_widget, mainwindow_base):
         self.moveTool.layersupdated.connect(self.actionMove.setVisible)
         self.moveTool.layersupdated.connect(self.actionEdit_Tools.setVisible)
 
-        self.extraaddtoolbar.addAction(self.actionGPSFeature)
 
         self.edittoolbar.addAction(self.actionMove)
         self.edittoolbar.addToActionGroup(self.actionMove)
@@ -256,8 +259,7 @@ class MainWindow(mainwindow_widget, mainwindow_base):
         self.actionGPSFeature.setEnabled(self.actionGPS.isConnected)
         self.actionGPS.gpsfixed.connect(self.actionGPSFeature.setEnabled)
 
-        self.actionHome.triggered.connect(self.zoomToDefaultView)
-        self.actionDefault.triggered.connect(self.canvas.zoomToFullExtent)
+        self.actionHome.triggered.connect(self.homeview)
         self.actionQuit.triggered.connect(self.exit)
 
     def showToolError(self, label, message):
@@ -273,7 +275,6 @@ class MainWindow(mainwindow_widget, mainwindow_base):
         action = layer.action
         action.toggled.connect(partial(self.setMapTool, tool))
 
-        # Hack until I fix it latemessageBarr
         if isinstance(tool, PointTool):
             add = partial(self.addNewFeature, layer.QGISLayer)
             tool.geometryComplete.connect(add)
@@ -284,15 +285,10 @@ class MainWindow(mainwindow_widget, mainwindow_base):
         # Set the action as a data entry button so we can remove it later.
         action.setProperty("dataentry", True)
 
-        if not tool.isEditTool():
-            # Connect the GPS tools strip to the action pressed event.
-            showgpstools = (partial(self.extraaddtoolbar.showToolbar,
-                                    action,
-                                    None))
-
-            action.toggled.connect(showgpstools)
+        self.actionGPSFeature.setVisible(not tool.isEditTool())
 
         self.toolbar.addAction(action)
+        self.toolbar.addAction(self.actionGPSFeature)
         self.editgroup.addAction(action)
         self.layerbuttons.append(action)
 
