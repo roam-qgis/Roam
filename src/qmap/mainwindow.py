@@ -1,9 +1,27 @@
-from PyQt4.QtCore import Qt, QFileInfo, QDir, QSize
-from PyQt4.QtGui import (QActionGroup, QWidget, QSizePolicy, QLabel, QApplication,
-                         QPixmap, QColor, QMessageBox)
-from qgis.core import (QgsProjectBadLayerHandler, QgsPalLabeling, QgsMapLayerRegistry,
-                        QgsProject, QgsMapLayer, QgsFeature, QgsFields)
-from qgis.gui import (QgsMessageBar, QgsMapToolZoom, QgsMapToolTouch, QgsRubberBand)
+from PyQt4.QtCore import Qt, QFileInfo, QDir, QSize, QModelIndex
+from PyQt4.QtGui import (QActionGroup
+                        ,QWidget
+                        ,QSizePolicy
+                        ,QLabel
+                        ,QApplication
+                        ,QPixmap
+                        ,QColor
+                        ,QMessageBox
+                        ,QStandardItemModel
+                        ,QStandardItem
+                        ,QItemSelectionModel
+                        ,QIcon)
+from qgis.core import (QgsProjectBadLayerHandler
+                        ,QgsPalLabeling
+                        ,QgsMapLayerRegistry
+                        ,QgsProject
+                        ,QgsMapLayer
+                        ,QgsFeature
+                        ,QgsFields)
+from qgis.gui import (QgsMessageBar
+                    ,QgsMapToolZoom
+                    ,QgsMapToolTouch
+                    ,QgsRubberBand)
 
 from functools import partial
 
@@ -27,12 +45,13 @@ import qmap.messagebaritems
 import qmap.utils
 
 
-class BadLayerHandler( QgsProjectBadLayerHandler):
+class BadLayerHandler(QgsProjectBadLayerHandler):
     """
     Handler class for any layers that fail to load when
     opening the project.
     """
-    def __init__( self, callback ):
+
+    def __init__(self, callback):
         """
             callback - Any bad layers are passed to the callback so it
             can do what it wills with them
@@ -40,7 +59,7 @@ class BadLayerHandler( QgsProjectBadLayerHandler):
         super(BadLayerHandler, self).__init__()
         self.callback = callback
 
-    def handleBadLayers( self, domNodes, domDocument ):
+    def handleBadLayers(self, domNodes, domDocument):
         layers = [node.namedItem("layername").toElement().text() for node in domNodes]
         self.callback(layers)
 
@@ -49,6 +68,7 @@ class MainWindow(mainwindow_widget, mainwindow_base):
     """
     Main application window
     """
+
     def __init__(self):
         super(MainWindow, self).__init__()
         self.setupUi(self)
@@ -128,7 +148,7 @@ class MainWindow(mainwindow_widget, mainwindow_base):
         self.syncactionstoolbar = FloatingToolBar("Syncing", self.projecttoolbar)
         self.syncactionstoolbar.setOrientation(Qt.Vertical)
 
-        size = QSize(32,32)
+        size = QSize(32, 32)
         self.edittoolbar.setIconSize(size)
         self.extraaddtoolbar.setIconSize(size)
         self.syncactionstoolbar.setIconSize(size)
@@ -149,18 +169,32 @@ class MainWindow(mainwindow_widget, mainwindow_base):
         self.messageBar = qmap.messagebaritems.MessageBar(self.canvas)
 
         from PyQt4.QtGui import QToolBar, QComboBox
+
         self.canvas_page.layout().insertWidget(2, self.projecttoolbar)
         self.toolbar = QToolBar()
-        self.toolbar.setIconSize(QSize(48,48))
-        combo = QComboBox()
-        combo.addItem("Tree Inspection")
-        combo.addItem("Pool Inspection")
-        self.toolbar.addWidget(combo)
-        self.canvas_page.layout().insertWidget(3,self.toolbar)
+        self.toolbar.setIconSize(QSize(48, 48))
+        self.dataentrymodel = QStandardItemModel(self)
+        self.dataentrycombo = QComboBox()
+        self.dataentrycombo.setSizeAdjustPolicy(QComboBox.AdjustToContents)
+        self.dataentrycombo.setModel(self.dataentrymodel)
+        self.dataentrycombo.currentIndexChanged.connect(self.dataentrychanged)
+        self.toolbar.addWidget(self.dataentrycombo)
+        self.canvas_page.layout().insertWidget(3, self.toolbar)
 
         self.centralwidget.layout().addWidget(self.statusbar)
 
         self.infodock = InfoDock(self.canvas)
+
+
+    def dataentrychanged(self, index):
+        print "Data entry"
+        self.clearCapatureTools()
+
+        modelindex = self.dataentrymodel.index(index, 0)
+        print modelindex
+        layer = modelindex.data(Qt.UserRole + 1)
+        print "New layer:{}".format(layer)
+        self.createCaptureFeature(layer)
 
     def raiseerror(self, exctype, value, traceback):
         item = qmap.messagebaritems.ErrorMessage(execinfo=(exctype, value, traceback))
@@ -182,7 +216,7 @@ class MainWindow(mainwindow_widget, mainwindow_base):
             action.toggled.connect(partial(self.setMapTool, tool))
 
         self.zoomInTool = QgsMapToolZoom(self.canvas, False)
-        self.zoomOutTool  = QgsMapToolZoom(self.canvas, True)
+        self.zoomOutTool = QgsMapToolZoom(self.canvas, True)
         self.panTool = QgsMapToolTouch(self.canvas)
         self.moveTool = MoveTool(self.canvas, [])
         self.infoTool = InfoTool(self.canvas)
@@ -213,8 +247,8 @@ class MainWindow(mainwindow_widget, mainwindow_base):
         self.edittoolbar.addToActionGroup(self.actionMove)
 
         showediting = (partial(self.edittoolbar.showToolbar,
-                                 self.actionEdit_Tools,
-                                 self.actionMove))
+                               self.actionEdit_Tools,
+                               self.actionMove))
 
         self.actionEdit_Tools.toggled.connect(showediting)
 
@@ -229,6 +263,11 @@ class MainWindow(mainwindow_widget, mainwindow_base):
     def showToolError(self, label, message):
         self.messageBar.pushMessage(label, message, QgsMessageBar.WARNING)
 
+    def clearCapatureTools(self):
+        for action in self.toolbar.actions():
+            if action.property('dataentry'):
+                self.toolbar.removeAction(action)
+
     def createCaptureFeature(self, layer):
         tool = layer.getMaptool(self.canvas)
         action = layer.action
@@ -242,16 +281,18 @@ class MainWindow(mainwindow_widget, mainwindow_base):
             tool.finished.connect(self.openForm)
             tool.error.connect(partial(self.showToolError, layer.icontext))
 
-        self.toolbar.addAction(action)
+        # Set the action as a data entry button so we can remove it later.
+        action.setProperty("dataentry", True)
 
         if not tool.isEditTool():
             # Connect the GPS tools strip to the action pressed event.
             showgpstools = (partial(self.extraaddtoolbar.showToolbar,
-                                     action,
-                                     None))
+                                    action,
+                                    None))
 
             action.toggled.connect(showgpstools)
 
+        self.toolbar.addAction(action)
         self.editgroup.addAction(action)
         self.layerbuttons.append(action)
 
@@ -270,9 +311,14 @@ class MainWindow(mainwindow_widget, mainwindow_base):
         def moveFeature(layer):
             self.moveTool.addLayer(layer.QGISLayer)
 
-        capabilitityhandlers = { "capture" : self.createCaptureFeature,
-                                 "edit" : editFeature,
-                                 "move" : moveFeature}
+        def captureFeature(layer):
+            item = QStandardItem(QIcon(layer.icon), layer.icontext)
+            item.setData(layer, Qt.UserRole + 1)
+            self.dataentrymodel.appendRow(item)
+
+        capabilitityhandlers = {"capture": captureFeature,
+                                "edit": editFeature,
+                                "move": moveFeature}
 
         for layer in projectlayers:
             valid, reason = layer.valid
@@ -291,6 +337,8 @@ class MainWindow(mainwindow_widget, mainwindow_base):
                                                 error.message,
                                                 level=QgsMessageBar.WARNING)
                     continue
+
+        self.dataentrycombo.setCurrentIndex(0)
 
     def addFeatureAtGPS(self):
         """
@@ -359,7 +407,7 @@ class MainWindow(mainwindow_widget, mainwindow_base):
         fields = layer.pendingFields()
 
         feature = QgsFeature()
-        feature.setGeometry( geometry )
+        feature.setGeometry(geometry)
         feature.initAttributes(fields.count())
         feature.setFields(fields)
 
@@ -401,7 +449,7 @@ class MainWindow(mainwindow_widget, mainwindow_base):
         for layer in self.canvaslayers:
             if layer.layer().type() == QgsMapLayer.RasterLayer:
                 layer.setVisible(not layer.isVisible())
-        # Really!? We have to reload the whole layer set every time?
+            # Really!? We have to reload the whole layer set every time?
         # WAT?
         self.canvas.setLayerSet(self.canvaslayers)
         self.canvas.freeze(False)
@@ -452,9 +500,10 @@ class MainWindow(mainwindow_widget, mainwindow_base):
         Update the UI state to reflect the currently selected
         page in the stacked widget
         """
+
         def setToolbarsActive(enabled):
-          self.projecttoolbar.setEnabled(enabled)
-          self.extraaddtoolbar.setVisible(enabled)
+            self.projecttoolbar.setEnabled(enabled)
+            self.extraaddtoolbar.setVisible(enabled)
 
         def setPanelsVisible(visible):
             for panel in self.panels:
@@ -492,7 +541,7 @@ class MainWindow(mainwindow_widget, mainwindow_base):
         projectpath = QgsProject.instance().fileName()
         self.project = QMapProject(os.path.dirname(projectpath))
         self.projectlabel.setText("Project: {}".format(self.project.name))
-        self.createFormButtons(projectlayers = self.project.getConfiguredLayers())
+        self.createFormButtons(projectlayers=self.project.getConfiguredLayers())
 
         # Enable the raster layers button only if the project contains a raster layer.
         layers = QgsMapLayerRegistry.instance().mapLayers().values()
@@ -504,7 +553,7 @@ class MainWindow(mainwindow_widget, mainwindow_base):
 
         # Show panels
         for panel in self.project.getPanels():
-            self.mainwindow.addDockWidget(Qt.BottomDockWidgetArea , panel)
+            self.mainwindow.addDockWidget(Qt.BottomDockWidgetArea, panel)
             self.panels.append(panel)
 
     #noinspection PyArgumentList
@@ -533,7 +582,7 @@ class MainWindow(mainwindow_widget, mainwindow_base):
         # No idea why we have to set this each time.  Maybe QGIS deletes it for
         # some reason.
         self.badLayerHandler = BadLayerHandler(callback=self.missingLayers)
-        QgsProject.instance().setBadLayerHandler( self.badLayerHandler )
+        QgsProject.instance().setBadLayerHandler(self.badLayerHandler)
 
         #self.messageBar.pushMessage("Project Loading","", QgsMessageBar.INFO)
         self.stackedWidget.setCurrentIndex(3)
@@ -558,10 +607,11 @@ class MainWindow(mainwindow_widget, mainwindow_base):
         for panel in self.panels:
             self.removeDockWidget(panel)
             del panel
-        # Remove all the old buttons
+            # Remove all the old buttons
         for action in self.layerbuttons:
             self.editgroup.removeAction(action)
-            self.projecttoolbar.removeAction(action)
+
+        self.dataentrymodel.clear()
         self.panels = []
         self.project = None
 
