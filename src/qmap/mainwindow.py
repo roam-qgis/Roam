@@ -12,7 +12,8 @@ from PyQt4.QtGui import (QActionGroup
                         ,QItemSelectionModel
                         ,QIcon
                         ,QToolBar
-                        ,QComboBox)
+                        ,QComboBox
+                        ,QToolButton)
 from qgis.core import (QgsProjectBadLayerHandler
                         ,QgsPalLabeling
                         ,QgsMapLayerRegistry
@@ -476,6 +477,14 @@ class MainWindow(mainwindow_widget, mainwindow_base):
         """
         page = action.property("page")
         self.stackedWidget.setCurrentIndex(page)
+
+    def updateicons(self):
+        iconswithtext = qmap.utils.settings.get("iconswithtext", False)
+        if iconswithtext:
+            self.projecttoolbar.setToolButtonStyle(Qt.ToolButtonTextUnderIcon)
+        else:
+            self.projecttoolbar.setToolButtonStyle(Qt.ToolButtonIconOnly)
+
 
     def show(self):
         """

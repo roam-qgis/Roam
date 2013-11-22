@@ -65,7 +65,7 @@ QLabel[class=&quot;small&quot;]  {  font: 12px &quot;Segoe UI&quot; ; }</string>
        </widget>
       </item>
       <item row="1" column="0">
-       <widget class="QCheckBox" name="checkBox">
+       <widget class="QCheckBox" name="iconswithtextCheck">
         <property name="text">
          <string>Icons with text</string>
         </property>

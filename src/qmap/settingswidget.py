@@ -12,14 +12,18 @@ class SettingsWidget(settings_widget, settings_base):
         super(SettingsWidget, self).__init__(parent)
         self.setupUi(self)
         self.populated = False
-        self.fullScreenCheck.stateChanged.connect(self.fullScreenCheck_stateChanged)
+        self.fullScreenCheck.toggled.connect(self.fullScreenCheck_stateChanged)
         self.gpsPortCombo.currentIndexChanged.connect(self.gpsPortCombo_currentIndexChanged)
         self.refreshPortsButton.pressed.connect(self.refreshPortsButton_pressed)
-        
-    def fullScreenCheck_stateChanged(self, state):
+        self.iconswithtextCheck.toggled.connect(self.iconswithtextCheck_toggled)
+
+    def iconswithtextCheck_toggled(self, checked):
+        settings['iconswithtext'] = checked
+        utils.saveSettings()
+
+    def fullScreenCheck_stateChanged(self, checked):
         utils.log("fullscreen changed")
-        state = bool(state)
-        settings["fullscreen"] = state
+        settings["fullscreen"] = checked
         utils.saveSettings()
         
     def gpsPortCombo_currentIndexChanged(self, index):
@@ -42,7 +46,10 @@ class SettingsWidget(settings_widget, settings_base):
         
     def readSettings(self):
         fullscreen = settings.get("fullscreen", False)
+        iconswithtext = settings.get('iconswithtext', True)
         gpsport = settings.get("gpsport", 'scan')
+
+        self.iconswithtextCheck.setChecked(iconswithtext)
         self.fullScreenCheck.setChecked(fullscreen)
         gpsindex = self.gpsPortCombo.findData(gpsport)
         

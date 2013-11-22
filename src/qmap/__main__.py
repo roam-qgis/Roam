@@ -38,6 +38,7 @@ with qmap.utils.Timer("Load time:", logging=qmap.utils.info):
     projects = project.getProjects(sys.argv[1])
     window.loadProjectList(projects)
     qmap.utils.settings_notify.settings_changed.connect(window.show)
+    qmap.utils.settings_notify.settings_changed.connect(window.updateicons)
 
     window.actionProject.toggle()
     window.viewprojects()
