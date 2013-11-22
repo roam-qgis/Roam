@@ -86,6 +86,7 @@ class MainWindow(mainwindow_widget, mainwindow_base):
         self.menuGroup.setExclusive(True)
 
         self.menuGroup.addAction(self.actionMap)
+        self.menuGroup.addAction(self.actionDataEntry)
         self.menuGroup.addAction(self.actionProject)
         self.menuGroup.addAction(self.actionSettings)
         self.menuGroup.triggered.connect(self.updatePage)
@@ -113,16 +114,21 @@ class MainWindow(mainwindow_widget, mainwindow_base):
         self.actionSettings.toggled.connect(self.settingswidget.populateControls)
         self.actionSettings.toggled.connect(self.settingswidget.readSettings)
 
-        def createSpacer(width):
+        def createSpacer(width=0, height=0):
             widget = QWidget()
             widget.setMinimumWidth(width)
+            widget.setMinimumHeight(height)
             return widget
 
         gpsspacewidget = createSpacer(30)
         sidespacewidget = createSpacer(30)
+        sidespacewidget2 = createSpacer(height=20)
+
         sidespacewidget.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
+        sidespacewidget2.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
         gpsspacewidget.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
-        self.topspaceraction = self.projecttoolbar.insertWidget(self.actionSync, gpsspacewidget)
+
+        self.topspaceraction = self.projecttoolbar.insertWidget(self.actionGPS, gpsspacewidget)
 
         def _createSideLabel(text):
             style = """
@@ -141,7 +147,8 @@ class MainWindow(mainwindow_widget, mainwindow_base):
         self.statusbar.addWidget(self.projectlabel)
         self.statusbar.addWidget(self.userlabel)
 
-        self.menutoolbar.insertWidget(self.actionSettings, sidespacewidget)
+        self.menutoolbar.insertWidget(self.actionQuit, sidespacewidget2)
+        self.menutoolbar.insertWidget(self.actionProject, sidespacewidget)
         self.stackedWidget.currentChanged.connect(self.updateUIState)
 
         self.panels = []
@@ -189,16 +196,23 @@ class MainWindow(mainwindow_widget, mainwindow_base):
         self.actionGPSFeature.setProperty('dataentry', True)
 
         self.infodock = InfoDock(self.canvas)
+        self.hidedataentry()
 
+    def showmap(self):
+        self.actionMap.trigger()
+
+    def hidedataentry(self):
+        self.actionDataEntry.setVisible(False)
+
+    def showdataentry(self):
+        self.actionDataEntry.setVisible(True)
+        self.actionDataEntry.trigger()
 
     def dataentrychanged(self, index):
-        print "Data entry"
         self.clearCapatureTools()
 
         modelindex = self.dataentrymodel.index(index, 0)
-        print modelindex
         layer = modelindex.data(Qt.UserRole + 1)
-        print "New layer:{}".format(layer)
         self.createCaptureFeature(layer)
 
     def raiseerror(self, exctype, value, traceback):
@@ -242,9 +256,11 @@ class MainWindow(mainwindow_widget, mainwindow_base):
         self.editTool.featuresfound.connect(self.showFeatureSelection)
         self.editTool.radius = 10
 
-        self.editTool.layersupdated.connect(self.actionEdit_Attributes.setVisible)
-        self.moveTool.layersupdated.connect(self.actionMove.setVisible)
-        self.moveTool.layersupdated.connect(self.actionEdit_Tools.setVisible)
+        self.editTool.layersupdated.connect(self.actionEdit_Attributes.setEnabled)
+        self.moveTool.layersupdated.connect(self.actionMove.setEnabled)
+
+        # The edit toolbutton is currently not being used but leaving it for feature.
+        self.moveTool.layersupdated.connect(self.actionEdit_Tools.setEnabled)
 
 
         self.edittoolbar.addAction(self.actionMove)
@@ -374,20 +390,24 @@ class MainWindow(mainwindow_widget, mainwindow_base):
                                         "Changes Saved",
                                         QgsMessageBar.INFO,
                                         2)
-            self.band.reset()
-            self.clearToolRubberBand()
 
         def failSave():
             self.messageBar.pushMessage("Error",
                                         "Error with saving changes.",
                                         QgsMessageBar.CRITICAL)
+
+        def cleartempobjects():
             self.band.reset()
             self.clearToolRubberBand()
 
         self.band.setToGeometry(feature.geometry(), layer)
         provider = DialogProvider(self.canvas)
+        provider.accepted.connect(cleartempobjects)
+        provider.rejected.connect(cleartempobjects)
         provider.featuresaved.connect(featureSaved)
+        provider.featuresaved.connect(cleartempobjects)
         provider.failedsave.connect(failSave)
+        provider.failedsave.connect(cleartempobjects)
 
         qmaplayer = self.project.layer(layer.name())
 

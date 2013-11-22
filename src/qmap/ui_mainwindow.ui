@@ -303,7 +303,7 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>701</width>
+             <width>686</width>
              <height>441</height>
             </rect>
            </property>
@@ -537,7 +537,9 @@ QToolButton {
     <bool>false</bool>
    </attribute>
    <addaction name="actionMap"/>
+   <addaction name="actionDataEntry"/>
    <addaction name="actionProject"/>
+   <addaction name="actionSync"/>
    <addaction name="actionSettings"/>
    <addaction name="actionQuit"/>
   </widget>
@@ -580,10 +582,9 @@ QToolButton {
    <addaction name="actionZoom_Out"/>
    <addaction name="actionRaster"/>
    <addaction name="actionInfo"/>
-   <addaction name="actionEdit_Tools"/>
+   <addaction name="actionMove"/>
    <addaction name="actionEdit_Attributes"/>
    <addaction name="separator"/>
-   <addaction name="actionSync"/>
   </widget>
   <action name="actionMap">
    <property name="checkable">
@@ -597,7 +598,7 @@ QToolButton {
     <string>Map</string>
    </property>
    <property name="iconText">
-    <string>Map    </string>
+    <string>Map          </string>
    </property>
    <property name="page" stdset="0">
     <number>0</number>
@@ -612,7 +613,10 @@ QToolButton {
      <normaloff>:/icons/open</normaloff>:/icons/open</iconset>
    </property>
    <property name="text">
-    <string>Project</string>
+    <string>Projects</string>
+   </property>
+   <property name="iconText">
+    <string>Projects    </string>
    </property>
    <property name="page" stdset="0">
     <number>1</number>
@@ -629,6 +633,9 @@ QToolButton {
    <property name="text">
     <string>Settings</string>
    </property>
+   <property name="iconText">
+    <string>Settings     </string>
+   </property>
    <property name="page" stdset="0">
     <number>2</number>
    </property>
@@ -642,7 +649,7 @@ QToolButton {
     <string>Quit</string>
    </property>
    <property name="iconText">
-    <string>Quit      </string>
+    <string>Quit           </string>
    </property>
   </action>
   <action name="actionHome">
@@ -750,7 +757,10 @@ QToolButton {
      <normaloff>:/icons/sync</normaloff>:/icons/sync</iconset>
    </property>
    <property name="text">
-    <string>Sync</string>
+    <string>Sync     </string>
+   </property>
+   <property name="iconText">
+    <string>Sync          </string>
    </property>
   </action>
   <action name="actionMove">
@@ -772,6 +782,24 @@ QToolButton {
    </property>
    <property name="text">
     <string>Feature at GPS</string>
+   </property>
+  </action>
+  <action name="actionDataEntry">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="resources.qrc">
+     <normaloff>:/icons/dataentry</normaloff>:/icons/dataentry</iconset>
+   </property>
+   <property name="text">
+    <string>Data Entry</string>
+   </property>
+   <property name="iconText">
+    <string>Data Entry</string>
+   </property>
+   <property name="page" stdset="0">
+    <number>4</number>
    </property>
   </action>
  </widget>

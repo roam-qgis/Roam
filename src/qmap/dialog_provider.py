@@ -51,15 +51,18 @@ class DialogProvider(QObject):
                 self.featuresaved.emit()
 
             self.canvas.refresh()
-            parent.stackedWidget.setCurrentIndex(0)
+            parent.showmap()
+            self.accepted.emit()
 
         def reject():
             if not form.reject():
                 return
 
             layer.rollBack()
-            #clearcurrentwidget()
-            parent.stackedWidget.setCurrentIndex(0)
+            clearcurrentwidget()
+            parent.showmap()
+            parent.hidedataentry()
+            self.rejected.emit()
 
         def formvalidation(passed):
             msg = None
@@ -85,16 +88,13 @@ class DialogProvider(QObject):
         form = featuredialog.FeatureForm.from_layer(layer, layerconfig, qmaplayer, parent)
         form.formvalidation.connect(formvalidation)
 
-        for field in feature.fields():
-            print field.name()
-
         form.bindfeature(feature, defaults)
 
         widget = form.widget
         clearcurrentwidget()
 
         parent.scrollAreaWidgetContents.layout().insertWidget(0, widget)
-        parent.stackedWidget.setCurrentIndex(4)
+        parent.showdataentry()
         layer.startEditing()
 
     def selectingFromMap(self, message):
