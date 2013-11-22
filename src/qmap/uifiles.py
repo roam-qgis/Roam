@@ -20,3 +20,4 @@ settings_widget, settings_base = create_ui('ui_settings.ui')
 infodock_widget, infodock_base = create_ui('ui_infodock.ui')
 # drawing_widget, drawing_base = create_ui('ui_drawingpad.ui'
 mainwindow_widget, mainwindow_base = create_ui('ui_mainwindow.ui')
+sync_widget, sync_base = create_ui('ui_sync.ui')

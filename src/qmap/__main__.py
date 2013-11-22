@@ -36,7 +36,7 @@ with qmap.utils.Timer("Load time:", logging=qmap.utils.info):
     sys.excepthook = partial(excepthook, window.raiseerror)
 
     projects = project.getProjects(sys.argv[1])
-    window.loadProjectList(projects)
+    window.loadprojects(projects)
     qmap.utils.settings_notify.settings_changed.connect(window.show)
     qmap.utils.settings_notify.settings_changed.connect(window.updateicons)
 

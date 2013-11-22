@@ -229,7 +229,7 @@ class QMapProject(object):
             
         return self._splash
     
-    def getSyncProviders(self):
+    def syncprovders(self):
         providers = self.settings.get("providers", {})
         for name, config in providers.iteritems():
             cmd = config['cmd']

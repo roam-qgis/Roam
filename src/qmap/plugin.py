@@ -735,7 +735,7 @@ class QMap():
     def connectSyncProviders(self, project):
         self.syncactionstoolbar.clear()
         
-        syncactions = list(project.getSyncProviders())
+        syncactions = list(project.syncprovders())
         
         # Don't show the sync button if there is no sync providers
         if not syncactions:

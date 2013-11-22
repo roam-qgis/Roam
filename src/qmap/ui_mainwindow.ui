@@ -99,8 +99,11 @@
     </property>
     <item row="0" column="0">
      <widget class="QStackedWidget" name="stackedWidget">
+      <property name="styleSheet">
+       <string notr="true">background-color: rgb(255, 255, 255);</string>
+      </property>
       <property name="currentIndex">
-       <number>4</number>
+       <number>5</number>
       </property>
       <widget class="QWidget" name="canvas_page">
        <property name="styleSheet">
@@ -485,6 +488,13 @@ QPushButton[enabled=&quot;false&quot;] {
         </item>
        </layout>
       </widget>
+      <widget class="QWidget" name="syncpage">
+       <layout class="QGridLayout" name="gridLayout_2">
+        <property name="margin">
+         <number>0</number>
+        </property>
+       </layout>
+      </widget>
      </widget>
     </item>
    </layout>
@@ -529,6 +539,9 @@ QToolButton {
    </property>
    <property name="floatable">
     <bool>false</bool>
+   </property>
+   <property name="page" stdset="0">
+    <number>5</number>
    </property>
    <attribute name="toolBarArea">
     <enum>LeftToolBarArea</enum>
@@ -752,6 +765,9 @@ QToolButton {
    </property>
   </action>
   <action name="actionSync">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
    <property name="icon">
     <iconset resource="resources.qrc">
      <normaloff>:/icons/sync</normaloff>:/icons/sync</iconset>
@@ -761,6 +777,9 @@ QToolButton {
    </property>
    <property name="iconText">
     <string>Sync          </string>
+   </property>
+   <property name="page" stdset="0">
+    <number>5</number>
    </property>
   </action>
   <action name="actionMove">

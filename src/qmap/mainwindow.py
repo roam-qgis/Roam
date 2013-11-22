@@ -43,6 +43,7 @@ from qmap.project import QMapProject, NoMapToolConfigured, ErrorInMapTool
 from qmap.maptools import MoveTool, InfoTool, EditTool, PointTool
 from qmap.listfeatureform import ListFeaturesForm
 from qmap.infodock import InfoDock
+from qmap.syncwidget import SyncWidget
 
 import qmap.messagebaritems
 import qmap.utils
@@ -88,6 +89,7 @@ class MainWindow(mainwindow_widget, mainwindow_base):
         self.menuGroup.addAction(self.actionMap)
         self.menuGroup.addAction(self.actionDataEntry)
         self.menuGroup.addAction(self.actionProject)
+        self.menuGroup.addAction(self.actionSync)
         self.menuGroup.addAction(self.actionSettings)
         self.menuGroup.triggered.connect(self.updatePage)
 
@@ -108,6 +110,9 @@ class MainWindow(mainwindow_widget, mainwindow_base):
         self.projectwidget.requestOpenProject.connect(self.loadProject)
         QgsProject.instance().readProject.connect(self._readProject)
         self.project_page.layout().addWidget(self.projectwidget)
+
+        self.syncwidget = SyncWidget()
+        self.syncpage.layout().addWidget(self.syncwidget)
 
         self.settingswidget = SettingsWidget(self)
         self.settings_page.layout().addWidget(self.settingswidget)
@@ -483,12 +488,14 @@ class MainWindow(mainwindow_widget, mainwindow_base):
                                                               parent=self.messageBar)
         self.messageBar.pushItem(missinglayers)
 
-    def loadProjectList(self, projects):
+    def loadprojects(self, projects):
         """
         Load the given projects into the project
         list
         """
+        projects = list(projects)
         self.projectwidget.loadProjectList(projects)
+        self.syncwidget.loadprojects(projects)
 
     def updatePage(self, action):
         """
