@@ -19,16 +19,19 @@
   <property name="styleSheet">
    <string notr="true">QLabel#settingsLabel {
 	color: #4f4f4f;
-	font: 25pt &quot;Calibri&quot; ;
+	font: 25pt &quot;Segoe UI&quot; ;
 }
 
-* {
-            font: 20px &quot;Calibri&quot; ;
+	* {
+            font: 20px &quot;Segoe UI&quot; ;
         }	
 
-QLabel[class=&quot;small&quot;]  {  font: 12px &quot;Calibri&quot; ; }</string>
+QLabel[class=&quot;small&quot;]  {  font: 12px &quot;Segoe UI&quot; ; }</string>
   </property>
   <layout class="QGridLayout" name="gridLayout">
+   <property name="margin">
+    <number>0</number>
+   </property>
    <item row="0" column="0" colspan="3">
     <widget class="QLabel" name="settingsLabel">
      <property name="text">
@@ -40,7 +43,7 @@ QLabel[class=&quot;small&quot;]  {  font: 12px &quot;Calibri&quot; ; }</string>
     <widget class="QGroupBox" name="groupBox">
      <property name="font">
       <font>
-       <family>Calibri</family>
+       <family>Segoe UI</family>
        <pointsize>-1</pointsize>
        <weight>50</weight>
        <italic>false</italic>

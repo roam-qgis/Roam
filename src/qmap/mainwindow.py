@@ -90,8 +90,6 @@ class MainWindow(mainwindow_widget, mainwindow_base):
         self.actionSettings.toggled.connect(self.settingswidget.populateControls)
         self.actionSettings.toggled.connect(self.settingswidget.readSettings)
 
-        self.infodock = InfoDock(self.canvas)
-
         def createSpacer(width):
             widget = QWidget()
             widget.setMinimumWidth(width)
@@ -150,7 +148,19 @@ class MainWindow(mainwindow_widget, mainwindow_base):
         self.bar = qmap.messagebaritems.MessageBar(self)
         self.messageBar = qmap.messagebaritems.MessageBar(self.canvas)
 
-        self.canvas_page.layout().insertWidget(0, self.projecttoolbar)
+        from PyQt4.QtGui import QToolBar, QComboBox
+        self.canvas_page.layout().insertWidget(2, self.projecttoolbar)
+        self.toolbar = QToolBar()
+        self.toolbar.setIconSize(QSize(48,48))
+        combo = QComboBox()
+        combo.addItem("Tree Inspection")
+        combo.addItem("Pool Inspection")
+        self.toolbar.addWidget(combo)
+        self.canvas_page.layout().insertWidget(3,self.toolbar)
+
+        self.centralwidget.layout().addWidget(self.statusbar)
+
+        self.infodock = InfoDock(self.canvas)
 
     def raiseerror(self, exctype, value, traceback):
         item = qmap.messagebaritems.ErrorMessage(execinfo=(exctype, value, traceback))
@@ -232,7 +242,7 @@ class MainWindow(mainwindow_widget, mainwindow_base):
             tool.finished.connect(self.openForm)
             tool.error.connect(partial(self.showToolError, layer.icontext))
 
-        self.projecttoolbar.insertAction(self.topspaceraction, action)
+        self.toolbar.addAction(action)
 
         if not tool.isEditTool():
             # Connect the GPS tools strip to the action pressed event.
