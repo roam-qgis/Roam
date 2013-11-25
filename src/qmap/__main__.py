@@ -12,7 +12,10 @@ import sys
 
 from qgis.core import QgsApplication, QgsPythonRunner, QgsProviderRegistry
 from PyQt4.QtGui import QApplication, QFont
-from PyQt4.QtCore import QDir, QCoreApplication
+from PyQt4.QtCore import QDir, QCoreApplication, QLibrary
+
+# We have to import QtSql or else the MSSQL driver will fail to load.
+import PyQt4.QtSql
 
 from qmap.mainwindow import MainWindow
 import qmap.project as project
@@ -31,7 +34,6 @@ with qmap.utils.Timer("Load time:", logging=qmap.utils.info):
     app = QgsApplication(sys.argv, True)
     apppath = QDir(QCoreApplication.applicationDirPath())
     pluginpath = os.path.join(apppath.absolutePath(), "libs")
-    qmap.utils.info('MyPath: ' + pluginpath)
     QgsApplication.setPrefixPath(pluginpath, True)
     QgsApplication.initQgis()
 

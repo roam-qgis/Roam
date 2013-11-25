@@ -35,7 +35,7 @@ setup(
         'dll_excludes': [ 'msvcr80.dll', 'msvcp80.dll',
                         'msvcr80d.dll', 'msvcp80d.dll',
                         'powrprof.dll', 'mswsock.dll' ],
-        'includes': ['PyQt4.QtNetwork', 'sip'],
+        'includes': ['PyQt4.QtNetwork', 'sip', 'PyQt4.QtSql'],
         'skip_archive': True,
       }},
 )

@@ -48,12 +48,22 @@ def build():
     """
     build_plugin()
 
+def builduifiles():
+    for root, dirs, files in os.walk(appsrcopyFilesath):
+        for file in files:
+            if file.endswith('.ui'):
+                uipath = os.path.join(root, file)
+                pypath = join(root, file[:-3] + '.py')
+                run('pyuic4.bat', '-o', pypath, uipath, shell=True)
+
 def compileplugin():
     print " - building resource files..."
     path = join(appsrcopyFilesath, 'editorwidgets', "uifiles")
     run('pyrcc4', '-o', join(path, 'images_rc.py'), join(path, 'images.qrc'))
     run('pyrcc4', '-o', join(appsrcopyFilesath,'resources_rc.py'), join(appsrcopyFilesath,'resources.qrc'))
     run('pyrcc4', '-o', join(appsrcopyFilesath,'syncing/resources_rc.py'), join(appsrcopyFilesath,'syncing/resources.qrc'))
+    print " - building UI files...."
+    builduifiles()
 
 def docs():
     print "Generating docs"
