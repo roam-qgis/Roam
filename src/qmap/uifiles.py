@@ -1,23 +1,22 @@
 import os
 
-from PyQt4 import uic
+from PyQt4.QtGui import QWidget, QDialog, QMainWindow
 
 from qmap import resources_rc
 
+from qmap import (ui_projectwidget, ui_listmodules, ui_listfeatures, ui_helpviewer,
+                 ui_helppage, ui_datatimerpicker, ui_settings, ui_infodock, ui_mainwindow, ui_sync)
 
-def create_ui(filename):
-    basepath = os.path.dirname(__file__)
-    uipath = os.path.join(basepath, filename)
-    return uic.loadUiType(uipath)
-
-project_widget, project_base = create_ui('ui_projectwidget.ui')
-modules_widget, modules_base = create_ui('ui_listmodules.ui')
-features_widget, features_base = create_ui('ui_listfeatures.ui')
-helpviewer_widget, helpviewer_base = create_ui('ui_helpviewer.ui')
-helppage_widget, helppage_base = create_ui('ui_helppage.ui')
-datepicker_widget, datepicker_base = create_ui('ui_datatimerpicker.ui')
-settings_widget, settings_base = create_ui('ui_settings.ui')
-infodock_widget, infodock_base = create_ui('ui_infodock.ui')
+project_widget, project_base = ui_projectwidget.Ui_Form, QWidget
+modules_widget, modules_base = ui_listmodules.Ui_ListModules, QWidget
+features_widget, features_base = ui_listfeatures.Ui_ListFeatueForm, QDialog
+helpviewer_widget, helpviewer_base = ui_helpviewer.Ui_HelpViewer, QDialog
+helppage_widget, helppage_base = ui_helppage.Ui_apphelpwidget, QWidget
+datepicker_widget, datepicker_base = ui_datatimerpicker.Ui_datatimerpicker, QWidget
+settings_widget, settings_base = ui_settings.Ui_settingsWidget, QWidget
+infodock_widget, infodock_base = ui_infodock.Ui_Form, QWidget
 # drawing_widget, drawing_base = create_ui('ui_drawingpad.ui'
-mainwindow_widget, mainwindow_base = create_ui('ui_mainwindow.ui')
-sync_widget, sync_base = create_ui('ui_sync.ui')
+mainwindow_widget, mainwindow_base = ui_mainwindow.Ui_MainWindow, QMainWindow
+sync_widget, sync_base = ui_sync.Ui_Form, QWidget
+
+print mainwindow_base

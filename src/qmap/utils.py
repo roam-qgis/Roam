@@ -39,8 +39,8 @@ warning = logger.warning
 error = logger.error
 critical = logger.critical
 
-curdir = os.path.dirname(__file__)
-settingspath = os.path.join(curdir, '..', 'settings.config')
+curdir = os.getcwd()
+settingspath = os.path.join(os.getcwd(), 'settings.config')
 
 
 class Settings(dict):

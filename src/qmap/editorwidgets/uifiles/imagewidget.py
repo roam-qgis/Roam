@@ -4,7 +4,7 @@ from PyQt4.QtGui import (QLabel, QDialog, QFileDialog,
 from PyQt4.QtCore import (QByteArray, QBuffer,
                         QIODevice, QEvent, QObject, pyqtSignal)
 
-from qmap.editorwidgets.uifiles import create_ui, images_rc, ui_imagewidget
+from qmap.editorwidgets.uifiles import images_rc, ui_imagewidget
 
 
 class QMapImageWidget(ui_imagewidget.Ui_imagewidget, QWidget):

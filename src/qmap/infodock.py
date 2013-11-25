@@ -18,6 +18,7 @@ from qmap import utils
 from qmap.htmlviewer import updateTemplate, openimage
 from qmap.uifiles import (infodock_widget, infodock_base)
 
+import pkgutil
 htmlpath = os.path.join(os.path.dirname(__file__), "info.html")
 
 with open(htmlpath) as f:

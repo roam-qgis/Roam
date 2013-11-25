@@ -4,13 +4,11 @@ from PyQt4.QtGui import QPushButton, QDateTimeEdit, QIcon, QDateEdit
 from PyQt4.QtCore import QDateTime, Qt, QSize
 
 from qmap.editorwidgets.core import WidgetFactory, EditorWidget
-from qmap.editorwidgets.uifiles import create_ui
+from qmap.editorwidgets.uifiles import ui_datewidget
 from qmap.datatimerpickerwidget import DateTimePickerDialog
 
-widget, base = create_ui("datewidget.ui")
 
-
-class DateUiWidget(widget, base):
+class DateUiWidget(ui_datewidget.Ui_Form, ui_datewidget.Ui_Form.__base__):
     def __init__(self, parent=None):
         super(DateUiWidget, self).__init__(parent)
         self.setupUi(self)
