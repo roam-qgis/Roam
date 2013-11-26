@@ -26,6 +26,6 @@ logger.addHandler(filehandler)
 logger.addHandler(stream)
 logger.setLevel(logging.DEBUG)
 
-logger.info('Running Tests')
-
 sys.excepthook = excepthook
+
+logger.info('Running Tests')

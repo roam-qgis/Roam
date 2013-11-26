@@ -1,4 +1,5 @@
 import os
+import sys
 import subprocess
 import types
 import json
@@ -6,7 +7,7 @@ import json
 from functools import partial
 
 from PyQt4 import uic
-from PyQt4.QtCore import pyqtSignal, QObject, QSize, QEvent, QProcess, Qt
+from PyQt4.QtCore import pyqtSignal, QObject, QSize, QEvent, QProcess, Qt, QPyNullVariant
 from PyQt4.QtGui import (QWidget,
                          QDialogButtonBox,
                          QStatusBar,
@@ -23,7 +24,7 @@ from qgis.core import QgsFields
 
 from qmap.editorwidgets.core import WidgetsRegistry
 from qmap.helpviewdialog import HelpViewDialog
-from qmap import nullcheck, utils
+from qmap import utils
 
 style = """
             QCheckBox::indicator {
@@ -94,6 +95,13 @@ def savevalues(layer, values):
 
     with open(savedvaluesfile, 'w') as f:
         json.dump(values, f)
+
+
+def nullcheck(value):
+    if isinstance(value, QPyNullVariant):
+        return None
+    else:
+        return value
 
 
 class FeatureForm(QObject):

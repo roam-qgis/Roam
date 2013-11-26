@@ -1,7 +1,6 @@
 from PyQt4.QtGui import  QCheckBox
 
 from qmap.editorwidgets.core import WidgetFactory, EditorWidget
-from qmap import nullcheck
 
 
 class CheckboxWidget(EditorWidget):

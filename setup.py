@@ -7,15 +7,18 @@ from py2exe.build_exe import py2exe as build_exe
 
 osgeopath = r'C:\OSGeo4W'
 qtimageforms = os.path.join(osgeopath,r'apps\qt4\plugins\imageformats\*')
+qgispluginpath = os.path.join(osgeopath, r'apps\qgis-dev\plugins\*provider.dll' )
 
-datafiles = [(".", [r'src\settings.config']),
+datafiles = [(".", [r'src\settings.config',
+                    r'src\_install\_createshortcut.bat',
+                    r'src\_install\shortcut.vbs']),
             (r'libs\qmap', [r'src\qmap\info.html',
                             r'src\qmap\error.html']),
             (r'libs\qmap\bootstrap', glob.glob(r'src\qmap\bootstrap\*')),
             (r'projects', [r'projects\__init__.py']),
-            # We have to copy the imageformat drivers to the root
-            # folder.
-            (r'imageformats', glob.glob(qtimageforms))]
+            # We have to copy the imageformat drivers to the root folder.
+            (r'imageformats', glob.glob(qtimageforms)),
+            (r'plugins', glob.glob(qgispluginpath))]
 
 roam_target = dict(
                 script='src\qmap\__main__.py',
@@ -26,6 +29,12 @@ roam_target = dict(
 tests_target = dict(
                 script='tests\__main__.py',
                 dest_base='Roam_tests',
+                icon_resources=[(1, "src\icon.ico")]
+            )
+
+projectupdater = dict(
+                script='src\_install\postinstall.py',
+                dest_base='Roam Project Updater',
                 icon_resources=[(1, "src\icon.ico")]
             )
 
@@ -41,7 +50,7 @@ setup(
     author_email='nathan.woodrow@mapsolutions.com.au',
     description='',
     windows=[roam_target],
-    console=['src\_install\postinstall.py', tests_target],
+    console=[projectupdater, tests_target],
     data_files=datafiles,
     zipfile='libs\\',
     options = {'py2exe': {

@@ -5,6 +5,7 @@ from PyQt4.QtCore import (QByteArray, QBuffer,
                         QIODevice, QEvent, QObject, pyqtSignal)
 
 from qmap.editorwidgets.uifiles import images_rc, ui_imagewidget
+import qmap.utils
 
 
 class QMapImageWidget(ui_imagewidget.Ui_imagewidget, QWidget):
@@ -32,7 +33,8 @@ class QMapImageWidget(ui_imagewidget.Ui_imagewidget, QWidget):
 
     def selectImage(self):
         # Show the file picker
-        image = QFileDialog.getOpenFileName(self, "Select Image", "", "Images (*.jpg)")
+        image = QFileDialog.getOpenFileName(self, "Select Image", "")
+        qmap.utils.debug(image)
         if image is None or not image:
             return
 
@@ -54,6 +56,7 @@ class QMapImageWidget(ui_imagewidget.Ui_imagewidget, QWidget):
 
     def loadFromPixMap(self, pixmap):
         if pixmap.isNull():
+            qmap.utils.debug("Image is null")
             self.removeImage()
             return
 

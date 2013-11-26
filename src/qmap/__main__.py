@@ -11,55 +11,58 @@ import os
 import sys
 
 from qgis.core import QgsApplication, QgsPythonRunner, QgsProviderRegistry
-from PyQt4.QtGui import QApplication, QFont
-from PyQt4.QtCore import QDir, QCoreApplication, QLibrary
 
+from PyQt4.QtGui import QApplication, QFont, QImageReader, QImageWriter
+from PyQt4.QtCore import QDir, QCoreApplication, QLibrary
 # We have to import QtSql or else the MSSQL driver will fail to load.
 import PyQt4.QtSql
 
-from qmap.mainwindow import MainWindow
-import qmap.project as project
+# We have to start this here or else the image drivers don't load for some reason
+app = QgsApplication(sys.argv, True)
+
+import qmap
 import qmap.utils
-
-start = time.time()
-
-qmap.utils.info("Loading Roam")
+from qmap.mainwindow import MainWindow
 
 
 def excepthook(errorhandler, exctype, value, traceback):
     errorhandler(exctype, value, traceback)
     qmap.utils.error("Uncaught exception", exc_info=(exctype, value, traceback))
 
-with qmap.utils.Timer("Load time:", logging=qmap.utils.info):
-    app = QgsApplication(sys.argv, True)
-    apppath = QDir(QCoreApplication.applicationDirPath())
-    pluginpath = os.path.join(apppath.absolutePath(), "libs")
-    QgsApplication.setPrefixPath(pluginpath, True)
-    QgsApplication.initQgis()
+start = time.time()
+qmap.utils.info("Loading Roam")
+apppath = QDir(QCoreApplication.applicationDirPath())
 
-    qmap.utils.info(QgsProviderRegistry.instance().libraryDirectory().path())
-    qmap.utils.info(QgsProviderRegistry.instance().pluginList())
+QgsApplication.setPrefixPath(apppath.absolutePath(), True)
+QgsApplication.initQgis()
 
-    QApplication.setStyle("Plastique")
-    QApplication.setFont(QFont('Segoe UI'))
+qmap.utils.info(QgsProviderRegistry.instance().pluginList())
+qmap.utils.info(QImageReader.supportedImageFormats())
+qmap.utils.info(QImageWriter.supportedImageFormats())
+qmap.utils.info(QgsApplication.libraryPaths())
 
-    window = MainWindow()
-    sys.excepthook = partial(excepthook, window.raiseerror)
+QApplication.setStyle("Plastique")
+QApplication.setFont(QFont('Segoe UI'))
 
-    try:
-        projectpath = sys.argv[1]
-    except IndexError:
-        projectpath = os.path.join(os.getcwd(), "projects")
+window = MainWindow()
+sys.excepthook = partial(excepthook, window.raiseerror)
 
-    projects = project.getProjects(projectpath)
-    window.loadprojects(projects)
-    qmap.utils.settings_notify.settings_changed.connect(window.show)
-    qmap.utils.settings_notify.settings_changed.connect(window.updateicons)
+try:
+    projectpath = sys.argv[1]
+except IndexError:
+    projectpath = os.path.join(os.getcwd(), "projects")
 
-    window.actionProject.toggle()
-    window.viewprojects()
-    window.updateUIState(1)
-    window.show()
+projects = qmap.project.getProjects(projectpath)
+window.loadprojects(projects)
+qmap.utils.settings_notify.settings_changed.connect(window.show)
+qmap.utils.settings_notify.settings_changed.connect(window.updateicons)
+
+window.actionProject.toggle()
+window.viewprojects()
+window.updateUIState(1)
+window.show()
+
+qmap.utils.info("Roam Loaded in {}".format(str(time.time() - start)))
 
 app.exec_()
 QgsApplication.exitQgis()

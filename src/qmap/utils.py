@@ -20,7 +20,7 @@ formater = logging.Formatter(log_format)
 console_formater = logging.Formatter(console_format)
 
 filehandler = logging.FileHandler('roam.log', mode='at')
-filehandler.setLevel(logging.INFO)
+filehandler.setLevel(logging.DEBUG)
 filehandler.setFormatter(formater)
 
 stream = logging.StreamHandler(stream=sys.stdout)

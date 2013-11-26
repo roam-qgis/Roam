@@ -1,7 +1,7 @@
 from PyQt4.QtGui import QLineEdit
 
 from qmap.editorwidgets.core import WidgetFactory, EditorWidget
-from qmap import nullcheck
+
 
 class TextWidget(EditorWidget):
     def __init__(self, *args):

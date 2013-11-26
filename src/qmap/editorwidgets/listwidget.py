@@ -3,7 +3,7 @@ from PyQt4.QtGui import QComboBox
 from qgis.core import QgsMessageLog, QgsMapLayerRegistry, QgsExpression, QgsFeatureRequest
 
 from qmap.editorwidgets.core import WidgetFactory, WidgetsRegistry, EditorWidget
-from qmap import nullcheck
+
 
 class ListWidget(EditorWidget):
     def __init__(self, *args):
