@@ -3,6 +3,10 @@ import py2exe
 import glob
 import os
 
+# You are not meant to do this but we don't install using
+# setup.py so no big deal.
+import qmap
+
 from py2exe.build_exe import py2exe as build_exe
 
 osgeopath = r'C:\OSGeo4W'
@@ -40,7 +44,7 @@ projectupdater = dict(
 
 setup(
     name='qmap',
-    version='2.0',
+    version=qmap.__version__,
     packages=['qmap', 'qmap.yaml', 'qmap.syncing', 'qmap.maptools', 'qmap.editorwidgets', 'qmap.editorwidgets.core',
               'qmap.editorwidgets.uifiles', '_install', 'tests'],
     package_dir={'': 'src', 'tests' : 'tests'},

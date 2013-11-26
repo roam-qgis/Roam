@@ -1,6 +1,7 @@
 import os
 from qgis.core import QgsGPSDetector
 
+import qmap
 from qmap import utils
 
 from qmap.uifiles import settings_widget, settings_base
@@ -66,11 +67,6 @@ class SettingsWidget(settings_widget, settings_base):
         
         self.updateCOMPorts()
         # Read version
-        try:
-            with open(os.path.join(curdir, 'version.txt')) as f:
-                version = f.read().strip()
-        except IOError:
-            version = 'unknown'
-            
-        self.versionLabel.setText(version)
+
+        self.versionLabel.setText(qmap.__version__)
         self.populated = True
