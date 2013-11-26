@@ -33,7 +33,12 @@ start = time.time()
 qmap.utils.info("Loading Roam")
 apppath = QDir(QCoreApplication.applicationDirPath())
 
-QgsApplication.setPrefixPath(apppath.absolutePath(), True)
+if '__file__' in globals() and 'src' in __file__:
+    # Setup the paths for OSGeo4w if we are running out of the src folder.
+    QgsApplication.setPrefixPath(r"C:\OSGeo4W\apps\qgis-dev", True)
+else:
+    QgsApplication.setPrefixPath(apppath.absolutePath(), True)
+
 QgsApplication.initQgis()
 
 qmap.utils.info(QgsProviderRegistry.instance().pluginList())
