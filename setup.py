@@ -7,8 +7,6 @@ import os
 # setup.py so no big deal.
 import qmap
 
-from py2exe.build_exe import py2exe as build_exe
-
 osgeopath = r'C:\OSGeo4W'
 qtimageforms = os.path.join(osgeopath,r'apps\qt4\plugins\imageformats\*')
 qgispluginpath = os.path.join(osgeopath, r'apps\qgis-dev\plugins\*provider.dll' )
@@ -19,7 +17,7 @@ datafiles = [(".", [r'src\settings.config',
             (r'libs\qmap', [r'src\qmap\info.html',
                             r'src\qmap\error.html']),
             (r'libs\qmap\bootstrap', glob.glob(r'src\qmap\bootstrap\*')),
-            (r'projects', [r'projects\__init__.py']),
+            (r'projects', [r'src\projects\__init__.py']),
             # We have to copy the imageformat drivers to the root folder.
             (r'imageformats', glob.glob(qtimageforms)),
             (r'plugins', glob.glob(qgispluginpath))]
