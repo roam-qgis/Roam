@@ -3,13 +3,12 @@
 ====================
 
 :Authors:
-    Nathan Woodrow,
-    Damien Smith
+    Digital Mapping Solutions
+    Nathan Woodrow
 
 :Version: 2.0
 
 .. |name| replace:: IntraMaps Roam
-.. |f| image:: images/folder.png
 
 .. contents::
 
@@ -17,127 +16,14 @@
 
 Custom forms are built using Qt Designer and follow a convention based approach in order to save configuration.  The general goal of |name| is to be datasource agnostic in most of what it does.  
 
-|name| was orignally built by Southern Downs Regional Council, and now open sourced under the GPL, in order to aid in field data collection. |name| is maintained by `Nathan <https://github.com/NathanW2>`_ at work and in his spare time.
-
-
-Requirements
+Building
 -------------
-- QGIS 2.0 (latest dev build from OSGeo4W)
+
+- QGIS 2.0 (installed using OSGeo4W)
 - Qt Designer (part of the qt4-devel package)
-- Microsoft Sync Framework (http://www.microsoft.com/en-us/download/details.aspx?id=23217)
+- py2exe
 
-OSGeo4W Packages
-
-- qgis-dev
-- qt4-devel
-
-If you need SQL Server syncing support
-
-- MS SQL Server 2008 (express or greater)
-- .NET 3.5 (or greater)
-- Microsoft Sync Framework (http://www.microsoft.com/en-us/download/details.aspx?id=23217)
-
-Projects
--------------------
-QMap projects are stuctured using a single folder in the qmap-admin/projects folder and deployed
-to the device using QMap Admin tool.
-
-Project stucture is as follows:
-
-::
-
-	---projects
-	    +---Project Name
-	        |   splash.png
-	        |   your project.qgs
-	        |
-	        +---layername
-	        |   |   form.ui
-	        |   |   icon.png
-	        |   |
-	        |   \---help
-	        |           column1.html
-	        |           column2.html
-	        |           column3.html
-	        |
-	        \---_data
-	                {extra data your project needs}
-	               
-	                
-Each project folder must contain a `splash.png`, and a `.qgs` project. One one `.qgs` file is
-supported per project.
-
-Every folder inside the project folder will be treated as an editing layer, the 
-name of the folder must match the name in the .qgs project file.  Each layername folder
-may contain a `icon.png` which will be used on the toolbar, and a help folder which
-contains a html file for each column.
-
-`help` folders are optional.  Any folders starting with _ will be ignored by QMap but still
-copied to the device. 
-
-An example project layout is:
-
-::
-
-	---projects
-	    +---Firebreak Inspection
-	    |   |   fireinspect.qgs
-	    |   |   splash.png
-	    |   |
-	    |   +---Inspection
-	    |   |       fireform.ui
-	    |   |       icon.png
-	    |   
-	    |   
-	    |   
-	    |   
-	    |
-	    \---Trees (Sample)
-	        |   splash.png
-	        |   Trees (Sample).qgs
-	        |
-	        +---trees
-	        |   |   form.ui
-	        |   |   icon.png
-	        |   |
-	        |   \---help
-	        |           Asset_Type.html
-	        |           Condition.html
-	        |           Species.html
-	        |
-	        \---_data
-	                sample_data.sqlite
-
-QMap Layers
---------------
-
-Layers in QMap are defined using plain folders inside the project folder. 
-	
-	.. note::
-	
-	Each layer folder must match the name of the layer in the QGIS project.  
-
-When QMap loads a project it will match each folder name and assign it to the QGIS
-layer of the same name.  QMap will create a new button on the toolbar for each matching
-layer in the project folder.
-
-The form that QMap will use for each layer is defined 
-in the normal QGIS project using the `Fields` tab. The options are `Autogenerate`, `Drag and Drop`,
-`UI-File`. If using the UI-File option the `.ui` file used should be located in layer folder as per
-the example.
-
-Syncing Support
------------------
-Current supported sycning providers
-
-- MS SQL Server 2008
-
-At the moment syncing of MS SQL 2008 Spatial layers is done using MS SQL Sync Framework.
-
-Syncing support is not a requirement to use QMap, nor is it a requirement to use 
-SQL Server 2008 layers in your projects.
-
-Syncing support for different data sources e.g. PostGIS, SpatiaLite might added later.
+See PACKAGE.txt for more details on building.
 
 License
 --------------
