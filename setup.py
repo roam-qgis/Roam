@@ -5,7 +5,7 @@ import os
 
 # You are not meant to do this but we don't install using
 # setup.py so no big deal.
-import qmap
+import roam
 
 osgeopath = r'C:\OSGeo4W'
 qtimageforms = os.path.join(osgeopath,r'apps\qt4\plugins\imageformats\*')
@@ -14,52 +14,52 @@ qgispluginpath = os.path.join(osgeopath, r'apps\qgis-dev\plugins\*provider.dll' 
 datafiles = [(".", [r'src\settings.config',
                     r'src\_install\_createshortcut.bat',
                     r'src\_install\shortcut.vbs']),
-            (r'libs\qmap', [r'src\qmap\info.html',
-                            r'src\qmap\error.html']),
-            (r'libs\qmap\bootstrap', glob.glob(r'src\qmap\bootstrap\*')),
+            (r'libs\roam', [r'src\roam\info.html',
+                            r'src\roam\error.html']),
+            (r'libs\roam\bootstrap', glob.glob(r'src\roam\bootstrap\*')),
             (r'projects', [r'src\projects\__init__.py']),
             # We have to copy the imageformat drivers to the root folder.
             (r'imageformats', glob.glob(qtimageforms)),
             (r'plugins', glob.glob(qgispluginpath))]
 
 roam_target = dict(
-                script='src\qmap\__main__.py',
+                script=r'src\roam\__main__.py',
                 dest_base='Roam',
                 icon_resources=[(1, "src\icon.ico")]
             )
 
 tests_target = dict(
-                script='tests\__main__.py',
+                script=r'tests\__main__.py',
                 dest_base='Roam_tests',
                 icon_resources=[(1, "src\icon.ico")]
             )
 
-projectupdater = dict(
-                script='src\_install\postinstall.py',
+projectupdater_target = dict(
+                script=r'src\_install\postinstall.py',
                 dest_base='Roam Project Updater',
                 icon_resources=[(1, "src\icon.ico")]
             )
 
 setup(
-    name='qmap',
-    version=qmap.__version__,
-    packages=['qmap', 'qmap.yaml', 'qmap.syncing', 'qmap.maptools', 'qmap.editorwidgets', 'qmap.editorwidgets.core',
-              'qmap.editorwidgets.uifiles', '_install', 'tests'],
+    name='roam',
+    version=roam.__version__,
+    packages=['roam', 'roam.yaml', 'roam.syncing', 'roam.maptools', 'roam.editorwidgets', 'roam.editorwidgets.core',
+              'roam.editorwidgets.uifiles', '_install', 'tests'],
     package_dir={'': 'src', 'tests' : 'tests'},
     url='',
     license='GPL',
-    author='nathan.woodrow',
+    author='Digital Mapping Solutions',
     author_email='nathan.woodrow@mapsolutions.com.au',
     description='',
     windows=[roam_target],
-    console=[projectupdater, tests_target],
+    console=[tests_target, projectupdater_target],
     data_files=datafiles,
     zipfile='libs\\',
     options = {'py2exe': {
         'dll_excludes': [ 'msvcr80.dll', 'msvcp80.dll',
                         'msvcr80d.dll', 'msvcp80d.dll',
                         'powrprof.dll', 'mswsock.dll',
-                        'w9xpopen.exe'],
+                        'w9xpopen.exe', 'MSVCP90.dll'],
         'includes': ['PyQt4.QtNetwork', 'sip', 'PyQt4.QtSql'],
         'skip_archive': True,
       }},

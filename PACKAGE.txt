@@ -1,5 +1,9 @@
 NOTE: Package script assumes OSGeo4W install path. 64bit OSGeo4W will be added later.
 
+You need:
+
+- py2exe
+
 1. Download py2exe http://waix.dl.sourceforge.net/project/py2exe/py2exe/0.6.9/py2exe-0.6.9.zip
 2. Extract
 3. Run OSGeo4W.bat in QGIS install folder

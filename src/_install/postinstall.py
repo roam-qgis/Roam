@@ -9,7 +9,7 @@ import sys
 import shutil
 import logging
 import re
-import qmap.yaml
+import roam.yaml
 
 curdir = os.path.abspath(os.path.dirname(__file__))
 pardir = os.path.join(curdir, '..')
@@ -161,4 +161,4 @@ if __name__ == "__main__":
     if args.save:
         path = os.path.join(curdir, 'installervalues.txt')
         with open(path, 'w') as f:
-            qmap.yaml.dump(data=updatedtokens, stream=f, default_flow_style=False)
+            roam.yaml.dump(data=updatedtokens, stream=f, default_flow_style=False)
