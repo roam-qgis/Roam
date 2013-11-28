@@ -15,8 +15,6 @@ class CheckboxWidget(EditorWidget):
                                 QGroupBox::title[ok=true]
                                 { border-radius: 5px; background-color: rgba(200, 255, 197, 150); }"""
 
-        self.buddywidget.setStyleSheet(self.validationstyle)
-
     def createWidget(self, parent):
         return QCheckBox(parent)
 

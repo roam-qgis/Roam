@@ -18,7 +18,10 @@ from PyQt4.QtGui import (QWidget,
                          QLineEdit,
                          QPlainTextEdit,
                          QComboBox,
-                         QDateTimeEdit)
+                         QDateTimeEdit,
+                         QBoxLayout,
+                         QSpacerItem,
+                         QFormLayout)
 
 from qgis.core import QgsFields
 
@@ -103,6 +106,27 @@ def nullcheck(value):
     else:
         return value
 
+def buildfromui(uifile):
+    return uic.loadUi(uifile)
+
+def buildfromauto(layerconfig):
+    fieldsconfig = layerconfig['fields']
+
+    outlayout = QFormLayout()
+    outwidget = QWidget()
+    outwidget.setLayout(outlayout)
+    for field, config in fieldsconfig.iteritems():
+        label = QLabel(field)
+        label.setObjectName(field + "_label")
+        widgetconfig = config['widget']
+        widgettype = widgetconfig['widgettype']
+        widgetwrapper = WidgetsRegistry.createwidget(widgettype, layer=None, field=field, widget=None, label=label, config=None)
+        widget = widgetwrapper.widget
+        widget.setObjectName(field)
+        outlayout.addRow(label, widget)
+    outlayout.addItem(QSpacerItem(10,10))
+    return outwidget
+
 
 class FeatureForm(QObject):
     requiredfieldsupdated = pyqtSignal(bool)
@@ -122,9 +146,12 @@ class FeatureForm(QObject):
     def from_layer(cls, layer, layerconfig, qmaplayer, parent=None):
         formconfig = layerconfig['form']
         formtype = formconfig['type']
+        print formtype
         if formtype == 'custom':
             uifile = os.path.join(qmaplayer.folder, "form.ui")
-            widget = uic.loadUi(uifile)
+            widget = buildfromui(uifile)
+        elif formtype == 'auto':
+            widget = buildfromauto(layerconfig)
         else:
             raise NotImplemented('Other form types not supported yet')
 

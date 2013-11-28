@@ -1,6 +1,6 @@
 from functools import partial
 
-from PyQt4.QtGui import QPushButton, QDateTimeEdit, QIcon, QDateEdit
+from PyQt4.QtGui import QPushButton, QDateTimeEdit, QIcon, QDateEdit, QWidget
 from PyQt4.QtCore import QDateTime, Qt, QSize
 
 from roam.editorwidgets.core import WidgetFactory, EditorWidget
@@ -8,9 +8,9 @@ from roam.editorwidgets.uifiles import ui_datewidget
 from roam.datatimerpickerwidget import DateTimePickerDialog
 
 
-class DateUiWidget(ui_datewidget.Ui_Form, ui_datewidget.Ui_Form.__base__):
+class DateUiWidget(ui_datewidget.Ui_Form, QWidget):
     def __init__(self, parent=None):
-        super(DateUiWidget, self).__init__(parent)
+        super(DateUiWidget, self).__init__()
         self.setupUi(self)
 
 

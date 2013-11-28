@@ -20,7 +20,8 @@ class WidgetsRegistry(object):
 
         factory = WidgetsRegistry.widgets[widgettype]
         widgetwrapper = factory.createWidget(layer, field, widget, label, parent)
-        widgetwrapper.config = config
+        if not config is None:
+            widgetwrapper.config = config
         return widgetwrapper
 
 
