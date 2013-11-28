@@ -1,9 +1,9 @@
 @ECHO OFF
 setlocal enableextensions enabledelayedexpansion
 
-CALL "%~dp0setenv.bat"
-
-python qmap "%~dp0\..\projects"
-
+pushd %~dp0
+CALL setenv.bat
+python roam "%~dp0\projects"
+popd
 pause
 

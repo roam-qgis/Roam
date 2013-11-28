@@ -3,12 +3,20 @@ Main entry file.  This file creates and setups the main window and then hands co
 
 The MainWindow object handles everything from there on in.
 """
-from __future__ import absolute_import
 from functools import partial
-
 import time
 import os
 import sys
+
+RUNNING_IN_SRC = '__file__' in globals() and 'src' in __file__
+
+if RUNNING_IN_SRC:
+    # Setup the paths for OSGeo4w if we are running out of the src folder.
+    os.environ['PATH'] += r";C:\OSGeo4W\bin\;C:\OSGeo4W\apps\qgis\bin"
+    sys.path.append(r"C:\OSGeo4W\apps\qgis\python")
+    os.environ["GDAL_DATA"] = r"C:\OSGeo4W\share\gdal"
+    os.environ["GDAL_DRIVER_PATH"] = r"C:\OSGeo4W\bin\gdalplugins"
+    os.environ["QT_PLUGIN_PATH"] = r"C:\OSGeo4W\apps\Qt4\plugins"
 
 from qgis.core import QgsApplication, QgsPythonRunner, QgsProviderRegistry
 
@@ -24,7 +32,6 @@ import roam
 import roam.utils
 from roam.mainwindow import MainWindow
 
-
 def excepthook(errorhandler, exctype, value, traceback):
     errorhandler(exctype, value, traceback)
     roam.utils.error("Uncaught exception", exc_info=(exctype, value, traceback))
@@ -33,10 +40,10 @@ start = time.time()
 roam.utils.info("Loading Roam")
 apppath = QDir(QCoreApplication.applicationDirPath())
 
-if '__file__' in globals() and 'src' in __file__:
-    # Setup the paths for OSGeo4w if we are running out of the src folder.
-    QgsApplication.setPrefixPath(r"C:\OSGeo4W\apps\qgis-dev", True)
+if RUNNING_IN_SRC:
+    QgsApplication.setPrefixPath(r"C:\OSGeo4W\apps\qgis", True)
 else:
+    # TODO Setup GDAL plugin path
     QgsApplication.setPrefixPath(apppath.absolutePath(), True)
 
 QgsApplication.initQgis()
