@@ -8,11 +8,12 @@ import time
 import os
 import sys
 
-RUNNING_IN_SRC = '__file__' in globals() and 'src' in __file__
+RUNNING_FROM_FILE = '__file__' in globals()
 
-if RUNNING_IN_SRC:
-    # Setup the paths for OSGeo4w if we are running out of the src folder.
-    os.environ['PATH'] += r";C:\OSGeo4W\bin\;C:\OSGeo4W\apps\qgis\bin"
+if RUNNING_FROM_FILE:
+    # Setup the paths for OSGeo4w if we are running from a file
+    # this means that we are not running from a frozen app.
+    os.environ['PATH'] += r";C:\OSGeo4W\bin;C:\OSGeo4W\apps\qgis\bin"
     sys.path.append(r"C:\OSGeo4W\apps\qgis\python")
     os.environ["GDAL_DATA"] = r"C:\OSGeo4W\share\gdal"
     os.environ["GDAL_DRIVER_PATH"] = r"C:\OSGeo4W\bin\gdalplugins"
@@ -40,7 +41,7 @@ start = time.time()
 roam.utils.info("Loading Roam")
 apppath = QDir(QCoreApplication.applicationDirPath())
 
-if RUNNING_IN_SRC:
+if RUNNING_FROM_FILE:
     QgsApplication.setPrefixPath(r"C:\OSGeo4W\apps\qgis", True)
 else:
     # TODO Setup GDAL plugin path

@@ -552,7 +552,6 @@ class MainWindow(mainwindow_widget, mainwindow_base):
         readProject is called by QgsProject once the map layer has been
         populated with all the layers
         """
-        print "_readProject"
         parser = ProjectParser(doc)
         canvasnode = parser.canvasnode
         self.canvas.mapRenderer().readXML(canvasnode)
@@ -561,7 +560,6 @@ class MainWindow(mainwindow_widget, mainwindow_base):
         self.canvas.updateScale()
         self.canvas.freeze(False)
         self.canvas.refresh()
-
         self.projectOpened()
         self.stackedWidget.setCurrentIndex(0)
 

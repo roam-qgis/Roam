@@ -44,5 +44,6 @@
   </qresource>
   <qresource prefix="branding">
     <file alias="logo">resources/branding/logo.png</file>
+    <file alias="dms">resources/branding/dms.png</file>
   </qresource>
 </RCC>

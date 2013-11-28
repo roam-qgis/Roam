@@ -1,5 +1,5 @@
 import os
-from qgis.core import QgsGPSDetector
+from qgis.core import QgsGPSDetector, QGis
 
 import roam
 from roam import utils
@@ -69,4 +69,5 @@ class SettingsWidget(settings_widget, settings_base):
         # Read version
 
         self.versionLabel.setText(roam.__version__)
+        self.qgisapiLabel.setText(str(QGis.QGIS_VERSION))
         self.populated = True
