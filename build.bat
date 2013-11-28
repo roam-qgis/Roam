@@ -1,8 +1,7 @@
 @ECHO OFF
 
-call %~dp0setenv.bat
-
-python %~dp0build.py clean
-python %~dp0build.py
-
+pushd %~dp0
+call setenv.bat
+python setup.py clean && python setup.py build
+popd
 if defined DOUBLECLICKED pause

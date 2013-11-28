@@ -1,18 +1,16 @@
 @ECHO OFF
 
-CD %~dp0
-
-call setenv.bat
+pushd %~dp0
 
 ECHO Building Roam package
 
->package.log 2>&1 (
-	python build.py clean
-	python build.py
-	python setup.py py2exe
+call setenv.bat
+>package.log (
+	python setup.py clean && python setup.py py2exe
 )
+popd
 
 ECHO Package in dist\
-ECHO Check package.log for build log and errors
+ECHO Check package.log for build log
 
 if defined DOUBLECLICKED pause

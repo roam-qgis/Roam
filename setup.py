@@ -1,4 +1,7 @@
 from distutils.core import setup
+from distutils.command.build import build
+from fabricate import run
+
 import py2exe
 import glob
 import os
@@ -40,6 +43,29 @@ projectupdater_target = dict(
                 icon_resources=[(1, "src\icon.ico")]
             )
 
+
+curpath = os.path.dirname(os.path.realpath(__file__))
+appsrcopyFilesath = os.path.join(curpath, "src", 'roam')
+
+def buildqtfiles():
+    for root, dirs, files in os.walk(appsrcopyFilesath):
+        for file in files:
+            filepath = os.path.join(root, file)
+            file, ext = os.path.splitext(filepath)
+            if ext == '.ui':
+                newfile = file + ".py"
+                run('pyuic4.bat', '-o', newfile, filepath, shell=True)
+            elif ext == '.qrc':
+                newfile = file + "_rc.py"
+                run('pyrcc4', '-o', newfile, filepath)
+
+
+class qtbuild(build):
+    def run(self):
+        buildqtfiles()
+        build.run(self)
+
+
 setup(
     name='roam',
     version=roam.__version__,
@@ -55,7 +81,8 @@ setup(
     console=[tests_target, projectupdater_target],
     data_files=datafiles,
     zipfile='libs\\',
-    options = {'py2exe': {
+    cmdclass= {'build': qtbuild},
+    options={'py2exe': {
         'dll_excludes': [ 'msvcr80.dll', 'msvcp80.dll',
                         'msvcr80d.dll', 'msvcp80d.dll',
                         'powrprof.dll', 'mswsock.dll',

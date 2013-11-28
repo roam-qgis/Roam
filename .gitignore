@@ -11,12 +11,9 @@ bin/
 obj/
 *.user
 docs/*.html
-resources_rc.py
-libsyncing.dll
-provisioner.exe
-
-# This is the plugin build folder. We don't ever need to version this.
-build/
+*.msi
+*.exe
+*_rc.py
 
 *.py[co]
 
