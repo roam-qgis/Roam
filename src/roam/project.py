@@ -14,6 +14,8 @@ from roam.maptools import PointTool, InspectionTool, EditTool
 from roam.utils import log
 from roam.syncing import replication
 
+import roam.utils
+
 
 class NoMapToolConfigured(Exception):
     """ 
@@ -38,8 +40,14 @@ def getProjects(projectpath):
     folders = (sorted( [os.path.join(projectpath, item)
                        for item in os.walk(projectpath).next()[1]]))
     
-    for folder in folders:      
-        yield QMapProject(folder)
+    for folder in folders:
+        project = QMapProject(folder)
+        if project.vaild:
+            yield project
+        else:
+            roam.utils.warning("Invaild project")
+            roam.utils.warning(project.error)
+
 
 
 class QMapLayer(object):
@@ -192,6 +200,7 @@ class QMapProject(object):
         self._project = None
         self._splash = None 
         self._isVaild = True
+        self.error = ''
 
     @property
     def name(self):
@@ -212,11 +221,14 @@ class QMapProject(object):
             try:
                 self._project = glob.glob(os.path.join(self.folder, '*.qgs'))[0]
             except IndexError:
+                self.error = "No QGIS project found in the {} project folder".format(self.name)
                 self._isVaild = False
         return self._project
     
     @property
     def vaild(self):
+        if self.settings is None:
+            self._isVaild = False
         return self._isVaild
     
     @property
@@ -292,6 +304,8 @@ class QMapProject(object):
             with open(settings,'r') as f:
                 return yaml.load(f)
         except IOError as e:
+            self._isVaild = False
+            self.error = "No settings.config found in {} project folder".format(self.folder)
             utils.warning(e)
             return None
         
