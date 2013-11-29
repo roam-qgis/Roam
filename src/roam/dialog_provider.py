@@ -3,9 +3,6 @@ import os
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 
-from qgis.core import QgsDistanceArea
-from qgis.gui import QgsMessageBar
-
 from roam.utils import log, info, warning, error
 from roam import featuredialog
 
@@ -26,15 +23,16 @@ class DialogProvider(QObject):
         QObject.__init__(self)
         self.canvas = canvas
 
-    def openDialog(self, feature, layer, settings, qmaplayer, parent=None):
+    def openDialog(self, feature, form, parent=None):
         """
         Opens a form for the given feature
         """
+        layer = form.QGISLayer
         def accept():
             if not form.accept():
                 return
 
-            feature, savedvalues = form.getupdatedfeature()
+            feature, savedvalues = featureform.getupdatedfeature()
             print feature.id()
             if feature.id() > 0:
                 layer.updateFeature(feature)
@@ -55,7 +53,7 @@ class DialogProvider(QObject):
             self.accepted.emit()
 
         def reject():
-            if not form.reject():
+            if not featureform.reject():
                 return
 
             layer.rollBack()
@@ -81,19 +79,16 @@ class DialogProvider(QObject):
         parent.savedataButton.pressed.connect(accept)
         parent.cancelButton.pressed.connect(reject)
 
-        layerconfig = settings[layer.name()]
-
         defaults = featuredialog.loadsavedvalues(layer)
 
-        form = featuredialog.FeatureForm.from_layer(layer, layerconfig, qmaplayer, parent)
-        form.formvalidation.connect(formvalidation)
+        featureform = form.featureform
+        featureform.formvalidation.connect(formvalidation)
 
-        form.bindfeature(feature, defaults)
+        featureform.bindfeature(feature, defaults)
 
-        widget = form.widget
         clearcurrentwidget()
 
-        parent.scrollAreaWidgetContents.layout().insertWidget(0, widget)
+        parent.scrollAreaWidgetContents.layout().insertWidget(0, featureform.widget)
         parent.showdataentry()
         layer.startEditing()
 

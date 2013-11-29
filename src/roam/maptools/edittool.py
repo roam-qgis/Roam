@@ -15,13 +15,14 @@ class EditTool(MapTool):
         and copies selected data from the underlying feature.
     """
     
-    finished = pyqtSignal(QgsVectorLayer, QgsFeature)
-    featuresfound = pyqtSignal(list)
+    finished = pyqtSignal(object, QgsFeature)
+    featuresfound = pyqtSignal(dict)
 
-    def __init__(self, canvas, layers, snapradius = 2):
-        MapTool.__init__(self, canvas, layers)
+    def __init__(self, canvas, forms, snapradius = 2):
+        MapTool.__init__(self, canvas, [])
         self.canvas = canvas
         self.radius = snapradius
+        self.forms = forms
         
         self.band = QgsRubberBand(self.canvas)
         self.band.setColor(QColor.fromRgb(224,162,16))
@@ -52,16 +53,36 @@ class EditTool(MapTool):
             "    ++.....+    ",
             "      ++.++     ",
             "       +.+      "]))
-        
+
+    def addForm(self, form):
+        self.forms.append(form)
+        self.layersupdated.emit(True)
+
+    def layers(self):
+        """
+        Return a set of layers that this edit tool can work on
+        """
+        return set([form.QGISLayer for form in self.forms])
+
+    def formsforlayer(self, layer):
+        for form in self.forms:
+            if form.QGISLayer == layer:
+                yield form
+
+    def reset(self):
+        self.forms = []
+        self.layersupdated.emit(False)
+
     def getFeatures(self, rect):
         rq = QgsFeatureRequest().setFilterRect(rect)
 
         self.band.reset()
-        for layer in self.layers:
-            rq = QgsFeatureRequest().setFilterRect(rect) 
+        for layer in self.layers():
+            forms = list(self.formsforlayer(layer))
+            rq = QgsFeatureRequest().setFilterRect(rect)
             for feature in layer.getFeatures(rq):
                 if feature.isValid():
-                    yield feature, layer
+                    yield feature, forms
                     
     def toSearchRect(self, point):
         searchRadius =  self.canvas.extent().width() * ( self.radius / 100.0 )
@@ -96,6 +117,9 @@ class EditTool(MapTool):
     def canvasReleaseEvent(self, event):
         if self.dragging:
             geometry = self.selectband.asGeometry()
+            if not geometry:
+                return
+
             rect = geometry.boundingBox()            
         else:
             rect = self.toSearchRect(event.pos())
@@ -103,11 +127,16 @@ class EditTool(MapTool):
         self.dragging = False
         self.selectband.reset()
             
-        features = list(self.getFeatures(rect))
+        features = dict(self.getFeatures(rect))
+        print features
             
         if len(features) == 1:
-            feature = features[0]
-            self.finished.emit(feature[1], feature[0])
+            feature = features.keys()[0]
+            forms = features.values()[0]
+            if len(forms) == 1:
+                self.finished.emit(forms[0], feature)
+            else:
+                self.featuresfound.emit(features)
         elif len(features) > 0:
             self.featuresfound.emit(features)
 
@@ -115,9 +144,6 @@ class EditTool(MapTool):
     def activate(self):
         """
         Set the tool as the active tool in the canvas. 
-
-        @note: Should be moved out into qmap.py 
-               and just expose a cursor to be used
         """
         self.canvas.setCursor(self.cursor)
         super(EditTool, self).activate()

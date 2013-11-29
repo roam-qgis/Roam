@@ -109,17 +109,16 @@ def nullcheck(value):
 def buildfromui(uifile):
     return uic.loadUi(uifile)
 
-def buildfromauto(layerconfig):
-    fieldsconfig = layerconfig['fields']
+def buildfromauto(formconfig):
+    widgetsconfig = formconfig['widgets']
 
     outlayout = QFormLayout()
     outwidget = QWidget()
     outwidget.setLayout(outlayout)
-    for field, config in fieldsconfig.iteritems():
+    for field, config in widgetsconfig.iteritems():
         label = QLabel(field)
         label.setObjectName(field + "_label")
-        widgetconfig = config['widget']
-        widgettype = widgetconfig['widgettype']
+        widgettype = config['widgettype']
         widgetwrapper = WidgetsRegistry.createwidget(widgettype, layer=None, field=field, widget=None, label=label, config=None)
         widget = widgetwrapper.widget
         widget.setObjectName(field)
@@ -132,37 +131,35 @@ class FeatureForm(QObject):
     requiredfieldsupdated = pyqtSignal(bool)
     formvalidation = pyqtSignal(bool)
 
-    def __init__(self, widget, layer, layerconfig, qmaplayer):
+    def __init__(self, widget, form, formconfig):
         super(FeatureForm, self).__init__()
         self.widget = widget
-        self.qmaplayer = qmaplayer
-        self.layerconfig = layerconfig
-        self.layer = layer
+        self.form = form
+        self.formconfig = formconfig
         self.boundwidgets = []
         self.requiredfields = {}
         self.feature = None
 
     @classmethod
-    def from_layer(cls, layer, layerconfig, qmaplayer, parent=None):
-        formconfig = layerconfig['form']
+    def from_form(cls, form, parent=None):
+        formconfig = form.settings
         formtype = formconfig['type']
         print formtype
         if formtype == 'custom':
-            uifile = os.path.join(qmaplayer.folder, "form.ui")
+            uifile = os.path.join(form.folder, "form.ui")
             widget = buildfromui(uifile)
         elif formtype == 'auto':
-            widget = buildfromauto(layerconfig)
+            widget = buildfromauto(formconfig)
         else:
             raise NotImplemented('Other form types not supported yet')
 
         widget.setStyleSheet(style)
 
-        form = cls(widget, layer, layerconfig, qmaplayer)
+        featureform = cls(widget, form, formconfig)
         widgettypes = [QLineEdit, QPlainTextEdit, QDateTimeEdit]
-        map(form._installeventfilters, widgettypes)
-        widget.setProperty('featureform', form)
-
-        return form
+        map(featureform._installeventfilters, widgettypes)
+        widget.setProperty('featureform', featureform)
+        return featureform
 
     def _installeventfilters(self, widgettype):
         for widget in self.widget.findChildren(widgettype):
@@ -202,17 +199,22 @@ class FeatureForm(QObject):
             wrapper.validate()
 
     def bindfeature(self, feature, defaults={}):
-        fieldsconfig = self.layerconfig['fields']
+        widgetsconfig = self.formconfig['widgets']
         self.feature = feature
         # Ummm why do the fields go out of scope :S
         self.fields = QgsFields(self.feature.fields())
 
-        for field, config in fieldsconfig.iteritems():
+        for field, config in widgetsconfig.iteritems():
             widget = self.widget.findChild(QWidget, field)
             label = self.widget.findChild(QLabel, "{}_label".format(field))
-            widgetconfig = config['widget']
-            widgettype = widgetconfig['widgettype']
-            widgetwrapper = WidgetsRegistry.createwidget(widgettype, self.layer, field, widget, label, widgetconfig)
+            widgetconfig = config.get('widget', {})
+            widgettype = config['widgettype']
+            widgetwrapper = WidgetsRegistry.createwidget(widgettype,
+                                                         self.form.QGISLayer,
+                                                         field,
+                                                         widget,
+                                                         label,
+                                                         widgetconfig)
 
             if widgetwrapper is None:
                 print("No widget found for {}".format(widgettype))
@@ -245,7 +247,7 @@ class FeatureForm(QObject):
 
     def createhelplinks(self, widget):
         for label in widget.findChildren(QLabel):
-            self.createhelplink(label, self.qmaplayer.folder)
+            self.createhelplink(label, self.form.folder)
 
     def createhelplink(self, label, folder):
         def showhelp(url):

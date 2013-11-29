@@ -39,7 +39,7 @@ from roam.listmodulesdialog import ProjectsWidget
 from roam.floatingtoolbar import FloatingToolBar
 from roam.settingswidget import SettingsWidget
 from roam.projectparser import ProjectParser
-from roam.project import QMapProject, NoMapToolConfigured, ErrorInMapTool
+from roam.project import Project, NoMapToolConfigured, ErrorInMapTool
 from roam.maptools import MoveTool, InfoTool, EditTool, PointTool
 from roam.listfeatureform import ListFeaturesForm
 from roam.infodock import InfoDock
@@ -202,6 +202,7 @@ class MainWindow(mainwindow_widget, mainwindow_base):
 
         self.infodock = InfoDock(self.canvas)
         self.hidedataentry()
+        self.updateicons()
 
     def showmap(self):
         self.actionMap.trigger()
@@ -217,8 +218,8 @@ class MainWindow(mainwindow_widget, mainwindow_base):
         self.clearCapatureTools()
 
         modelindex = self.dataentrymodel.index(index, 0)
-        layer = modelindex.data(Qt.UserRole + 1)
-        self.createCaptureFeature(layer)
+        form = modelindex.data(Qt.UserRole + 1)
+        self.createCaptureFeature(form)
 
     def raiseerror(self, exctype, value, traceback):
         item = roam.messagebaritems.ErrorMessage(execinfo=(exctype, value, traceback))
@@ -292,17 +293,17 @@ class MainWindow(mainwindow_widget, mainwindow_base):
             if action.property('dataentry'):
                 self.toolbar.removeAction(action)
 
-    def createCaptureFeature(self, layer):
-        tool = layer.getMaptool(self.canvas)
-        action = layer.action
+    def createCaptureFeature(self, form):
+        tool = form.getMaptool(self.canvas)
+        action = form.action
         action.toggled.connect(partial(self.setMapTool, tool))
 
         if isinstance(tool, PointTool):
-            add = partial(self.addNewFeature, layer.QGISLayer)
+            add = partial(self.addNewFeature, form)
             tool.geometryComplete.connect(add)
         else:
             tool.finished.connect(self.openForm)
-            tool.error.connect(partial(self.showToolError, layer.icontext))
+            tool.error.connect(partial(self.showToolError, form.label))
 
         # Set the action as a data entry button so we can remove it later.
         action.setProperty("dataentry", True)
@@ -314,39 +315,39 @@ class MainWindow(mainwindow_widget, mainwindow_base):
         self.editgroup.addAction(action)
         self.layerbuttons.append(action)
 
-    def createFormButtons(self, projectlayers):
+    def createFormButtons(self, forms):
         """
             Create buttons for each form that is defined
         """
-        # TODO Refactor me!
-
         self.editTool.reset()
         self.moveTool.reset()
 
-        def editFeature(layer):
-            self.editTool.addLayer(layer.QGISLayer)
+        def editFeature(form):
+            self.editTool.addForm(form)
 
-        def moveFeature(layer):
-            self.moveTool.addLayer(layer.QGISLayer)
+        def moveFeature(form):
+            self.moveTool.addLayer(form.QGISLayer)
 
-        def captureFeature(layer):
-            item = QStandardItem(QIcon(layer.icon), layer.icontext)
-            item.setData(layer, Qt.UserRole + 1)
+        def captureFeature(form):
+            item = QStandardItem(QIcon(form.icon), form.icontext)
+            item.setData(form, Qt.UserRole + 1)
             self.dataentrymodel.appendRow(item)
 
         capabilitityhandlers = {"capture": captureFeature,
                                 "edit": editFeature,
                                 "move": moveFeature}
 
-        for layer in projectlayers:
-            valid, reason = layer.valid
+        failedforms = []
+        for form in forms:
+            valid, reasons = form.valid
             if not valid:
-                roam.utils.log("Layer is invalid for data entry because {}".format(reason))
+                roam.utils.log("Form is invalid for data entry because {}".format(reasons))
+                failedforms.append(form, reasons)
                 continue
 
-            for capability in layer.capabilities:
+            for capability in form.capabilities:
                 try:
-                    capabilitityhandlers[capability](layer)
+                    capabilitityhandlers[capability](form)
                 except NoMapToolConfigured:
                     roam.utils.log("No map tool configured")
                     continue
@@ -355,6 +356,11 @@ class MainWindow(mainwindow_widget, mainwindow_base):
                                                 error.message,
                                                 level=QgsMessageBar.WARNING)
                     continue
+
+        if failedforms:
+            self.bar.pushMessage("Form errors",
+                                 "Looks like some forms couldn't be loaded",
+                                 level=QgsMessageBar.WARNING)
 
         self.dataentrycombo.setCurrentIndex(0)
 
@@ -365,12 +371,12 @@ class MainWindow(mainwindow_widget, mainwindow_base):
         action = self.editgroup.checkedAction()
         if not action:
             return
-        layer = action.data()
+        form = action.data()
         if not layer:
             return
 
         point = self.actionGPS.position
-        self.addNewFeature(layer=layer, geometry=point)
+        self.addNewFeature(form=form, geometry=point)
 
     def clearToolRubberBand(self):
         """
@@ -383,10 +389,11 @@ class MainWindow(mainwindow_widget, mainwindow_base):
             # No clearBand method found, but that's cool.
             pass
 
-    def openForm(self, layer, feature):
+    def openForm(self, form, feature):
         """
         Open the form that is assigned to the layer
         """
+        layer = form.QGISLayer
         if not layer.isEditable():
             layer.startEditing()
 
@@ -414,18 +421,13 @@ class MainWindow(mainwindow_widget, mainwindow_base):
         provider.failedsave.connect(failSave)
         provider.failedsave.connect(cleartempobjects)
 
-        qmaplayer = self.project.layer(layer.name())
+        provider.openDialog(feature=feature, form=form, parent=self)
 
-        provider.openDialog(feature=feature,
-                            layer=layer,
-                            settings=self.project.layersettings,
-                            qmaplayer=qmaplayer,
-                            parent=self)
-
-    def addNewFeature(self, layer, geometry):
+    def addNewFeature(self, form, geometry):
         """
         Add a new new feature to the given layer
         """
+        layer = form.QGISLayer
         fields = layer.pendingFields()
 
         feature = QgsFeature()
@@ -436,7 +438,7 @@ class MainWindow(mainwindow_widget, mainwindow_base):
         for indx in xrange(fields.count()):
             feature[indx] = layer.dataProvider().defaultValue(indx)
 
-        self.openForm(layer, feature)
+        self.openForm(form, feature)
 
     def exit(self):
         """
@@ -509,8 +511,10 @@ class MainWindow(mainwindow_widget, mainwindow_base):
         iconswithtext = roam.utils.settings.get("iconswithtext", False)
         if iconswithtext:
             self.projecttoolbar.setToolButtonStyle(Qt.ToolButtonTextUnderIcon)
+            self.toolbar.setToolButtonStyle(Qt.ToolButtonTextUnderIcon)
         else:
             self.projecttoolbar.setToolButtonStyle(Qt.ToolButtonIconOnly)
+            self.toolbar.setToolButtonStyle(Qt.ToolButtonIconOnly)
 
 
     def show(self):
@@ -569,9 +573,9 @@ class MainWindow(mainwindow_widget, mainwindow_base):
             Called when a new project is opened in QGIS.
         """
         projectpath = QgsProject.instance().fileName()
-        self.project = QMapProject(os.path.dirname(projectpath))
+        self.project = Project.from_folder(os.path.dirname(projectpath))
         self.projectlabel.setText("Project: {}".format(self.project.name))
-        self.createFormButtons(projectlayers=self.project.getConfiguredLayers())
+        self.createFormButtons(forms=self.project.forms)
 
         # Enable the raster layers button only if the project contains a raster layer.
         layers = QgsMapLayerRegistry.instance().mapLayers().values()
@@ -595,7 +599,7 @@ class MainWindow(mainwindow_widget, mainwindow_base):
         roam.utils.log(project)
         roam.utils.log(project.name)
         roam.utils.log(project.projectfile)
-        roam.utils.log(project.vaild)
+        roam.utils.log(project.valid)
 
         (passed, message) = project.onProjectLoad()
 
@@ -614,7 +618,6 @@ class MainWindow(mainwindow_widget, mainwindow_base):
         self.badLayerHandler = BadLayerHandler(callback=self.missingLayers)
         QgsProject.instance().setBadLayerHandler(self.badLayerHandler)
 
-        #self.messageBar.pushMessage("Project Loading","", QgsMessageBar.INFO)
         self.stackedWidget.setCurrentIndex(3)
         self.projectloading_label.setText("Project {} Loading".format(project.name))
         self.projectimage.setPixmap(QPixmap(project.splash))

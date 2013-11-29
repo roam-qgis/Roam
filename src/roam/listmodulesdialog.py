@@ -55,7 +55,7 @@ class ProjectsWidget(modules_widget, modules_base):
     def loadProjectList(self, projects):
         self.moduleList.clear()
         for project in projects:
-            if not project.vaild:
+            if not project.valid:
                 continue
             
             item = QListWidgetItem(self.moduleList, QListWidgetItem.UserType)

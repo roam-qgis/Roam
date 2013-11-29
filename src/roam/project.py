@@ -13,6 +13,8 @@ from qgis.core import QgsMapLayerRegistry, QGis, QgsTolerance, QgsVectorLayer, Q
 from roam.maptools import PointTool, InspectionTool, EditTool
 from roam.utils import log
 from roam.syncing import replication
+from roam.featuredialog import FeatureForm
+from roam.orderedyaml import OrderedDictYAMLLoader
 
 import roam.utils
 
@@ -41,8 +43,8 @@ def getProjects(projectpath):
                        for item in os.walk(projectpath).next()[1]]))
     
     for folder in folders:
-        project = QMapProject(folder)
-        if project.vaild:
+        project = Project.from_folder(folder)
+        if project.valid:
             yield project
         else:
             roam.utils.warning("Invaild project")
@@ -50,41 +52,46 @@ def getProjects(projectpath):
 
 
 
-class QMapLayer(object):
-    """
-    A QMap layer represented as a folder on the disk.
-    """
-    def __init__(self, rootfolder, project):
+class Form(object):
+    def __init__(self, config, rootfolder):
+        self.settings = config
         self.folder = rootfolder
-        self.project = project
-        
+
+    @classmethod
+    def from_config(cls, config, folder):
+        form = cls(config, folder)
+        return form
+
+    @property
+    def label(self):
+        return self.settings.get('label', self.name)
+
     @property
     def name(self):
         return os.path.basename(self.folder)
     
     @property
     def icontext(self):
-        return self.settings.get("label", self.name)
+        return self.label
          
     @property
     def icon(self):
-        utils.log(os.path.join(self.folder, 'icon.png'))
-        return os.path.join(self.folder, 'icon.png')
+        iconpath = os.path.join(self.folder, 'icon.png')
+        utils.log(iconpath)
+        return iconpath
 
     @property
     def QGISLayer(self):
-        # If the layer has a ui file then we need to rewrite to be relative
-        # to the current projects->layer folder as QGIS doesn't support that yet.
-        layer = self._getLayer(self.name)
+        def getlayer(name):
+            try:
+                return QgsMapLayerRegistry.instance().mapLayersByName(name)[0]
+            except IndexError as e:
+                utils.log(e)
+                return None
+
+        layer = getlayer(self.settings["layer"])
         return layer
 
-    def _getLayer(self, name):
-        try:
-            return QgsMapLayerRegistry.instance().mapLayersByName(name)[0]
-        except IndexError as e:
-            utils.log(e)
-            return None
-        
     def getMaptool(self, canvas):
         """
             Returns the map tool configured for this layer.
@@ -157,7 +164,7 @@ class QMapLayer(object):
         """
         The GUI action that can be used for this layer
         """
-        action = QAction(QIcon(self.icon), self.icontext, None)
+        action = QAction(QIcon(self.icon), "Capture", None)
         action.setData(self)
         action.setCheckable(True)
         return action
@@ -173,34 +180,55 @@ class QMapLayer(object):
         return capabilities
     
     @property
-    def settings(self):
-        return self.project.layersettings[self.name]
-
-    @property
     def valid(self):
         """
         Check if this layer is a valid project layer
         """
+        errors = []
+        if not os.path.exists(self.folder):
+            errors.append("Form folder not found")
+
         if self.QGISLayer is None:
-            return False, "Layer {} not found in project".format(self.name)
-        elif self.QGISLayer.type() == QgsMapLayer.RasterLayer:
-            return False, "We don't support raster layers for data entry"
+            errors.append("Layer {} not found in project".format(self.name))
+        elif not self.QGISLayer.type() == QgsMapLayer.VectorLayer:
+            errors.append("We can only support vector layers for data entry")
+
+        if errors:
+            return False, errors
         else:
-            return True, None
+            return True, []
+
+    @property
+    def widgets(self):
+        return self.settings.get('widgets', {})
+
+    @property
+    def featureform(self):
+        return FeatureForm.from_form(self, self.settings)
         
 
-class QMapProject(object):
-    """
-        A QMap project represented as a folder on the disk.  Each project folder
-        can contain a single QGIS project, a splash icon, name, 
-        and a list of layer represented as folders.
-    """
-    def __init__(self, rootfolder):
+class Project(object):
+    def __init__(self, rootfolder, settings):
         self.folder = rootfolder
         self._project = None
         self._splash = None 
-        self._isVaild = True
+        self.valid = True
+        self.settings = {}
         self.error = ''
+
+    @classmethod
+    def from_folder(cls, rootfolder):
+        settings = os.path.join(rootfolder, "settings.config")
+        project = cls(rootfolder, {})
+        try:
+            with open(settings,'r') as f:
+                settings = yaml.load(f, Loader=OrderedDictYAMLLoader)
+                project.settings = settings
+        except IOError as e:
+            project.valid = False
+            project.error = "No settings.config found in {} project folder".format(self.folder)
+            utils.warning(e)
+        return project
 
     @property
     def name(self):
@@ -222,14 +250,8 @@ class QMapProject(object):
                 self._project = glob.glob(os.path.join(self.folder, '*.qgs'))[0]
             except IndexError:
                 self.error = "No QGIS project found in the {} project folder".format(self.name)
-                self._isVaild = False
+                self.valid = False
         return self._project
-    
-    @property
-    def vaild(self):
-        if self.settings is None:
-            self._isVaild = False
-        return self._isVaild
     
     @property
     def splash(self):
@@ -296,21 +318,10 @@ class QMapProject(object):
             log("Not onProjectLoad attribute found")
             print "No onProjectLoad attribute found"
             return True, None
-        
+
     @property
-    def settings(self):
-        settings = os.path.join(self.folder, "settings.config")
-        try:
-            with open(settings,'r') as f:
-                return yaml.load(f)
-        except IOError as e:
-            self._isVaild = False
-            self.error = "No settings.config found in {} project folder".format(self.folder)
-            utils.warning(e)
-            return None
-        
-    @property
-    def layersettings(self):
-        return self.settings["layers"]
-        
-    
+    def forms(self):
+        for form, config in self.settings.get("forms", {}).iteritems():
+            folder = os.path.join(self.folder, form)
+            yield Form.from_config(config, folder)
+
