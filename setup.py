@@ -12,7 +12,7 @@ import roam
 
 osgeopath = r'C:\OSGeo4W'
 qtimageforms = os.path.join(osgeopath,r'apps\qt4\plugins\imageformats\*')
-qgispluginpath = os.path.join(osgeopath, r'apps\qgis-dev\plugins\*provider.dll' )
+qgispluginpath = os.path.join(osgeopath, r'apps\qgis\plugins\*provider.dll' )
 
 datafiles = [(".", [r'src\settings.config',
                     r'src\_install\_createshortcut.bat',
