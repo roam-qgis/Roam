@@ -124,7 +124,7 @@ class InfoDock(infodock_widget, QWidget):
         self.attributesView.setHtml(html, baseurl)
         edittools = len(self.forms[layer.name()]) > 0
         self.editButton.setVisible(edittools)
-        self.moveButton.setVisible(edittools)
+        #self.moveButton.setVisible(edittools)
         self.selection = layer, feature
         self.featureupdated.emit(layer, feature)
 

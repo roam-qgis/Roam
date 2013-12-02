@@ -200,6 +200,7 @@ class MainWindow(mainwindow_widget, mainwindow_base):
         self.infodock = InfoDock(self.canvas)
         self.infodock.requestopenform.connect(self.openForm)
         self.infodock.featureupdated.connect(self.highlightfeatures)
+        self.infodock.hide()
         self.hidedataentry()
         self.updateicons()
         self.flickwidget = FlickCharm()
