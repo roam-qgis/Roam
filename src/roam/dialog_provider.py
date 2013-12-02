@@ -29,7 +29,7 @@ class DialogProvider(QObject):
         """
         layer = form.QGISLayer
         def accept():
-            if not form.accept():
+            if not featureform.accept():
                 return
 
             feature, savedvalues = featureform.getupdatedfeature()
