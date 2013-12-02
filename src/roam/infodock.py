@@ -8,7 +8,7 @@ from PyQt4.QtGui import (QImageReader, QWidget, QFrame, QDialog)
 
 from PyQt4.QtCore import (Qt, QUrl, 
                           QDate,
-                          QDateTime, QTime, QPoint, QSize)
+                          QDateTime, QTime, QPoint, QSize, QEvent)
 from PyQt4.QtWebKit import QWebPage
 
 from qgis.core import (QgsExpression, QgsFeature, 
@@ -34,11 +34,15 @@ class InfoDock(infodock_widget, QWidget):
         self.featureList.currentIndexChanged.connect(self.featureIndexChanged)
         self.attributesView.linkClicked.connect(openimage)
         self.attributesView.page().setLinkDelegationPolicy(QWebPage.DelegateAllLinks)
+        self.parent().installEventFilter(self)
 
-    def showEvent(self, event):
-        self.resize(QSize(self.geometry().width(), self.parent().geometry().size().height()))
-        topright = self.parent().geometry().topRight()
-        self.move(topright - QPoint(self.geometry().width(), 0))
+    def eventFilter(self, object, event):
+        if event.type() == QEvent.Resize:
+            self.resize(self.width(), self.parent().height())
+            self.move(self.parent().width() - self.width() -1, 1)
+
+        return self.parent().eventFilter(object, event)
+
 
     def featureIndexChanged(self, index):
         feature = self.featureList.itemData(index)
