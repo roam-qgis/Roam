@@ -199,10 +199,17 @@ class MainWindow(mainwindow_widget, mainwindow_base):
 
         self.infodock = InfoDock(self.canvas)
         self.infodock.requestopenform.connect(self.openForm)
+        self.infodock.featureupdated.connect(self.highlightfeatures)
         self.hidedataentry()
         self.updateicons()
         self.flickwidget = FlickCharm()
         self.flickwidget.activateOn(self.scrollArea)
+
+    def highlightfeatures(self, layer, feature):
+        if layer is None or feature is None:
+            self.band.reset()
+        else:
+            self.band.setToGeometry(feature.geometry(), layer)
 
     def showmap(self):
         self.actionMap.trigger()

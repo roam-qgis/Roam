@@ -30,6 +30,7 @@ with open(htmlpath) as f:
 
 class InfoDock(infodock_widget, QWidget):
     requestopenform = pyqtSignal(object, QgsFeature)
+    featureupdated = pyqtSignal(object, object)
     def __init__(self, parent):
         super(InfoDock, self).__init__(parent)
         self.setupUi(self)
@@ -125,6 +126,7 @@ class InfoDock(infodock_widget, QWidget):
         self.editButton.setVisible(edittools)
         self.moveButton.setVisible(edittools)
         self.selection = layer, feature
+        self.featureupdated.emit(layer, feature)
 
     def clearResults(self):
         self.results.clear()
@@ -133,6 +135,7 @@ class InfoDock(infodock_widget, QWidget):
         self.attributesView.setHtml('')
         self.editButton.setVisible(False)
         self.moveButton.setVisible(False)
+        self.featureupdated.emit(None, None)
           
     def addLayer(self, layer):
         name = layer.name()
