@@ -2,7 +2,11 @@ from distutils.core import setup
 from distutils.command.build import build
 from fabricate import run
 
-import py2exe
+try:
+    import py2exe
+except ImportError:
+    print "Can't import py2exe. Do you have it installed."
+
 import glob
 import os
 
