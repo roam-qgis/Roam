@@ -119,7 +119,12 @@ def buildfromauto(formconfig):
         label = QLabel(field)
         label.setObjectName(field + "_label")
         widgettype = config['widgettype']
-        widgetwrapper = WidgetsRegistry.createwidget(widgettype, layer=None, field=field, widget=None, label=label, config=None)
+        widgetwrapper = WidgetsRegistry.createwidget(widgettype,
+                                                    layer=None,
+                                                    field=field,
+                                                    widget=None,
+                                                    label=label,
+                                                    config=None)
         widget = widgetwrapper.widget
         widget.setObjectName(field)
         outlayout.addRow(label, widget)
