@@ -226,7 +226,7 @@ class Project(object):
                 project.settings = settings
         except IOError as e:
             project.valid = False
-            project.error = "No settings.config found in {} project folder".format(self.folder)
+            project.error = "No settings.config found in {} project folder".format(folder)
             utils.warning(e)
         return project
 
