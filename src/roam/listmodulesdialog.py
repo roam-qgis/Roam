@@ -1,6 +1,7 @@
 from PyQt4.QtCore import pyqtSignal, QSize
 from PyQt4.QtGui import QListWidgetItem, QPixmap
 
+from roam.flickwidget import FlickCharm
 from roam.uifiles import (project_widget, project_base,
                          modules_widget, modules_base)
 
@@ -50,6 +51,8 @@ class ProjectsWidget(modules_widget, modules_base):
     def __init__(self, parent = None):
         super(ProjectsWidget, self).__init__(parent)
         self.setupUi(self)
+        self.flickcharm = FlickCharm()
+        self.flickcharm.activateOn(self.moduleList)
         self.moduleList.itemClicked.connect(self.openProject)
 
     def loadProjectList(self, projects):

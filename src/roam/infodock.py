@@ -15,6 +15,7 @@ from qgis.core import (QgsExpression, QgsFeature,
                        QgsMapLayer)
 
 from roam import utils
+from roam.flickwidget import FlickCharm
 from roam.htmlviewer import updateTemplate, openimage
 from roam.uifiles import (infodock_widget, infodock_base)
 
@@ -29,6 +30,8 @@ class InfoDock(infodock_widget, QWidget):
     def __init__(self, parent):
         super(InfoDock, self).__init__(parent)
         self.setupUi(self)
+        self.charm = FlickCharm()
+        self.charm.activateOn(self.attributesView)
         self.results = collections.defaultdict(list)
         self.layerList.currentIndexChanged.connect(self.layerIndexChanged)
         self.featureList.currentIndexChanged.connect(self.featureIndexChanged)

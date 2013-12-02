@@ -32,6 +32,7 @@ import getpass
 import sys
 import os
 
+from roam.flickwidget import FlickCharm
 from roam.gps_action import GPSAction
 from roam.dialog_provider import DialogProvider
 from roam.uifiles import mainwindow_widget, mainwindow_base
@@ -203,6 +204,8 @@ class MainWindow(mainwindow_widget, mainwindow_base):
         self.infodock = InfoDock(self.canvas)
         self.hidedataentry()
         self.updateicons()
+        self.flickwidget = FlickCharm()
+        self.flickwidget.activateOn(self.scrollArea)
 
     def showmap(self):
         self.actionMap.trigger()
