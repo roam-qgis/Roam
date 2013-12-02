@@ -1,4 +1,4 @@
-from PyQt4.QtCore import Qt, QFileInfo, QDir, QSize, QModelIndex
+from PyQt4.QtCore import Qt, QFileInfo, QDir, QSize, QModelIndex, QEvent
 from PyQt4.QtGui import (QActionGroup
                         ,QWidget
                         ,QSizePolicy
@@ -205,6 +205,14 @@ class MainWindow(mainwindow_widget, mainwindow_base):
         self.updateicons()
         self.flickwidget = FlickCharm()
         self.flickwidget.activateOn(self.scrollArea)
+        self.canvas.installEventFilter(self)
+
+    def eventFilter(self, object, event):
+        if object == self.canvas and event.type() == QEvent.Resize:
+            self.infodock.resize(self.infodock.width(), self.canvas.height())
+            self.infodock.move(self.canvas.width() - self.infodock.width() -1, 1)
+
+        return object.eventFilter(object, event)
 
     def highlightfeatures(self, layer, feature):
         if layer is None or feature is None:

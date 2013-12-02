@@ -43,8 +43,16 @@ class InfoDock(infodock_widget, QWidget):
         self.featureList.currentIndexChanged.connect(self.featureIndexChanged)
         self.attributesView.linkClicked.connect(openimage)
         self.attributesView.page().setLinkDelegationPolicy(QWebPage.DelegateAllLinks)
-        self.parent().installEventFilter(self)
+        self.grabGesture(Qt.SwipeGesture)
+        self.setAttribute(Qt.WA_AcceptTouchEvents)
         self.editButton.pressed.connect(self.openform)
+
+    def event(self, event):
+        if event.type() == QEvent.Gesture:
+            gesture = event.gesture(Qt.SwipeGesture)
+            if gesture:
+                self.pagenext()
+        return QWidget.event(self, event)
 
     def openform(self):
         layer, feature = self.selection
@@ -52,12 +60,12 @@ class InfoDock(infodock_widget, QWidget):
         form = forms[0]
         self.requestopenform.emit(form, feature)
 
-    def eventFilter(self, object, event):
-        if event.type() == QEvent.Resize:
-            self.resize(self.width(), self.parent().height())
-            self.move(self.parent().width() - self.width() -1, 1)
 
-        return self.parent().eventFilter(object, event)
+    def pagenext(self):
+        index = self.featureList.currentIndex() + 1
+        if index > self.featureList.count():
+            index = 0
+        self.featureList.setCurrentIndex(index)
 
     def featureIndexChanged(self, index):
         feature = self.featureList.itemData(index)

@@ -67,7 +67,7 @@ class FlickCharm(QObject):
 
     def eventFilter(self, object, event):
         if not object.isWidgetType():
-            return False;
+            return False
 
         eventType = event.type()
         if eventType != QEvent.MouseButtonPress and \
