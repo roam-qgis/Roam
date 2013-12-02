@@ -345,7 +345,7 @@ class MainWindow(mainwindow_widget, mainwindow_base):
             valid, reasons = form.valid
             if not valid:
                 roam.utils.log("Form is invalid for data entry because {}".format(reasons))
-                failedforms.append(form, reasons)
+                failedforms.append((form, reasons))
                 continue
 
             for capability in form.capabilities:
