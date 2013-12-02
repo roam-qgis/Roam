@@ -73,7 +73,11 @@ class Form(object):
     @property
     def icontext(self):
         return self.label
-         
+
+    @property
+    def layername(self):
+        return self.settings['layer']
+
     @property
     def icon(self):
         iconpath = os.path.join(self.folder, 'icon.png')
@@ -319,9 +323,13 @@ class Project(object):
             print "No onProjectLoad attribute found"
             return True, None
 
+    def formsforlayer(self, layername):
+        for form in self.forms:
+            if form.layername == layername:
+                yield form
+
     @property
     def forms(self):
         for form, config in self.settings.get("forms", {}).iteritems():
             folder = os.path.join(self.folder, form)
             yield Form.from_config(config, folder)
-

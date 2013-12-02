@@ -8,7 +8,9 @@ from PyQt4.QtGui import (QImageReader, QWidget, QFrame, QDialog)
 
 from PyQt4.QtCore import (Qt, QUrl, 
                           QDate,
-                          QDateTime, QTime, QPoint, QSize, QEvent)
+                          QDateTime, QTime,
+                          QPoint, QSize,
+                          QEvent, pyqtSignal)
 from PyQt4.QtWebKit import QWebPage
 
 from qgis.core import (QgsExpression, QgsFeature, 
@@ -27,9 +29,12 @@ with open(htmlpath) as f:
 
 
 class InfoDock(infodock_widget, QWidget):
+    requestopenform = pyqtSignal(object, QgsFeature)
     def __init__(self, parent):
         super(InfoDock, self).__init__(parent)
         self.setupUi(self)
+        self.forms = {}
+        self.selection = (None, None)
         self.charm = FlickCharm()
         self.charm.activateOn(self.attributesView)
         self.results = collections.defaultdict(list)
@@ -38,6 +43,13 @@ class InfoDock(infodock_widget, QWidget):
         self.attributesView.linkClicked.connect(openimage)
         self.attributesView.page().setLinkDelegationPolicy(QWebPage.DelegateAllLinks)
         self.parent().installEventFilter(self)
+        self.editButton.pressed.connect(self.openform)
+
+    def openform(self):
+        layer, feature = self.selection
+        forms = self.forms[layer.name()]
+        form = forms[0]
+        self.requestopenform.emit(form, feature)
 
     def eventFilter(self, object, event):
         if event.type() == QEvent.Resize:
@@ -45,7 +57,6 @@ class InfoDock(infodock_widget, QWidget):
             self.move(self.parent().width() - self.width() -1, 1)
 
         return self.parent().eventFilter(object, event)
-
 
     def featureIndexChanged(self, index):
         feature = self.featureList.itemData(index)
@@ -74,8 +85,9 @@ class InfoDock(infodock_widget, QWidget):
     def _addFeature(self, display, feature):
         self.featureList.addItem(display, feature)
         
-    def setResults(self, results):
+    def setResults(self, results, forms):
         self.clearResults()
+        self.forms = forms
         for result in results:
             self._addResult(result)
         self.layerIndexChanged(0)
@@ -109,12 +121,18 @@ class InfoDock(infodock_widget, QWidget):
         base = os.path.dirname(os.path.abspath(__file__))
         baseurl = QUrl.fromLocalFile(base + '\\')
         self.attributesView.setHtml(html, baseurl)
-        
+        edittools = len(self.forms[layer.name()]) > 0
+        self.editButton.setVisible(edittools)
+        self.moveButton.setVisible(edittools)
+        self.selection = layer, feature
+
     def clearResults(self):
         self.results.clear()
         self.layerList.clear()
         self.featureList.clear()
         self.attributesView.setHtml('')
+        self.editButton.setVisible(False)
+        self.moveButton.setVisible(False)
           
     def addLayer(self, layer):
         name = layer.name()

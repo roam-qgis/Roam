@@ -185,23 +185,20 @@ class MainWindow(mainwindow_widget, mainwindow_base):
         self.messageBar = roam.messagebaritems.MessageBar(self.canvas)
 
         self.canvas_page.layout().insertWidget(2, self.projecttoolbar)
-        self.toolbar = QToolBar()
-        iconsize = QSize(48, 48)
-        self.toolbar.setIconSize(iconsize)
         self.dataentrymodel = QStandardItemModel(self)
         self.dataentrycombo = QComboBox()
-        self.dataentrycombo.setIconSize(iconsize)
+        self.dataentrycombo.setIconSize(QSize(32,32))
         self.dataentrycombo.setSizeAdjustPolicy(QComboBox.AdjustToContents)
         self.dataentrycombo.setModel(self.dataentrymodel)
         self.dataentrycombo.currentIndexChanged.connect(self.dataentrychanged)
-        self.toolbar.addWidget(self.dataentrycombo)
-        self.canvas_page.layout().insertWidget(3, self.toolbar)
+        self.projecttoolbar.addWidget(self.dataentrycombo)
 
         self.centralwidget.layout().addWidget(self.statusbar)
 
         self.actionGPSFeature.setProperty('dataentry', True)
 
         self.infodock = InfoDock(self.canvas)
+        self.infodock.requestopenform.connect(self.openForm)
         self.hidedataentry()
         self.updateicons()
         self.flickwidget = FlickCharm()
@@ -292,9 +289,9 @@ class MainWindow(mainwindow_widget, mainwindow_base):
         self.messageBar.pushMessage(label, message, QgsMessageBar.WARNING)
 
     def clearCapatureTools(self):
-        for action in self.toolbar.actions():
+        for action in self.projecttoolbar.actions():
             if action.property('dataentry'):
-                self.toolbar.removeAction(action)
+                self.projecttoolbar.removeAction(action)
 
     def createCaptureFeature(self, form):
         tool = form.getMaptool(self.canvas)
@@ -313,8 +310,8 @@ class MainWindow(mainwindow_widget, mainwindow_base):
 
         self.actionGPSFeature.setVisible(not tool.isEditTool())
 
-        self.toolbar.addAction(action)
-        self.toolbar.addAction(self.actionGPSFeature)
+        self.projecttoolbar.addAction(action)
+        self.projecttoolbar.addAction(self.actionGPSFeature)
         self.editgroup.addAction(action)
         self.layerbuttons.append(action)
 
@@ -345,7 +342,7 @@ class MainWindow(mainwindow_widget, mainwindow_base):
             valid, reasons = form.valid
             if not valid:
                 roam.utils.log("Form is invalid for data entry because {}".format(reasons))
-                failedforms.append(form, reasons)
+                failedforms.append((form, reasons))
                 continue
 
             for capability in form.capabilities:
@@ -452,7 +449,12 @@ class MainWindow(mainwindow_widget, mainwindow_base):
     def showInfoResults(self, results):
         print results
         self.infodock.clearResults()
-        self.infodock.setResults(results)
+        forms = {}
+        for result in results:
+            layername = result.mLayer.name()
+            if not layername in forms:
+                forms[layername] = list(self.project.formsforlayer(layername))
+        self.infodock.setResults(results, forms)
         self.infodock.show()
 
     def showFeatureSelection(self, features):
@@ -514,11 +516,8 @@ class MainWindow(mainwindow_widget, mainwindow_base):
         iconswithtext = roam.utils.settings.get("iconswithtext", False)
         if iconswithtext:
             self.projecttoolbar.setToolButtonStyle(Qt.ToolButtonTextUnderIcon)
-            self.toolbar.setToolButtonStyle(Qt.ToolButtonTextUnderIcon)
         else:
             self.projecttoolbar.setToolButtonStyle(Qt.ToolButtonIconOnly)
-            self.toolbar.setToolButtonStyle(Qt.ToolButtonIconOnly)
-
 
     def show(self):
         """
@@ -539,19 +538,7 @@ class MainWindow(mainwindow_widget, mainwindow_base):
         Update the UI state to reflect the currently selected
         page in the stacked widget
         """
-
-        def setToolbarsActive(enabled):
-            self.projecttoolbar.setEnabled(enabled)
-            self.extraaddtoolbar.setVisible(enabled)
-
-        def setPanelsVisible(visible):
-            for panel in self.panels:
-                panel.setVisible(visible)
-
-        ismapview = page == 0
-        setToolbarsActive(ismapview)
-        setPanelsVisible(ismapview)
-        self.infodock.hide()
+        pass
 
     @roam.utils.timeit
     def _readProject(self, doc):
