@@ -16,6 +16,7 @@ from PyQt4.QtGui import (QActionGroup
                         ,QToolButton
                         ,QAction
                         ,QCursor)
+
 from qgis.core import (QgsProjectBadLayerHandler
                         ,QgsPalLabeling
                         ,QgsMapLayerRegistry
@@ -27,7 +28,8 @@ from qgis.core import (QgsProjectBadLayerHandler
 from qgis.gui import (QgsMessageBar
                     ,QgsMapToolZoom
                     ,QgsMapToolTouch
-                    ,QgsRubberBand)
+                    ,QgsRubberBand
+                    ,QgsMapCanvas)
 
 from functools import partial
 
@@ -85,6 +87,7 @@ class MainWindow(mainwindow_widget, mainwindow_base):
         self.project = None
         self.canvas.setCanvasColor(Qt.white)
         self.canvas.enableAntiAliasing(True)
+        self.canvas.setWheelAction(QgsMapCanvas.WheelZoomToMouseCursor)
         pal = QgsPalLabeling()
         self.canvas.mapRenderer().setLabelingEngine(pal)
         self.menuGroup = QActionGroup(self)
