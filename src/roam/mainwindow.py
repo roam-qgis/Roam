@@ -618,6 +618,7 @@ class MainWindow(mainwindow_widget, mainwindow_base):
         hasrasters = any(layer.type() == QgsMapLayer.RasterLayer for layer in layers)
         self.actionRaster.setEnabled(hasrasters)
         self.defaultextent = self.canvas.extent()
+        roam.utils.info("Extent: {}".format(self.defaultextent.toString()))
         # TODO Connect sync providers
         #self.connectSyncProviders(project)
 
