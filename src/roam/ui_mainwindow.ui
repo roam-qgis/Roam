@@ -786,7 +786,10 @@ QToolButton {
      <normaloff>:/icons/gpsadd</normaloff>:/icons/gpsadd</iconset>
    </property>
    <property name="text">
-    <string>Feature at GPS</string>
+    <string>Capture at GPS</string>
+   </property>
+   <property name="toolTip">
+    <string>Capture at GPS</string>
    </property>
   </action>
   <action name="actionDataEntry">

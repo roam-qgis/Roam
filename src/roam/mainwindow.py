@@ -13,7 +13,8 @@ from PyQt4.QtGui import (QActionGroup
                         ,QIcon
                         ,QToolBar
                         ,QComboBox
-                        ,QToolButton)
+                        ,QToolButton
+                        ,QAction)
 from qgis.core import (QgsProjectBadLayerHandler
                         ,QgsPalLabeling
                         ,QgsMapLayerRegistry
@@ -191,7 +192,7 @@ class MainWindow(mainwindow_widget, mainwindow_base):
         self.dataentrycombo.setSizeAdjustPolicy(QComboBox.AdjustToContents)
         self.dataentrycombo.setModel(self.dataentrymodel)
         self.dataentrycombo.currentIndexChanged.connect(self.dataentrychanged)
-        self.projecttoolbar.addWidget(self.dataentrycombo)
+        self.projecttoolbar.insertWidget(self.topspaceraction, self.dataentrycombo)
 
         self.centralwidget.layout().addWidget(self.statusbar)
 
@@ -231,11 +232,11 @@ class MainWindow(mainwindow_widget, mainwindow_base):
         self.actionDataEntry.trigger()
 
     def dataentrychanged(self, index):
-        self.clearCapatureTools()
+        wasactive = self.clearCapatureTools()
 
         modelindex = self.dataentrymodel.index(index, 0)
         form = modelindex.data(Qt.UserRole + 1)
-        self.createCaptureFeature(form)
+        self.createCaptureButtons(form, wasactive)
 
     def raiseerror(self, exctype, value, traceback):
         item = roam.messagebaritems.ErrorMessage(execinfo=(exctype, value, traceback))
@@ -305,13 +306,20 @@ class MainWindow(mainwindow_widget, mainwindow_base):
         self.messageBar.pushMessage(label, message, QgsMessageBar.WARNING)
 
     def clearCapatureTools(self):
+        captureselected = False
         for action in self.projecttoolbar.actions():
+            if action.objectName() == "capture" and action.isChecked():
+                captureselected = True
+
             if action.property('dataentry'):
                 self.projecttoolbar.removeAction(action)
+        return captureselected
 
-    def createCaptureFeature(self, form):
+    def createCaptureButtons(self, form, wasselected):
         tool = form.getMaptool(self.canvas)
-        action = form.action
+        action = QAction(QIcon(":/icons/capture"), "Capture", None)
+        action.setObjectName("capture")
+        action.setCheckable(True)
         action.toggled.connect(partial(self.setMapTool, tool))
 
         if isinstance(tool, PointTool):
@@ -326,10 +334,12 @@ class MainWindow(mainwindow_widget, mainwindow_base):
 
         self.actionGPSFeature.setVisible(not tool.isEditTool())
 
-        self.projecttoolbar.addAction(action)
-        self.projecttoolbar.addAction(self.actionGPSFeature)
+        self.projecttoolbar.insertAction(self.topspaceraction, action)
+        self.projecttoolbar.insertAction(self.topspaceraction, self.actionGPSFeature)
         self.editgroup.addAction(action)
         self.layerbuttons.append(action)
+
+        action.setChecked(wasselected)
 
     def createFormButtons(self, forms):
         """

@@ -41,6 +41,7 @@
     <file alias="info">resources/images/info.png</file>
     <file alias="save">resources/images/save.png</file>
     <file alias="dataentry">resources/images/data.png</file>
+    <file alias="capture">resources/images/capture.png</file>
   </qresource>
   <qresource prefix="branding">
     <file alias="logo">resources/branding/logo.png</file>
