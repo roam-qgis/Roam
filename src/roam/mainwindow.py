@@ -21,7 +21,8 @@ from qgis.core import (QgsProjectBadLayerHandler
                         ,QgsProject
                         ,QgsMapLayer
                         ,QgsFeature
-                        ,QgsFields)
+                        ,QgsFields
+                        ,QgsGeometry)
 from qgis.gui import (QgsMessageBar
                     ,QgsMapToolZoom
                     ,QgsMapToolTouch
@@ -394,14 +395,11 @@ class MainWindow(mainwindow_widget, mainwindow_base):
         """
         Add a record at the current GPS location.
         """
-        action = self.editgroup.checkedAction()
-        if not action:
-            return
-        form = action.data()
-        if not layer:
-            return
-
+        index = self.dataentrycombo.currentIndex()
+        modelindex = self.dataentrymodel.index(index, 0)
+        form = modelindex.data(Qt.UserRole + 1)
         point = self.actionGPS.position
+        point = QgsGeometry.fromPoint(point)
         self.addNewFeature(form=form, geometry=point)
 
     def clearToolRubberBand(self):
