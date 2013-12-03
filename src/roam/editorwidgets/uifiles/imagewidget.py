@@ -88,6 +88,8 @@ class QMapImageWidget(ui_imagewidget.Ui_imagewidget, QWidget):
     @isDefault.setter
     def isDefault(self, value):
         self._isdefault = value
+        self.selectbutton.setVisible(not value)
+        self.deletebutton.setVisible(not value)
         if value:
             self.imageloaded.emit()
         else:
