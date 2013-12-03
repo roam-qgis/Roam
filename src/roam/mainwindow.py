@@ -142,22 +142,26 @@ class MainWindow(mainwindow_widget, mainwindow_base):
 
         self.topspaceraction = self.projecttoolbar.insertWidget(self.actionGPS, gpsspacewidget)
 
-        def _createSideLabel(text):
+        def createlabel(text):
             style = """
                 QLabel {
                         color: #706565;
                         font: 14px "Calibri" ;
                         }"""
             label = QLabel(text)
-            #label.setAlignment(Qt.AlignCenter)
             label.setStyleSheet(style)
 
             return label
 
-        self.projectlabel = _createSideLabel("Project: {project}")
-        self.userlabel = _createSideLabel("User: {user}".format(user=getpass.getuser()))
+        self.projectlabel = createlabel("Project: {project}")
+        self.userlabel = createlabel("User: {user}".format(user=getpass.getuser()))
+        self.positionlabel = createlabel('')
         self.statusbar.addWidget(self.projectlabel)
         self.statusbar.addWidget(self.userlabel)
+        spacer = createSpacer()
+        spacer.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
+        self.statusbar.addWidget(spacer)
+        self.statusbar.addWidget(self.positionlabel)
 
         self.menutoolbar.insertWidget(self.actionQuit, sidespacewidget2)
         self.menutoolbar.insertWidget(self.actionProject, sidespacewidget)
@@ -212,6 +216,11 @@ class MainWindow(mainwindow_widget, mainwindow_base):
         self.flickwidget = FlickCharm()
         self.flickwidget.activateOn(self.scrollArea)
         self.canvas.installEventFilter(self)
+        self.canvas.extentsChanged.connect(self.updatestatuslabel)
+
+    def updatestatuslabel(self):
+        extent = self.canvas.extent()
+        self.positionlabel.setText("Map Center: {}".format(extent.center().toString()))
 
     def eventFilter(self, object, event):
         if object == self.canvas and event.type() == QEvent.Resize:
