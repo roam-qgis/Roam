@@ -4,7 +4,7 @@ from string import Template
 
 from PyQt4.QtCore import QUrl, QByteArray, QDate, QDateTime, QTime
 from PyQt4.QtGui import (QDialog, QWidget, QGridLayout, QPixmap,
-                         QImageReader)
+                         QImageReader, QDesktopServices)
 from PyQt4.QtWebKit import QWebView, QWebPage
 
 from roam import utils
@@ -62,9 +62,13 @@ def updateTemplate(data, template):
 def openimage(url):
     key = url.toString().lstrip('file://')
     try:
-        data, imagetype = self.images[os.path.basename(key)]
+        data, imagetype = images[os.path.basename(key)]
     except KeyError:
+        # It's not a image so lets just pass it of as a normal
+        # URL
+        QDesktopServices.openUrl(url)
         return
+
     pix = QPixmap()
     if imagetype == 'base64':
         pix.loadFromData(data)
