@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>833</width>
-    <height>679</height>
+    <height>653</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -83,6 +83,10 @@
         QComboBox {
             border: 1px solid #d3d3d3;
         }
+
+		 QComboBox::down-arrow {
+    		 image: url(:icons/down);
+ 		}
 
 	</string>
   </property>
@@ -307,7 +311,7 @@
              <x>0</x>
              <y>0</y>
              <width>686</width>
-             <height>441</height>
+             <height>415</height>
             </rect>
            </property>
            <property name="styleSheet">
@@ -722,7 +726,7 @@ QToolButton {
     <bool>true</bool>
    </property>
    <property name="icon">
-    <iconset resource="resources.qrc">
+    <iconset>
      <normaloff>:/icons/edittools</normaloff>:/icons/edittools</iconset>
    </property>
    <property name="text">
