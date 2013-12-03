@@ -14,7 +14,8 @@ from PyQt4.QtGui import (QActionGroup
                         ,QToolBar
                         ,QComboBox
                         ,QToolButton
-                        ,QAction)
+                        ,QAction
+                        ,QCursor)
 from qgis.core import (QgsProjectBadLayerHandler
                         ,QgsPalLabeling
                         ,QgsMapLayerRegistry
@@ -258,6 +259,11 @@ class MainWindow(mainwindow_widget, mainwindow_base):
         def connectAction(action, tool):
             action.toggled.connect(partial(self.setMapTool, tool))
 
+        def cursor(name):
+            pix = QPixmap(name)
+            pix = pix.scaled(QSize(24,24))
+            return QCursor(pix)
+
         self.zoomInTool = QgsMapToolZoom(self.canvas, False)
         self.zoomOutTool = QgsMapToolZoom(self.canvas, True)
         self.panTool = QgsMapToolTouch(self.canvas)
@@ -271,6 +277,10 @@ class MainWindow(mainwindow_widget, mainwindow_base):
         connectAction(self.actionMove, self.moveTool)
         connectAction(self.actionInfo, self.infoTool)
         connectAction(self.actionEdit_Attributes, self.editTool)
+
+        self.zoomInTool.setCursor(cursor(':/icons/in'))
+        self.zoomOutTool.setCursor(cursor(':/icons/out'))
+        self.infoTool.setCursor(cursor(':/icons/info'))
 
         self.actionRaster.triggered.connect(self.toggleRasterLayers)
 
