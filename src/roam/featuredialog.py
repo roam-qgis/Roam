@@ -26,7 +26,6 @@ from PyQt4.QtGui import (QWidget,
 from qgis.core import QgsFields
 
 from roam.editorwidgets.core import WidgetsRegistry
-from roam.helpviewdialog import HelpViewDialog
 from roam import utils
 
 style = """
@@ -135,6 +134,7 @@ def buildfromauto(formconfig):
 class FeatureForm(QObject):
     requiredfieldsupdated = pyqtSignal(bool)
     formvalidation = pyqtSignal(bool)
+    helprequest = pyqtSignal(str)
 
     def __init__(self, widget, form, formconfig):
         super(FeatureForm, self).__init__()
@@ -259,14 +259,6 @@ class FeatureForm(QObject):
             self.createhelplink(label, self.form.folder)
 
     def createhelplink(self, label, folder):
-        def showhelp(url):
-            """
-            Show the help viewer for the given field
-            """
-            dlg = HelpViewDialog()
-            dlg.loadFile(url)
-            dlg.exec_()
-
         def getHelpFile():
             # TODO We could just use the tooltip from the control to show help
             # rather then having to save out a html file.
@@ -287,7 +279,7 @@ class FeatureForm(QObject):
         if helpfile:
             text = '<a href="{}">{}<a>'.format(helpfile, label.text())
             label.setText(text)
-            label.linkActivated.connect(partial(showhelp))
+            label.linkActivated.connect(self.helprequest.emit)
 
     def getupdatedfeature(self):
         def shouldsave(field):

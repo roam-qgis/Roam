@@ -5,6 +5,7 @@ from PyQt4.QtGui import *
 
 from roam.utils import log, info, warning, error
 from roam import featuredialog
+from roam.helpviewdialog import HelpPage
 
 form = None
 
@@ -75,6 +76,11 @@ class DialogProvider(QObject):
             if item and item.widget():
                 item.widget().setParent(None)
 
+        def showhelp(url):
+            help = HelpPage(parent.stackedWidget)
+            help.setHelpPage(url)
+            help.show()
+
         # None of this saving logic belongs here.
         parent.savedataButton.pressed.connect(accept)
         parent.cancelButton.pressed.connect(reject)
@@ -83,6 +89,7 @@ class DialogProvider(QObject):
 
         featureform = form.featureform
         featureform.formvalidation.connect(formvalidation)
+        featureform.helprequest.connect(showhelp)
 
         featureform.bindfeature(feature, defaults)
 
