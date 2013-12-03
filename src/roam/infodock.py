@@ -97,18 +97,16 @@ class InfoDock(infodock_widget, QWidget):
     def setResults(self, results, forms):
         self.clearResults()
         self.forms = forms
-        for result in results:
-            self._addResult(result)
+        for layer, features in results.iteritems():
+            self._addResult(layer, features)
         self.layerIndexChanged(0)
         self.featureIndexChanged(0)
             
-    def _addResult(self, result):
-        layer = result.mLayer
+    def _addResult(self, layer, features):
         if layer.type() == QgsMapLayer.RasterLayer:
             return
         self.addLayer(layer)
-        utils.log(result.mFeature.id())
-        self.results[layer].append(QgsFeature(result.mFeature))
+        self.results[layer] = features
         
     def update(self, layer, feature):
         global image

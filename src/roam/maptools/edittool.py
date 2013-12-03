@@ -140,25 +140,5 @@ class EditTool(MapTool):
         elif len(features) > 0:
             self.featuresfound.emit(features)
 
-
-    def activate(self):
-        """
-        Set the tool as the active tool in the canvas. 
-        """
-        self.canvas.setCursor(self.cursor)
-        super(EditTool, self).activate()
-
-    def deactivate(self):
-        """
-        Deactive the tool.
-        """
-        super(EditTool, self).deactivate()
-
-    def isZoomTool(self):
-        return False
-
-    def isTransient(self):
-        return False
-
     def isEditTool(self):
         return True

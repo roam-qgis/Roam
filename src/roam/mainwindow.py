@@ -487,8 +487,8 @@ class MainWindow(mainwindow_widget, mainwindow_base):
         print results
         self.infodock.clearResults()
         forms = {}
-        for result in results:
-            layername = result.mLayer.name()
+        for layer in results.keys():
+            layername = layer.name()
             if not layername in forms:
                 forms[layername] = list(self.project.formsforlayer(layername))
         self.infodock.setResults(results, forms)
