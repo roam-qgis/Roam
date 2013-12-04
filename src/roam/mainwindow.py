@@ -211,7 +211,7 @@ class MainWindow(mainwindow_widget, mainwindow_base):
 
         self.infodock = InfoDock(self.canvas)
         self.infodock.requestopenform.connect(self.openForm)
-        self.infodock.featureupdated.connect(self.highlightfeatures)
+        self.infodock.featureupdated.connect(self.highlightfeature)
         self.infodock.resultscleared.connect(self.clearselection)
         self.infodock.hide()
         self.hidedataentry()
@@ -232,7 +232,27 @@ class MainWindow(mainwindow_widget, mainwindow_base):
 
         return object.eventFilter(object, event)
 
-    def highlightfeatures(self, layer, feature):
+    def highlightselection(self, results):
+        for layer, features in results.iteritems():
+            band = self.selectionbands[layer]
+            band.setColor(QColor(255, 0, 0, 150))
+            band.setIconSize(20)
+            band.setWidth(2)
+            band.setBrushStyle(Qt.NoBrush)
+            band.reset(layer.geometryType())
+            for feature in features:
+                band.addGeometry(feature.geometry(), layer)
+
+    def clearselection(self):
+        # Clear the main selection rubber band
+        self.band.reset()
+        # Clear the rest
+        for band in self.selectionbands.itervalues():
+            band.reset()
+
+    def highlightfeature(self, layer, feature, features):
+        self.clearselection()
+        self.highlightselection({layer: features})
         self.band.setToGeometry(feature.geometry(), layer)
 
     def showmap(self):
@@ -496,23 +516,7 @@ class MainWindow(mainwindow_widget, mainwindow_base):
         """
         QApplication.exit(0)
 
-    def highlightselection(self, results):
-        for layer, features in results.iteritems():
-            band = self.selectionbands[layer]
-            band.setColor(QColor(255, 0, 0, 150))
-            band.setIconSize(20)
-            band.setWidth(2)
-            band.setBrushStyle(Qt.NoBrush)
-            band.reset(layer.geometryType())
-            for feature in features:
-                band.addGeometry(feature.geometry(), layer)
 
-    def clearselection(self):
-        # Clear the main selection rubber band
-        self.band.reset()
-        # Clear the rest
-        for band in self.selectionbands.itervalues():
-            band.reset()
 
     def showInfoResults(self, results):
         self.infodock.clearResults()
@@ -523,7 +527,6 @@ class MainWindow(mainwindow_widget, mainwindow_base):
                 forms[layername] = list(self.project.formsforlayer(layername))
         self.infodock.setResults(results, forms)
         self.infodock.show()
-        self.highlightselection(results)
 
     def showFeatureSelection(self, features):
         """
