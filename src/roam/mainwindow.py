@@ -32,6 +32,7 @@ from qgis.gui import (QgsMessageBar
                     ,QgsMapCanvas)
 
 from functools import partial
+from collections import defaultdict
 
 import getpass
 import sys
@@ -85,6 +86,7 @@ class MainWindow(mainwindow_widget, mainwindow_base):
         self.canvaslayers = []
         self.layerbuttons = []
         self.project = None
+        self.selectionbands = defaultdict(partial(QgsRubberBand, self.canvas))
         self.canvas.setCanvasColor(Qt.white)
         self.canvas.enableAntiAliasing(True)
         self.canvas.setWheelAction(QgsMapCanvas.WheelZoomToMouseCursor)
@@ -210,6 +212,7 @@ class MainWindow(mainwindow_widget, mainwindow_base):
         self.infodock = InfoDock(self.canvas)
         self.infodock.requestopenform.connect(self.openForm)
         self.infodock.featureupdated.connect(self.highlightfeatures)
+        self.infodock.resultscleared.connect(self.clearselection)
         self.infodock.hide()
         self.hidedataentry()
         self.updateicons()
@@ -230,10 +233,7 @@ class MainWindow(mainwindow_widget, mainwindow_base):
         return object.eventFilter(object, event)
 
     def highlightfeatures(self, layer, feature):
-        if layer is None or feature is None:
-            self.band.reset()
-        else:
-            self.band.setToGeometry(feature.geometry(), layer)
+        self.band.setToGeometry(feature.geometry(), layer)
 
     def showmap(self):
         self.actionMap.trigger()
@@ -496,8 +496,25 @@ class MainWindow(mainwindow_widget, mainwindow_base):
         """
         QApplication.exit(0)
 
+    def highlightselection(self, results):
+        for layer, features in results.iteritems():
+            band = self.selectionbands[layer]
+            band.setColor(QColor(255, 0, 0, 150))
+            band.setIconSize(20)
+            band.setWidth(2)
+            band.setBrushStyle(Qt.NoBrush)
+            band.reset(layer.geometryType())
+            for feature in features:
+                band.addGeometry(feature.geometry(), layer)
+
+    def clearselection(self):
+        # Clear the main selection rubber band
+        self.band.reset()
+        # Clear the rest
+        for band in self.selectionbands.itervalues():
+            band.reset()
+
     def showInfoResults(self, results):
-        print results
         self.infodock.clearResults()
         forms = {}
         for layer in results.keys():
@@ -506,6 +523,7 @@ class MainWindow(mainwindow_widget, mainwindow_base):
                 forms[layername] = list(self.project.formsforlayer(layername))
         self.infodock.setResults(results, forms)
         self.infodock.show()
+        self.highlightselection(results)
 
     def showFeatureSelection(self, features):
         """

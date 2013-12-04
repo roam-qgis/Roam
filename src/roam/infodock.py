@@ -31,6 +31,8 @@ with open(htmlpath) as f:
 class InfoDock(infodock_widget, QWidget):
     requestopenform = pyqtSignal(object, QgsFeature)
     featureupdated = pyqtSignal(object, object)
+    resultscleared = pyqtSignal()
+
     def __init__(self, parent):
         super(InfoDock, self).__init__(parent)
         self.setupUi(self)
@@ -46,6 +48,10 @@ class InfoDock(infodock_widget, QWidget):
         self.grabGesture(Qt.SwipeGesture)
         self.setAttribute(Qt.WA_AcceptTouchEvents)
         self.editButton.pressed.connect(self.openform)
+
+    def close(self):
+        self.clearResults()
+        super(InfoDock, self).close()
 
     def event(self, event):
         if event.type() == QEvent.Gesture:
@@ -141,7 +147,7 @@ class InfoDock(infodock_widget, QWidget):
         self.attributesView.setHtml('')
         self.editButton.setVisible(False)
         self.moveButton.setVisible(False)
-        self.featureupdated.emit(None, None)
+        self.resultscleared.emit()
           
     def addLayer(self, layer):
         name = layer.name()
