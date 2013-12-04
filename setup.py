@@ -28,8 +28,8 @@ datafiles = [(".", [r'src\settings.config',
             (r'projects', [r'src\projects\__init__.py']),
             # We have to copy the imageformat drivers to the root folder.
             (r'imageformats', glob.glob(qtimageforms)),
-            (r'qgis\plugins', glob.glob(qgispluginpath)),
-            (r'qgis\resources', [os.path.join(qgisresources, 'qgis.db'),
+            (r'libs\qgis\plugins', glob.glob(qgispluginpath)),
+            (r'libs\qgis\resources', [os.path.join(qgisresources, 'qgis.db'),
                                  os.path.join(qgisresources, 'srs.db')])]
 
 roam_target = dict(

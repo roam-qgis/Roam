@@ -8,9 +8,18 @@ import time
 import os
 import sys
 
+from qgis.core import QgsApplication, QgsPythonRunner, QgsProviderRegistry
+from PyQt4.QtGui import QApplication, QFont, QImageReader, QImageWriter
+from PyQt4.QtCore import QDir, QCoreApplication, QLibrary
+# We have to import QtSql or else the MSSQL driver will fail to load.
+import PyQt4.QtSql
+
 RUNNING_FROM_FILE = '__file__' in globals()
+apppath = os.path.dirname(os.path.realpath(sys.argv[0]))
+prefixpath = os.path.join(apppath, "libs", "qgis")
 
 if RUNNING_FROM_FILE:
+    print "Running from file"
     # Setup the paths for OSGeo4w if we are running from a file
     # this means that we are not running from a frozen app.
     os.environ['PATH'] += r";C:\OSGeo4W\bin;C:\OSGeo4W\apps\qgis\bin"
@@ -18,13 +27,7 @@ if RUNNING_FROM_FILE:
     os.environ["GDAL_DATA"] = r"C:\OSGeo4W\share\gdal"
     os.environ["GDAL_DRIVER_PATH"] = r"C:\OSGeo4W\bin\gdalplugins"
     os.environ["QT_PLUGIN_PATH"] = r"C:\OSGeo4W\apps\Qt4\plugins"
-
-from qgis.core import QgsApplication, QgsPythonRunner, QgsProviderRegistry
-
-from PyQt4.QtGui import QApplication, QFont, QImageReader, QImageWriter
-from PyQt4.QtCore import QDir, QCoreApplication, QLibrary
-# We have to import QtSql or else the MSSQL driver will fail to load.
-import PyQt4.QtSql
+    prefixpath = r"C:\OSGeo4W\apps\qgis"
 
 # We have to start this here or else the image drivers don't load for some reason
 app = QgsApplication(sys.argv, True)
@@ -39,17 +42,11 @@ def excepthook(errorhandler, exctype, value, traceback):
 
 start = time.time()
 roam.utils.info("Loading Roam")
-apppath = QDir(QCoreApplication.applicationDirPath())
 
-if RUNNING_FROM_FILE:
-    QgsApplication.setPrefixPath(r"C:\OSGeo4W\apps\qgis", True)
-else:
-    # TODO Setup GDAL plugin path
-    QgsApplication.setPrefixPath(os.path.join(apppath.absolutePath(), "qgis"), True)
-
+QgsApplication.setPrefixPath(prefixpath, True)
 QgsApplication.initQgis()
-roam.utils.info(QgsApplication.showSettings())
 
+roam.utils.info(QgsApplication.showSettings())
 roam.utils.info(QgsProviderRegistry.instance().pluginList())
 roam.utils.info(QImageReader.supportedImageFormats())
 roam.utils.info(QImageWriter.supportedImageFormats())
