@@ -45,9 +45,10 @@ if RUNNING_FROM_FILE:
     QgsApplication.setPrefixPath(r"C:\OSGeo4W\apps\qgis", True)
 else:
     # TODO Setup GDAL plugin path
-    QgsApplication.setPrefixPath(apppath.absolutePath(), True)
+    QgsApplication.setPrefixPath(os.path.join(apppath.absolutePath(), "qgis"), True)
 
 QgsApplication.initQgis()
+roam.utils.info(QgsApplication.showSettings())
 
 roam.utils.info(QgsProviderRegistry.instance().pluginList())
 roam.utils.info(QImageReader.supportedImageFormats())

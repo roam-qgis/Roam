@@ -16,6 +16,7 @@ import roam
 
 osgeopath = r'C:\OSGeo4W'
 qtimageforms = os.path.join(osgeopath,r'apps\qt4\plugins\imageformats\*')
+qgisresources = os.path.join(osgeopath, "apps", "qgis", "resources")
 qgispluginpath = os.path.join(osgeopath, r'apps\qgis\plugins\*provider.dll' )
 
 datafiles = [(".", [r'src\settings.config',
@@ -27,7 +28,9 @@ datafiles = [(".", [r'src\settings.config',
             (r'projects', [r'src\projects\__init__.py']),
             # We have to copy the imageformat drivers to the root folder.
             (r'imageformats', glob.glob(qtimageforms)),
-            (r'plugins', glob.glob(qgispluginpath))]
+            (r'qgis\plugins', glob.glob(qgispluginpath)),
+            (r'qgis\resources', [os.path.join(qgisresources, 'qgis.db'),
+                                 os.path.join(qgisresources, 'srs.db')])]
 
 roam_target = dict(
                 script=r'src\roam\__main__.py',
