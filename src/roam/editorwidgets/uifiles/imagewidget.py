@@ -1,3 +1,5 @@
+import os
+
 from PyQt4.QtGui import (QLabel, QDialog, QFileDialog,
                         QPixmap, QGridLayout, QLayout,
                         QWidget)
@@ -23,6 +25,7 @@ class QMapImageWidget(ui_imagewidget.Ui_imagewidget, QWidget):
         self.image.mouseReleaseEvent = self.imageClick
         self.installEventFilter(self)
         self.removeImage()
+        self.defaultlocation = ''
 
     def eventFilter(self, parent, event):
         """ Handle mouse click events for disabled widget state """
@@ -33,7 +36,9 @@ class QMapImageWidget(ui_imagewidget.Ui_imagewidget, QWidget):
 
     def selectImage(self):
         # Show the file picker
-        image = QFileDialog.getOpenFileName(self, "Select Image", "")
+        defaultlocation = os.path.expandvars(self.defaultlocation)
+        print defaultlocation
+        image = QFileDialog.getOpenFileName(self, "Select Image", defaultlocation)
         roam.utils.debug(image)
         if image is None or not image:
             return
