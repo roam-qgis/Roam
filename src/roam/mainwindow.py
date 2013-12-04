@@ -201,7 +201,7 @@ class MainWindow(mainwindow_widget, mainwindow_base):
         self.dataentrycombo.setSizeAdjustPolicy(QComboBox.AdjustToContents)
         self.dataentrycombo.setModel(self.dataentrymodel)
         self.dataentrycombo.currentIndexChanged.connect(self.dataentrychanged)
-        self.projecttoolbar.insertWidget(self.topspaceraction, self.dataentrycombo)
+        self.dataentrycomboaction = self.projecttoolbar.insertWidget(self.topspaceraction, self.dataentrycombo)
 
         self.centralwidget.layout().addWidget(self.statusbar)
 
@@ -370,6 +370,8 @@ class MainWindow(mainwindow_widget, mainwindow_base):
         """
         self.editTool.reset()
         self.moveTool.reset()
+        self.dataentrymodel.clear()
+        self.clearCapatureTools()
 
         def editFeature(form):
             self.editTool.addForm(form)
@@ -411,6 +413,8 @@ class MainWindow(mainwindow_widget, mainwindow_base):
                                  "Looks like some forms couldn't be loaded",
                                  level=QgsMessageBar.WARNING)
 
+        visible = self.dataentrymodel.rowCount() > 0
+        self.dataentrycomboaction.setVisible(visible)
         self.dataentrycombo.setCurrentIndex(0)
 
     def addFeatureAtGPS(self):
