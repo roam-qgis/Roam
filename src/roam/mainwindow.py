@@ -35,6 +35,7 @@ from functools import partial
 from collections import defaultdict
 
 import getpass
+import traceback
 import sys
 import os
 
@@ -194,7 +195,6 @@ class MainWindow(mainwindow_widget, mainwindow_base):
         self.band.setColor(QColor(186, 93, 212, 76))
 
         self.bar = roam.messagebaritems.MessageBar(self)
-        self.messageBar = roam.messagebaritems.MessageBar(self.canvas)
 
         self.canvas_page.layout().insertWidget(2, self.projecttoolbar)
         self.dataentrymodel = QStandardItemModel(self)
@@ -272,9 +272,10 @@ class MainWindow(mainwindow_widget, mainwindow_base):
         form = modelindex.data(Qt.UserRole + 1)
         self.createCaptureButtons(form, wasactive)
 
-    def raiseerror(self, exctype, value, traceback):
-        item = roam.messagebaritems.ErrorMessage(execinfo=(exctype, value, traceback))
-        self.bar.pushItem(item)
+    def raiseerror(self, *exinfo):
+        info = traceback.format_exception(*exinfo)
+        item = self.bar.pushError('Seems something has gone wrong. Press for more detauls',
+                                  info)
 
     def setMapTool(self, tool, *args):
         self.canvas.setMapTool(tool)
@@ -346,7 +347,7 @@ class MainWindow(mainwindow_widget, mainwindow_base):
         self.actionQuit.triggered.connect(self.exit)
 
     def showToolError(self, label, message):
-        self.messageBar.pushMessage(label, message, QgsMessageBar.WARNING)
+        self.bar.pushMessage(label, message, QgsMessageBar.WARNING)
 
     def clearCapatureTools(self):
         captureselected = False
@@ -423,7 +424,7 @@ class MainWindow(mainwindow_widget, mainwindow_base):
                     roam.utils.log("No map tool configured")
                     continue
                 except ErrorInMapTool as error:
-                    self.messageBar.pushMessage("Error configuring map tool",
+                    self.bar.pushMessage("Error configuring map tool",
                                                 error.message,
                                                 level=QgsMessageBar.WARNING)
                     continue
@@ -468,15 +469,13 @@ class MainWindow(mainwindow_widget, mainwindow_base):
             layer.startEditing()
 
         def featureSaved():
-            self.messageBar.pushMessage("Saved",
+            self.bar.pushMessage("Saved",
                                         "Changes Saved",
                                         QgsMessageBar.INFO,
-                                        2)
+                                        1)
 
-        def failSave():
-            self.messageBar.pushMessage("Error",
-                                        "Error with saving changes.",
-                                        QgsMessageBar.CRITICAL)
+        def failSave(messages):
+            self.bar.pushError("Error when saving changes.", messages)
 
         def cleartempobjects():
             self.band.reset()
@@ -563,8 +562,8 @@ class MainWindow(mainwindow_widget, mainwindow_base):
         map(roam.utils.warning, layers)
 
         missinglayers = roam.messagebaritems.MissingLayerItem(layers,
-                                                              parent=self.messageBar)
-        self.messageBar.pushItem(missinglayers)
+                                                              parent=self.bar)
+        self.bar.pushItem(missinglayers)
 
     def loadprojects(self, projects):
         """

@@ -18,7 +18,7 @@ class DialogProvider(QObject):
     accepted = pyqtSignal()
     rejected = pyqtSignal()
     featuresaved = pyqtSignal()
-    failedsave = pyqtSignal()
+    failedsave = pyqtSignal(list)
     
     def __init__(self, canvas):
         QObject.__init__(self)
@@ -34,17 +34,16 @@ class DialogProvider(QObject):
                 return
 
             feature, savedvalues = featureform.getupdatedfeature()
-            print feature.id()
+            layer.startEditing()
             if feature.id() > 0:
                 layer.updateFeature(feature)
             else:
                 layer.addFeature(feature)
                 featuredialog.savevalues(layer, savedvalues)
-
             saved = layer.commitChanges()
 
             if not saved:
-                self.failedsave.emit()
+                self.failedsave.emit(layer.commitErrors())
                 map(error, layer.commitErrors())
             else:
                 self.featuresaved.emit()
@@ -97,7 +96,6 @@ class DialogProvider(QObject):
 
         parent.scrollAreaWidgetContents.layout().insertWidget(0, featureform.widget)
         parent.showdataentry()
-        layer.startEditing()
 
     def selectingFromMap(self, message):
         """

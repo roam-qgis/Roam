@@ -39,17 +39,23 @@ class MessageBar(QgsMessageBar):
     def showEvent(self, event):
         self.resize(QSize(self.parent().geometry().size().width(), 50))
 
-    def pushMessage(self, title, text=None, level=QgsMessageBar.INFO, duration=0):
-        item = ClickableMessage(title, text, level, duration)
+    def pushMessage(self, title, text=None, level=QgsMessageBar.INFO, duration=0, extrainfo=None):
+        item = ClickableMessage(title, text, level, duration, extrainfo)
         self.pushItem(item)
 
+    def pushError(self, text, extrainfo):
+        item = ClickableMessage('Opps', text, QgsMessageBar.CRITICAL, extrainfo=extrainfo)
+        item.setIcon(QIcon(":/icons/sad"))
+        self.pushItem(item)
 
 class ClickableMessage(QgsMessageBarItem):
-    def __init__(self, title=None, text=None, level=QgsMessageBar.INFO, duration=0, parent=None):
+    def __init__(self, title=None, text=None, level=QgsMessageBar.INFO, duration=0, extrainfo=None, parent=None):
         super(ClickableMessage, self).__init__(title, text, level, duration, parent)
         self.installEventFilter(self)
         self.setCursor(Qt.PointingHandCursor)
         self.updatefilters()
+        self.extrainfo = extrainfo
+        self.title = title
 
     def updatefilters(self):
         for child in self.findChildren(QWidget):
@@ -68,22 +74,15 @@ class ClickableMessage(QgsMessageBarItem):
         return QObject.eventFilter(self, parent, event)
 
     def showmessage(self):
-        pass
+        html = ''
+        data = []
+        if self.level() == QgsMessageBar.CRITICAL:
+            data = {"ERROR": "<br>".join(self.extrainfo)}
+            html = htmlpath
+            data = data
 
-
-class ErrorMessage(ClickableMessage):
-    def __init__(self, execinfo=None, parent=None):
-        super(ErrorMessage, self).__init__(parent=parent)
-        self.setIcon(QIcon(":/icons/sad"))
-        self.setText('Opps something seems to have gone wrong. Click bar for more details')
-        self.setLevel(QgsMessageBar.CRITICAL)
-        self.execinfo = execinfo
-        self.updatefilters()
-
-    def showmessage(self):
-        data = {"ERROR": "<br>".join(traceback.format_exception(*self.execinfo))}
-        roam.htmlviewer.showHTMLReport(title='Error',
-                                       html=htmlpath,
+        roam.htmlviewer.showHTMLReport(title=self.title,
+                                       html=html,
                                        data=data,
                                        parent=self.parent())
 
