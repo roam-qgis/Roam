@@ -126,7 +126,14 @@ def buildfromauto(formconfig):
                                                     config=None)
         widget = widgetwrapper.widget
         widget.setObjectName(field)
-        outlayout.addRow(label, widget)
+        layoutwidget = QWidget()
+        layoutwidget.setLayout(QBoxLayout(QBoxLayout.LeftToRight))
+        layoutwidget.layout().addWidget(widget)
+        if config.get('rememberlastvalue', False):
+            savebutton = QToolButton()
+            savebutton.setObjectName('{}_save'.format(field))
+            layoutwidget.layout().addWidget(savebutton)
+        outlayout.addRow(label, layoutwidget)
     outlayout.addItem(QSpacerItem(10,10))
     return outwidget
 
