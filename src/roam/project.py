@@ -210,8 +210,17 @@ class Form(object):
     def featureform(self):
         return FeatureForm.from_form(self, self.settings)
         
+    def widgetswithdefaults(self):
+        """
+        Return any widget configs that have default values needed
+        """
+        for field, config in self.widgets.iteritems():
+            if 'default' in config:
+                yield field, config
+
 
 class Project(object):
+
     def __init__(self, rootfolder, settings):
         self.folder = rootfolder
         self._project = None

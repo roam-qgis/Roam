@@ -3,11 +3,41 @@ import os
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 
+from qgis.core import QgsMapLayerRegistry, QgsFeatureRequest
+
 from roam.utils import log, info, warning, error
 from roam import featuredialog
 from roam.helpviewdialog import HelpPage
 
 form = None
+
+class DefaultError(Exception):
+    pass
+
+
+def spatial_query(feature, layer, field, defaultconfig):
+    layername = defaultconfig['layer']
+    op = defaultconfig['op']
+    field = defaultconfig['field']
+
+    print defaultconfig
+
+    layer = QgsMapLayerRegistry.instance().mapLayersByName(layername)[0]
+    if op == 'contains':
+        rect = feature.geometry().boundingBox()
+        features = layer.getFeatures(QgsFeatureRequest().setFilterRect(rect))
+        print features
+        for f in features:
+            print f
+            geometry = feature.geometry()
+            print f.geometry().contains(geometry)
+            if f.geometry().contains(geometry):
+                print "CONTAINS"
+                print f[field]
+                return f[field]
+        raise DefaultError('No features found')
+
+defaultproviders = {'spatial-query': spatial_query}
 
 class DialogProvider(QObject):
     """
@@ -84,7 +114,29 @@ class DialogProvider(QObject):
         parent.savedataButton.pressed.connect(accept)
         parent.cancelButton.pressed.connect(reject)
 
-        defaults = featuredialog.loadsavedvalues(layer)
+        defaults = {}
+        if not feature.id() > 0:
+            for field, config in form.widgetswithdefaults():
+                default = config.get("default", None)
+                if default is None:
+                    continue
+                if isinstance(default, dict):
+                    defaultconfig = default
+                    try:
+                        defaulttype = defaultconfig['type']
+                        defaultprovider = defaultproviders[defaulttype]
+                        value = defaultprovider(feature, layer, field, defaultconfig)
+                    except KeyError:
+                        continue
+                    except DefaultError as ex:
+                        log(ex)
+                        value = None
+                else:
+                    value = default
+
+                print "VALUE {}".format(value)
+                defaults[field] = value
+            defaults.update(featuredialog.loadsavedvalues(layer))
 
         featureform = form.featureform
         featureform.formvalidation.connect(formvalidation)
