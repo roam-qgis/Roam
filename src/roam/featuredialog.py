@@ -115,7 +115,8 @@ def buildfromauto(formconfig):
     outwidget = QWidget()
     outwidget.setLayout(outlayout)
     for field, config in widgetsconfig.iteritems():
-        label = QLabel(field)
+        name = config.get('name', field)
+        label = QLabel(name)
         label.setObjectName(field + "_label")
         widgettype = config['widgettype']
         widgetwrapper = WidgetsRegistry.createwidget(widgettype,
