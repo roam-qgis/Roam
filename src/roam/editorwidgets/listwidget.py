@@ -2,6 +2,7 @@ from PyQt4.QtGui import QComboBox
 
 from qgis.core import QgsMessageLog, QgsMapLayerRegistry, QgsExpression, QgsFeatureRequest
 
+import roam.utils
 from roam.editorwidgets.core import WidgetFactory, WidgetsRegistry, EditorWidget
 
 
@@ -28,17 +29,18 @@ class ListWidget(EditorWidget):
         layername = layerconfig['layer']
         keyfield = layerconfig['key']
         valuefield = layerconfig['value']
-        filterexp = layerconfig['filter']
+        filterexp = layerconfig.get('filter', None)
+
         try:
             layer = QgsMapLayerRegistry.instance().mapLayersByName(layername)[0]
         except IndexError:
-            print "Can't find layer {} in project".format(layername)
+            roam.utils.warning("Can't find layer {} in project".format(layername))
             return
 
         keyfieldindex = layer.fieldNameIndex(keyfield)
         valuefieldindex = layer.fieldNameIndex(valuefield)
         if keyfieldindex == -1 or valuefieldindex == -1:
-            print "Can't find key or value column"
+            roam.utils.warning("Can't find key or value column")
             return
 
         if not filterexp and valuefieldindex == keyfieldindex:
@@ -55,7 +57,7 @@ class ListWidget(EditorWidget):
             expression = QgsExpression(filterexp)
             expression.prepare(layer.pendingFields())
             if expression.hasParserError():
-                print "Expression has parser error: {}".format(expression.parserErrorString())
+                roam.utils.warning("Expression has parser error: {}".format(expression.parserErrorString()))
                 return
 
             if expression.needsGeometry():
@@ -71,14 +73,10 @@ class ListWidget(EditorWidget):
             if expression and not expression.evaluate(feature):
                 continue
 
-            pair = (feature[keyfieldindex], feature[valuefieldindex])
-            values.add(pair)
+            widget.addItem(feature[keyfieldindex], feature[valuefield])
 
         if self.config['allownull']:
-            widget.addItem('(no selection)', None)
-
-        for pair in values:
-            widget.addItem(pair[1], pair[0])
+            widget.insertItem(0, '(no selection)', None)
 
     def initWidget(self, widget):
         if 'list' in self.config:

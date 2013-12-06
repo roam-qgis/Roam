@@ -115,7 +115,8 @@ def buildfromauto(formconfig):
     outwidget = QWidget()
     outwidget.setLayout(outlayout)
     for field, config in widgetsconfig.iteritems():
-        label = QLabel(field)
+        name = config.get('name', field)
+        label = QLabel(name)
         label.setObjectName(field + "_label")
         widgettype = config['widgettype']
         widgetwrapper = WidgetsRegistry.createwidget(widgettype,
@@ -126,7 +127,18 @@ def buildfromauto(formconfig):
                                                     config=None)
         widget = widgetwrapper.widget
         widget.setObjectName(field)
-        outlayout.addRow(label, widget)
+        layoutwidget = QWidget()
+        layoutwidget.setLayout(QBoxLayout(QBoxLayout.LeftToRight))
+        layoutwidget.layout().addWidget(widget)
+        if config.get('rememberlastvalue', False):
+            savebutton = QToolButton()
+            savebutton.setObjectName('{}_save'.format(field))
+            layoutwidget.layout().addWidget(savebutton)
+
+        hidden = config.get('hidden', False)
+        if not hidden:
+            outlayout.addRow(label, layoutwidget)
+
     outlayout.addItem(QSpacerItem(10,10))
     return outwidget
 
@@ -225,7 +237,17 @@ class FeatureForm(QObject):
                 print("No widget found for {}".format(widgettype))
                 continue
 
-            if config.get('required', False):
+            readonlyrules = config.get('read-only-rules', [])
+
+            if feature.id() > 0 and 'editing' in readonlyrules:
+                widgetwrapper.readonly = True
+
+            if 'all' in readonlyrules:
+                widgetwrapper.readonly = True
+
+            widgetwrapper.hidden = config.get('hidden', False)
+
+            if config.get('required', False) and not widgetwrapper.hidden:
                 # All widgets state off as false unless told otherwise
                 self.requiredfields[field] = False
                 widgetwrapper.setrequired()
@@ -236,6 +258,7 @@ class FeatureForm(QObject):
             except KeyError:
                 utils.warning("Can't find field {}".format(field))
                 value = None
+
             widgetwrapper.setvalue(value)
             self.bindsavebutton(field, defaults, feature.id() > 0)
             self.boundwidgets.append(widgetwrapper)

@@ -55,6 +55,7 @@ class EditorWidget(QObject):
         self.field = field
         self.label = label
         self.required = False
+        self._readonly = True
         self.validationstyle = """QLabel[required=true]
                                 {border-radius: 5px; background-color: rgba(255, 221, 48,150);}
                                 QLabel[ok=true]
@@ -72,6 +73,24 @@ class EditorWidget(QObject):
 
         editor = cls(layer, field, widget, label, parent)
         return editor
+
+    @property
+    def readonly(self):
+        return self._readonly
+
+    @readonly.setter
+    def readonly(self, value):
+        self._readonly = value
+        self.setEnabled(not value)
+
+    @property
+    def hidden(self):
+        return self._hidden
+
+    @hidden.setter
+    def hidden(self, value):
+        self._hidden = value
+        self.widget.setVisible(not value)
 
     def raisevalidationupdate(self, passed):
         if self.required:

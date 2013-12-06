@@ -93,7 +93,7 @@ class Form(object):
                 utils.log(e)
                 return None
 
-        layer = getlayer(self.settings["layer"])
+        layer = getlayer(self.layername)
         return layer
 
     def getMaptool(self, canvas):
@@ -193,7 +193,7 @@ class Form(object):
             errors.append("Form folder not found")
 
         if self.QGISLayer is None:
-            errors.append("Layer {} not found in project".format(self.name))
+            errors.append("Layer {} not found in project".format(self.layername))
         elif not self.QGISLayer.type() == QgsMapLayer.VectorLayer:
             errors.append("We can only support vector layers for data entry")
 
