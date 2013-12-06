@@ -233,6 +233,14 @@ class FeatureForm(QObject):
                 print("No widget found for {}".format(widgettype))
                 continue
 
+            readonlyrules = config.get('read-only-rules', [])
+
+            if feature.id() > 0 and 'editing' in readonlyrules:
+                widgetwrapper.readonly = True
+
+            if 'all' in readonlyrules:
+                widgetwrapper.readonly = True
+
             if config.get('required', False):
                 # All widgets state off as false unless told otherwise
                 self.requiredfields[field] = False
