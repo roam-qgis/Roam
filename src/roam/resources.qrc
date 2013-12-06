@@ -15,7 +15,7 @@
     <file alias="gps_marker">resources/images/gps_marker.svg</file>
     <file alias="calender">resources/images/calender.png</file>
     <file alias="map">resources/images/map.svg</file>
-    <file alias="save_default">resources/images/save_default.png</file>
+    <file alias="save_default">resources/images/save_default.svg</file>
     <file alias="move">resources/images/move.png</file>
     <file alias="gpsadd">resources/images/capturegps.svg</file>
     <file alias="syncing">resources/images/sync_progress.png</file>
