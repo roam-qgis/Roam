@@ -20,20 +20,13 @@ def spatial_query(feature, layer, field, defaultconfig):
     op = defaultconfig['op']
     field = defaultconfig['field']
 
-    print defaultconfig
-
     layer = QgsMapLayerRegistry.instance().mapLayersByName(layername)[0]
     if op == 'contains':
         rect = feature.geometry().boundingBox()
         features = layer.getFeatures(QgsFeatureRequest().setFilterRect(rect))
-        print features
         for f in features:
-            print f
             geometry = feature.geometry()
-            print f.geometry().contains(geometry)
             if f.geometry().contains(geometry):
-                print "CONTAINS"
-                print f[field]
                 return f[field]
         raise DefaultError('No features found')
 
@@ -120,19 +113,21 @@ class DialogProvider(QObject):
                 default = config.get("default", None)
                 if default is None:
                     continue
+
                 if isinstance(default, dict):
                     defaultconfig = default
                     try:
                         defaulttype = defaultconfig['type']
                         defaultprovider = defaultproviders[defaulttype]
                         value = defaultprovider(feature, layer, field, defaultconfig)
-                    except KeyError:
+                    except KeyError as ex:
+                        log(ex)
                         continue
                     except DefaultError as ex:
                         log(ex)
                         value = None
                 else:
-                    value = default
+                    value = os.path.expandvars(default)
 
                 print "VALUE {}".format(value)
                 defaults[field] = value
