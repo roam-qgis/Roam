@@ -134,7 +134,11 @@ def buildfromauto(formconfig):
             savebutton = QToolButton()
             savebutton.setObjectName('{}_save'.format(field))
             layoutwidget.layout().addWidget(savebutton)
-        outlayout.addRow(label, layoutwidget)
+
+        hidden = config.get('hidden', False)
+        if not hidden:
+            outlayout.addRow(label, layoutwidget)
+
     outlayout.addItem(QSpacerItem(10,10))
     return outwidget
 
@@ -241,7 +245,9 @@ class FeatureForm(QObject):
             if 'all' in readonlyrules:
                 widgetwrapper.readonly = True
 
-            if config.get('required', False):
+            widgetwrapper.hidden = config.get('hidden', False)
+
+            if config.get('required', False) and not widgetwrapper.hidden:
                 # All widgets state off as false unless told otherwise
                 self.requiredfields[field] = False
                 widgetwrapper.setrequired()
@@ -252,6 +258,7 @@ class FeatureForm(QObject):
             except KeyError:
                 utils.warning("Can't find field {}".format(field))
                 value = None
+
             widgetwrapper.setvalue(value)
             self.bindsavebutton(field, defaults, feature.id() > 0)
             self.boundwidgets.append(widgetwrapper)

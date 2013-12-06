@@ -83,6 +83,15 @@ class EditorWidget(QObject):
         self._readonly = value
         self.setEnabled(not value)
 
+    @property
+    def hidden(self):
+        return self._hidden
+
+    @hidden.setter
+    def hidden(self, value):
+        self._hidden = value
+        self.widget.setVisible(not value)
+
     def raisevalidationupdate(self, passed):
         if self.required:
             self.validationupdate.emit(self.field, passed)
