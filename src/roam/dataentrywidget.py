@@ -7,7 +7,6 @@ from qgis.core import QgsMapLayerRegistry, QgsFeatureRequest
 
 from roam.utils import log, info, warning, error
 from roam import featuredialog
-from roam.helpviewdialog import HelpPage
 from roam.uifiles import dataentry_widget, dataentry_base
 from roam.flickwidget import FlickCharm
 

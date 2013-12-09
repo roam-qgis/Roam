@@ -39,7 +39,6 @@ import traceback
 import sys
 import os
 
-from roam.flickwidget import FlickCharm
 from roam.gps_action import GPSAction
 from roam.dataentrywidget import DataEntryWidget
 from roam.uifiles import mainwindow_widget, mainwindow_base
@@ -52,6 +51,7 @@ from roam.maptools import MoveTool, InfoTool, EditTool, PointTool
 from roam.listfeatureform import ListFeaturesForm
 from roam.infodock import InfoDock
 from roam.syncwidget import SyncWidget
+from roam.helpviewdialog import HelpPage
 
 import roam.messagebaritems
 import roam.utils
