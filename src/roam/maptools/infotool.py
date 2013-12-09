@@ -1,3 +1,5 @@
+from collections import OrderedDict
+
 from PyQt4.QtCore import pyqtSignal, QRect, Qt
 from PyQt4.QtGui import QCursor, QPixmap, QColor
 from qgis.core import (QgsRectangle, QgsTolerance,
@@ -23,12 +25,11 @@ class InfoTool(QgsMapTool):
         self.selectband = None
         self.selectrect = QRect()
         self.dragging = False
+        self.selectionlayers = []
 
     def getFeatures(self, rect):
-        rq = QgsFeatureRequest().setFilterRect(rect)
-
         self.band.reset()
-        for layer in self.canvas.layers():
+        for layer in self.selectionlayers:
             if (not layer.type() == QgsMapLayer.VectorLayer
                 or layer.geometryType() == QGis.NoGeometry):
                 continue
@@ -86,7 +87,7 @@ class InfoTool(QgsMapTool):
         self.dragging = False
         self.selectband.reset()
 
-        results = dict((l,f) for l, f in self.getFeatures(rect))
+        results = OrderedDict((l,f) for l, f in self.getFeatures(rect))
         print results
         self.infoResults.emit(results)
 

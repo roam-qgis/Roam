@@ -523,13 +523,7 @@ class MainWindow(mainwindow_widget, mainwindow_base):
             if not layername in forms:
                 forms[layername] = list(self.project.formsforlayer(layername))
 
-        selectlayers = self.project.selectlayers
-        if not selectlayers:
-            selectlayers = []
-            for layer in QgsMapLayerRegistry.instance().mapLayers().values():
-                selectlayers.append(layer.name())
-
-        self.infodock.setResults(results, forms, selectlayers)
+        self.infodock.setResults(results, forms)
         self.infodock.show()
 
     def showFeatureSelection(self, features):
@@ -655,6 +649,21 @@ class MainWindow(mainwindow_widget, mainwindow_base):
         for panel in self.project.getPanels():
             self.mainwindow.addDockWidget(Qt.BottomDockWidgetArea, panel)
             self.panels.append(panel)
+
+        # TODO Abstract this out
+        if not self.project.selectlayers:
+            selectionlayers = QgsMapLayerRegistry.instance().mapLayers().values()
+        else:
+            selectionlayers = []
+            for layername in self.project.selectlayers:
+                try:
+                    layer = QgsMapLayerRegistry.instance().mapLayersByName(layername)[0]
+                except IndexError:
+                    roam.utils.warning("Can't find QGIS layer for select layer {}".format(layername))
+                    continue
+                selectionlayers.append(layer)
+
+        self.infoTool.selectionlayers = selectionlayers
 
     #noinspection PyArgumentList
     @roam.utils.timeit

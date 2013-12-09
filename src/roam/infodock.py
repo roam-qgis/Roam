@@ -29,17 +29,6 @@ htmlpath = os.path.join(os.path.dirname(__file__), "info.html")
 with open(htmlpath) as f:
     template = Template(f.read())
 
-class SelectLayerFilter(QSortFilterProxyModel):
-    def __init__(self, selectlayers, parent=None):
-        super(SelectLayerFilter, self).__init__(parent)
-        self.selectlayers = selectlayers
-
-    def lessThan(self, leftindex, rightindex):
-        left = self.sourceModel().data(leftindex)
-        right = self.sourceModel().data(rightindex)
-        print left, right
-        return self.selectlayers.index(left) < self.selectlayers.index(right)
-
 class InfoDock(infodock_widget, QWidget):
     requestopenform = pyqtSignal(object, QgsFeature)
     featureupdated = pyqtSignal(object, object, list)
@@ -116,19 +105,14 @@ class InfoDock(infodock_widget, QWidget):
     def _addFeature(self, display, feature):
         self.featureList.addItem(display, feature)
         
-    def setResults(self, results, forms, selectlayers):
+    def setResults(self, results, forms):
         self.clearResults()
         self.forms = forms
         self.results = results
         for layer, features in results.iteritems():
-            if features and layer.name() in selectlayers:
+            if features:
                 self._addResult(layer, features)
 
-        proxy = SelectLayerFilter(selectlayers, parent=self.layerList)
-        proxy.setSourceModel(self.layerList.model())
-        self.layerList.model().setParent(proxy)
-        self.layerList.setModel(proxy)
-        self.layerList.model().sort(0)
         self.layerList.setCurrentIndex(0)
 
     def _addResult(self, layer, features):
