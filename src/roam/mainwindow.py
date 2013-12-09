@@ -515,8 +515,6 @@ class MainWindow(mainwindow_widget, mainwindow_base):
         """
         QApplication.exit(0)
 
-
-
     def showInfoResults(self, results):
         self.infodock.clearResults()
         forms = {}
@@ -524,7 +522,14 @@ class MainWindow(mainwindow_widget, mainwindow_base):
             layername = layer.name()
             if not layername in forms:
                 forms[layername] = list(self.project.formsforlayer(layername))
-        self.infodock.setResults(results, forms)
+
+        selectlayers = self.project.selectlayers
+        if not selectlayers:
+            selectlayers = []
+            for layer in QgsMapLayerRegistry.instance().mapLayers().values():
+                selectlayers.append(layer.name())
+
+        self.infodock.setResults(results, forms, selectlayers)
         self.infodock.show()
 
     def showFeatureSelection(self, features):

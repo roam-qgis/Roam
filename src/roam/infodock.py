@@ -4,13 +4,15 @@ import collections
 from string import Template
 from collections import OrderedDict
 
-from PyQt4.QtGui import (QImageReader, QWidget, QFrame, QDialog)
+from PyQt4.QtGui import (QImageReader, QWidget, QFrame, QDialog, QIcon, QSortFilterProxyModel)
 
 from PyQt4.QtCore import (Qt, QUrl, 
                           QDate,
                           QDateTime, QTime,
                           QPoint, QSize,
-                          QEvent, pyqtSignal)
+                          QEvent, pyqtSignal,
+                          )
+
 from PyQt4.QtWebKit import QWebPage
 
 from qgis.core import (QgsExpression, QgsFeature, 
@@ -27,6 +29,16 @@ htmlpath = os.path.join(os.path.dirname(__file__), "info.html")
 with open(htmlpath) as f:
     template = Template(f.read())
 
+class SelectLayerFilter(QSortFilterProxyModel):
+    def __init__(self, selectlayers, parent=None):
+        super(SelectLayerFilter, self).__init__(parent)
+        self.selectlayers = selectlayers
+
+    def lessThan(self, leftindex, rightindex):
+        left = self.sourceModel().data(leftindex)
+        right = self.sourceModel().data(rightindex)
+        print left, right
+        return self.selectlayers.index(left) < self.selectlayers.index(right)
 
 class InfoDock(infodock_widget, QWidget):
     requestopenform = pyqtSignal(object, QgsFeature)
@@ -37,7 +49,6 @@ class InfoDock(infodock_widget, QWidget):
         super(InfoDock, self).__init__(parent)
         self.setupUi(self)
         self.forms = {}
-        self.selection = (None, None)
         self.charm = FlickCharm()
         self.charm.activateOn(self.attributesView)
         self.results = collections.defaultdict(list)
@@ -60,12 +71,17 @@ class InfoDock(infodock_widget, QWidget):
                 self.pagenext()
         return QWidget.event(self, event)
 
+    @property
+    def selection(self):
+        layer = self.layerList.itemData(self.layerList.currentIndex())
+        feature = self.featureList.itemData(self.featureList.currentIndex())
+        return layer, feature
+
     def openform(self):
         layer, feature = self.selection
         forms = self.forms[layer.name()]
         form = forms[0]
         self.requestopenform.emit(form, feature)
-
 
     def pagenext(self):
         index = self.featureList.currentIndex() + 1
@@ -100,16 +116,21 @@ class InfoDock(infodock_widget, QWidget):
     def _addFeature(self, display, feature):
         self.featureList.addItem(display, feature)
         
-    def setResults(self, results, forms):
+    def setResults(self, results, forms, selectlayers):
         self.clearResults()
         self.forms = forms
         self.results = results
         for layer, features in results.iteritems():
-            if features:
+            if features and layer.name() in selectlayers:
                 self._addResult(layer, features)
-        self.layerIndexChanged(0)
-        self.featureIndexChanged(0)
-            
+
+        proxy = SelectLayerFilter(selectlayers, parent=self.layerList)
+        proxy.setSourceModel(self.layerList.model())
+        self.layerList.model().setParent(proxy)
+        self.layerList.setModel(proxy)
+        self.layerList.model().sort(0)
+        self.layerList.setCurrentIndex(0)
+
     def _addResult(self, layer, features):
         self.addLayer(layer)
         self.results[layer] = features
@@ -137,7 +158,6 @@ class InfoDock(infodock_widget, QWidget):
         edittools = len(self.forms[layer.name()]) > 0
         self.editButton.setVisible(edittools)
         #self.moveButton.setVisible(edittools)
-        self.selection = layer, feature
         self.featureupdated.emit(layer, feature, self.results[layer])
 
     def clearResults(self):
@@ -152,4 +172,8 @@ class InfoDock(infodock_widget, QWidget):
     def addLayer(self, layer):
         name = layer.name()
         if self.layerList.findData(layer) == -1:
-            self.layerList.addItem(name, layer)
+            forms = self.forms.get(name, None)
+            icon = QIcon()
+            if forms:
+                icon = QIcon(forms[0].icon)
+            self.layerList.addItem(icon, name, layer)

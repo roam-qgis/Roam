@@ -342,3 +342,7 @@ class Project(object):
         for form, config in self.settings.get("forms", {}).iteritems():
             folder = os.path.join(self.folder, form)
             yield Form.from_config(config, folder)
+
+    @property
+    def selectlayers(self):
+        return self.settings.get('selectlayers', [])
