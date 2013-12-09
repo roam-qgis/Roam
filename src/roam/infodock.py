@@ -105,13 +105,12 @@ class InfoDock(infodock_widget, QWidget):
         self.forms = forms
         self.results = results
         for layer, features in results.iteritems():
-            self._addResult(layer, features)
+            if features:
+                self._addResult(layer, features)
         self.layerIndexChanged(0)
         self.featureIndexChanged(0)
             
     def _addResult(self, layer, features):
-        if layer.type() == QgsMapLayer.RasterLayer:
-            return
         self.addLayer(layer)
         self.results[layer] = features
         

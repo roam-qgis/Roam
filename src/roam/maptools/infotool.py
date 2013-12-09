@@ -33,13 +33,14 @@ class InfoTool(QgsMapTool):
                 or layer.geometryType() == QGis.NoGeometry):
                 continue
 
-            rq = QgsFeatureRequest().setFilterRect(rect)
+            rect = self.toLayerCoordinates(layer, rect)
+
+            rq = QgsFeatureRequest().setFilterRect(rect).setFlags(QgsFeatureRequest.ExactIntersect)
             features = []
             for feature in layer.getFeatures(rq):
                 if feature.isValid():
                     features.append(feature)
 
-            print layer.name(), features
             yield layer, features
 
     def toSearchRect(self, point):
