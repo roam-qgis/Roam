@@ -129,7 +129,7 @@ class DialogProvider(QObject):
                 else:
                     value = os.path.expandvars(default)
 
-                print "VALUE {}".format(value)
+                log("Default value: {}".format(value))
                 defaults[field] = value
             defaults.update(featuredialog.loadsavedvalues(layer))
 
