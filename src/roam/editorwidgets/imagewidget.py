@@ -43,7 +43,7 @@ class ImageWidget(EditorWidget):
             self.widget.loadFromPixMap(QPixmap(value))
 
     def value(self):
-        pass
+        return self.widget.getImage()
 
 factory = WidgetFactory("Image", ImageWidget, None)
 
