@@ -218,6 +218,14 @@ class Form(object):
             if 'default' in config:
                 yield field, config
 
+    def accept(self):
+        #TODO Call form module accept method
+        return True
+
+    def reject(self):
+        #TODO Call form module reject method
+        return True
+
 
 class Project(object):
 

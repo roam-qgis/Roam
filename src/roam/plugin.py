@@ -33,7 +33,7 @@ from maptools import (MoveTool, PointTool,
                       EditTool, InfoTool)
 
 from floatingtoolbar import FloatingToolBar
-from dialog_provider import DialogProvider
+from dataentrywidget import DialogProvider
 from project import QMapProject, NoMapToolConfigured, getProjects, ErrorInMapTool
 
 from listfeatureform import ListFeaturesForm

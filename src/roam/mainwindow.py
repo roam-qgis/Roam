@@ -41,7 +41,7 @@ import os
 
 from roam.flickwidget import FlickCharm
 from roam.gps_action import GPSAction
-from roam.dialog_provider import DialogProvider
+from roam.dataentrywidget import DataEntryWidget
 from roam.uifiles import mainwindow_widget, mainwindow_base
 from roam.listmodulesdialog import ProjectsWidget
 from roam.floatingtoolbar import FloatingToolBar
@@ -128,6 +128,17 @@ class MainWindow(mainwindow_widget, mainwindow_base):
         self.settings_page.layout().addWidget(self.settingswidget)
         self.actionSettings.toggled.connect(self.settingswidget.populateControls)
         self.actionSettings.toggled.connect(self.settingswidget.readSettings)
+
+        self.dataentrywidget = DataEntryWidget()
+        self.widgetpage.layout().addWidget(self.dataentrywidget)
+        self.dataentrywidget.accepted.connect(self.cleartempobjects)
+        self.dataentrywidget.rejected.connect(self.cleartempobjects)
+        self.dataentrywidget.featuresaved.connect(self.cleartempobjects)
+        self.dataentrywidget.failedsave.connect(self.cleartempobjects)
+        self.dataentrywidget.finished.connect(self.dataentryfinished)
+        self.dataentrywidget.featuresaved.connect(self.featureSaved)
+        self.dataentrywidget.failedsave.connect(self.failSave)
+        self.dataentrywidget.helprequest.connect(self.showhelp)
 
         def createSpacer(width=0, height=0):
             widget = QWidget()
@@ -216,8 +227,6 @@ class MainWindow(mainwindow_widget, mainwindow_base):
         self.infodock.hide()
         self.hidedataentry()
         self.updateicons()
-        self.flickwidget = FlickCharm()
-        self.flickwidget.activateOn(self.scrollArea)
         self.canvas.installEventFilter(self)
         self.canvas.extentsChanged.connect(self.updatestatuslabel)
 
@@ -460,37 +469,33 @@ class MainWindow(mainwindow_widget, mainwindow_base):
             # No clearBand method found, but that's cool.
             pass
 
+    def showhelp(self, url):
+        help = HelpPage(self.stackedWidget)
+        help.setHelpPage(url)
+        help.show()
+
+    def dataentryfinished(self):
+        self.hidedataentry()
+        self.showmap()
+
+    def featureSaved(self):
+        self.bar.pushMessage("Saved", "Changes Saved", QgsMessageBar.INFO, 1)
+        self.canvas.refresh()
+
+    def failSave(self, messages):
+        self.bar.pushError("Error when saving changes.", messages)
+
+    def cleartempobjects(self):
+        self.band.reset()
+        self.clearToolRubberBand()
+
     def openForm(self, form, feature):
         """
         Open the form that is assigned to the layer
         """
-        layer = form.QGISLayer
-        if not layer.isEditable():
-            layer.startEditing()
-
-        def featureSaved():
-            self.bar.pushMessage("Saved",
-                                        "Changes Saved",
-                                        QgsMessageBar.INFO,
-                                        1)
-
-        def failSave(messages):
-            self.bar.pushError("Error when saving changes.", messages)
-
-        def cleartempobjects():
-            self.band.reset()
-            self.clearToolRubberBand()
-
-        self.band.setToGeometry(feature.geometry(), layer)
-        provider = DialogProvider(self.canvas)
-        provider.accepted.connect(cleartempobjects)
-        provider.rejected.connect(cleartempobjects)
-        provider.featuresaved.connect(featureSaved)
-        provider.featuresaved.connect(cleartempobjects)
-        provider.failedsave.connect(failSave)
-        provider.failedsave.connect(cleartempobjects)
-
-        provider.openDialog(feature=feature, form=form, parent=self)
+        self.band.setToGeometry(feature.geometry(), form.QGISLayer)
+        self.dataentrywidget.openform(feature=feature, form=form)
+        self.showdataentry()
 
     def addNewFeature(self, form, geometry):
         """
