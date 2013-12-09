@@ -74,6 +74,7 @@ class DialogProvider(QObject):
             self.canvas.refresh()
             parent.showmap()
             self.accepted.emit()
+            parent.savedataButton.pressed.disconnect(accept)
 
         def reject():
             if not featureform.reject():
@@ -83,6 +84,7 @@ class DialogProvider(QObject):
             clearcurrentwidget()
             parent.showmap()
             parent.hidedataentry()
+            parent.cancelButton.pressed.disconnect(reject)
             self.rejected.emit()
 
         def formvalidation(passed):
