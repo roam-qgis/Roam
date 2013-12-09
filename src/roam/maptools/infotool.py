@@ -29,7 +29,8 @@ class InfoTool(QgsMapTool):
 
         self.band.reset()
         for layer in self.canvas.layers():
-            if not layer.type() == QgsMapLayer.VectorLayer:
+            if (not layer.type() == QgsMapLayer.VectorLayer
+                or layer.geometryType() == QGis.NoGeometry):
                 continue
 
             rq = QgsFeatureRequest().setFilterRect(rect)
