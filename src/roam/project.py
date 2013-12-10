@@ -354,3 +354,6 @@ class Project(object):
     @property
     def selectlayers(self):
         return self.settings.get('selectlayers', [])
+
+    def historyenabled(self, layer):
+        return layer.name() in self.settings.get('historylayers', [])

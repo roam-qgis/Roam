@@ -1,9 +1,11 @@
 import os.path
 import os
+import getpass
+
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 
-from qgis.core import QgsMapLayerRegistry, QgsFeatureRequest
+from qgis.core import QgsMapLayerRegistry, QgsFeatureRequest, QgsFeature
 
 from roam.utils import log, info, warning, error
 from roam import featuredialog
@@ -74,6 +76,7 @@ class DataEntryWidget(dataentry_widget, dataentry_base):
         super(DataEntryWidget, self).__init__(parent)
         self.setupUi(self)
         self.featureform = None
+        self.project = None
 
         self.flickwidget = FlickCharm()
         self.flickwidget.activateOn(self.scrollArea)
@@ -83,18 +86,26 @@ class DataEntryWidget(dataentry_widget, dataentry_base):
 
     def accept(self):
         assert not self.featureform is None
+        assert not self.project is None
 
         if not self.featureform.accept():
             return
 
         layer = self.featureform.form.QGISLayer
-        feature, savedvalues = self.featureform.getupdatedfeature()
+        before, after, savedvalues = self.featureform.getupdatedfeature()
 
         layer.startEditing()
-        if feature.id() > 0:
-            layer.updateFeature(feature)
+        if after.id() > 0:
+            if self.project.historyenabled(layer):
+                # Mark the old one as history
+                before['dateedited'] = QDateTime.currentDateTime()
+                before['editedby'] = getpass.getuser()
+                layer.addFeature(after)
+                layer.updateFeature(before)
+            else:
+                layer.updateFeature(after)
         else:
-            layer.addFeature(feature)
+            layer.addFeature(after)
             featuredialog.savevalues(layer, savedvalues)
         saved = layer.commitChanges()
 
@@ -135,7 +146,7 @@ class DataEntryWidget(dataentry_widget, dataentry_base):
         if item and item.widget():
             item.widget().setParent(None)
 
-    def openform(self, form, feature):
+    def openform(self, form, feature, project):
         """
         Opens a form for the given feature
         """
@@ -143,6 +154,7 @@ class DataEntryWidget(dataentry_widget, dataentry_base):
         if not feature.id() > 0:
             defaults.update(getdefaults(form.widgetswithdefaults(), feature, form.QGISLayer))
 
+        self.project = project
         self.featureform = form.featureform
         self.featureform.formvalidation.connect(self.formvalidation)
         self.featureform.helprequest.connect(self.helprequest.emit)

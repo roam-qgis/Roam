@@ -494,7 +494,7 @@ class MainWindow(mainwindow_widget, mainwindow_base):
         Open the form that is assigned to the layer
         """
         self.band.setToGeometry(feature.geometry(), form.QGISLayer)
-        self.dataentrywidget.openform(feature=feature, form=form)
+        self.dataentrywidget.openform(feature=feature, form=form, project=self.project)
         self.showdataentry()
 
     def addNewFeature(self, form, geometry):
@@ -504,10 +504,9 @@ class MainWindow(mainwindow_widget, mainwindow_base):
         layer = form.QGISLayer
         fields = layer.pendingFields()
 
-        feature = QgsFeature()
+        feature = QgsFeature(fields)
+        roam.utils.log(feature.fields().toList())
         feature.setGeometry(geometry)
-        feature.initAttributes(fields.count())
-        feature.setFields(fields)
 
         for indx in xrange(fields.count()):
             feature[indx] = layer.dataProvider().defaultValue(indx)

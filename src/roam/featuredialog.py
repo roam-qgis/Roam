@@ -23,7 +23,7 @@ from PyQt4.QtGui import (QWidget,
                          QSpacerItem,
                          QFormLayout)
 
-from qgis.core import QgsFields
+from qgis.core import QgsFields, QgsFeature
 
 from roam.editorwidgets.core import WidgetsRegistry
 from roam import utils
@@ -218,8 +218,7 @@ class FeatureForm(QObject):
     def bindfeature(self, feature, defaults={}):
         widgetsconfig = self.formconfig['widgets']
         self.feature = feature
-        # Ummm why do the fields go out of scope :S
-        self.fields = QgsFields(self.feature.fields())
+        self.fields = self.feature.fields()
 
         for field, config in widgetsconfig.iteritems():
             widget = self.widget.findChild(QWidget, field)
@@ -310,7 +309,12 @@ class FeatureForm(QObject):
             if button:
                 return button.isChecked()
 
-        self.feature.setFields(self.fields)
+        before = QgsFeature(self.feature)
+        before.setFields(self.fields, initAttributes=False)
+        after = QgsFeature(self.feature)
+        after.setFields(self.fields, initAttributes=False)
+
+        self.feature.setFields(self.fields, initAttributes=False)
         savedvalues = {}
         for wrapper in self.boundwidgets:
             value = wrapper.value()
@@ -319,4 +323,4 @@ class FeatureForm(QObject):
                 savedvalues[field] = value
             self.feature[field] = value
 
-        return self.feature, savedvalues
+        return before, self.feature, savedvalues
