@@ -5,7 +5,7 @@ import getpass
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 
-from qgis.core import QgsMapLayerRegistry, QgsFeatureRequest, QgsFeature
+from qgis.core import QgsMapLayerRegistry, QgsFeatureRequest, QgsFeature, QgsExpression
 
 from roam.utils import log, info, warning, error
 from roam import featuredialog
@@ -37,6 +37,10 @@ def getdefaults(widgets, feature, layer):
                 log(ex)
                 value = None
         else:
+            # Pass it though a series of filters to get the default value
+            if '[%' in default and '%]' in default:
+                # TODO Use regex
+                default = QgsExpression.replaceExpressionText(default, feature, layer )
             value = os.path.expandvars(default)
 
         log("Default value: {}".format(value))
