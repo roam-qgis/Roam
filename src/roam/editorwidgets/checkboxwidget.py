@@ -35,4 +35,4 @@ class CheckboxWidget(EditorWidget):
         else:
             return self.config['uncheckedvalue']
 
-factory = WidgetFactory("Checkbox", CheckboxWidget, None)
+factory = WidgetFactory("Checkbox", CheckboxWidget)

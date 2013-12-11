@@ -1,4 +1,4 @@
-from PyQt4.QtGui import QLineEdit
+from PyQt4.QtGui import QLineEdit, QPlainTextEdit
 
 from roam.editorwidgets.core import WidgetFactory, EditorWidget
 
@@ -35,4 +35,12 @@ class TextWidget(EditorWidget):
         except AttributeError:
             return self.widget.text()
 
-factory = WidgetFactory("Text", TextWidget, None)
+
+class TextBlockWidget(TextWidget):
+    def __init__(self, *args):
+        super(TextBlockWidget, self).__init__(*args)
+
+    def createWidget(self, parent):
+        return QPlainTextEdit(parent)
+factory = WidgetFactory("Text", TextWidget)
+blockfactory = WidgetFactory("TextBlock", TextBlockWidget)

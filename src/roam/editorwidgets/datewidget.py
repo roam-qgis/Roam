@@ -85,4 +85,4 @@ class DateWidget(EditorWidget):
         else:
             self.datewidget.dateTime().toString(Qt.ISODate)
 
-factory = WidgetFactory("Date", DateWidget, None)
+factory = WidgetFactory("Date", DateWidget)

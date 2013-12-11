@@ -22,7 +22,8 @@ factories = [listwidget.factory,
              checkboxwidget.factory,
              textwidget.factory,
              datewidget.factory,
-             imagewidget.factory]
+             imagewidget.factory,
+             textwidget.blockfactory]
 
 WidgetsRegistry.registerFactories(factories)
 

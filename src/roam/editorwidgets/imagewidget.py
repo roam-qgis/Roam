@@ -45,5 +45,5 @@ class ImageWidget(EditorWidget):
     def value(self):
         return self.widget.getImage()
 
-factory = WidgetFactory("Image", ImageWidget, None)
+factory = WidgetFactory("Image", ImageWidget)
 

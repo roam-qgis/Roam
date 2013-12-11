@@ -118,4 +118,4 @@ class ListWidget(EditorWidget):
 
         return value
 
-factory = WidgetFactory("List", ListWidget, None)
+factory = WidgetFactory("List", ListWidget)

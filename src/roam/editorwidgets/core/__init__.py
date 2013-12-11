@@ -26,22 +26,14 @@ class WidgetsRegistry(object):
 
 
 class WidgetFactory(object):
-    def __init__(self, name, editorwidget, configwidget):
+    def __init__(self, name, editorwidget):
         self.name = name
         self.description = ''
         self.icon = ''
         self.editorwidget = editorwidget
-        self.configwidget = configwidget
 
     def createWidget(self, layer, field, widget, label, parent=None):
         return self.editorwidget.for_widget(layer, field, widget, label, parent)
-
-    def readwidgetconfig(self, configwidget):
-        widgetconfig = configwidget.getconfig()
-        return {self.name: widgetconfig}
-
-    def setwidgetconfig(self, configwidget, config):
-        configwidget.config = config
 
 
 class EditorWidget(QObject):
