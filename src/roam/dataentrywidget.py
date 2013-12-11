@@ -98,8 +98,10 @@ class DataEntryWidget(dataentry_widget, dataentry_base):
         if after.id() > 0:
             if self.project.historyenabled(layer):
                 # Mark the old one as history
-                before['dateedited'] = QDateTime.currentDateTime()
-                before['editedby'] = getpass.getuser()
+                before['status'] = 'H'
+                after['status'] = 'C'
+                after['dateedited'] = QDateTime.currentDateTime()
+                after['editedby'] = getpass.getuser()
                 layer.addFeature(after)
                 layer.updateFeature(before)
             else:
