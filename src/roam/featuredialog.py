@@ -240,8 +240,10 @@ class FeatureForm(QObject):
 
             if feature.id() > 0 and 'editing' in readonlyrules:
                 widgetwrapper.readonly = True
+            elif 'insert' in readonlyrules:
+                widgetwrapper.readonly = True
 
-            if 'all' in readonlyrules:
+            if 'always' in readonlyrules:
                 widgetwrapper.readonly = True
 
             widgetwrapper.hidden = config.get('hidden', False)
