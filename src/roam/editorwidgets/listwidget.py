@@ -3,10 +3,11 @@ from PyQt4.QtGui import QComboBox
 from qgis.core import QgsMessageLog, QgsMapLayerRegistry, QgsExpression, QgsFeatureRequest
 
 import roam.utils
-from roam.editorwidgets.core import WidgetFactory, WidgetsRegistry, EditorWidget
+from roam.editorwidgets.core import WidgetsRegistry, EditorWidget
 
 
 class ListWidget(EditorWidget):
+    widgettype = 'List'
     def __init__(self, *args):
         super(ListWidget, self).__init__(*args)
 
@@ -118,4 +119,3 @@ class ListWidget(EditorWidget):
 
         return value
 
-factory = WidgetFactory("List", ListWidget)

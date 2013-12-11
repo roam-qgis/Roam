@@ -1,11 +1,12 @@
 from PyQt4.QtGui import QDialog, QGridLayout, QLabel, QLayout, QPixmap
 from PyQt4.QtCore import QByteArray
 
-from roam.editorwidgets.core import WidgetFactory, EditorWidget
+from roam.editorwidgets.core import EditorWidget
 from roam.editorwidgets.uifiles.imagewidget import QMapImageWidget
 
 
 class ImageWidget(EditorWidget):
+    widgettype = 'Image'
     def __init__(self, *args):
         super(ImageWidget, self).__init__(*args)
 
@@ -44,6 +45,4 @@ class ImageWidget(EditorWidget):
 
     def value(self):
         return self.widget.getImage()
-
-factory = WidgetFactory("Image", ImageWidget)
 

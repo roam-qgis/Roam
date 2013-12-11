@@ -1,9 +1,10 @@
 from PyQt4.QtGui import QLineEdit, QPlainTextEdit
 
-from roam.editorwidgets.core import WidgetFactory, EditorWidget
+from roam.editorwidgets.core import EditorWidget
 
 
 class TextWidget(EditorWidget):
+    widgettype = 'Text'
     def __init__(self, *args):
         super(TextWidget, self).__init__(*args)
 
@@ -37,10 +38,9 @@ class TextWidget(EditorWidget):
 
 
 class TextBlockWidget(TextWidget):
+    widgettype = 'TextBlock'
     def __init__(self, *args):
         super(TextBlockWidget, self).__init__(*args)
 
     def createWidget(self, parent):
         return QPlainTextEdit(parent)
-factory = WidgetFactory("Text", TextWidget)
-blockfactory = WidgetFactory("TextBlock", TextBlockWidget)

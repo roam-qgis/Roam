@@ -9,21 +9,16 @@ import os
 uipath = os.path.join(os.path.dirname(__file__), 'uifiles')
 sys.path.append(uipath)
 
-
-from roam.editorwidgets import (listwidget,
-                                checkboxwidget,
-                                textwidget,
-                                datewidget,
-                                imagewidget)
+from roam.editorwidgets.listwidget import ListWidget
+from roam.editorwidgets.checkboxwidget import CheckboxWidget
+from roam.editorwidgets.datewidget import DateWidget
+from roam.editorwidgets.textwidget import TextBlockWidget, TextWidget
+from roam.editorwidgets.imagewidget import ImageWidget
 
 from roam.editorwidgets.core import WidgetsRegistry
 
-factories = [listwidget.factory,
-             checkboxwidget.factory,
-             textwidget.factory,
-             datewidget.factory,
-             imagewidget.factory,
-             textwidget.blockfactory]
+widgets = [ListWidget, CheckboxWidget, DateWidget, TextBlockWidget,
+           TextWidget, ImageWidget]
 
-WidgetsRegistry.registerFactories(factories)
+WidgetsRegistry.registerwidgets(widgets)
 

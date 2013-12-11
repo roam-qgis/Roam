@@ -5,35 +5,24 @@ class WidgetsRegistry(object):
     widgets = {}
 
     @staticmethod
-    def registerFactories(factories):
-        for factory in factories:
-            WidgetsRegistry.addWidget(factory)
+    def registerwidgets(widgets):
+        for widget in widgets:
+            WidgetsRegistry.addWidget(widget.widgettype, widget)
 
     @staticmethod
-    def addWidget(widgetfactory):
-        WidgetsRegistry.widgets[widgetfactory.name] = widgetfactory
+    def addWidget(widgettype, widget):
+        WidgetsRegistry.widgets[widgettype] = widget
 
     @staticmethod
     def createwidget(widgettype, layer, field, widget, label, config, parent=None):
         if not widgettype in WidgetsRegistry.widgets:
             return None
 
-        factory = WidgetsRegistry.widgets[widgettype]
-        widgetwrapper = factory.createWidget(layer, field, widget, label, parent)
+        editorwidget = WidgetsRegistry.widgets[widgettype]
+        widgetwrapper = editorwidget.for_widget(layer, field, widget, label, parent)
         if not config is None:
             widgetwrapper.config = config
         return widgetwrapper
-
-
-class WidgetFactory(object):
-    def __init__(self, name, editorwidget):
-        self.name = name
-        self.description = ''
-        self.icon = ''
-        self.editorwidget = editorwidget
-
-    def createWidget(self, layer, field, widget, label, parent=None):
-        return self.editorwidget.for_widget(layer, field, widget, label, parent)
 
 
 class EditorWidget(QObject):

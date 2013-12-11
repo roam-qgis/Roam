@@ -1,9 +1,10 @@
 from PyQt4.QtGui import  QCheckBox
 
-from roam.editorwidgets.core import WidgetFactory, EditorWidget
+from roam.editorwidgets.core import EditorWidget
 
 
 class CheckboxWidget(EditorWidget):
+    widgettype = 'Checkbox'
     def __init__(self, *args):
         super(CheckboxWidget, self).__init__(*args)
         self.validationstyle = """QCheckBox[required=true]
@@ -35,4 +36,3 @@ class CheckboxWidget(EditorWidget):
         else:
             return self.config['uncheckedvalue']
 
-factory = WidgetFactory("Checkbox", CheckboxWidget)
