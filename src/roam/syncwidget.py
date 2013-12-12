@@ -5,6 +5,7 @@ from PyQt4.QtGui import QIcon, QTreeWidgetItem, QPushButton, QStyledItemDelegate
 
 from roam.uifiles import sync_widget, sync_base
 from roam.syncing.replication import SyncProvider
+from roam.flickwidget import FlickCharm
 
 
 class SyncWidget(sync_widget, sync_base):
@@ -13,6 +14,9 @@ class SyncWidget(sync_widget, sync_base):
         super(SyncWidget, self).__init__(parent)
         self.setupUi(self)
         self.syncrunning = False
+        self.flickcharm = FlickCharm()
+        self.flickcharm.activateOn(self.synctree)
+        self.flickcharm.activateOn(self.syncstatus)
 
     def loadprojects(self, projects):
         #self.model = TreeModel(list(projects))
@@ -39,9 +43,10 @@ class SyncWidget(sync_widget, sync_base):
 
     def updatestatus(self, message):
         self.syncstatus.append(message)
+        self.syncstatus.ensureCursorVisible()
 
     def updatewitherror(self, message):
-        self.syncstatus.append('<b style="color:red">Error: {}</b>'.format(message))
+        self.updatestatus('<b style="color:red">Error in sync: {}</b>'.format(message))
 
     def runnext(self):
         try:
@@ -69,13 +74,14 @@ class SyncWidget(sync_widget, sync_base):
         button.setEnabled(True)
         self.syncrunning = False
 
-    def syncstarted(self, button):
+    def syncstarted(self, button, provider):
+        self.updatestatus('<b style="font-size:large">Sync started for {}</h3>'.format(provider.name))
         button.setText('Running')
         button.setEnabled(False)
         self.syncrunning = True
 
     def run(self, button, provider):
-        provider.syncStarted.connect(partial(self.syncstarted, button))
+        provider.syncStarted.connect(partial(self.syncstarted, button, provider))
         provider.syncFinished.connect(partial(self.syncfinished, button, provider))
 
         SyncWidget.syncqueue.append(provider)

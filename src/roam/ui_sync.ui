@@ -50,8 +50,8 @@
      </property>
     </widget>
    </item>
-   <item row="2" column="0">
-    <widget class="QPushButton" name="pushButton">
+   <item row="3" column="0">
+    <widget class="QPushButton" name="syncallButton">
      <property name="text">
       <string>Sync All</string>
      </property>
@@ -67,30 +67,10 @@
      </property>
     </widget>
    </item>
-   <item row="2" column="1" colspan="2">
-    <spacer name="horizontalSpacer">
-     <property name="orientation">
-      <enum>Qt::Horizontal</enum>
-     </property>
-     <property name="sizeHint" stdset="0">
-      <size>
-       <width>40</width>
-       <height>20</height>
-      </size>
-     </property>
-    </spacer>
-   </item>
-   <item row="4" column="2">
+   <item row="3" column="2" rowspan="3">
     <widget class="QTextEdit" name="syncstatus"/>
    </item>
-   <item row="3" column="2">
-    <widget class="QLabel" name="label">
-     <property name="text">
-      <string>Sync Report</string>
-     </property>
-    </widget>
-   </item>
-   <item row="3" column="0" rowspan="2" colspan="2">
+   <item row="4" column="0" rowspan="2" colspan="2">
     <widget class="QTreeWidget" name="synctree">
      <property name="styleSheet">
       <string notr="true">QHeaderView::section
