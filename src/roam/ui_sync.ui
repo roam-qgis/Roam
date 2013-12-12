@@ -17,10 +17,7 @@
    <string notr="true"/>
   </property>
   <layout class="QGridLayout" name="gridLayout">
-   <property name="margin">
-    <number>0</number>
-   </property>
-   <item row="0" column="0" colspan="2">
+   <item row="0" column="0">
     <widget class="QLabel" name="settingsLabel_2">
      <property name="sizePolicy">
       <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
@@ -37,7 +34,7 @@
      </property>
     </widget>
    </item>
-   <item row="1" column="0" colspan="2">
+   <item row="1" column="0" colspan="3">
     <widget class="Line" name="line">
      <property name="styleSheet">
       <string notr="true">color: rgb(165, 165, 165);</string>
@@ -53,8 +50,48 @@
      </property>
     </widget>
    </item>
-   <item row="4" column="0" colspan="2">
-    <widget class="QTableView" name="synctable">
+   <item row="2" column="0">
+    <widget class="QPushButton" name="pushButton">
+     <property name="text">
+      <string>Sync All</string>
+     </property>
+     <property name="icon">
+      <iconset resource="resources.qrc">
+       <normaloff>:/icons/sync</normaloff>:/icons/sync</iconset>
+     </property>
+     <property name="iconSize">
+      <size>
+       <width>48</width>
+       <height>48</height>
+      </size>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="1" colspan="2">
+    <spacer name="horizontalSpacer">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>40</width>
+       <height>20</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+   <item row="4" column="2">
+    <widget class="QTextEdit" name="syncstatus"/>
+   </item>
+   <item row="3" column="2">
+    <widget class="QLabel" name="label">
+     <property name="text">
+      <string>Sync Report</string>
+     </property>
+    </widget>
+   </item>
+   <item row="3" column="0" rowspan="2" colspan="2">
+    <widget class="QTreeWidget" name="synctree">
      <property name="styleSheet">
       <string notr="true">QHeaderView::section
 {
@@ -79,55 +116,36 @@
      <property name="selectionBehavior">
       <enum>QAbstractItemView::SelectColumns</enum>
      </property>
-     <property name="showGrid">
-      <bool>false</bool>
-     </property>
-     <property name="gridStyle">
-      <enum>Qt::NoPen</enum>
-     </property>
-     <attribute name="horizontalHeaderVisible">
-      <bool>false</bool>
-     </attribute>
-     <attribute name="horizontalHeaderDefaultSectionSize">
+     <property name="autoExpandDelay">
       <number>0</number>
-     </attribute>
-     <attribute name="verticalHeaderVisible">
+     </property>
+     <property name="indentation">
+      <number>18</number>
+     </property>
+     <property name="rootIsDecorated">
       <bool>false</bool>
-     </attribute>
-     <attribute name="verticalHeaderDefaultSectionSize">
-      <number>1</number>
-     </attribute>
+     </property>
+     <property name="itemsExpandable">
+      <bool>true</bool>
+     </property>
+     <property name="sortingEnabled">
+      <bool>false</bool>
+     </property>
+     <property name="animated">
+      <bool>false</bool>
+     </property>
+     <property name="wordWrap">
+      <bool>false</bool>
+     </property>
+     <property name="headerHidden">
+      <bool>true</bool>
+     </property>
+     <column>
+      <property name="text">
+       <string notr="true">1</string>
+      </property>
+     </column>
     </widget>
-   </item>
-   <item row="3" column="0">
-    <widget class="QPushButton" name="pushButton">
-     <property name="text">
-      <string>Sync All</string>
-     </property>
-     <property name="icon">
-      <iconset resource="resources.qrc">
-       <normaloff>:/icons/sync</normaloff>:/icons/sync</iconset>
-     </property>
-     <property name="iconSize">
-      <size>
-       <width>48</width>
-       <height>48</height>
-      </size>
-     </property>
-    </widget>
-   </item>
-   <item row="3" column="1">
-    <spacer name="horizontalSpacer">
-     <property name="orientation">
-      <enum>Qt::Horizontal</enum>
-     </property>
-     <property name="sizeHint" stdset="0">
-      <size>
-       <width>40</width>
-       <height>20</height>
-      </size>
-     </property>
-    </spacer>
    </item>
   </layout>
  </widget>
