@@ -76,7 +76,7 @@ class ListWidget(EditorWidget):
 
             widget.addItem(feature[keyfieldindex], feature[valuefield])
 
-        if self.config['allownull']:
+        if self.allownulls:
             widget.insertItem(0, '(no selection)', None)
 
     def initWidget(self, widget):
@@ -92,8 +92,12 @@ class ListWidget(EditorWidget):
 
         widget.currentIndexChanged.connect(self.validate)
 
+    @property
+    def allownulls(self):
+        return self.config.get('allownull', False)
+
     def validate(self, *args):
-        if (not self.config['allownull'] and (not self.widget.currentText() or
+        if (not self.allownulls and (not self.widget.currentText() or
             self.widget.currentText() == "(no selection)")):
             self.raisevalidationupdate(False)
         else:

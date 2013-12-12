@@ -32,11 +32,17 @@ class DateWidget(EditorWidget):
             pickbutton.setIconSize(QSize(24, 24))
             pickbutton.pressed.connect(self.showpickdialog)
 
-        self.datewidget.dateTimeChanged.connect(self.validate)
+        if type(self.datewidget) is QDateEdit:
+            self.datawidget.dateChanged.connect(self.validate)
+        else:
+            self.datewidget.dateTimeChanged.connect(self.validate)
 
     @property
     def datewidget(self):
-        return self.widget.findChild(QDateTimeEdit)
+        if type(self.widget) is QDateTimeEdit:
+            return self.widget
+        else:
+            return self.widget.findChild(QDateTimeEdit)
 
     def validate(self, *args):
         if self.value() is None:
