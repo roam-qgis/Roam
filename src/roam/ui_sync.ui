@@ -136,6 +136,12 @@ QTreeWidget::item
      <property name="selectionBehavior">
       <enum>QAbstractItemView::SelectColumns</enum>
      </property>
+     <property name="iconSize">
+      <size>
+       <width>32</width>
+       <height>32</height>
+      </size>
+     </property>
      <property name="autoExpandDelay">
       <number>0</number>
      </property>

@@ -1,7 +1,7 @@
 from functools import partial
 
 from PyQt4.QtCore import QAbstractItemModel, Qt, QModelIndex
-from PyQt4.QtGui import QIcon, QTreeWidgetItem, QPushButton, QStyledItemDelegate, QApplication
+from PyQt4.QtGui import QIcon, QTreeWidgetItem, QPushButton, QStyledItemDelegate, QApplication, QIcon
 
 from roam.uifiles import sync_widget, sync_base
 from roam.syncing.replication import SyncProvider
@@ -30,6 +30,7 @@ class SyncWidget(sync_widget, sync_base):
 
             projectitem = QTreeWidgetItem(root)
             projectitem.setText(0, project.name)
+            projectitem.setIcon(0, QIcon(project.splash))
             for provider in providers:
                 provideritem = QTreeWidgetItem(projectitem)
                 provideritem.setText(0, provider.name)
