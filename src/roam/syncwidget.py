@@ -20,8 +20,6 @@ class SyncWidget(sync_widget, sync_base):
         self.flickcharm.activateOn(self.syncstatus)
 
     def loadprojects(self, projects):
-        #self.model = TreeModel(list(projects))
-        #self.synctree.setModel(self.model)
         root = self.synctree.invisibleRootItem()
         for project in projects:
             print project
