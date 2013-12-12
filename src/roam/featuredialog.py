@@ -115,8 +115,7 @@ def buildfromauto(formconfig):
     outwidget = QWidget()
     outwidget.setLayout(outlayout)
     for config in widgetsconfig:
-        widgettype = config['type']
-        print widgettype
+        widgettype = config['widget']
         field = config['field']
         name = config.get('name', field)
         label = QLabel(name)
@@ -223,7 +222,7 @@ class FeatureForm(QObject):
         self.fields = self.feature.fields()
 
         for config in widgetsconfig:
-            widgettype = config['type']
+            widgettype = config['widget']
             field = config['field']
             widget = self.widget.findChild(QWidget, field)
             label = self.widget.findChild(QLabel, "{}_label".format(field))
