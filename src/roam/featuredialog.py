@@ -114,11 +114,12 @@ def buildfromauto(formconfig):
     outlayout = QFormLayout()
     outwidget = QWidget()
     outwidget.setLayout(outlayout)
-    for field, config in widgetsconfig.iteritems():
+    for config in widgetsconfig:
+        widgettype = config['widget']
+        field = config['field']
         name = config.get('name', field)
         label = QLabel(name)
         label.setObjectName(field + "_label")
-        widgettype = config['widgettype']
         widgetwrapper = WidgetsRegistry.createwidget(widgettype,
                                                     layer=None,
                                                     field=field,
@@ -220,11 +221,12 @@ class FeatureForm(QObject):
         self.feature = feature
         self.fields = self.feature.fields()
 
-        for field, config in widgetsconfig.iteritems():
+        for config in widgetsconfig:
+            widgettype = config['widget']
+            field = config['field']
             widget = self.widget.findChild(QWidget, field)
             label = self.widget.findChild(QLabel, "{}_label".format(field))
-            widgetconfig = config.get('widget', {})
-            widgettype = config['widgettype']
+            widgetconfig = config.get('config', {})
             widgetwrapper = WidgetsRegistry.createwidget(widgettype,
                                                          self.form.QGISLayer,
                                                          field,

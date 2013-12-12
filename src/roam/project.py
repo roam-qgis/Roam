@@ -214,9 +214,9 @@ class Form(object):
         """
         Return any widget configs that have default values needed
         """
-        for field, config in self.widgets.iteritems():
+        for config in self.widgets:
             if 'default' in config:
-                yield field, config
+                yield config['field'], config
 
     def accept(self):
         #TODO Call form module accept method
