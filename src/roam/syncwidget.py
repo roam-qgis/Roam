@@ -14,6 +14,7 @@ class SyncWidget(sync_widget, sync_base):
         super(SyncWidget, self).__init__(parent)
         self.setupUi(self)
         self.syncrunning = False
+        self.syncallButton.hide()
         self.flickcharm = FlickCharm()
         self.flickcharm.activateOn(self.synctree)
         self.flickcharm.activateOn(self.syncstatus)

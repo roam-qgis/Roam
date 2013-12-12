@@ -7,7 +7,15 @@ class SyncProvider(QObject):
     syncMessage = pyqtSignal(str)
     syncError = pyqtSignal(str)
     syncFinished = pyqtSignal()
-    
+
+    def __init__(self, name):
+        super(SyncProvider, self).__init__(None)
+        self._name = name
+
+    @property
+    def name(self):
+        return "Sync {}".format(self._name)
+
     def startSync(self):
         pass
     
@@ -17,8 +25,7 @@ class SyncProvider(QObject):
 
 class ReplicationSync(SyncProvider):
     def __init__(self, name, cmd):
-        super(SyncProvider, self).__init__()
-        self.name = name
+        super(ReplicationSync, self).__init__(name)
         self.cmd = cmd
         self.process = QProcess()
         self.process.finished.connect(self.complete)
@@ -27,7 +34,7 @@ class ReplicationSync(SyncProvider):
         self.process.readyReadStandardOutput.connect(self.readOutput)
         self._output = ""
         self.haserror = False
-        
+
     def start(self):
         self._output = ""
         self.process.start(self.cmd, [])
@@ -47,7 +54,8 @@ class ReplicationSync(SyncProvider):
         print "Complete"
         if error > 0:
             print "Error"
-            self.syncError.emit('On snap!')
+            stderr = self.process.readAllStandardError().data()
+            self.syncError.emit(stderr)
         else:
             self.syncComplete.emit()
         self.syncFinished.emit()
