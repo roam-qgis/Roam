@@ -17,19 +17,18 @@ class DefaultError(Exception):
     pass
 
 
-def getdefaults(widgets, feature, layer):
+def getdefaults(widgets, feature, layer, canvas):
     defaults = {}
     for field, config in widgets:
         default = config.get("default", None)
         if default is None:
             continue
-
         if isinstance(default, dict):
             defaultconfig = default
             try:
                 defaulttype = defaultconfig['type']
                 defaultprovider = defaultproviders[defaulttype]
-                value = defaultprovider(feature, layer, field, defaultconfig)
+                value = defaultprovider(feature, layer, field, defaultconfig, canvas)
             except KeyError as ex:
                 log(ex)
                 continue
@@ -49,7 +48,8 @@ def getdefaults(widgets, feature, layer):
     defaults.update(featuredialog.loadsavedvalues(layer))
     return defaults
 
-def spatial_query(feature, layer, field, defaultconfig):
+
+def spatial_query(feature, layer, field, defaultconfig, canvas):
     layername = defaultconfig['layer']
     op = defaultconfig['op']
     field = defaultconfig['field']
@@ -57,7 +57,9 @@ def spatial_query(feature, layer, field, defaultconfig):
     layer = QgsMapLayerRegistry.instance().mapLayersByName(layername)[0]
     if op == 'contains':
         rect = feature.geometry().boundingBox()
-        features = layer.getFeatures(QgsFeatureRequest().setFilterRect(rect))
+        rect = canvas.mapRenderer().mapToLayerCoordinates(layer, rect)
+        rq = QgsFeatureRequest().setFilterRect(rect).setFlags(QgsFeatureRequest.ExactIntersect)
+        features = layer.getFeatures(rq)
         for f in features:
             geometry = feature.geometry()
             if f.geometry().contains(geometry):
@@ -65,6 +67,7 @@ def spatial_query(feature, layer, field, defaultconfig):
         raise DefaultError('No features found')
 
 defaultproviders = {'spatial-query': spatial_query}
+
 
 class DataEntryWidget(dataentry_widget, dataentry_base):
     """
@@ -76,11 +79,12 @@ class DataEntryWidget(dataentry_widget, dataentry_base):
     failedsave = pyqtSignal(list)
     helprequest = pyqtSignal(str)
 
-    def __init__(self, parent=None):
+    def __init__(self, canvas, parent=None):
         super(DataEntryWidget, self).__init__(parent)
         self.setupUi(self)
         self.featureform = None
         self.project = None
+        self.canvas = canvas
 
         self.flickwidget = FlickCharm()
         self.flickwidget.activateOn(self.scrollArea)
@@ -157,14 +161,19 @@ class DataEntryWidget(dataentry_widget, dataentry_base):
         Opens a form for the given feature
         """
         defaults = {}
-        # Call the pre loading events for the form
-        state, message = form.onformloading(form, feature, iter(QgsMapLayerRegistry.instance().mapLayers()))
+        editing = feature.id() > 0
+        if not editing:
+            defaults = getdefaults(form.widgetswithdefaults(), feature, form.QGISLayer, self.canvas)
+
+        for field, value in defaults.iteritems():
+            feature[field] = value
+
+        # Call the pre loading evnts for the form
+        layers = iter(QgsMapLayerRegistry.instance().mapLayers())
+        state, message = form.onformloading(form, feature, layers, editing)
 
         if not state:
             return state, message
-
-        if not feature.id() > 0:
-            defaults.update(getdefaults(form.widgetswithdefaults(), feature, form.QGISLayer))
 
         self.project = project
         self.featureform = form.featureform
@@ -173,3 +182,5 @@ class DataEntryWidget(dataentry_widget, dataentry_base):
         self.featureform.bindfeature(feature, defaults)
 
         self.setwidget(self.featureform.widget)
+
+        return True, None

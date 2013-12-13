@@ -129,7 +129,7 @@ class MainWindow(mainwindow_widget, mainwindow_base):
         self.actionSettings.toggled.connect(self.settingswidget.populateControls)
         self.actionSettings.toggled.connect(self.settingswidget.readSettings)
 
-        self.dataentrywidget = DataEntryWidget()
+        self.dataentrywidget = DataEntryWidget(self.canvas)
         self.widgetpage.layout().addWidget(self.dataentrywidget)
         self.dataentrywidget.accepted.connect(self.cleartempobjects)
         self.dataentrywidget.rejected.connect(self.cleartempobjects)

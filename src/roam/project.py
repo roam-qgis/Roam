@@ -206,7 +206,7 @@ class Form(object):
 
     @property
     def widgets(self):
-        return self.settings.get('widgets', {})
+        return self.settings.get('widgets', [])
 
     @property
     def featureform(self):
@@ -242,12 +242,12 @@ class Form(object):
         #TODO Call form module reject method
         return True
 
-    def onformloading(self, form, feature, layers):
+    def onformloading(self, form, feature, layers, editing):
         """
         Called before the form is loaded. This method can be used to do pre checks and halt the loading of the form
         if needed.
 
-        When implemented, this method should always return a tuple with a pass or fail state and a message.
+        When implemented, this method should always return a tuple with a pass state and a message.
 
         Returning (True, None) will let the form continue to be opened.
         Returning (False, "Message") will stop the opening of the form and show the message to the user.
@@ -255,9 +255,13 @@ class Form(object):
         You may alter the QgsFeature given. You can access form settings using:
 
             >>> form.settings
+
+        You can get the QGIS layer for the form using:
+
+            >>> form.QGISLayer
         """
         try:
-            return self.module.formloading(form, feature, layers)
+            return self.module.formloading(form, feature, layers, editing)
         except AttributeError as err:
             log("No formloading attribute found. Assuming pass")
             return True, None
