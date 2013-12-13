@@ -257,7 +257,7 @@ class FeatureForm(QObject):
                 widgetwrapper.validationupdate.connect(self.updaterequired)
 
             try:
-                value = defaults.get(field, nullcheck(feature[field]))
+                value = nullcheck(feature[field])
             except KeyError:
                 utils.warning("Can't find field {}".format(field))
                 value = None

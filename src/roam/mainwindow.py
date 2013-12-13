@@ -129,7 +129,7 @@ class MainWindow(mainwindow_widget, mainwindow_base):
         self.actionSettings.toggled.connect(self.settingswidget.populateControls)
         self.actionSettings.toggled.connect(self.settingswidget.readSettings)
 
-        self.dataentrywidget = DataEntryWidget()
+        self.dataentrywidget = DataEntryWidget(self.canvas)
         self.widgetpage.layout().addWidget(self.dataentrywidget)
         self.dataentrywidget.accepted.connect(self.cleartempobjects)
         self.dataentrywidget.rejected.connect(self.cleartempobjects)
@@ -439,9 +439,13 @@ class MainWindow(mainwindow_widget, mainwindow_base):
                     continue
 
         if failedforms:
+            for form, reasons in failedforms:
+                html = "<h3>{}</h3><br>{}".format(form.label,
+                                             "<br>".join(reasons))
+                print html
             self.bar.pushMessage("Form errors",
                                  "Looks like some forms couldn't be loaded",
-                                 level=QgsMessageBar.WARNING)
+                                 level=QgsMessageBar.WARNING, extrainfo=html)
 
         visible = self.dataentrymodel.rowCount() > 0
         self.dataentrycomboaction.setVisible(visible)
@@ -494,7 +498,14 @@ class MainWindow(mainwindow_widget, mainwindow_base):
         Open the form that is assigned to the layer
         """
         self.band.setToGeometry(feature.geometry(), form.QGISLayer)
-        self.dataentrywidget.openform(feature=feature, form=form, project=self.project)
+        state, message = self.dataentrywidget.openform(feature=feature, form=form, project=self.project)
+        # If the pre load method returns False then we show the error and
+        # exit
+        if not state:
+            self.bar.pushMessage("Sorry", message, QgsMessageBar.WARNING, duration=2)
+            self.cleartempobjects()
+            return
+
         self.showdataentry()
 
     def addNewFeature(self, form, geometry):
@@ -646,8 +657,6 @@ class MainWindow(mainwindow_widget, mainwindow_base):
         self.actionRaster.setEnabled(hasrasters)
         self.defaultextent = self.canvas.extent()
         roam.utils.info("Extent: {}".format(self.defaultextent.toString()))
-        # TODO Connect sync providers
-        #self.connectSyncProviders(project)
 
         # Show panels
         for panel in self.project.getPanels():
