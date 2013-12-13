@@ -439,9 +439,13 @@ class MainWindow(mainwindow_widget, mainwindow_base):
                     continue
 
         if failedforms:
+            for form, reasons in failedforms:
+                html = "<h3>{}</h3><br>{}".format(form.label,
+                                             "<br>".join(reasons))
+                print html
             self.bar.pushMessage("Form errors",
                                  "Looks like some forms couldn't be loaded",
-                                 level=QgsMessageBar.WARNING)
+                                 level=QgsMessageBar.WARNING, extrainfo=html)
 
         visible = self.dataentrymodel.rowCount() > 0
         self.dataentrycomboaction.setVisible(visible)
@@ -653,8 +657,6 @@ class MainWindow(mainwindow_widget, mainwindow_base):
         self.actionRaster.setEnabled(hasrasters)
         self.defaultextent = self.canvas.extent()
         roam.utils.info("Extent: {}".format(self.defaultextent.toString()))
-        # TODO Connect sync providers
-        #self.connectSyncProviders(project)
 
         # Show panels
         for panel in self.project.getPanels():

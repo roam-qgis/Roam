@@ -57,6 +57,7 @@ class Form(object):
         self.folder = rootfolder
         self.project = project
         self._module = None
+        self.errors = []
 
     @classmethod
     def from_config(cls, config, folder, project):
@@ -190,20 +191,16 @@ class Form(object):
         """
         Check if this layer is a valid project layer
         """
-        errors = []
-        if self.module is None:
-            errors.append("No __init__.py file found in form folder.")
-
         if not os.path.exists(self.folder):
-            errors.append("Form folder not found")
+            self.errors.append("Form folder not found")
 
         if self.QGISLayer is None:
-            errors.append("Layer {} not found in project".format(self.layername))
+            self.errors.append("Layer {} not found in project".format(self.layername))
         elif not self.QGISLayer.type() == QgsMapLayer.VectorLayer:
-            errors.append("We can only support vector layers for data entry")
+            self.errors.append("We can only support vector layers for data entry")
 
-        if errors:
-            return False, errors
+        if self.errors:
+            return False, self.errors
         else:
             return True, []
 
@@ -230,6 +227,7 @@ class Form(object):
             self._module = importlib.import_module(name)
         except ImportError as err:
             log(err)
+            self.errors.append(err.message)
             self._module = None
 
     @property
@@ -249,7 +247,7 @@ class Form(object):
         Called before the form is loaded. This method can be used to do pre checks and halt the loading of the form
         if needed.
 
-        When implemented, this method should always return a tuple with a pass state and a message.
+        When implemented, this method should always return a tuple with a pass or fail state and a message.
 
         Returning (True, None) will let the form continue to be opened.
         Returning (False, "Message") will stop the opening of the form and show the message to the user.

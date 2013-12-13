@@ -74,7 +74,7 @@ class ClickableMessage(QgsMessageBarItem):
         return QObject.eventFilter(self, parent, event)
 
     def showmessage(self):
-        html = ''
+        html = self.extrainfo
         data = []
         if self.level() == QgsMessageBar.CRITICAL:
             data = {"ERROR": "<br>".join(self.extrainfo)}
