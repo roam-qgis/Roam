@@ -157,6 +157,12 @@ class DataEntryWidget(dataentry_widget, dataentry_base):
         Opens a form for the given feature
         """
         defaults = {}
+        # Call the pre loading events for the form
+        state, message = form.onformloading(form, feature, iter(QgsMapLayerRegistry.instance().mapLayers()))
+
+        if not state:
+            return state, message
+
         if not feature.id() > 0:
             defaults.update(getdefaults(form.widgetswithdefaults(), feature, form.QGISLayer))
 

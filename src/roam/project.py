@@ -51,15 +51,17 @@ def getProjects(projectpath):
             roam.utils.warning(project.error)
 
 
-
 class Form(object):
-    def __init__(self, config, rootfolder):
+    def __init__(self, config, rootfolder, project):
         self.settings = config
         self.folder = rootfolder
+        self.project = project
+        self._module = None
 
     @classmethod
-    def from_config(cls, config, folder):
-        form = cls(config, folder)
+    def from_config(cls, config, folder, project):
+        form = cls(config, folder, project)
+        form._loadmodule()
         return form
 
     @property
@@ -189,6 +191,9 @@ class Form(object):
         Check if this layer is a valid project layer
         """
         errors = []
+        if self.module is None:
+            errors.append("No __init__.py file found in form folder.")
+
         if not os.path.exists(self.folder):
             errors.append("Form folder not found")
 
@@ -218,6 +223,19 @@ class Form(object):
             if 'default' in config:
                 yield config['field'], config
 
+    def _loadmodule(self):
+        projectfolder = os.path.basename(self.project.folder)
+        name = "projects.{project}.{formfolder}".format(project=projectfolder, formfolder=self.name)
+        try:
+            self._module = importlib.import_module(name)
+        except ImportError as err:
+            log(err)
+            self._module = None
+
+    @property
+    def module(self):
+        return self._module
+
     def accept(self):
         #TODO Call form module accept method
         return True
@@ -225,6 +243,26 @@ class Form(object):
     def reject(self):
         #TODO Call form module reject method
         return True
+
+    def onformloading(self, form, feature, layers):
+        """
+        Called before the form is loaded. This method can be used to do pre checks and halt the loading of the form
+        if needed.
+
+        When implemented, this method should always return a tuple with a pass state and a message.
+
+        Returning (True, None) will let the form continue to be opened.
+        Returning (False, "Message") will stop the opening of the form and show the message to the user.
+
+        You may alter the QgsFeature given. You can access form settings using:
+
+            >>> form.settings
+        """
+        try:
+            return self.module.formloading(form, feature, layers)
+        except AttributeError as err:
+            log("No formloading attribute found. Assuming pass")
+            return True, None
 
 
 class Project(object):
@@ -349,7 +387,7 @@ class Project(object):
     def forms(self):
         for form, config in self.settings.get("forms", {}).iteritems():
             folder = os.path.join(self.folder, form)
-            yield Form.from_config(config, folder)
+            yield Form.from_config(config, folder, self)
 
     @property
     def selectlayers(self):

@@ -494,7 +494,14 @@ class MainWindow(mainwindow_widget, mainwindow_base):
         Open the form that is assigned to the layer
         """
         self.band.setToGeometry(feature.geometry(), form.QGISLayer)
-        self.dataentrywidget.openform(feature=feature, form=form, project=self.project)
+        state, message = self.dataentrywidget.openform(feature=feature, form=form, project=self.project)
+        # If the pre load method returns False then we show the error and
+        # exit
+        if not state:
+            self.bar.pushMessage("Sorry", message, QgsMessageBar.WARNING, duration=2)
+            self.cleartempobjects()
+            return
+
         self.showdataentry()
 
     def addNewFeature(self, form, geometry):
