@@ -52,18 +52,17 @@ def getProjects(projectpath):
 
 
 class Form(object):
-    def __init__(self, name, config, rootfolder, project):
+    def __init__(self, name, config, rootfolder):
         self._name = name
         self.settings = config
         self.folder = rootfolder
-        self.project = project
         self._module = None
         self.errors = []
         self._qgislayer = None
         self._formclass = None
 
     @classmethod
-    def from_config(cls, name, config, project):
+    def from_config(cls, name, config, folder):
         def getlayer(name):
             try:
                 return QgsMapLayerRegistry.instance().mapLayersByName(name)[0]
@@ -71,8 +70,7 @@ class Form(object):
                 utils.log(e)
                 return None
 
-        folder = os.path.join(project.folder, name)
-        form = cls(name, config, folder, project)
+        form = cls(name, config, folder)
         form.QGISLayer = getlayer(config['layer'])
         form._loadmodule()
         form.init_form()
@@ -135,7 +133,7 @@ class Form(object):
                 method = method[1:]
 
                 try:
-                    projectfolder = os.path.basename(self.project.folder)
+                    projectfolder = os.path.basename(os.path.join(self.folder, '..'))
                     name = "projects.{project}.{layer}.{module}".format(project=projectfolder,
                                                                         module=modulename,
                                                                         layer=self.name)
@@ -235,8 +233,9 @@ class Form(object):
                 yield config['field'], config
 
     def _loadmodule(self):
-        projectfolder = os.path.basename(self.project.folder)
-        name = "projects.{project}.{formfolder}".format(project=projectfolder, formfolder=self.name)
+        projectfolder = os.path.abspath(os.path.join(self.folder, '..'))
+        projectname = os.path.basename(projectfolder)
+        name = "projects.{project}.{formfolder}".format(project=projectname, formfolder=self.name)
         try:
             self._module = importlib.import_module(name)
         except ImportError as err:
@@ -371,7 +370,8 @@ class Project(object):
     def forms(self):
         if not self._forms:
             for formname, config in self.settings.get("forms", {}).iteritems():
-                form = Form.from_config(formname, config, self)
+                folder = os.path.join(self.folder, formname)
+                form = Form.from_config(formname, config, folder)
                 self._forms.append(form)
         return self._forms
 
