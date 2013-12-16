@@ -133,7 +133,7 @@ class DataEntryWidget(dataentry_widget, dataentry_base):
     def reject(self, message):
         # Tell the form it is rejected
         if self.featureform:
-            self.featureform.reject()
+            self.featureform.reject(message)
 
     def formrejected(self, message=None):
         self.featureform.form.QGISLayer.rollBack()
@@ -165,7 +165,13 @@ class DataEntryWidget(dataentry_widget, dataentry_base):
 
     def openform(self, form, feature, project):
         """
-        Opens a form for the given feature
+        Opens a form for the given feature.
+
+        This method is connected using signals rather.  If the loadform signal is emitted
+        the data entry widget will continue to bind and load the form.  If rejected is emitted
+        the form will be rejected and the message will be shown to the user.
+
+        This allows for pre form load checks that allow the form to show pre main form widgets.
         """
         def continueload():
             self.featureform.formvalidation.connect(self.formvalidation)
@@ -185,6 +191,7 @@ class DataEntryWidget(dataentry_widget, dataentry_base):
         for field, value in defaults.iteritems():
             feature[field] = value
 
+        self.formvalidation(passed=True)
         self.featureform = form.create_featureform()
         self.featureform.showwidget.connect(self.showwidget)
         self.featureform.loadform.connect(continueload)

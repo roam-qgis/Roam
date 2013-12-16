@@ -172,6 +172,15 @@ class FeatureForm(QObject):
 
     def init_form(form):
         form.registerform(MyModule)
+
+
+    You can access form settings using:
+
+        >>> self.formconfigs
+
+    You can get the QGIS layer for the form using:
+
+        >>> self.form.QGISLayer/
     """
     requiredfieldsupdated = pyqtSignal(bool)
     formvalidation = pyqtSignal(bool)
@@ -237,19 +246,21 @@ class FeatureForm(QObject):
 
         When implemented, this method should always return a tuple with a pass state and a message.
 
-        Emit self.loadform will let the form continue to be opened.
-        Emitting self.haltform will stop the opening of the form and show the message to the user.
+        Calling self.continue_() will let the form continue to be opened.
+        Calling self.reject("Your message") will stop the opening of the form and show the message to the user.
 
-            >>> self.haltform("Sorry you can't load this form now")
+            >>> self.reject("Sorry you can't load this form now")
 
-        You may alter the QgsFeature given. You can access form settings using:
+            or
 
-            >>> form.settings
+            >>> self.continue_()
 
-        You can get the QGIS layer for the form using:
-
-            >>> form.QGISLayer
+        You may alter the QgsFeature given.
         """
+        self.continue_()
+
+
+    def continue_(self):
         self.loadform.emit()
 
     def loaded(self):
