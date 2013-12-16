@@ -22,9 +22,10 @@ if os.name == 'nt':
 class GPSAction(QAction):
     gpsfixed = pyqtSignal(bool)
 
-    def __init__(self, icon, canvas, parent):
+    def __init__(self, icon, canvas, settings, parent):
         QAction.__init__(self, QIcon(icon), "Enable GPS", parent)
         self.canvas = canvas
+        self.settings = settings
         self.triggered.connect(self.connectGPS)
         self.gpsConn = None
         self.isConnected = False
@@ -40,8 +41,6 @@ class GPSAction(QAction):
             self.power = PowerState(self.parent())
             self.power.poweroff.connect(self.disconnectGPS)
             
-        utils.settings_notify.settings_changed.connect(self.updateGPSPort)
-            
     def updateGPSPort(self):
         if self.isConnected:
             self.disconnectGPS()
@@ -54,7 +53,7 @@ class GPSAction(QAction):
             self.setIconText("Connecting")
             self.setEnabled(False)
 
-            portname = utils.settings.get("gpsport", '')
+            portname = self.settings.settings.get("gpsport", '')
             if portname == 'scan':
                 utils.log("Auto scanning for GPS port")
                 portname = ''

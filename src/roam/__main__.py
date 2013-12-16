@@ -7,16 +7,23 @@ from functools import partial
 import time
 import os
 import sys
+import yaml
+import logging
 
 from qgis.core import QgsApplication, QgsPythonRunner, QgsProviderRegistry
+from PyQt4 import uic
 from PyQt4.QtGui import QApplication, QFont, QImageReader, QImageWriter
 from PyQt4.QtCore import QDir, QCoreApplication, QLibrary
 # We have to import QtSql or else the MSSQL driver will fail to load.
 import PyQt4.QtSql
 
+uic.uiparser.logger.setLevel(logging.INFO)
+uic.properties.logger.setLevel(logging.INFO)
+
 RUNNING_FROM_FILE = '__file__' in globals()
 apppath = os.path.dirname(os.path.realpath(sys.argv[0]))
 prefixpath = os.path.join(apppath, "libs", "qgis")
+settingspath = os.path.join(apppath, "settings.config")
 
 if RUNNING_FROM_FILE:
     print "Running from file"
@@ -28,6 +35,7 @@ if RUNNING_FROM_FILE:
     os.environ["GDAL_DRIVER_PATH"] = r"C:\OSGeo4W\bin\gdalplugins"
     os.environ["QT_PLUGIN_PATH"] = r"C:\OSGeo4W\apps\Qt4\plugins"
     prefixpath = r"C:\OSGeo4W\apps\qgis"
+    settingspath = os.path.join(apppath, "..", "settings.config")
 
 # We have to start this here or else the image drivers don't load for some reason
 app = QgsApplication(sys.argv, True)
@@ -55,7 +63,24 @@ roam.utils.info(QgsApplication.libraryPaths())
 QApplication.setStyle("Plastique")
 QApplication.setFont(QFont('Segoe UI'))
 
-window = MainWindow()
+class Settings:
+    def __init__(self, path):
+        self.path = path
+        self.settings = {}
+
+    def load(self):
+        settingspath = self.path
+        with open(settingspath, 'r') as f:
+            self.settings = yaml.load(f)
+
+    def save(self):
+        with open(self.path, 'w') as f:
+            yaml.dump(data=self.settings, stream=f, default_flow_style=False)
+
+settings = Settings(settingspath)
+settings.load()
+
+window = MainWindow(settings=settings)
 sys.excepthook = partial(excepthook, window.raiseerror)
 
 try:
@@ -65,8 +90,6 @@ except IndexError:
 
 projects = roam.project.getProjects(projectpath)
 window.loadprojects(projects)
-roam.utils.settings_notify.settings_changed.connect(window.show)
-roam.utils.settings_notify.settings_changed.connect(window.updateicons)
 
 window.actionProject.toggle()
 window.viewprojects()

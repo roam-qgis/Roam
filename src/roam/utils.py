@@ -3,15 +3,9 @@ import logging
 import os
 import json
 import inspect
-import yaml
 import sys
 
-from PyQt4 import uic
-from PyQt4.QtCore import QObject, pyqtSignal
 from PyQt4.QtGui import (QLabel, QDialog, QGridLayout, QLayout)
-
-uic.uiparser.logger.setLevel(logging.INFO)
-uic.properties.logger.setLevel(logging.INFO)
 
 LOG_FILENAME = 'roam.log'
 log_format = '%(levelname)s - %(asctime)s - %(module)s-%(funcName)s:%(lineno)d - %(message)s'
@@ -38,46 +32,6 @@ info = logger.info
 warning = logger.warning
 error = logger.error
 critical = logger.critical
-
-curdir = os.getcwd()
-settingspath = os.path.join(os.getcwd(), 'settings.config')
-
-
-class Settings(dict):
-    class Emitter(QObject):
-        settings_changed = pyqtSignal()
-        def __init__(self):
-            super(Settings.Emitter, self).__init__()
-        
-    def __init__(self, path, *arg,**kwargs):
-        super(Settings, self).__init__(*arg, **kwargs)
-        self.settingspath = path
-        self._emitter = Settings.Emitter()
-        self.settings_changed = self._emitter.settings_changed
-        
-    def loadSettings(self): 
-        with open(self.settingspath,'r') as f:
-            settings = yaml.load(f)
-            
-    def saveSettings(self):
-        with open(self.settingspath, 'w') as f:
-            yaml.dump(data=self, stream=f, default_flow_style=False)
-              
-        self.settings_changed.emit()
-      
-settings_notify = Settings(settingspath)
-
-with open(settingspath,'r') as f:
-    settings = yaml.load(f)
-
-
-def saveSettings():
-    with open(settingspath, 'w') as f:
-        yaml.dump(data=settings, stream=f, default_flow_style=False)
-          
-    settings_notify.settings_changed.emit()
-
-appdata = os.path.join(os.environ['APPDATA'], "QMap")
 
 
 class Timer():

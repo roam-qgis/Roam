@@ -1,37 +1,46 @@
 import os
+from PyQt4.QtCore import pyqtSignal
 from qgis.core import QgsGPSDetector, QGis
 
 import roam
-from roam import utils
-
+import roam.utils as utils
 from roam.uifiles import settings_widget, settings_base
-from roam.utils import settings, curdir
 
 
-class SettingsWidget(settings_widget, settings_base):            
-    def __init__(self, parent=None):
+class SettingsWidget(settings_widget, settings_base):
+    settingsupdated = pyqtSignal(object)
+
+    def __init__(self, settings, parent=None):
         super(SettingsWidget, self).__init__(parent)
         self.setupUi(self)
+        self._settings = settings
         self.populated = False
         self.fullScreenCheck.toggled.connect(self.fullScreenCheck_stateChanged)
         self.gpsPortCombo.currentIndexChanged.connect(self.gpsPortCombo_currentIndexChanged)
         self.refreshPortsButton.pressed.connect(self.refreshPortsButton_pressed)
         self.iconswithtextCheck.toggled.connect(self.iconswithtextCheck_toggled)
 
+    @property
+    def settings(self):
+        return self._settings.settings
+
+    def notifysettingsupdate(self):
+        self.settingsupdated.emit(self._settings)
+
     def iconswithtextCheck_toggled(self, checked):
-        settings['iconswithtext'] = checked
-        utils.saveSettings()
+        self.settings['iconswithtext'] = checked
+        self.notifysettingsupdate()
 
     def fullScreenCheck_stateChanged(self, checked):
         utils.log("fullscreen changed")
-        settings["fullscreen"] = checked
-        utils.saveSettings()
-        
+        self.settings["fullscreen"] = checked
+        self.notifysettingsupdate()
+
     def gpsPortCombo_currentIndexChanged(self, index):
         port = self.gpsPortCombo.itemData(index)
-        settings["gpsport"] = port
-        utils.saveSettings()
-        
+        self.settings["gpsport"] = port
+        self.notifysettingsupdate()
+
     def refreshPortsButton_pressed(self):
         self.updateCOMPorts()
         
@@ -46,9 +55,9 @@ class SettingsWidget(settings_widget, settings_base):
         self.blockSignals(False)
         
     def readSettings(self):
-        fullscreen = settings.get("fullscreen", False)
-        iconswithtext = settings.get('iconswithtext', True)
-        gpsport = settings.get("gpsport", 'scan')
+        fullscreen = self.settings.get("fullscreen", False)
+        iconswithtext = self.settings.get('iconswithtext', True)
+        gpsport = self.settings.get("gpsport", 'scan')
 
         self.iconswithtextCheck.setChecked(iconswithtext)
         self.fullScreenCheck.setChecked(fullscreen)

@@ -81,9 +81,10 @@ class MainWindow(mainwindow_widget, mainwindow_base):
     Main application window
     """
 
-    def __init__(self):
+    def __init__(self, settings):
         super(MainWindow, self).__init__()
         self.setupUi(self)
+        self.settings = settings
         self.canvaslayers = []
         self.layerbuttons = []
         self.project = None
@@ -113,7 +114,7 @@ class MainWindow(mainwindow_widget, mainwindow_base):
         self.editgroup.addAction(self.actionEdit_Attributes)
 
         #TODO Extract GPS out into a service and remove UI stuff
-        self.actionGPS = GPSAction(":/icons/gps", self.canvas, self)
+        self.actionGPS = GPSAction(":/icons/gps", self.canvas, self.settings, self)
         self.projecttoolbar.addAction(self.actionGPS)
 
         self.projectwidget = ProjectsWidget(self)
@@ -124,10 +125,11 @@ class MainWindow(mainwindow_widget, mainwindow_base):
         self.syncwidget = SyncWidget()
         self.syncpage.layout().addWidget(self.syncwidget)
 
-        self.settingswidget = SettingsWidget(self)
+        self.settingswidget = SettingsWidget(settings, self)
         self.settings_page.layout().addWidget(self.settingswidget)
         self.actionSettings.toggled.connect(self.settingswidget.populateControls)
         self.actionSettings.toggled.connect(self.settingswidget.readSettings)
+        self.settingswidget.settingsupdated.connect(self.settingsupdated)
 
         self.dataentrywidget = DataEntryWidget(self.canvas)
         self.widgetpage.layout().addWidget(self.dataentrywidget)
@@ -229,6 +231,12 @@ class MainWindow(mainwindow_widget, mainwindow_base):
         self.updateicons()
         self.canvas.installEventFilter(self)
         self.canvas.extentsChanged.connect(self.updatestatuslabel)
+
+    def settingsupdated(self, settings):
+        settings.save()
+        self.updateicons()
+        self.show()
+        self.actionGPS.updateGPSPort()
 
     def updatestatuslabel(self):
         extent = self.canvas.extent()
@@ -597,7 +605,7 @@ class MainWindow(mainwindow_widget, mainwindow_base):
         self.stackedWidget.setCurrentIndex(page)
 
     def updateicons(self):
-        iconswithtext = roam.utils.settings.get("iconswithtext", False)
+        iconswithtext = self.settings.settings.get("iconswithtext", False)
         if iconswithtext:
             self.projecttoolbar.setToolButtonStyle(Qt.ToolButtonTextUnderIcon)
         else:
@@ -608,7 +616,7 @@ class MainWindow(mainwindow_widget, mainwindow_base):
         Override show method. Handles showing the app in fullscreen
         mode or just maximized
         """
-        fullscreen = roam.utils.settings.get("fullscreen", False)
+        fullscreen = self.settings.settings.get("fullscreen", False)
         if fullscreen:
             self.showFullScreen()
         else:
