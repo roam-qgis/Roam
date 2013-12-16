@@ -240,7 +240,7 @@ class FeatureForm(QObject):
 
         return QObject.eventFilter(self, parent, event)
 
-    def loading(self, feature, layers, editing):
+    def load(self, feature, layers, editing):
         """
         Called before the form is loaded. This method can be used to do pre checks and halt the loading of the form
         if needed.

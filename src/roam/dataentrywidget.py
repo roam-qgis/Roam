@@ -209,4 +209,4 @@ class DataEntryWidget(dataentry_widget, dataentry_base):
         layers = iter(QgsMapLayerRegistry.instance().mapLayers())
 
         self.project = project
-        self.featureform.loading(feature, layers, editing)
+        self.featureform.load(feature, layers, editing)
