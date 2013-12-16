@@ -1,5 +1,7 @@
 import pytest
 
+from mock import patch
+
 import os
 import sys
 
@@ -13,6 +15,18 @@ def test_should_return_name_if_no_label():
     form = Form('test', {}, None, None)
     assert form.label == 'test'
 
-def test_should_be_invaild_when_no_name_found():
-    form = Form(None, {}, None, None)
-    assert not form.valid
+def test_should_return_layer_name_from_config():
+    form = Form('test', {'layer': 'TestLayer'}, None, None)
+    assert form.layername == 'TestLayer'
+
+def test_should_return_list_of_defined_widgets():
+    widgetone = {'field':'test'}
+    widgettwo = {'field':'test2'}
+    widgets = [widgetone, widgettwo]
+    config = dict(widgets=widgets)
+    form = Form('test', config, None, None)
+    assert form.widgets == widgets
+
+def test_should_return_no_widgets_when_not_found():
+    form = Form('test', {}, None, None)
+    assert form.widgets == []
