@@ -133,10 +133,8 @@ class MainWindow(mainwindow_widget, mainwindow_base):
 
         self.dataentrywidget = DataEntryWidget(self.canvas)
         self.widgetpage.layout().addWidget(self.dataentrywidget)
-        self.dataentrywidget.accepted.connect(self.cleartempobjects)
-        self.dataentrywidget.rejected.connect(self.cleartempobjects)
-        self.dataentrywidget.featuresaved.connect(self.cleartempobjects)
-        self.dataentrywidget.failedsave.connect(self.cleartempobjects)
+
+        self.dataentrywidget.rejected.connect(self.formrejected)
         self.dataentrywidget.finished.connect(self.dataentryfinished)
         self.dataentrywidget.featuresaved.connect(self.featureSaved)
         self.dataentrywidget.failedsave.connect(self.failSave)
@@ -489,6 +487,7 @@ class MainWindow(mainwindow_widget, mainwindow_base):
     def dataentryfinished(self):
         self.hidedataentry()
         self.showmap()
+        self.cleartempobjects()
 
     def featureSaved(self):
         self.bar.pushMessage("Saved", "Changes Saved", QgsMessageBar.INFO, 1)
@@ -501,20 +500,19 @@ class MainWindow(mainwindow_widget, mainwindow_base):
         self.band.reset()
         self.clearToolRubberBand()
 
+    def formrejected(self, message):
+        if message:
+            self.bar.pushMessage("Form Message", message, QgsMessageBar.WARNING, duration=2)
+
+        self.cleartempobjects()
+
     def openForm(self, form, feature):
         """
         Open the form that is assigned to the layer
         """
         self.band.setToGeometry(feature.geometry(), form.QGISLayer)
-        state, message = self.dataentrywidget.openform(feature=feature, form=form, project=self.project)
-        # If the pre load method returns False then we show the error and
-        # exit
-        if not state:
-            self.bar.pushMessage("Sorry", message, QgsMessageBar.WARNING, duration=2)
-            self.cleartempobjects()
-            return
-
         self.showdataentry()
+        self.dataentrywidget.openform(feature=feature, form=form, project=self.project)
 
     def addNewFeature(self, form, geometry):
         """

@@ -13,7 +13,7 @@ from qgis.core import QgsMapLayerRegistry, QGis, QgsTolerance, QgsVectorLayer, Q
 from roam.maptools import PointTool, InspectionTool, EditTool
 from roam.utils import log
 from roam.syncing import replication
-from roam.featuredialog import FeatureForm
+from roam.featureform import FeatureForm
 from roam.orderedyaml import OrderedDictYAMLLoader
 
 import roam.utils
@@ -60,6 +60,7 @@ class Form(object):
         self._module = None
         self.errors = []
         self._qgislayer = None
+        self._formclass = None
 
     @classmethod
     def from_config(cls, name, config, project):
@@ -74,6 +75,7 @@ class Form(object):
         form = cls(name, config, folder, project)
         form.QGISLayer = getlayer(config['layer'])
         form._loadmodule()
+        form.init_form()
         return form
 
     @property
@@ -174,16 +176,6 @@ class Form(object):
         raise NoMapToolConfigured
 
     @property
-    def action(self):
-        """
-        The GUI action that can be used for this layer
-        """
-        action = QAction(QIcon(self.icon), "Capture", None)
-        action.setData(self)
-        action.setCheckable(True)
-        return action
-
-    @property
     def capabilities(self):
         """
             The configured capabilities for this layer.
@@ -215,10 +207,25 @@ class Form(object):
     def widgets(self):
         return self.settings.get('widgets', [])
 
+    def init_form(self):
+        try:
+            self.module.init_form(self)
+        except AttributeError:
+            pass
+
+    def registerform(self, formclass):
+        self._formclass = formclass
+
     @property
-    def featureform(self):
-        return FeatureForm.from_form(self, self.settings)
-        
+    def formclass(self):
+        return self._formclass or FeatureForm
+
+    def create_featureform(self):
+        """
+        Creates and returns the feature form for this Roam form
+        """
+        return self.formclass.from_form(self, self.settings)
+
     def widgetswithdefaults(self):
         """
         Return any widget configs that have default values needed
@@ -241,39 +248,6 @@ class Form(object):
     def module(self):
         return self._module
 
-    def accept(self):
-        #TODO Call form module accept method
-        return True
-
-    def reject(self):
-        #TODO Call form module reject method
-        return True
-
-    def onformloading(self, form, feature, layers, editing):
-        """
-        Called before the form is loaded. This method can be used to do pre checks and halt the loading of the form
-        if needed.
-
-        When implemented, this method should always return a tuple with a pass state and a message.
-
-        Returning (True, None) will let the form continue to be opened.
-        Returning (False, "Message") will stop the opening of the form and show the message to the user.
-
-        You may alter the QgsFeature given. You can access form settings using:
-
-            >>> form.settings
-
-        You can get the QGIS layer for the form using:
-
-            >>> form.QGISLayer
-        """
-        try:
-            return self.module.formloading(form, feature, layers, editing)
-        except AttributeError as err:
-            log("No formloading attribute found. Assuming pass")
-            return True, None
-
-
 class Project(object):
 
     def __init__(self, rootfolder, settings):
@@ -282,6 +256,7 @@ class Project(object):
         self._splash = None 
         self.valid = True
         self.settings = {}
+        self._forms = []
         self.error = ''
 
     @classmethod
@@ -394,8 +369,11 @@ class Project(object):
 
     @property
     def forms(self):
-        for formname, config in self.settings.get("forms", {}).iteritems():
-            yield Form.from_config(formname, config, self)
+        if not self._forms:
+            for formname, config in self.settings.get("forms", {}).iteritems():
+                form = Form.from_config(formname, config, self)
+                self._forms.append(form)
+        return self._forms
 
     @property
     def selectlayers(self):

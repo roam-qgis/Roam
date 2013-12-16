@@ -145,9 +145,40 @@ def buildfromauto(formconfig):
 
 
 class FeatureForm(QObject):
+    """
+    An object that represents a feature form in Roam.  This object will create and bind
+    the widget for the form config.
+
+    You may override this in forms __init__.py module in order to add custom logic in the following
+    places:
+
+        - formloading
+        - formloaded
+        - accpet
+        - reject
+        - featuresaved
+
+
+    class MyModule(FeatureForm):
+        def __init__(self, widget, form, formconfig):
+            super(MyModule, self).__init__(widget, form, formconfig)
+
+        def accept(self):
+            ....
+
+
+    In order to register your feature form class you need to call `form.registerform` from the init_form method
+    in your form module
+
+    def init_form(form):
+        form.registerform(MyModule)
+    """
     requiredfieldsupdated = pyqtSignal(bool)
     formvalidation = pyqtSignal(bool)
     helprequest = pyqtSignal(str)
+    showwidget = pyqtSignal(QWidget)
+    loadform = pyqtSignal()
+    rejected = pyqtSignal(str)
 
     def __init__(self, widget, form, formconfig):
         super(FeatureForm, self).__init__()
@@ -160,9 +191,14 @@ class FeatureForm(QObject):
 
     @classmethod
     def from_form(cls, form, parent=None):
+        """
+        Create a feature form the given Roam form.
+        :param form: A Roam form
+        :param parent:
+        :return:
+        """
         formconfig = form.settings
         formtype = formconfig['type']
-        print formtype
         if formtype == 'custom':
             uifile = os.path.join(form.folder, "form.ui")
             widget = buildfromui(uifile)
@@ -174,9 +210,12 @@ class FeatureForm(QObject):
         widget.setStyleSheet(style)
 
         featureform = cls(widget, form, formconfig)
+        featureform.createhelplinks(widget)
+        widget.setProperty('featureform', featureform)
+
         widgettypes = [QLineEdit, QPlainTextEdit, QDateTimeEdit]
         map(featureform._installeventfilters, widgettypes)
-        widget.setProperty('featureform', featureform)
+
         return featureform
 
     def _installeventfilters(self, widgettype):
@@ -191,21 +230,36 @@ class FeatureForm(QObject):
 
         return QObject.eventFilter(self, parent, event)
 
+    def formloading(self, feature, layers, editing):
+        """
+        Called before the form is loaded. This method can be used to do pre checks and halt the loading of the form
+        if needed.
+
+        When implemented, this method should always return a tuple with a pass state and a message.
+
+        Emit self.loadform will let the form continue to be opened.
+        Emitting self.haltform will stop the opening of the form and show the message to the user.
+
+            >>> self.haltform("Sorry you can't load this form now")
+
+        You may alter the QgsFeature given. You can access form settings using:
+
+            >>> form.settings
+
+        You can get the QGIS layer for the form using:
+
+            >>> form.QGISLayer
+        """
+        self.loadform.emit()
+
+    def formloaded(self):
+        pass
+
     def accept(self):
-        #TODO Call form module accept method
         return True
 
-    def reject(self):
-        #TODO Call form module reject method
-        return True
-
-    def acceptbutton(self):
-        try:
-            buttonbox = self.widget.findChildren(QDialogButtonBox)[0]
-            savebutton = buttonbox.button(QDialogButtonBox.Save)
-            return savebutton
-        except IndexError:
-            return None
+    def reject(self, message=None):
+        self.rejected.emit(message)
 
     def updaterequired(self, field, passed):
         self.requiredfields[field] = passed
@@ -216,7 +270,14 @@ class FeatureForm(QObject):
         for wrapper in widgetwrappers:
             wrapper.validate()
 
-    def bindfeature(self, feature, defaults={}):
+    def bind(self, feature, defaults):
+        """
+        Binds the given feature to the to the feature form.
+        :param feature:
+        :param defaults: The lookup containing the default values.  Note: This is only used to toggle
+        the save buttons.  Default values should be set before the feature is given to the bind function.
+        :return:
+        """
         widgetsconfig = self.formconfig['widgets']
         self.feature = feature
         self.fields = self.feature.fields()
@@ -263,51 +324,12 @@ class FeatureForm(QObject):
                 value = None
 
             widgetwrapper.setvalue(value)
-            self.bindsavebutton(field, defaults, feature.id() > 0)
+            self._bindsavebutton(field, defaults, feature.id() > 0)
             self.boundwidgets.append(widgetwrapper)
 
         self.validateall(self.boundwidgets)
-        self.createhelplinks(self.widget)
 
-    def bindsavebutton(self, field, defaults, editmode):
-        button = self.widget.findChild(QToolButton, "{}_save".format(field))
-        if not button:
-            return
-
-        button.setCheckable(not editmode)
-        button.setIcon(QIcon(":/icons/save_default"))
-        button.setIconSize(QSize(24, 24))
-        button.setChecked(field in defaults)
-        button.setVisible(not editmode)
-
-    def createhelplinks(self, widget):
-        for label in widget.findChildren(QLabel):
-            self.createhelplink(label, self.form.folder)
-
-    def createhelplink(self, label, folder):
-        def getHelpFile():
-            # TODO We could just use the tooltip from the control to show help
-            # rather then having to save out a html file.
-            name = label.objectName()
-            if name.endswith("_label"):
-                name = name[:-6]
-            filename = "{}.html".format(name)
-            filepath = os.path.join(folder, "help", filename)
-            if os.path.exists(filepath):
-                return filepath
-            else:
-                return None
-
-        if label is None:
-            return
-
-        helpfile = getHelpFile()
-        if helpfile:
-            text = '<a href="{}">{}<a>'.format(helpfile, label.text())
-            label.setText(text)
-            label.linkActivated.connect(self.helprequest.emit)
-
-    def getupdatedfeature(self):
+    def unbind(self):
         def shouldsave(field):
             button = self.widget.findChild(QToolButton, "{}_save".format(field))
             if button:
@@ -328,3 +350,43 @@ class FeatureForm(QObject):
             self.feature[field] = value
 
         return before, self.feature, savedvalues
+
+    def _bindsavebutton(self, field, defaults, editmode):
+        button = self.widget.findChild(QToolButton, "{}_save".format(field))
+        if not button:
+            return
+
+        button.setCheckable(not editmode)
+        button.setIcon(QIcon(":/icons/save_default"))
+        button.setIconSize(QSize(24, 24))
+        button.setChecked(field in defaults)
+        button.setVisible(not editmode)
+
+    def createhelplinks(self, widget):
+        def createhelplink(label, folder):
+            def getHelpFile():
+                # TODO We could just use the tooltip from the control to show help
+                # rather then having to save out a html file.
+                name = label.objectName()
+                if name.endswith("_label"):
+                    name = name[:-6]
+                filename = "{}.html".format(name)
+                filepath = os.path.join(folder, "help", filename)
+                if os.path.exists(filepath):
+                    return filepath
+                else:
+                    return None
+
+            if label is None:
+                return
+
+            helpfile = getHelpFile()
+            if helpfile:
+                text = '<a href="{}">{}<a>'.format(helpfile, label.text())
+                label.setText(text)
+                label.linkActivated.connect(self.helprequest.emit)
+
+        for label in widget.findChildren(QLabel):
+            createhelplink(label, self.form.folder)
+
+

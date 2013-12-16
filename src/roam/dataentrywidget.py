@@ -1,3 +1,4 @@
+import functools
 import os.path
 import os
 import getpass
@@ -8,7 +9,7 @@ from PyQt4.QtGui import *
 from qgis.core import QgsMapLayerRegistry, QgsFeatureRequest, QgsFeature, QgsExpression
 
 from roam.utils import log, info, warning, error
-from roam import featuredialog
+from roam import featureform
 from roam.uifiles import dataentry_widget, dataentry_base
 from roam.flickwidget import FlickCharm
 
@@ -45,7 +46,7 @@ def getdefaults(widgets, feature, layer, canvas):
         log("Default value: {}".format(value))
         defaults[field] = value
 
-    defaults.update(featuredialog.loadsavedvalues(layer))
+    defaults.update(featureform.loadsavedvalues(layer))
     return defaults
 
 
@@ -73,7 +74,7 @@ class DataEntryWidget(dataentry_widget, dataentry_base):
     """
     """
     accepted = pyqtSignal()
-    rejected = pyqtSignal()
+    rejected = pyqtSignal(str)
     finished = pyqtSignal()
     featuresaved = pyqtSignal()
     failedsave = pyqtSignal(list)
@@ -90,17 +91,17 @@ class DataEntryWidget(dataentry_widget, dataentry_base):
         self.flickwidget.activateOn(self.scrollArea)
 
         self.savedataButton.pressed.connect(self.accept)
-        self.cancelButton.pressed.connect(self.reject)
+        self.cancelButton.pressed.connect(functools.partial(self.reject, None))
 
     def accept(self):
-        assert not self.featureform is None
-        assert not self.project is None
+        if not self.featureform:
+            return
 
         if not self.featureform.accept():
             return
 
         layer = self.featureform.form.QGISLayer
-        before, after, savedvalues = self.featureform.getupdatedfeature()
+        before, after, savedvalues = self.featureform.unbind()
 
         layer.startEditing()
         if after.id() > 0:
@@ -116,7 +117,7 @@ class DataEntryWidget(dataentry_widget, dataentry_base):
                 layer.updateFeature(after)
         else:
             layer.addFeature(after)
-            featuredialog.savevalues(layer, savedvalues)
+            featureform.savevalues(layer, savedvalues)
         saved = layer.commitChanges()
 
         if not saved:
@@ -127,17 +128,19 @@ class DataEntryWidget(dataentry_widget, dataentry_base):
 
         self.accepted.emit()
         self.finished.emit()
+        self.featureform = None
 
-    def reject(self):
-        assert not self.featureform is None
+    def reject(self, message):
+        # Tell the form it is rejected
+        if self.featureform:
+            self.featureform.reject()
 
-        if not self.featureform.reject():
-            return
-
+    def formrejected(self, message=None):
         self.featureform.form.QGISLayer.rollBack()
         self.clearcurrentwidget()
-        self.rejected.emit()
+        self.rejected.emit(message)
         self.finished.emit()
+        self.featureform = None
 
     def formvalidation(self, passed):
         msg = None
@@ -146,6 +149,10 @@ class DataEntryWidget(dataentry_widget, dataentry_base):
         self.missingfieldsLabel.setText(msg)
         self.savedataButton.setEnabled(passed)
         self.yellowLabel.setVisible(not passed)
+
+    def showwidget(self, widget):
+        self.savedataButton.hide()
+        self.setwidget(widget)
 
     def setwidget(self, widget):
         self.clearcurrentwidget()
@@ -160,6 +167,16 @@ class DataEntryWidget(dataentry_widget, dataentry_base):
         """
         Opens a form for the given feature
         """
+        def continueload():
+            self.featureform.formvalidation.connect(self.formvalidation)
+            self.featureform.helprequest.connect(self.helprequest.emit)
+            self.featureform.bind(feature, defaults)
+
+            self.savedataButton.show()
+            self.setwidget(self.featureform.widget)
+
+            self.featureform.formloaded()
+
         defaults = {}
         editing = feature.id() > 0
         if not editing:
@@ -168,19 +185,13 @@ class DataEntryWidget(dataentry_widget, dataentry_base):
         for field, value in defaults.iteritems():
             feature[field] = value
 
+        self.featureform = form.create_featureform()
+        self.featureform.showwidget.connect(self.showwidget)
+        self.featureform.loadform.connect(continueload)
+        self.featureform.rejected.connect(self.formrejected)
+
         # Call the pre loading evnts for the form
         layers = iter(QgsMapLayerRegistry.instance().mapLayers())
-        state, message = form.onformloading(form, feature, layers, editing)
-
-        if not state:
-            return state, message
 
         self.project = project
-        self.featureform = form.featureform
-        self.featureform.formvalidation.connect(self.formvalidation)
-        self.featureform.helprequest.connect(self.helprequest.emit)
-        self.featureform.bindfeature(feature, defaults)
-
-        self.setwidget(self.featureform.widget)
-
-        return True, None
+        self.featureform.formloading(feature, layers, editing)
