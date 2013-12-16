@@ -5,3 +5,12 @@ __ver_sub__ = "dev"
 __ver_tuple__ = (__ver_major__,__ver_minor__,__ver_patch__,__ver_sub__)
 __version__ = "%d.%d.%d%s" % __ver_tuple__
 
+import sip
+
+try:
+    apis = ["QDate", "QDateTime", "QString", "QTextStream", "QTime", "QUrl", "QVariant"]
+    for api in apis:
+        sip.setapi(api, 2)
+except ValueError:
+    # API has already been set so we can't set it again.
+    pass

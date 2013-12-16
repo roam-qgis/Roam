@@ -52,7 +52,8 @@ def getProjects(projectpath):
 
 
 class Form(object):
-    def __init__(self, config, rootfolder, project):
+    def __init__(self, name, config, rootfolder, project):
+        self._name = name
         self.settings = config
         self.folder = rootfolder
         self.project = project
@@ -60,8 +61,9 @@ class Form(object):
         self.errors = []
 
     @classmethod
-    def from_config(cls, config, folder, project):
-        form = cls(config, folder, project)
+    def from_config(cls, name, config, project):
+        folder = os.path.join(self.folder, name)
+        form = cls(name, config, folder, project)
         form._loadmodule()
         return form
 
@@ -71,8 +73,8 @@ class Form(object):
 
     @property
     def name(self):
-        return os.path.basename(self.folder)
-    
+        return self._name
+
     @property
     def icontext(self):
         return self.label
@@ -387,9 +389,8 @@ class Project(object):
 
     @property
     def forms(self):
-        for form, config in self.settings.get("forms", {}).iteritems():
-            folder = os.path.join(self.folder, form)
-            yield Form.from_config(config, folder, self)
+        for formname, config in self.settings.get("forms", {}).iteritems():
+            yield Form.from_config(formname, config, self)
 
     @property
     def selectlayers(self):
