@@ -152,8 +152,8 @@ class FeatureForm(QObject):
     You may override this in forms __init__.py module in order to add custom logic in the following
     places:
 
-        - formloading
-        - formloaded
+        - loading
+        - loaded
         - accpet
         - reject
         - featuresaved
@@ -230,7 +230,7 @@ class FeatureForm(QObject):
 
         return QObject.eventFilter(self, parent, event)
 
-    def formloading(self, feature, layers, editing):
+    def loading(self, feature, layers, editing):
         """
         Called before the form is loaded. This method can be used to do pre checks and halt the loading of the form
         if needed.
@@ -252,7 +252,7 @@ class FeatureForm(QObject):
         """
         self.loadform.emit()
 
-    def formloaded(self):
+    def loaded(self):
         pass
 
     def accept(self):

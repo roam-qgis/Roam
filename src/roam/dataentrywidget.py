@@ -175,7 +175,7 @@ class DataEntryWidget(dataentry_widget, dataentry_base):
             self.savedataButton.show()
             self.setwidget(self.featureform.widget)
 
-            self.featureform.formloaded()
+            self.featureform.loaded()
 
         defaults = {}
         editing = feature.id() > 0
@@ -194,4 +194,4 @@ class DataEntryWidget(dataentry_widget, dataentry_base):
         layers = iter(QgsMapLayerRegistry.instance().mapLayers())
 
         self.project = project
-        self.featureform.formloading(feature, layers, editing)
+        self.featureform.loading(feature, layers, editing)
