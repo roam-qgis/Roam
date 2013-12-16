@@ -220,11 +220,11 @@ class Form(object):
     def formclass(self):
         return self._formclass or FeatureForm
 
-    def create_featureform(self):
+    def create_featureform(self, feature, defaults):
         """
         Creates and returns the feature form for this Roam form
         """
-        return self.formclass.from_form(self, self.settings)
+        return self.formclass.from_form(self, self.settings, feature, defaults)
 
     def widgetswithdefaults(self):
         """

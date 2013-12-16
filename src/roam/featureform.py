@@ -189,24 +189,25 @@ class FeatureForm(QObject):
     loadform = pyqtSignal()
     rejected = pyqtSignal(str)
 
-    def __init__(self, widget, form, formconfig):
+    def __init__(self, widget, form, formconfig, feature, defaults):
         super(FeatureForm, self).__init__()
         self.widget = widget
         self.form = form
         self.formconfig = formconfig
         self.boundwidgets = []
         self.requiredfields = {}
-        self.feature = None
+        self.feature = feature
+        self.fields = self.feature.fields()
+        self.defaults = defaults
 
     @classmethod
-    def from_form(cls, form, parent=None):
+    def from_form(cls, form, formconfig, feature, defaults, parent=None):
         """
         Create a feature form the given Roam form.
         :param form: A Roam form
         :param parent:
         :return:
         """
-        formconfig = form.settings
         formtype = formconfig['type']
         if formtype == 'custom':
             uifile = os.path.join(form.folder, "form.ui")
@@ -218,7 +219,7 @@ class FeatureForm(QObject):
 
         widget.setStyleSheet(style)
 
-        featureform = cls(widget, form, formconfig)
+        featureform = cls(widget, form, formconfig, feature, defaults)
         featureform.createhelplinks(widget)
         widget.setProperty('featureform', featureform)
 
@@ -281,7 +282,11 @@ class FeatureForm(QObject):
         for wrapper in widgetwrappers:
             wrapper.validate()
 
-    def bind(self, feature, defaults):
+    @property
+    def editingmode(self):
+        return self.feature.id() > 0
+
+    def bind(self):
         """
         Binds the given feature to the to the feature form.
         :param feature:
@@ -290,11 +295,10 @@ class FeatureForm(QObject):
         :return:
         """
         widgetsconfig = self.formconfig['widgets']
-        self.feature = feature
-        self.fields = self.feature.fields()
 
         for config in widgetsconfig:
             widgettype = config['widget']
+            print widgettype
             field = config['field']
             widget = self.widget.findChild(QWidget, field)
             label = self.widget.findChild(QLabel, "{}_label".format(field))
@@ -306,13 +310,14 @@ class FeatureForm(QObject):
                                                          label,
                                                          widgetconfig)
 
+            print widgetwrapper
             if widgetwrapper is None:
                 print("No widget found for {}".format(widgettype))
                 continue
 
             readonlyrules = config.get('read-only-rules', [])
 
-            if feature.id() > 0 and 'editing' in readonlyrules:
+            if self.editingmode and 'editing' in readonlyrules:
                 widgetwrapper.readonly = True
             elif 'insert' in readonlyrules:
                 widgetwrapper.readonly = True
@@ -329,13 +334,16 @@ class FeatureForm(QObject):
                 widgetwrapper.validationupdate.connect(self.updaterequired)
 
             try:
-                value = nullcheck(feature[field])
+                print "Null Check"
+                print self.feature.fields().toList()
+                value = nullcheck(self.feature[field])
+                print value
             except KeyError:
                 utils.warning("Can't find field {}".format(field))
                 value = None
 
             widgetwrapper.setvalue(value)
-            self._bindsavebutton(field, defaults, feature.id() > 0)
+            self._bindsavebutton(field)
             self.boundwidgets.append(widgetwrapper)
 
         self.validateall(self.boundwidgets)
@@ -362,16 +370,16 @@ class FeatureForm(QObject):
 
         return before, self.feature, savedvalues
 
-    def _bindsavebutton(self, field, defaults, editmode):
+    def _bindsavebutton(self, field):
         button = self.widget.findChild(QToolButton, "{}_save".format(field))
         if not button:
             return
 
-        button.setCheckable(not editmode)
+        button.setCheckable(not self.feature.id() > 0)
         button.setIcon(QIcon(":/icons/save_default"))
         button.setIconSize(QSize(24, 24))
-        button.setChecked(field in defaults)
-        button.setVisible(not editmode)
+        button.setChecked(field in self.defaults)
+        button.setVisible(not self.editingmode)
 
     def createhelplinks(self, widget):
         def createhelplink(label, folder):

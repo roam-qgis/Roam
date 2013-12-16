@@ -136,7 +136,6 @@ class DataEntryWidget(dataentry_widget, dataentry_base):
             self.featureform.reject(message)
 
     def formrejected(self, message=None):
-        self.featureform.form.QGISLayer.rollBack()
         self.clearcurrentwidget()
         self.rejected.emit(message)
         self.finished.emit()
@@ -155,33 +154,41 @@ class DataEntryWidget(dataentry_widget, dataentry_base):
         self.setwidget(widget)
 
     def setwidget(self, widget):
+        print "SET WIDGET", widget
         self.clearcurrentwidget()
         self.scrollAreaWidgetContents.layout().insertWidget(0, widget)
 
     def clearcurrentwidget(self):
         item = self.scrollAreaWidgetContents.layout().itemAt(0)
         if item and item.widget():
-            item.widget().setParent(None)
+            widget = item.widget()
+            widget.deleteLater()
+
+    def continueload(self):
+        self.featureform.showwidget.disconnect()
+        self.featureform.loadform.disconnect()
+
+        self.featureform.formvalidation.connect(self.formvalidation)
+        self.featureform.helprequest.connect(self.helprequest.emit)
+        self.featureform.bind()
+
+        self.savedataButton.show()
+        self.setwidget(self.featureform.widget)
+
+        self.featureform.loaded()
 
     def openform(self, form, feature, project):
         """
         Opens a form for the given feature.
 
-        This method is connected using signals rather.  If the loadform signal is emitted
+        This method is connected using signals rather then a normal top down method.
+        If the loadform signal is emitted from the FeatureForm
         the data entry widget will continue to bind and load the form.  If rejected is emitted
         the form will be rejected and the message will be shown to the user.
 
-        This allows for pre form load checks that allow the form to show pre main form widgets.
+        This allows for pre form load checks that allow the form to show pre main form widgets
+        using showwidget.
         """
-        def continueload():
-            self.featureform.formvalidation.connect(self.formvalidation)
-            self.featureform.helprequest.connect(self.helprequest.emit)
-            self.featureform.bind(feature, defaults)
-
-            self.savedataButton.show()
-            self.setwidget(self.featureform.widget)
-
-            self.featureform.loaded()
 
         defaults = {}
         editing = feature.id() > 0
@@ -192,9 +199,10 @@ class DataEntryWidget(dataentry_widget, dataentry_base):
             feature[field] = value
 
         self.formvalidation(passed=True)
-        self.featureform = form.create_featureform()
+        self.feature = feature
+        self.featureform = form.create_featureform(feature, defaults)
         self.featureform.showwidget.connect(self.showwidget)
-        self.featureform.loadform.connect(continueload)
+        self.featureform.loadform.connect(self.continueload)
         self.featureform.rejected.connect(self.formrejected)
 
         # Call the pre loading evnts for the form
