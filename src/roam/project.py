@@ -110,64 +110,6 @@ class Form(object):
         """
             Returns the map tool configured for this layer.
         """
-        def _getEditTool():
-            radius = 10
-            tool = EditTool(canvas = canvas, layers = [self.QGISLayer])
-            tool.searchRadius = radius
-            return tool
-        
-        def _getInsectionTool():
-            """
-            """
-            try:
-                sourcelayername = toolsettings["sourcelayer"]
-                sourcelayer = self._getLayer(sourcelayername)
-                destlayername = toolsettings["destlayer"]
-                destlayer = self._getLayer(destlayername)
-                fieldmapping = toolsettings["mapping"]
-                validation = toolsettings.get("validation", None)
-                if destlayer is None or sourcelayer is None:
-                    raise ErrorInMapTool("{} or {} not found in project".format(sourcelayername, destlayername))
-
-                modulename, method = os.path.splitext(validation)
-                method = method[1:]
-
-                try:
-                    projectfolder = os.path.basename(os.path.join(self.folder, '..'))
-                    name = "projects.{project}.{layer}.{module}".format(project=projectfolder,
-                                                                        module=modulename,
-                                                                        layer=self.name)
-                    validationmod = importlib.import_module(name)
-                    log(dir(validationmod))
-                    validation_method = getattr(validationmod, method)
-                except ImportError as err:
-                    error = "Validation import error {}".format(err)
-                    log(error)
-                    raise ErrorInMapTool(error)
-                except AttributeError:
-                    error = "No method in {} called {} found".format(modulename, method)
-                    log(error)
-                    raise ErrorInMapTool(error)
-
-                return InspectionTool(canvas=canvas, layerfrom=sourcelayer, 
-                                      layerto=destlayer, mapping=fieldmapping, 
-                                      validation_method=validation_method)
-            except KeyError as e:
-                utils.log(e)
-                raise ErrorInMapTool(e)
-            
-        tools = {
-                 "inspection" : _getInsectionTool,
-                 "edit" : _getEditTool
-                 }
-                
-        try:
-            toolsettings = self.settings["maptool"]
-            tooltype = toolsettings["type"]
-            return tools[tooltype]()
-        except KeyError:
-            pass
-        
         if self.QGISLayer.geometryType() == QGis.Point:
             return PointTool(canvas)
         
