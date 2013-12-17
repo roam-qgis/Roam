@@ -273,9 +273,13 @@ class FeatureForm(QObject):
     def reject(self, message=None):
         self.rejected.emit(message)
 
+    @property
+    def allpassing(self):
+        return all(valid for valid in self.requiredfields.values())
+
     def updaterequired(self, field, passed):
         self.requiredfields[field] = passed
-        passed = all(valid for valid in self.requiredfields.values())
+        passed = self.allpassing
         self.formvalidation.emit(passed)
 
     def validateall(self, widgetwrappers):

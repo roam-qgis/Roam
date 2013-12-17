@@ -92,6 +92,8 @@ class MainWindow(mainwindow_widget, mainwindow_base):
         self.canvas.setCanvasColor(Qt.white)
         self.canvas.enableAntiAliasing(True)
         self.canvas.setWheelAction(QgsMapCanvas.WheelZoomToMouseCursor)
+        self.bar = roam.messagebaritems.MessageBar(self)
+
         pal = QgsPalLabeling()
         self.canvas.mapRenderer().setLabelingEngine(pal)
         self.menuGroup = QActionGroup(self)
@@ -131,7 +133,7 @@ class MainWindow(mainwindow_widget, mainwindow_base):
         self.actionSettings.toggled.connect(self.settingswidget.readSettings)
         self.settingswidget.settingsupdated.connect(self.settingsupdated)
 
-        self.dataentrywidget = DataEntryWidget(self.canvas)
+        self.dataentrywidget = DataEntryWidget(self.canvas, self.bar)
         self.widgetpage.layout().addWidget(self.dataentrywidget)
 
         self.dataentrywidget.rejected.connect(self.formrejected)
@@ -204,8 +206,6 @@ class MainWindow(mainwindow_widget, mainwindow_base):
         self.band.setIconSize(20)
         self.band.setWidth(10)
         self.band.setColor(QColor(186, 93, 212, 76))
-
-        self.bar = roam.messagebaritems.MessageBar(self)
 
         self.canvas_page.layout().insertWidget(2, self.projecttoolbar)
         self.dataentrymodel = QStandardItemModel(self)

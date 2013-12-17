@@ -7,6 +7,7 @@ from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 
 from qgis.core import QgsMapLayerRegistry, QgsFeatureRequest, QgsFeature, QgsExpression
+from qgis.gui import QgsMessageBar
 
 from roam.utils import log, info, warning, error
 from roam import featureform
@@ -89,12 +90,13 @@ class DataEntryWidget(dataentry_widget, dataentry_base):
     failedsave = pyqtSignal(list)
     helprequest = pyqtSignal(str)
 
-    def __init__(self, canvas, parent=None):
+    def __init__(self, canvas, bar, parent=None):
         super(DataEntryWidget, self).__init__(parent)
         self.setupUi(self)
         self.featureform = None
         self.project = None
         self.canvas = canvas
+        self.bar = bar
 
         self.flickwidget = FlickCharm()
         self.flickwidget.activateOn(self.scrollArea)
@@ -106,6 +108,7 @@ class DataEntryWidget(dataentry_widget, dataentry_base):
         toolbar.setToolButtonStyle(style)
         self.actionSave.triggered.connect(self.accept)
         self.actionCancel.triggered.connect(functools.partial(self.reject, None))
+
         label = 'Required fields marked in <b style="background-color:rgba(255, 221, 48,150)">yellow</b>'
         self.missingfieldsLabel = QLabel(label)
         self.missingfieldsLabel.hide()
@@ -121,7 +124,14 @@ class DataEntryWidget(dataentry_widget, dataentry_base):
         toolbar.addAction(self.actionCancel)
         self.layout().insertWidget(2, toolbar)
 
+        self.actionSave
+
     def accept(self):
+        if not self.featureform.allpassing:
+            self.bar.pushMessage("Missing fields", "Some fields are still required.",
+                                 QgsMessageBar.WARNING, duration=2)
+            return
+
         if not self.featureform:
             return
 
@@ -170,12 +180,10 @@ class DataEntryWidget(dataentry_widget, dataentry_base):
         self.featureform = None
 
     def formvalidation(self, passed):
-        print passed
         self.missingfieldaction.setVisible(not passed)
-        self.actionSave.setEnabled(passed)
 
     def showwidget(self, widget):
-        self.actionSave.hide()
+        self.actionSave.setVisible(False)
         self.setwidget(widget)
 
     def setwidget(self, widget):
