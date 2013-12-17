@@ -317,7 +317,8 @@ QToolButton:hover {
 }
 
 QToolButton:checked { 
-	color: rgb(255,0,0);
+	color: rgb(91,147,194);
+	font: 75 12pt &quot;Calibri&quot;;
 	background-color: rgb(85,85,85);
 }</string>
    </property>
