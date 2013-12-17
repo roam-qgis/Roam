@@ -51,21 +51,30 @@ def getdefaults(widgets, feature, layer, canvas):
 
 
 def spatial_query(feature, layer, field, defaultconfig, canvas):
+    def within(geom, geom2):
+        return geom.within(geom2)
+
+    def contains(geom, geom2):
+        return geom2.contains(geom)
+
     layername = defaultconfig['layer']
     op = defaultconfig['op']
     field = defaultconfig['field']
 
+    ops = {'within': within,
+           'contains': contains}
+
     layer = QgsMapLayerRegistry.instance().mapLayersByName(layername)[0]
-    if op == 'contains':
-        rect = feature.geometry().boundingBox()
-        rect = canvas.mapRenderer().mapToLayerCoordinates(layer, rect)
-        rq = QgsFeatureRequest().setFilterRect(rect).setFlags(QgsFeatureRequest.ExactIntersect)
-        features = layer.getFeatures(rq)
-        for f in features:
-            geometry = feature.geometry()
-            if f.geometry().contains(geometry):
-                return f[field]
-        raise DefaultError('No features found')
+    func = ops[op]
+    rect = feature.geometry().boundingBox()
+    rect = canvas.mapRenderer().mapToLayerCoordinates(layer, rect)
+    rq = QgsFeatureRequest().setFilterRect(rect)
+    features = layer.getFeatures(rq)
+    geometry = feature.geometry()
+    for f in features:
+        if func(geometry, f.geometry()):
+            return f[field]
+    raise DefaultError('No features found')
 
 defaultproviders = {'spatial-query': spatial_query}
 
