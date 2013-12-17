@@ -1,3 +1,5 @@
+import os
+
 from PyQt4.QtCore import pyqtSignal, QProcess, QObject
 
 
@@ -28,6 +30,7 @@ class ReplicationSync(SyncProvider):
         super(ReplicationSync, self).__init__(name)
         self.cmd = cmd
         self.process = QProcess()
+        self.process.setWorkingDirectory(os.path.dirname(os.path.realpath(self.cmd)))
         self.process.finished.connect(self.complete)
         self.process.started.connect(self.syncStarted)
         self.process.readyReadStandardError.connect(self.error)
