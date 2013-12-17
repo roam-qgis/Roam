@@ -99,8 +99,27 @@ class DataEntryWidget(dataentry_widget, dataentry_base):
         self.flickwidget = FlickCharm()
         self.flickwidget.activateOn(self.scrollArea)
 
-        self.savedataButton.pressed.connect(self.accept)
-        self.cancelButton.pressed.connect(functools.partial(self.reject, None))
+        toolbar = QToolBar()
+        size = QSize(32, 32)
+        toolbar.setIconSize(size)
+        style = Qt.ToolButtonTextUnderIcon
+        toolbar.setToolButtonStyle(style)
+        self.actionSave.triggered.connect(self.accept)
+        self.actionCancel.triggered.connect(functools.partial(self.reject, None))
+        label = 'Required fields marked in <b style="background-color:rgba(255, 221, 48,150)">yellow</b>'
+        self.missingfieldsLabel = QLabel(label)
+        self.missingfieldsLabel.hide()
+        self.missingfieldaction = toolbar.addWidget(self.missingfieldsLabel)
+        spacer = QWidget()
+        spacer2 = QWidget()
+        spacer2.setMinimumWidth(20)
+        spacer.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
+        spacer2.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
+        toolbar.addWidget(spacer)
+        toolbar.addAction(self.actionSave)
+        toolbar.addWidget(spacer2)
+        toolbar.addAction(self.actionCancel)
+        self.layout().insertWidget(2, toolbar)
 
     def accept(self):
         if not self.featureform:
@@ -151,19 +170,15 @@ class DataEntryWidget(dataentry_widget, dataentry_base):
         self.featureform = None
 
     def formvalidation(self, passed):
-        msg = None
-        if not passed:
-            msg = "Looks like some fields are missing. Check any fields marked in"
-        self.missingfieldsLabel.setText(msg)
-        self.savedataButton.setEnabled(passed)
-        self.yellowLabel.setVisible(not passed)
+        print passed
+        self.missingfieldaction.setVisible(not passed)
+        self.actionSave.setEnabled(passed)
 
     def showwidget(self, widget):
-        self.savedataButton.hide()
+        self.actionSave.hide()
         self.setwidget(widget)
 
     def setwidget(self, widget):
-        print "SET WIDGET", widget
         self.clearcurrentwidget()
         self.scrollAreaWidgetContents.layout().insertWidget(0, widget)
 
@@ -181,7 +196,7 @@ class DataEntryWidget(dataentry_widget, dataentry_base):
         self.featureform.helprequest.connect(self.helprequest.emit)
         self.featureform.bind()
 
-        self.savedataButton.show()
+        self.actionSave.setVisible(True)
         self.setwidget(self.featureform.widget)
 
         self.featureform.loaded()
