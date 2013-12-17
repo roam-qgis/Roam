@@ -17,7 +17,18 @@ import roam
 osgeopath = r'C:\OSGeo4W'
 qtimageforms = os.path.join(osgeopath,r'apps\qt4\plugins\imageformats\*')
 qgisresources = os.path.join(osgeopath, "apps", "qgis", "resources")
+svgs = os.path.join(osgeopath, "apps", "qgis", "svg")
 qgispluginpath = os.path.join(osgeopath, r'apps\qgis\plugins\*provider.dll' )
+
+def svgfiles():
+    for path, dirs, files in os.walk(svgs):
+        if not files: continue
+        newpath = r'libs\qgis\svg\{}'.format(os.path.basename(path))
+        collection = []
+        for f in files:
+            filename = os.path.join(path, f)
+            collection.append(filename)
+        yield (newpath, collection)
 
 datafiles = [(".", [r'src\settings.config',
                     r'src\_install\_createshortcut.bat',
@@ -31,6 +42,9 @@ datafiles = [(".", [r'src\settings.config',
             (r'libs\qgis\plugins', glob.glob(qgispluginpath)),
             (r'libs\qgis\resources', [os.path.join(qgisresources, 'qgis.db'),
                                  os.path.join(qgisresources, 'srs.db')])]
+
+for path, collection in svgfiles():
+    datafiles.append((path, collection))
 
 roam_target = dict(
                 script=r'src\roam\__main__.py',
