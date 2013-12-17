@@ -15,6 +15,7 @@ import os
 import roam
 
 osgeopath = r'C:\OSGeo4W'
+osgeobin = os.path.join(osgeopath, 'bin')
 qtimageforms = os.path.join(osgeopath,r'apps\qt4\plugins\imageformats\*')
 qgisresources = os.path.join(osgeopath, "apps", "qgis", "resources")
 svgs = os.path.join(osgeopath, "apps", "qgis", "svg")
@@ -30,6 +31,9 @@ def svgfiles():
             collection.append(filename)
         yield (newpath, collection)
 
+ecwfiles = [os.path.join(osgeobin, 'gdalplugins', 'gdal_ECW_JP2ECW.dll'),
+            os.path.join(osgeobin, 'NCSEcw.dll')]
+
 datafiles = [(".", [r'src\settings.config',
                     r'src\_install\_createshortcut.bat',
                     r'src\_install\shortcut.vbs']),
@@ -41,7 +45,8 @@ datafiles = [(".", [r'src\settings.config',
             (r'imageformats', glob.glob(qtimageforms)),
             (r'libs\qgis\plugins', glob.glob(qgispluginpath)),
             (r'libs\qgis\resources', [os.path.join(qgisresources, 'qgis.db'),
-                                 os.path.join(qgisresources, 'srs.db')])]
+                                 os.path.join(qgisresources, 'srs.db')]),
+            (r'libs', ecwfiles)]
 
 for path, collection in svgfiles():
     datafiles.append((path, collection))
@@ -108,6 +113,7 @@ setup(
                         'msvcr80d.dll', 'msvcp80d.dll',
                         'powrprof.dll', 'mswsock.dll',
                         'w9xpopen.exe', 'MSVCP90.dll'],
+        'excludes': ['PyQt4.uic.port_v3'],
         'includes': ['PyQt4.QtNetwork', 'sip', 'PyQt4.QtSql'],
         'skip_archive': True,
       }},

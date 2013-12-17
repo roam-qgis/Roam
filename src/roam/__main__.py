@@ -3,29 +3,20 @@ Main entry file.  This file creates and setups the main window and then hands co
 
 The MainWindow object handles everything from there on in.
 """
-from functools import partial
-import time
+
 import os
 import sys
-import logging
-
-
-from qgis.core import QgsApplication, QgsPythonRunner, QgsProviderRegistry
-from PyQt4 import uic
-from PyQt4.QtGui import QApplication, QFont, QImageReader, QImageWriter
-from PyQt4.QtCore import QDir, QCoreApplication, QLibrary
-# We have to import QtSql or else the MSSQL driver will fail to load.
-import PyQt4.QtSql
-
-uic.uiparser.logger.setLevel(logging.INFO)
-uic.properties.logger.setLevel(logging.INFO)
-
-import roam.yaml as yaml
 
 RUNNING_FROM_FILE = '__file__' in globals()
 apppath = os.path.dirname(os.path.realpath(sys.argv[0]))
 prefixpath = os.path.join(apppath, "libs", "qgis")
 settingspath = os.path.join(apppath, "settings.config")
+
+# Set the PATH and GDAL_DRIVER_PATH for gdal to find the plugins.
+# Not sure why we have to set these here but GDAL doesn't like it if we
+# don't
+os.environ['PATH'] += ";{}".format(os.path.join(apppath, 'libs'))
+os.environ["GDAL_DRIVER_PATH"] = os.path.join(apppath, 'libs')
 
 if RUNNING_FROM_FILE:
     print "Running from file"
@@ -39,10 +30,25 @@ if RUNNING_FROM_FILE:
     prefixpath = r"C:\OSGeo4W\apps\qgis"
     settingspath = os.path.join(apppath, "..", "settings.config")
 
+import logging
+import time
+from functools import partial
+
+from qgis.core import QgsApplication, QgsPythonRunner, QgsProviderRegistry
+from PyQt4 import uic
+from PyQt4.QtGui import QApplication, QFont, QImageReader, QImageWriter
+from PyQt4.QtCore import QDir, QCoreApplication, QLibrary
+# We have to import QtSql or else the MSSQL driver will fail to load.
+import PyQt4.QtSql
+
+uic.uiparser.logger.setLevel(logging.INFO)
+uic.properties.logger.setLevel(logging.INFO)
+
 # We have to start this here or else the image drivers don't load for some reason
 app = QgsApplication(sys.argv, True)
 
 import roam
+import roam.yaml as yaml
 import roam.utils
 from roam.mainwindow import MainWindow
 
