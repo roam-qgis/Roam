@@ -7,8 +7,8 @@ from functools import partial
 import time
 import os
 import sys
-import yaml
 import logging
+
 
 from qgis.core import QgsApplication, QgsPythonRunner, QgsProviderRegistry
 from PyQt4 import uic
@@ -19,6 +19,8 @@ import PyQt4.QtSql
 
 uic.uiparser.logger.setLevel(logging.INFO)
 uic.properties.logger.setLevel(logging.INFO)
+
+import roam.yaml as yaml
 
 RUNNING_FROM_FILE = '__file__' in globals()
 apppath = os.path.dirname(os.path.realpath(sys.argv[0]))
@@ -87,6 +89,8 @@ try:
     projectpath = sys.argv[1]
 except IndexError:
     projectpath = os.path.join(os.getcwd(), "projects")
+
+sys.path.append(projectpath)
 
 projects = roam.project.getProjects(projectpath)
 window.loadprojects(projects)

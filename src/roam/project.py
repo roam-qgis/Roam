@@ -5,6 +5,7 @@ import yaml
 import functools
 import imp
 import importlib
+import sys
 
 from PyQt4.QtGui import QAction, QIcon
 
@@ -177,10 +178,11 @@ class Form(object):
     def _loadmodule(self):
         projectfolder = os.path.abspath(os.path.join(self.folder, '..'))
         projectname = os.path.basename(projectfolder)
-        name = "projects.{project}.{formfolder}".format(project=projectname, formfolder=self.name)
+        name = "{project}.{formfolder}".format(project=projectname, formfolder=self.name)
         try:
             self._module = importlib.import_module(name)
         except ImportError as err:
+            log(sys.path)
             log(err)
             self.errors.append(err.message)
             self._module = None
@@ -290,7 +292,7 @@ class Project(object):
         """
         try:
             name = os.path.basename(self.folder)
-            module = importlib.import_module("projects.{}".format(name))
+            module = importlib.import_module("{}".format(name))
         except ImportError as err:
             log(err)
             print err
