@@ -25,9 +25,9 @@ class SyncProvider(QObject):
         return "<p>No report for sync provider generated<p>"
     
 
-class ReplicationSync(SyncProvider):
+class BatchFileSync(SyncProvider):
     def __init__(self, name, cmd):
-        super(ReplicationSync, self).__init__(name)
+        super(BatchFileSync, self).__init__(name)
         self.cmd = cmd
         self.process = QProcess()
         self.process.setWorkingDirectory(os.path.dirname(os.path.realpath(self.cmd)))

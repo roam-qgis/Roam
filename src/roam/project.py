@@ -254,8 +254,8 @@ class Project(object):
         for name, config in providers.iteritems():
             cmd = config['cmd']
             cmd = os.path.join(self.folder, cmd)
-            if config['type'] == 'replication':
-                yield replication.ReplicationSync(name, cmd)
+            if config['type'] == 'replication' or config['type'] == 'batch':
+                yield replication.BatchFileSync(name, cmd)
     
     def getConfiguredLayers(self):
         """
