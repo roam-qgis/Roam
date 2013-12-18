@@ -48,6 +48,15 @@ class InfoDock(infodock_widget, QWidget):
         self.grabGesture(Qt.SwipeGesture)
         self.setAttribute(Qt.WA_AcceptTouchEvents)
         self.editButton.pressed.connect(self.openform)
+        self.parent().installEventFilter(self)
+
+    def eventFilter(self, object, event):
+        if event.type() == QEvent.Resize:
+            width = self.parent().width() * 40 / 100
+            self.resize(width, self.parent().height())
+            self.move(self.parent().width() - self.width() -1, 1)
+
+        return object.eventFilter(object, event)
 
     def close(self):
         self.clearResults()
