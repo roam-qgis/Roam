@@ -33,6 +33,8 @@
     <file alias="capture">resources/images/capture.svg</file>
     <file alias="down">resources/images/down.svg</file>
     <file alias="remove">resources/images/remove.svg</file>
+    <file alias="next">resources/images/next.svg</file>
+    <file alias="previous">resources/images/previous.svg</file>
   </qresource>
   <qresource prefix="branding">
     <file alias="logo">resources/branding/logo.png</file>
