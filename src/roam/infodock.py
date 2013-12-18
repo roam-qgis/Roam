@@ -47,7 +47,6 @@ class FeatureCursor(object):
         self.index += 1
         if self.index > len(self.features) - 1:
             self.index = 0
-        print self.index, len(self.features)
         return self
 
     def back(self):
