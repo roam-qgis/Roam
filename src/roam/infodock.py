@@ -4,7 +4,7 @@ import collections
 from string import Template
 from collections import OrderedDict
 
-from PyQt4.QtGui import (QImageReader, QWidget, QFrame, QDialog, QIcon, QSortFilterProxyModel)
+from PyQt4.QtGui import (QImageReader, QWidget, QFrame, QDialog, QIcon, QSortFilterProxyModel,QListWidgetItem)
 
 from PyQt4.QtCore import (Qt, QUrl, 
                           QDate,
@@ -29,6 +29,42 @@ htmlpath = os.path.join(os.path.dirname(__file__), "info.html")
 with open(htmlpath) as f:
     template = Template(f.read())
 
+class FeatureCursor(object):
+    """
+    A feature cursor that keeps track of the current feature
+    and handles wrapping to the start and end of the list
+
+    HACK: This could be a lot nicer and cleaner but it works
+    for now
+    """
+    def __init__(self, layer, features, form=None, index=0):
+        self.layer = layer
+        self.features = features
+        self.index = index
+        self.form = form
+
+    def next(self):
+        self.index += 1
+        if self.index > len(self.features) - 1:
+            self.index = 0
+        return self
+
+    def back(self):
+        self.index -= 1
+        if self.index < 0:
+            self.index = len(self.features) - 1
+        return self
+
+    @property
+    def feature(self):
+        try:
+            return self.features[self.index]
+        except IndexError:
+            return None
+
+    def __str__(self):
+        return "{} of {}".format(self.index + 1, len(self.features))
+
 class InfoDock(infodock_widget, QWidget):
     requestopenform = pyqtSignal(object, QgsFeature)
     featureupdated = pyqtSignal(object, object, list)
@@ -40,14 +76,21 @@ class InfoDock(infodock_widget, QWidget):
         self.forms = {}
         self.charm = FlickCharm()
         self.charm.activateOn(self.attributesView)
-        self.results = collections.defaultdict(list)
-        self.layerList.currentIndexChanged.connect(self.layerIndexChanged)
-        self.featureList.currentIndexChanged.connect(self.featureIndexChanged)
+        self.layerList.currentRowChanged.connect(self.layerIndexChanged)
         self.attributesView.linkClicked.connect(openimage)
         self.attributesView.page().setLinkDelegationPolicy(QWebPage.DelegateAllLinks)
         self.grabGesture(Qt.SwipeGesture)
         self.setAttribute(Qt.WA_AcceptTouchEvents)
         self.editButton.pressed.connect(self.openform)
+        self.parent().installEventFilter(self)
+
+    def eventFilter(self, object, event):
+        if event.type() == QEvent.Resize:
+            width = self.parent().width() * 40 / 100
+            self.resize(width, self.parent().height())
+            self.move(self.parent().width() - self.width() -1, 1)
+
+        return object.eventFilter(object, event)
 
     def close(self):
         self.clearResults()
@@ -62,66 +105,64 @@ class InfoDock(infodock_widget, QWidget):
 
     @property
     def selection(self):
-        layer = self.layerList.itemData(self.layerList.currentIndex())
-        feature = self.featureList.itemData(self.featureList.currentIndex())
-        return layer, feature
+        item = self.layerList.item(self.layerList.currentRow())
+        if not item:
+            return
+
+        cursor = item.data(Qt.UserRole)
+        return cursor
 
     def openform(self):
-        layer, feature = self.selection
-        forms = self.forms[layer.name()]
-        form = forms[0]
-        self.requestopenform.emit(form, feature)
+        cursor = self.selection
+        self.requestopenform.emit(cursor.form, cursor.feature)
+
+    def pageback(self):
+        cursor = self.selection
+        cursor.back()
+        self.update(cursor)
 
     def pagenext(self):
-        index = self.featureList.currentIndex() + 1
-        if index > self.featureList.count():
-            index = 0
-        self.featureList.setCurrentIndex(index)
-
-    def featureIndexChanged(self, index):
-        feature = self.featureList.itemData(index)
-        layer = self.layerList.itemData(self.layerList.currentIndex())
-        if not feature:
-            return 
-        
-        self.update(layer, feature)
+        cursor = self.selection
+        cursor.next()
+        self.update(cursor)
 
     def layerIndexChanged(self, index):
-        self.featureList.clear()
-        layer = self.layerList.itemData(index)
-        if not layer:
+        item = self.layerList.item(index)
+        if not item:
             return
-        
-        features = self.results[layer]
-        utils.log(features)
-        index = layer.fieldNameIndex(layer.displayField())
-        for feature in features:
-            if index < 0:
-                display = QgsExpression.replaceExpressionText( layer.displayField(), feature, layer )
-            else:
-                display = feature[index]
-            self._addFeature(str(display), feature)
-                     
-    def _addFeature(self, display, feature):
-        self.featureList.addItem(display, feature)
-        
+
+        cursor = item.data(Qt.UserRole)
+        self.update(cursor)
+
     def setResults(self, results, forms):
         self.clearResults()
         self.forms = forms
-        self.results = results
         for layer, features in results.iteritems():
             if features:
                 self._addResult(layer, features)
 
-        self.layerList.setCurrentIndex(0)
+        self.layerList.setCurrentRow(0)
+        self.layerList.setMinimumWidth(self.layerList.sizeHintForColumn(0) + 20)
+        self.navwidget.show()
 
     def _addResult(self, layer, features):
-        self.addLayer(layer)
-        self.results[layer] = features
-        
-    def update(self, layer, feature):
+        layername = layer.name()
+        forms = self.forms.get(layername, [])
+        if not forms:
+            item = QListWidgetItem(QIcon(), layername, self.layerList)
+            item.setData(Qt.UserRole, FeatureCursor(layer, features))
+            return
+
+        for form in forms:
+            itemtext = "{} ({})".format(layername, form.label)
+            icon = QIcon(form.icon)
+            item = QListWidgetItem(icon, itemtext, self.layerList)
+            item.setData(Qt.UserRole, FeatureCursor(layer, features, form))
+
+    def update(self, cursor):
         global image
         images = {}
+        feature = cursor.feature
         fields = [field.name() for field in feature.fields()]
         data = OrderedDict()
 
@@ -132,32 +173,37 @@ class InfoDock(infodock_widget, QWidget):
             items.append(item)
         rowtemple = Template(''.join(items))
         rowshtml = updateTemplate(data, rowtemple)
-        info = {}
-        info['TITLE'] = layer.name()
-        info['ROWS'] = rowshtml
+
+        form = cursor.form
+        layer = cursor.layer
+        if form:
+            name = "{}".format(layer.name(), form.label)
+        else:
+            name = layer.name()
+
+        info = dict(TITLE=name,
+                    ROWS=rowshtml)
+
         html = updateTemplate(info, template)
         base = os.path.dirname(os.path.abspath(__file__))
         baseurl = QUrl.fromLocalFile(base + '\\')
+
+        if form:
+            displaytext = form.settings.get('display', None)
+            display = QgsExpression.replaceExpressionText(displaytext, cursor.feature, layer )
+        else:
+            display = str(feature[0])
+
+        self.countlabel.setText(str(cursor))
+        self.displaylabel.setText(display)
         self.attributesView.setHtml(html, baseurl)
-        edittools = len(self.forms[layer.name()]) > 0
-        self.editButton.setVisible(edittools)
-        #self.moveButton.setVisible(edittools)
-        self.featureupdated.emit(layer, feature, self.results[layer])
+        self.editButton.setVisible(not form is None)
+        self.featureupdated.emit(layer, cursor.feature, cursor.features)
 
     def clearResults(self):
-        self.results.clear()
         self.layerList.clear()
-        self.featureList.clear()
         self.attributesView.setHtml('')
         self.editButton.setVisible(False)
-        self.moveButton.setVisible(False)
         self.resultscleared.emit()
-          
-    def addLayer(self, layer):
-        name = layer.name()
-        if self.layerList.findData(layer) == -1:
-            forms = self.forms.get(name, None)
-            icon = QIcon()
-            if forms:
-                icon = QIcon(forms[0].icon)
-            self.layerList.addItem(icon, name, layer)
+        self.navwidget.hide()
+

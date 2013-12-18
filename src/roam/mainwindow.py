@@ -229,7 +229,6 @@ class MainWindow(mainwindow_widget, mainwindow_base):
         self.infodock.hide()
         self.hidedataentry()
         self.updateicons()
-        self.canvas.installEventFilter(self)
         self.canvas.extentsChanged.connect(self.updatestatuslabel)
 
     def settingsupdated(self, settings):
@@ -241,13 +240,6 @@ class MainWindow(mainwindow_widget, mainwindow_base):
     def updatestatuslabel(self):
         extent = self.canvas.extent()
         self.positionlabel.setText("Map Center: {}".format(extent.center().toString()))
-
-    def eventFilter(self, object, event):
-        if object == self.canvas and event.type() == QEvent.Resize:
-            self.infodock.resize(self.infodock.width(), self.canvas.height())
-            self.infodock.move(self.canvas.width() - self.infodock.width() -1, 1)
-
-        return object.eventFilter(object, event)
 
     def highlightselection(self, results):
         for layer, features in results.iteritems():
@@ -746,6 +738,7 @@ class MainWindow(mainwindow_widget, mainwindow_base):
         self.project = None
         self.dataentrywidget.clear()
         self.hidedataentry()
+        self.infodock.close()
 
 
 

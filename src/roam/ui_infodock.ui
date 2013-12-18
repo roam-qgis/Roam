@@ -6,15 +6,15 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>480</width>
-    <height>664</height>
+    <width>657</width>
+    <height>607</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Form</string>
   </property>
   <property name="autoFillBackground">
-   <bool>true</bool>
+   <bool>false</bool>
   </property>
   <property name="styleSheet">
    <string notr="true">QCheckBox::indicator {
@@ -63,7 +63,42 @@ width: 30px;
    <property name="margin">
     <number>0</number>
    </property>
+   <property name="spacing">
+    <number>0</number>
+   </property>
    <item row="0" column="0">
+    <widget class="QListWidget" name="layerList">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Fixed" vsizetype="Expanding">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">QListWidget {
+background-color: rgb(149,150,145, 220);
+}
+
+QListWidget::item {
+	color: rgb(217,217,215);
+    border-bottom: 1px solid black;
+	padding: 4px;
+}
+
+QListWidget::item::selected {
+	color: white;
+	background-color: rgb(85,85,85);
+}
+
+
+</string>
+     </property>
+     <property name="frameShape">
+      <enum>QFrame::NoFrame</enum>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="1">
     <widget class="QFrame" name="frame">
      <property name="frameShape">
       <enum>QFrame::StyledPanel</enum>
@@ -75,13 +110,10 @@ width: 30px;
       <property name="margin">
        <number>0</number>
       </property>
-      <item row="0" column="0" colspan="2">
-       <widget class="QComboBox" name="layerList"/>
-      </item>
-      <item row="1" column="0" colspan="2">
-       <widget class="QComboBox" name="featureList"/>
-      </item>
-      <item row="3" column="0" colspan="2">
+      <property name="spacing">
+       <number>0</number>
+      </property>
+      <item row="1" column="0">
        <widget class="QWebView" name="attributesView">
         <property name="baseSize">
          <size>
@@ -99,70 +131,8 @@ width: 30px;
         </property>
        </widget>
       </item>
-      <item row="4" column="0">
-       <spacer name="horizontalSpacer">
-        <property name="orientation">
-         <enum>Qt::Horizontal</enum>
-        </property>
-        <property name="sizeHint" stdset="0">
-         <size>
-          <width>233</width>
-          <height>35</height>
-         </size>
-        </property>
-       </spacer>
-      </item>
-      <item row="4" column="1">
-       <widget class="QPushButton" name="pushButton">
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
-        <property name="text">
-         <string>Close Panel</string>
-        </property>
-       </widget>
-      </item>
-      <item row="2" column="0" colspan="2">
-       <layout class="QHBoxLayout" name="horizontalLayout_2">
-        <item>
-         <spacer name="horizontalSpacer_2">
-          <property name="orientation">
-           <enum>Qt::Horizontal</enum>
-          </property>
-          <property name="sizeHint" stdset="0">
-           <size>
-            <width>40</width>
-            <height>20</height>
-           </size>
-          </property>
-         </spacer>
-        </item>
-        <item>
-         <widget class="QToolButton" name="moveButton">
-          <property name="text">
-           <string>Move Feature</string>
-          </property>
-          <property name="icon">
-           <iconset resource="resources.qrc">
-            <normaloff>:/icons/move</normaloff>:/icons/move</iconset>
-          </property>
-          <property name="iconSize">
-           <size>
-            <width>24</width>
-            <height>24</height>
-           </size>
-          </property>
-          <property name="toolButtonStyle">
-           <enum>Qt::ToolButtonTextUnderIcon</enum>
-          </property>
-          <property name="autoRaise">
-           <bool>true</bool>
-          </property>
-         </widget>
-        </item>
+      <item row="2" column="0">
+       <layout class="QHBoxLayout" name="horizontalLayout">
         <item>
          <widget class="QToolButton" name="editButton">
           <property name="text">
@@ -186,7 +156,129 @@ width: 30px;
           </property>
          </widget>
         </item>
+        <item>
+         <spacer name="horizontalSpacer">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>233</width>
+            <height>35</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item>
+         <widget class="QToolButton" name="toolButton">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="text">
+           <string>Close Panel</string>
+          </property>
+          <property name="icon">
+           <iconset resource="resources.qrc">
+            <normaloff>:/icons/cancel</normaloff>:/icons/cancel</iconset>
+          </property>
+          <property name="iconSize">
+           <size>
+            <width>24</width>
+            <height>24</height>
+           </size>
+          </property>
+          <property name="toolButtonStyle">
+           <enum>Qt::ToolButtonTextUnderIcon</enum>
+          </property>
+          <property name="autoRaise">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
        </layout>
+      </item>
+      <item row="0" column="0">
+       <widget class="QWidget" name="navwidget" native="true">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <layout class="QHBoxLayout" name="horizontalLayout_3">
+         <property name="margin">
+          <number>0</number>
+         </property>
+         <item>
+          <widget class="QLabel" name="displaylabel">
+           <property name="text">
+            <string/>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QToolButton" name="backButton">
+           <property name="text">
+            <string>&lt;</string>
+           </property>
+           <property name="icon">
+            <iconset resource="resources.qrc">
+             <normaloff>:/icons/previous</normaloff>:/icons/previous</iconset>
+           </property>
+           <property name="iconSize">
+            <size>
+             <width>32</width>
+             <height>32</height>
+            </size>
+           </property>
+           <property name="autoRaise">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLabel" name="countlabel">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="text">
+            <string>X of Y</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QToolButton" name="nextButton">
+           <property name="text">
+            <string>&gt;</string>
+           </property>
+           <property name="icon">
+            <iconset resource="resources.qrc">
+             <normaloff>:/icons/next</normaloff>:/icons/next</iconset>
+           </property>
+           <property name="iconSize">
+            <size>
+             <width>32</width>
+             <height>32</height>
+            </size>
+           </property>
+           <property name="autoRaise">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+        </layout>
+        <zorder></zorder>
+        <zorder>nextButton</zorder>
+        <zorder>backButton</zorder>
+        <zorder>displaylabel</zorder>
+        <zorder>countlabel</zorder>
+       </widget>
       </item>
      </layout>
     </widget>
@@ -205,20 +297,56 @@ width: 30px;
  </resources>
  <connections>
   <connection>
-   <sender>pushButton</sender>
-   <signal>clicked()</signal>
+   <sender>toolButton</sender>
+   <signal>pressed()</signal>
    <receiver>Form</receiver>
    <slot>close()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>262</x>
-     <y>654</y>
+     <x>604</x>
+     <y>570</y>
     </hint>
     <hint type="destinationlabel">
-     <x>403</x>
-     <y>595</y>
+     <x>615</x>
+     <y>212</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>nextButton</sender>
+   <signal>pressed()</signal>
+   <receiver>Form</receiver>
+   <slot>pagenext()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>637</x>
+     <y>25</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>687</x>
+     <y>52</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>backButton</sender>
+   <signal>pressed()</signal>
+   <receiver>Form</receiver>
+   <slot>pageback()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>525</x>
+     <y>18</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>488</x>
+     <y>-45</y>
     </hint>
    </hints>
   </connection>
  </connections>
+ <slots>
+  <slot>pagenext()</slot>
+  <slot>pageback()</slot>
+ </slots>
 </ui>
