@@ -1,6 +1,6 @@
 <RCC>
   <qresource prefix="icons">
-    <file alias="cancel">resources/images/cancel.png</file>
+    <file alias="cancel">resources/images/cancel.svg</file>
     <file alias="edit">resources/images/edit.svg</file>
     <file alias="home">resources/images/home.svg</file>
     <file alias="in">resources/images/in.svg</file>
@@ -28,7 +28,7 @@
     <file alias="quit">resources/images/quit.png</file>
     <file alias="config">resources/images/config.svg</file>
     <file alias="info">resources/images/info.svg</file>
-    <file alias="save">resources/images/save.png</file>
+    <file alias="save">resources/images/save.svg</file>
     <file alias="dataentry">resources/images/data.png</file>
     <file alias="capture">resources/images/capture.svg</file>
     <file alias="down">resources/images/down.svg</file>
