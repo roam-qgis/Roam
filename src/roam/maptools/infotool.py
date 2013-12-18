@@ -57,6 +57,7 @@ class InfoTool(QgsMapTool):
         return rect
 
     def canvasPressEvent(self, event):
+        self.dragging = False
         self.selectrect.setRect( 0, 0, 0, 0 )
 
         self.selectband = QgsRubberBand(self.canvas, QGis.Polygon )
@@ -68,8 +69,8 @@ class InfoTool(QgsMapTool):
             return
 
         if not self.dragging:
-            self.dragging = True
             self.selectrect.setTopLeft(event.pos())
+            self.dragging = True
         self.selectrect.setBottomRight(event.pos())
 
         maptoolutils.setRubberBand(self.canvas, self.selectrect, self.selectband)
