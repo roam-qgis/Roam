@@ -137,6 +137,8 @@ class InfoDock(infodock_widget, QWidget):
     def setResults(self, results, forms):
         self.clearResults()
         self.forms = forms
+
+
         for layer, features in results.iteritems():
             if features:
                 self._addResult(layer, features)
@@ -144,6 +146,12 @@ class InfoDock(infodock_widget, QWidget):
         self.layerList.setCurrentRow(0)
         self.layerList.setMinimumWidth(self.layerList.sizeHintForColumn(0) + 20)
         self.navwidget.show()
+
+    def show(self):
+        if self.layerList.count() > 0:
+            super(InfoDock, self).show()
+        else:
+            self.hide()
 
     def _addResult(self, layer, features):
         layername = layer.name()
