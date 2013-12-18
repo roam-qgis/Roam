@@ -211,8 +211,9 @@ class MainWindow(mainwindow_widget, mainwindow_base):
 
         self.canvas_page.layout().insertWidget(2, self.projecttoolbar)
         self.dataentrymodel = QStandardItemModel(self)
-        self.dataentrycombo = QComboBox()
+        self.dataentrycombo = QComboBox(self.projecttoolbar)
         self.dataentrycombo.setIconSize(QSize(48,48))
+        self.dataentrycombo.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Expanding)
         self.dataentrycombo.setSizeAdjustPolicy(QComboBox.AdjustToContents)
         self.dataentrycombo.setModel(self.dataentrymodel)
         self.dataentrycombo.currentIndexChanged.connect(self.dataentrychanged)
@@ -413,6 +414,7 @@ class MainWindow(mainwindow_widget, mainwindow_base):
         def captureFeature(form):
             item = QStandardItem(QIcon(form.icon), form.icontext)
             item.setData(form, Qt.UserRole + 1)
+            item.setSizeHint(QSize(item.sizeHint().width(), self.projecttoolbar.height()))
             self.dataentrymodel.appendRow(item)
 
         capabilitityhandlers = {"capture": captureFeature,
@@ -449,6 +451,8 @@ class MainWindow(mainwindow_widget, mainwindow_base):
                                  level=QgsMessageBar.WARNING, extrainfo=html)
 
         visible = self.dataentrymodel.rowCount() > 0
+        # We have to do this because the combobox will reset it size with AdjustToContents
+        self.dataentrycombo.setMinimumHeight(self.projecttoolbar.height())
         self.dataentrycomboaction.setVisible(visible)
         self.dataentrycombo.setCurrentIndex(0)
 
