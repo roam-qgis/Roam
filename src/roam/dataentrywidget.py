@@ -190,6 +190,10 @@ class DataEntryWidget(dataentry_widget, dataentry_base):
         self.clearcurrentwidget()
         self.scrollAreaWidgetContents.layout().insertWidget(0, widget)
 
+    def clear(self):
+        self.featureform = None
+        self.clearcurrentwidget()
+
     def clearcurrentwidget(self):
         item = self.scrollAreaWidgetContents.layout().itemAt(0)
         if item and item.widget():

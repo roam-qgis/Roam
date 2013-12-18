@@ -744,6 +744,8 @@ class MainWindow(mainwindow_widget, mainwindow_base):
         self.dataentrymodel.clear()
         self.panels = []
         self.project = None
+        self.dataentrywidget.clear()
+        self.hidedataentry()
 
 
 
