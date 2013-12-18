@@ -25,7 +25,7 @@
     <file alias="sync">resources/images/sync.png</file>
     <file alias="help">resources/images/help.png</file>
     <file alias="sad">resources/images/sad.png</file>
-    <file alias="quit">resources/images/quit.png</file>
+    <file alias="quit">resources/images/quit.svg</file>
     <file alias="config">resources/images/config.svg</file>
     <file alias="info">resources/images/info.svg</file>
     <file alias="save">resources/images/save.svg</file>
