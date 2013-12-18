@@ -114,7 +114,7 @@ class InfoDock(infodock_widget, QWidget):
                 self._addResult(layer, features)
 
         self.layerList.setCurrentRow(0)
-        self.setMinimumWidth(self.layerList.sizeHintForColumn(0))
+        self.layerList.setMinimumWidth(self.layerList.sizeHintForColumn(0) + 20)
 
     def _addResult(self, layer, features):
         self.addLayer(layer)

@@ -69,7 +69,7 @@ width: 30px;
    <item row="0" column="0">
     <widget class="QListWidget" name="layerList">
      <property name="sizePolicy">
-      <sizepolicy hsizetype="MinimumExpanding" vsizetype="Expanding">
+      <sizepolicy hsizetype="Fixed" vsizetype="Expanding">
        <horstretch>0</horstretch>
        <verstretch>0</verstretch>
       </sizepolicy>
