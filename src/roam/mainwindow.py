@@ -738,6 +738,7 @@ class MainWindow(mainwindow_widget, mainwindow_base):
         self.project = None
         self.dataentrywidget.clear()
         self.hidedataentry()
+        self.infodock.close()
 
 
 
