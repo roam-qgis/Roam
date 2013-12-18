@@ -94,6 +94,8 @@ class MainWindow(mainwindow_widget, mainwindow_base):
         self.canvas.setWheelAction(QgsMapCanvas.WheelZoomToMouseCursor)
         self.bar = roam.messagebaritems.MessageBar(self)
 
+        self.actionMap.setVisible(False)
+
         pal = QgsPalLabeling()
         self.canvas.mapRenderer().setLabelingEngine(pal)
         self.menuGroup = QActionGroup(self)
@@ -271,6 +273,7 @@ class MainWindow(mainwindow_widget, mainwindow_base):
         self.band.setToGeometry(feature.geometry(), layer)
 
     def showmap(self):
+        self.actionMap.setVisible(True)
         self.actionMap.trigger()
 
     def hidedataentry(self):
@@ -645,7 +648,7 @@ class MainWindow(mainwindow_widget, mainwindow_base):
         self.canvas.freeze(False)
         self.canvas.refresh()
         self.projectOpened()
-        self.stackedWidget.setCurrentIndex(0)
+        self.showmap()
 
     @roam.utils.timeit
     def projectOpened(self):
