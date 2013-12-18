@@ -202,6 +202,12 @@ QListWidget::item::selected {
       </item>
       <item row="0" column="0">
        <widget class="QWidget" name="navwidget" native="true">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
         <layout class="QHBoxLayout" name="horizontalLayout_3">
          <property name="margin">
           <number>0</number>
