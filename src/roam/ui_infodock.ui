@@ -82,6 +82,7 @@ background-color: rgb(149,150,145, 220);
 QListWidget::item {
 	color: rgb(217,217,215);
     border-bottom: 1px solid black;
+	padding: 4px;
 }
 
 QListWidget::item::selected {
