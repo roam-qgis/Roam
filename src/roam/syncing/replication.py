@@ -54,9 +54,7 @@ class ReplicationSync(SyncProvider):
         self.haserror = True
         
     def complete(self, error, status):
-        print "Complete"
         if error > 0:
-            print "Error"
             stderr = self.process.readAllStandardError().data()
             self.syncError.emit(stderr)
         else:
