@@ -4,7 +4,7 @@ import collections
 from string import Template
 from collections import OrderedDict
 
-from PyQt4.QtGui import (QImageReader, QWidget, QFrame, QDialog, QIcon, QSortFilterProxyModel)
+from PyQt4.QtGui import (QImageReader, QWidget, QFrame, QDialog, QIcon, QSortFilterProxyModel,QListWidgetItem)
 
 from PyQt4.QtCore import (Qt, QUrl, 
                           QDate,
@@ -41,7 +41,7 @@ class InfoDock(infodock_widget, QWidget):
         self.charm = FlickCharm()
         self.charm.activateOn(self.attributesView)
         self.results = collections.defaultdict(list)
-        self.layerList.currentIndexChanged.connect(self.layerIndexChanged)
+        self.layerList.currentRowChanged.connect(self.layerIndexChanged)
         self.featureList.currentIndexChanged.connect(self.featureIndexChanged)
         self.attributesView.linkClicked.connect(openimage)
         self.attributesView.page().setLinkDelegationPolicy(QWebPage.DelegateAllLinks)
@@ -62,7 +62,7 @@ class InfoDock(infodock_widget, QWidget):
 
     @property
     def selection(self):
-        layer = self.layerList.itemData(self.layerList.currentIndex())
+        layer = self.layerList.item(self.layerList.currentRow()).data(Qt.UserRole)
         feature = self.featureList.itemData(self.featureList.currentIndex())
         return layer, feature
 
@@ -80,7 +80,7 @@ class InfoDock(infodock_widget, QWidget):
 
     def featureIndexChanged(self, index):
         feature = self.featureList.itemData(index)
-        layer = self.layerList.itemData(self.layerList.currentIndex())
+        layer = self.layerList.item(self.layerList.currentRow()).data(Qt.UserRole)
         if not feature:
             return 
         
@@ -88,7 +88,7 @@ class InfoDock(infodock_widget, QWidget):
 
     def layerIndexChanged(self, index):
         self.featureList.clear()
-        layer = self.layerList.itemData(index)
+        layer = self.layerList.item(index).data(Qt.UserRole)
         if not layer:
             return
         
@@ -97,7 +97,7 @@ class InfoDock(infodock_widget, QWidget):
         index = layer.fieldNameIndex(layer.displayField())
         for feature in features:
             if index < 0:
-                display = QgsExpression.replaceExpressionText( layer.displayField(), feature, layer )
+                display = QgsExpression.replaceExpressionText(layer.displayField(), feature, layer )
             else:
                 display = feature[index]
             self._addFeature(str(display), feature)
@@ -113,7 +113,8 @@ class InfoDock(infodock_widget, QWidget):
             if features:
                 self._addResult(layer, features)
 
-        self.layerList.setCurrentIndex(0)
+        self.layerList.setCurrentRow(0)
+        self.setMinimumWidth(self.layerList.sizeHintForColumn(0))
 
     def _addResult(self, layer, features):
         self.addLayer(layer)
@@ -150,14 +151,14 @@ class InfoDock(infodock_widget, QWidget):
         self.featureList.clear()
         self.attributesView.setHtml('')
         self.editButton.setVisible(False)
-        self.moveButton.setVisible(False)
         self.resultscleared.emit()
           
     def addLayer(self, layer):
         name = layer.name()
-        if self.layerList.findData(layer) == -1:
+        if not self.layerList.findItems(name, Qt.MatchExactly):
             forms = self.forms.get(name, None)
             icon = QIcon()
             if forms:
                 icon = QIcon(forms[0].icon)
-            self.layerList.addItem(icon, name, layer)
+            item = QListWidgetItem(icon, name, self.layerList)
+            item.setData(Qt.UserRole, layer)
