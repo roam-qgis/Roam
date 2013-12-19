@@ -25,6 +25,7 @@ class GPSAction(QAction):
     def __init__(self, icon, canvas, settings, parent):
         QAction.__init__(self, QIcon(icon), "Enable GPS", parent)
         self.canvas = canvas
+        self._position = None
         self.settings = settings
         self.triggered.connect(self.connectGPS)
         self.gpsConn = None
@@ -34,6 +35,7 @@ class GPSAction(QAction):
         self.NMEA_FIX_3D = 3
         self.marker = GPSMarker(self.canvas)
         self.marker.hide()
+        self.currentport = None
         self.lastposition = QgsPoint(0.0, 0.0)
         self.wgs84CRS = QgsCoordinateReferenceSystem(4326)
 
@@ -42,7 +44,7 @@ class GPSAction(QAction):
             self.power.poweroff.connect(self.disconnectGPS)
             
     def updateGPSPort(self):
-        if self.isConnected:
+        if self.isConnected and not self.settings.settings['gpsport'] == self.currentport:
             self.disconnectGPS()
             self.connectGPS()
 
@@ -54,6 +56,7 @@ class GPSAction(QAction):
             self.setEnabled(False)
 
             portname = self.settings.settings.get("gpsport", '')
+            self.currentport = portname
             if portname == 'scan':
                 utils.log("Auto scanning for GPS port")
                 portname = ''
@@ -91,6 +94,7 @@ class GPSAction(QAction):
         self.setIcon(QIcon(":/icons/gps"))
         self.setIconText("Enable GPS")
         self.setEnabled(True)
+        self._position = None
 
     def connected(self, gpsConnection):
         self.setIcon(QIcon(':/icons/gps_looking'))
@@ -110,21 +114,24 @@ class GPSAction(QAction):
         self.setIcon(QIcon(':/icons/gps_failed'))
         self.setIconText("GPS Failed. Click to retry")
 
+    @property
+    def zoomtolocation(self):
+        return self.settings.settings.get('gpszoomonfix', True)
+
     def gpsStateChanged(self, gpsInfo):
-        fixed = False
         if gpsInfo.fixType == self.NMEA_FIX_BAD or gpsInfo.status == 0 or gpsInfo.quality == 0:
             self.setIcon(QIcon(':/icons/gps_failed'))
             self.setIconText("No fix yet")
+            self.gpsfixed.emit(False)
+            return
+
         elif gpsInfo.fixType == self.NMEA_FIX_3D or self.NMEA_FIX_2D:
             self.setIcon(QIcon(':/icons/gps_on'))
             self.setIconText("GPS Fixed")
-            fixed = True
+            self.gpsfixed.emit(True)
 
-        self.gpsfixed.emit(fixed)
 
-        myPoistion = self.lastposition
-        if fixed:
-            myPoistion = QgsPoint(gpsInfo.longitude, gpsInfo.latitude)
+        myPoistion = QgsPoint(gpsInfo.longitude, gpsInfo.latitude)
 
         # Recenter map if we go outside of the 95% of the area
         transform = QgsCoordinateTransform(self.wgs84CRS, self.canvas.mapRenderer().destinationCrs())
@@ -132,6 +139,9 @@ class GPSAction(QAction):
             map_pos = transform.transform(myPoistion)
         except QgsCsException:
             return
+
+        if self._position is None and self.zoomtolocation:
+            self.canvas.zoomScale(1000)
 
         if not self.lastposition == map_pos:
             self.lastposition = map_pos
