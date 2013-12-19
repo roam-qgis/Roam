@@ -466,7 +466,10 @@ QToolButton:checked {
      <normaloff>:/icons/home</normaloff>:/icons/home</iconset>
    </property>
    <property name="text">
-    <string>Home Viiew</string>
+    <string>Home View</string>
+   </property>
+   <property name="toolTip">
+    <string>Home View</string>
    </property>
   </action>
   <action name="actionPan">
