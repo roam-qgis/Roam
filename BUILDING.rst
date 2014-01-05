@@ -5,7 +5,6 @@ You need:
 
 - Visual Studio C++ 2008 (http://download.microsoft.com/download/A/5/4/A54BADB6-9C3F-478D-8657-93B3FC9FE62D/vcsetup.exe)
     (This is for the Python compiler for py2exe)
-- py2exe (http://waix.dl.sourceforge.net/project/py2exe/py2exe/0.6.9/py2exe-0.6.9.zip)
 - QGIS 32bit OSGeo4W (http://download.osgeo.org/osgeo4w/osgeo4w-setup-x86.exe)
 
 NOTE: Build scripts assume OSGeo4W install path.
