@@ -5,8 +5,8 @@ from roam.editorwidgets.core import EditorWidget
 
 class CheckboxWidget(EditorWidget):
     widgettype = 'Checkbox'
-    def __init__(self, *args):
-        super(CheckboxWidget, self).__init__(*args)
+    def __init__(self, *args, **kwargs):
+        super(CheckboxWidget, self).__init__(*args, **kwargs)
         self.validationstyle = """QCheckBox[required=true]
                                 {border-radius: 5px; background-color: rgba(255, 221, 48,150);}
                                 QCheckBox[ok=true]

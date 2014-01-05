@@ -12,7 +12,6 @@ config = {"checkedvalue":'MyTrue',
 def setup_module(module):
     global app
     app = QApplication([])
-    print app
 
 def test_should_set_config_checkedvalue_on_true():
     checkbox = QCheckBox()
