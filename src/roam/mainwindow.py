@@ -76,6 +76,21 @@ class BadLayerHandler(QgsProjectBadLayerHandler):
         self.callback(layers)
 
 
+class FloatingToolButton(QToolButton):
+    def __init__(self, position, action, parent=None):
+        super(FloatingToolButton, self).__init__(parent)
+        self.position = position
+        self.setDefaultAction(action)
+        self.setIconSize(QSize(32,32))
+        self.parent().installEventFilter(self)
+
+    def eventFilter(self, object, event):
+        if event.type() == QEvent.Resize:
+            self.move(*self.position)
+
+        return super(FloatingToolButton, self).eventFilter(object, event)
+
+
 class MainWindow(mainwindow_widget, mainwindow_base):
     """
     Main application window
@@ -99,6 +114,8 @@ class MainWindow(mainwindow_widget, mainwindow_base):
         pal = QgsPalLabeling()
         self.canvas.mapRenderer().setLabelingEngine(pal)
         self.canvas.setFrameStyle(QFrame.NoFrame)
+        self.button = FloatingToolButton((20, 20), self.actionInfo, self.canvas)
+        self.button.show()
         self.menuGroup = QActionGroup(self)
         self.menuGroup.setExclusive(True)
 
