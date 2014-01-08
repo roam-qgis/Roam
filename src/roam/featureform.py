@@ -264,6 +264,8 @@ class FeatureForm(QObject):
         """
         pass
 
+    def featuresaved(self, feature):
+        pass
 
     def loaded(self):
         pass

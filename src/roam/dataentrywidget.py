@@ -162,6 +162,7 @@ class DataEntryWidget(dataentry_widget, dataentry_base):
             self.failedsave.emit(layer.commitErrors())
             map(error, layer.commitErrors())
         else:
+            self.featureform.featuresaved(after)
             self.featuresaved.emit()
 
         self.accepted.emit()
