@@ -18,6 +18,7 @@ from roam.featureform import FeatureForm
 from roam.orderedyaml import OrderedDictYAMLLoader
 
 import roam.utils
+import roam
 
 
 class NoMapToolConfigured(Exception):
@@ -35,16 +36,32 @@ class ErrorInMapTool(Exception):
     pass
 
 
+def checkversion(roamversion, projectversion):
+    def versiontuple(v):
+        version = tuple(map(int, (v.split("."))))
+        if len(version) == 2:
+            version = (version[0], version[1], 0)
+        return version
+
+    min = versiontuple(roamversion)
+    project = versiontuple(projectversion)
+    majormatch = min[0] == project[0]
+    return majormatch and (project > min or project == min)
+
+
 def getProjects(projectpath):
     """
     Return QMapProjects inside the set path.  
     Each folder will be considered a QMap project
     """
-    folders = (sorted( [os.path.join(projectpath, item)
+    folders = (sorted([os.path.join(projectpath, item)
                        for item in os.walk(projectpath).next()[1]]))
     
     for folder in folders:
         project = Project.from_folder(folder)
+        if not checkversion(roam.__version__, project.version):
+            return
+
         if project.valid:
             yield project
         else:
@@ -227,7 +244,7 @@ class Project(object):
         
     @property
     def version(self):
-        return self.settings.get("version", 1.00)
+        return str(self.settings.get("version", roam.__version__))
     
     @property
     def projectfile(self):
