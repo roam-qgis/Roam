@@ -208,8 +208,8 @@ class Form(object):
     def module(self):
         return self._module
 
-class Project(object):
 
+class Project(object):
     def __init__(self, rootfolder, settings):
         self.folder = rootfolder
         self._project = None
@@ -224,7 +224,7 @@ class Project(object):
         settings = os.path.join(rootfolder, "settings.config")
         project = cls(rootfolder, {})
         try:
-            with open(settings,'r') as f:
+            with open(settings, 'r') as f:
                 settings = yaml.load(f, Loader=OrderedDictYAMLLoader)
                 project.settings = settings
         except IOError as e:

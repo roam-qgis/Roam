@@ -306,6 +306,7 @@
    <property name="styleSheet">
     <string notr="true">QToolBar {
 	background-color: rgb(85,85,85);
+    padding: 0px;
 }
 
 QToolButton {
@@ -318,8 +319,8 @@ QToolButton:hover {
 
 QToolButton:checked { 
 	color: rgb(91,147,194);
-	font: 75 12pt &quot;Calibri&quot;;
-	background-color: rgb(85,85,85);
+	padding-right: 0px;
+	background-color: white;
 }</string>
    </property>
    <property name="movable">
