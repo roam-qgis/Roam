@@ -499,9 +499,9 @@ class MainWindow(mainwindow_widget, mainwindow_base):
         self.band.reset()
         self.clearToolRubberBand()
 
-    def formrejected(self, message):
+    def formrejected(self, message, level):
         if message:
-            self.bar.pushMessage("Form Message", message, QgsMessageBar.WARNING, duration=2)
+            self.bar.pushMessage("Form Message", message, level, duration=2)
 
         self.cleartempobjects()
 

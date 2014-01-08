@@ -144,6 +144,15 @@ def buildfromauto(formconfig):
     return outwidget
 
 
+class RejectedException(Exception):
+    WARNING = 1
+    ERROR = 2
+
+    def __init__(self, message, level=WARNING):
+        super(RejectedException, self).__init__(message)
+        self.level = level
+
+
 class FeatureForm(QObject):
     """
     An object that represents a feature form in Roam.  This object will create and bind
@@ -232,13 +241,13 @@ class FeatureForm(QObject):
         for widget in self.widget.findChildren(widgettype):
             widget.installEventFilter(self)
 
-    def eventFilter(self, parent, event):
+    def eventFilter(self, object, event):
         """ Handle mouse click events for disabled widget state """
         if event.type() == QEvent.FocusIn:
             cmd = r'C:\Program Files\Common Files\Microsoft Shared\ink\TabTip.exe'
             os.startfile(cmd)
 
-        return QObject.eventFilter(self, parent, event)
+        return super(FeatureForm, self).eventFilter(object, event)
 
     def load(self, feature, layers, editing):
         """
@@ -247,22 +256,14 @@ class FeatureForm(QObject):
 
         When implemented, this method should always return a tuple with a pass state and a message.
 
-        Calling self.continue_() will let the form continue to be opened.
         Calling self.reject("Your message") will stop the opening of the form and show the message to the user.
 
-            >>> self.reject("Sorry you can't load this form now")
+            >>> self.cancelload("Sorry you can't load this form now")
 
-            or
-
-            >>> self.continue_()
-
-        You may alter the QgsFeature given.
+        You may alter the QgsFeature given. It will be passed to the form after this method returns.
         """
-        self.continue_()
+        pass
 
-
-    def continue_(self):
-        self.loadform.emit()
 
     def loaded(self):
         pass
@@ -270,8 +271,8 @@ class FeatureForm(QObject):
     def accept(self):
         return True
 
-    def reject(self, message=None):
-        self.rejected.emit(message)
+    def cancelload(self, message=None, level=RejectedException.WARNING):
+        raise RejectedException(message, level)
 
     @property
     def allpassing(self):

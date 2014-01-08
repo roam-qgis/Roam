@@ -13,6 +13,7 @@ from roam.utils import log, info, warning, error
 from roam import featureform
 from roam.uifiles import dataentry_widget, dataentry_base
 from roam.flickwidget import FlickCharm
+from roam import featureform
 
 
 class DefaultError(Exception):
@@ -84,7 +85,7 @@ class DataEntryWidget(dataentry_widget, dataentry_base):
     """
     """
     accepted = pyqtSignal()
-    rejected = pyqtSignal(str)
+    rejected = pyqtSignal(str, int)
     finished = pyqtSignal()
     featuresaved = pyqtSignal()
     failedsave = pyqtSignal(list)
@@ -94,6 +95,7 @@ class DataEntryWidget(dataentry_widget, dataentry_base):
         super(DataEntryWidget, self).__init__(parent)
         self.setupUi(self)
         self.featureform = None
+        self.feature = None
         self.project = None
         self.canvas = canvas
         self.bar = bar
@@ -107,7 +109,7 @@ class DataEntryWidget(dataentry_widget, dataentry_base):
         style = Qt.ToolButtonTextUnderIcon
         toolbar.setToolButtonStyle(style)
         self.actionSave.triggered.connect(self.accept)
-        self.actionCancel.triggered.connect(functools.partial(self.reject, None))
+        self.actionCancel.triggered.connect(functools.partial(self.formrejected, None))
 
         label = 'Required fields marked in <b style="background-color:rgba(255, 221, 48,150)">yellow</b>'
         self.missingfieldsLabel = QLabel(label)
@@ -123,8 +125,6 @@ class DataEntryWidget(dataentry_widget, dataentry_base):
         toolbar.addWidget(spacer2)
         toolbar.addAction(self.actionCancel)
         self.layout().insertWidget(2, toolbar)
-
-        self.actionSave
 
     def accept(self):
         if not self.featureform.allpassing:
@@ -168,23 +168,13 @@ class DataEntryWidget(dataentry_widget, dataentry_base):
         self.finished.emit()
         self.featureform = None
 
-    def reject(self, message):
-        # Tell the form it is rejected
-        if self.featureform:
-            self.featureform.reject(message)
-
-    def formrejected(self, message=None):
-        self.clearcurrentwidget()
-        self.rejected.emit(message)
+    def formrejected(self, message=None, level=featureform.RejectedException.WARNING):
+        self.clear()
+        self.rejected.emit(message, level)
         self.finished.emit()
-        self.featureform = None
 
     def formvalidation(self, passed):
         self.missingfieldaction.setVisible(not passed)
-
-    def showwidget(self, widget):
-        self.actionSave.setVisible(False)
-        self.setwidget(widget)
 
     def setwidget(self, widget):
         self.clearcurrentwidget()
@@ -198,32 +188,12 @@ class DataEntryWidget(dataentry_widget, dataentry_base):
         item = self.scrollAreaWidgetContents.layout().itemAt(0)
         if item and item.widget():
             widget = item.widget()
+            widget.setParent(None)
             widget.deleteLater()
-
-    def continueload(self):
-        self.featureform.showwidget.disconnect()
-        self.featureform.loadform.disconnect()
-
-        self.featureform.formvalidation.connect(self.formvalidation)
-        self.featureform.helprequest.connect(self.helprequest.emit)
-        self.featureform.bind()
-
-        self.actionSave.setVisible(True)
-        self.setwidget(self.featureform.widget)
-
-        self.featureform.loaded()
 
     def openform(self, form, feature, project):
         """
         Opens a form for the given feature.
-
-        This method is connected using signals rather then a normal top down method.
-        If the loadform signal is emitted from the FeatureForm
-        the data entry widget will continue to bind and load the form.  If rejected is emitted
-        the form will be rejected and the message will be shown to the user.
-
-        This allows for pre form load checks that allow the form to show pre main form widgets
-        using showwidget.
         """
 
         defaults = {}
@@ -237,12 +207,23 @@ class DataEntryWidget(dataentry_widget, dataentry_base):
         self.formvalidation(passed=True)
         self.feature = feature
         self.featureform = form.create_featureform(feature, defaults)
-        self.featureform.showwidget.connect(self.showwidget)
-        self.featureform.loadform.connect(self.continueload)
         self.featureform.rejected.connect(self.formrejected)
 
-        # Call the pre loading evnts for the form
+        # Call the pre loading events for the form
         layers = iter(QgsMapLayerRegistry.instance().mapLayers())
 
         self.project = project
-        self.featureform.load(feature, layers, editing)
+        try:
+            self.featureform.load(feature, layers, editing)
+        except featureform.RejectedException as rejected:
+            self.formrejected(rejected.message, rejected.level)
+            return
+
+        self.featureform.formvalidation.connect(self.formvalidation)
+        self.featureform.helprequest.connect(self.helprequest.emit)
+        self.featureform.bind()
+
+        self.actionSave.setVisible(True)
+        self.setwidget(self.featureform.widget)
+
+        self.featureform.loaded()

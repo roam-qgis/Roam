@@ -27,12 +27,12 @@ class QMapImageWidget(ui_imagewidget.Ui_imagewidget, QWidget):
         self.removeImage()
         self.defaultlocation = ''
 
-    def eventFilter(self, parent, event):
+    def eventFilter(self, object, event):
         """ Handle mouse click events for disabled widget state """
         if event.type() == QEvent.MouseButtonRelease and not self.isDefault:
             self.openRequest.emit(self.image.pixmap())
 
-        return QObject.eventFilter(self, parent, event)
+        return super(QMapImageWidget, self).eventFilter(object, event)
 
     def selectImage(self):
         # Show the file picker

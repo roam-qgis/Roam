@@ -65,13 +65,13 @@ class ClickableMessage(QgsMessageBarItem):
             child.setCursor(Qt.PointingHandCursor)
             child.installEventFilter(self)
 
-    def eventFilter(self, parent, event):
+    def eventFilter(self, object, event):
         """ Handle mouse click events for disabled widget state """
         if event.type() == QEvent.MouseButtonRelease and self.extrainfo:
             self.showmessage()
             event.accept()
 
-        return QObject.eventFilter(self, parent, event)
+        return super(ClickableMessage, self).eventFilter(object, event)
 
     def showmessage(self):
         html = self.extrainfo

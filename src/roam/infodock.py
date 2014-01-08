@@ -90,7 +90,7 @@ class InfoDock(infodock_widget, QWidget):
             self.resize(width, self.parent().height())
             self.move(self.parent().width() - self.width() -1, 1)
 
-        return object.eventFilter(object, event)
+        return super(InfoDock, self).eventFilter(object, event)
 
     def close(self):
         self.clearResults()
