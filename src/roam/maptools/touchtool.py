@@ -16,7 +16,7 @@ class TouchMapTool(QgsMapToolTouch):
         self.dragging = False
 
     def canvasMoveEvent(self, event):
-        if not self.pinching:
+        if not self.pinching and event.buttons() & Qt.LeftButton:
             self.dragging = True
             super(TouchMapTool, self).canvasMoveEvent(event)
 
