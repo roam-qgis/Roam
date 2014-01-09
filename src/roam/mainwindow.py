@@ -47,7 +47,7 @@ from roam.floatingtoolbar import FloatingToolBar
 from roam.settingswidget import SettingsWidget
 from roam.projectparser import ProjectParser
 from roam.project import Project, NoMapToolConfigured, ErrorInMapTool
-from roam.maptools import MoveTool, InfoTool, EditTool, PointTool
+from roam.maptools import MoveTool, InfoTool, EditTool, PointTool, TouchMapTool
 from roam.listfeatureform import ListFeaturesForm
 from roam.infodock import InfoDock
 from roam.syncwidget import SyncWidget
@@ -311,7 +311,7 @@ class MainWindow(mainwindow_widget, mainwindow_base):
 
         self.zoomInTool = QgsMapToolZoom(self.canvas, False)
         self.zoomOutTool = QgsMapToolZoom(self.canvas, True)
-        self.panTool = QgsMapToolTouch(self.canvas)
+        self.panTool = TouchMapTool(self.canvas)
         self.moveTool = MoveTool(self.canvas, [])
         self.infoTool = InfoTool(self.canvas)
         self.editTool = EditTool(self.canvas, [])

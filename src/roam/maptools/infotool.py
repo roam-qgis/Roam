@@ -8,14 +8,16 @@ from qgis.core import (QgsRectangle, QgsTolerance,
 from qgis.gui import QgsMapTool, QgsRubberBand
 
 from roam.maptools.maptool import MapTool
+from roam.maptools.touchtool import TouchMapTool
 from roam.maptools import maptoolutils
+from roam.utils import log
 
-class InfoTool(QgsMapTool):
+
+class InfoTool(TouchMapTool):
     infoResults = pyqtSignal(dict)
 
     def __init__(self, canvas, snapradius = 2):
         super(InfoTool, self).__init__(canvas)
-        self.canvas = canvas
         self.radius = snapradius
 
         self.band = QgsRubberBand(self.canvas)
@@ -57,14 +59,20 @@ class InfoTool(QgsMapTool):
         return rect
 
     def canvasPressEvent(self, event):
+        if self.pinching:
+            return
+
         self.dragging = False
-        self.selectrect.setRect( 0, 0, 0, 0 )
+        self.selectrect.setRect(0, 0, 0, 0)
 
         self.selectband = QgsRubberBand(self.canvas, QGis.Polygon )
         self.selectband.setColor(QColor.fromRgb(0,0,255, 65))
         self.selectband.setWidth(5)
 
     def canvasMoveEvent(self, event):
+        if self.pinching:
+            return
+
         if not event.buttons() == Qt.LeftButton:
             return
 
@@ -76,6 +84,9 @@ class InfoTool(QgsMapTool):
         maptoolutils.setRubberBand(self.canvas, self.selectrect, self.selectband)
 
     def canvasReleaseEvent(self, event):
+        if self.pinching:
+            return
+
         if self.dragging:
             geometry = self.selectband.asGeometry()
             if not geometry:
@@ -91,4 +102,3 @@ class InfoTool(QgsMapTool):
         results = OrderedDict((l,f) for l, f in self.getFeatures(rect))
         print results
         self.infoResults.emit(results)
-

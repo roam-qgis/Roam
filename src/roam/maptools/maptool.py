@@ -1,14 +1,14 @@
 from PyQt4.QtCore import pyqtSignal
-from qgis.gui import QgsMapTool, QgsMapToolTouch
+from roam.maptools.touchtool import TouchMapTool
 
 
-class MapTool(QgsMapToolTouch):
+class MapTool(TouchMapTool):
     """
         Base map tool.
     """
     layersupdated = pyqtSignal(bool)
     def __init__(self, canvas, layers):
-        QgsMapTool.__init__(self, canvas)
+        super(MapTool, self).__init__(canvas)
         self._layers = layers
     
     @property

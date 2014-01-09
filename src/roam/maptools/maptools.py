@@ -3,6 +3,7 @@ from PyQt4.QtGui import *
 from qgis.core import *
 from qgis.gui import *
 
+from roam.maptools.touchtool import TouchMapTool
 
 class PolygonTool(QgsMapTool):
     mouseClicked = pyqtSignal(QgsPoint)
@@ -84,19 +85,15 @@ class PolygonTool(QgsMapTool):
         return True
 
 
-class PointTool(QgsMapTool):
+class PointTool(TouchMapTool):
     """
     A basic point tool that can be connected to actions in order to handle
     point based actions.
-
-    Emits mouseClicked and mouseMove signals.
     """
-    mouseClicked = pyqtSignal(QgsPoint)
-    mouseMove = pyqtSignal(QgsPoint)
     geometryComplete = pyqtSignal(QgsGeometry)
     
     def __init__(self, canvas):
-        QgsMapTool.__init__(self, canvas)
+        super(PointTool, self).__init__(canvas)
         self.cursor = QCursor(QPixmap(["16 16 3 1",
             "      c None",
             ".     c #FF0000",
@@ -118,29 +115,14 @@ class PointTool(QgsMapTool):
             "      ++.++     ",
             "       +.+      "]))
 
-    def canvasPressEvent(self, event):
-        pass
-
-    def setAsMapTool(self):
-        """ 
-        Set the current tool as active
-
-        @note: Should be moved out into qmap.py
-        """
-        self.canvas().setMapTool(self)
-
-    def canvasMoveEvent(self, event):
-        point = self.toMapCoordinates(event.pos())
-
-        self.mouseMove.emit(point)
-
     def canvasReleaseEvent(self, event):
-        point = self.toMapCoordinates(event.pos())
+        if self.pinching or self.dragging:
+            super(PointTool, self).canvasReleaseEvent(event)
+            return
 
-        self.mouseClicked.emit(point)
+        point = self.toMapCoordinates(event.pos())
         self.geometryComplete.emit(QgsGeometry.fromPoint(point))
         
-
     def activate(self):
         """
         Set the tool as the active tool in the canvas. 
@@ -148,7 +130,7 @@ class PointTool(QgsMapTool):
         @note: Should be moved out into qmap.py 
                and just expose a cursor to be used
         """
-        self.canvas().setCursor(self.cursor)
+        self.canvas.setCursor(self.cursor)
 
     def deactivate(self):
         """
