@@ -626,6 +626,18 @@ QToolButton:checked {
     <string>Select</string>
    </property>
   </action>
+  <action name="actionProjectInfo">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="resources.qrc">
+     <normaloff>:/icons/project_info</normaloff>:/icons/project_info</iconset>
+   </property>
+   <property name="text">
+    <string>Project Info</string>
+   </property>
+  </action>
  </widget>
  <customwidgets>
   <customwidget>
