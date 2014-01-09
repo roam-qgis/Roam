@@ -1,35 +1,35 @@
 from PyQt4.QtCore import Qt, QFileInfo, QDir, QSize, QModelIndex, QEvent
-from PyQt4.QtGui import (QActionGroup
-                        ,QWidget
-                        ,QSizePolicy
-                        ,QLabel
-                        ,QApplication
-                        ,QPixmap
-                        ,QColor
-                        ,QMessageBox
-                        ,QStandardItemModel
-                        ,QStandardItem
-                        ,QItemSelectionModel
-                        ,QIcon
-                        ,QToolBar
-                        ,QComboBox
-                        ,QToolButton
-                        ,QAction
-                        ,QCursor)
+from PyQt4.QtGui import (QActionGroup,
+                        QWidget,
+                        QSizePolicy,
+                        QLabel,
+                        QApplication,
+                        QPixmap,
+                        QColor,
+                        QMessageBox,
+                        QStandardItemModel,
+                        QStandardItem,
+                        QItemSelectionModel,
+                        QIcon,
+                        QToolBar,
+                        QComboBox,
+                        QToolButton,
+                        QAction,
+                        QCursor, QFrame)
 
-from qgis.core import (QgsProjectBadLayerHandler
-                        ,QgsPalLabeling
-                        ,QgsMapLayerRegistry
-                        ,QgsProject
-                        ,QgsMapLayer
-                        ,QgsFeature
-                        ,QgsFields
-                        ,QgsGeometry)
-from qgis.gui import (QgsMessageBar
-                    ,QgsMapToolZoom
-                    ,QgsMapToolTouch
-                    ,QgsRubberBand
-                    ,QgsMapCanvas)
+from qgis.core import (QgsProjectBadLayerHandler,
+                        QgsPalLabeling,
+                        QgsMapLayerRegistry,
+                        QgsProject,
+                        QgsMapLayer,
+                        QgsFeature,
+                        QgsFields,
+                        QgsGeometry)
+from qgis.gui import (QgsMessageBar,
+                        QgsMapToolZoom,
+                        QgsMapToolTouch,
+                        QgsRubberBand,
+                        QgsMapCanvas)
 
 from functools import partial
 from collections import defaultdict
@@ -98,6 +98,7 @@ class MainWindow(mainwindow_widget, mainwindow_base):
 
         pal = QgsPalLabeling()
         self.canvas.mapRenderer().setLabelingEngine(pal)
+        self.canvas.setFrameStyle(QFrame.NoFrame)
         self.menuGroup = QActionGroup(self)
         self.menuGroup.setExclusive(True)
 
