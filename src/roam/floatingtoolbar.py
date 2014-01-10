@@ -3,7 +3,7 @@ from PyQt4.QtCore import Qt, QSize, QEvent
 
 
 class FloatingToolBar(QToolBar):
-    def __init__(self, position, parent=None):
+    def __init__(self, position=(0, 0), parent=None):
         super(FloatingToolBar, self).__init__(parent)
         self.setStyleSheet("background-color : transparent; border: 0px;")
         self._position = position

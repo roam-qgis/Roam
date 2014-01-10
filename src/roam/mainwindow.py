@@ -129,10 +129,6 @@ class MainWindow(mainwindow_widget, mainwindow_base):
         self.canvas.setWheelAction(QgsMapCanvas.WheelZoomToMouseCursor)
         self.bar = roam.messagebaritems.MessageBar(self)
 
-        self.projectinfowidget = ProjectInfoWidget(self.canvas)
-        self.projectinfowidget.show()
-        self.projectinfowidget.hide()
-
         self.actionMap.setVisible(False)
 
         pal = QgsPalLabeling()
@@ -199,7 +195,6 @@ class MainWindow(mainwindow_widget, mainwindow_base):
 
         self.topspaceraction = self.projecttoolbar.insertWidget(self.actionGPS, gpsspacewidget)
 
-        self.projectinfowidget.setuser(getpass.getuser())
 
         self.menutoolbar.insertWidget(self.actionQuit, sidespacewidget2)
         self.menutoolbar.insertWidget(self.actionProject, sidespacewidget)
@@ -226,6 +221,13 @@ class MainWindow(mainwindow_widget, mainwindow_base):
 
         self.actionGPSFeature.setProperty('dataentry', True)
 
+        self.projectinfowidget = ProjectInfoWidget(parent=self.canvas)
+        self.projectinfowidget.show()
+        self.projectinfowidget.hide()
+        self.projectinfowidget.setuser(getpass.getuser())
+
+        self.floatinginfo = FloatingToolBar(parent=self.canvas)
+
         self.infodock = InfoDock(self.canvas)
         self.infodock.requestopenform.connect(self.openForm)
         self.infodock.featureupdated.connect(self.highlightfeature)
@@ -251,7 +253,7 @@ class MainWindow(mainwindow_widget, mainwindow_base):
         def showinfo(checked):
             self.projectinfowidget.setVisible(checked)
 
-        self.floatinginfo = FloatingToolBar(calcpostion, self.canvas)
+        self.floatinginfo._position = calcpostion
         self.floatinginfo.addAction(self.actionProjectInfo)
         self.actionProjectInfo.toggled.connect(showinfo)
         self.floatinginfo.show()
