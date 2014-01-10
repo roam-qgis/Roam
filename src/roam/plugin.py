@@ -690,6 +690,7 @@ class QMap():
         self.infodock.hide()
         path = os.path.join(os.path.dirname(__file__), '..' , 'projects/')
         projects = getProjects(path, self.iface)
+        projects = [project for project in projects if project.valid]
         self.projectwidget.loadProjectList(projects)
         
     def loadProject(self, project):

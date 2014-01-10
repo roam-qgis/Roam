@@ -11,6 +11,8 @@ import logging
 import re
 import roam.yaml
 
+from string import Template
+
 curdir = os.path.abspath(os.path.dirname(__file__))
 pardir = os.path.join(curdir, '..')
 projectdir = os.path.join(pardir, "projects")
@@ -33,7 +35,8 @@ def templatefiles(rootfolder):
             template = os.path.join(root, filename)
             newfile = os.path.splitext(template)[0]       
             yield template, newfile
-    
+
+# TODO This could be done with the string.Template class
 def replace_tokens(filename, tokens ):
     """
         Replace all the tokens in the file 
@@ -47,7 +50,8 @@ def replace_tokens(filename, tokens ):
         f.seek(0)
         f.write(text)
         f.truncate()
-        
+
+# TODO We could use the string.Template class to get tokens
 def get_tokens(filename):
     """
     Return the tokens in the file that can be used by the installer
