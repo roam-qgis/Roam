@@ -298,7 +298,6 @@
     </item>
    </layout>
   </widget>
-  <widget class="QStatusBar" name="statusbar"/>
   <widget class="QToolBar" name="menutoolbar">
    <property name="contextMenuPolicy">
     <enum>Qt::PreventContextMenu</enum>
