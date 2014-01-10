@@ -81,34 +81,12 @@ class ProjectInfoWidget(projectinfo_widget, projectinfo_base):
     def __init__(self, parent=None):
         super(ProjectInfoWidget, self).__init__(parent)
         self.setupUi(self)
-        self._position = (0, 0)
-        self.parent().installEventFilter(self)
 
     def setproject(self, projectname):
         self.projectlabel.setText(projectname)
 
     def setuser(self, username):
         self.userlabel.setText(username)
-
-    def setposition(self, position):
-        self.mapcenterlabel.setText(position)
-
-    def eventFilter(self, object, event):
-        if event.type() == QEvent.Resize:
-            self.move(*self.position)
-
-        return False
-
-    def show(self):
-        self.move(*self.position)
-        super(ProjectInfoWidget, self).show()
-
-    @property
-    def position(self):
-        if hasattr(self._position, "__call__"):
-            return self._position()
-        else:
-            return self._position
 
 
 class MainWindow(mainwindow_widget, mainwindow_base):
@@ -130,9 +108,6 @@ class MainWindow(mainwindow_widget, mainwindow_base):
         self.bar = roam.messagebaritems.MessageBar(self)
 
         self.projectinfowidget = ProjectInfoWidget(self.canvas)
-        self.projectinfowidget.show()
-        self.projectinfowidget.hide()
-
         self.actionMap.setVisible(False)
 
         pal = QgsPalLabeling()
@@ -199,7 +174,26 @@ class MainWindow(mainwindow_widget, mainwindow_base):
 
         self.topspaceraction = self.projecttoolbar.insertWidget(self.actionGPS, gpsspacewidget)
 
-        self.projectinfowidget.setuser(getpass.getuser())
+        def createlabel(text):
+            style = """
+                QLabel {
+                        color: #706565;
+                        font: 14px "Calibri" ;
+                        }"""
+            label = QLabel(text)
+            label.setStyleSheet(style)
+
+            return label
+
+        self.projectlabel = createlabel("Project: {project}")
+        self.userlabel = createlabel("User: {user}".format(user=getpass.getuser()))
+        self.positionlabel = createlabel('')
+        self.statusbar.addWidget(self.projectlabel)
+        self.statusbar.addWidget(self.userlabel)
+        spacer = createSpacer()
+        spacer.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
+        self.statusbar.addWidget(spacer)
+        self.statusbar.addWidget(self.positionlabel)
 
         self.menutoolbar.insertWidget(self.actionQuit, sidespacewidget2)
         self.menutoolbar.insertWidget(self.actionProject, sidespacewidget)
@@ -224,6 +218,8 @@ class MainWindow(mainwindow_widget, mainwindow_base):
         self.dataentrycombo.currentIndexChanged.connect(self.dataentrychanged)
         self.dataentrycomboaction = self.projecttoolbar.insertWidget(self.topspaceraction, self.dataentrycombo)
 
+        self.centralwidget.layout().addWidget(self.statusbar)
+
         self.actionGPSFeature.setProperty('dataentry', True)
 
         self.infodock = InfoDock(self.canvas)
@@ -243,19 +239,13 @@ class MainWindow(mainwindow_widget, mainwindow_base):
             y = self.canvas.height() - 50
             return x, y
 
-        def calcpositoninfo():
-            x = self.canvas.width() - self.projectinfowidget.width() - 20
-            y = self.canvas.height() - self.projectinfowidget.height() - 50
-            return x, y
-
         def showinfo(checked):
-            self.projectinfowidget.setVisible(checked)
+            self.projectinfowidget.show()
 
         self.floatinginfo = FloatingToolBar(calcpostion, self.canvas)
         self.floatinginfo.addAction(self.actionProjectInfo)
         self.actionProjectInfo.toggled.connect(showinfo)
         self.floatinginfo.show()
-        self.projectinfowidget._position = calcpositoninfo
 
     def settingsupdated(self, settings):
         settings.save()
@@ -265,7 +255,7 @@ class MainWindow(mainwindow_widget, mainwindow_base):
 
     def updatestatuslabel(self):
         extent = self.canvas.extent()
-        self.projectinfowidget.setposition(extent.center().toString())
+        self.positionlabel.setText("Map Center: {}".format(extent.center().toString()))
 
     def highlightselection(self, results):
         for layer, features in results.iteritems():
@@ -668,7 +658,7 @@ class MainWindow(mainwindow_widget, mainwindow_base):
         """
         projectpath = QgsProject.instance().fileName()
         self.project = Project.from_folder(os.path.dirname(projectpath))
-        self.projectinfowidget.setproject(self.project.name)
+        self.projectlabel.setText("Project: {}".format(self.project.name))
         self.createFormButtons(forms=self.project.forms)
 
         # Enable the raster layers button only if the project contains a raster layer.
