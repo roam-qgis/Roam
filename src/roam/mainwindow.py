@@ -714,7 +714,10 @@ class MainWindow(mainwindow_widget, mainwindow_base):
 
         self.stackedWidget.setCurrentIndex(3)
         self.projectloading_label.setText("Project {} Loading".format(project.name))
-        self.projectimage.setPixmap(QPixmap(project.splash))
+        pixmap = QPixmap(project.splash)
+        w = self.projectimage.width()
+        h = self.projectimage.height()
+        self.projectimage.setPixmap(pixmap.scaled(w,h, Qt.KeepAspectRatio))
         QApplication.processEvents()
 
         QDir.setCurrent(os.path.dirname(project.projectfile))
