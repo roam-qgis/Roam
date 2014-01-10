@@ -1,29 +1,41 @@
-from PyQt4.QtGui import QToolBar
-from PyQt4.QtCore import Qt, QSize, QEvent
+from PyQt4.QtGui import QToolBar, QActionGroup
+from PyQt4.QtCore import Qt, QPoint
+
+from roam.utils import log
 
 
 class FloatingToolBar(QToolBar):
-    def __init__(self, position, parent=None):
-        super(FloatingToolBar, self).__init__(parent)
-        self.setStyleSheet("background-color : transparent; border: 0px;")
-        self._position = position
-        self.setIconSize(QSize(32, 32))
+    """
+	A floating QToolBar with no border and is offset under its parent
+	"""
+
+    def __init__(self, name, parent):
+        """
+		parent: The parent of this toolbar.  Should be another toolbar
+		"""
+        QToolBar.__init__(self, name, parent)
         self.setMovable(False)
-        self.parent().installEventFilter(self)
+        self.setWindowFlags(Qt.Tool | Qt.FramelessWindowHint | Qt.X11BypassWindowManagerHint)
+        self.setAllowedAreas(Qt.NoToolBarArea)
+        self.actiongroup = QActionGroup(self)
 
-    def eventFilter(self, object, event):
-        if event.type() == QEvent.Resize:
-            self.move(*self.position)
+    def addToActionGroup(self, action):
+        self.actiongroup.addAction(action)
 
-        return False
-
-    def show(self):
-        self.move(*self.position)
-        super(FloatingToolBar, self).show()
-
-    @property
-    def position(self):
-        if hasattr(self._position, "__call__"):
-            return self._position()
+    def showToolbar(self, parentaction, defaultaction, toggled):
+        if toggled:
+            self.show()
+            if defaultaction:
+                defaultaction.toggle()
+            widget = self.parent().widgetForAction(parentaction)
+            x = self.parent().mapToGlobal(widget.pos()).x()
+            y = self.parent().mapToGlobal(widget.pos()).y()
+            newpoint = QPoint(x, y + self.parent().rect().height())
+            # 			if self.orientation() == Qt.Vertical:
+            # 				newpoint = QPoint(x, y + self.parent().rect().width())
+            self.move(newpoint)
         else:
-            return self._position
+            action = self.actiongroup.checkedAction()
+            if action:
+                action.toggle()
+            self.hide()

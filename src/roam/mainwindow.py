@@ -15,7 +15,7 @@ from PyQt4.QtGui import (QActionGroup,
                         QComboBox,
                         QToolButton,
                         QAction,
-                        QCursor, QFrame, QVBoxLayout)
+                        QCursor, QFrame)
 
 from qgis.core import (QgsProjectBadLayerHandler,
                         QgsPalLabeling,
@@ -52,7 +52,6 @@ from roam.listfeatureform import ListFeaturesForm
 from roam.infodock import InfoDock
 from roam.syncwidget import SyncWidget
 from roam.helpviewdialog import HelpPage
-from roam.uifiles import projectinfo_widget, projectinfo_base
 
 import roam.messagebaritems
 import roam.utils
@@ -77,16 +76,19 @@ class BadLayerHandler(QgsProjectBadLayerHandler):
         self.callback(layers)
 
 
-class ProjectInfoWidget(projectinfo_widget, projectinfo_base):
-    def __init__(self, parent=None):
-        super(ProjectInfoWidget, self).__init__(parent)
-        self.setupUi(self)
+class FloatingToolButton(QToolButton):
+    def __init__(self, position, action, parent=None):
+        super(FloatingToolButton, self).__init__(parent)
+        self.position = position
+        self.setDefaultAction(action)
+        self.setIconSize(QSize(32,32))
+        self.parent().installEventFilter(self)
 
-    def setproject(self, projectname):
-        self.projectlabel.setText(projectname)
+    def eventFilter(self, object, event):
+        if event.type() == QEvent.Resize:
+            self.move(*self.position)
 
-    def setuser(self, username):
-        self.userlabel.setText(username)
+        return super(FloatingToolButton, self).eventFilter(object, event)
 
 
 class MainWindow(mainwindow_widget, mainwindow_base):
@@ -107,14 +109,16 @@ class MainWindow(mainwindow_widget, mainwindow_base):
         self.canvas.setWheelAction(QgsMapCanvas.WheelZoomToMouseCursor)
         self.bar = roam.messagebaritems.MessageBar(self)
 
-        self.projectinfowidget = ProjectInfoWidget(self.canvas)
         self.actionMap.setVisible(False)
 
         pal = QgsPalLabeling()
         self.canvas.mapRenderer().setLabelingEngine(pal)
         self.canvas.setFrameStyle(QFrame.NoFrame)
+        self.button = FloatingToolButton((20, 20), self.actionInfo, self.canvas)
+        self.button.show()
         self.menuGroup = QActionGroup(self)
         self.menuGroup.setExclusive(True)
+
         self.menuGroup.addAction(self.actionMap)
         self.menuGroup.addAction(self.actionDataEntry)
         self.menuGroup.addAction(self.actionProject)
@@ -201,6 +205,21 @@ class MainWindow(mainwindow_widget, mainwindow_base):
 
         self.panels = []
 
+        self.edittoolbar = FloatingToolBar("Editing", self.projecttoolbar)
+        self.extraaddtoolbar = FloatingToolBar("Feature Tools", self.projecttoolbar)
+        self.syncactionstoolbar = FloatingToolBar("Syncing", self.projecttoolbar)
+        self.syncactionstoolbar.setOrientation(Qt.Vertical)
+
+        size = QSize(32, 32)
+        self.edittoolbar.setIconSize(size)
+        self.extraaddtoolbar.setIconSize(size)
+        self.syncactionstoolbar.setIconSize(size)
+
+        style = Qt.ToolButtonTextUnderIcon
+        self.edittoolbar.setToolButtonStyle(style)
+        self.extraaddtoolbar.setToolButtonStyle(style)
+        self.syncactionstoolbar.setToolButtonStyle(style)
+
         self.connectButtons()
 
         self.band = QgsRubberBand(self.canvas)
@@ -230,22 +249,6 @@ class MainWindow(mainwindow_widget, mainwindow_base):
         self.hidedataentry()
         self.updateicons()
         self.canvas.extentsChanged.connect(self.updatestatuslabel)
-
-        self.addfloatingtools()
-
-    def addfloatingtools(self):
-        def calcpostion():
-            x = self.canvas.width() - 50
-            y = self.canvas.height() - 50
-            return x, y
-
-        def showinfo(checked):
-            self.projectinfowidget.show()
-
-        self.floatinginfo = FloatingToolBar(calcpostion, self.canvas)
-        self.floatinginfo.addAction(self.actionProjectInfo)
-        self.actionProjectInfo.toggled.connect(showinfo)
-        self.floatinginfo.show()
 
     def settingsupdated(self, settings):
         settings.save()
@@ -354,6 +357,16 @@ class MainWindow(mainwindow_widget, mainwindow_base):
 
         # The edit toolbutton is currently not being used but leaving it for feature.
         self.moveTool.layersupdated.connect(self.actionEdit_Tools.setEnabled)
+
+
+        self.edittoolbar.addAction(self.actionMove)
+        self.edittoolbar.addToActionGroup(self.actionMove)
+
+        showediting = (partial(self.edittoolbar.showToolbar,
+                               self.actionEdit_Tools,
+                               self.actionMove))
+
+        self.actionEdit_Tools.toggled.connect(showediting)
 
         self.actionGPSFeature.triggered.connect(self.addFeatureAtGPS)
         self.actionGPSFeature.setEnabled(self.actionGPS.isConnected)
