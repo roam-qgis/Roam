@@ -1,5 +1,6 @@
 import sys
 import sip
+import logging
 
 apis = ["QDate", "QDateTime", "QString", "QTextStream", "QTime", "QUrl", "QVariant"]
 for api in apis:
@@ -8,37 +9,50 @@ for api in apis:
 from PyQt4.QtGui import (QApplication, QDialog, QListWidgetItem, QIcon, QWidget,
                          QVBoxLayout, QLabel, QScrollArea, QFrame, QFormLayout,
                          QLineEdit)
-from PyQt4.QtCore import Qt
+from PyQt4.QtCore import Qt, pyqtSignal
 from ui_installer import Ui_ProjectInstallerDialog
+from ui_project import Ui_ProjectWidget
 from roam.project import getProjects
-from postinstall import get_project_tokens, sort_tokens
+from postinstall import (get_project_tokens, sort_tokens, replace_templates_in_folder,
+                         run_post_install_scripts, setuplogger, containsinstallscripts)
 
-class ProjectPageWidget(QWidget):
+
+class ProjectPageWidget(Ui_ProjectWidget, QWidget):
+    updateproject = pyqtSignal(dict)
+
     def __init__(self, project, parent=None):
         super(ProjectPageWidget, self).__init__(parent)
-        layout = QVBoxLayout()
-        layout.setContentsMargins(0, 0, 0, 0)
-        self.setLayout(layout)
-        label = QLabel("<b>{}</b>".format(project.name))
-        layout.addWidget(label)
-        self.scollarea = QScrollArea()
-        self.scollarea.setLayout(QFormLayout())
-        self.scollarea.setFrameStyle(QFrame.NoFrame)
-        layout.addWidget(self.scollarea)
+        self.setupUi(self)
+        self.project = project
+        self.projectlabel.setText(project.name)
+        self.tokenwidgets = []
 
         tokens = sort_tokens(get_project_tokens(project.folder))
+        self.createtokenwidgets(tokens, self.scrollAreaWidgetContents.layout())
 
-        self.createtokenwidgets(tokens, self.scollarea.layout())
+        hasinstallscripts = containsinstallscripts(project.folder)
+        self.postinstalllabel.setVisible(hasinstallscripts)
 
     def createtokenwidgets(self, tokens, layout):
         for token in tokens:
             label = QLabel(token)
             lineedit = QLineEdit()
             lineedit.setObjectName(token)
-            layout.addRow(label, QLineEdit())
+            self.tokenwidgets.append(lineedit)
+            layout.addRow(label, lineedit)
 
+    def save(self):
+        tokenvalues = {}
+        for widget in self.tokenwidgets:
+            token = widget.objectName()
+            value = widget.text()
+            tokenvalues[token] = value
 
+        self.updateproject.emit(tokenvalues)
 
+    def runinstallscripts(self, _):
+        logger.info("Run scripts for {}".format(self.project.name))
+        run_post_install_scripts(self.project.folder)
 
 
 class ProjectInstallerDialog(Ui_ProjectInstallerDialog, QDialog):
@@ -52,12 +66,24 @@ class ProjectInstallerDialog(Ui_ProjectInstallerDialog, QDialog):
             item.setData(Qt.UserRole, project)
             item.setIcon(QIcon(project.splash))
             widget = ProjectPageWidget(project)
+            widget.updateproject.connect(self.updateproject)
             self.mOptionsStackedWidget.addWidget(widget)
 
         self.mOptionsListWidget.adjustSize()
 
+    def updateproject(self, tokenvalues):
+        currentproject = self.mOptionsListWidget.currentItem().data(Qt.UserRole)
+        if not currentproject:
+            return
+        logger.info("Updating project {}".format(currentproject.name))
+        logger.info(tokenvalues)
+        replace_templates_in_folder(currentproject.folder, tokens=tokenvalues)
+        run_post_install_scripts(currentproject.folder)
+
 app = QApplication([])
 
+setuplogger()
+logger = logging.getLogger("Project Installer")
 dialog = ProjectInstallerDialog()
 projects = getProjects(sys.argv[1])
 dialog.loadprojects(projects)

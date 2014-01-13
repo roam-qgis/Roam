@@ -13,16 +13,23 @@ import roam.yaml
 
 from string import Template
 
-curdir = os.path.abspath(os.path.dirname(__file__))
-pardir = os.path.join(curdir, '..')
-projectdir = os.path.join(pardir, "projects")
+
+_logger = None
+
+
+def containsinstallscripts(folder):
+    """
+        Does this folder contain any post install scripts for the project.
+    """
+    scripts = list(installscripts(folder))
+    return len(scripts) > 0
 
 def installscripts(rootfolder):
     """
         Return the post install scripts for each installed project.
     """
     for root, _, filenames in os.walk(rootfolder):
-        for filename in fnmatch.filter(filenames, 'postinstall.py'):
+        for filename in fnmatch.filter(filenames, 'install.py'):
             yield root, filename
             
 def templatefiles(rootfolder):
@@ -84,27 +91,31 @@ def replace_tokens_in_files(root, files, tokens):
         Replace all the tokens in the given files.
     """
     # Get all the files which need to have their connection strings updated
+    logger = log()
     for filename in files:
         if not os.path.exists(filename):
             filename = os.path.join(root, '..', filename)
         try:
             replace_tokens(filename, tokens )
         except IOError as err:
-            print "Error reading file"
-            print filename
-            print err
-    
-def main(tokens):
-    logger.info('{0:=^50}'.format('Copying template files'))
-    # Create a real file for each template file in project file.
-    for template, newfile in templatefiles(projectdir):
+            logger.exception("Error reading file", err)
+
+def replace_templates_in_folder(folder, tokens):
+    """
+        Replaces any files with .tmpl and updates the tokens
+    """
+    logger = log()
+    for template, newfile in templatefiles(folder):
         shutil.copy2(template, newfile)
-        replace_tokens(newfile, tokens )
+        replace_tokens(newfile, tokens)
         logger.info("Updated {}".format(os.path.basename(newfile)))
-      
-    logger.info('{0:=^50}'.format('Running post install scripts'))
-    # Run the post install scripts for each installed project.
-    for root, postinstall in installscripts(projectdir):
+
+def run_post_install_scripts(folder):
+    """
+        Runs the post install scripts that are found in each project module.
+    """
+    logger = log()
+    for root, postinstall in installscripts(folder):
         modulename = os.path.splitext(postinstall)[0]
         try:
             # Loading the source and run what ever code is in the module
@@ -114,23 +125,49 @@ def main(tokens):
             logger.error("{}".format(err))
             continue
 
-if __name__ == "__main__":
-    
+def main(tokens, folder):
+    logger.info('{0:=^50}'.format('Copying template files'))
+    # Create a real file for each template file in project file.
+    replace_templates_in_folder(folder)
+
+    logger.info('{0:=^50}'.format('Running post install scripts'))
+    # Run the post install scripts for each installed project.
+    run_post_install_scripts(folder)
+
+def setuplogger():
     logger = logging.getLogger()
     logger.setLevel(logging.DEBUG)
-    
+
     consolelogger = logging.StreamHandler()
     consolelogger.setLevel(logging.INFO)
     consolelogger_format = logging.Formatter('%(message)s')
     consolelogger.setFormatter(consolelogger_format)
     logger.addHandler(consolelogger)
-    
+
     filelogger = logging.FileHandler("installer.log")
     filelogger.setLevel(logging.DEBUG)
     filelogger_format = logging.Formatter('%(asctime)s - %(levelname)-8s - %(message)s')
     filelogger.setFormatter(filelogger_format)
     logger.addHandler(filelogger)
-    
+
+def log():
+    """
+        Return the logger for this module.
+    """
+    if not _logger:
+        global _logger
+        _logger = logging.getLogger("postinstall")
+    return _logger
+
+if __name__ == "__main__":
+    curdir = os.path.abspath(os.path.dirname(__file__))
+    pardir = os.path.join(curdir, '..')
+    projectdir = os.path.join(pardir, "projects")
+
+    setuplogger()
+
+    logger = log()
+
     logger.info('{0:=^50}'.format('IntraMaps Roam Installer'))
     
     import argparse
@@ -160,7 +197,7 @@ if __name__ == "__main__":
         logger.info("{} = {}".format(key, value))
     logger.info('{0:=^50}'.format('='))
         
-    main(updatedtokens)
+    main(updatedtokens, projectdir)
     
     if args.save:
         path = os.path.join(curdir, 'installervalues.txt')
