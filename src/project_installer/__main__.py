@@ -83,7 +83,8 @@ class ProjectInstallerDialog(Ui_ProjectInstallerDialog, QDialog):
         replace_templates_in_folder(currentproject.folder, tokens=tokenvalues)
         run_post_install_scripts(currentproject.folder)
 
-app = QApplication([])
+app = QApplication(sys.argv)
+app.setApplicationName("Roam Project Installer")
 
 setuplogger()
 logger = logging.getLogger("Project Installer")
@@ -98,7 +99,7 @@ logger.info("Loading projects from {}".format(projectpath))
 dialog = ProjectInstallerDialog()
 projects = getProjects(projectpath)
 dialog.loadprojects(projects)
-dialog.exec_()
+app.setActiveWindow(dialog)
+dialog.show()
+sys.exit(app.exec_())
 
-app.exec_()
-app.exit(0)
