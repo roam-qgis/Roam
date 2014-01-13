@@ -116,7 +116,10 @@ class PointTool(TouchMapTool):
             "       +.+      "]))
 
     def canvasReleaseEvent(self, event):
-        if self.pinching or self.dragging:
+        if self.pinching:
+            return
+
+        if self.dragging:
             super(PointTool, self).canvasReleaseEvent(event)
             return
 

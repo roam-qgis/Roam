@@ -683,6 +683,7 @@ class MainWindow(mainwindow_widget, mainwindow_base):
                 selectionlayers.append(layer)
 
         self.infoTool.selectionlayers = selectionlayers
+        self.actionPan.trigger()
 
     #noinspection PyArgumentList
     @roam.utils.timeit
