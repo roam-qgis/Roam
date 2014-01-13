@@ -60,13 +60,10 @@ def getProjects(projectpath):
     for folder in folders:
         project = Project.from_folder(folder)
         if not checkversion(roam.__version__, project.version):
-            return
+            project.valid = False
+            project.error = "Version mismatch"
 
-        if project.valid:
-            yield project
-        else:
-            roam.utils.warning("Invaild project")
-            roam.utils.warning(project.error)
+        yield project
 
 
 class Form(object):
