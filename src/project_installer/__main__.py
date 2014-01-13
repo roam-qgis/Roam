@@ -1,3 +1,4 @@
+import os
 import sys
 import sip
 import logging
@@ -10,10 +11,12 @@ from PyQt4.QtGui import (QApplication, QDialog, QListWidgetItem, QIcon, QWidget,
                          QVBoxLayout, QLabel, QScrollArea, QFrame, QFormLayout,
                          QLineEdit)
 from PyQt4.QtCore import Qt, pyqtSignal
-from ui_installer import Ui_ProjectInstallerDialog
-from ui_project import Ui_ProjectWidget
+
 from roam.project import getProjects
-from postinstall import (get_project_tokens, sort_tokens, replace_templates_in_folder,
+
+from project_installer.ui_installer import Ui_ProjectInstallerDialog
+from project_installer.ui_project import Ui_ProjectWidget
+from project_installer.postinstall import (get_project_tokens, sort_tokens, replace_templates_in_folder,
                          run_post_install_scripts, setuplogger, containsinstallscripts)
 
 
@@ -84,8 +87,16 @@ app = QApplication([])
 
 setuplogger()
 logger = logging.getLogger("Project Installer")
+
+try:
+    projectpath = sys.argv[1]
+except IndexError:
+    projectpath = os.path.join(os.getcwd(), "projects")
+
+logger.info("Loading projects from {}".format(projectpath))
+
 dialog = ProjectInstallerDialog()
-projects = getProjects(sys.argv[1])
+projects = getProjects(projectpath)
 dialog.loadprojects(projects)
 dialog.exec_()
 

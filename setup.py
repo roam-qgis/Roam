@@ -34,9 +34,7 @@ def svgfiles():
 ecwfiles = [os.path.join(osgeobin, 'gdalplugins', 'gdal_ECW_JP2ECW.dll'),
             os.path.join(osgeobin, 'NCSEcw.dll')]
 
-datafiles = [(".", [r'src\settings.config',
-                    r'src\_install\_createshortcut.bat',
-                    r'src\_install\shortcut.vbs']),
+datafiles = [(".", [r'src\settings.config']),
             (r'libs\roam', [r'src\roam\info.html',
                             r'src\roam\error.html']),
             (r'libs\roam\bootstrap', glob.glob(r'src\roam\bootstrap\*')),
@@ -54,20 +52,17 @@ for path, collection in svgfiles():
 roam_target = dict(
                 script=r'src\roam\__main__.py',
                 dest_base='Roam',
-                icon_resources=[(1, "src\icon.ico")]
-            )
+                icon_resources=[(1, "src\icon.ico")])
 
 tests_target = dict(
                 script=r'tests\__main__.py',
                 dest_base='Roam_tests',
-                icon_resources=[(1, "src\icon.ico")]
-            )
+                icon_resources=[(1, "src\icon.ico")])
 
 projectupdater_target = dict(
                 script=r'src\project_installer\__main__.py',
                 dest_base='Roam Project Updater',
-                icon_resources=[(1, "src\icon.ico")]
-            )
+                icon_resources=[(1, "src\icon.ico")])
 
 
 curpath = os.path.dirname(os.path.realpath(__file__))
@@ -105,8 +100,8 @@ setup(
     author='Digital Mapping Solutions',
     author_email='nathan.woodrow@mapsolutions.com.au',
     description='',
-    windows=[roam_target],
-    console=[tests_target, projectupdater_target],
+    windows=[roam_target, projectupdater_target],
+    console=[tests_target],
     data_files=datafiles,
     zipfile='libs\\',
     cmdclass= {'build': qtbuild},

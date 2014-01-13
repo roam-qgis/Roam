@@ -11,11 +11,6 @@ import logging
 import re
 import roam.yaml
 
-from string import Template
-
-
-_logger = None
-
 
 def containsinstallscripts(folder):
     """
@@ -91,7 +86,7 @@ def replace_tokens_in_files(root, files, tokens):
         Replace all the tokens in the given files.
     """
     # Get all the files which need to have their connection strings updated
-    logger = log()
+    logger = getlogger()
     for filename in files:
         if not os.path.exists(filename):
             filename = os.path.join(root, '..', filename)
@@ -104,7 +99,7 @@ def replace_templates_in_folder(folder, tokens):
     """
         Replaces any files with .tmpl and updates the tokens
     """
-    logger = log()
+    logger = getlogger()
     for template, newfile in templatefiles(folder):
         shutil.copy2(template, newfile)
         replace_tokens(newfile, tokens)
@@ -114,7 +109,7 @@ def run_post_install_scripts(folder):
     """
         Runs the post install scripts that are found in each project module.
     """
-    logger = log()
+    logger = getlogger()
     for root, postinstall in installscripts(folder):
         modulename = os.path.splitext(postinstall)[0]
         try:
@@ -150,14 +145,11 @@ def setuplogger():
     filelogger.setFormatter(filelogger_format)
     logger.addHandler(filelogger)
 
-def log():
+def getlogger():
     """
         Return the logger for this module.
     """
-    if not _logger:
-        global _logger
-        _logger = logging.getLogger("postinstall")
-    return _logger
+    return logging.getLogger("postinstall")
 
 if __name__ == "__main__":
     curdir = os.path.abspath(os.path.dirname(__file__))
@@ -166,7 +158,7 @@ if __name__ == "__main__":
 
     setuplogger()
 
-    logger = log()
+    logger = getlogger()
 
     logger.info('{0:=^50}'.format('IntraMaps Roam Installer'))
     
