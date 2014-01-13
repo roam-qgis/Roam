@@ -101,7 +101,6 @@ setup(
     author_email='nathan.woodrow@mapsolutions.com.au',
     description='',
     windows=[roam_target, projectupdater_target],
-    console=[tests_target],
     data_files=datafiles,
     zipfile='libs\\',
     cmdclass= {'build': qtbuild},
