@@ -105,14 +105,16 @@ def nullcheck(value):
     else:
         return value
 
-def buildfromui(uifile):
-    return uic.loadUi(uifile)
 
-def buildfromauto(formconfig):
+def buildfromui(uifile, base):
+    return uic.loadUi(uifile, base)
+
+
+def buildfromauto(formconfig, base):
     widgetsconfig = formconfig['widgets']
 
     outlayout = QFormLayout()
-    outwidget = QWidget()
+    outwidget = base
     outwidget.setLayout(outlayout)
     for config in widgetsconfig:
         widgettype = config['widget']
@@ -153,7 +155,7 @@ class RejectedException(Exception):
         self.level = level
 
 
-class FeatureForm(QObject):
+class FeatureForm(QWidget):
     """
     An object that represents a feature form in Roam.  This object will create and bind
     the widget for the form config.
@@ -198,9 +200,8 @@ class FeatureForm(QObject):
     loadform = pyqtSignal()
     rejected = pyqtSignal(str)
 
-    def __init__(self, widget, form, formconfig, feature, defaults):
+    def __init__(self, form, formconfig, feature, defaults):
         super(FeatureForm, self).__init__()
-        self.widget = widget
         self.form = form
         self.formconfig = formconfig
         self.boundwidgets = []
@@ -218,19 +219,20 @@ class FeatureForm(QObject):
         :return:
         """
         formtype = formconfig['type']
+        featureform = cls(form, formconfig, feature, defaults)
+
         if formtype == 'custom':
             uifile = os.path.join(form.folder, "form.ui")
-            widget = buildfromui(uifile)
+            featureform = buildfromui(uifile, base=featureform)
         elif formtype == 'auto':
-            widget = buildfromauto(formconfig)
+            featureform = buildfromauto(formconfig, base=featureform)
         else:
             raise NotImplemented('Other form types not supported yet')
 
-        widget.setStyleSheet(style)
+        featureform.setStyleSheet(style)
 
-        featureform = cls(widget, form, formconfig, feature, defaults)
-        featureform.createhelplinks(widget)
-        widget.setProperty('featureform', featureform)
+        featureform.createhelplinks()
+        featureform.setProperty('featureform', featureform)
 
         widgettypes = [QLineEdit, QPlainTextEdit, QDateTimeEdit]
         map(featureform._installeventfilters, widgettypes)
@@ -238,7 +240,7 @@ class FeatureForm(QObject):
         return featureform
 
     def _installeventfilters(self, widgettype):
-        for widget in self.widget.findChildren(widgettype):
+        for widget in self.findChildren(widgettype):
             widget.installEventFilter(self)
 
     def eventFilter(self, object, event):
@@ -307,8 +309,8 @@ class FeatureForm(QObject):
             widgettype = config['widget']
             print widgettype
             field = config['field']
-            widget = self.widget.findChild(QWidget, field)
-            label = self.widget.findChild(QLabel, "{}_label".format(field))
+            widget = self.findChild(QWidget, field)
+            label = self.findChild(QLabel, "{}_label".format(field))
             widgetconfig = config.get('config', {})
             widgetwrapper = WidgetsRegistry.createwidget(widgettype,
                                                          self.form.QGISLayer,
@@ -357,7 +359,7 @@ class FeatureForm(QObject):
 
     def unbind(self):
         def shouldsave(field):
-            button = self.widget.findChild(QToolButton, "{}_save".format(field))
+            button = self.findChild(QToolButton, "{}_save".format(field))
             if button:
                 return button.isChecked()
 
@@ -378,7 +380,7 @@ class FeatureForm(QObject):
         return before, self.feature, savedvalues
 
     def _bindsavebutton(self, field):
-        button = self.widget.findChild(QToolButton, "{}_save".format(field))
+        button = self.findChild(QToolButton, "{}_save".format(field))
         if not button:
             return
 
@@ -388,7 +390,7 @@ class FeatureForm(QObject):
         button.setChecked(field in self.defaults)
         button.setVisible(not self.editingmode)
 
-    def createhelplinks(self, widget):
+    def createhelplinks(self):
         def createhelplink(label, folder):
             def getHelpFile():
                 # TODO We could just use the tooltip from the control to show help
@@ -412,7 +414,7 @@ class FeatureForm(QObject):
                 label.setText(text)
                 label.linkActivated.connect(self.helprequest.emit)
 
-        for label in widget.findChildren(QLabel):
+        for label in self.findChildren(QLabel):
             createhelplink(label, self.form.folder)
 
 

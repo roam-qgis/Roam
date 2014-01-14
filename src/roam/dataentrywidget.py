@@ -225,6 +225,6 @@ class DataEntryWidget(dataentry_widget, dataentry_base):
         self.featureform.bind()
 
         self.actionSave.setVisible(True)
-        self.setwidget(self.featureform.widget)
+        self.setwidget(self.featureform)
 
         self.featureform.loaded()
