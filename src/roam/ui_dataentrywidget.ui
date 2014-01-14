@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>741</width>
-    <height>646</height>
+    <height>645</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -64,7 +64,7 @@
         <x>0</x>
         <y>0</y>
         <width>711</width>
-        <height>586</height>
+        <height>585</height>
        </rect>
       </property>
       <property name="styleSheet">
@@ -108,6 +108,15 @@
    </property>
    <property name="text">
     <string>Don't Save</string>
+   </property>
+  </action>
+  <action name="actionDelete">
+   <property name="icon">
+    <iconset resource="resources.qrc">
+     <normaloff>:/icons/delete</normaloff>:/icons/delete</iconset>
+   </property>
+   <property name="text">
+    <string>Delete Feature</string>
    </property>
   </action>
  </widget>

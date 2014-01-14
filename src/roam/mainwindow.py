@@ -142,6 +142,7 @@ class MainWindow(mainwindow_widget, mainwindow_base):
         self.dataentrywidget.rejected.connect(self.formrejected)
         self.dataentrywidget.finished.connect(self.dataentryfinished)
         self.dataentrywidget.featuresaved.connect(self.featureSaved)
+        self.dataentrywidget.featuredeleted.connect(self.featuredeleted)
         self.dataentrywidget.failedsave.connect(self.failSave)
         self.dataentrywidget.helprequest.connect(self.showhelp)
 
@@ -488,6 +489,10 @@ class MainWindow(mainwindow_widget, mainwindow_base):
         self.hidedataentry()
         self.showmap()
         self.cleartempobjects()
+
+    def featuredeleted(self):
+        self.bar.pushMessage("Deleted", "Feature Deleted", QgsMessageBar.INFO, 1)
+        self.canvas.refresh()
 
     def featureSaved(self):
         self.bar.pushMessage("Saved", "Changes Saved", QgsMessageBar.INFO, 1)

@@ -1,6 +1,7 @@
 <RCC>
   <qresource prefix="icons">
     <file alias="cancel">resources/images/cancel.svg</file>
+    <file alias="delete">resources/images/delete.svg</file>
     <file alias="edit">resources/images/edit.svg</file>
     <file alias="home">resources/images/home.svg</file>
     <file alias="in">resources/images/in.svg</file>

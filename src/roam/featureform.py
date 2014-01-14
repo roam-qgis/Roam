@@ -149,6 +149,10 @@ class RejectedException(Exception):
         self.level = level
 
 
+class DeleteFeatureException(Exception):
+    pass
+
+
 class FeatureForm(QWidget):
     """
     An object that represents a feature form in Roam.  This object will create and bind
@@ -223,7 +227,10 @@ class FeatureForm(QWidget):
         else:
             raise NotImplemented('Other form types not supported yet')
 
-        featureform.setStyleSheet(style)
+        featureform.setContentsMargins(3, 0, 3, 0)
+        formstyle = style
+        formstyle += featureform.styleSheet()
+        featureform.setStyleSheet(formstyle)
 
         featureform.createhelplinks()
         featureform.setProperty('featureform', featureform)
@@ -261,6 +268,18 @@ class FeatureForm(QWidget):
         pass
 
     def featuresaved(self, feature):
+        pass
+
+    def deletefeature(self):
+        """
+        Return False if you do not wish to override the delete logic.
+        Raise a DeleteFeatureException if you need to raise a error else
+        roam will assume everything was fine.
+        :return:
+        """
+        return False
+
+    def featuredeleted(self, feature):
         pass
 
     def loaded(self):

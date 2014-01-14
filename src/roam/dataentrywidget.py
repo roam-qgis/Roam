@@ -88,6 +88,7 @@ class DataEntryWidget(dataentry_widget, dataentry_base):
     rejected = pyqtSignal(str, int)
     finished = pyqtSignal()
     featuresaved = pyqtSignal()
+    featuredeleted = pyqtSignal()
     failedsave = pyqtSignal(list)
     helprequest = pyqtSignal(str)
 
@@ -110,10 +111,12 @@ class DataEntryWidget(dataentry_widget, dataentry_base):
         toolbar.setToolButtonStyle(style)
         self.actionSave.triggered.connect(self.accept)
         self.actionCancel.triggered.connect(functools.partial(self.formrejected, None))
+        self.actionDelete.triggered.connect(self.deletefeature)
 
         label = 'Required fields marked in <b style="background-color:rgba(255, 221, 48,150)">yellow</b>'
         self.missingfieldsLabel = QLabel(label)
         self.missingfieldsLabel.hide()
+        toolbar.addAction(self.actionDelete)
         self.missingfieldaction = toolbar.addWidget(self.missingfieldsLabel)
         spacer = QWidget()
         spacer2 = QWidget()
@@ -121,10 +124,39 @@ class DataEntryWidget(dataentry_widget, dataentry_base):
         spacer.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
         spacer2.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
         toolbar.addWidget(spacer)
-        toolbar.addAction(self.actionSave)
-        toolbar.addWidget(spacer2)
         toolbar.addAction(self.actionCancel)
+        toolbar.addWidget(spacer2)
+        toolbar.addAction(self.actionSave)
         self.layout().insertWidget(2, toolbar)
+
+    def deletefeature(self):
+        msg = """<b style="color:red">Warning:</b> Are you sure you would like to delete this feature?"""
+
+        box = QMessageBox(QMessageBox.Question, "Delete Current Feature?", msg )
+        box.addButton("Delete", QMessageBox.AcceptRole)
+        box.addButton(QMessageBox.Abort)
+
+        if not box.exec_() == QMessageBox.AcceptRole:
+            return
+
+        userdelete = self.featureform.deletefeature()
+        saved = False
+
+        if not userdelete:
+            # If the user didn't add there own feature delete logic
+            # we will just do it for them.
+            layer = self.featureform.form.QGISLayer
+            layer.startEditing()
+            layer.deleteFeature(self.feature.id())
+            saved = layer.commitChanges()
+
+        if not saved:
+            self.failedsave.emit(layer.commitErrors())
+            map(error, layer.commitErrors())
+        else:
+            self.featureform.featuredeleted(self.feature)
+            self.featuredeleted.emit()
+            self.finished.emit()
 
     def accept(self):
         if not self.featureform.allpassing:
@@ -201,6 +233,8 @@ class DataEntryWidget(dataentry_widget, dataentry_base):
         editing = feature.id() > 0
         if not editing:
             defaults = getdefaults(form.widgetswithdefaults(), feature, form.QGISLayer, self.canvas)
+
+        self.actionDelete.setVisible(editing)
 
         for field, value in defaults.iteritems():
             feature[field] = value
