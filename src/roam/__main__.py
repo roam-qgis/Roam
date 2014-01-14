@@ -89,6 +89,7 @@ settings = Settings(settingspath)
 settings.load()
 
 window = MainWindow(settings=settings)
+app.setActiveWindow(window)
 sys.excepthook = partial(excepthook, window.raiseerror)
 
 try:

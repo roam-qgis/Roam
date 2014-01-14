@@ -14,6 +14,7 @@ from roam import featureform
 from roam.uifiles import dataentry_widget, dataentry_base
 from roam.flickwidget import FlickCharm
 from roam import featureform
+from roam.deletefeaturedialog import DeleteFeatureDialog
 
 
 class DefaultError(Exception):
@@ -130,13 +131,9 @@ class DataEntryWidget(dataentry_widget, dataentry_base):
         self.layout().insertWidget(2, toolbar)
 
     def deletefeature(self):
-        msg = """<b style="color:red">Warning:</b> Are you sure you would like to delete this feature?"""
+        box = DeleteFeatureDialog(QApplication.activeWindow())
 
-        box = QMessageBox(QMessageBox.Question, "Delete Current Feature?", msg )
-        box.addButton("Delete", QMessageBox.AcceptRole)
-        box.addButton(QMessageBox.Abort)
-
-        if not box.exec_() == QMessageBox.AcceptRole:
+        if not box.exec_():
             return
 
         try:
