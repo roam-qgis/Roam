@@ -25,7 +25,7 @@ from PyQt4.QtGui import (QWidget,
 
 from qgis.core import QgsFields, QgsFeature
 
-from roam.editorwidgets.core import WidgetsRegistry
+from roam.editorwidgets.core import WidgetsRegistry, EditorWidgetException
 from roam import utils
 
 style = """
@@ -122,13 +122,7 @@ def buildfromauto(formconfig, base):
         name = config.get('name', field)
         label = QLabel(name)
         label.setObjectName(field + "_label")
-        widgetwrapper = WidgetsRegistry.createwidget(widgettype,
-                                                    layer=None,
-                                                    field=field,
-                                                    widget=None,
-                                                    label=label,
-                                                    config=None)
-        widget = widgetwrapper.widget
+        widget = WidgetsRegistry.createwidget(widgettype, parent=base)
         widget.setObjectName(field)
         layoutwidget = QWidget()
         layoutwidget.setLayout(QBoxLayout(QBoxLayout.LeftToRight))
@@ -312,16 +306,15 @@ class FeatureForm(QWidget):
             widget = self.findChild(QWidget, field)
             label = self.findChild(QLabel, "{}_label".format(field))
             widgetconfig = config.get('config', {})
-            widgetwrapper = WidgetsRegistry.createwidget(widgettype,
-                                                         self.form.QGISLayer,
-                                                         field,
-                                                         widget,
-                                                         label,
-                                                         widgetconfig)
-
-            print widgetwrapper
-            if widgetwrapper is None:
-                print("No widget found for {}".format(widgettype))
+            try:
+                widgetwrapper = WidgetsRegistry.widgetwrapper(widgettype=widgettype,
+                                                              layer=self.form.QGISLayer,
+                                                              field=field,
+                                                              widget=widget,
+                                                              label=label,
+                                                              config=widgetconfig)
+            except EditorWidgetException as ex:
+                utils.warning(ex.msg)
                 continue
 
             readonlyrules = config.get('read-only-rules', [])

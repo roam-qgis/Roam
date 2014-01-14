@@ -1,6 +1,10 @@
 from PyQt4.QtCore import QObject, pyqtSignal
 
 
+class EditorWidgetException(Exception):
+    pass
+
+# HACK I really don't like all this static state here. Fix me!
 class WidgetsRegistry(object):
     widgets = {}
 
@@ -14,21 +18,30 @@ class WidgetsRegistry(object):
         WidgetsRegistry.widgets[widgettype] = widget
 
     @staticmethod
-    def createwidget(widgettype, layer, field, widget, label, config, parent=None):
-        if not widgettype in WidgetsRegistry.widgets:
-            return None
+    def widgetwrapper(widgettype, widget, config, layer, label, field, parent=None):
+        try:
+            editorwidget = WidgetsRegistry.widgets[widgettype]
+        except KeyError:
+            raise EditorWidgetException("No widget wrapper for type {} was found".format(widgettype))
 
-        editorwidget = WidgetsRegistry.widgets[widgettype]
-        widgetwrapper = editorwidget.for_widget(layer, field, widget, label, parent)
-        if not config is None:
-            widgetwrapper.config = config
+        widgetwrapper = editorwidget.for_widget(widget, layer, label, field, parent)
+        widgetwrapper.config = config
         return widgetwrapper
+
+    @staticmethod
+    def createwidget(widgettype, parent=None):
+        try:
+            wrapper = WidgetsRegistry.widgets[widgettype]
+        except KeyError:
+            raise EditorWidgetException("No widget wrapper for type {} was found".format(widgettype))
+
+        return wrapper.createwidget(parent=parent)
 
 
 class EditorWidget(QObject):
     validationupdate = pyqtSignal(str, bool)
 
-    def __init__(self, layer=None, field=None, widget=None, label=None, parent=None):
+    def __init__(self, widget=None, layer=None, label=None, field=None, parent=None):
         super(EditorWidget, self).__init__(parent)
         self._config = {}
         self.widget = widget
@@ -44,16 +57,19 @@ class EditorWidget(QObject):
         self.validationupdate.connect(self.updatecontrolstate)
 
     @classmethod
-    def for_widget(cls, layer, field, widget, label, parent=None):
+    def for_widget(cls, widget, layer, label, field, parent):
         """
         Create a new editor wrapper for the given widget.
-        If no widget is given then the wrapper will create the widget it needs.
         """
-        if widget is None:
-            widget = cls().createWidget(parent)
-
-        editor = cls(layer, field, widget, label, parent)
+        editor = cls(widget, layer, label, field, parent)
         return editor
+
+    @classmethod
+    def createwidget(cls, parent):
+        """
+        Creates the widget that wrapper supports.
+        """
+        return cls().createWidget(parent)
 
     @property
     def readonly(self):
