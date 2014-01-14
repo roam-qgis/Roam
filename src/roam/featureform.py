@@ -301,9 +301,11 @@ class FeatureForm(QWidget):
 
         for config in widgetsconfig:
             widgettype = config['widget']
-            print widgettype
             field = config['field']
             widget = self.findChild(QWidget, field)
+            if widget is None:
+                continue
+
             label = self.findChild(QLabel, "{}_label".format(field))
             widgetconfig = config.get('config', {})
             try:
@@ -336,10 +338,7 @@ class FeatureForm(QWidget):
                 widgetwrapper.validationupdate.connect(self.updaterequired)
 
             try:
-                print "Null Check"
-                print self.feature.fields().toList()
                 value = nullcheck(self.feature[field])
-                print value
             except KeyError:
                 utils.warning("Can't find field {}".format(field))
                 value = None
@@ -364,7 +363,9 @@ class FeatureForm(QWidget):
         self.feature.setFields(self.fields, initAttributes=False)
         savedvalues = {}
         for wrapper in self.boundwidgets:
+            print "Unbinding {}".format(wrapper)
             value = wrapper.value()
+            print value
             field = wrapper.field
             if shouldsave(field):
                 savedvalues[field] = value

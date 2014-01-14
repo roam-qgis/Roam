@@ -17,6 +17,7 @@ class DateUiWidget(ui_datewidget.Ui_Form, QWidget):
 class DateWidget(EditorWidget):
     widgettype = 'Date'
     DEFAULTDATE = QDateTime(2000, 1, 1, 00, 00, 00, 0)
+
     def __init__(self, *args):
         super(DateWidget, self).__init__(*args)
 
@@ -87,8 +88,9 @@ class DateWidget(EditorWidget):
             self.datewidget.setTime(value.time())
 
     def value(self):
-        if self.datewidget.dateTime() == DateWidget.DEFAULTDATE:
+        datetime = self.datewidget.dateTime()
+        if datetime == DateWidget.DEFAULTDATE:
             return None
         else:
-            self.datewidget.dateTime().toString(Qt.ISODate)
+            return datetime.toString(Qt.ISODate)
 
