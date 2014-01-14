@@ -139,24 +139,27 @@ class DataEntryWidget(dataentry_widget, dataentry_base):
         if not box.exec_() == QMessageBox.AcceptRole:
             return
 
-        userdelete = self.featureform.deletefeature()
-        saved = False
+        try:
+            userdeleted = self.featureform.deletefeature()
 
-        if not userdelete:
-            # If the user didn't add there own feature delete logic
-            # we will just do it for them.
-            layer = self.featureform.form.QGISLayer
-            layer.startEditing()
-            layer.deleteFeature(self.feature.id())
-            saved = layer.commitChanges()
+            if not userdeleted:
+                # If the user didn't add there own feature delete logic
+                # we will just do it for them.
+                layer = self.featureform.form.QGISLayer
+                layer.startEditing()
+                layer.deleteFeature(self.feature.id())
+                saved = layer.commitChanges()
+                if not saved:
+                    raise featureform.DeleteFeatureException(layer.commitErrors())
 
-        if not saved:
-            self.failedsave.emit(layer.commitErrors())
-            map(error, layer.commitErrors())
-        else:
-            self.featureform.featuredeleted(self.feature)
-            self.featuredeleted.emit()
-            self.finished.emit()
+        except featureform.DeleteFeatureException as ex:
+            self.failedsave.emit([ex.message])
+            map(error, ex.message)
+            return
+
+        self.featureform.featuredeleted(self.feature)
+        self.featuredeleted.emit()
+        self.finished.emit()
 
     def accept(self):
         if not self.featureform.allpassing:
