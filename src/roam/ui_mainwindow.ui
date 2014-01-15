@@ -249,7 +249,7 @@
    </layout>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
-  <widget class="QToolBar" name="menutoolbar">
+  <widget class="MenuToolbar" name="menutoolbar">
    <property name="contextMenuPolicy">
     <enum>Qt::PreventContextMenu</enum>
    </property>
@@ -583,6 +583,11 @@ QToolButton:checked {
    <extends>QWidget</extends>
    <header>qgis.gui</header>
    <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>MenuToolbar</class>
+   <extends>QToolBar</extends>
+   <header>roam.gui</header>
   </customwidget>
  </customwidgets>
  <resources>
