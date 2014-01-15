@@ -210,7 +210,7 @@ class MainWindow(mainwindow_widget, mainwindow_base):
         self.band.setWidth(10)
         self.band.setColor(QColor(186, 93, 212, 76))
 
-        self.canvas_page.layout().insertWidget(2, self.projecttoolbar)
+        self.canvas_page.layout().insertWidget(0, self.projecttoolbar)
         self.dataentrymodel = QStandardItemModel(self)
         self.dataentrycombo = QComboBox(self.projecttoolbar)
         self.dataentrycombo.setIconSize(QSize(48,48))

@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>833</width>
-    <height>657</height>
+    <height>658</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -110,7 +110,7 @@
        <string notr="true">background-color: rgb(255, 255, 255);</string>
       </property>
       <property name="currentIndex">
-       <number>3</number>
+       <number>0</number>
       </property>
       <widget class="QWidget" name="canvas_page">
        <property name="styleSheet">
@@ -123,30 +123,6 @@
         <property name="margin">
          <number>0</number>
         </property>
-        <item>
-         <widget class="QLabel" name="settingsLabel_2">
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-          <property name="styleSheet">
-           <string notr="true">	color: #4f4f4f;
-	font: 25pt &quot;Segoe UI&quot; ;</string>
-          </property>
-          <property name="text">
-           <string>Map</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="Line" name="line_2">
-          <property name="orientation">
-           <enum>Qt::Horizontal</enum>
-          </property>
-         </widget>
-        </item>
         <item>
          <widget class="QgsMapCanvas" name="canvas" native="true"/>
         </item>

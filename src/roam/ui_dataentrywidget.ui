@@ -18,24 +18,6 @@
     <number>0</number>
    </property>
    <item>
-    <widget class="QLabel" name="settingsLabel">
-     <property name="styleSheet">
-      <string notr="true">	color: #4f4f4f;
-	font: 25pt &quot;Segoe UI&quot; ;</string>
-     </property>
-     <property name="text">
-      <string>Data Entry</string>
-     </property>
-    </widget>
-   </item>
-   <item>
-    <widget class="Line" name="line">
-     <property name="orientation">
-      <enum>Qt::Horizontal</enum>
-     </property>
-    </widget>
-   </item>
-   <item>
     <widget class="QScrollArea" name="scrollArea">
      <property name="styleSheet">
       <string notr="true">QScrollBar {
@@ -64,7 +46,7 @@
         <x>0</x>
         <y>0</y>
         <width>711</width>
-        <height>585</height>
+        <height>645</height>
        </rect>
       </property>
       <property name="styleSheet">

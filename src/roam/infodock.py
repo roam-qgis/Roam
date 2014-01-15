@@ -88,7 +88,7 @@ class InfoDock(infodock_widget, QWidget):
         if event.type() == QEvent.Resize:
             width = self.parent().width() * 40 / 100
             self.resize(width, self.parent().height())
-            self.move(self.parent().width() - self.width() -1, 1)
+            self.move(self.parent().width() - self.width(), 0)
 
         return super(InfoDock, self).eventFilter(object, event)
 

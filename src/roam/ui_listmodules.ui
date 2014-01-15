@@ -32,46 +32,13 @@
    <property name="spacing">
     <number>0</number>
    </property>
-   <item row="3" column="0">
+   <item row="1" column="0">
     <widget class="QListWidget" name="moduleList">
      <property name="styleSheet">
       <string notr="true">QListWidget:item:hover {background-color: #dddddd;}</string>
      </property>
      <property name="frameShape">
       <enum>QFrame::NoFrame</enum>
-     </property>
-    </widget>
-   </item>
-   <item row="1" column="0">
-    <widget class="QLabel" name="settingsLabel_2">
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
-       <horstretch>0</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
-     </property>
-     <property name="styleSheet">
-      <string notr="true">	color: #4f4f4f;
-	font: 25pt &quot;Segoe UI&quot; ;</string>
-     </property>
-     <property name="text">
-      <string>Projects</string>
-     </property>
-    </widget>
-   </item>
-   <item row="2" column="0">
-    <widget class="Line" name="line">
-     <property name="styleSheet">
-      <string notr="true">color: rgb(165, 165, 165);</string>
-     </property>
-     <property name="frameShadow">
-      <enum>QFrame::Plain</enum>
-     </property>
-     <property name="lineWidth">
-      <number>1</number>
-     </property>
-     <property name="orientation">
-      <enum>Qt::Horizontal</enum>
      </property>
     </widget>
    </item>

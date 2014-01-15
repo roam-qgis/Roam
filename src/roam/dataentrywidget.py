@@ -128,7 +128,7 @@ class DataEntryWidget(dataentry_widget, dataentry_base):
         toolbar.addAction(self.actionCancel)
         toolbar.addWidget(spacer2)
         toolbar.addAction(self.actionSave)
-        self.layout().insertWidget(2, toolbar)
+        self.layout().insertWidget(0, toolbar)
 
     def deletefeature(self):
         msg = self.featureform.deletemessage

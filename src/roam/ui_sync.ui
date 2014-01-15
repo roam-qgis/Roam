@@ -24,39 +24,6 @@
     <number>0</number>
    </property>
    <item>
-    <widget class="QLabel" name="settingsLabel_2">
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
-       <horstretch>0</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
-     </property>
-     <property name="styleSheet">
-      <string notr="true">	color: #4f4f4f;
-	font: 25pt &quot;Segoe UI&quot; ;</string>
-     </property>
-     <property name="text">
-      <string>Sync</string>
-     </property>
-    </widget>
-   </item>
-   <item>
-    <widget class="Line" name="line">
-     <property name="styleSheet">
-      <string notr="true">color: rgb(165, 165, 165);</string>
-     </property>
-     <property name="frameShadow">
-      <enum>QFrame::Plain</enum>
-     </property>
-     <property name="lineWidth">
-      <number>1</number>
-     </property>
-     <property name="orientation">
-      <enum>Qt::Horizontal</enum>
-     </property>
-    </widget>
-   </item>
-   <item>
     <widget class="QPushButton" name="syncallButton">
      <property name="text">
       <string>Sync All</string>
