@@ -90,7 +90,6 @@ def loadsavedvalues(layer):
 
 def savevalues(layer, values):
     savedvaluesfile = os.path.join(values_file, "%s.json" % str(layer.id()))
-    print savedvaluesfile
     folder = os.path.dirname(savedvaluesfile)
     if not os.path.exists(folder):
         os.makedirs(folder)
@@ -153,53 +152,17 @@ class DeleteFeatureException(Exception):
     pass
 
 
-class FeatureForm(QWidget):
-    """
-    An object that represents a feature form in Roam.  This object will create and bind
-    the widget for the form config.
-
-    You may override this in forms __init__.py module in order to add custom logic in the following
-    places:
-
-        - loading
-        - loaded
-        - accpet
-        - reject
-        - featuresaved
-
-
-    class MyModule(FeatureForm):
-        def __init__(self, widget, form, formconfig):
-            super(MyModule, self).__init__(widget, form, formconfig)
-
-        def accept(self):
-            ....
-
-
-    In order to register your feature form class you need to call `form.registerform` from the init_form method
-    in your form module
-
-    def init_form(form):
-        form.registerform(MyModule)
-
-
-    You can access form settings using:
-
-        >>> self.formconfigs
-
-    You can get the QGIS layer for the form using:
-
-        >>> self.form.QGISLayer/
-    """
+class FeatureFormBase(QWidget):
     requiredfieldsupdated = pyqtSignal(bool)
     formvalidation = pyqtSignal(bool)
     helprequest = pyqtSignal(str)
     showwidget = pyqtSignal(QWidget)
     loadform = pyqtSignal()
     rejected = pyqtSignal(str)
+    enablesave = pyqtSignal(bool)
 
-    def __init__(self, form, formconfig, feature, defaults):
-        super(FeatureForm, self).__init__()
+    def __init__(self, form, formconfig, feature, defaults, parent):
+        super(FeatureFormBase, self).__init__(parent)
         self.form = form
         self.formconfig = formconfig
         self.boundwidgets = []
@@ -207,39 +170,6 @@ class FeatureForm(QWidget):
         self.feature = feature
         self.fields = self.feature.fields()
         self.defaults = defaults
-        self.deletemessage = 'Do you really want to delete this feature?'
-
-    @classmethod
-    def from_form(cls, form, formconfig, feature, defaults, parent=None):
-        """
-        Create a feature form the given Roam form.
-        :param form: A Roam form
-        :param parent:
-        :return:
-        """
-        formtype = formconfig['type']
-        featureform = cls(form, formconfig, feature, defaults)
-
-        if formtype == 'custom':
-            uifile = os.path.join(form.folder, "form.ui")
-            featureform = buildfromui(uifile, base=featureform)
-        elif formtype == 'auto':
-            featureform = buildfromauto(formconfig, base=featureform)
-        else:
-            raise NotImplemented('Other form types not supported yet')
-
-        featureform.setContentsMargins(3, 0, 3, 0)
-        formstyle = style
-        formstyle += featureform.styleSheet()
-        featureform.setStyleSheet(formstyle)
-
-        featureform.createhelplinks()
-        featureform.setProperty('featureform', featureform)
-
-        widgettypes = [QLineEdit, QPlainTextEdit, QDateTimeEdit]
-        map(featureform._installeventfilters, widgettypes)
-
-        return featureform
 
     def _installeventfilters(self, widgettype):
         for widget in self.findChildren(widgettype):
@@ -251,50 +181,7 @@ class FeatureForm(QWidget):
             cmd = r'C:\Program Files\Common Files\Microsoft Shared\ink\TabTip.exe'
             os.startfile(cmd)
 
-        return super(FeatureForm, self).eventFilter(object, event)
-
-    def load(self, feature, layers, editing):
-        """
-        Called before the form is loaded. This method can be used to do pre checks and halt the loading of the form
-        if needed.
-
-        When implemented, this method should always return a tuple with a pass state and a message.
-
-        Calling self.reject("Your message") will stop the opening of the form and show the message to the user.
-
-            >>> self.cancelload("Sorry you can't load this form now")
-
-        You may alter the QgsFeature given. It will be passed to the form after this method returns.
-        """
-        pass
-
-    def featuresaved(self, feature):
-        pass
-
-    def deletefeature(self):
-        """
-        Return False if you do not wish to override the delete logic.
-        Raise a DeleteFeatureException if you need to raise a error else
-        roam will assume everything was fine.
-        :return:
-        """
         return False
-
-    def featuredeleted(self, feature):
-        pass
-
-    def loaded(self):
-        pass
-
-    def accept(self):
-        return True
-
-    def cancelload(self, message=None, level=RejectedException.WARNING):
-        raise RejectedException(message, level)
-
-    @property
-    def allpassing(self):
-        return all(valid for valid in self.requiredfields.values())
 
     def updaterequired(self, field, passed):
         self.requiredfields[field] = passed
@@ -304,10 +191,6 @@ class FeatureForm(QWidget):
     def validateall(self, widgetwrappers):
         for wrapper in widgetwrappers:
             wrapper.validate()
-
-    @property
-    def editingmode(self):
-        return self.feature.id() > 0
 
     def bind(self):
         """
@@ -383,9 +266,7 @@ class FeatureForm(QWidget):
         self.feature.setFields(self.fields, initAttributes=False)
         savedvalues = {}
         for wrapper in self.boundwidgets:
-            print "Unbinding {}".format(wrapper)
             value = wrapper.value()
-            print value
             field = wrapper.field
             if shouldsave(field):
                 savedvalues[field] = value
@@ -430,5 +311,136 @@ class FeatureForm(QWidget):
 
         for label in self.findChildren(QLabel):
             createhelplink(label, self.form.folder)
+
+
+class FeatureForm(FeatureFormBase):
+    """
+    You may override this in forms __init__.py module in order to add custom logic in the following
+    places:
+
+        - loading
+        - loaded
+        - accpet
+        - reject
+        - featuresaved
+
+
+    class MyModule(FeatureForm):
+        def __init__(self, widget, form, formconfig):
+            super(MyModule, self).__init__(widget, form, formconfig)
+
+        def accept(self):
+            ....
+
+
+    In order to register your feature form class you need to call `form.registerform` from the init_form method
+    in your form module
+
+    def init_form(form):
+        form.registerform(MyModule)
+
+
+    You can access form settings using:
+
+        >>> self.formconfigs
+
+    You can get the QGIS layer for the form using:
+
+        >>> self.form.QGISLayer/
+    """
+
+    def __init__(self, form, formconfig, feature, defaults, parent):
+        super(FeatureForm, self).__init__(form, formconfig, feature, defaults, parent)
+        self.deletemessage = 'Do you really want to delete this feature?'
+
+    @classmethod
+    def from_form(cls, form, formconfig, feature, defaults, parent=None):
+        """
+        Create a feature form the given Roam form.
+        :param form: A Roam form
+        :param parent:
+        :return:
+        """
+        formtype = formconfig['type']
+        featureform = cls(form, formconfig, feature, defaults, parent)
+
+        if formtype == 'custom':
+            uifile = os.path.join(form.folder, "form.ui")
+            featureform = buildfromui(uifile, base=featureform)
+        elif formtype == 'auto':
+            featureform = buildfromauto(formconfig, base=featureform)
+        else:
+            raise NotImplemented('Other form types not supported yet')
+
+        featureform.setContentsMargins(3, 0, 3, 0)
+        formstyle = style
+        formstyle += featureform.styleSheet()
+        featureform.setStyleSheet(formstyle)
+
+        featureform.createhelplinks()
+        featureform.setProperty('featureform', featureform)
+
+        widgettypes = [QLineEdit, QPlainTextEdit, QDateTimeEdit]
+        map(featureform._installeventfilters, widgettypes)
+
+        featureform.uisetup()
+
+        return featureform
+
+    def uisetup(self):
+        """
+        Called when the UI is fully constructed.  You should connect any signals here.
+        """
+        pass
+
+    def load(self, feature, layers):
+        """
+        Called before the form is loaded. This method can be used to do pre checks and halt the loading of the form
+        if needed.
+
+        When implemented, this method should always return a tuple with a pass state and a message.
+
+        Calling self.reject("Your message") will stop the opening of the form and show the message to the user.
+
+            >>> self.cancelload("Sorry you can't load this form now")
+
+        You may alter the QgsFeature given. It will be passed to the form after this method returns.
+        """
+        pass
+
+    def featuresaved(self, feature):
+        pass
+
+    def deletefeature(self):
+        """
+        Return False if you do not wish to override the delete logic.
+        Raise a DeleteFeatureException if you need to raise a error else
+        roam will assume everything was fine.
+        :return:
+        """
+        return False
+
+    def featuredeleted(self, feature):
+        pass
+
+    def loaded(self):
+        pass
+
+    def accept(self):
+        return True
+
+    def cancelload(self, message=None, level=RejectedException.WARNING):
+        raise RejectedException(message, level)
+
+    def saveenabled(self, enabled):
+        self.enablesave.emit(enabled)
+
+    @property
+    def allpassing(self):
+        return all(valid for valid in self.requiredfields.values())
+
+    @property
+    def editingmode(self):
+        return self.feature.id() > 0
 
 

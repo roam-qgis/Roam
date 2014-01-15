@@ -241,13 +241,14 @@ class DataEntryWidget(dataentry_widget, dataentry_base):
         self.feature = feature
         self.featureform = form.create_featureform(feature, defaults)
         self.featureform.rejected.connect(self.formrejected)
+        self.featureform.enablesave.connect(self.actionSave.setEnabled)
 
         # Call the pre loading events for the form
         layers = iter(QgsMapLayerRegistry.instance().mapLayers())
 
         self.project = project
         try:
-            self.featureform.load(feature, layers, editing)
+            self.featureform.load(feature, layers)
         except featureform.RejectedException as rejected:
             self.formrejected(rejected.message, rejected.level)
             return
