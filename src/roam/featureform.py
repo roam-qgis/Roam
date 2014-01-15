@@ -27,6 +27,7 @@ from qgis.core import QgsFields, QgsFeature
 
 from roam.editorwidgets.core import WidgetsRegistry, EditorWidgetException
 from roam import utils
+from roam.flickwidget import FlickCharm
 
 style = """
             QCheckBox::indicator {
@@ -106,7 +107,8 @@ def nullcheck(value):
 
 
 def buildfromui(uifile, base):
-    return uic.loadUi(uifile, base)
+    widget = uic.loadUi(uifile, base)
+    return installflickcharm(widget)
 
 
 def buildfromauto(formconfig, base):
@@ -135,8 +137,19 @@ def buildfromauto(formconfig, base):
         if not hidden:
             outlayout.addRow(label, layoutwidget)
 
-    outlayout.addItem(QSpacerItem(10,10))
+    outlayout.addItem(QSpacerItem(10, 10))
+    installflickcharm(outwidget)
     return outwidget
+
+
+def installflickcharm(widget):
+    """
+    Installs the flick charm on every widget on the form.
+    """
+    widget.charm = FlickCharm()
+    for child in widget.findChildren(QWidget):
+        widget.charm.activateOn(child)
+    return widget
 
 
 class RejectedException(Exception):
@@ -386,6 +399,16 @@ class FeatureForm(FeatureFormBase):
         featureform.uisetup()
 
         return featureform
+
+    def toNone(self, value):
+        """
+        Convert the value to a None type if it is a QPyNullVariant, because noone likes that
+        crappy QPyNullVariant type.
+
+        :return: A None if the the value is a instance of QPyNullVariant. Returns the given value
+                if not.
+        """
+        return nullcheck(value)
 
     def uisetup(self):
         """

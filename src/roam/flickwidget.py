@@ -37,7 +37,6 @@ class FlickCharm(QObject):
         QObject.__init__(self, parent)
         self.d = FlickCharmPrivate()
 
-
     def activateOn(self, widget):
         if isinstance(widget, QWebView):
             frame = widget.page().mainFrame()
@@ -45,14 +44,14 @@ class FlickCharm(QObject):
             self.d.flickData[widget] = FlickData()
             self.d.flickData[widget].widget = widget
             self.d.flickData[widget].state = FlickData.Steady
-        else:
+
+        if hasattr(widget, "viewport"):
             viewport = widget.viewport()
             viewport.installEventFilter(self)
             widget.installEventFilter(self)
             self.d.flickData[viewport] = FlickData()
             self.d.flickData[viewport].widget = widget
             self.d.flickData[viewport].state = FlickData.Steady
-
 
     def deactivateFrom(self, widget):
         if isinstance(widget, QWebView):
