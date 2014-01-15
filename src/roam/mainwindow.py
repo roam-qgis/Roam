@@ -140,7 +140,6 @@ class MainWindow(mainwindow_widget, mainwindow_base):
         self.widgetpage.layout().addWidget(self.dataentrywidget)
 
         self.dataentrywidget.rejected.connect(self.formrejected)
-        self.dataentrywidget.finished.connect(self.dataentryfinished)
         self.dataentrywidget.featuresaved.connect(self.featureSaved)
         self.dataentrywidget.featuredeleted.connect(self.featuredeleted)
         self.dataentrywidget.failedsave.connect(self.failSave)
@@ -491,10 +490,12 @@ class MainWindow(mainwindow_widget, mainwindow_base):
         self.cleartempobjects()
 
     def featuredeleted(self):
+        self.dataentryfinished()
         self.bar.pushMessage("Deleted", "Feature Deleted", QgsMessageBar.INFO, 1)
         self.canvas.refresh()
 
     def featureSaved(self):
+        self.dataentryfinished()
         self.bar.pushMessage("Saved", "Changes Saved", QgsMessageBar.INFO, 1)
         self.canvas.refresh()
 
@@ -506,6 +507,7 @@ class MainWindow(mainwindow_widget, mainwindow_base):
         self.clearToolRubberBand()
 
     def formrejected(self, message, level):
+        self.dataentryfinished()
         if message:
             self.bar.pushMessage("Form Message", message, level, duration=2)
 

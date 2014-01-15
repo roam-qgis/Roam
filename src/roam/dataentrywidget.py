@@ -156,7 +156,6 @@ class DataEntryWidget(dataentry_widget, dataentry_base):
 
         self.featureform.featuredeleted(self.feature)
         self.featuredeleted.emit()
-        self.finished.emit()
 
     def accept(self):
         if not self.featureform.allpassing:
@@ -198,13 +197,11 @@ class DataEntryWidget(dataentry_widget, dataentry_base):
             self.featuresaved.emit()
 
         self.accepted.emit()
-        self.finished.emit()
         self.featureform = None
 
     def formrejected(self, message=None, level=featureform.RejectedException.WARNING):
         self.clear()
         self.rejected.emit(message, level)
-        self.finished.emit()
 
     def formvalidation(self, passed):
         self.missingfieldaction.setVisible(not passed)
