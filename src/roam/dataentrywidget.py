@@ -131,7 +131,8 @@ class DataEntryWidget(dataentry_widget, dataentry_base):
         self.layout().insertWidget(2, toolbar)
 
     def deletefeature(self):
-        box = DeleteFeatureDialog(QApplication.activeWindow())
+        msg = self.featureform.deletemessage
+        box = DeleteFeatureDialog(msg, QApplication.activeWindow())
 
         if not box.exec_():
             return

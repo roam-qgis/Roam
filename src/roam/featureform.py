@@ -207,6 +207,7 @@ class FeatureForm(QWidget):
         self.feature = feature
         self.fields = self.feature.fields()
         self.defaults = defaults
+        self.deletemessage = 'Do you really want to delete this feature?'
 
     @classmethod
     def from_form(cls, form, formconfig, feature, defaults, parent=None):

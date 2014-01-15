@@ -5,10 +5,12 @@ from uifiles import featurefeature_dialog
 
 
 class DeleteFeatureDialog(featurefeature_dialog, QDialog):
-    def __init__(self, parent=None):
+    def __init__(self, msg=None, parent=None):
         super(DeleteFeatureDialog, self).__init__(parent, Qt.FramelessWindowHint)
         self.setupUi(self)
         self.setModal(True)
+        if msg:
+            self.deletelabel.setText(msg)
 
     def showEvent(self, event):
         self.resizetoparent()
