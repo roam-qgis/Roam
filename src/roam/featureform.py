@@ -414,7 +414,7 @@ class FeatureForm(FeatureFormBase):
         """
         pass
 
-    def load(self, feature, layers):
+    def load(self, feature, layers, values):
         """
         Called before the form is loaded. This method can be used to do pre checks and halt the loading of the form
         if needed.

@@ -267,17 +267,17 @@ class DataEntryWidget(dataentry_widget, dataentry_base):
         layers = iter(QgsMapLayerRegistry.instance().mapLayers())
 
         self.project = project
+        fields = [field.name() for field in self.fields]
+        values = dict(zip(fields, feature.attributes()))
+
         try:
-            self.featureform.load(feature, layers)
+            self.featureform.load(feature, layers, values)
         except featureform.RejectedException as rejected:
             self.formrejected(rejected.message, rejected.level)
             return
 
         self.featureform.formvalidation.connect(self.formvalidation)
         self.featureform.helprequest.connect(self.helprequest.emit)
-
-        fields = [field.name() for field in self.fields]
-        values = dict(zip(fields, feature.attributes()))
         self.featureform.bind(values)
 
         self.actionSave.setVisible(True)
