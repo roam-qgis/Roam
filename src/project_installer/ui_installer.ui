@@ -191,7 +191,7 @@ QListWidget::item::selected {
                <rect>
                 <x>0</x>
                 <y>0</y>
-                <width>594</width>
+                <width>488</width>
                 <height>475</height>
                </rect>
               </property>
@@ -280,8 +280,24 @@ QListWidget::item::selected {
      <y>325</y>
     </hint>
     <hint type="destinationlabel">
-     <x>794</x>
-     <y>14</y>
+     <x>748</x>
+     <y>20</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>buttonBox</sender>
+   <signal>rejected()</signal>
+   <receiver>ProjectInstallerDialog</receiver>
+   <slot>reject()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>729</x>
+     <y>514</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>775</x>
+     <y>487</y>
     </hint>
    </hints>
   </connection>
