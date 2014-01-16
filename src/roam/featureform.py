@@ -181,7 +181,6 @@ class FeatureFormBase(QWidget):
         self.boundwidgets = []
         self.requiredfields = {}
         self.feature = feature
-        self.fields = self.feature.fields()
         self.defaults = defaults
 
     def _installeventfilters(self, widgettype):
@@ -265,27 +264,22 @@ class FeatureFormBase(QWidget):
 
         self.validateall(self.boundwidgets)
 
-    def unbind(self):
+    def getvalues(self):
         def shouldsave(field):
             button = self.findChild(QToolButton, "{}_save".format(field))
             if button:
                 return button.isChecked()
 
-        before = QgsFeature(self.feature)
-        before.setFields(self.fields, initAttributes=False)
-        after = QgsFeature(self.feature)
-        after.setFields(self.fields, initAttributes=False)
-
-        self.feature.setFields(self.fields, initAttributes=False)
         savedvalues = {}
+        values = {}
         for wrapper in self.boundwidgets:
             value = wrapper.value()
             field = wrapper.field
             if shouldsave(field):
                 savedvalues[field] = value
-            self.feature[field] = value
+            values[field] = value
 
-        return before, self.feature, savedvalues
+        return values, savedvalues
 
     def _bindsavebutton(self, field):
         button = self.findChild(QToolButton, "{}_save".format(field))
