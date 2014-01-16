@@ -160,7 +160,7 @@ class DataEntryWidget(dataentry_widget, dataentry_base):
         self.featuredeleted.emit()
 
     def accept(self):
-        def updatefeautrefields(feature, values):
+        def updatefeautrefields(feature):
             for key, value in values.iteritems():
                 try:
                     feature[key] = value
@@ -184,6 +184,7 @@ class DataEntryWidget(dataentry_widget, dataentry_base):
 
         values, savedvalues = self.featureform.getvalues()
 
+        after = QgsFeature
 
         layer.startEditing()
         if after.id() > 0:
