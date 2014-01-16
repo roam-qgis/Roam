@@ -706,8 +706,9 @@ class MainWindow(mainwindow_widget, mainwindow_base):
         (passed, message) = project.onProjectLoad()
 
         if not passed:
-            QMessageBox.warning(self.mainwindow, "Project Load Rejected",
-                                "Project couldn't be loaded because {}".format(message))
+            self.bar.pushMessage("Project load rejected", "Sorry this project couldn't"
+                                                          "be loaded.  Click for me details.",
+                                 QgsMessageBar.WARNING, extrainfo=message)
             return
 
         self.actionMap.trigger()
