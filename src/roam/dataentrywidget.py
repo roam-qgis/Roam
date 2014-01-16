@@ -166,6 +166,7 @@ class DataEntryWidget(dataentry_widget, dataentry_base):
                     feature[key] = value
                 except KeyError:
                     continue
+            return feature
 
         if not self.featureform.allpassing:
             self.bar.pushMessage("Missing fields", "Some fields are still required.",
@@ -184,7 +185,9 @@ class DataEntryWidget(dataentry_widget, dataentry_base):
 
         values, savedvalues = self.featureform.getvalues()
 
-        after = QgsFeature
+        after = QgsFeature(self.feature)
+        after.setFields(self.fields, initAttributes=False)
+        after = updatefeautrefields(after)
 
         layer.startEditing()
         if after.id() > 0:
@@ -201,13 +204,14 @@ class DataEntryWidget(dataentry_widget, dataentry_base):
         else:
             layer.addFeature(after)
             featureform.savevalues(layer, savedvalues)
+
         saved = layer.commitChanges()
 
         if not saved:
             self.failedsave.emit(layer.commitErrors())
             map(error, layer.commitErrors())
         else:
-            self.featureform.featuresaved(after)
+            self.featureform.featuresaved(after, values)
             self.featuresaved.emit()
 
         self.accepted.emit()
@@ -271,7 +275,10 @@ class DataEntryWidget(dataentry_widget, dataentry_base):
 
         self.featureform.formvalidation.connect(self.formvalidation)
         self.featureform.helprequest.connect(self.helprequest.emit)
-        self.featureform.bind()
+
+        fields = [field.name() for field in self.fields]
+        values = dict(zip(fields, feature.attributes()))
+        self.featureform.bind(values)
 
         self.actionSave.setVisible(True)
         self.setwidget(self.featureform)

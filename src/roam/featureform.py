@@ -204,7 +204,7 @@ class FeatureFormBase(QWidget):
         for wrapper in widgetwrappers:
             wrapper.validate()
 
-    def bind(self):
+    def bind(self, values):
         """
         Binds the given feature to the to the feature form.
         :param feature:
@@ -238,10 +238,7 @@ class FeatureFormBase(QWidget):
 
             if self.editingmode and 'editing' in readonlyrules:
                 widgetwrapper.readonly = True
-            elif 'insert' in readonlyrules:
-                widgetwrapper.readonly = True
-
-            if 'always' in readonlyrules:
+            elif 'insert' in readonlyrules or 'always' in readonlyrules:
                 widgetwrapper.readonly = True
 
             widgetwrapper.hidden = config.get('hidden', False)
@@ -253,7 +250,7 @@ class FeatureFormBase(QWidget):
                 widgetwrapper.validationupdate.connect(self.updaterequired)
 
             try:
-                value = nullcheck(self.feature[field])
+                value = nullcheck(values[field])
             except KeyError:
                 utils.warning("Can't find field {}".format(field))
                 value = None
@@ -286,7 +283,7 @@ class FeatureFormBase(QWidget):
         if not button:
             return
 
-        button.setCheckable(not self.feature.id() > 0)
+        button.setCheckable(not self.editingmode)
         button.setIcon(QIcon(":/icons/save_default"))
         button.setIconSize(QSize(24, 24))
         button.setChecked(field in self.defaults)
@@ -318,6 +315,13 @@ class FeatureFormBase(QWidget):
 
         for label in self.findChildren(QLabel):
             createhelplink(label, self.form.folder)
+
+    @property
+    def editingmode(self):
+        if not self.feature:
+            return True
+
+        return self.feature.id() > 0
 
 
 class FeatureForm(FeatureFormBase):
@@ -425,7 +429,15 @@ class FeatureForm(FeatureFormBase):
         """
         pass
 
-    def featuresaved(self, feature):
+    def featuresaved(self, feature, values):
+        """
+        Called when the feature is saved in QGIS.
+
+        The values that are taken from the form as passed in too.
+        :param feature:
+        :param values:
+        :return:
+        """
         pass
 
     def deletefeature(self):
@@ -455,9 +467,5 @@ class FeatureForm(FeatureFormBase):
     @property
     def allpassing(self):
         return all(valid for valid in self.requiredfields.values())
-
-    @property
-    def editingmode(self):
-        return self.feature.id() > 0
 
 
