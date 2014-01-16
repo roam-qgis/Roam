@@ -106,7 +106,7 @@ class DataEntryWidget(dataentry_widget, dataentry_base):
         self.flickwidget.activateOn(self.scrollArea)
 
         toolbar = QToolBar()
-        size = QSize(32, 32)
+        size = QSize(48, 48)
         toolbar.setIconSize(size)
         style = Qt.ToolButtonTextUnderIcon
         toolbar.setToolButtonStyle(style)
