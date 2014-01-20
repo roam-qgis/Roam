@@ -178,7 +178,7 @@ class FeatureFormBase(QWidget):
         super(FeatureFormBase, self).__init__(parent)
         self.form = form
         self.formconfig = formconfig
-        self.boundwidgets = []
+        self.boundwidgets = {}
         self.requiredfields = {}
         self.feature = feature
         self.defaults = defaults
@@ -257,9 +257,9 @@ class FeatureFormBase(QWidget):
 
             widgetwrapper.setvalue(value)
             self._bindsavebutton(field)
-            self.boundwidgets.append(widgetwrapper)
+            self.boundwidgets[field] = widgetwrapper
 
-        self.validateall(self.boundwidgets)
+        self.validateall(self.boundwidgets.itervalues())
 
     def getvalues(self):
         def shouldsave(field):
@@ -269,9 +269,8 @@ class FeatureFormBase(QWidget):
 
         savedvalues = {}
         values = {}
-        for wrapper in self.boundwidgets:
+        for field, wrapper in self.boundwidgets.iteritems():
             value = wrapper.value()
-            field = wrapper.field
             if shouldsave(field):
                 savedvalues[field] = value
             values[field] = value
