@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>657</width>
-    <height>607</height>
+    <width>625</width>
+    <height>646</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -273,7 +273,6 @@ QListWidget::item::selected {
           </widget>
          </item>
         </layout>
-        <zorder></zorder>
         <zorder>nextButton</zorder>
         <zorder>backButton</zorder>
         <zorder>displaylabel</zorder>
