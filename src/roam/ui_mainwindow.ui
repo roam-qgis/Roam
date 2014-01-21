@@ -249,7 +249,7 @@
    </layout>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
-  <widget class="MenuToolbar" name="menutoolbar">
+  <widget class="HideableToolbar" name="menutoolbar">
    <property name="contextMenuPolicy">
     <enum>Qt::PreventContextMenu</enum>
    </property>
@@ -307,7 +307,7 @@ QToolButton:checked {
    <addaction name="actionSettings"/>
    <addaction name="actionQuit"/>
   </widget>
-  <widget class="QToolBar" name="projecttoolbar">
+  <widget class="HideableToolbar" name="projecttoolbar">
    <property name="contextMenuPolicy">
     <enum>Qt::PreventContextMenu</enum>
    </property>
@@ -585,7 +585,7 @@ QToolButton:checked {
    <container>1</container>
   </customwidget>
   <customwidget>
-   <class>MenuToolbar</class>
+   <class>HideableToolbar</class>
    <extends>QToolBar</extends>
    <header>roam.gui</header>
   </customwidget>

@@ -188,21 +188,6 @@ class MainWindow(mainwindow_widget, mainwindow_base):
 
         self.panels = []
 
-        self.edittoolbar = FloatingToolBar("Editing", self.projecttoolbar)
-        self.extraaddtoolbar = FloatingToolBar("Feature Tools", self.projecttoolbar)
-        self.syncactionstoolbar = FloatingToolBar("Syncing", self.projecttoolbar)
-        self.syncactionstoolbar.setOrientation(Qt.Vertical)
-
-        size = QSize(32, 32)
-        self.edittoolbar.setIconSize(size)
-        self.extraaddtoolbar.setIconSize(size)
-        self.syncactionstoolbar.setIconSize(size)
-
-        style = Qt.ToolButtonTextUnderIcon
-        self.edittoolbar.setToolButtonStyle(style)
-        self.extraaddtoolbar.setToolButtonStyle(style)
-        self.syncactionstoolbar.setToolButtonStyle(style)
-
         self.connectButtons()
 
         self.band = QgsRubberBand(self.canvas)
@@ -232,6 +217,10 @@ class MainWindow(mainwindow_widget, mainwindow_base):
         self.hidedataentry()
         self.updateicons()
         self.canvas.extentsChanged.connect(self.updatestatuslabel)
+        self.projecttoolbar.toolButtonStyleChanged.connect(self.updatecombo)
+
+    def updatecombo(self, *args):
+        self.dataentrycombo.setMinimumHeight(0)
 
     def settingsupdated(self, settings):
         settings.save()
@@ -340,16 +329,6 @@ class MainWindow(mainwindow_widget, mainwindow_base):
 
         # The edit toolbutton is currently not being used but leaving it for feature.
         self.moveTool.layersupdated.connect(self.actionEdit_Tools.setEnabled)
-
-
-        self.edittoolbar.addAction(self.actionMove)
-        self.edittoolbar.addToActionGroup(self.actionMove)
-
-        showediting = (partial(self.edittoolbar.showToolbar,
-                               self.actionEdit_Tools,
-                               self.actionMove))
-
-        self.actionEdit_Tools.toggled.connect(showediting)
 
         self.actionGPSFeature.triggered.connect(self.addFeatureAtGPS)
         self.actionGPSFeature.setEnabled(self.actionGPS.isConnected)
@@ -732,8 +711,6 @@ class MainWindow(mainwindow_widget, mainwindow_base):
         QDir.setCurrent(os.path.dirname(project.projectfile))
         fileinfo = QFileInfo(project.projectfile)
         QgsProject.instance().read(fileinfo)
-        print project.projectfile
-        print QgsProject.instance().error()
 
     def closeProject(self):
         """
