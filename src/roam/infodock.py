@@ -174,6 +174,9 @@ class InfoDock(infodock_widget, QWidget):
         self.update(self.selection)
 
     def update(self, cursor):
+        if cursor is None:
+            return
+
         global image
         images = {}
         feature = cursor.feature
