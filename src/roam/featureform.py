@@ -218,19 +218,12 @@ class FeatureFormBase(QWidget):
         for config in widgetsconfig:
             widgettype = config['widget']
             field = config['field'].lower()
-            regex = QRegExp("^{}$".format(field))
-            regex.setCaseSensitivity(Qt.CaseInsensitive)
-            try:
-                widget = self.findChildren(QWidget, regex)[0]
-            except IndexError:
-                utils.warning("Could not find control for {}".format(field))
+            widget = self.findcontrol(field)
+            if widget is None:
                 continue
 
-            try:
-                regex = QRegExp("^{}_label$".format(field))
-                regex.setCaseSensitivity(Qt.CaseInsensitive)
-                label = self.findChildren(QLabel, regex)[0]
-            except IndexError:
+            label = self.findcontrol("{}_label".format(field))
+            if label is None:
                 utils.warning("Not label found for {}".format(field))
 
             widgetconfig = config.get('config', {})
@@ -274,8 +267,9 @@ class FeatureFormBase(QWidget):
 
     def getvalues(self):
         def shouldsave(field):
-            button = self.findChild(QToolButton, "{}_save".format(field))
-            if button:
+            name = "{}_save".format(field)
+            button = self.findcontrol(name)
+            if not button is None:
                 return button.isChecked()
 
         savedvalues = {}
@@ -288,9 +282,20 @@ class FeatureFormBase(QWidget):
 
         return values, savedvalues
 
+    def findcontrol(self, name):
+        regex = QRegExp("^{}$".format(name))
+        regex.setCaseSensitivity(Qt.CaseInsensitive)
+        try:
+            widget = self.findChildren(QWidget, regex)[0]
+        except IndexError:
+            utils.warning("Could not find control for {}".format(name))
+            widget = None
+        return widget
+
     def _bindsavebutton(self, field):
-        button = self.findChild(QToolButton, "{}_save".format(field))
-        if not button:
+        name = "{}_save".format(field)
+        button = self.findcontrol(name)
+        if button is None:
             return
 
         button.setCheckable(not self.editingmode)
