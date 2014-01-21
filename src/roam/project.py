@@ -15,7 +15,7 @@ from roam.maptools import PointTool, InspectionTool, EditTool
 from roam.utils import log
 from roam.syncing import replication
 from roam.featureform import FeatureForm
-from roam.orderedyaml import OrderedDictYAMLLoader
+from roam.structs import OrderedDictYAMLLoader
 
 import roam.utils
 import roam

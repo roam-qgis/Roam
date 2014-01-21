@@ -28,6 +28,7 @@ from qgis.core import QgsFields, QgsFeature
 from roam.editorwidgets.core import WidgetsRegistry, EditorWidgetException
 from roam import utils
 from roam.flickwidget import FlickCharm
+from roam.structs import CaseInsensitiveDict
 
 style = """
             QCheckBox::indicator {
@@ -178,8 +179,8 @@ class FeatureFormBase(QWidget):
         super(FeatureFormBase, self).__init__(parent)
         self.form = form
         self.formconfig = formconfig
-        self.boundwidgets = {}
-        self.requiredfields = {}
+        self.boundwidgets = CaseInsensitiveDict()
+        self.requiredfields = CaseInsensitiveDict()
         self.feature = feature
         self.defaults = defaults
 

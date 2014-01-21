@@ -15,6 +15,7 @@ from roam.uifiles import dataentry_widget, dataentry_base
 from roam.flickwidget import FlickCharm
 from roam import featureform
 from roam.deletefeaturedialog import DeleteFeatureDialog
+from roam.structs import CaseInsensitiveDict
 
 
 class DefaultError(Exception):
@@ -268,7 +269,7 @@ class DataEntryWidget(dataentry_widget, dataentry_base):
 
         self.project = project
         fields = [field.name().lower() for field in self.fields]
-        values = dict(zip(fields, feature.attributes()))
+        values = CaseInsensitiveDict(zip(fields, feature.attributes()))
 
         try:
             self.featureform.load(feature, layers, values)
