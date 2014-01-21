@@ -267,7 +267,7 @@ class DataEntryWidget(dataentry_widget, dataentry_base):
         layers = iter(QgsMapLayerRegistry.instance().mapLayers())
 
         self.project = project
-        fields = [field.name() for field in self.fields]
+        fields = [field.name().lower() for field in self.fields]
         values = dict(zip(fields, feature.attributes()))
 
         try:

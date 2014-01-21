@@ -177,8 +177,6 @@ class InfoDock(infodock_widget, QWidget):
         if cursor is None:
             return
 
-        global image
-        images = {}
         feature = cursor.feature
         fields = [field.name() for field in feature.fields()]
         data = OrderedDict()

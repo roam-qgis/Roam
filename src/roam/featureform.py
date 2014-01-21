@@ -7,7 +7,7 @@ import json
 from functools import partial
 
 from PyQt4 import uic
-from PyQt4.QtCore import pyqtSignal, QObject, QSize, QEvent, QProcess, Qt, QPyNullVariant
+from PyQt4.QtCore import pyqtSignal, QObject, QSize, QEvent, QProcess, Qt, QPyNullVariant, QRegExp
 from PyQt4.QtGui import (QWidget,
                          QDialogButtonBox,
                          QStatusBar,
@@ -216,9 +216,13 @@ class FeatureFormBase(QWidget):
 
         for config in widgetsconfig:
             widgettype = config['widget']
-            field = config['field']
-            widget = self.findChild(QWidget, field)
-            if widget is None:
+            field = config['field'].lower()
+            regex = QRegExp("^{}$".format(field))
+            regex.setCaseSensitivity(Qt.CaseInsensitive)
+            try:
+                widget = self.findChildren(QWidget, regex)[0]
+            except IndexError:
+                utils.warning("Could not find control for {}".format(field))
                 continue
 
             label = self.findChild(QLabel, "{}_label".format(field))
