@@ -98,6 +98,7 @@ class DataEntryWidget(dataentry_widget, dataentry_base):
         self.setupUi(self)
         self.featureform = None
         self.feature = None
+        self.fields = None
         self.project = None
         self.canvas = canvas
         self.bar = bar
@@ -159,6 +160,14 @@ class DataEntryWidget(dataentry_widget, dataentry_base):
         self.featuredeleted.emit()
 
     def accept(self):
+        def updatefeautrefields(feature):
+            for key, value in values.iteritems():
+                try:
+                    feature[key] = value
+                except KeyError:
+                    continue
+            return feature
+
         if not self.featureform.allpassing:
             self.bar.pushMessage("Missing fields", "Some fields are still required.",
                                  QgsMessageBar.WARNING, duration=2)
@@ -171,7 +180,14 @@ class DataEntryWidget(dataentry_widget, dataentry_base):
             return
 
         layer = self.featureform.form.QGISLayer
-        before, after, savedvalues = self.featureform.unbind()
+        before = QgsFeature(self.feature)
+        before.setFields(self.fields, initAttributes=False)
+
+        values, savedvalues = self.featureform.getvalues()
+
+        after = QgsFeature(self.feature)
+        after.setFields(self.fields, initAttributes=False)
+        after = updatefeautrefields(after)
 
         layer.startEditing()
         if after.id() > 0:
@@ -188,13 +204,14 @@ class DataEntryWidget(dataentry_widget, dataentry_base):
         else:
             layer.addFeature(after)
             featureform.savevalues(layer, savedvalues)
+
         saved = layer.commitChanges()
 
         if not saved:
             self.failedsave.emit(layer.commitErrors())
             map(error, layer.commitErrors())
         else:
-            self.featureform.featuresaved(after)
+            self.featureform.featuresaved(after, values)
             self.featuresaved.emit()
 
         self.accepted.emit()
@@ -239,6 +256,9 @@ class DataEntryWidget(dataentry_widget, dataentry_base):
 
         self.formvalidation(passed=True)
         self.feature = feature
+        # Hold a reference to the fields because QGIS will let the
+        # go out of scope and we get crashes. Yay!
+        self.fields = self.feature.fields()
         self.featureform = form.create_featureform(feature, defaults)
         self.featureform.rejected.connect(self.formrejected)
         self.featureform.enablesave.connect(self.actionSave.setEnabled)
@@ -247,15 +267,18 @@ class DataEntryWidget(dataentry_widget, dataentry_base):
         layers = iter(QgsMapLayerRegistry.instance().mapLayers())
 
         self.project = project
+        fields = [field.name() for field in self.fields]
+        values = dict(zip(fields, feature.attributes()))
+
         try:
-            self.featureform.load(feature, layers)
+            self.featureform.load(feature, layers, values)
         except featureform.RejectedException as rejected:
             self.formrejected(rejected.message, rejected.level)
             return
 
         self.featureform.formvalidation.connect(self.formvalidation)
         self.featureform.helprequest.connect(self.helprequest.emit)
-        self.featureform.bind()
+        self.featureform.bind(values)
 
         self.actionSave.setVisible(True)
         self.setwidget(self.featureform)

@@ -65,6 +65,7 @@ class FeatureCursor(object):
     def __str__(self):
         return "{} of {}".format(self.index + 1, len(self.features))
 
+
 class InfoDock(infodock_widget, QWidget):
     requestopenform = pyqtSignal(object, QgsFeature)
     featureupdated = pyqtSignal(object, object, list)
@@ -86,8 +87,7 @@ class InfoDock(infodock_widget, QWidget):
 
     def eventFilter(self, object, event):
         if event.type() == QEvent.Resize:
-            width = self.parent().width() * 40 / 100
-            self.resize(width, self.parent().height())
+            self.resize(self.width(), self.parent().height())
             self.move(self.parent().width() - self.width(), 0)
 
         return super(InfoDock, self).eventFilter(object, event)
@@ -162,7 +162,7 @@ class InfoDock(infodock_widget, QWidget):
             return
 
         for form in forms:
-            itemtext = "{} ({})".format(layername, form.label)
+            itemtext = "{} \n ({})".format(layername, form.label)
             icon = QIcon(form.icon)
             item = QListWidgetItem(icon, itemtext, self.layerList)
             item.setData(Qt.UserRole, FeatureCursor(layer, features, form))

@@ -178,10 +178,9 @@ class FeatureFormBase(QWidget):
         super(FeatureFormBase, self).__init__(parent)
         self.form = form
         self.formconfig = formconfig
-        self.boundwidgets = []
+        self.boundwidgets = {}
         self.requiredfields = {}
         self.feature = feature
-        self.fields = self.feature.fields()
         self.defaults = defaults
 
     def _installeventfilters(self, widgettype):
@@ -205,7 +204,7 @@ class FeatureFormBase(QWidget):
         for wrapper in widgetwrappers:
             wrapper.validate()
 
-    def bind(self):
+    def bind(self, values):
         """
         Binds the given feature to the to the feature form.
         :param feature:
@@ -239,10 +238,7 @@ class FeatureFormBase(QWidget):
 
             if self.editingmode and 'editing' in readonlyrules:
                 widgetwrapper.readonly = True
-            elif 'insert' in readonlyrules:
-                widgetwrapper.readonly = True
-
-            if 'always' in readonlyrules:
+            elif 'insert' in readonlyrules or 'always' in readonlyrules:
                 widgetwrapper.readonly = True
 
             widgetwrapper.hidden = config.get('hidden', False)
@@ -254,45 +250,39 @@ class FeatureFormBase(QWidget):
                 widgetwrapper.validationupdate.connect(self.updaterequired)
 
             try:
-                value = nullcheck(self.feature[field])
+                value = nullcheck(values[field])
             except KeyError:
                 utils.warning("Can't find field {}".format(field))
                 value = None
 
             widgetwrapper.setvalue(value)
             self._bindsavebutton(field)
-            self.boundwidgets.append(widgetwrapper)
+            self.boundwidgets[field] = widgetwrapper
 
-        self.validateall(self.boundwidgets)
+        self.validateall(self.boundwidgets.itervalues())
 
-    def unbind(self):
+    def getvalues(self):
         def shouldsave(field):
             button = self.findChild(QToolButton, "{}_save".format(field))
             if button:
                 return button.isChecked()
 
-        before = QgsFeature(self.feature)
-        before.setFields(self.fields, initAttributes=False)
-        after = QgsFeature(self.feature)
-        after.setFields(self.fields, initAttributes=False)
-
-        self.feature.setFields(self.fields, initAttributes=False)
         savedvalues = {}
-        for wrapper in self.boundwidgets:
+        values = {}
+        for field, wrapper in self.boundwidgets.iteritems():
             value = wrapper.value()
-            field = wrapper.field
             if shouldsave(field):
                 savedvalues[field] = value
-            self.feature[field] = value
+            values[field] = value
 
-        return before, self.feature, savedvalues
+        return values, savedvalues
 
     def _bindsavebutton(self, field):
         button = self.findChild(QToolButton, "{}_save".format(field))
         if not button:
             return
 
-        button.setCheckable(not self.feature.id() > 0)
+        button.setCheckable(not self.editingmode)
         button.setIcon(QIcon(":/icons/save_default"))
         button.setIconSize(QSize(24, 24))
         button.setChecked(field in self.defaults)
@@ -324,6 +314,13 @@ class FeatureFormBase(QWidget):
 
         for label in self.findChildren(QLabel):
             createhelplink(label, self.form.folder)
+
+    @property
+    def editingmode(self):
+        if not self.feature:
+            return True
+
+        return self.feature.id() > 0
 
 
 class FeatureForm(FeatureFormBase):
@@ -416,7 +413,7 @@ class FeatureForm(FeatureFormBase):
         """
         pass
 
-    def load(self, feature, layers):
+    def load(self, feature, layers, values):
         """
         Called before the form is loaded. This method can be used to do pre checks and halt the loading of the form
         if needed.
@@ -431,7 +428,15 @@ class FeatureForm(FeatureFormBase):
         """
         pass
 
-    def featuresaved(self, feature):
+    def featuresaved(self, feature, values):
+        """
+        Called when the feature is saved in QGIS.
+
+        The values that are taken from the form as passed in too.
+        :param feature:
+        :param values:
+        :return:
+        """
         pass
 
     def deletefeature(self):
@@ -461,9 +466,5 @@ class FeatureForm(FeatureFormBase):
     @property
     def allpassing(self):
         return all(valid for valid in self.requiredfields.values())
-
-    @property
-    def editingmode(self):
-        return self.feature.id() > 0
 
 
