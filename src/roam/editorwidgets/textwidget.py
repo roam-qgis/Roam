@@ -24,7 +24,7 @@ class TextWidget(EditorWidget):
         # Not the best way but should cover most use cases
         # for now
         value = value or ''
-        value = str(value)
+        value = unicode(value)
         try:
             self.widget.setPlainText(value)
         except AttributeError:
