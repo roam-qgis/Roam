@@ -226,7 +226,13 @@ class FeatureFormBase(QWidget):
                 utils.warning("Could not find control for {}".format(field))
                 continue
 
-            label = self.findChild(QLabel, "{}_label".format(field))
+            try:
+                regex = QRegExp("^{}_label$".format(field))
+                regex.setCaseSensitivity(Qt.CaseInsensitive)
+                label = self.findChildren(QLabel, regex)[0]
+            except IndexError:
+                utils.warning("Not label found for {}".format(field))
+
             widgetconfig = config.get('config', {})
             try:
                 widgetwrapper = WidgetsRegistry.widgetwrapper(widgettype=widgettype,
