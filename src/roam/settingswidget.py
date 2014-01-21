@@ -18,7 +18,6 @@ class SettingsWidget(settings_widget, settings_base):
         self.fullScreenCheck.toggled.connect(self.fullScreenCheck_stateChanged)
         self.gpsPortCombo.currentIndexChanged.connect(self.gpsPortCombo_currentIndexChanged)
         self.refreshPortsButton.pressed.connect(self.refreshPortsButton_pressed)
-        self.iconswithtextCheck.toggled.connect(self.iconswithtextCheck_toggled)
         self.gpslocationCheck.toggled.connect(self.gpslocationCheck_toggled)
 
     @property
@@ -30,10 +29,6 @@ class SettingsWidget(settings_widget, settings_base):
 
     def gpslocationCheck_toggled(self, checked):
         self.settings['gpszoomonfix'] = checked
-        self.notifysettingsupdate()
-
-    def iconswithtextCheck_toggled(self, checked):
-        self.settings['iconswithtext'] = checked
         self.notifysettingsupdate()
 
     def fullScreenCheck_stateChanged(self, checked):
@@ -61,11 +56,9 @@ class SettingsWidget(settings_widget, settings_base):
         
     def readSettings(self):
         fullscreen = self.settings.get("fullscreen", False)
-        iconswithtext = self.settings.get('iconswithtext', True)
         gpsport = self.settings.get("gpsport", 'scan')
         gpszoom = self.settings.get('gpszoomonfix', True)
 
-        self.iconswithtextCheck.setChecked(iconswithtext)
         self.fullScreenCheck.setChecked(fullscreen)
         self.gpslocationCheck.setChecked(gpszoom)
         gpsindex = self.gpsPortCombo.findData(gpsport)

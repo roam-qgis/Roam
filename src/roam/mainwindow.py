@@ -215,7 +215,6 @@ class MainWindow(mainwindow_widget, mainwindow_base):
         self.infodock.resultscleared.connect(self.clearselection)
         self.infodock.hide()
         self.hidedataentry()
-        self.updateicons()
         self.canvas.extentsChanged.connect(self.updatestatuslabel)
         self.projecttoolbar.toolButtonStyleChanged.connect(self.updatecombo)
 
@@ -224,7 +223,6 @@ class MainWindow(mainwindow_widget, mainwindow_base):
 
     def settingsupdated(self, settings):
         settings.save()
-        self.updateicons()
         self.show()
         self.actionGPS.updateGPSPort()
 
@@ -587,13 +585,6 @@ class MainWindow(mainwindow_widget, mainwindow_base):
         """
         page = action.property("page")
         self.stackedWidget.setCurrentIndex(page)
-
-    def updateicons(self):
-        iconswithtext = self.settings.settings.get("iconswithtext", False)
-        if iconswithtext:
-            self.projecttoolbar.setToolButtonStyle(Qt.ToolButtonTextUnderIcon)
-        else:
-            self.projecttoolbar.setToolButtonStyle(Qt.ToolButtonIconOnly)
 
     def show(self):
         """
