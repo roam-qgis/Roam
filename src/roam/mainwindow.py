@@ -465,6 +465,7 @@ class MainWindow(mainwindow_widget, mainwindow_base):
         self.hidedataentry()
         self.showmap()
         self.cleartempobjects()
+        self.infodock.refreshcurrent()
 
     def featuredeleted(self):
         self.dataentryfinished()

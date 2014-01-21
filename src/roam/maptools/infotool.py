@@ -38,7 +38,9 @@ class InfoTool(TouchMapTool):
 
             rect = self.toLayerCoordinates(layer, rect)
 
-            rq = QgsFeatureRequest().setFilterRect(rect).setFlags(QgsFeatureRequest.ExactIntersect)
+            rq = QgsFeatureRequest().setFilterRect(rect)\
+                                    .setFlags(QgsFeatureRequest.ExactIntersect)\
+                                    .setSubsetOfAttributes([])
             features = []
             for feature in layer.getFeatures(rq):
                 if feature.isValid():

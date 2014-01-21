@@ -16,7 +16,7 @@ from PyQt4.QtCore import (Qt, QUrl,
 from PyQt4.QtWebKit import QWebPage
 
 from qgis.core import (QgsExpression, QgsFeature, 
-                       QgsMapLayer)
+                       QgsMapLayer, QgsFeatureRequest)
 
 from roam import utils
 from roam.flickwidget import FlickCharm
@@ -58,8 +58,12 @@ class FeatureCursor(object):
     @property
     def feature(self):
         try:
-            return self.features[self.index]
+            feature = self.features[self.index]
+            rq = QgsFeatureRequest(feature.id())
+            return self.layer.getFeatures(rq).next()
         except IndexError:
+            return None
+        except StopIteration:
             return None
 
     def __str__(self):
@@ -138,7 +142,6 @@ class InfoDock(infodock_widget, QWidget):
         self.clearResults()
         self.forms = forms
 
-
         for layer, features in results.iteritems():
             if features:
                 self._addResult(layer, features)
@@ -166,6 +169,9 @@ class InfoDock(infodock_widget, QWidget):
             icon = QIcon(form.icon)
             item = QListWidgetItem(icon, itemtext, self.layerList)
             item.setData(Qt.UserRole, FeatureCursor(layer, features, form))
+
+    def refreshcurrent(self):
+        self.update(self.selection)
 
     def update(self, cursor):
         global image
