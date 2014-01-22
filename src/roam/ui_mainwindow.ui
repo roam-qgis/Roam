@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>833</width>
-    <height>658</height>
+    <height>643</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -273,7 +273,7 @@ QToolButton:hover {
 QToolButton:checked { 
 	color: rgb(91,147,194);
 	padding-right: 0px;
-	background-color: white;
+	background-color: rgb(240, 240, 240);
 }</string>
    </property>
    <property name="movable">
@@ -315,8 +315,8 @@ QToolButton:checked {
     <string>projecttoolbar</string>
    </property>
    <property name="styleSheet">
-    <string notr="true">QToolBar {
-	background: none;
+    <string notr="true">QWidget {
+	background: rgb(240, 240, 240);
 }</string>
    </property>
    <property name="movable">
