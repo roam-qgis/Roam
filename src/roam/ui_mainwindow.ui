@@ -348,10 +348,10 @@ QWidget {
     <bool>false</bool>
    </attribute>
    <addaction name="actionHome"/>
+   <addaction name="actionRaster"/>
    <addaction name="actionPan"/>
    <addaction name="actionZoom_In"/>
    <addaction name="actionZoom_Out"/>
-   <addaction name="actionRaster"/>
    <addaction name="actionInfo"/>
    <addaction name="separator"/>
   </widget>
