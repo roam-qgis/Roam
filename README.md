@@ -1,11 +1,3 @@
-====================
-|name| - README
-====================
-
-:Authors:
-    Digital Mapping Solutions
-    Nathan Woodrow
-
 :Version: 2.0
 
 .. |name| replace:: IntraMaps Roam
