@@ -29,6 +29,11 @@ htmlpath = os.path.join(os.path.dirname(__file__), "info.html")
 with open(htmlpath) as f:
     template = Template(f.read())
 
+
+class NoFeature(Exception):
+    pass
+
+
 class FeatureCursor(object):
     """
     A feature cursor that keeps track of the current feature
@@ -62,9 +67,9 @@ class FeatureCursor(object):
             rq = QgsFeatureRequest(feature.id())
             return self.layer.getFeatures(rq).next()
         except IndexError:
-            return None
+            raise NoFeature("No feature with id {}".format(feature.id()))
         except StopIteration:
-            return None
+            raise NoFeature("No feature with id {}".format(feature.id()))
 
     def __str__(self):
         return "{} of {}".format(self.index + 1, len(self.features))
@@ -177,7 +182,12 @@ class InfoDock(infodock_widget, QWidget):
         if cursor is None:
             return
 
-        feature = cursor.feature
+        try:
+            feature = cursor.feature
+        except NoFeature as ex:
+            utils.warning(ex)
+            return
+
         fields = [field.name() for field in feature.fields()]
         data = OrderedDict()
 
@@ -205,7 +215,7 @@ class InfoDock(infodock_widget, QWidget):
 
         if form:
             displaytext = form.settings.get('display', None)
-            display = QgsExpression.replaceExpressionText(displaytext, cursor.feature, layer )
+            display = QgsExpression.replaceExpressionText(displaytext, feature, layer )
         else:
             display = str(feature[0])
 
@@ -213,7 +223,7 @@ class InfoDock(infodock_widget, QWidget):
         self.displaylabel.setText(display)
         self.attributesView.setHtml(html, baseurl)
         self.editButton.setVisible(not form is None)
-        self.featureupdated.emit(layer, cursor.feature, cursor.features)
+        self.featureupdated.emit(layer, feature, cursor.features)
 
     def clearResults(self):
         self.layerList.clear()

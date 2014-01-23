@@ -7,6 +7,7 @@ from roam.editorwidgets.uifiles.imagewidget import QMapImageWidget
 
 class ImageWidget(EditorWidget):
     widgettype = 'Image'
+
     def __init__(self, *args):
         super(ImageWidget, self).__init__(*args)
 
@@ -38,10 +39,7 @@ class ImageWidget(EditorWidget):
         pass
 
     def setvalue(self, value):
-        if isinstance(value, QByteArray):
-            self.widget.loadImage(value)
-        else:
-            self.widget.loadFromPixMap(QPixmap(value))
+        self.widget.loadImage(value)
 
     def value(self):
         return self.widget.getImage()

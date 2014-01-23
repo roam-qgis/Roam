@@ -4,7 +4,7 @@ from PyQt4.QtGui import (QLabel, QDialog, QFileDialog,
                         QPixmap, QGridLayout, QLayout,
                         QWidget)
 from PyQt4.QtCore import (QByteArray, QBuffer,
-                        QIODevice, QEvent, QObject, pyqtSignal)
+                        QIODevice, QEvent, QObject, pyqtSignal, Qt)
 
 from roam.editorwidgets.uifiles import images_rc, ui_imagewidget
 import roam.utils
@@ -43,12 +43,10 @@ class QMapImageWidget(ui_imagewidget.Ui_imagewidget, QWidget):
         if image is None or not image:
             return
 
-        pix = QPixmap(image)
-        self.loadFromPixMap(pix)
+        self.loadImage(image)
 
     def removeImage(self):
-        pix = QPixmap(":/images/images/add.png")
-        self.loadFromPixMap(pix)
+        self.loadImage(":/images/images/add.png", scaled=False)
         self.image.setScaledContents(False)
         self.imageremoved.emit()
         self.isDefault = True
@@ -59,17 +57,7 @@ class QMapImageWidget(ui_imagewidget.Ui_imagewidget, QWidget):
         else:
             self.openRequest.emit(self.image.pixmap())
 
-    def loadFromPixMap(self, pixmap):
-        if pixmap.isNull():
-            roam.utils.debug("Image is null")
-            self.removeImage()
-            return
-
-        self.image.setScaledContents(True)
-        self.image.setPixmap(pixmap)
-        self.isDefault = False
-
-    def loadImage(self, data):
+    def loadImage(self, data, scaled=True):
         """
             Load the image into the widget using a bytearray
 
@@ -80,9 +68,16 @@ class QMapImageWidget(ui_imagewidget.Ui_imagewidget, QWidget):
             self.removeImage()
             return
 
-        pix = QPixmap()
-        r = pix.loadFromData(data, 'JPG')
-        self.image.setScaledContents(True)
+        if isinstance(data, QByteArray):
+            pix = QPixmap()
+            r = pix.loadFromData(data, 'JPG')
+        else:
+            pix = QPixmap(data)
+
+        h = self.maximumHeight()
+        if scaled:
+            pix = pix.scaledToHeight(h, Qt.SmoothTransformation)
+
         self.image.setPixmap(pix)
         self.isDefault = False
 
