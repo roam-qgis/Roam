@@ -1,26 +1,13 @@
-:Version: 2.0
+Roam is a field data collection application built using the QGIS libraries and Python. It was built to be easy to use on (windows) based tablet devices, with Android planned for the future.
 
-.. |name| replace:: IntraMaps Roam
+![a](http://i.imgur.com/F4TZScJ.png)
 
-.. contents::
-
-|name| is a field data collection application built using QGIS. It was built to be easy to use on (windows) based tablet devices, with Android planned for the future.
-
-Custom forms are built using Qt Designer and follow a convention based approach in order to save configuration.  The general goal of |name| is to be datasource agnostic in most of what it does.  
-
-Building
--------------
-
-- QGIS 2.0 (installed using OSGeo4W)
-- Qt Designer (part of the qt4-devel package)
-- py2exe
-
-See PACKAGE.txt for more details on building.
+See the [wiki](https://github.com/DMS-Aus/Roam/wiki) for information on how to create a project and user guides.
 
 License
 --------------
 
-|name| is free software: you can redistribute it and/or modify it
+Roam is free software: you can redistribute it and/or modify it
 under the terms of the GNU General Public License version 2 (GPLv2) as
 published by the Free Software Foundation.
 
