@@ -59,23 +59,6 @@ def updateTemplate(data, template):
     return template.safe_substitute(**data)
 
 
-def openimage(url):
-    key = url.toString().lstrip('file://')
-    try:
-        data, imagetype = images[os.path.basename(key)]
-    except KeyError:
-        # It's not a image so lets just pass it of as a normal
-        # URL
-        QDesktopServices.openUrl(url)
-        return
-
-    pix = QPixmap()
-    if imagetype == 'base64':
-        pix.loadFromData(data)
-    else:
-        pix.load(data)
-    utils.openImageViewer(pix)
-
 blocks = {QByteArray: image_handler,
           QDate: date_handler,
           QDateTime: date_handler,
@@ -109,7 +92,7 @@ class HtmlViewerWidget(QWidget):
         super(HtmlViewerWidget, self).__init__(parent)
         self.setLayout(QGridLayout())
         self.layout().setContentsMargins(0, 0, 0, 0)
-        self.view = QWebView(linkClicked=openimage)
+        self.view = QWebView()
         self.view.page().setLinkDelegationPolicy(QWebPage.DelegateAllLinks)
         self.layout().addWidget(self.view)
         

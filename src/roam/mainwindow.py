@@ -15,7 +15,7 @@ from PyQt4.QtGui import (QActionGroup,
                         QComboBox,
                         QToolButton,
                         QAction,
-                        QCursor, QFrame)
+                        QCursor, QFrame, QDesktopServices)
 
 from qgis.core import (QgsProjectBadLayerHandler,
                         QgsPalLabeling,
@@ -55,6 +55,7 @@ from roam.helpviewdialog import HelpPage
 
 import roam.messagebaritems
 import roam.utils
+import roam.htmlviewer
 
 
 class BadLayerHandler(QgsProjectBadLayerHandler):
@@ -213,10 +214,45 @@ class MainWindow(mainwindow_widget, mainwindow_base):
         self.infodock.requestopenform.connect(self.openForm)
         self.infodock.featureupdated.connect(self.highlightfeature)
         self.infodock.resultscleared.connect(self.clearselection)
+        self.infodock.openurl.connect(self.viewurl)
         self.infodock.hide()
         self.hidedataentry()
         self.canvas.extentsChanged.connect(self.updatestatuslabel)
         self.projecttoolbar.toolButtonStyleChanged.connect(self.updatecombo)
+
+    def viewurl(self, url):
+        """
+        Open a URL in Roam
+        :param url:
+        :return:
+        """
+        key = url.toString().lstrip('file://')
+        print key
+        print roam.htmlviewer.images
+        try:
+            # Hack. Eww fix me.
+            data, imagetype = roam.htmlviewer.images[os.path.basename(key)]
+        except KeyError:
+            # It's not a image so lets just pass it of as a normal
+            # URL
+            QDesktopServices.openUrl(url)
+            return
+
+        pix = QPixmap()
+        if imagetype == 'base64':
+            pix.loadFromData(data)
+        else:
+            pix.load(data)
+
+        self.openimage(pix)
+
+    def openimage(self, pixmap):
+        label = QLabel(self.stackedWidget)
+        label.mouseReleaseEvent = lambda x: label.hide()
+        label.resize(self.stackedWidget.size())
+        pix = pixmap.scaledToHeight(label.height(), Qt.SmoothTransformation)
+        label.setPixmap(pix)
+        label.show()
 
     def updatecombo(self, *args):
         self.dataentrycombo.setMinimumHeight(0)

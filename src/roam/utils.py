@@ -59,7 +59,7 @@ def timeit(method):
     return wrapper
 
 
-def openImageViewer(pixmap):
+def openImageViewer(pixmap, parent):
         dlg = QDialog()
         dlg.setWindowTitle("Image Viewer")
         dlg.setLayout(QGridLayout())

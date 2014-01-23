@@ -20,7 +20,7 @@ from qgis.core import (QgsExpression, QgsFeature,
 
 from roam import utils
 from roam.flickwidget import FlickCharm
-from roam.htmlviewer import updateTemplate, openimage
+from roam.htmlviewer import updateTemplate
 from roam.uifiles import (infodock_widget, infodock_base)
 
 import pkgutil
@@ -79,6 +79,7 @@ class InfoDock(infodock_widget, QWidget):
     requestopenform = pyqtSignal(object, QgsFeature)
     featureupdated = pyqtSignal(object, object, list)
     resultscleared = pyqtSignal()
+    openurl = pyqtSignal(object)
 
     def __init__(self, parent):
         super(InfoDock, self).__init__(parent)
@@ -87,7 +88,7 @@ class InfoDock(infodock_widget, QWidget):
         self.charm = FlickCharm()
         self.charm.activateOn(self.attributesView)
         self.layerList.currentRowChanged.connect(self.layerIndexChanged)
-        self.attributesView.linkClicked.connect(openimage)
+        self.attributesView.linkClicked.connect(self.openurl.emit)
         self.attributesView.page().setLinkDelegationPolicy(QWebPage.DelegateAllLinks)
         self.grabGesture(Qt.SwipeGesture)
         self.setAttribute(Qt.WA_AcceptTouchEvents)
