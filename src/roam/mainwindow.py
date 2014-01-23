@@ -273,7 +273,7 @@ class MainWindow(mainwindow_widget, mainwindow_base):
 
     def raiseerror(self, *exinfo):
         info = traceback.format_exception(*exinfo)
-        item = self.bar.pushError('Seems something has gone wrong. Press for more detauls',
+        item = self.bar.pushError('Seems something has gone wrong. Press for more details',
                                   info)
 
     def setMapTool(self, tool, *args):
