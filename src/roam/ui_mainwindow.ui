@@ -315,9 +315,16 @@ QToolButton:checked {
     <string>projecttoolbar</string>
    </property>
    <property name="styleSheet">
-    <string notr="true">QWidget {
-	background: rgb(240, 240, 240);
-}</string>
+    <string notr="true">QToolBar 
+{
+    border-bottom: 1px solid grey;
+}
+
+QWidget {
+	background-color: rgb(250, 250, 250);
+}
+
+</string>
    </property>
    <property name="movable">
     <bool>false</bool>
