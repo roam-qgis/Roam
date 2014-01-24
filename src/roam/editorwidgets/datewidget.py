@@ -78,7 +78,9 @@ class DateWidget(EditorWidget):
             self.setvalue(datetime)
 
     def setvalue(self, value):
-        if not isinstance(value, QDateTime):
+        if value is None:
+            value = DateWidget.DEFAULTDATE
+        elif not isinstance(value, QDateTime):
             value = QDateTime.fromString(value, Qt.ISODate)
 
         if hasattr(self.datewidget, 'setDate'):
