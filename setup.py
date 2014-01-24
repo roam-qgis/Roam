@@ -9,6 +9,7 @@ except ImportError:
 
 import glob
 import os
+import shutil
 
 # You are not meant to do this but we don't install using
 # setup.py so no big deal.
@@ -35,9 +36,9 @@ ecwfiles = [os.path.join(osgeobin, 'gdalplugins', 'gdal_ECW_JP2ECW.dll'),
             os.path.join(osgeobin, 'NCSEcw.dll')]
 
 datafiles = [(".", [r'src\settings.config']),
-            (r'libs\roam', [r'src\roam\info.html',
-                            r'src\roam\error.html']),
-            (r'libs\roam\bootstrap', glob.glob(r'src\roam\bootstrap\*')),
+            (r'libs\roam\templates', [r'src\roam\templates\info.html',
+                                      r'src\roam\templates\error.html']),
+            (r'libs\roam\templates\bootstrap', glob.glob(r'src\roam\templates\bootstrap\*')),
             (r'projects', [r'src\projects\__init__.py']),
             # We have to copy the imageformat drivers to the root folder.
             (r'imageformats', glob.glob(qtimageforms)),
@@ -87,13 +88,15 @@ class qtbuild(build):
     def run(self):
         buildqtfiles()
         build.run(self)
+        dst = os.path.join(appsrcopyFilesath, "ui", "resources_rc.py")
+        shutil.copy(os.path.join(appsrcopyFilesath, "resources_rc.py"), dst)
 
 
 setup(
     name='roam',
     version=roam.__version__,
     packages=['roam', 'roam.yaml', 'roam.syncing', 'roam.maptools', 'roam.editorwidgets', 'roam.editorwidgets.core',
-              'roam.editorwidgets.uifiles', 'project_installer', 'tests'],
+              'roam.editorwidgets.uifiles', 'roam.ui', 'roam.templates', 'project_installer', 'tests'],
     package_dir={'': 'src', 'tests': 'tests'},
     url='',
     license='GPL',
