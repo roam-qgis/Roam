@@ -1,10 +1,9 @@
 import os.path
 import functools
-import resources_rc
 
 from PyQt4 import QtCore, QtGui
 
-from uifiles import drawing_widget, drawing_base
+from roam.ui.uifiles import drawing_widget, drawing_base
 from utils import log
 
 class ScribbleArea(drawing_widget, drawing_base):

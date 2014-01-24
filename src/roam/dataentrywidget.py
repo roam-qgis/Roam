@@ -9,11 +9,10 @@ from PyQt4.QtGui import *
 from qgis.core import QgsMapLayerRegistry, QgsFeatureRequest, QgsFeature, QgsExpression
 from qgis.gui import QgsMessageBar
 
-from roam.utils import log, info, warning, error
+from roam.utils import log, error
 from roam import featureform
-from roam.uifiles import dataentry_widget, dataentry_base
+from roam.ui.uifiles import dataentry_widget, dataentry_base
 from roam.flickwidget import FlickCharm
-from roam import featureform
 from roam.deletefeaturedialog import DeleteFeatureDialog
 from roam.structs import CaseInsensitiveDict
 

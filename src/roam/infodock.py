@@ -1,15 +1,11 @@
 import os
-import collections
 
 from string import Template
 from collections import OrderedDict
 
-from PyQt4.QtGui import (QImageReader, QWidget, QFrame, QDialog, QIcon, QSortFilterProxyModel,QListWidgetItem)
+from PyQt4.QtGui import ( QWidget, QIcon, QListWidgetItem)
 
-from PyQt4.QtCore import (Qt, QUrl, 
-                          QDate,
-                          QDateTime, QTime,
-                          QPoint, QSize,
+from PyQt4.QtCore import (Qt, QUrl,
                           QEvent, pyqtSignal,
                           )
 
@@ -21,10 +17,11 @@ from qgis.core import (QgsExpression, QgsFeature,
 from roam import utils
 from roam.flickwidget import FlickCharm
 from roam.htmlviewer import updateTemplate
-from roam.uifiles import (infodock_widget, infodock_base)
+from roam.ui.uifiles import (infodock_widget)
 
-import pkgutil
-htmlpath = os.path.join(os.path.dirname(__file__), "info.html")
+import templates
+
+htmlpath = os.path.join(os.path.dirname(__file__), "templates/info.html")
 
 with open(htmlpath) as f:
     template = Template(f.read())
@@ -211,8 +208,6 @@ class InfoDock(infodock_widget, QWidget):
                     ROWS=rowshtml)
 
         html = updateTemplate(info, template)
-        base = os.path.dirname(os.path.abspath(__file__))
-        baseurl = QUrl.fromLocalFile(base + '\\')
 
         if form:
             displaytext = form.settings.get('display', None)
@@ -222,7 +217,7 @@ class InfoDock(infodock_widget, QWidget):
 
         self.countlabel.setText(str(cursor))
         self.displaylabel.setText(display)
-        self.attributesView.setHtml(html, baseurl)
+        self.attributesView.setHtml(html, templates.baseurl)
         self.editButton.setVisible(not form is None)
         self.featureupdated.emit(layer, feature, cursor.features)
 

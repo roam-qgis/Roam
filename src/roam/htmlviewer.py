@@ -9,6 +9,7 @@ from PyQt4.QtWebKit import QWebView, QWebPage
 
 from roam import utils
 
+import templates
 
 images = {}
 formats = [f.data() for f in QImageReader.supportedImageFormats()]
@@ -96,13 +97,11 @@ class HtmlViewerWidget(QWidget):
         self.layout().addWidget(self.view)
         
     def showHTML(self, html, data):
-        base = os.path.dirname(os.path.abspath(__file__))
-        baseurl = QUrl.fromLocalFile(base + '\\')
         if os.path.isfile(html):
             html = open(html).read()
 
         html = html.replace(r'\n', '<br>')
         templte = Template(html)
         html = updateTemplate(data, templte)
-        self.view.setHtml(html, baseurl)
+        self.view.setHtml(html, templates.baseurl)
 

@@ -1,7 +1,7 @@
 from PyQt4.QtGui import QDialog
 from PyQt4.QtCore import QUrl, QEvent, Qt
 
-from roam.uifiles import (helpviewer_widget, helpviewer_base,
+from roam.ui.uifiles import (helpviewer_widget, helpviewer_base,
                      helppage_widget, helppage_base)
 
 

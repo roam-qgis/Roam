@@ -2,7 +2,7 @@ from PyQt4.QtCore import pyqtSignal, QSize
 from PyQt4.QtGui import QListWidgetItem, QPixmap
 
 from roam.flickwidget import FlickCharm
-from roam.uifiles import (project_widget, project_base,
+from roam.ui.uifiles import (project_widget, project_base,
                          modules_widget, modules_base)
 
 

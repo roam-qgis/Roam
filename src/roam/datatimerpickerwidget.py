@@ -2,7 +2,7 @@ from PyQt4.QtGui import QDialog,QApplication, QButtonGroup
 from PyQt4.QtCore import QTime, Qt, QDateTime
 
 from roam import utils
-from roam.uifiles import datepicker_widget, datepicker_base
+from roam.ui.uifiles import datepicker_widget
 
 
 class DateTimePickerDialog(datepicker_widget, QDialog):

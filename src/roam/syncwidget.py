@@ -1,10 +1,8 @@
 from functools import partial
 
-from PyQt4.QtCore import QAbstractItemModel, Qt, QModelIndex
-from PyQt4.QtGui import QIcon, QTreeWidgetItem, QPushButton, QStyledItemDelegate, QApplication, QIcon
+from PyQt4.QtGui import QIcon, QTreeWidgetItem, QPushButton
 
-from roam.uifiles import sync_widget, sync_base
-from roam.syncing.replication import SyncProvider
+from roam.ui.uifiles import sync_widget, sync_base
 from roam.flickwidget import FlickCharm
 
 

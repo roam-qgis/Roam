@@ -4,7 +4,7 @@ from PyQt4.QtGui import QWidget, QDialog, QMainWindow
 
 from roam import resources_rc
 
-from roam import (ui_projectwidget, ui_listmodules, ui_listfeatures, ui_helpviewer,
+from roam.ui import (ui_projectwidget, ui_listmodules, ui_listfeatures, ui_helpviewer,
                  ui_helppage, ui_datatimerpicker, ui_settings, ui_infodock, ui_mainwindow, ui_sync,
                  ui_dataentrywidget, ui_deletefeature, ui_imageviewer)
 

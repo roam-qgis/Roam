@@ -24,7 +24,7 @@ style = """QPushButton {
         background-color: rgb(211, 228, 255);
      }"""
 
-htmlpath = os.path.join(os.path.dirname(__file__), "error.html")
+htmlpath = os.path.join(os.path.dirname(__file__), "templates/error.html")
 
 
 class MessageBar(QgsMessageBar):

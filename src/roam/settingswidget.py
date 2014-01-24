@@ -1,10 +1,9 @@
-import os
 from PyQt4.QtCore import pyqtSignal
 from qgis.core import QgsGPSDetector, QGis
 
 import roam
 import roam.utils as utils
-from roam.uifiles import settings_widget, settings_base
+from roam.ui.uifiles import settings_widget, settings_base
 
 
 class SettingsWidget(settings_widget, settings_base):

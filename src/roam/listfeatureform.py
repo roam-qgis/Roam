@@ -1,10 +1,8 @@
-import resources_rc
-
-from PyQt4.QtGui import QDialog, QListWidgetItem, QApplication, QIcon
+from PyQt4.QtGui import QDialog, QListWidgetItem, QIcon
 from PyQt4.QtCore import pyqtSignal, Qt
 from qgis.core import QgsFeature, QgsVectorLayer, QgsExpression
 
-from roam.uifiles import features_widget, features_base
+from roam.ui.uifiles import features_widget
 
 
 class ListFeaturesForm(features_widget, QDialog):

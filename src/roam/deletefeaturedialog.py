@@ -1,7 +1,7 @@
-from PyQt4.QtCore import Qt, QEvent
-from PyQt4.QtGui import QDialog, QApplication
+from PyQt4.QtCore import Qt
+from PyQt4.QtGui import QDialog
 
-from uifiles import featurefeature_dialog
+from roam.ui.uifiles import featurefeature_dialog
 
 
 class DeleteFeatureDialog(featurefeature_dialog, QDialog):

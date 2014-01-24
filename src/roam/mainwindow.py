@@ -1,4 +1,10 @@
-from PyQt4.QtCore import Qt, QFileInfo, QDir, QSize, QModelIndex, QEvent
+from functools import partial
+from collections import defaultdict
+import getpass
+import traceback
+import os
+
+from PyQt4.QtCore import Qt, QFileInfo, QDir, QSize
 from PyQt4.QtGui import (QActionGroup,
                         QWidget,
                         QSizePolicy,
@@ -6,17 +12,12 @@ from PyQt4.QtGui import (QActionGroup,
                         QApplication,
                         QPixmap,
                         QColor,
-                        QMessageBox,
                         QStandardItemModel,
                         QStandardItem,
-                        QItemSelectionModel,
                         QIcon,
-                        QToolBar,
                         QComboBox,
-                        QToolButton,
                         QAction,
                         QCursor, QFrame, QDesktopServices)
-
 from qgis.core import (QgsProjectBadLayerHandler,
                         QgsPalLabeling,
                         QgsMapLayerRegistry,
@@ -31,19 +32,10 @@ from qgis.gui import (QgsMessageBar,
                         QgsRubberBand,
                         QgsMapCanvas)
 
-from functools import partial
-from collections import defaultdict
-
-import getpass
-import traceback
-import sys
-import os
-
 from roam.gps_action import GPSAction
 from roam.dataentrywidget import DataEntryWidget
-from roam.uifiles import mainwindow_widget, mainwindow_base
+from roam.ui.uifiles import mainwindow_widget, mainwindow_base
 from roam.listmodulesdialog import ProjectsWidget
-from roam.floatingtoolbar import FloatingToolBar
 from roam.settingswidget import SettingsWidget
 from roam.projectparser import ProjectParser
 from roam.project import Project, NoMapToolConfigured, ErrorInMapTool

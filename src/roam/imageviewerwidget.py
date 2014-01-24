@@ -1,5 +1,5 @@
 from PyQt4.QtCore import Qt
-from uifiles import imageviewer_widget, imageviewer_base
+from roam.ui.uifiles import imageviewer_widget, imageviewer_base
 
 
 class ImageViewer(imageviewer_widget, imageviewer_base):
