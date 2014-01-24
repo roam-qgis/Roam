@@ -21,7 +21,6 @@ def image_handler(key, value, **kwargs):
                     </a>'''
 
     imagetype = kwargs.get('imagetype', 'base64' )
-    global images
     images[key] = (value, imagetype)
     if imagetype == 'base64':
         src = 'data:image/png;base64,${}'.format(value.toBase64())

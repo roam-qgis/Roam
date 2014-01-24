@@ -174,6 +174,7 @@ class FeatureFormBase(QWidget):
     loadform = pyqtSignal()
     rejected = pyqtSignal(str)
     enablesave = pyqtSignal(bool)
+    openimage = pyqtSignal(object)
 
     def __init__(self, form, formconfig, feature, defaults, parent):
         super(FeatureFormBase, self).__init__(parent)
@@ -205,13 +206,9 @@ class FeatureFormBase(QWidget):
         for wrapper in widgetwrappers:
             wrapper.validate()
 
-    def bind(self, values):
+    def setupui(self):
         """
-        Binds the given feature to the to the feature form.
-        :param feature:
-        :param defaults: The lookup containing the default values.  Note: This is only used to toggle
-        the save buttons.  Default values should be set before the feature is given to the bind function.
-        :return:
+        Setup the widget in the form
         """
         widgetsconfig = self.formconfig['widgets']
 
@@ -220,6 +217,7 @@ class FeatureFormBase(QWidget):
             field = config['field'].lower()
             widget = self.findcontrol(field)
             if widget is None:
+                utils.warning("No widget named {} found".format(field))
                 continue
 
             label = self.findcontrol("{}_label".format(field))
@@ -238,6 +236,10 @@ class FeatureFormBase(QWidget):
                 utils.warning(ex.msg)
                 continue
 
+            # Connect the
+            if hasattr(widgetwrapper, "openimage"):
+                widgetwrapper.openimage.connect(self.openimage.emit)
+
             readonlyrules = config.get('read-only-rules', [])
 
             if self.editingmode and 'editing' in readonlyrules:
@@ -253,15 +255,19 @@ class FeatureFormBase(QWidget):
                 widgetwrapper.setrequired()
                 widgetwrapper.validationupdate.connect(self.updaterequired)
 
-            try:
-                value = nullcheck(values[field])
-            except KeyError:
-                utils.warning("Can't find field {}".format(field))
-                value = None
-
-            widgetwrapper.setvalue(value)
             self._bindsavebutton(field)
             self.boundwidgets[field] = widgetwrapper
+
+    def bindvalues(self, values):
+        """
+        Bind the values to the form.
+        """
+        for field, value in values.iteritems():
+            value = nullcheck(value)
+            try:
+                self.boundwidgets[field].setvalue(value)
+            except KeyError:
+                utils.info("Can't find control for field {}. Ignoring".format(field))
 
         self.validateall(self.boundwidgets.itervalues())
 
@@ -288,7 +294,6 @@ class FeatureFormBase(QWidget):
         try:
             widget = self.findChildren(QWidget, regex)[0]
         except IndexError:
-            utils.warning("Could not find control for {}".format(name))
             widget = None
         return widget
 

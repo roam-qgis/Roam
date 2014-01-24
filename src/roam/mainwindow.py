@@ -52,6 +52,7 @@ from roam.listfeatureform import ListFeaturesForm
 from roam.infodock import InfoDock
 from roam.syncwidget import SyncWidget
 from roam.helpviewdialog import HelpPage
+from roam.imageviewerwidget import ImageViewer
 
 import roam.messagebaritems
 import roam.utils
@@ -145,6 +146,7 @@ class MainWindow(mainwindow_widget, mainwindow_base):
         self.dataentrywidget.featuredeleted.connect(self.featuredeleted)
         self.dataentrywidget.failedsave.connect(self.failSave)
         self.dataentrywidget.helprequest.connect(self.showhelp)
+        self.dataentrywidget.openimage.connect(self.openimage)
 
         def createSpacer(width=0, height=0):
             widget = QWidget()
@@ -247,12 +249,9 @@ class MainWindow(mainwindow_widget, mainwindow_base):
         self.openimage(pix)
 
     def openimage(self, pixmap):
-        label = QLabel(self.stackedWidget)
-        label.mouseReleaseEvent = lambda x: label.hide()
-        label.resize(self.stackedWidget.size())
-        pix = pixmap.scaledToHeight(label.height(), Qt.SmoothTransformation)
-        label.setPixmap(pix)
-        label.show()
+        viewer = ImageViewer(self.stackedWidget)
+        viewer.resize(self.stackedWidget.size())
+        viewer.openimage(pixmap)
 
     def updatecombo(self, *args):
         self.dataentrycombo.setMinimumHeight(0)

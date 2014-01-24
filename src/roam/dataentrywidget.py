@@ -93,6 +93,7 @@ class DataEntryWidget(dataentry_widget, dataentry_base):
     featuredeleted = pyqtSignal()
     failedsave = pyqtSignal(list)
     helprequest = pyqtSignal(str)
+    openimage = pyqtSignal(object)
 
     def __init__(self, canvas, bar, parent=None):
         super(DataEntryWidget, self).__init__(parent)
@@ -271,6 +272,8 @@ class DataEntryWidget(dataentry_widget, dataentry_base):
         fields = [field.name().lower() for field in self.fields]
         values = CaseInsensitiveDict(zip(fields, feature.attributes()))
 
+        self.featureform.setupui()
+
         try:
             self.featureform.load(feature, layers, values)
         except featureform.RejectedException as rejected:
@@ -278,8 +281,9 @@ class DataEntryWidget(dataentry_widget, dataentry_base):
             return
 
         self.featureform.formvalidation.connect(self.formvalidation)
+        self.featureform.openimage.connect(self.openimage.emit)
         self.featureform.helprequest.connect(self.helprequest.emit)
-        self.featureform.bind(values)
+        self.featureform.bindvalues(values)
 
         self.actionSave.setVisible(True)
         self.setwidget(self.featureform)
