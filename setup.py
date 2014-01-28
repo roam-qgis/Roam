@@ -69,9 +69,10 @@ projectupdater_target = dict(
 curpath = os.path.dirname(os.path.realpath(__file__))
 appsrcopyFilesath = os.path.join(curpath, "src", 'roam')
 projectinstallerpath = os.path.join(curpath, "src", 'project_installer')
+configmangerpath = os.path.join(curpath, "src", 'configmanager')
 
 def buildqtfiles():
-    for folder in [appsrcopyFilesath, projectinstallerpath]:
+    for folder in [appsrcopyFilesath, projectinstallerpath, configmangerpath]:
         for root, dirs, files in os.walk(folder):
             for file in files:
                 filepath = os.path.join(root, file)
