@@ -279,7 +279,7 @@ class FeatureFormBase(QWidget):
                 return button.isChecked()
 
         savedvalues = {}
-        values = {}
+        values = CaseInsensitiveDict()
         for field, wrapper in self.boundwidgets.iteritems():
             value = wrapper.value()
             if shouldsave(field):
