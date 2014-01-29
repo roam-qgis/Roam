@@ -56,9 +56,13 @@ class ConfigManagerDialog(ui_configmanager.Ui_ProjectInstallerDialog, QDialog):
         self.setupUi(self)
         self.projectmodel = ProjectModel()
         self.projectList.setModel(self.projectmodel)
-        self.projectList.curre
+        self.projectList.selectionModel().currentChanged.connect(self.updatecurrentproject)
 
     def loadprojects(self, projects):
         self.projectmodel.loadprojects(projects)
+
+    def updatecurrentproject(self, index, _):
+        project = index.data(Qt.UserRole)
+        self.projectwidget.setproject(project)
 
 
