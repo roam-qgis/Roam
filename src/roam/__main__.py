@@ -15,7 +15,7 @@ from functools import partial
 
 prefixpath, settingspath = roam.environ.setup(sys.argv)
 
-from qgis.core import QgsApplication, QgsPythonRunner, QgsProviderRegistry
+from qgis.core import QgsApplication
 
 from PyQt4 import uic
 from PyQt4.QtGui import QApplication, QFont, QImageReader, QImageWriter
@@ -78,8 +78,7 @@ try:
 except IndexError:
     projectpath = os.path.join(os.getcwd(), "projects")
 
-sys.path.append(projectpath)
-
+projectpath = roam.environ.projectpath(sys.argv)
 projects = roam.project.getProjects(projectpath)
 window.loadprojects(projects)
 

@@ -31,4 +31,14 @@ def setup(argv):
         prefixpath = r"C:\OSGeo4W\apps\qgis"
         settingspath = os.path.join(apppath, "..", "settings.config")
 
+
     return prefixpath, settingspath
+
+
+def projectpath(argv):
+    try:
+        _projectpath = argv[1]
+    except IndexError:
+        _projectpath = os.path.join(os.getcwd(), "projects")
+    sys.path.append(_projectpath)
+    return _projectpath

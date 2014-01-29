@@ -58,7 +58,7 @@
         <number>0</number>
        </property>
        <item>
-        <widget class="QListWidget" name="mOptionsListWidget">
+        <widget class="QListView" name="projectList">
          <property name="minimumSize">
           <size>
            <width>58</width>
@@ -72,15 +72,20 @@
           </size>
          </property>
          <property name="styleSheet">
-          <string notr="true">QListWidget {
+          <string notr="true">QListView {
 	background-color: rgb(85,85,85);
-    padding: 4px;
-	color: white;
+	outline: 0;
 }
 
-QListWidget::item::selected {
+QListView::item::selected {
   background-color:palette(Window);
   color: black;
+  padding-right: 0px;
+}
+
+QListView::item {
+  padding: 5px;
+  color: white;
 }
 </string>
          </property>
@@ -141,7 +146,7 @@ QListWidget::item::selected {
        <item>
         <widget class="QTabWidget" name="tabWidget">
          <property name="currentIndex">
-          <number>0</number>
+          <number>1</number>
          </property>
          <widget class="QWidget" name="tab">
           <attribute name="title">
