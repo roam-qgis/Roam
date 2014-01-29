@@ -85,6 +85,10 @@ class ProjectWidget(Ui_Form, QWidget):
     def updatecurrentform(self, index, _):
         form = index.data(Qt.UserRole)
         self.formNameText.setText(form.name)
+        index = self.layermodel.findlayer(form.layername)
+        if index.isValid():
+            self.layerCombo.setCurrentIndex(index.row())
+
         formtype = form.settings.get("type", "auto")
         index = self.formtypeCombo.findText(formtype)
         if index == -1:

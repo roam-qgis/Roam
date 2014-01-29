@@ -78,20 +78,23 @@ class QgsLayerModel(QAbstractItemModel):
 
     def getLayer(self, index):
         try:
-            layer =  self.layers[index]
+            layer = self.layers[index]
             if layer.type() in self.layerfilter:
                 return layer
         except IndexError:
             return None
 
     def data(self, index, role):
-        if not index.isValid(): return None
-        if index.internalPointer() is None: return
+        if not index.isValid() or index.internalPointer() is None:
+            return
 
         layer = index.internalPointer()
         if role == Qt.DisplayRole:
             return layer.name()
         elif role == Qt.DecorationRole:
+            if layer.type() == QgsMapLayer.RasterLayer:
+                return
+
             geomtype = layer.geometryType()
             return QIcon(icons.get(geomtype, None))
         elif role == Qt.FontRole:
