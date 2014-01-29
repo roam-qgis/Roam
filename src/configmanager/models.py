@@ -204,6 +204,17 @@ class WidgetsModel(QAbstractItemModel):
     def __init__(self, parent=None):
         super(WidgetsModel, self).__init__(parent)
 
+    def findwidget(self, widgettype):
+        """
+        Find a field in the model by it's name
+        """
+        startindex = self.index(0, 0)
+        items = self.match(startindex, Qt.DisplayRole, widgettype, -1)
+        for item in items:
+            if item.data(Qt.DisplayRole) == widgettype:
+                return item
+        return None
+
     def index(self, row, column, parent=QModelIndex()):
         widget = self.getWidget(row)
         if not widget: QModelIndex()

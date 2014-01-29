@@ -111,9 +111,11 @@ class ProjectWidget(Ui_Form, QWidget):
     def updatecurrentwidget(self, index, _):
         widget = index.data(Qt.UserRole)
         widgettype = widget['widget']
-        print widgettype
         field = widget['field']
-        pass
+        self.fieldList.setEditText(field)
+        index = self.possiblewidgetsmodel.findwidget(widgettype)
+        if index.isValid():
+            self.widgetCombo.setCurrentIndex(index.row())
 
 
 
