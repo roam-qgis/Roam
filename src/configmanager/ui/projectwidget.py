@@ -24,7 +24,7 @@ class ProjectWidget(Ui_Form, QWidget):
         self.formmodel = QStandardItemModel()
         self.widgetmodel = QStandardItemModel()
         self.possiblewidgetsmodel = WidgetsModel()
-        self.layermodel = QgsLayerModel()
+        self.layermodel = QgsLayerModel(watchregistry=False)
 
         self.layerCombo.setModel(self.layermodel)
         self.widgetCombo.setModel(self.possiblewidgetsmodel)
@@ -65,6 +65,7 @@ class ProjectWidget(Ui_Form, QWidget):
         self.canvas.updateScale()
         self.canvas.freeze(False)
         self.canvas.refresh()
+        self.layermodel.updateLayerList(QgsMapLayerRegistry.instance().mapLayers().values())
         self._updateforproject(self.project)
 
     def _updateforproject(self, project):

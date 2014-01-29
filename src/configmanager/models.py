@@ -53,6 +53,7 @@ class QgsLayerModel(QAbstractItemModel):
         except IndexError:
             layers = registy.mapLayers().values()
 
+        self.layers = []
         for layer in layers:
             if layer.type() in self.layerfilter:
                 self.layers.append(layer)
