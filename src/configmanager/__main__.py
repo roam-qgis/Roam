@@ -19,7 +19,7 @@ projects = roam.project.getProjects(projectpath)
 
 dialog = ConfigManagerDialog()
 dialog.loadprojects(projects)
-dialog.exec_()
+dialog.showMaximized()
 
 app.exec_()
 QgsApplication.exitQgis()

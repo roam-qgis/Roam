@@ -6,18 +6,18 @@ from qgis.core import QGis, QgsMapLayerRegistry, QgsMessageLog, QgsMapLayer
 
 import os
 
-from admin_plugin.editorwidgets.core import WidgetsRegistry
+import roam.editorwidgets
 
-import admin_plugin.resources_rc
+import configmanager.ui.resources_rc
 
 plugin_path = os.path.dirname(os.path.realpath(__file__))
 
 registy = QgsMapLayerRegistry.instance()
 icons = {
-    QGis.Point: os.path.join(plugin_path, ":/mIconPointLayer.svg"),
-    QGis.Polygon: os.path.join(plugin_path, ":/mIconPolygonLayer.svg"),
-    QGis.Line: os.path.join(plugin_path, ":/mIconLineLayer.svg"),
-    QGis.NoGeometry: os.path.join(":/mIconTableLayer.png")
+    QGis.Point: ":/icons/PointLayer",
+    QGis.Polygon: ":/icons/PolygonLayer",
+    QGis.Line: ":/icons/LineLayer",
+    QGis.NoGeometry: ":/icons/TableLayer"
 }
 
 
@@ -200,7 +200,7 @@ class WidgetsModel(QAbstractItemModel):
     def __init__(self, parent=None):
         super(WidgetsModel, self).__init__(parent)
 
-    def index(self, row, column, parent = QModelIndex()):
+    def index(self, row, column, parent=QModelIndex()):
         widget = self.getWidget(row)
         if not widget: QModelIndex()
         return self.createIndex(row, column, widget)
@@ -209,25 +209,31 @@ class WidgetsModel(QAbstractItemModel):
         return QModelIndex()
 
     def rowCount(self, parent=QModelIndex()):
-        return len(WidgetsRegistry.widgets)
+        return len(roam.editorwidgets.supportedwidgets)
 
     def columnCount(self, parent=QModelIndex()):
         return 1
 
     def getWidget(self, index):
         try:
-            return WidgetsRegistry.widgets.values()[index]
+            return roam.editorwidgets.supportedwidgets[index]
         except IndexError:
             return None
 
     def data(self, index, role):
-        if not index.isValid(): return None
-        if not index.internalPointer(): return None
+        if not index.isValid():
+            return None
+        if not index.internalPointer():
+            return None
 
-        factory = index.internalPointer()
+        widgettype = index.internalPointer()
         if role == Qt.DisplayRole:
-            return factory.name
+            return widgettype.widgettype
         elif role == Qt.UserRole:
-            return factory
+            return widgetyype
         elif role == Qt.DecorationRole:
-            return QIcon(factory.icon)
+            return widgeticon(widgettype)
+
+
+def widgeticon(widgettype):
+    return QIcon(':/icons/{}'.format(widgettype))

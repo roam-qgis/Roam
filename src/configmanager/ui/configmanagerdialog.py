@@ -57,12 +57,15 @@ class ConfigManagerDialog(ui_configmanager.Ui_ProjectInstallerDialog, QDialog):
         self.projectmodel = ProjectModel()
         self.projectList.setModel(self.projectmodel)
         self.projectList.selectionModel().currentChanged.connect(self.updatecurrentproject)
+        self.projectwidget.adjustSize()
 
     def loadprojects(self, projects):
         self.projectmodel.loadprojects(projects)
 
     def updatecurrentproject(self, index, _):
         project = index.data(Qt.UserRole)
-        self.projectwidget.setproject(project)
+        self.projectwidget.setproject(project, loadqgis=True)
+
+
 
 

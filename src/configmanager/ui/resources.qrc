@@ -1,0 +1,14 @@
+<RCC>
+  <qresource prefix="icons">
+    <file alias="List">..\editorwidgets\icons\list.png</file>
+    <file alias="Image">..\editorwidgets\icons\picture.png</file>
+    <file alias="CheckBox">..\editorwidgets\icons\check.png</file>
+    <file alias="Text">..\editorwidgets\icons\text.png</file>
+    <file alias="TextBlock">..\editorwidgets\icons\text.png</file>
+    <file alias="Date">..\editorwidgets\icons\date.png</file>
+    <file alias="LineLayer">mIconLineLayer.svg</file>
+      <file alias="PointLayer">mIconPointLayer.svg</file>
+      <file alias="PolygonLayer">mIconPolygonLayer.svg</file>
+      <file alias="TableLayer">mIconTableLayer.svg</file>
+  </qresource>
+</RCC>
