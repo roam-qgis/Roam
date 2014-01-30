@@ -2,6 +2,9 @@
 <ui version="4.0">
  <class>ProjectInstallerDialog</class>
  <widget class="QDialog" name="ProjectInstallerDialog">
+  <property name="windowModality">
+   <enum>Qt::ApplicationModal</enum>
+  </property>
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -18,6 +21,9 @@
   </property>
   <property name="windowTitle">
    <string>Options Dialog Template</string>
+  </property>
+  <property name="sizeGripEnabled">
+   <bool>true</bool>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <property name="spacing">

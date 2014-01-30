@@ -237,15 +237,10 @@ class WidgetsModel(QAbstractItemModel):
         self.widgets = widgets
         self.endResetModel()
 
-    def findwidget(self, widgettype):
-        """
-        Find a field in the model by it's name
-        """
-        return self.index(0, 0)
-
     def index(self, row, column, parent=QModelIndex()):
         widget = self.getWidget(row)
-        if not widget: QModelIndex()
+        if not widget:
+            return QModelIndex()
         return self.createIndex(row, column, widget)
 
     def parent(self, index):
@@ -262,6 +257,16 @@ class WidgetsModel(QAbstractItemModel):
             return self.widgets[index]
         except IndexError:
             return None
+
+    def setData(self, index, value, role=None):
+        if role == Qt.UserRole:
+            row = index.row()
+            startdata = self.data(index, Qt.UserRole)
+            self.widgets[row] = value
+            self.dataChanged.emit(index, index)
+            return True
+        else:
+            super(WidgetsModel, self).setData(index, value, role)
 
     def data(self, index, role):
         if not index.isValid():

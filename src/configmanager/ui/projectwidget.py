@@ -11,6 +11,7 @@ from qgis.gui import QgsMapCanvas
 from configmanager.ui.ui_projectwidget import Ui_Form
 from configmanager.models import widgeticon, WidgetsModel, QgsLayerModel, QgsFieldModel, LayerFilter
 
+import roam.editorwidgets
 import roam.projectparser
 import roam.yaml
 import roam
@@ -66,19 +67,34 @@ class ProjectWidget(Ui_Form, QWidget):
         #widget settings
         self.fieldList.currentIndexChanged.connect(self._save_field)
         self.fieldList.editTextChanged.connect(self._save_fieldname)
+        self.requiredCheck.toggled.connect(self._save_required)
+
+        self.loadwidgettypes()
+
+    def loadwidgettypes(self):
+        for widgettype in roam.editorwidgets.supportedwidgets:
+            item = QStandardItem(widgettype.widgettype)
+            item.setData(widgettype, Qt.UserRole)
+            item.setIcon(QIcon(widgeticon(widgettype.widgettype)))
+            self.widgetCombo.model().appendRow(item)
 
     @property
     def currentform(self):
         """
         Return the current selected form.
         """
-        index = self.formlist.selectedIndexes()[0]
+        index = self.formlist.selectionModel().currentIndex()
         return index.data(Qt.UserRole), index
 
     @property
     def currentwidget(self):
-        index = self.widgetlist.selectedIndexes()[0]
+        index = self.widgetlist.selectionModel().currentIndex()
         return index.data(Qt.UserRole), index
+
+    def _save_required(self, checked):
+        widget, index = self.currentwidget
+        widget['required'] = checked
+        self.widgetmodel.setData(index, widget, Qt.UserRole)
 
     def _save_field(self, index):
         self._save_fieldname(self.fieldList.currentText())
@@ -86,7 +102,7 @@ class ProjectWidget(Ui_Form, QWidget):
     def _save_fieldname(self, name):
         widget, index = self.currentwidget
         widget['field'] = name
-
+        self.widgetmodel.dataChanged.emit(index, index)
 
     def _save_selectionlayers(self, index, layer, value):
         config = self.project.settings
@@ -249,9 +265,9 @@ class ProjectWidget(Ui_Form, QWidget):
             self.fieldList.setEditText(field)
         self.fieldList.blockSignals(False)
 
-        index = self.possiblewidgetsmodel.findwidget(widgettype)
-        if index.isValid():
-            self.widgetCombo.setCurrentIndex(index.row())
+        index = self.widgetCombo.findText(widgettype)
+        if index > -1:
+            self.widgetCombo.setCurrentIndex(index)
 
     def _saveproject(self):
         """

@@ -58,6 +58,7 @@ class ConfigManagerDialog(ui_configmanager.Ui_ProjectInstallerDialog, QDialog):
         self.projectList.setModel(self.projectmodel)
         self.projectList.selectionModel().currentChanged.connect(self.updatecurrentproject)
         self.projectwidget.adjustSize()
+        self.setWindowFlags(Qt.Window)
 
     def loadprojects(self, projects):
         self.projectmodel.loadprojects(projects)
