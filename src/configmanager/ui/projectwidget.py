@@ -2,7 +2,7 @@ import os
 import copy
 from PyQt4.Qsci import QsciLexerYAML
 
-from PyQt4.QtCore import Qt, QDir, QFileInfo
+from PyQt4.QtCore import Qt, QDir, QFileInfo, pyqtSignal
 from PyQt4.QtGui import QWidget, QStandardItemModel, QStandardItem, QIcon
 
 from qgis.core import QgsProject, QgsMapLayerRegistry, QgsPalLabeling
@@ -17,6 +17,8 @@ import roam
 
 
 class ProjectWidget(Ui_Form, QWidget):
+    projectsaved = pyqtSignal(object, object)
+
     def __init__(self, parent=None):
         super(ProjectWidget, self).__init__(parent)
         self.setupUi(self)
@@ -27,10 +29,11 @@ class ProjectWidget(Ui_Form, QWidget):
 
         self.fieldsmodel = QgsFieldModel()
         self.formmodel = QStandardItemModel()
-        self.widgetmodel = QStandardItemModel()
-        self.possiblewidgetsmodel = WidgetsModel()
+        self.widgetmodel = WidgetsModel()
+        self.possiblewidgetsmodel = QStandardItemModel()
         self.layermodel = QgsLayerModel(watchregistry=True)
         self.selectlayermodel = QgsLayerModel(watchregistry=True, checkselect=True)
+        self.selectlayermodel.layerchecked.connect(self._save_selectionlayers)
 
         self.layerfilter = LayerFilter()
         self.layerfilter.setSourceModel(self.layermodel)
@@ -58,6 +61,11 @@ class ProjectWidget(Ui_Form, QWidget):
         # Form settings
         self.formLabelText.textChanged.connect(self._save_formname)
         self.layerCombo.currentIndexChanged.connect(self._save_layer)
+        self.formtypeCombo.currentIndexChanged.connect(self._save_formtype)
+
+        #widget settings
+        self.fieldList.currentIndexChanged.connect(self._save_field)
+        self.fieldList.editTextChanged.connect(self._save_fieldname)
 
     @property
     def currentform(self):
@@ -65,16 +73,45 @@ class ProjectWidget(Ui_Form, QWidget):
         Return the current selected form.
         """
         index = self.formlist.selectedIndexes()[0]
-        return index.data(Qt.UserRole)
+        return index.data(Qt.UserRole), index
+
+    @property
+    def currentwidget(self):
+        index = self.widgetlist.selectedIndexes()[0]
+        return index.data(Qt.UserRole), index
+
+    def _save_field(self, index):
+        self._save_fieldname(self.fieldList.currentText())
+
+    def _save_fieldname(self, name):
+        widget, index = self.currentwidget
+        widget['field'] = name
+
+
+    def _save_selectionlayers(self, index, layer, value):
+        config = self.project.settings
+        selectlayers = config.get('selectlayers', [])
+        layername = unicode(layer.name())
+        if value == Qt.Checked:
+            selectlayers.append(layername)
+        else:
+            selectlayers.remove(layername)
+
+        self.selectlayermodel.dataChanged.emit(index, index)
+
+    def _save_formtype(self, index):
+        formtype = self.formtypeCombo.currentText()
+        form, index = self.currentform
+        form.settings['type'] = formtype
 
     def _save_formname(self, text):
         """
         Save the form label to the settings file.
         """
         try:
-            form = self.currentform
+            form, index = self.currentform
             form.settings['label'] = text
-            print form.settings
+            self.formmodel.dataChanged.emit(index, index)
         except IndexError:
             return
 
@@ -84,14 +121,19 @@ class ProjectWidget(Ui_Form, QWidget):
         """
         index = self.layerfilter.index(index, 0)
         layer = index.data(Qt.UserRole)
+        if not layer:
+            return
+
         form = self.currentform
         form.settings['layer'] = layer.name()
+        self.formmodel.dataChanged.emit(index, index)
         self.updatefields(layer)
 
     def setproject(self, project, loadqgis=True):
         """
         Set the widgets active project.
         """
+        self.startsettings = copy.deepcopy(project.settings)
         self.project = project
         self.selectlayermodel.config = project.settings
         if loadqgis:
@@ -174,16 +216,7 @@ class ProjectWidget(Ui_Form, QWidget):
         else:
             self.formtypeCombo.setCurrentIndex(index)
 
-        def loadwidgets(widgets):
-            self.widgetmodel.clear()
-            for widget in widgets:
-                widgettype = widget['widget']
-                item = QStandardItem(widgettype)
-                item.setIcon(widgeticon(widgettype))
-                item.setData(widget, Qt.UserRole)
-                self.widgetmodel.appendRow(item)
-
-        loadwidgets(widgets)
+        self.widgetmodel.loadwidgets(widgets)
 
         index = self.widgetmodel.index(0, 0)
         if index.isValid():
@@ -202,13 +235,25 @@ class ProjectWidget(Ui_Form, QWidget):
         widget = index.data(Qt.UserRole)
         widgettype = widget['widget']
         field = widget['field']
+        required = widget.get('required', False)
 
-        self.fieldList.setEditText(field)
+        self.requiredCheck.blockSignals(True)
+        self.requiredCheck.setChecked(required)
+        self.requiredCheck.blockSignals(False)
+
+        self.fieldList.blockSignals(True)
+        index = self.fieldList.findText(field)
+        if index > -1:
+            self.fieldList.setCurrentIndex(index)
+        else:
+            self.fieldList.setEditText(field)
+        self.fieldList.blockSignals(False)
+
         index = self.possiblewidgetsmodel.findwidget(widgettype)
         if index.isValid():
             self.widgetCombo.setCurrentIndex(index.row())
 
-    def saveproject(self):
+    def _saveproject(self):
         """
         Save the project config to disk.
         """
@@ -221,9 +266,8 @@ class ProjectWidget(Ui_Form, QWidget):
         settings['description'] = description
         settings['version'] = version
 
-        settingspath = os.path.join(self.project.folder, "settings.config")
+        self.projectsaved.emit(self.startsettings, self.project)
 
-        with open(settingspath, 'w') as f:
-            roam.yaml.dump(data=settings, stream=f, default_flow_style=False)
+        self.startsettings = copy.deepcopy(settings)
 
 

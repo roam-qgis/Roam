@@ -105,7 +105,7 @@ QListView::item {
       </sizepolicy>
      </property>
      <property name="currentIndex">
-      <number>0</number>
+      <number>1</number>
      </property>
      <widget class="QWidget" name="page">
       <layout class="QFormLayout" name="formLayout">
@@ -191,31 +191,6 @@ QListView::item {
        <item row="0" column="0">
         <layout class="QVBoxLayout" name="verticalLayout">
          <item>
-          <widget class="QListView" name="formlist">
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="Maximum" vsizetype="Expanding">
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
-           <property name="maximumSize">
-            <size>
-             <width>300</width>
-             <height>16777215</height>
-            </size>
-           </property>
-           <property name="alternatingRowColors">
-            <bool>true</bool>
-           </property>
-           <property name="selectionMode">
-            <enum>QAbstractItemView::SingleSelection</enum>
-           </property>
-           <property name="selectionBehavior">
-            <enum>QAbstractItemView::SelectItems</enum>
-           </property>
-          </widget>
-         </item>
-         <item>
           <layout class="QHBoxLayout" name="horizontalLayout">
            <item>
             <widget class="QToolButton" name="toolButton">
@@ -248,6 +223,31 @@ QListView::item {
             </widget>
            </item>
           </layout>
+         </item>
+         <item>
+          <widget class="QListView" name="formlist">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Maximum" vsizetype="Expanding">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="maximumSize">
+            <size>
+             <width>300</width>
+             <height>16777215</height>
+            </size>
+           </property>
+           <property name="alternatingRowColors">
+            <bool>true</bool>
+           </property>
+           <property name="selectionMode">
+            <enum>QAbstractItemView::SingleSelection</enum>
+           </property>
+           <property name="selectionBehavior">
+            <enum>QAbstractItemView::SelectItems</enum>
+           </property>
+          </widget>
          </item>
         </layout>
        </item>
@@ -432,19 +432,6 @@ QListView::item {
              <item row="3" column="1" colspan="2">
               <layout class="QVBoxLayout" name="verticalLayout_2">
                <item>
-                <widget class="QListView" name="widgetlist">
-                 <property name="alternatingRowColors">
-                  <bool>true</bool>
-                 </property>
-                 <property name="selectionMode">
-                  <enum>QAbstractItemView::SingleSelection</enum>
-                 </property>
-                 <property name="selectionBehavior">
-                  <enum>QAbstractItemView::SelectItems</enum>
-                 </property>
-                </widget>
-               </item>
-               <item>
                 <layout class="QHBoxLayout" name="horizontalLayout_2">
                  <item>
                   <widget class="QToolButton" name="toolButton_3">
@@ -474,6 +461,19 @@ QListView::item {
                   </widget>
                  </item>
                 </layout>
+               </item>
+               <item>
+                <widget class="QListView" name="widgetlist">
+                 <property name="alternatingRowColors">
+                  <bool>true</bool>
+                 </property>
+                 <property name="selectionMode">
+                  <enum>QAbstractItemView::SingleSelection</enum>
+                 </property>
+                 <property name="selectionBehavior">
+                  <enum>QAbstractItemView::SelectItems</enum>
+                 </property>
+                </widget>
                </item>
               </layout>
              </item>
@@ -610,7 +610,7 @@ QListView::item {
    <sender>toolButton_6</sender>
    <signal>pressed()</signal>
    <receiver>Form</receiver>
-   <slot>saveproject()</slot>
+   <slot>_saveproject()</slot>
    <hints>
     <hint type="sourcelabel">
      <x>168</x>
@@ -624,6 +624,6 @@ QListView::item {
   </connection>
  </connections>
  <slots>
-  <slot>saveproject()</slot>
+  <slot>_saveproject()</slot>
  </slots>
 </ui>

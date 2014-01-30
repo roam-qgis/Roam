@@ -19,19 +19,20 @@ projectpath = roam.environ.projectpath(sys.argv)
 projects = list(roam.project.getProjects(projectpath))
 
 
-def backupprojects(projects):
+def saveproject(oldsettings, project):
     """
-    Backup the projects that are already there so we can just edit the
-    settings in the config manager with no fear.
+    Save the project config to disk.
     """
-    for project in projects:
-        settingspath = os.path.join(project.folder, "settings.config")
-        import shutil
-        shutil.copy(settingspath, settingspath + '~')
+    def writesettings(settings, path):
+        with open(path, 'w') as f:
+            roam.yaml.dump(data=settings, stream=f, default_flow_style=False)
+
+    settingspath = os.path.join(project.folder, "settings.config")
+    writesettings(oldsettings, settingspath + '~')
+    writesettings(project.settings, settingspath)
 
 dialog = ConfigManagerDialog()
-# Backup before we load.
-backupprojects(projects)
+dialog.projectwidget.projectsaved.connect(saveproject)
 dialog.loadprojects(projects)
 dialog.showMaximized()
 

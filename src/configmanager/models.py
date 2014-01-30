@@ -1,4 +1,4 @@
-from PyQt4.QtCore import QAbstractItemModel, QModelIndex, Qt
+from PyQt4.QtCore import QAbstractItemModel, QModelIndex, Qt, pyqtSignal
 from PyQt4.QtGui import (QComboBox, QListView, QDialog, QGridLayout, QIcon, QFont, QTextBlockUserData,
                          QItemDelegate, QSortFilterProxyModel)
 
@@ -37,6 +37,8 @@ class LayerFilter(QSortFilterProxyModel):
 
 
 class QgsLayerModel(QAbstractItemModel):
+    layerchecked = pyqtSignal(object, object, int)
+
     def __init__(self, watchregistry=True, checkselect=False, parent=None):
         super(QgsLayerModel, self).__init__(parent)
         self.config = {}
@@ -105,14 +107,7 @@ class QgsLayerModel(QAbstractItemModel):
 
     def setData(self, index, value, role=None):
         if role == Qt.CheckStateRole:
-            selectlayers = self.config.get('selectlayers', [])
-            layername = unicode(index.data(Qt.UserRole).name())
-            if value == Qt.Checked:
-                selectlayers.append(layername)
-            else:
-                selectlayers.remove(layername)
-
-            self.config['selectlayers'] = selectlayers
+            self.layerchecked.emit(index, index.data(Qt.UserRole), value)
 
         return super(QgsLayerModel, self).setData(index, value, role)
 
@@ -235,17 +230,18 @@ class QgsFieldModel(QAbstractItemModel):
 class WidgetsModel(QAbstractItemModel):
     def __init__(self, parent=None):
         super(WidgetsModel, self).__init__(parent)
+        self.widgets = []
+
+    def loadwidgets(self, widgets):
+        self.beginResetModel()
+        self.widgets = widgets
+        self.endResetModel()
 
     def findwidget(self, widgettype):
         """
         Find a field in the model by it's name
         """
-        startindex = self.index(0, 0)
-        items = self.match(startindex, Qt.DisplayRole, widgettype, -1)
-        for item in items:
-            if item.data(Qt.DisplayRole) == widgettype:
-                return item
-        return None
+        return self.index(0, 0)
 
     def index(self, row, column, parent=QModelIndex()):
         widget = self.getWidget(row)
@@ -256,14 +252,14 @@ class WidgetsModel(QAbstractItemModel):
         return QModelIndex()
 
     def rowCount(self, parent=QModelIndex()):
-        return len(roam.editorwidgets.supportedwidgets)
+        return len(self.widgets)
 
     def columnCount(self, parent=QModelIndex()):
         return 1
 
     def getWidget(self, index):
         try:
-            return roam.editorwidgets.supportedwidgets[index]
+            return self.widgets[index]
         except IndexError:
             return None
 
@@ -273,13 +269,13 @@ class WidgetsModel(QAbstractItemModel):
         if not index.internalPointer():
             return None
 
-        widgettype = index.internalPointer()
+        widget = index.internalPointer()
         if role == Qt.DisplayRole:
-            return widgettype.widgettype
+            return "{} ({})".format(widget['widget'], widget['field'])
         elif role == Qt.UserRole:
-            return widgetyype
+            return widget
         elif role == Qt.DecorationRole:
-            return widgeticon(widgettype)
+            return widgeticon(widget['widget'])
 
 
 def widgeticon(widgettype):
