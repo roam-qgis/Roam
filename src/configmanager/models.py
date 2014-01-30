@@ -30,6 +30,9 @@ class LayerFilter(QSortFilterProxyModel):
 
     def filterAcceptsRow(self, sourcerow, soureparent):
         index = self.sourceModel().index(sourcerow, 0, soureparent)
+        if index.data(Qt.UserRole).type() == QgsMapLayer.RasterLayer:
+            return False
+
         return not index.data(Qt.UserRole).geometryType() in self.geomtypes
 
 
@@ -68,8 +71,11 @@ class QgsLayerModel(QAbstractItemModel):
 
         self.layers = []
         for layer in layers:
-            if layer.type() in self.layerfilter:
-                self.layers.append(layer)
+            try:
+                if layer.type() in self.layerfilter:
+                    self.layers.append(layer)
+            except AttributeError:
+                continue
         self.endResetModel()
 
     def flags(self, index):
@@ -96,6 +102,19 @@ class QgsLayerModel(QAbstractItemModel):
                 return layer
         except IndexError:
             return None
+
+    def setData(self, index, value, role=None):
+        if role == Qt.CheckStateRole:
+            selectlayers = self.config.get('selectlayers', [])
+            layername = unicode(index.data(Qt.UserRole).name())
+            if value == Qt.Checked:
+                selectlayers.append(layername)
+            else:
+                selectlayers.remove(layername)
+
+            self.config['selectlayers'] = selectlayers
+
+        return super(QgsLayerModel, self).setData(index, value, role)
 
     def data(self, index, role):
         if not index.isValid() or index.internalPointer() is None:

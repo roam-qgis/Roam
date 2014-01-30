@@ -1,3 +1,4 @@
+import os
 import sys
 
 print sys.path
@@ -15,9 +16,22 @@ QgsApplication.setPrefixPath(prefixpath, True)
 QgsApplication.initQgis()
 
 projectpath = roam.environ.projectpath(sys.argv)
-projects = roam.project.getProjects(projectpath)
+projects = list(roam.project.getProjects(projectpath))
+
+
+def backupprojects(projects):
+    """
+    Backup the projects that are already there so we can just edit the
+    settings in the config manager with no fear.
+    """
+    for project in projects:
+        settingspath = os.path.join(project.folder, "settings.config")
+        import shutil
+        shutil.copy(settingspath, settingspath + '~')
 
 dialog = ConfigManagerDialog()
+# Backup before we load.
+backupprojects(projects)
 dialog.loadprojects(projects)
 dialog.showMaximized()
 

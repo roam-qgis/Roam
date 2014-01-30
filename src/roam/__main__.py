@@ -15,7 +15,7 @@ from functools import partial
 
 prefixpath, settingspath = roam.environ.setup(sys.argv)
 
-from qgis.core import QgsApplication
+from qgis.core import QgsApplication, QgsProviderRegistry
 
 from PyQt4 import uic
 from PyQt4.QtGui import QApplication, QFont, QImageReader, QImageWriter

@@ -61,6 +61,8 @@ class ConfigManagerDialog(ui_configmanager.Ui_ProjectInstallerDialog, QDialog):
 
     def loadprojects(self, projects):
         self.projectmodel.loadprojects(projects)
+        index = self.projectmodel.index(0, 0)
+        self.projectList.setCurrentIndex(index)
 
     def updatecurrentproject(self, index, _):
         project = index.data(Qt.UserRole)

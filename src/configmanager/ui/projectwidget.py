@@ -13,6 +13,7 @@ from configmanager.models import widgeticon, WidgetsModel, QgsLayerModel, QgsFie
 
 import roam.projectparser
 import roam.yaml
+import roam
 
 
 class ProjectWidget(Ui_Form, QWidget):
@@ -24,6 +25,7 @@ class ProjectWidget(Ui_Form, QWidget):
         self.canvas.setWheelAction(QgsMapCanvas.WheelZoomToMouseCursor)
         self.canvas.mapRenderer().setLabelingEngine(QgsPalLabeling())
 
+        self.fieldsmodel = QgsFieldModel()
         self.formmodel = QStandardItemModel()
         self.widgetmodel = QStandardItemModel()
         self.possiblewidgetsmodel = WidgetsModel()
@@ -47,9 +49,49 @@ class ProjectWidget(Ui_Form, QWidget):
 
         self.selectLayers.setModel(self.selectlayerfilter)
 
+        self.fieldList.setModel(self.fieldsmodel)
+
         QgsProject.instance().readProject.connect(self._readproject)
 
+        self.menuList.setCurrentRow(0)
+
+        # Form settings
+        self.formLabelText.textChanged.connect(self._save_formname)
+        self.layerCombo.currentIndexChanged.connect(self._save_layer)
+
+    @property
+    def currentform(self):
+        """
+        Return the current selected form.
+        """
+        index = self.formlist.selectedIndexes()[0]
+        return index.data(Qt.UserRole)
+
+    def _save_formname(self, text):
+        """
+        Save the form label to the settings file.
+        """
+        try:
+            form = self.currentform
+            form.settings['label'] = text
+            print form.settings
+        except IndexError:
+            return
+
+    def _save_layer(self, index):
+        """
+        Save the selected layer to the settings file.
+        """
+        index = self.layerfilter.index(index, 0)
+        layer = index.data(Qt.UserRole)
+        form = self.currentform
+        form.settings['layer'] = layer.name()
+        self.updatefields(layer)
+
     def setproject(self, project, loadqgis=True):
+        """
+        Set the widgets active project.
+        """
         self.project = project
         self.selectlayermodel.config = project.settings
         if loadqgis:
@@ -96,15 +138,35 @@ class ProjectWidget(Ui_Form, QWidget):
             item.setData(form, Qt.UserRole)
             self.formmodel.appendRow(item)
 
+        index = self.formmodel.index(0, 0)
+        if index.isValid():
+            self.formlist.setCurrentIndex(index)
+            self.formframe.show()
+        else:
+            self.formframe.hide()
+
     def updatecurrentform(self, index, _):
+        """
+        Update the UI with the currently selected form.
+        """
         form = index.data(Qt.UserRole)
-        self.formNameText.setText(form.name)
-        index = self.layermodel.findlayer(form.layername)
+        settings = form.settings
+        label = settings['label']
+        layer = settings['layer']
+        version = settings.get('version', roam.__version__)
+        formtype = settings.get('type', 'auto')
+        widgets = settings.get('widgets', [])
+
+        self.formLabelText.setText(label)
+        self.versionText.setText(version)
+        index = self.layermodel.findlayer(layer)
         index = self.layerfilter.mapFromSource(index)
         if index.isValid():
+            self.layerCombo.blockSignals(True)
             self.layerCombo.setCurrentIndex(index.row())
+            self.updatefields(index.data(Qt.UserRole))
+            self.layerCombo.blockSignals(False)
 
-        formtype = form.settings.get("type", "auto")
         index = self.formtypeCombo.findText(formtype)
         if index == -1:
             self.formtypeCombo.insertItem(0, formtype)
@@ -121,36 +183,47 @@ class ProjectWidget(Ui_Form, QWidget):
                 item.setData(widget, Qt.UserRole)
                 self.widgetmodel.appendRow(item)
 
-        loadwidgets(form.widgets)
+        loadwidgets(widgets)
+
+        index = self.widgetmodel.index(0, 0)
+        if index.isValid():
+            self.widgetlist.setCurrentIndex(index)
+
+    def updatefields(self, layer):
+        """
+        Update the UI with the fields for the selected layer.
+        """
+        self.fieldsmodel.setLayer(layer)
 
     def updatecurrentwidget(self, index, _):
+        """
+        Update the UI with the config for the current selected widget.
+        """
         widget = index.data(Qt.UserRole)
         widgettype = widget['widget']
         field = widget['field']
+
         self.fieldList.setEditText(field)
         index = self.possiblewidgetsmodel.findwidget(widgettype)
         if index.isValid():
             self.widgetCombo.setCurrentIndex(index.row())
 
     def saveproject(self):
-        print "Saving {}".format(self.project.name)
+        """
+        Save the project config to disk.
+        """
         title = self.titleText.text()
         description = self.descriptionText.toPlainText()
+        version = str(self.versionText.text())
 
-        settings = copy.copy(self.project.settings)
+        settings = self.project.settings
         settings['title'] = title
         settings['description'] = description
+        settings['version'] = version
 
         settingspath = os.path.join(self.project.folder, "settings.config")
 
-        import shutil
-        # Backup the old file first
-        shutil.copy(settingspath, settingspath + '~')
-
         with open(settingspath, 'w') as f:
             roam.yaml.dump(data=settings, stream=f, default_flow_style=False)
-
-        self.project.settings = settings
-
 
 
