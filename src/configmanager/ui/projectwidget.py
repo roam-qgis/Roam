@@ -97,6 +97,7 @@ class ProjectWidget(Ui_Form, QWidget):
         self.widgetmodel.setData(index, widget, Qt.UserRole)
 
     def _save_field(self, index):
+        print self.fieldList.currentIndex()
         self._save_fieldname(self.fieldList.currentText())
 
     def _save_fieldname(self, name):
@@ -140,7 +141,7 @@ class ProjectWidget(Ui_Form, QWidget):
         if not layer:
             return
 
-        form = self.currentform
+        form, index = self.currentform
         form.settings['layer'] = layer.name()
         self.formmodel.dataChanged.emit(index, index)
         self.updatefields(layer)
@@ -258,7 +259,7 @@ class ProjectWidget(Ui_Form, QWidget):
         self.requiredCheck.blockSignals(False)
 
         self.fieldList.blockSignals(True)
-        index = self.fieldList.findText(field)
+        index = self.fieldList.findData(field, QgsFieldModel.FieldNameRole)
         if index > -1:
             self.fieldList.setCurrentIndex(index)
         else:

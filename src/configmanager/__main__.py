@@ -4,6 +4,9 @@ import sys
 print sys.path
 
 from qgis.core import QgsApplication
+
+from PyQt4.QtGui import QApplication, QFont
+
 import roam.environ
 import roam.project
 
@@ -14,6 +17,9 @@ prefixpath, settingspath = roam.environ.setup(sys.argv)
 app = QgsApplication(sys.argv, True)
 QgsApplication.setPrefixPath(prefixpath, True)
 QgsApplication.initQgis()
+
+QApplication.setStyle("Plastique")
+QApplication.setFont(QFont('Segoe UI'))
 
 projectpath = roam.environ.projectpath(sys.argv)
 projects = list(roam.project.getProjects(projectpath))

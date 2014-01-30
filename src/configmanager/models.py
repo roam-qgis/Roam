@@ -159,6 +159,9 @@ class QgsFieldModel(QAbstractItemModel):
         self.fields = layer.pendingFields().toList()
         self.endResetModel()
 
+    def flags(self, index):
+        return Qt.ItemIsSelectable | Qt.ItemIsEnabled | Qt.ItemIsEditable
+
     def findfield(self, name):
         """
         Find a field in the model by it's name
@@ -203,22 +206,16 @@ class QgsFieldModel(QAbstractItemModel):
             return None
 
     def data(self, index, role):
-        if not index.isValid(): return None
-        if index.internalPointer() is None: return
+        if not index.isValid():
+            return None
+        if index.internalPointer() is None:
+            return
 
         field = index.internalPointer()
         if role == Qt.DisplayRole:
             return "{} ({})".format(field.name(), field.typeName())
         elif role == Qt.UserRole:
             return field
-        elif role == Qt.FontRole:
-            try:
-                if field.name() in self.config['layers'][self.layer.name()]['fields']:
-                    font = QFont()
-                    font.setBold(True)
-                    return font
-            except KeyError:
-                return None
         elif role == QgsFieldModel.FieldNameRole:
             return field.name()
 
@@ -259,14 +256,13 @@ class WidgetsModel(QAbstractItemModel):
             return None
 
     def setData(self, index, value, role=None):
-        if role == Qt.UserRole:
-            row = index.row()
-            startdata = self.data(index, Qt.UserRole)
-            self.widgets[row] = value
+        if role == Qt.UserRole and index.isValid():
+            widget = self.data(index, Qt.UserRole)
+            widget.update(value)
             self.dataChanged.emit(index, index)
             return True
-        else:
-            super(WidgetsModel, self).setData(index, value, role)
+
+        return False
 
     def data(self, index, role):
         if not index.isValid():
@@ -276,7 +272,7 @@ class WidgetsModel(QAbstractItemModel):
 
         widget = index.internalPointer()
         if role == Qt.DisplayRole:
-            return "{} ({})".format(widget['widget'], widget['field'])
+            return "{} ({})".format(widget['widget'], widget['field'].lower())
         elif role == Qt.UserRole:
             return widget
         elif role == Qt.DecorationRole:
