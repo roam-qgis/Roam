@@ -514,7 +514,7 @@ QListView::item {
    <slot>setCurrentIndex(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>219</x>
+     <x>149</x>
      <y>286</y>
     </hint>
     <hint type="destinationlabel">
@@ -523,5 +523,24 @@ QListView::item {
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>toolButton_6</sender>
+   <signal>pressed()</signal>
+   <receiver>Form</receiver>
+   <slot>saveproject()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>168</x>
+     <y>10</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>279</x>
+     <y>-33</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
+ <slots>
+  <slot>saveproject()</slot>
+ </slots>
 </ui>

@@ -1,6 +1,6 @@
 from PyQt4.QtCore import QAbstractItemModel, QModelIndex, Qt
 from PyQt4.QtGui import (QComboBox, QListView, QDialog, QGridLayout, QIcon, QFont, QTextBlockUserData,
-                         QItemDelegate)
+                         QItemDelegate, QSortFilterProxyModel)
 
 from qgis.core import QGis, QgsMapLayerRegistry, QgsMessageLog, QgsMapLayer
 
@@ -12,7 +12,6 @@ import configmanager.ui.resources_rc
 
 plugin_path = os.path.dirname(os.path.realpath(__file__))
 
-registy = QgsMapLayerRegistry.instance()
 icons = {
     QGis.Point: ":/icons/PointLayer",
     QGis.Polygon: ":/icons/PolygonLayer",
@@ -21,22 +20,36 @@ icons = {
 }
 
 
+class LayerFilter(QSortFilterProxyModel):
+    """
+    Filter a model to hide the given types of layers
+    """
+    def __init__(self, geomtypes=[QGis.NoGeometry], parent=None):
+        super(LayerFilter, self).__init__(parent)
+        self.geomtypes = geomtypes
+
+    def filterAcceptsRow(self, sourcerow, soureparent):
+        index = self.sourceModel().index(sourcerow, 0, soureparent)
+        return not index.data(Qt.UserRole).geometryType() in self.geomtypes
+
+
 class QgsLayerModel(QAbstractItemModel):
-    def __init__(self, watchregistry=True, parent=None):
+    def __init__(self, watchregistry=True, checkselect=False, parent=None):
         super(QgsLayerModel, self).__init__(parent)
         self.config = {}
         self.layerfilter = [QgsMapLayer.VectorLayer, QgsMapLayer.RasterLayer]
         self.layers = []
+        self.checkselect = checkselect
 
         if watchregistry:
-            registy.layersAdded.connect(self.updateLayerList)
-            registy.layersRemoved.connect(self.updateLayerList)
+            QgsMapLayerRegistry.instance().layersAdded.connect(self.updateLayerList)
+            QgsMapLayerRegistry.instance().layersRemoved.connect(self.updateLayerList)
 
     def findlayer(self, name):
         """
         Find a layer in the model by it's name
         """
-        startindex = self.index(0,0)
+        startindex = self.index(0, 0)
         items = self.match(startindex, Qt.DisplayRole, name)
         try:
             return items[0]
@@ -51,7 +64,7 @@ class QgsLayerModel(QAbstractItemModel):
         try:
             layers = args[0]
         except IndexError:
-            layers = registy.mapLayers().values()
+            layers = QgsMapLayerRegistry.instance().mapLayers().values()
 
         self.layers = []
         for layer in layers:
@@ -70,10 +83,10 @@ class QgsLayerModel(QAbstractItemModel):
     def parent(self, index):
         return QModelIndex()
 
-    def rowCount(self, parent = QModelIndex()):
+    def rowCount(self, parent=QModelIndex()):
         return len(self.layers)
 
-    def columnCount(self, parent = QModelIndex()):
+    def columnCount(self, parent=QModelIndex()):
         return 1
 
     def getLayer(self, index):
@@ -97,18 +110,18 @@ class QgsLayerModel(QAbstractItemModel):
 
             geomtype = layer.geometryType()
             return QIcon(icons.get(geomtype, None))
-        elif role == Qt.FontRole:
-            try:
-                if layer.name() in self.config['layers']:
-                    font = QFont()
-                    font.setBold(True)
-                    return font
-                else:
-                    return None
-            except KeyError:
-                return None
         elif role == Qt.UserRole:
             return layer
+        elif role == Qt.CheckStateRole:
+            if not self.checkselect:
+                return
+            try:
+                if layer.name() in self.config['selectlayers']:
+                    return Qt.Checked
+                else:
+                    return Qt.Unchecked
+            except KeyError:
+                return Qt.Unchecked
 
     def configchanged(self):
         lastindex = self.index(self.rowCount(), self.rowCount())

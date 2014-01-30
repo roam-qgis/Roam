@@ -1,4 +1,6 @@
 import os
+import copy
+from PyQt4.Qsci import QsciLexerYAML
 
 from PyQt4.QtCore import Qt, QDir, QFileInfo
 from PyQt4.QtGui import QWidget, QStandardItemModel, QStandardItem, QIcon
@@ -7,9 +9,10 @@ from qgis.core import QgsProject, QgsMapLayerRegistry, QgsPalLabeling
 from qgis.gui import QgsMapCanvas
 
 from configmanager.ui.ui_projectwidget import Ui_Form
-from configmanager.models import widgeticon, WidgetsModel, QgsLayerModel, QgsFieldModel
+from configmanager.models import widgeticon, WidgetsModel, QgsLayerModel, QgsFieldModel, LayerFilter
 
 import roam.projectparser
+import roam.yaml
 
 
 class ProjectWidget(Ui_Form, QWidget):
@@ -24,9 +27,16 @@ class ProjectWidget(Ui_Form, QWidget):
         self.formmodel = QStandardItemModel()
         self.widgetmodel = QStandardItemModel()
         self.possiblewidgetsmodel = WidgetsModel()
-        self.layermodel = QgsLayerModel(watchregistry=False)
+        self.layermodel = QgsLayerModel(watchregistry=True)
+        self.selectlayermodel = QgsLayerModel(watchregistry=True, checkselect=True)
 
-        self.layerCombo.setModel(self.layermodel)
+        self.layerfilter = LayerFilter()
+        self.layerfilter.setSourceModel(self.layermodel)
+
+        self.selectlayerfilter = LayerFilter()
+        self.selectlayerfilter.setSourceModel(self.selectlayermodel)
+
+        self.layerCombo.setModel(self.layerfilter)
         self.widgetCombo.setModel(self.possiblewidgetsmodel)
 
         self.widgetlist.setModel(self.widgetmodel)
@@ -35,10 +45,13 @@ class ProjectWidget(Ui_Form, QWidget):
         self.formlist.setModel(self.formmodel)
         self.formlist.selectionModel().currentChanged.connect(self.updatecurrentform)
 
+        self.selectLayers.setModel(self.selectlayerfilter)
+
         QgsProject.instance().readProject.connect(self._readproject)
 
     def setproject(self, project, loadqgis=True):
         self.project = project
+        self.selectlayermodel.config = project.settings
         if loadqgis:
             self.loadqgisproject(project, self.project.projectfile)
         else:
@@ -66,6 +79,7 @@ class ProjectWidget(Ui_Form, QWidget):
         self.canvas.freeze(False)
         self.canvas.refresh()
         self.layermodel.updateLayerList(QgsMapLayerRegistry.instance().mapLayers().values())
+        self.selectlayermodel.updateLayerList(QgsMapLayerRegistry.instance().mapLayers().values())
         self._updateforproject(self.project)
 
     def _updateforproject(self, project):
@@ -86,6 +100,7 @@ class ProjectWidget(Ui_Form, QWidget):
         form = index.data(Qt.UserRole)
         self.formNameText.setText(form.name)
         index = self.layermodel.findlayer(form.layername)
+        index = self.layerfilter.mapFromSource(index)
         if index.isValid():
             self.layerCombo.setCurrentIndex(index.row())
 
@@ -117,7 +132,25 @@ class ProjectWidget(Ui_Form, QWidget):
         if index.isValid():
             self.widgetCombo.setCurrentIndex(index.row())
 
+    def saveproject(self):
+        print "Saving {}".format(self.project.name)
+        title = self.titleText.text()
+        description = self.descriptionText.toPlainText()
 
+        settings = copy.copy(self.project.settings)
+        settings['title'] = title
+        settings['description'] = description
+
+        settingspath = os.path.join(self.project.folder, "settings.config")
+
+        import shutil
+        # Backup the old file first
+        shutil.copy(settingspath, settingspath + '~')
+
+        with open(settingspath, 'w') as f:
+            roam.yaml.dump(data=settings, stream=f, default_flow_style=False)
+
+        self.project.settings = settings
 
 
 
