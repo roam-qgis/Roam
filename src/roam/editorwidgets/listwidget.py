@@ -74,7 +74,7 @@ class ListWidget(EditorWidget):
             if expression and not expression.evaluate(feature):
                 continue
 
-            widget.addItem(feature[keyfieldindex], feature[valuefield])
+            widget.addItem(unicode(feature[keyfieldindex]), unicode(feature[valuefield]))
 
         if self.allownulls:
             widget.insertItem(0, '(no selection)', None)

@@ -70,12 +70,13 @@ class ProjectWidget(Ui_Form, QWidget):
         self.fieldList.currentIndexChanged.connect(self._save_field)
         self.fieldList.editTextChanged.connect(self._save_fieldname)
         self.requiredCheck.toggled.connect(self._save_selectedwidget)
-        self.widgetCombo.currentIndexChanged.connect(self.updatewidgetconfig)
+        self.defaultvalueText.textChanged.connect(self._save_selectedwidget)
         self.widgetCombo.currentIndexChanged.connect(self._save_selectedwidget)
 
         self.loadwidgettypes()
 
     def loadwidgettypes(self):
+        self.widgetCombo.blockSignals(True)
         for widgettype in roam.editorwidgets.supportedwidgets:
             try:
                 configclass = configmanager.editorwidgets.widgetconfigs[widgettype.widgettype]
@@ -91,6 +92,7 @@ class ProjectWidget(Ui_Form, QWidget):
             self.widgetCombo.model().appendRow(item)
             self.widgetstack.addWidget(configwidget)
             self.samplestack.addWidget(samplewidget)
+        self.widgetCombo.blockSignals(False)
 
     @property
     def currentform(self):
@@ -116,15 +118,6 @@ class ProjectWidget(Ui_Form, QWidget):
         index = self.widgetCombo.currentIndex()
         index = self.possiblewidgetsmodel.index(index, 0)
         return index.data(Qt.UserRole), index, index.data(ProjectWidget.SampleWidgetRole), index.data(Qt.DisplayRole)
-
-    def updatewidgetconfig(self, index):
-        widgetconfig, index, sample, widgettype = self.currentwidgetconfig
-        userwidget, index = self.currentuserwidget
-        if not userwidget:
-            return
-
-        config = userwidget.get('config', {})
-        self.setconfigwidget(widgetconfig, config, sample, widgettype)
 
     def _save_selectedwidget(self, index):
         configwidget, index, _, widgetype = self.currentwidgetconfig
@@ -246,10 +239,21 @@ class ProjectWidget(Ui_Form, QWidget):
         else:
             self.formframe.hide()
 
+    def updatewidgetconfig(self, index):
+        print "update widget config"
+        widgetconfig, index, sample, widgettype = self.currentwidgetconfig
+        userwidget, index = self.currentuserwidget
+        if not userwidget:
+            return
+
+        config = userwidget.get('config', {})
+        self.setconfigwidget(widgetconfig, config, sample, widgettype)
+
     def updatecurrentform(self, index, _):
         """
         Update the UI with the currently selected form.
         """
+        print "update form"
         form = index.data(Qt.UserRole)
         settings = form.settings
         label = settings['label']
@@ -292,28 +296,34 @@ class ProjectWidget(Ui_Form, QWidget):
         """
         Set the active config widget.
         """
+
         self.samplewrapper = roam.editorwidgets.WidgetsRegistry.widgetwrapper(widgettype,
                                                                              samplewidget,
                                                                              {},
                                                                              None,
                                                                              None,
                                                                              None)
+        try:
+            configwidget.widgetdirty.disconnect(self.samplewrapper.setconfig)
+            configwidget.widgetdirty.disconnect(self._save_selectedwidget)
+        except TypeError:
+            pass
+
         self.descriptionLabel.setText(configwidget.description)
         self.samplestack.setCurrentWidget(samplewidget)
         self.widgetstack.setCurrentWidget(configwidget)
         configwidget.setconfig(config)
         self.samplewrapper.setconfig(config)
-        try:
-            configwidget.widgetdirty.disconnect(self.samplewrapper.setconfig)
-        except TypeError:
-            pass
 
+
+        configwidget.widgetdirty.connect(self._save_selectedwidget)
         configwidget.widgetdirty.connect(self.samplewrapper.setconfig)
 
     def updatecurrentwidget(self, index, _):
         """
         Update the UI with the config for the current selected widget.
         """
+        print "update widget"
         widget = index.data(Qt.UserRole)
 
         widgettype = widget['widget']
@@ -333,10 +343,12 @@ class ProjectWidget(Ui_Form, QWidget):
         self.fieldList.blockSignals(False)
 
         index = self.widgetCombo.findText(widgettype)
+        self.widgetCombo.blockSignals(True)
         if index > -1:
             self.widgetCombo.setCurrentIndex(index)
+        self.widgetCombo.blockSignals(False)
 
-        self.updatewidgetconfig(None)
+        self.updatewidgetconfig(index)
 
     def _saveproject(self):
         """

@@ -2,6 +2,7 @@ import os
 
 from functools import partial
 
+from PyQt4.QtGui import QWidget
 from PyQt4.QtCore import Qt
 from qgis.core import QgsMapLayer
 
@@ -22,16 +23,18 @@ class ListWidgetConfig(Ui_Form, ConfigWidget):
         self.layerRadio.clicked.connect(partial(self.stackedWidget.setCurrentIndex, 0))
         self.listRadio.clicked.connect(partial(self.stackedWidget.setCurrentIndex, 1))
 
-        self.layermodel = QgsLayerModel()
+        self.layermodel = QgsLayerModel(watchregistry=False)
         self.layermodel.layerfilter = [QgsMapLayer.VectorLayer]
 
         self.fieldmodel = QgsFieldModel()
 
+        self.blockSignals(True)
         self.layerCombo.setModel(self.layermodel)
         self.keyCombo.setModel(self.fieldmodel)
         self.valueCombo.setModel(self.fieldmodel)
 
         self.fieldmodel.setLayerFilter(self.layerCombo.view().selectionModel())
+        self.blockSignals(False)
 
     def widgetchanged(self):
         self.allownull = self.allownullCheck.isChecked()
@@ -54,10 +57,12 @@ class ListWidgetConfig(Ui_Form, ConfigWidget):
             self.key = fieldname_key
             self.value = fieldname_value
             self.filter = self.filterText.toPlainText()
+
         self.widgetdirty.emit(self.getconfig())
 
     def getconfig(self):
         config = {}
+        print self.allownull
         config['allownull'] = self.allownull
         config['orderbyvalue'] = self.orderby
         if self.layerRadio.isChecked():
@@ -73,11 +78,24 @@ class ListWidgetConfig(Ui_Form, ConfigWidget):
             config['list']['items'] = self.list
         return config
 
+    def blockSignals(self, bool):
+        for child in self.findChildren(QWidget):
+            child.blockSignals(bool)
+
+        super(ListWidgetConfig, self).blockSignals(bool)
+
     def setconfig(self, config):
-        self.layermodel.updateLayerList()
         self.blockSignals(True)
-        self.allownull = config['allownull']
+        self.allownull = config.get('allownull', True)
         self.orderby = config.get('orderbyvalue', False)
+
+        #Clear the widgets
+        self.listText.setPlainText('')
+        self.keyCombo.clear()
+        self.valueCombo.clear()
+        self.filterText.clear()
+
+        # Rebind all the values
         if 'list' in config:
             subconfig = config.get('list', {})
             self.listRadio.setChecked(True)
@@ -89,16 +107,11 @@ class ListWidgetConfig(Ui_Form, ConfigWidget):
             self.layerRadio.setChecked(True)
             self.stackedWidget.setCurrentIndex(0)
             subconfig = config.get('layer', {})
-            layer = subconfig.get('layer', '')
-            if not layer:
-                layer = ''
-            key = subconfig.get('key', '')
-            if not key:
-                key = ''
-            value = subconfig.get('value', '')
-            if not value:
-                value = ''
+            layer = subconfig.get('layer', '') or ''
+            key = subconfig.get('key', '') or ''
+            value = subconfig.get('value', '') or ''
             filter = subconfig.get('filter', None)
+            self.layermodel.updateLayerList()
             index = self.layerCombo.findData(layer, Qt.DisplayRole)
             if index > -1:
                 self.layerCombo.setCurrentIndex(index)
