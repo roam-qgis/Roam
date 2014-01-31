@@ -1,15 +1,19 @@
 import os
 
+from PyQt4.QtCore import pyqtSignal
 from PyQt4.QtGui import QComboBox
 
-from admin_plugin.editorwidgets.core import WidgetFactory, ConfigWidget
-from admin_plugin import create_ui
+from configmanager.editorwidgets.core import ConfigWidget
+from configmanager.editorwidgets.uifiles.checkwidget_config import Ui_Form
+from roam.editorwidgets.checkboxwidget import CheckboxWidget
 
-widget, base = create_ui(os.path.join("editorwidgets", 'uifiles', 'checkwidget_config.ui'))
 
-class CheckWidgetConfig(widget, ConfigWidget):
-    def __init__(self, layer, field, parent=None):
-        super(CheckWidgetConfig, self).__init__(layer, field, parent)
+class CheckboxWidgetConfig(Ui_Form, ConfigWidget):
+    description = "Checkbox with changeable true false values"
+    widget = CheckboxWidget
+
+    def __init__(self, parent=None):
+        super(CheckboxWidgetConfig, self).__init__(parent)
         self.setupUi(self)
 
     def getconfig(self):
@@ -20,10 +24,6 @@ class CheckWidgetConfig(widget, ConfigWidget):
 
     def setconfig(self, config):
         self.blockSignals(True)
-        self.checkedText.setText(config['checkedvalue'])
-        self.uncheckedText.setText(config['uncheckedvalue'])
+        self.checkedText.setText(str(config.get('checkedvalue', 0)))
+        self.uncheckedText.setText(str(config.get('uncheckedvalue', 0)))
         self.blockSignals(False)
-
-factory = WidgetFactory("Checkbox", None, CheckWidgetConfig)
-factory.description = "Checkbox with changeable true false values"
-factory.icon = ':/icons/check'

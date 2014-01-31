@@ -11,6 +11,7 @@ from qgis.gui import QgsMapCanvas
 from configmanager.ui.ui_projectwidget import Ui_Form
 from configmanager.models import widgeticon, WidgetsModel, QgsLayerModel, QgsFieldModel, LayerFilter
 
+import configmanager.editorwidgets
 import roam.editorwidgets
 import roam.projectparser
 import roam.yaml
@@ -68,15 +69,24 @@ class ProjectWidget(Ui_Form, QWidget):
         self.fieldList.currentIndexChanged.connect(self._save_field)
         self.fieldList.editTextChanged.connect(self._save_fieldname)
         self.requiredCheck.toggled.connect(self._save_required)
+        self.widgetCombo.currentIndexChanged.connect(self.updatewidgetconfig)
+        self.widgetCombo.currentIndexChanged.connect(self._save_selectedwidget)
 
         self.loadwidgettypes()
 
     def loadwidgettypes(self):
         for widgettype in roam.editorwidgets.supportedwidgets:
+            try:
+                configclass = configmanager.editorwidgets.widgetconfigs[widgettype.widgettype]
+            except KeyError:
+                continue
+
+            configwidget = configclass()
             item = QStandardItem(widgettype.widgettype)
-            item.setData(widgettype, Qt.UserRole)
+            item.setData(configwidget, Qt.UserRole)
             item.setIcon(QIcon(widgeticon(widgettype.widgettype)))
             self.widgetCombo.model().appendRow(item)
+            self.stackedWidget_2.addWidget(configwidget)
 
     @property
     def currentform(self):
@@ -87,21 +97,45 @@ class ProjectWidget(Ui_Form, QWidget):
         return index.data(Qt.UserRole), index
 
     @property
-    def currentwidget(self):
+    def currentuserwidget(self):
+        """
+        Return the selected user widget.
+        """
         index = self.widgetlist.selectionModel().currentIndex()
         return index.data(Qt.UserRole), index
 
+    @property
+    def currentwidgetconfig(self):
+        """
+        Return the selected widget in the widget combo.
+        """
+        index = self.widgetCombo.currentIndex()
+        index = self.possiblewidgetsmodel.index(index, 0)
+        return index.data(Qt.UserRole), index
+
+    def updatewidgetconfig(self, index):
+        widgetconfig, index = self.currentwidgetconfig
+        userwidget, index = self.currentuserwidget
+        if not userwidget:
+            return
+
+        config = userwidget.get('config', {})
+        self.setconfigwidget(widgetconfig, config)
+
+    def _save_selectedwidget(self, index):
+        index = self.possiblewidgetsmodel.index(index, 0)
+        selectedwidget = index.data(Qt.UserRole)
+
     def _save_required(self, checked):
-        widget, index = self.currentwidget
+        widget, index = self.currentuserwidget
         widget['required'] = checked
         self.widgetmodel.setData(index, widget, Qt.UserRole)
 
     def _save_field(self, index):
-        print self.fieldList.currentIndex()
         self._save_fieldname(self.fieldList.currentText())
 
     def _save_fieldname(self, name):
-        widget, index = self.currentwidget
+        widget, index = self.currentuserwidget
         widget['field'] = name
         self.widgetmodel.dataChanged.emit(index, index)
 
@@ -208,6 +242,7 @@ class ProjectWidget(Ui_Form, QWidget):
         """
         Update the UI with the currently selected form.
         """
+        print "Update form"
         form = index.data(Qt.UserRole)
         settings = form.settings
         label = settings['label']
@@ -235,6 +270,7 @@ class ProjectWidget(Ui_Form, QWidget):
 
         self.widgetmodel.loadwidgets(widgets)
 
+        # Set the first widget
         index = self.widgetmodel.index(0, 0)
         if index.isValid():
             self.widgetlist.setCurrentIndex(index)
@@ -245,11 +281,21 @@ class ProjectWidget(Ui_Form, QWidget):
         """
         self.fieldsmodel.setLayer(layer)
 
+    def setconfigwidget(self, configwidget, config):
+        """
+        Set the active config widget.
+        """
+        self.descriptionLabel.setText(configwidget.description)
+        self.stackedWidget_2.setCurrentWidget(configwidget)
+        configwidget.setconfig(config)
+
     def updatecurrentwidget(self, index, _):
         """
         Update the UI with the config for the current selected widget.
         """
+        print "Update widget"
         widget = index.data(Qt.UserRole)
+
         widgettype = widget['widget']
         field = widget['field']
         required = widget.get('required', False)
@@ -259,7 +305,8 @@ class ProjectWidget(Ui_Form, QWidget):
         self.requiredCheck.blockSignals(False)
 
         self.fieldList.blockSignals(True)
-        index = self.fieldList.findData(field, QgsFieldModel.FieldNameRole)
+        index = self.fieldList.findData(field.lower(), QgsFieldModel.FieldNameRole)
+        print index
         if index > -1:
             self.fieldList.setCurrentIndex(index)
         else:
@@ -269,6 +316,7 @@ class ProjectWidget(Ui_Form, QWidget):
         index = self.widgetCombo.findText(widgettype)
         if index > -1:
             self.widgetCombo.setCurrentIndex(index)
+        self.updatewidgetconfig(None)
 
     def _saveproject(self):
         """

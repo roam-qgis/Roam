@@ -157,6 +157,7 @@ class QgsFieldModel(QAbstractItemModel):
         self.layer = layer
         self.beginResetModel()
         self.fields = layer.pendingFields().toList()
+        print self.fields
         self.endResetModel()
 
     def flags(self, index):
@@ -174,6 +175,7 @@ class QgsFieldModel(QAbstractItemModel):
             return None
 
     def updateLayer(self, index, index_before):
+        print "Update layer"
         if self.layermodel is None:
             return
 
@@ -182,6 +184,7 @@ class QgsFieldModel(QAbstractItemModel):
         self.setLayer(layer)
 
     def setLayerFilter(self, selectionModel):
+        print "Set layer filter."
         self.layermodel = selectionModel.model()
         selectionModel.currentChanged.connect(self.updateLayer)
 
@@ -217,7 +220,7 @@ class QgsFieldModel(QAbstractItemModel):
         elif role == Qt.UserRole:
             return field
         elif role == QgsFieldModel.FieldNameRole:
-            return field.name()
+            return field.name().lower()
 
     def configchanged(self):
         lastindex = self.index(self.rowCount(), self.rowCount())

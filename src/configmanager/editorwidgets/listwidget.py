@@ -2,19 +2,22 @@ import os
 
 from functools import partial
 
-from PyQt4.QtGui import QComboBox
-
+from PyQt4.QtCore import Qt
 from qgis.core import QgsMapLayer
 
-from admin_plugin.models import QgsLayerModel,QgsFieldModel
-from admin_plugin.editorwidgets.core import WidgetFactory, ConfigWidget
-from admin_plugin import create_ui
+from roam.editorwidgets.listwidget import ListWidget
 
-widget, base = create_ui(os.path.join("editorwidgets","uifiles",'listwidget_config.ui'))
+from configmanager.models import QgsLayerModel, QgsFieldModel
+from configmanager.editorwidgets.core import ConfigWidget
+from configmanager.editorwidgets.uifiles.listwidget_config import Ui_Form
 
-class ListWidgetConfig(widget, ConfigWidget):
-    def __init__(self, layer, field, parent=None):
-        super(ListWidgetConfig, self).__init__(layer, field, parent)
+
+class ListWidgetConfig(Ui_Form, ConfigWidget):
+    description = "Select an item from a predefined list"
+    widget = ListWidget
+
+    def __init__(self, parent=None):
+        super(ListWidgetConfig, self).__init__(parent)
         self.setupUi(self)
 
         self.layerRadio.clicked.connect(partial(self.stackedWidget.setCurrentIndex, 0))
@@ -22,7 +25,6 @@ class ListWidgetConfig(widget, ConfigWidget):
 
         self.layermodel = QgsLayerModel()
         self.layermodel.layerfilter = [QgsMapLayer.VectorLayer]
-        self.layermodel.updateLayerList()
 
         self.fieldmodel = QgsFieldModel()
 
@@ -30,7 +32,6 @@ class ListWidgetConfig(widget, ConfigWidget):
         self.keyCombo.setModel(self.fieldmodel)
         self.valueCombo.setModel(self.fieldmodel)
 
-        self.fieldmodel.setLayerFilter(self.layerCombo.view().selectionModel())
         self.fieldmodel.setLayerFilter(self.layerCombo.view().selectionModel())
 
     def widgetchanged(self):
@@ -54,7 +55,7 @@ class ListWidgetConfig(widget, ConfigWidget):
             self.key = fieldname_key
             self.value = fieldname_value
             self.filter = self.filterText.toPlainText()
-        self.widgetdirty.emit()
+        self.widgetdirty.emit(self.getconfig())
 
     def getconfig(self):
         config = {}
@@ -74,9 +75,10 @@ class ListWidgetConfig(widget, ConfigWidget):
         return config
 
     def setconfig(self, config):
+        self.layermodel.updateLayerList()
         self.blockSignals(True)
         self.allownull = config['allownull']
-        self.orderby = config['orderbyvalue']
+        self.orderby = config.get('orderbyvalue', False)
         if 'list' in config:
             subconfig = config.get('list', {})
             self.listRadio.setChecked(True)
@@ -92,27 +94,25 @@ class ListWidgetConfig(widget, ConfigWidget):
             key = subconfig.get('key', None)
             value = subconfig.get('value', None)
             filter = subconfig.get('filter', None)
-            index = self.layermodel.findlayer(layer)
-            if index:
-                self.layerCombo.view().setCurrentIndex(index)
-                self.layerCombo.setCurrentIndex(index.row())
+            index = self.layerCombo.findData(layer, Qt.DisplayRole)
+            if index > -1:
+                self.layerCombo.setCurrentIndex(index)
 
-            keyindex = self.fieldmodel.findfield(key)
-            if keyindex:
-                self.keyCombo.view().setCurrentIndex(keyindex)
-                self.keyCombo.setCurrentIndex(keyindex.row())
+            index = self.layermodel.index(index, 0)
+            self.fieldmodel.updateLayer(index, None)
 
-            valueindex = self.fieldmodel.findfield(value)
-            if valueindex:
-                self.valueCombo.view().setCurrentIndex(valueindex)
-                self.valueCombo.setCurrentIndex(valueindex.row())
+            keyindex = self.keyCombo.findData(key.lower(), QgsFieldModel.FieldNameRole)
+            print keyindex
+            if keyindex > -1:
+                self.keyCombo.setCurrentIndex(keyindex)
+
+            valueindex = self.valueCombo.findData(value.lower(), QgsFieldModel.FieldNameRole)
+            if valueindex > -1:
+                self.valueCombo.setCurrentIndex(valueindex)
 
             self.filterText.setPlainText(filter)
 
-        self.allownullCheck.setChecked(config['allownull'])
-        self.orderbyCheck.setChecked(config['orderbyvalue'])
+        self.allownullCheck.setChecked(self.allownull)
+        self.orderbyCheck.setChecked(self.orderby)
         self.blockSignals(False)
 
-factory = WidgetFactory("List", None, ListWidgetConfig)
-factory.description = "Select an item from a predefined list"
-factory.icon = ':/icons/list'

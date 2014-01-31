@@ -1,25 +1,15 @@
-import os
-
 from PyQt4.QtGui import QDateTimeEdit
 
-from admin_plugin.editorwidgets.core import WidgetFactory, ConfigWidget
-from admin_plugin import create_ui
+from roam.editorwidgets.datewidget import DateWidget
 
-widget, base = create_ui(os.path.join("editorwidgets","uifiles", 'datewidget_config.ui'))
+from configmanager.editorwidgets.core import ConfigWidget
+from configmanager.editorwidgets.uifiles.datewidget_config import Ui_Form
 
-class DateWidgetConfig(widget, ConfigWidget):
-    def __init__(self, layer, field, parent=None):
-        super(DateWidgetConfig, self).__init__(layer, field, parent)
+
+class DateWidgetConfig(Ui_Form, ConfigWidget):
+    description = "Date selector"
+    widget = DateWidget
+
+    def __init__(self, parent=None):
+        super(DateWidgetConfig, self).__init__(parent)
         self.setupUi(self)
-
-    def getconfig(self):
-        config = {}
-        return config
-
-    def setconfig(self, config):
-        self.blockSignals(True)
-        self.blockSignals(False)
-
-factory = WidgetFactory("Date", None,  DateWidgetConfig)
-factory.description = "Date selector"
-factory.icon = ':/icons/date2'
