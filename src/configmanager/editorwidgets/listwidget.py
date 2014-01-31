@@ -89,9 +89,15 @@ class ListWidgetConfig(Ui_Form, ConfigWidget):
             self.layerRadio.setChecked(True)
             self.stackedWidget.setCurrentIndex(0)
             subconfig = config.get('layer', {})
-            layer = subconfig.get('layer', None)
-            key = subconfig.get('key', None)
-            value = subconfig.get('value', None)
+            layer = subconfig.get('layer', '')
+            if not layer:
+                layer = ''
+            key = subconfig.get('key', '')
+            if not key:
+                key = ''
+            value = subconfig.get('value', '')
+            if not value:
+                value = ''
             filter = subconfig.get('filter', None)
             index = self.layerCombo.findData(layer, Qt.DisplayRole)
             if index > -1:

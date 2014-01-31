@@ -69,7 +69,7 @@ class ProjectWidget(Ui_Form, QWidget):
         #widget settings
         self.fieldList.currentIndexChanged.connect(self._save_field)
         self.fieldList.editTextChanged.connect(self._save_fieldname)
-        self.requiredCheck.toggled.connect(self._save_required)
+        self.requiredCheck.toggled.connect(self._save_selectedwidget)
         self.widgetCombo.currentIndexChanged.connect(self.updatewidgetconfig)
         self.widgetCombo.currentIndexChanged.connect(self._save_selectedwidget)
 
@@ -127,13 +127,16 @@ class ProjectWidget(Ui_Form, QWidget):
         self.setconfigwidget(widgetconfig, config, sample, widgettype)
 
     def _save_selectedwidget(self, index):
-        index = self.possiblewidgetsmodel.index(index, 0)
-        selectedwidget = index.data(Qt.UserRole)
-        # TODO Save the selected widget
-
-    def _save_required(self, checked):
+        configwidget, index, _, widgetype = self.currentwidgetconfig
         widget, index = self.currentuserwidget
-        widget['required'] = checked
+        if not widget:
+            return
+
+        widget['widget'] = widgetype
+        widget['required'] = self.requiredCheck.isChecked()
+        widget['default'] = self.defaultvalueText.text()
+        widget['config'] = configwidget.getconfig()
+
         self.widgetmodel.setData(index, widget, Qt.UserRole)
 
     def _save_field(self, index):
