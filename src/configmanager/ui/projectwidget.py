@@ -239,21 +239,15 @@ class ProjectWidget(Ui_Form, QWidget):
         else:
             self.formframe.hide()
 
-    def updatewidgetconfig(self, index):
-        print "update widget config"
+    def updatewidgetconfig(self, config):
+        print config
         widgetconfig, index, sample, widgettype = self.currentwidgetconfig
-        userwidget, index = self.currentuserwidget
-        if not userwidget:
-            return
-
-        config = userwidget.get('config', {})
         self.setconfigwidget(widgetconfig, config, sample, widgettype)
 
     def updatecurrentform(self, index, _):
         """
         Update the UI with the currently selected form.
         """
-        print "update form"
         form = index.data(Qt.UserRole)
         settings = form.settings
         label = settings['label']
@@ -315,7 +309,6 @@ class ProjectWidget(Ui_Form, QWidget):
         configwidget.setconfig(config)
         self.samplewrapper.setconfig(config)
 
-
         configwidget.widgetdirty.connect(self._save_selectedwidget)
         configwidget.widgetdirty.connect(self.samplewrapper.setconfig)
 
@@ -323,12 +316,20 @@ class ProjectWidget(Ui_Form, QWidget):
         """
         Update the UI with the config for the current selected widget.
         """
-        print "update widget"
         widget = index.data(Qt.UserRole)
 
         widgettype = widget['widget']
         field = widget['field']
         required = widget.get('required', False)
+        default = widget.get('default', '')
+
+        self.defaultvalueText.blockSignals(True)
+        if not isinstance(default, dict):
+            self.defaultvalueText.setText(default)
+        else:
+            # TODO Handle the more advanced default values.
+            pass
+        self.defaultvalueText.blockSignals(False)
 
         self.requiredCheck.blockSignals(True)
         self.requiredCheck.setChecked(required)
@@ -348,7 +349,7 @@ class ProjectWidget(Ui_Form, QWidget):
             self.widgetCombo.setCurrentIndex(index)
         self.widgetCombo.blockSignals(False)
 
-        self.updatewidgetconfig(index)
+        self.updatewidgetconfig(config=widget.get('config', {}))
 
     def _saveproject(self):
         """
