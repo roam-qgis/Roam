@@ -10,7 +10,7 @@
     <x>0</x>
     <y>0</y>
     <width>1089</width>
-    <height>671</height>
+    <height>688</height>
    </rect>
   </property>
   <property name="minimumSize">
@@ -21,6 +21,9 @@
   </property>
   <property name="windowTitle">
    <string>Options Dialog Template</string>
+  </property>
+  <property name="styleSheet">
+   <string notr="true">background-color: rgb(255, 255, 255);</string>
   </property>
   <property name="sizeGripEnabled">
    <bool>true</bool>
@@ -84,7 +87,7 @@
 }
 
 QListView::item::selected {
-  background-color:palette(Window);
+  background-color:white;
   color: black;
   padding-right: 0px;
 }

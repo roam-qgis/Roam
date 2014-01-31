@@ -8,7 +8,6 @@ from configmanager.editorwidgets.uifiles.datewidget_config import Ui_Form
 
 class DateWidgetConfig(Ui_Form, ConfigWidget):
     description = "Date selector"
-    widget = DateWidget
 
     def __init__(self, parent=None):
         super(DateWidgetConfig, self).__init__(parent)

@@ -80,17 +80,19 @@ class ListWidget(EditorWidget):
             widget.insertItem(0, '(no selection)', None)
 
     def initWidget(self, widget):
-        if 'list' in self.config:
-            listconfig = self.config['list']
-            self._buildfromlist(widget, listconfig)
-        elif 'layer' in self.config:
-            layerconfig = self.config['layer']
-            self._buildfromlayer(widget, layerconfig)
-
         if widget.isEditable():
             widget.editTextChanged.connect(self.validate)
 
         widget.currentIndexChanged.connect(self.validate)
+
+    def updatefromconfig(self):
+        self.widget.clear()
+        if 'list' in self.config:
+            listconfig = self.config['list']
+            self._buildfromlist(self.widget, listconfig)
+        elif 'layer' in self.config:
+            layerconfig = self.config['layer']
+            self._buildfromlayer(self.widget, layerconfig)
 
     @property
     def allownulls(self):

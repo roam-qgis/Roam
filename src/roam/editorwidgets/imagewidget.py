@@ -19,7 +19,9 @@ class ImageWidget(EditorWidget):
         widget.openRequest.connect(self.showlargeimage)
         widget.imageloaded.connect(self.validate)
         widget.imageremoved.connect(self.validate)
-        widget.defaultlocation = self.config.get('defaultlocation', '')
+
+    def updatefromconfig(self):
+        self.widget.defaultlocation = self.config.get('defaultlocation', '')
 
     def validate(self, *args):
         self.raisevalidationupdate(not self.widget.isDefault)

@@ -25,6 +25,7 @@ class WidgetsRegistry(object):
             raise EditorWidgetException("No widget wrapper for type {} was found".format(widgettype))
 
         widgetwrapper = editorwidget.for_widget(widget, layer, label, field, parent)
+        widgetwrapper.initWidget(widget)
         widgetwrapper.config = config
         return widgetwrapper
 
@@ -65,7 +66,7 @@ class EditorWidget(QObject):
         return editor
 
     @classmethod
-    def createwidget(cls, parent):
+    def createwidget(cls, parent=None):
         """
         Creates the widget that wrapper supports.
         """
@@ -120,6 +121,12 @@ class EditorWidget(QObject):
     def validate(self, *args):
         pass
 
+    def setconfig(self, config):
+        """
+        Alias function for self.config so we can connect it to a signal.
+        """
+        self.config = config
+
     @property
     def config(self):
         return self._config
@@ -127,7 +134,10 @@ class EditorWidget(QObject):
     @config.setter
     def config(self, value):
         self._config = value
-        self.initWidget(self.widget)
+        self.updatefromconfig()
+
+    def updatefromconfig(self):
+        pass
 
     def createWidget(self, parent):
         pass

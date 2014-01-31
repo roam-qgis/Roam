@@ -14,7 +14,6 @@ from configmanager.editorwidgets.uifiles.listwidget_config import Ui_Form
 
 class ListWidgetConfig(Ui_Form, ConfigWidget):
     description = "Select an item from a predefined list"
-    widget = ListWidget
 
     def __init__(self, parent=None):
         super(ListWidgetConfig, self).__init__(parent)
@@ -102,7 +101,6 @@ class ListWidgetConfig(Ui_Form, ConfigWidget):
             self.fieldmodel.updateLayer(index, None)
 
             keyindex = self.keyCombo.findData(key.lower(), QgsFieldModel.FieldNameRole)
-            print keyindex
             if keyindex > -1:
                 self.keyCombo.setCurrentIndex(keyindex)
 
