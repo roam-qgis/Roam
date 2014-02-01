@@ -61,19 +61,21 @@ class ProjectWidget(Ui_Form, QWidget):
 
         self.menuList.setCurrentRow(0)
 
-        # Form settings
-        self.formLabelText.textChanged.connect(self._save_formname)
-        self.layerCombo.currentIndexChanged.connect(self._save_layer)
-        self.formtypeCombo.currentIndexChanged.connect(self._save_formtype)
-
-        #widget settings
-        self.fieldList.currentIndexChanged.connect(self._save_field)
-        self.fieldList.editTextChanged.connect(self._save_fieldname)
-        self.requiredCheck.toggled.connect(self._save_selectedwidget)
-        self.defaultvalueText.textChanged.connect(self._save_selectedwidget)
-        self.widgetCombo.currentIndexChanged.connect(self._save_selectedwidget)
 
         self.loadwidgettypes()
+
+        self.addWidgetButton.pressed.connect(self.newwidget)
+
+    def newwidget(self):
+        """
+        Create a new widget.  The default is a list.
+        """
+        widget = {}
+        widget['widget'] = 'List'
+        # Grab the first field.
+        widget['field'] = self.fieldsmodel.index(0, 0).data(QgsFieldModel.FieldNameRole)
+        index = self.widgetmodel.addwidget(widget)
+        self.widgetlist.setCurrentIndex(index)
 
     def loadwidgettypes(self):
         self.widgetCombo.blockSignals(True)
@@ -128,17 +130,12 @@ class ProjectWidget(Ui_Form, QWidget):
         widget['widget'] = widgetype
         widget['required'] = self.requiredCheck.isChecked()
         widget['default'] = self.defaultvalueText.text()
+        row = self.fieldList.currentIndex()
+        field = self.fieldsmodel.index(row, 0).data(QgsFieldModel.FieldNameRole)
+        widget['field'] = field
         widget['config'] = configwidget.getconfig()
 
         self.widgetmodel.setData(index, widget, Qt.UserRole)
-
-    def _save_field(self, index):
-        self._save_fieldname(self.fieldList.currentText())
-
-    def _save_fieldname(self, name):
-        widget, index = self.currentuserwidget
-        widget['field'] = name
-        self.widgetmodel.dataChanged.emit(index, index)
 
     def _save_selectionlayers(self, index, layer, value):
         config = self.project.settings
@@ -185,6 +182,22 @@ class ProjectWidget(Ui_Form, QWidget):
         """
         Set the widgets active project.
         """
+        def connectsignals():
+            # Form settings
+            self.formLabelText.textChanged.connect(self._save_formname)
+            self.layerCombo.currentIndexChanged.connect(self._save_layer)
+            self.formtypeCombo.currentIndexChanged.connect(self._save_formtype)
+
+        def disconnectsignals():
+            try:
+                 # Form settings
+                self.formLabelText.textChanged.disconnect(self._save_formname)
+                self.layerCombo.currentIndexChanged.disconnect(self._save_layer)
+                self.formtypeCombo.currentIndexChanged.disconnect(self._save_formtype)
+            except TypeError:
+                pass
+
+        disconnectsignals()
         self.startsettings = copy.deepcopy(project.settings)
         self.project = project
         self.selectlayermodel.config = project.settings
@@ -192,6 +205,7 @@ class ProjectWidget(Ui_Form, QWidget):
             self.loadqgisproject(project, self.project.projectfile)
         else:
             self._updateforproject(self.project)
+        connectsignals()
 
     def loadqgisproject(self, project, projectfile):
         self._closeqgisproject()
@@ -240,7 +254,6 @@ class ProjectWidget(Ui_Form, QWidget):
             self.formframe.hide()
 
     def updatewidgetconfig(self, config):
-        print config
         widgetconfig, index, sample, widgettype = self.currentwidgetconfig
         self.setconfigwidget(widgetconfig, config, sample, widgettype)
 
@@ -248,6 +261,27 @@ class ProjectWidget(Ui_Form, QWidget):
         """
         Update the UI with the currently selected form.
         """
+        def connectsignals():
+            #widget settings
+            self.fieldList.currentIndexChanged.connect(self._save_selectedwidget)
+            self.fieldList.editTextChanged.connect(self._save_selectedwidget)
+            self.requiredCheck.toggled.connect(self._save_selectedwidget)
+            self.defaultvalueText.textChanged.connect(self._save_selectedwidget)
+            self.widgetCombo.currentIndexChanged.connect(self._save_selectedwidget)
+
+        def disconnectsignals():
+            try:
+                #widget settings
+                self.fieldList.currentIndexChanged.disconnect(self._save_selectedwidget)
+                self.fieldList.editTextChanged.disconnect(self._save_selectedwidget)
+                self.requiredCheck.toggled.disconnect(self._save_selectedwidget)
+                self.defaultvalueText.textChanged.disconnect(self._save_selectedwidget)
+                self.widgetCombo.currentIndexChanged.disconnect(self._save_selectedwidget)
+            except TypeError:
+                pass
+
+        disconnectsignals()
+
         form = index.data(Qt.UserRole)
         settings = form.settings
         label = settings['label']
@@ -273,12 +307,18 @@ class ProjectWidget(Ui_Form, QWidget):
         else:
             self.formtypeCombo.setCurrentIndex(index)
 
+        for widget in widgets:
+            print widget['field']
+
         self.widgetmodel.loadwidgets(widgets)
 
         # Set the first widget
         index = self.widgetmodel.index(0, 0)
         if index.isValid():
             self.widgetlist.setCurrentIndex(index)
+            self.updatecurrentwidget(index, None)
+
+        connectsignals()
 
     def updatefields(self, layer):
         """
@@ -316,8 +356,8 @@ class ProjectWidget(Ui_Form, QWidget):
         """
         Update the UI with the config for the current selected widget.
         """
+        print "Update widget"
         widget = index.data(Qt.UserRole)
-
         widgettype = widget['widget']
         field = widget['field']
         required = widget.get('required', False)

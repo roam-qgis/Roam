@@ -229,6 +229,13 @@ class WidgetsModel(QAbstractItemModel):
         super(WidgetsModel, self).__init__(parent)
         self.widgets = []
 
+    def addwidget(self, widget):
+        count = self.rowCount()
+        self.beginInsertRows(QModelIndex(), count, count + 1)
+        self.widgets.append(widget)
+        self.endInsertRows()
+        return self.index(count + 1, 0)
+
     def loadwidgets(self, widgets):
         self.beginResetModel()
         self.widgets = widgets
@@ -272,7 +279,8 @@ class WidgetsModel(QAbstractItemModel):
 
         widget = index.internalPointer()
         if role == Qt.DisplayRole:
-            return "{} ({})".format(widget['widget'], widget['field'].lower())
+            field = widget.get('field', '') or ''
+            return "{} ({})".format(widget['widget'], field.lower())
         elif role == Qt.UserRole:
             return widget
         elif role == Qt.DecorationRole:

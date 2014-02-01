@@ -34,17 +34,21 @@ class ListWidgetConfig(Ui_Form, ConfigWidget):
         self.valueCombo.setModel(self.fieldmodel)
 
         self.fieldmodel.setLayerFilter(self.layerCombo.view().selectionModel())
+        self.reset()
         self.blockSignals(False)
 
-    def widgetchanged(self):
-        self.allownull = self.allownullCheck.isChecked()
-        self.orderby = self.orderbyCheck.isChecked()
+    def reset(self):
         self.listtype = 'layer'
         self.list = []
         self.layer = None
         self.key = None
         self.value = None
         self.filter = None
+
+    def widgetchanged(self):
+        self.reset()
+        self.allownull = self.allownullCheck.isChecked()
+        self.orderby = self.orderbyCheck.isChecked()
         if self.listRadio.isChecked():
             self.listtype = 'list'
             self.list = [item for item in self.listText.toPlainText().split('\n')]

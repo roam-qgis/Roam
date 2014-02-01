@@ -585,7 +585,7 @@ QListView::item {
                <item>
                 <layout class="QHBoxLayout" name="horizontalLayout_2">
                  <item>
-                  <widget class="QToolButton" name="toolButton_3">
+                  <widget class="QToolButton" name="addWidgetButton">
                    <property name="text">
                     <string>Add</string>
                    </property>
@@ -779,7 +779,6 @@ QListView::item {
          <property name="styleSheet">
           <string notr="true"/>
          </property>
-         <zorder></zorder>
         </widget>
        </item>
       </layout>
