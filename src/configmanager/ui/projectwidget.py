@@ -319,9 +319,6 @@ class ProjectWidget(Ui_Form, QWidget):
         else:
             self.formtypeCombo.setCurrentIndex(index)
 
-        for widget in widgets:
-            print widget['field']
-
         self.widgetmodel.loadwidgets(widgets)
 
         # Set the first widget
@@ -368,7 +365,6 @@ class ProjectWidget(Ui_Form, QWidget):
         """
         Update the UI with the config for the current selected widget.
         """
-        print "Update widget"
         widget = index.data(Qt.UserRole)
         widgettype = widget['widget']
         field = widget['field']
