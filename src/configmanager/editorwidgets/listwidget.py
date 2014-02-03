@@ -89,6 +89,7 @@ class ListWidgetConfig(Ui_Form, ConfigWidget):
         super(ListWidgetConfig, self).blockSignals(bool)
 
     def setconfig(self, config):
+        print "Set config"
         self.blockSignals(True)
         self.allownull = config.get('allownull', True)
         self.orderby = config.get('orderbyvalue', False)
@@ -98,6 +99,7 @@ class ListWidgetConfig(Ui_Form, ConfigWidget):
         self.keyCombo.clear()
         self.valueCombo.clear()
         self.filterText.clear()
+        self.layermodel.refresh()
 
         # Rebind all the values
         if 'list' in config:
@@ -115,7 +117,6 @@ class ListWidgetConfig(Ui_Form, ConfigWidget):
             key = subconfig.get('key', '') or ''
             value = subconfig.get('value', '') or ''
             filter = subconfig.get('filter', None)
-            self.layermodel.updateLayerList()
             index = self.layerCombo.findData(layer, Qt.DisplayRole)
             if index > -1:
                 self.layerCombo.setCurrentIndex(index)

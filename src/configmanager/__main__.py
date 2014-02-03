@@ -37,7 +37,7 @@ def saveproject(oldsettings, project):
     writesettings(oldsettings, settingspath + '~')
     writesettings(project.settings, settingspath)
 
-dialog = ConfigManagerDialog()
+dialog = ConfigManagerDialog(projectpath)
 dialog.projectwidget.projectsaved.connect(saveproject)
 dialog.loadprojects(projects)
 dialog.showMaximized()

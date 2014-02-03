@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>984</width>
-    <height>671</height>
+    <width>1294</width>
+    <height>726</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -247,12 +247,13 @@ QListView::item {
      </property>
      <widget class="QWidget" name="page">
       <layout class="QFormLayout" name="formLayout">
-       <property name="fieldGrowthPolicy">
-        <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
-       </property>
-       <property name="margin">
-        <number>0</number>
-       </property>
+       <item row="0" column="0">
+        <widget class="QLabel" name="label_2">
+         <property name="text">
+          <string>Title</string>
+         </property>
+        </widget>
+       </item>
        <item row="0" column="1">
         <widget class="QLineEdit" name="titleText"/>
        </item>
@@ -286,13 +287,6 @@ QListView::item {
          </property>
         </widget>
        </item>
-       <item row="0" column="0">
-        <widget class="QLabel" name="label_2">
-         <property name="text">
-          <string>Title</string>
-         </property>
-        </widget>
-       </item>
        <item row="3" column="0">
         <widget class="QLabel" name="label_9">
          <property name="text">
@@ -301,17 +295,28 @@ QListView::item {
         </widget>
        </item>
        <item row="3" column="1">
-        <widget class="QLineEdit" name="versionText">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-         <property name="inputMask">
-          <string>0.0.0; </string>
-         </property>
-        </widget>
+        <layout class="QHBoxLayout" name="horizontalLayout_3">
+         <item>
+          <widget class="QLineEdit" name="versionText">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="inputMask">
+            <string>0.0.0; </string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLabel" name="roamVersionLabel">
+           <property name="text">
+            <string>TextLabel</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
        </item>
       </layout>
      </widget>
@@ -344,8 +349,162 @@ QListView::item {
           <property name="margin">
            <number>0</number>
           </property>
+          <item row="0" column="0">
+           <widget class="QGroupBox" name="groupBox">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="maximumSize">
+             <size>
+              <width>300</width>
+              <height>16777215</height>
+             </size>
+            </property>
+            <property name="styleSheet">
+             <string notr="true"/>
+            </property>
+            <property name="title">
+             <string>Form</string>
+            </property>
+            <property name="flat">
+             <bool>true</bool>
+            </property>
+            <layout class="QGridLayout" name="gridLayout_4">
+             <property name="bottomMargin">
+              <number>0</number>
+             </property>
+             <item row="2" column="1">
+              <widget class="QLabel" name="label_5">
+               <property name="text">
+                <string>Type</string>
+               </property>
+              </widget>
+             </item>
+             <item row="2" column="2">
+              <widget class="QComboBox" name="formtypeCombo">
+               <item>
+                <property name="text">
+                 <string>auto</string>
+                </property>
+               </item>
+              </widget>
+             </item>
+             <item row="3" column="1" colspan="2">
+              <layout class="QVBoxLayout" name="verticalLayout_2">
+               <item>
+                <layout class="QHBoxLayout" name="horizontalLayout_2">
+                 <item>
+                  <widget class="QToolButton" name="addWidgetButton">
+                   <property name="text">
+                    <string>Add</string>
+                   </property>
+                   <property name="icon">
+                    <iconset resource="../../roam/resources.qrc">
+                     <normaloff>:/icons/add</normaloff>:/icons/add</iconset>
+                   </property>
+                   <property name="autoRaise">
+                    <bool>true</bool>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <spacer name="horizontalSpacer_2">
+                   <property name="orientation">
+                    <enum>Qt::Horizontal</enum>
+                   </property>
+                   <property name="sizeHint" stdset="0">
+                    <size>
+                     <width>40</width>
+                     <height>20</height>
+                    </size>
+                   </property>
+                  </spacer>
+                 </item>
+                 <item>
+                  <widget class="QToolButton" name="removeWidgetButton">
+                   <property name="text">
+                    <string>Remove</string>
+                   </property>
+                   <property name="icon">
+                    <iconset resource="../../roam/resources.qrc">
+                     <normaloff>:/icons/remove</normaloff>:/icons/remove</iconset>
+                   </property>
+                   <property name="autoRaise">
+                    <bool>true</bool>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+               </item>
+               <item>
+                <widget class="QListView" name="widgetlist">
+                 <property name="alternatingRowColors">
+                  <bool>true</bool>
+                 </property>
+                 <property name="selectionMode">
+                  <enum>QAbstractItemView::SingleSelection</enum>
+                 </property>
+                 <property name="selectionBehavior">
+                  <enum>QAbstractItemView::SelectItems</enum>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </item>
+             <item row="0" column="1">
+              <widget class="QLabel" name="label_6">
+               <property name="text">
+                <string>Label</string>
+               </property>
+              </widget>
+             </item>
+             <item row="0" column="2">
+              <widget class="QLineEdit" name="formLabelText"/>
+             </item>
+             <item row="1" column="1">
+              <widget class="QLabel" name="label_7">
+               <property name="text">
+                <string>Layer</string>
+               </property>
+              </widget>
+             </item>
+             <item row="1" column="2">
+              <widget class="QComboBox" name="layerCombo">
+               <property name="editable">
+                <bool>false</bool>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </widget>
+          </item>
+          <item row="0" column="2">
+           <spacer name="horizontalSpacer_5">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeType">
+             <enum>QSizePolicy::MinimumExpanding</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>0</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
           <item row="0" column="1">
            <widget class="QGroupBox" name="groupBox_2">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
             <property name="title">
              <string>Widget Config</string>
             </property>
@@ -537,134 +696,6 @@ QListView::item {
             </layout>
            </widget>
           </item>
-          <item row="0" column="0">
-           <widget class="QGroupBox" name="groupBox">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="maximumSize">
-             <size>
-              <width>300</width>
-              <height>16777215</height>
-             </size>
-            </property>
-            <property name="styleSheet">
-             <string notr="true"/>
-            </property>
-            <property name="title">
-             <string>Form</string>
-            </property>
-            <property name="flat">
-             <bool>true</bool>
-            </property>
-            <layout class="QGridLayout" name="gridLayout_4">
-             <property name="bottomMargin">
-              <number>0</number>
-             </property>
-             <item row="2" column="1">
-              <widget class="QLabel" name="label_5">
-               <property name="text">
-                <string>Type</string>
-               </property>
-              </widget>
-             </item>
-             <item row="2" column="2">
-              <widget class="QComboBox" name="formtypeCombo">
-               <item>
-                <property name="text">
-                 <string>auto</string>
-                </property>
-               </item>
-              </widget>
-             </item>
-             <item row="3" column="1" colspan="2">
-              <layout class="QVBoxLayout" name="verticalLayout_2">
-               <item>
-                <layout class="QHBoxLayout" name="horizontalLayout_2">
-                 <item>
-                  <widget class="QToolButton" name="addWidgetButton">
-                   <property name="text">
-                    <string>Add</string>
-                   </property>
-                   <property name="autoRaise">
-                    <bool>true</bool>
-                   </property>
-                  </widget>
-                 </item>
-                 <item>
-                  <spacer name="horizontalSpacer_2">
-                   <property name="orientation">
-                    <enum>Qt::Horizontal</enum>
-                   </property>
-                   <property name="sizeHint" stdset="0">
-                    <size>
-                     <width>40</width>
-                     <height>20</height>
-                    </size>
-                   </property>
-                  </spacer>
-                 </item>
-                 <item>
-                  <widget class="QToolButton" name="removeWidgetButton">
-                   <property name="text">
-                    <string>Remove</string>
-                   </property>
-                   <property name="icon">
-                    <iconset resource="../../roam/resources.qrc">
-                     <normaloff>:/icons/remove</normaloff>:/icons/remove</iconset>
-                   </property>
-                   <property name="autoRaise">
-                    <bool>true</bool>
-                   </property>
-                  </widget>
-                 </item>
-                </layout>
-               </item>
-               <item>
-                <widget class="QListView" name="widgetlist">
-                 <property name="alternatingRowColors">
-                  <bool>true</bool>
-                 </property>
-                 <property name="selectionMode">
-                  <enum>QAbstractItemView::SingleSelection</enum>
-                 </property>
-                 <property name="selectionBehavior">
-                  <enum>QAbstractItemView::SelectItems</enum>
-                 </property>
-                </widget>
-               </item>
-              </layout>
-             </item>
-             <item row="0" column="1">
-              <widget class="QLabel" name="label_6">
-               <property name="text">
-                <string>Label</string>
-               </property>
-              </widget>
-             </item>
-             <item row="0" column="2">
-              <widget class="QLineEdit" name="formLabelText"/>
-             </item>
-             <item row="1" column="1">
-              <widget class="QLabel" name="label_7">
-               <property name="text">
-                <string>Layer</string>
-               </property>
-              </widget>
-             </item>
-             <item row="1" column="2">
-              <widget class="QComboBox" name="layerCombo">
-               <property name="editable">
-                <bool>false</bool>
-               </property>
-              </widget>
-             </item>
-            </layout>
-           </widget>
-          </item>
          </layout>
         </widget>
        </item>
@@ -689,9 +720,13 @@ QListView::item {
           <item>
            <layout class="QHBoxLayout" name="horizontalLayout">
             <item>
-             <widget class="QToolButton" name="toolButton">
+             <widget class="QToolButton" name="addFormButton">
               <property name="text">
                <string>Add</string>
+              </property>
+              <property name="icon">
+               <iconset resource="../../roam/resources.qrc">
+                <normaloff>:/icons/add</normaloff>:/icons/add</iconset>
               </property>
               <property name="autoRaise">
                <bool>true</bool>
@@ -715,7 +750,7 @@ QListView::item {
              </spacer>
             </item>
             <item>
-             <widget class="QToolButton" name="toolButton_2">
+             <widget class="QToolButton" name="removeFormButton">
               <property name="text">
                <string>Remove</string>
               </property>
@@ -757,6 +792,19 @@ QListView::item {
           </item>
          </layout>
         </widget>
+       </item>
+       <item row="0" column="2">
+        <spacer name="horizontalSpacer_3">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>40</width>
+           <height>20</height>
+          </size>
+         </property>
+        </spacer>
        </item>
       </layout>
      </widget>
@@ -828,7 +876,7 @@ QListView::item {
     </hint>
     <hint type="destinationlabel">
      <x>279</x>
-     <y>-33</y>
+     <y>0</y>
     </hint>
    </hints>
   </connection>

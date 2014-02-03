@@ -34,8 +34,8 @@ class ProjectWidget(Ui_Form, QWidget):
         self.formmodel = QStandardItemModel()
         self.widgetmodel = WidgetsModel()
         self.possiblewidgetsmodel = QStandardItemModel()
-        self.layermodel = QgsLayerModel(watchregistry=True)
-        self.selectlayermodel = QgsLayerModel(watchregistry=True, checkselect=True)
+        self.layermodel = QgsLayerModel(watchregistry=False)
+        self.selectlayermodel = QgsLayerModel(watchregistry=False, checkselect=True)
         self.selectlayermodel.layerchecked.connect(self._save_selectionlayers)
 
         self.layerfilter = LayerFilter()
@@ -49,6 +49,9 @@ class ProjectWidget(Ui_Form, QWidget):
 
         self.widgetlist.setModel(self.widgetmodel)
         self.widgetlist.selectionModel().currentChanged.connect(self.updatecurrentwidget)
+        self.widgetmodel.rowsRemoved.connect(self.setwidgetconfigvisiable)
+        self.widgetmodel.rowsInserted.connect(self.setwidgetconfigvisiable)
+        self.widgetmodel.modelReset.connect(self.setwidgetconfigvisiable)
 
         self.formlist.setModel(self.formmodel)
         self.formlist.selectionModel().currentChanged.connect(self.updatecurrentform)
@@ -61,13 +64,21 @@ class ProjectWidget(Ui_Form, QWidget):
 
         self.menuList.setCurrentRow(0)
 
-
         self.loadwidgettypes()
 
         self.addWidgetButton.pressed.connect(self.newwidget)
         self.removeWidgetButton.pressed.connect(self.removewidget)
 
+        self.roamVersionLabel.setText("You are running IntraMaps Roam version {}".format(roam.__version__))
+
+    def setwidgetconfigvisiable(self, *args):
+        haswidgets = self.widgetmodel.rowCount() > 0
+        self.groupBox_2.setVisible(haswidgets)
+
     def removewidget(self):
+        """
+        Remove the selected widget from the widgets list
+        """
         widget, index = self.currentuserwidget
         if index.isValid():
             self.widgetmodel.removeRow(index.row())
@@ -148,7 +159,6 @@ class ProjectWidget(Ui_Form, QWidget):
         widget['default'] = default
         self.widgetmodel.setData(index, widget, Qt.UserRole)
 
-
     def _save_selectionlayers(self, index, layer, value):
         config = self.project.settings
         selectlayers = config.get('selectlayers', [])
@@ -226,9 +236,13 @@ class ProjectWidget(Ui_Form, QWidget):
         QgsProject.instance().read(fileinfo)
 
     def _closeqgisproject(self):
-        self.canvas.freeze()
+        if self.canvas.isDrawing():
+            return
+
+        self.canvas.freeze(True)
+        self.layermodel.removeall()
+        self.selectlayermodel.removeall()
         QgsMapLayerRegistry.instance().removeAllMapLayers()
-        self.canvas.clear()
         self.canvas.freeze(False)
 
     def _readproject(self, doc):
@@ -240,30 +254,34 @@ class ProjectWidget(Ui_Form, QWidget):
         self.canvas.updateScale()
         self.canvas.freeze(False)
         self.canvas.refresh()
-        self.layermodel.updateLayerList(QgsMapLayerRegistry.instance().mapLayers().values())
-        self.selectlayermodel.updateLayerList(QgsMapLayerRegistry.instance().mapLayers().values())
+        layers = QgsMapLayerRegistry.instance().mapLayers().values()
+        self.layermodel.addlayers(layers, removeall=True)
+        self.selectlayermodel.addlayers(layers, removeall=True)
         self._updateforproject(self.project)
 
     def _updateforproject(self, project):
+        def _loadforms(forms):
+            self.formmodel.clear()
+            for form in forms:
+                item = QStandardItem(form.name)
+                item.setEditable(True)
+                item.setIcon(QIcon(form.icon))
+                item.setData(form, Qt.UserRole)
+                self.formmodel.appendRow(item)
+
+            index = self.formmodel.index(0, 0)
+            if index.isValid():
+                self.formlist.setCurrentIndex(index)
+                self.formframe.show()
+            else:
+                self.formframe.hide()
+
         self.titleText.setText(project.name)
         self.descriptionText.setPlainText(project.description)
-        self._loadforms(project.forms)
+        _loadforms(project.forms)
 
-    def _loadforms(self, forms):
-        self.formmodel.clear()
-        for form in forms:
-            item = QStandardItem(form.name)
-            item.setEditable(False)
-            item.setIcon(QIcon(form.icon))
-            item.setData(form, Qt.UserRole)
-            self.formmodel.appendRow(item)
-
-        index = self.formmodel.index(0, 0)
-        if index.isValid():
-            self.formlist.setCurrentIndex(index)
-            self.formframe.show()
-        else:
-            self.formframe.hide()
+    def swapwidgetconfig(self, index):
+        self.updatewidgetconfig({})
 
     def updatewidgetconfig(self, config):
         widgetconfig, index, sample, widgettype = self.currentwidgetconfig
@@ -280,6 +298,7 @@ class ProjectWidget(Ui_Form, QWidget):
             self.requiredCheck.toggled.connect(self._save_selectedwidget)
             self.defaultvalueText.textChanged.connect(self._save_default)
             self.widgetCombo.currentIndexChanged.connect(self._save_selectedwidget)
+            self.widgetCombo.currentIndexChanged.connect(self.swapwidgetconfig)
 
         def disconnectsignals():
             try:
@@ -289,6 +308,7 @@ class ProjectWidget(Ui_Form, QWidget):
                 self.requiredCheck.toggled.disconnect(self._save_selectedwidget)
                 self.defaultvalueText.textChanged.disconnect(self._save_default)
                 self.widgetCombo.currentIndexChanged.disconnect(self._save_selectedwidget)
+                self.widgetCombo.currentIndexChanged.disconnect(self.swapwidgetconfig)
             except TypeError:
                 pass
 
@@ -307,10 +327,8 @@ class ProjectWidget(Ui_Form, QWidget):
         index = self.layermodel.findlayer(layer)
         index = self.layerfilter.mapFromSource(index)
         if index.isValid():
-            self.layerCombo.blockSignals(True)
             self.layerCombo.setCurrentIndex(index.row())
             self.updatefields(index.data(Qt.UserRole))
-            self.layerCombo.blockSignals(False)
 
         index = self.formtypeCombo.findText(formtype)
         if index == -1:
@@ -326,6 +344,7 @@ class ProjectWidget(Ui_Form, QWidget):
         if index.isValid():
             self.widgetlist.setCurrentIndex(index)
             self.updatecurrentwidget(index, None)
+
 
         connectsignals()
 
@@ -365,6 +384,9 @@ class ProjectWidget(Ui_Form, QWidget):
         """
         Update the UI with the config for the current selected widget.
         """
+        if not index.isValid():
+            return
+
         widget = index.data(Qt.UserRole)
         widgettype = widget['widget']
         field = widget['field']
@@ -383,13 +405,14 @@ class ProjectWidget(Ui_Form, QWidget):
         self.requiredCheck.setChecked(required)
         self.requiredCheck.blockSignals(False)
 
-        self.fieldList.blockSignals(True)
-        index = self.fieldList.findData(field.lower(), QgsFieldModel.FieldNameRole)
-        if index > -1:
-            self.fieldList.setCurrentIndex(index)
-        else:
-            self.fieldList.setEditText(field)
-        self.fieldList.blockSignals(False)
+        if not field is None:
+            self.fieldList.blockSignals(True)
+            index = self.fieldList.findData(field.lower(), QgsFieldModel.FieldNameRole)
+            if index > -1:
+                self.fieldList.setCurrentIndex(index)
+            else:
+                self.fieldList.setEditText(field)
+            self.fieldList.blockSignals(False)
 
         index = self.widgetCombo.findText(widgettype)
         self.widgetCombo.blockSignals(True)

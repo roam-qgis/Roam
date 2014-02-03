@@ -36,6 +36,7 @@
     <file alias="remove">resources/images/remove.svg</file>
     <file alias="next">resources/images/next.svg</file>
     <file alias="previous">resources/images/previous.svg</file>
+    <file alias="add">resources/images/add.svg</file>
   </qresource>
   <qresource prefix="branding">
     <file alias="logo">resources/branding/logo.png</file>

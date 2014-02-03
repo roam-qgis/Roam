@@ -1,8 +1,13 @@
+import os
+import random
+
 from PyQt4.QtGui import QDialog, QFont, QColor, QIcon
 from PyQt4.QtCore import QAbstractItemModel, QModelIndex, Qt
 
 from configmanager.ui import ui_configmanager
 
+import shutil
+import roam.project
 
 class ProjectModel(QAbstractItemModel):
     def __init__(self, parent=None):
@@ -13,6 +18,13 @@ class ProjectModel(QAbstractItemModel):
         self.beginResetModel()
         self.projects = list(projects)
         self.endResetModel()
+
+    def addproject(self, project):
+        count = self.rowCount()
+        self.beginInsertRows(QModelIndex(), count, count + 1)
+        self.projects.append(project)
+        self.endInsertRows()
+        return self.index(self.rowCount() - 1, 0)
 
     def flags(self, index):
         return Qt.ItemIsSelectable | Qt.ItemIsEnabled
@@ -51,7 +63,7 @@ class ProjectModel(QAbstractItemModel):
 
 
 class ConfigManagerDialog(ui_configmanager.Ui_ProjectInstallerDialog, QDialog):
-    def __init__(self, parent=None):
+    def __init__(self, projectfolder, parent=None):
         super(ConfigManagerDialog, self).__init__(parent)
         self.setupUi(self)
         self.projectmodel = ProjectModel()
@@ -59,6 +71,16 @@ class ConfigManagerDialog(ui_configmanager.Ui_ProjectInstallerDialog, QDialog):
         self.projectList.selectionModel().currentChanged.connect(self.updatecurrentproject)
         self.projectwidget.adjustSize()
         self.setWindowFlags(Qt.Window)
+        self.projectfolder = projectfolder
+        self.newProjectButton.pressed.connect(self.newproject)
+
+    def newproject(self):
+        templateProject = os.path.join(os.path.dirname(__file__), "..", "templates/templateProject")
+        newfolder = os.path.join(self.projectfolder, "newProject{}".format(random.randint(1, 100)))
+        shutil.copytree(templateProject, newfolder)
+        project = roam.project.Project.from_folder(newfolder)
+        newindex = self.projectmodel.addproject(project)
+        self.projectList.setCurrentIndex(newindex)
 
     def loadprojects(self, projects):
         self.projectmodel.loadprojects(projects)

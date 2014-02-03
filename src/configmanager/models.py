@@ -27,9 +27,13 @@ class LayerFilter(QSortFilterProxyModel):
     def __init__(self, geomtypes=[QGis.NoGeometry], parent=None):
         super(LayerFilter, self).__init__(parent)
         self.geomtypes = geomtypes
+        self.setDynamicSortFilter(True)
 
     def filterAcceptsRow(self, sourcerow, soureparent):
         index = self.sourceModel().index(sourcerow, 0, soureparent)
+        if not index.isValid():
+            return False
+
         if index.data(Qt.UserRole).type() == QgsMapLayer.RasterLayer:
             return False
 
@@ -47,8 +51,8 @@ class QgsLayerModel(QAbstractItemModel):
         self.checkselect = checkselect
 
         if watchregistry:
-            QgsMapLayerRegistry.instance().layersAdded.connect(self.updateLayerList)
-            QgsMapLayerRegistry.instance().layersRemoved.connect(self.updateLayerList)
+            QgsMapLayerRegistry.instance().layerWasAdded.connect(self.addlayer)
+            QgsMapLayerRegistry.instance().removeAll.connect(self.removeall)
 
     def findlayer(self, name):
         """
@@ -59,33 +63,50 @@ class QgsLayerModel(QAbstractItemModel):
         try:
             return items[0]
         except IndexError:
-            return None
+            return QModelIndex()
 
-    def updateLayerList(self, *args):
-        """
-        Update the layer list. If no layers are given it will read from the map registry
-        """
-        self.beginResetModel()
+    def addlayer(self, layer):
+        self.beginInsertRows(QModelIndex(), self.rowCount(), self.rowCount() + 1)
         try:
-            layers = args[0]
-        except IndexError:
-            layers = QgsMapLayerRegistry.instance().mapLayers().values()
+            if layer.type() in self.layerfilter:
+                self.layers.append(layer)
+        except AttributeError:
+            pass
+        self.endInsertRows()
 
+    def removeall(self):
+        self.beginResetModel()
         self.layers = []
-        for layer in layers:
-            try:
-                if layer.type() in self.layerfilter:
-                    self.layers.append(layer)
-            except AttributeError:
-                continue
         self.endResetModel()
+
+    def addlayers(self, layers, removeall=False):
+        if removeall:
+            self.removeall()
+
+        for layer in layers:
+            self.addlayer(layer)
+
+    def refresh(self):
+        self.removeall()
+        for layer in QgsMapLayerRegistry.instance().mapLayers().values():
+            self.addlayer(layer)
 
     def flags(self, index):
         return Qt.ItemIsUserCheckable | Qt.ItemIsSelectable | Qt.ItemIsEnabled
 
     def index(self, row, column, parent = QModelIndex()):
-        layer = self.getLayer(row)
-        if not layer: QModelIndex()
+        def getLayer(index):
+            try:
+                layer = self.layers[index]
+                if layer.type() in self.layerfilter:
+                    return layer
+            except IndexError:
+                return None
+
+        layer = getLayer(row)
+        if not layer:
+            return QModelIndex()
+
         return self.createIndex(row, column, layer)
 
     def parent(self, index):
@@ -96,14 +117,6 @@ class QgsLayerModel(QAbstractItemModel):
 
     def columnCount(self, parent=QModelIndex()):
         return 1
-
-    def getLayer(self, index):
-        try:
-            layer = self.layers[index]
-            if layer.type() in self.layerfilter:
-                return layer
-        except IndexError:
-            return None
 
     def setData(self, index, value, role=None):
         if role == Qt.CheckStateRole:
@@ -234,7 +247,7 @@ class WidgetsModel(QAbstractItemModel):
         self.beginInsertRows(QModelIndex(), count, count + 1)
         self.widgets.append(widget)
         self.endInsertRows()
-        return self.index(count + 1, 0)
+        return self.index(self.rowCount() - 1, 0)
 
     def loadwidgets(self, widgets):
         self.beginResetModel()
