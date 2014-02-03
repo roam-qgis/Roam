@@ -262,6 +262,12 @@ class WidgetsModel(QAbstractItemModel):
         except IndexError:
             return None
 
+    def removeRow(self, row, parent=None):
+        self.beginRemoveRows(QModelIndex(), row, row)
+        del self.widgets[row]
+        self.endRemoveRows()
+        return True
+
     def setData(self, index, value, role=None):
         if role == Qt.UserRole and index.isValid():
             widget = self.data(index, Qt.UserRole)

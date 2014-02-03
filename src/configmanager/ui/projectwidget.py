@@ -2,7 +2,7 @@ import os
 import copy
 from PyQt4.Qsci import QsciLexerYAML
 
-from PyQt4.QtCore import Qt, QDir, QFileInfo, pyqtSignal
+from PyQt4.QtCore import Qt, QDir, QFileInfo, pyqtSignal, QModelIndex
 from PyQt4.QtGui import QWidget, QStandardItemModel, QStandardItem, QIcon
 
 from qgis.core import QgsProject, QgsMapLayerRegistry, QgsPalLabeling
@@ -65,6 +65,12 @@ class ProjectWidget(Ui_Form, QWidget):
         self.loadwidgettypes()
 
         self.addWidgetButton.pressed.connect(self.newwidget)
+        self.removeWidgetButton.pressed.connect(self.removewidget)
+
+    def removewidget(self):
+        widget, index = self.currentuserwidget
+        if index.isValid():
+            self.widgetmodel.removeRow(index.row())
 
     def newwidget(self):
         """
@@ -129,13 +135,19 @@ class ProjectWidget(Ui_Form, QWidget):
 
         widget['widget'] = widgetype
         widget['required'] = self.requiredCheck.isChecked()
-        widget['default'] = self.defaultvalueText.text()
         row = self.fieldList.currentIndex()
         field = self.fieldsmodel.index(row, 0).data(QgsFieldModel.FieldNameRole)
         widget['field'] = field
         widget['config'] = configwidget.getconfig()
 
         self.widgetmodel.setData(index, widget, Qt.UserRole)
+
+    def _save_default(self):
+        widget, index = self.currentuserwidget
+        default = self.defaultvalueText.text()
+        widget['default'] = default
+        self.widgetmodel.setData(index, widget, Qt.UserRole)
+
 
     def _save_selectionlayers(self, index, layer, value):
         config = self.project.settings
@@ -266,7 +278,7 @@ class ProjectWidget(Ui_Form, QWidget):
             self.fieldList.currentIndexChanged.connect(self._save_selectedwidget)
             self.fieldList.editTextChanged.connect(self._save_selectedwidget)
             self.requiredCheck.toggled.connect(self._save_selectedwidget)
-            self.defaultvalueText.textChanged.connect(self._save_selectedwidget)
+            self.defaultvalueText.textChanged.connect(self._save_default)
             self.widgetCombo.currentIndexChanged.connect(self._save_selectedwidget)
 
         def disconnectsignals():
@@ -275,7 +287,7 @@ class ProjectWidget(Ui_Form, QWidget):
                 self.fieldList.currentIndexChanged.disconnect(self._save_selectedwidget)
                 self.fieldList.editTextChanged.disconnect(self._save_selectedwidget)
                 self.requiredCheck.toggled.disconnect(self._save_selectedwidget)
-                self.defaultvalueText.textChanged.disconnect(self._save_selectedwidget)
+                self.defaultvalueText.textChanged.disconnect(self._save_default)
                 self.widgetCombo.currentIndexChanged.disconnect(self._save_selectedwidget)
             except TypeError:
                 pass

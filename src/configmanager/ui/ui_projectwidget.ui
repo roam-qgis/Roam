@@ -608,7 +608,7 @@ QListView::item {
                   </spacer>
                  </item>
                  <item>
-                  <widget class="QToolButton" name="toolButton_4">
+                  <widget class="QToolButton" name="removeWidgetButton">
                    <property name="text">
                     <string>Remove</string>
                    </property>
