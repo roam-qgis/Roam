@@ -95,6 +95,7 @@ class GPSAction(QAction):
         self.setIconText("Enable GPS")
         self.setEnabled(True)
         self._position = None
+        QgsGPSConnectionRegistry.instance().unregisterConnection(gpsConnection)
 
     def connected(self, gpsConnection):
         self.setIcon(QIcon(':/icons/gps_looking'))
@@ -107,6 +108,7 @@ class GPSAction(QAction):
         self.gpsConn.stateChanged.connect(self.gpsStateChanged)
         self.isConnected = True
         self.setEnabled(True)
+        QgsGPSConnectionRegistry.instance().registerConnection(gpsConnection)
 
     def failed(self):
         self.setEnabled(True)

@@ -23,7 +23,7 @@ from PyQt4.QtGui import (QWidget,
                          QSpacerItem,
                          QFormLayout)
 
-from qgis.core import QgsFields, QgsFeature
+from qgis.core import QgsFields, QgsFeature, QgsGPSConnectionRegistry
 
 from roam.editorwidgets.core import WidgetsRegistry, EditorWidgetException
 from roam import utils
@@ -279,7 +279,7 @@ class FeatureFormBase(QWidget):
                 return button.isChecked()
 
         savedvalues = {}
-        values = {}
+        values = CaseInsensitiveDict()
         for field, wrapper in self.boundwidgets.iteritems():
             value = wrapper.value()
             if shouldsave(field):
@@ -383,6 +383,9 @@ class FeatureForm(FeatureFormBase):
     def __init__(self, form, formconfig, feature, defaults, parent):
         super(FeatureForm, self).__init__(form, formconfig, feature, defaults, parent)
         self.deletemessage = 'Do you really want to delete this feature?'
+        self.connection = self.gpsconnection
+        if self.connection:
+            self.connection.stateChanged.connect(self.ongpsupdate)
 
     @classmethod
     def from_form(cls, form, formconfig, feature, defaults, parent=None):
@@ -477,6 +480,16 @@ class FeatureForm(FeatureFormBase):
 
     def accept(self):
         return True
+
+    @property
+    def gpsconnection(self):
+        try:
+            return QgsGPSConnectionRegistry.instance().connectionList()[0]
+        except IndexError:
+            return None
+
+    def ongpsupdate(self, info):
+        pass
 
     def cancelload(self, message=None, level=RejectedException.WARNING):
         raise RejectedException(message, level)
