@@ -8,7 +8,8 @@ def setup(argv):
 
     Returns the QGIS prefix path and settings path.
     """
-    RUNNING_FROM_FILE = '__file__' in globals()
+    frozen = getattr(sys, "frozen", False)
+    RUNNING_FROM_FILE = not frozen
     apppath = os.path.dirname(os.path.realpath(argv[0]))
     prefixpath = os.path.join(apppath, "libs", "qgis")
     settingspath = os.path.join(apppath, "settings.config")
