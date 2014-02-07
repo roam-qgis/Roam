@@ -40,6 +40,7 @@ class WidgetsRegistry(object):
 
 class EditorWidget(QObject):
     validationupdate = pyqtSignal(str, bool)
+    valuechanged = pyqtSignal(object)
 
     def __init__(self, widget=None, layer=None, label=None, field=None, parent=None):
         super(EditorWidget, self).__init__(parent)
@@ -138,4 +139,12 @@ class EditorWidget(QObject):
     def setEnabled(self, enabled):
         if not self.widget is None:
             self.widget.setEnabled(enabled)
+
+    def emitvaluechanged(self, *args):
+        """
+        Emit the value changed signal.
+        :param args: Ignored.  Just a sink so we can connect it to any signal.
+        :return:
+        """
+        self.valuechanged.emit(self.value())
 

@@ -103,6 +103,8 @@ class ListWidget(EditorWidget):
         else:
             self.raisevalidationupdate(True)
 
+        self.emitvaluechanged()
+
     def setvalue(self, value):
         index = self.widget.findData(value)
         self.widget.setCurrentIndex(index)

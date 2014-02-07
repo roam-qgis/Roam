@@ -23,6 +23,7 @@ class ImageWidget(EditorWidget):
 
     def validate(self, *args):
         self.raisevalidationupdate(not self.widget.isDefault)
+        self.emitvaluechanged()
 
     def showlargeimage(self, pixmap):
         self.openimage.emit(pixmap)

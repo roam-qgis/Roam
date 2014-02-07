@@ -271,8 +271,6 @@ class DataEntryWidget(dataentry_widget, dataentry_base):
         fields = [field.name().lower() for field in self.fields]
         values = CaseInsensitiveDict(zip(fields, feature.attributes()))
 
-        self.featureform.setupui()
-
         try:
             self.featureform.load(feature, layers, values)
         except featureform.RejectedException as rejected:
