@@ -11,6 +11,8 @@ from qgis.gui import QgsMapCanvas
 from configmanager.ui.ui_projectwidget import Ui_Form
 from configmanager.models import widgeticon, WidgetsModel, QgsLayerModel, QgsFieldModel, LayerFilter
 
+from roam.featureform import FeatureForm
+
 import configmanager.editorwidgets
 import roam.editorwidgets
 import roam.projectparser
@@ -61,6 +63,9 @@ class ProjectWidget(Ui_Form, QWidget):
 
         self.formlist.setModel(self.formmodel)
         self.formlist.selectionModel().currentChanged.connect(self.updatecurrentform)
+
+        self.formpreviewList.setModel(self.formmodel)
+        self.formpreviewList.clicked.connect(self.updateformpreview)
 
         self.selectLayers.setModel(self.selectlayerfilter)
 
@@ -325,6 +330,21 @@ class ProjectWidget(Ui_Form, QWidget):
     def updatewidgetconfig(self, config):
         widgetconfig, index, sample, widgettype = self.currentwidgetconfig
         self.setconfigwidget(widgetconfig, config, sample, widgettype)
+
+    def updateformpreview(self, index):
+
+        def removewidget():
+            item = self.frame_2.layout().itemAt(0)
+            if item and item.widget():
+                item.widget().setParent(None)
+
+        removewidget()
+        form = index.data(Qt.UserRole)
+
+        featureform = FeatureForm.from_form(form, form.settings, None, {})
+
+        self.frame_2.layout().addWidget(featureform)
+
 
     def updatecurrentform(self, index, _):
         """
