@@ -51,6 +51,8 @@ class DateWidget(EditorWidget):
         else:
             self.raisevalidationupdate(True)
 
+        self.emitvaluechanged()
+
     def showpickdialog(self):
         """
         Open the date time picker dialog

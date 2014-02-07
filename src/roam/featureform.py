@@ -417,6 +417,8 @@ class FeatureForm(FeatureFormBase):
         widgettypes = [QLineEdit, QPlainTextEdit, QDateTimeEdit]
         map(featureform._installeventfilters, widgettypes)
 
+        featureform.setupui()
+
         featureform.uisetup()
 
         return featureform

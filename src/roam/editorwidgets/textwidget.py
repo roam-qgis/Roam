@@ -21,6 +21,8 @@ class TextWidget(EditorWidget):
         else:
             self.raisevalidationupdate(True)
 
+        self.emitvaluechanged()
+
     def setvalue(self, value):
         # Not the best way but should cover most use cases
         # for now
