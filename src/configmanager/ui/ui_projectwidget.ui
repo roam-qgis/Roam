@@ -191,6 +191,16 @@ QListView::item {
       </widget>
      </item>
      <item>
+      <widget class="QLabel" name="projectupdatedlabel">
+       <property name="text">
+        <string/>
+       </property>
+       <property name="openExternalLinks">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item>
       <spacer name="horizontalSpacer_4">
        <property name="orientation">
         <enum>Qt::Horizontal</enum>

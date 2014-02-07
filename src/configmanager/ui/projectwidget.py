@@ -2,7 +2,7 @@ import os
 import copy
 import subprocess
 
-from PyQt4.QtCore import Qt, QDir, QFileInfo, pyqtSignal, QModelIndex
+from PyQt4.QtCore import Qt, QDir, QFileInfo, pyqtSignal, QModelIndex, QFileSystemWatcher
 from PyQt4.QtGui import QWidget, QStandardItemModel, QStandardItem, QIcon
 
 from qgis.core import QgsProject, QgsMapLayerRegistry, QgsPalLabeling
@@ -80,6 +80,17 @@ class ProjectWidget(Ui_Form, QWidget):
         self.openProjectFolderButton.pressed.connect(self.openprojectfolder)
         self.openDataButton.pressed.connect(self.opendatafolder)
         self.openinQGISButton.pressed.connect(self.openinqgis)
+
+        self.filewatcher = QFileSystemWatcher()
+        self.filewatcher.fileChanged.connect(self.projectupdated)
+
+        self.projectupdatedlabel.linkActivated.connect(self.reloadproject)
+
+    def reloadproject(self, *args):
+        self.setproject(self.project)
+
+    def projectupdated(self, path):
+        self.projectupdatedlabel.setText("Project has been updated. <a href='reload'> Click to reload<a>")
 
     def openinqgis(self):
         projectfile = self.project.projectfile
@@ -244,6 +255,9 @@ class ProjectWidget(Ui_Form, QWidget):
                 pass
 
         disconnectsignals()
+        self.filewatcher.removePaths(self.filewatcher.files())
+        self.projectupdatedlabel.setText("")
+
         self.startsettings = copy.deepcopy(project.settings)
         self.project = project
         self.selectlayermodel.config = project.settings
@@ -251,6 +265,7 @@ class ProjectWidget(Ui_Form, QWidget):
             self.loadqgisproject(project, self.project.projectfile)
         else:
             self._updateforproject(self.project)
+        self.filewatcher.addPath(self.project.projectfile)
         connectsignals()
 
     def loadqgisproject(self, project, projectfile):
