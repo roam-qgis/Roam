@@ -20,6 +20,9 @@ import roam
 def openfolder(folder):
     subprocess.Popen('explorer "{}"'.format(folder))
 
+def openqgis(project):
+    # TODO This needs to look in other places for QGIS.
+    subprocess.Popen([r'C:\OSGeo4W\bin\qgis.bat', "--noplugins", project])
 
 class ProjectWidget(Ui_Form, QWidget):
     SampleWidgetRole = Qt.UserRole + 1
@@ -76,6 +79,11 @@ class ProjectWidget(Ui_Form, QWidget):
 
         self.openProjectFolderButton.pressed.connect(self.openprojectfolder)
         self.openDataButton.pressed.connect(self.opendatafolder)
+        self.openinQGISButton.pressed.connect(self.openinqgis)
+
+    def openinqgis(self):
+        projectfile = self.project.projectfile
+        openqgis(projectfile)
 
     def opendatafolder(self):
         folder = self.project.folder
