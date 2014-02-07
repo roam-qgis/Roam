@@ -204,6 +204,31 @@ QListView::item {
       </spacer>
      </item>
      <item>
+      <widget class="QToolButton" name="toolButton_7">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="text">
+        <string>Open Project Folder</string>
+       </property>
+       <property name="iconSize">
+        <size>
+         <width>24</width>
+         <height>24</height>
+        </size>
+       </property>
+       <property name="toolButtonStyle">
+        <enum>Qt::ToolButtonTextBesideIcon</enum>
+       </property>
+       <property name="autoRaise">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item>
       <widget class="QToolButton" name="toolButton_5">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
@@ -524,14 +549,14 @@ QListView::item {
              <property name="bottomMargin">
               <number>0</number>
              </property>
-             <item row="4" column="0">
+             <item row="6" column="0">
               <widget class="QLabel" name="label">
                <property name="text">
                 <string>Defauilt Value</string>
                </property>
               </widget>
              </item>
-             <item row="4" column="1">
+             <item row="6" column="1">
               <widget class="QLineEdit" name="defaultvalueText"/>
              </item>
              <item row="1" column="1">
@@ -567,7 +592,7 @@ QListView::item {
              <item row="0" column="1">
               <widget class="QComboBox" name="widgetCombo"/>
              </item>
-             <item row="10" column="0" colspan="2">
+             <item row="12" column="0" colspan="2">
               <widget class="QGroupBox" name="widgetConfig">
                <property name="enabled">
                 <bool>true</bool>
@@ -609,7 +634,7 @@ QListView::item {
                </layout>
               </widget>
              </item>
-             <item row="6" column="0" colspan="2">
+             <item row="8" column="0" colspan="2">
               <widget class="QGroupBox" name="widgetGroupBox_2">
                <property name="enabled">
                 <bool>true</bool>
@@ -654,7 +679,7 @@ QListView::item {
                </layout>
               </widget>
              </item>
-             <item row="5" column="0" colspan="2">
+             <item row="7" column="0" colspan="2">
               <widget class="QLabel" name="descriptionLabel">
                <property name="sizePolicy">
                 <sizepolicy hsizetype="Expanding" vsizetype="Maximum">
@@ -679,19 +704,29 @@ QListView::item {
                </property>
               </widget>
              </item>
-             <item row="2" column="1">
+             <item row="4" column="1">
               <widget class="QCheckBox" name="requiredCheck">
                <property name="text">
                 <string/>
                </property>
               </widget>
              </item>
-             <item row="2" column="0">
+             <item row="4" column="0">
               <widget class="QLabel" name="label_10">
                <property name="text">
                 <string>Required?</string>
                </property>
               </widget>
+             </item>
+             <item row="3" column="0">
+              <widget class="QLabel" name="label_11">
+               <property name="text">
+                <string>Name</string>
+               </property>
+              </widget>
+             </item>
+             <item row="3" column="1">
+              <widget class="QLineEdit" name="nameText"/>
              </item>
             </layout>
            </widget>

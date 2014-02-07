@@ -150,6 +150,7 @@ class ProjectWidget(Ui_Form, QWidget):
         field = self.fieldsmodel.index(row, 0).data(QgsFieldModel.FieldNameRole)
         widget['field'] = field
         widget['config'] = configwidget.getconfig()
+        widget['name'] = self.nameText.text()
 
         self.widgetmodel.setData(index, widget, Qt.UserRole)
 
@@ -299,6 +300,7 @@ class ProjectWidget(Ui_Form, QWidget):
             self.defaultvalueText.textChanged.connect(self._save_default)
             self.widgetCombo.currentIndexChanged.connect(self._save_selectedwidget)
             self.widgetCombo.currentIndexChanged.connect(self.swapwidgetconfig)
+            self.nameText.textChanged.connect(self._save_selectedwidget)
 
         def disconnectsignals():
             try:
@@ -309,6 +311,7 @@ class ProjectWidget(Ui_Form, QWidget):
                 self.defaultvalueText.textChanged.disconnect(self._save_default)
                 self.widgetCombo.currentIndexChanged.disconnect(self._save_selectedwidget)
                 self.widgetCombo.currentIndexChanged.disconnect(self.swapwidgetconfig)
+                self.nameText.textChanged.disconnect(self._save_selectedwidget)
             except TypeError:
                 pass
 
@@ -391,6 +394,7 @@ class ProjectWidget(Ui_Form, QWidget):
         widgettype = widget['widget']
         field = widget['field']
         required = widget.get('required', False)
+        name = widget.get('name', field)
         default = widget.get('default', '')
 
         self.defaultvalueText.blockSignals(True)
@@ -400,6 +404,10 @@ class ProjectWidget(Ui_Form, QWidget):
             # TODO Handle the more advanced default values.
             pass
         self.defaultvalueText.blockSignals(False)
+
+        self.nameText.blockSignals(True)
+        self.nameText.setText(name)
+        self.nameText.blockSignals(False)
 
         self.requiredCheck.blockSignals(True)
         self.requiredCheck.setChecked(required)

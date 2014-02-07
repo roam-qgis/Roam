@@ -649,8 +649,8 @@ class MainWindow(mainwindow_widget, mainwindow_base):
         self.canvas.updateScale()
         self.canvas.freeze(False)
         self.canvas.refresh()
-        self.projectOpened()
         self.showmap()
+        self.projectOpened()
 
     @roam.utils.timeit
     def projectOpened(self):
