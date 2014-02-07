@@ -1,6 +1,6 @@
 import os
 import copy
-from PyQt4.Qsci import QsciLexerYAML
+import subprocess
 
 from PyQt4.QtCore import Qt, QDir, QFileInfo, pyqtSignal, QModelIndex
 from PyQt4.QtGui import QWidget, QStandardItemModel, QStandardItem, QIcon
@@ -16,6 +16,9 @@ import roam.editorwidgets
 import roam.projectparser
 import roam.yaml
 import roam
+
+def openfolder(folder):
+    subprocess.Popen('explorer "{}"'.format(folder))
 
 
 class ProjectWidget(Ui_Form, QWidget):
@@ -70,6 +73,18 @@ class ProjectWidget(Ui_Form, QWidget):
         self.removeWidgetButton.pressed.connect(self.removewidget)
 
         self.roamVersionLabel.setText("You are running IntraMaps Roam version {}".format(roam.__version__))
+
+        self.openProjectFolderButton.pressed.connect(self.openprojectfolder)
+        self.openDataButton.pressed.connect(self.opendatafolder)
+
+    def opendatafolder(self):
+        folder = self.project.folder
+        folder = os.path.join(folder, "_data")
+        openfolder(folder)
+
+    def openprojectfolder(self):
+        folder = self.project.folder
+        openfolder(folder)
 
     def setwidgetconfigvisiable(self, *args):
         haswidgets = self.widgetmodel.rowCount() > 0
