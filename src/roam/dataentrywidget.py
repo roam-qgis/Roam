@@ -52,34 +52,29 @@ def getdefaults(widgets, feature, layer, canvas):
     defaults.update(featureform.loadsavedvalues(layer))
     return defaults
 
-
-def spatial_query(feature, layer, field, defaultconfig, canvas):
-    def within(geom, geom2):
-        return geom.within(geom2)
-
-    def contains(geom, geom2):
-        return geom2.contains(geom)
-
+def layer_value(feature, layer, field, defaultconfig, canvas):
     layername = defaultconfig['layer']
-    op = defaultconfig['op']
+    expression = defaultconfig['expression']
     field = defaultconfig['field']
 
-    ops = {'within': within,
-           'contains': contains}
-
-    layer = QgsMapLayerRegistry.instance().mapLayersByName(layername)[0]
-    func = ops[op]
+    searchlayer = QgsMapLayerRegistry.instance().mapLayersByName(layername)[0]
     rect = feature.geometry().boundingBox()
     rect = canvas.mapRenderer().mapToLayerCoordinates(layer, rect)
     rq = QgsFeatureRequest().setFilterRect(rect)
-    features = layer.getFeatures(rq)
-    geometry = feature.geometry()
+    features = searchlayer.getFeatures(rq)
+    capturegeometry = feature.geometry()
+    exp = QgsExpression(expression)
+    exp.prepare(searchlayer.pendingFields())
+    exp.setSpecialColumn("$roamgeomtry", capturegeometry)
+
     for f in features:
-        if func(geometry, f.geometry()):
+        if exp.evaluate(f):
             return f[field]
+
     raise DefaultError('No features found')
 
-defaultproviders = {'spatial-query': spatial_query}
+defaultproviders = {'spatial-query': layer_value,
+                    'layer-value': layer_value}
 
 
 class DataEntryWidget(dataentry_widget, dataentry_base):
