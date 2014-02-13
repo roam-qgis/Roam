@@ -19,6 +19,13 @@ import roam.projectparser
 import roam.yaml
 import roam
 
+
+readonlyvalues = [('Never', 'never'),
+                  ('Always', 'always'),
+                  ('When editing', 'editing'),
+                  ('When inserting', 'insert')]
+
+
 def openfolder(folder):
     subprocess.Popen('explorer "{}"'.format(folder))
 
@@ -90,6 +97,9 @@ class ProjectWidget(Ui_Form, QWidget):
         self.filewatcher.fileChanged.connect(self.projectupdated)
 
         self.projectupdatedlabel.linkActivated.connect(self.reloadproject)
+
+        for item, data in readonlyvalues:
+            self.readonlyCombo.addItem(item, data)
 
     def reloadproject(self, *args):
         self.setproject(self.project)
@@ -190,6 +200,8 @@ class ProjectWidget(Ui_Form, QWidget):
         widget['field'] = field
         widget['config'] = configwidget.getconfig()
         widget['name'] = self.nameText.text()
+        widget['read-only-rules'] = [self.readonlyCombo.itemData(self.readonlyCombo.currentIndex())]
+        widget['hidden'] = self.hiddenCheck.isChecked()
 
         self.widgetmodel.setData(index, widget, Qt.UserRole)
 
@@ -359,6 +371,8 @@ class ProjectWidget(Ui_Form, QWidget):
             self.widgetCombo.currentIndexChanged.connect(self._save_selectedwidget)
             self.widgetCombo.currentIndexChanged.connect(self.swapwidgetconfig)
             self.nameText.textChanged.connect(self._save_selectedwidget)
+            self.readonlyCombo.currentIndexChanged.connect(self._save_selectedwidget)
+            self.hiddenCheck.toggled.connect(self._save_selectedwidget)
 
         def disconnectsignals():
             try:
@@ -370,6 +384,8 @@ class ProjectWidget(Ui_Form, QWidget):
                 self.widgetCombo.currentIndexChanged.disconnect(self._save_selectedwidget)
                 self.widgetCombo.currentIndexChanged.disconnect(self.swapwidgetconfig)
                 self.nameText.textChanged.disconnect(self._save_selectedwidget)
+                self.readonlyCombo.currentIndexChanged.disconnect(self._save_selectedwidget)
+                self.hiddenCheck.toggled.disconnect(self._save_selectedwidget)
             except TypeError:
                 pass
 
@@ -454,6 +470,18 @@ class ProjectWidget(Ui_Form, QWidget):
         required = widget.get('required', False)
         name = widget.get('name', field)
         default = widget.get('default', '')
+        readonly = widget.get('read-only-rules', [])
+        hidden = widget.get('hidden', False)
+
+        try:
+            data = readonly[0]
+        except:
+            data = 'never'
+
+        self.readonlyCombo.blockSignals(True)
+        index = self.readonlyCombo.findData(data)
+        self.readonlyCombo.setCurrentIndex(index)
+        self.readonlyCombo.blockSignals(False)
 
         self.defaultvalueText.blockSignals(True)
         if not isinstance(default, dict):
@@ -470,6 +498,10 @@ class ProjectWidget(Ui_Form, QWidget):
         self.requiredCheck.blockSignals(True)
         self.requiredCheck.setChecked(required)
         self.requiredCheck.blockSignals(False)
+
+        self.hiddenCheck.blockSignals(True)
+        self.hiddenCheck.setChecked(hidden)
+        self.hiddenCheck.blockSignals(False)
 
         if not field is None:
             self.fieldList.blockSignals(True)

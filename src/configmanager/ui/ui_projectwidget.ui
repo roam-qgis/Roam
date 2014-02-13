@@ -308,7 +308,7 @@ QListView::item {
       </sizepolicy>
      </property>
      <property name="currentIndex">
-      <number>2</number>
+      <number>1</number>
      </property>
      <widget class="QWidget" name="page">
       <layout class="QFormLayout" name="formLayout">
@@ -589,17 +589,17 @@ QListView::item {
              <property name="bottomMargin">
               <number>0</number>
              </property>
-             <item row="6" column="0">
+             <item row="7" column="1">
               <widget class="QLabel" name="label">
                <property name="text">
                 <string>Defauilt Value</string>
                </property>
               </widget>
              </item>
-             <item row="6" column="1">
+             <item row="7" column="3">
               <widget class="QLineEdit" name="defaultvalueText"/>
              </item>
-             <item row="1" column="1">
+             <item row="1" column="3">
               <widget class="QComboBox" name="fieldList">
                <property name="enabled">
                 <bool>true</bool>
@@ -615,24 +615,24 @@ QListView::item {
                </property>
               </widget>
              </item>
-             <item row="1" column="0">
+             <item row="1" column="1">
               <widget class="QLabel" name="label_4">
                <property name="text">
                 <string>Field</string>
                </property>
               </widget>
              </item>
-             <item row="0" column="0">
+             <item row="0" column="1">
               <widget class="QLabel" name="label_8">
                <property name="text">
                 <string>Widget</string>
                </property>
               </widget>
              </item>
-             <item row="0" column="1">
+             <item row="0" column="3">
               <widget class="QComboBox" name="widgetCombo"/>
              </item>
-             <item row="12" column="0" colspan="2">
+             <item row="13" column="1" colspan="3">
               <widget class="QGroupBox" name="widgetConfig">
                <property name="enabled">
                 <bool>true</bool>
@@ -674,7 +674,7 @@ QListView::item {
                </layout>
               </widget>
              </item>
-             <item row="8" column="0" colspan="2">
+             <item row="9" column="1" colspan="3">
               <widget class="QGroupBox" name="widgetGroupBox_2">
                <property name="enabled">
                 <bool>true</bool>
@@ -719,7 +719,7 @@ QListView::item {
                </layout>
               </widget>
              </item>
-             <item row="7" column="0" colspan="2">
+             <item row="8" column="1" colspan="3">
               <widget class="QLabel" name="descriptionLabel">
                <property name="sizePolicy">
                 <sizepolicy hsizetype="Expanding" vsizetype="Maximum">
@@ -744,29 +744,98 @@ QListView::item {
                </property>
               </widget>
              </item>
-             <item row="4" column="1">
+             <item row="4" column="3">
               <widget class="QCheckBox" name="requiredCheck">
                <property name="text">
                 <string/>
                </property>
               </widget>
              </item>
-             <item row="4" column="0">
+             <item row="4" column="1">
               <widget class="QLabel" name="label_10">
+               <property name="toolTip">
+                <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Required&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-weight:600;&quot;&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;This field must be completed before the form can be accpected.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+               </property>
+               <property name="whatsThis">
+                <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Required&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-weight:600;&quot;&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;This field must be completed before the form can be accpected.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+               </property>
                <property name="text">
                 <string>Required?</string>
                </property>
               </widget>
              </item>
-             <item row="3" column="0">
+             <item row="3" column="1">
               <widget class="QLabel" name="label_11">
                <property name="text">
                 <string>Name</string>
                </property>
               </widget>
              </item>
-             <item row="3" column="1">
+             <item row="3" column="3">
               <widget class="QLineEdit" name="nameText"/>
+             </item>
+             <item row="5" column="3">
+              <widget class="QCheckBox" name="hiddenCheck">
+               <property name="text">
+                <string/>
+               </property>
+              </widget>
+             </item>
+             <item row="5" column="1">
+              <widget class="QLabel" name="label_12">
+               <property name="toolTip">
+                <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Hidden&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-weight:600;&quot;&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Is this field hidden when the form is open in Roam.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+               </property>
+               <property name="whatsThis">
+                <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Hidden&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-weight:600;&quot;&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Is this field hidden when the form is open in Roam.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+               </property>
+               <property name="text">
+                <string>Hidden?</string>
+               </property>
+              </widget>
+             </item>
+             <item row="6" column="1">
+              <widget class="QLabel" name="label_13">
+               <property name="whatsThis">
+                <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Hidden&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-weight:600;&quot;&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Is this field hidden when the form is open in Roam.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+               </property>
+               <property name="text">
+                <string>Read Only</string>
+               </property>
+              </widget>
+             </item>
+             <item row="6" column="3">
+              <widget class="QComboBox" name="readonlyCombo"/>
              </item>
             </layout>
            </widget>
