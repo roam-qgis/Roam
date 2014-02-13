@@ -113,7 +113,6 @@ class Form(object):
     @property
     def icon(self):
         iconpath = os.path.join(self.folder, 'icon.png')
-        utils.log(iconpath)
         return iconpath
 
     @property

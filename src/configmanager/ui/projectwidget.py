@@ -9,7 +9,7 @@ from qgis.core import QgsProject, QgsMapLayerRegistry, QgsPalLabeling
 from qgis.gui import QgsMapCanvas
 
 from configmanager.ui.ui_projectwidget import Ui_Form
-from configmanager.models import widgeticon, WidgetsModel, QgsLayerModel, QgsFieldModel, LayerFilter
+from configmanager.models import widgeticon, WidgetsModel, QgsLayerModel, QgsFieldModel, LayerFilter, FormModel
 
 from roam.featureform import FeatureForm
 
@@ -46,7 +46,7 @@ class ProjectWidget(Ui_Form, QWidget):
         self.canvas.mapRenderer().setLabelingEngine(QgsPalLabeling())
 
         self.fieldsmodel = QgsFieldModel()
-        self.formmodel = QStandardItemModel()
+        self.formmodel = FormModel()
         self.widgetmodel = WidgetsModel()
         self.possiblewidgetsmodel = QStandardItemModel()
         self.layermodel = QgsLayerModel(watchregistry=False)
@@ -317,13 +317,7 @@ class ProjectWidget(Ui_Form, QWidget):
 
     def _updateforproject(self, project):
         def _loadforms(forms):
-            self.formmodel.clear()
-            for form in forms:
-                item = QStandardItem(form.name)
-                item.setEditable(True)
-                item.setIcon(QIcon(form.icon))
-                item.setData(form, Qt.UserRole)
-                self.formmodel.appendRow(item)
+            self.formmodel.addforms(forms)
 
             index = self.formmodel.index(0, 0)
             if index.isValid():
@@ -344,7 +338,6 @@ class ProjectWidget(Ui_Form, QWidget):
         self.setconfigwidget(widgetconfig, config, sample, widgettype)
 
     def updateformpreview(self, index):
-
         def removewidget():
             item = self.frame_2.layout().itemAt(0)
             if item and item.widget():

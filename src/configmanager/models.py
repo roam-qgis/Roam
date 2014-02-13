@@ -39,6 +39,48 @@ class LayerFilter(QSortFilterProxyModel):
 
         return not index.data(Qt.UserRole).geometryType() in self.geomtypes
 
+class FormModel(QAbstractItemModel):
+    def __init__(self, parent=None):
+        super(FormModel, self).__init__(parent)
+        self.forms = []
+
+    def addform(self, form):
+        self.beginInsertRows(QModelIndex(), self.rowCount(), self.rowCount() + 1)
+        self.forms.append(form)
+        self.endInsertRows()
+
+    def addforms(self, forms):
+        self.beginResetModel()
+        self.forms = forms
+        self.endResetModel()
+
+    def index(self, row, column, parnet=QModelIndex()):
+        try:
+            form = self.forms[row]
+            return self.createIndex(row, column, form)
+        except IndexError:
+            return QModelIndex()
+
+    def data(self, index, role):
+        if not index.isValid() or index.internalPointer() is None:
+            return
+
+        form = index.internalPointer()
+        if role == Qt.DisplayRole:
+            return form.label
+        if role == Qt.UserRole:
+            return form
+        if role == Qt.DecorationRole:
+            return QIcon(form.icon)
+
+    def rowCount(self, QModelIndex_parent=None, *args, **kwargs):
+        return len(self.forms)
+
+    def columnCount(self, QModelIndex_parent=None, *args, **kwargs):
+        return 1
+
+    def parent(self, parent=None):
+        return QModelIndex()
 
 class QgsLayerModel(QAbstractItemModel):
     layerchecked = pyqtSignal(object, object, int)
