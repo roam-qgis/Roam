@@ -35,6 +35,11 @@ def default_handler(key, value):
 
 
 def string_handler(key, value):
+    base64 = QByteArray.fromBase64(value)
+    image = QPixmap()
+    loaded = image.loadFromData(base64)
+    if loaded:
+        return image_handler(key, base64, imagetype='base64')
     _, extension = os.path.splitext(value)
     if extension[1:] in formats:
         return image_handler(key, value, imagetype='file')
