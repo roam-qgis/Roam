@@ -18,6 +18,7 @@ class SettingsWidget(settings_widget, settings_base):
         self.gpsPortCombo.currentIndexChanged.connect(self.gpsPortCombo_currentIndexChanged)
         self.refreshPortsButton.pressed.connect(self.refreshPortsButton_pressed)
         self.gpslocationCheck.toggled.connect(self.gpslocationCheck_toggled)
+        self.keyboardCheck.toggled.connect(self.keyboardCheck_toggled)
 
     @property
     def settings(self):
@@ -33,6 +34,10 @@ class SettingsWidget(settings_widget, settings_base):
     def fullScreenCheck_stateChanged(self, checked):
         utils.log("fullscreen changed")
         self.settings["fullscreen"] = checked
+        self.notifysettingsupdate()
+
+    def keyboardCheck_toggled(self, checked):
+        self.settings["keyboard"] = checked
         self.notifysettingsupdate()
 
     def gpsPortCombo_currentIndexChanged(self, index):
@@ -57,9 +62,12 @@ class SettingsWidget(settings_widget, settings_base):
         fullscreen = self.settings.get("fullscreen", False)
         gpsport = self.settings.get("gpsport", 'scan')
         gpszoom = self.settings.get('gpszoomonfix', True)
+        keyboard = self.settings.get('keyboard', True)
 
         self.fullScreenCheck.setChecked(fullscreen)
         self.gpslocationCheck.setChecked(gpszoom)
+        self.keyboardCheck.setChecked(keyboard)
+
         gpsindex = self.gpsPortCombo.findData(gpsport)
         
         self.blockSignals(True)
