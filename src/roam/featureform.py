@@ -30,6 +30,8 @@ from roam import utils
 from roam.flickwidget import FlickCharm
 from roam.structs import CaseInsensitiveDict
 
+settings = {}
+
 style = """
             QCheckBox::indicator {
                  width: 40px;
@@ -190,8 +192,9 @@ class FeatureFormBase(QWidget):
             widget.installEventFilter(self)
 
     def eventFilter(self, object, event):
-        """ Handle mouse click events for disabled widget state """
-        if event.type() == QEvent.FocusIn:
+        # Hack I really don't like this but there doesn't seem to be a better way at the
+        # moment.
+        if event.type() == QEvent.FocusIn and settings.get('keyboard', True):
             cmd = r'C:\Program Files\Common Files\Microsoft Shared\ink\TabTip.exe'
             os.startfile(cmd)
 

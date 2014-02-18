@@ -49,6 +49,7 @@ from roam.imageviewerwidget import ImageViewer
 import roam.messagebaritems
 import roam.utils
 import roam.htmlviewer
+import roam.featureform
 
 
 class BadLayerHandler(QgsProjectBadLayerHandler):
@@ -79,6 +80,7 @@ class MainWindow(mainwindow_widget, mainwindow_base):
         super(MainWindow, self).__init__()
         self.setupUi(self)
         self.settings = settings
+        roam.featureform.settings = settings.settings
         self.canvaslayers = []
         self.layerbuttons = []
         self.project = None
@@ -252,6 +254,8 @@ class MainWindow(mainwindow_widget, mainwindow_base):
         settings.save()
         self.show()
         self.actionGPS.updateGPSPort()
+        # eww!
+        roam.featureform.settings = settings.settings
 
     def updatestatuslabel(self):
         extent = self.canvas.extent()
