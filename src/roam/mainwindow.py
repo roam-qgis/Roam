@@ -538,11 +538,16 @@ class MainWindow(mainwindow_widget, mainwindow_base):
         fields = layer.pendingFields()
 
         feature = QgsFeature(fields)
-        roam.utils.log(feature.fields().toList())
         feature.setGeometry(geometry)
 
-        for indx in xrange(fields.count()):
-            feature[indx] = layer.dataProvider().defaultValue(indx)
+        # Disable getting provider defaults for now as it seems to
+        # cause issues.
+        #for indx in xrange(fields.count()):
+        #    value = layer.dataProvider().defaultValue(indx)
+        #    if value is qgis.core.NULL:
+        #        # Oh QPyNullVariant how I hate you so.
+        #        value = None
+        #    feature[indx] = layer.dataProvider().defaultValue(indx)
 
         self.openForm(form, feature)
 

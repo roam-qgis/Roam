@@ -118,6 +118,7 @@ def buildfromauto(formconfig, base):
     widgetsconfig = formconfig['widgets']
 
     outlayout = QFormLayout()
+    outlayout.setFieldGrowthPolicy(QFormLayout.AllNonFixedFieldsGrow)
     outwidget = base
     outwidget.setLayout(outlayout)
     for config in widgetsconfig:

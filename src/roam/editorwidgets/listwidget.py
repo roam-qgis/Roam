@@ -3,7 +3,14 @@ from PyQt4.QtGui import QComboBox
 from qgis.core import QgsMessageLog, QgsMapLayerRegistry, QgsExpression, QgsFeatureRequest
 
 import roam.utils
+import qgis.core
+
 from roam.editorwidgets.core import WidgetsRegistry, EditorWidget
+
+def nullconvert(value):
+    if value == qgis.core.NULL:
+        return None
+    return value
 
 
 class ListWidget(EditorWidget):
@@ -44,9 +51,13 @@ class ListWidget(EditorWidget):
             roam.utils.warning("Can't find key or value column")
             return
 
+        if self.allownulls:
+            widget.addItem('(no selection)', None)
+
         if not filterexp and valuefieldindex == keyfieldindex:
             values = layer.uniqueValues(keyfieldindex)
             for value in values:
+                value = nullconvert(value)
                 widget.addItem(value, value)
             return
 
@@ -74,10 +85,9 @@ class ListWidget(EditorWidget):
             if expression and not expression.evaluate(feature):
                 continue
 
-            widget.addItem(unicode(feature[keyfieldindex]), unicode(feature[valuefield]))
-
-        if self.allownulls:
-            widget.insertItem(0, '(no selection)', None)
+            keyvalue = nullconvert(feature[keyfieldindex])
+            valuvalue = nullconvert(feature[valuefield])
+            widget.addItem(unicode(keyvalue), unicode(valuvalue))
 
     def initWidget(self, widget):
         if widget.isEditable():
