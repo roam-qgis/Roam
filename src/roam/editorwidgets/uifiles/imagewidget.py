@@ -68,10 +68,9 @@ class QMapImageWidget(ui_imagewidget.Ui_imagewidget, QWidget):
             self.removeImage()
             return
 
-        if isinstance(data, QByteArray):
-            pix = QPixmap()
-            r = pix.loadFromData(data, 'JPG')
-        else:
+        pix = QPixmap()
+        r = pix.loadFromData(data, 'JPG')
+        if not r:
             pix = QPixmap(data)
 
         h = self.maximumHeight()
