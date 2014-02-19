@@ -51,6 +51,9 @@ class ListWidget(EditorWidget):
             roam.utils.warning("Can't find key or value column")
             return
 
+        if self.allownulls:
+            widget.addItem('(no selection)', None)
+
         if not filterexp and valuefieldindex == keyfieldindex:
             values = layer.uniqueValues(keyfieldindex)
             for value in values:
@@ -85,9 +88,6 @@ class ListWidget(EditorWidget):
             keyvalue = nullconvert(feature[keyfieldindex])
             valuvalue = nullconvert(feature[valuefield])
             widget.addItem(unicode(keyvalue), unicode(valuvalue))
-
-        if self.allownulls:
-            widget.insertItem(0, '(no selection)', None)
 
     def initWidget(self, widget):
         if 'list' in self.config:
