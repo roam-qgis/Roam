@@ -30,7 +30,7 @@ class ImageWidget(EditorWidget):
 
     def setvalue(self, value):
         field = self.layer.pendingFields().field(self.field)
-        if field.type() == QVariant.String:
+        if field.type() == QVariant.String and value:
             value = QByteArray.fromBase64(value)
         self.widget.loadImage(value)
 
