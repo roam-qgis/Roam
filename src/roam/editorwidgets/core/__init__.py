@@ -89,6 +89,7 @@ class EditorWidget(QObject):
     def hidden(self, value):
         self._hidden = value
         self.widget.setVisible(not value)
+        self.buddywidget.setVisible(not value)
 
     def raisevalidationupdate(self, passed):
         if self.required:

@@ -137,9 +137,7 @@ def buildfromauto(formconfig, base):
             savebutton.setObjectName('{}_save'.format(field))
             layoutwidget.layout().addWidget(savebutton)
 
-        hidden = config.get('hidden', False)
-        if not hidden:
-            outlayout.addRow(label, layoutwidget)
+        outlayout.addRow(label, layoutwidget)
 
     outlayout.addItem(QSpacerItem(10, 10))
     installflickcharm(outwidget)
