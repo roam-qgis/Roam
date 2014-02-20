@@ -2,6 +2,8 @@ from PyQt4.QtGui import QComboBox
 
 from qgis.core import QgsMessageLog, QgsMapLayerRegistry, QgsExpression, QgsFeatureRequest
 
+from roam.flickwidget import FlickCharm
+
 import roam.utils
 import qgis.core
 
@@ -90,12 +92,21 @@ class ListWidget(EditorWidget):
             widget.addItem(unicode(keyvalue), unicode(valuvalue))
 
     def initWidget(self, widget):
+        if widget.isEditable():
+            widget.editTextChanged.connect(self.validate)
+
+        self.charm = FlickCharm()
+        self.charm.activateOn(widget.view())
+        widget.currentIndexChanged.connect(self.validate)
+
+    def updatefromconfig(self):
+        self.widget.clear()
         if 'list' in self.config:
             listconfig = self.config['list']
-            self._buildfromlist(widget, listconfig)
+            self._buildfromlist(self.widget, listconfig)
         elif 'layer' in self.config:
             layerconfig = self.config['layer']
-            self._buildfromlayer(widget, layerconfig)
+            self._buildfromlayer(self.widget, layerconfig)
 
         if widget.isEditable():
             widget.editTextChanged.connect(self.validate)
