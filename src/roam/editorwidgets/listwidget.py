@@ -108,11 +108,6 @@ class ListWidget(EditorWidget):
             layerconfig = self.config['layer']
             self._buildfromlayer(self.widget, layerconfig)
 
-        if widget.isEditable():
-            widget.editTextChanged.connect(self.validate)
-
-        widget.currentIndexChanged.connect(self.validate)
-
     @property
     def allownulls(self):
         return self.config.get('allownull', False)

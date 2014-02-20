@@ -43,6 +43,9 @@ def checkversion(roamversion, projectversion):
             version = (version[0], version[1], 0)
         return version
 
+    if not projectversion:
+        return True
+
     min = versiontuple(roamversion)
     project = versiontuple(projectversion)
     majormatch = min[0] == project[0]
@@ -110,7 +113,6 @@ class Form(object):
     @property
     def icon(self):
         iconpath = os.path.join(self.folder, 'icon.png')
-        utils.log(iconpath)
         return iconpath
 
     @property
@@ -212,7 +214,7 @@ class Project(object):
         self._project = None
         self._splash = None 
         self.valid = True
-        self.settings = {}
+        self.settings = settings
         self._forms = []
         self.error = ''
 
@@ -222,7 +224,7 @@ class Project(object):
         project = cls(rootfolder, {})
         try:
             with open(settings, 'r') as f:
-                settings = yaml.load(f, Loader=OrderedDictYAMLLoader)
+                settings = yaml.load(f)
                 project.settings = settings
         except IOError as e:
             project.valid = False

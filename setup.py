@@ -65,13 +65,18 @@ projectupdater_target = dict(
                 dest_base='Roam Project Updater',
                 icon_resources=[(1, "src\icon.ico")])
 
+configmanager_target = dict(
+                script=r'src\configmanager\__main__.py',
+                dest_base='Roam Config Manager',
+                icon_resources=[(1, "src\icon.ico")])
 
 curpath = os.path.dirname(os.path.realpath(__file__))
 appsrcopyFilesath = os.path.join(curpath, "src", 'roam')
 projectinstallerpath = os.path.join(curpath, "src", 'project_installer')
+configmangerpath = os.path.join(curpath, "src", 'configmanager')
 
 def buildqtfiles():
-    for folder in [appsrcopyFilesath, projectinstallerpath]:
+    for folder in [appsrcopyFilesath, projectinstallerpath, configmangerpath]:
         for root, dirs, files in os.walk(folder):
             for file in files:
                 filepath = os.path.join(root, file)
@@ -103,7 +108,7 @@ setup(
     author='Digital Mapping Solutions',
     author_email='nathan.woodrow@mapsolutions.com.au',
     description='',
-    windows=[roam_target, projectupdater_target],
+    windows=[roam_target, projectupdater_target, configmanager_target],
     data_files=datafiles,
     zipfile='libs\\',
     cmdclass= {'build': qtbuild},

@@ -3,6 +3,8 @@ import sys
 import sip
 import logging
 
+print sys.path
+
 apis = ["QDate", "QDateTime", "QString", "QTextStream", "QTime", "QUrl", "QVariant"]
 for api in apis:
     sip.setapi(api, 2)

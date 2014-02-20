@@ -17,8 +17,9 @@ from roam.editorwidgets.imagewidget import ImageWidget
 
 from roam.editorwidgets.core import WidgetsRegistry
 
-widgets = [ListWidget, CheckboxWidget, DateWidget, TextBlockWidget,
-           TextWidget, ImageWidget]
+supportedwidgets = [ListWidget, CheckboxWidget, DateWidget, TextBlockWidget,
+                   TextWidget, ImageWidget]
 
-WidgetsRegistry.registerwidgets(widgets)
+WidgetsRegistry.registerwidgets(supportedwidgets)
+
 
