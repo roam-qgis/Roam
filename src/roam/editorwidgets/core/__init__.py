@@ -40,7 +40,7 @@ class WidgetsRegistry(object):
 
 
 class EditorWidget(QObject):
-    validationupdate = pyqtSignal(str, bool)
+    validationupdate = pyqtSignal(object, bool)
     valuechanged = pyqtSignal(object)
 
     def __init__(self, widget=None, layer=None, label=None, field=None, parent=None):
@@ -113,6 +113,13 @@ class EditorWidget(QObject):
             return self.label
         else:
             return self.widget
+
+    @property
+    def labeltext(self):
+        if self.label is None:
+            return self.widget.objectName()
+        else:
+            return self.label.text()
 
     def setvalue(self, value):
         pass

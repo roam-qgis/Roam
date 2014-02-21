@@ -200,7 +200,7 @@ class FeatureFormBase(QWidget):
         return False
 
     def updaterequired(self, field, passed):
-        self.requiredfields[field] = passed
+        self.requiredfields[field.name()] = passed
         passed = self.allpassing
         self.formvalidation.emit(passed)
 

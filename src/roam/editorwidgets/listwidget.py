@@ -1,8 +1,10 @@
-from PyQt4.QtGui import QComboBox
+from PyQt4.QtGui import QComboBox, QListView, QWidget
+from PyQt4.QtCore import QSize, Qt, pyqtSignal, QModelIndex
 
 from qgis.core import QgsMessageLog, QgsMapLayerRegistry, QgsExpression, QgsFeatureRequest
 
 from roam.flickwidget import FlickCharm
+from roam.editorwidgets.uifiles.ui_list import Ui_BigList
 
 import roam.utils
 import qgis.core
@@ -13,6 +15,31 @@ def nullconvert(value):
     if value == qgis.core.NULL:
         return None
     return value
+
+
+class BigList(Ui_BigList, QWidget):
+    itemselected = pyqtSignal(QModelIndex)
+
+    def __init__(self, parent=None):
+        super(BigList, self).__init__(parent)
+        self.setupUi(self)
+        self.listView.clicked.connect(self.itemselected)
+        self.charm = FlickCharm()
+        self.charm.activateOn(self.listView)
+
+    def setmodel(self, model):
+        self.listView.setModel(model)
+
+    def setlabel(self, fieldname):
+        self.fieldnameLabel.setText(fieldname)
+
+    def show(self):
+        super(BigList, self).show()
+
+        width = self.parent().width()
+        height = self.parent().height()
+        self.move(width / 4, 0)
+        self.resize(QSize(width / 2, height))
 
 
 class ListWidget(EditorWidget):
@@ -81,7 +108,6 @@ class ListWidget(EditorWidget):
                 index = layer.fieldNameIndex(field)
                 attributes.add(index)
 
-        values = set()
         request = QgsFeatureRequest().setFlags(flags).setSubsetOfAttributes(list(attributes))
         for feature in layer.getFeatures(request):
             if expression and not expression.evaluate(feature):
@@ -95,9 +121,23 @@ class ListWidget(EditorWidget):
         if widget.isEditable():
             widget.editTextChanged.connect(self.validate)
 
-        self.charm = FlickCharm()
-        self.charm.activateOn(widget.view())
         widget.currentIndexChanged.connect(self.validate)
+        self.biglist = BigList(self.widget.parent().parent())
+        self.biglist.setlabel(self.labeltext)
+        self.biglist.setmodel(widget.model())
+        self.biglist.itemselected.connect(self.itemselected)
+        self.biglist.hide()
+        widget.showPopup = self.showpopup
+
+    def itemselected(self, index):
+        self.biglist.hide()
+        self.widget.setCurrentIndex(index.row())
+
+    def showpopup(self):
+        if self.widget.count() == 0:
+            return
+
+        self.biglist.show()
 
     def updatefromconfig(self):
         self.widget.clear()
