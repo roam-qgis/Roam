@@ -227,10 +227,15 @@ class FeatureFormBase(QWidget):
                 utils.warning("Not label found for {}".format(field))
 
             widgetconfig = config.get('config', {})
+            layer = self.form.QGISLayer
+            # Crash in QGIS if you lookup a field that isn't found.
+            # We just make a dict with all fields lower because QgsFields is case sensitive.
+            fields = {field.name().lower():field for field in layer.pendingFields().toList()}
+            qgsfield = fields[field]
             try:
                 widgetwrapper = WidgetsRegistry.widgetwrapper(widgettype=widgettype,
                                                               layer=self.form.QGISLayer,
-                                                              field=field,
+                                                              field=qgsfield,
                                                               widget=widget,
                                                               label=label,
                                                               config=widgetconfig)

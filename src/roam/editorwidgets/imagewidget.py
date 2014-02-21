@@ -11,6 +11,10 @@ class ImageWidget(EditorWidget):
 
     def __init__(self, *args):
         super(ImageWidget, self).__init__(*args)
+        self.tobase64 = False
+
+        if self.field and self.field.type() == QVariant.String:
+            self.tobase64 = True
 
     def createWidget(self, parent):
         return QMapImageWidget(parent)
@@ -31,15 +35,14 @@ class ImageWidget(EditorWidget):
         self.openimage.emit(pixmap)
 
     def setvalue(self, value):
-        field = self.layer.pendingFields().field(self.field)
-        if field.type() == QVariant.String and value:
+        if self.tobase64 and value:
             value = QByteArray.fromBase64(value)
+
         self.widget.loadImage(value)
 
     def value(self):
-        field = self.layer.pendingFields().field(self.field)
         image = self.widget.getImage()
-        if field.type() == QVariant.String and image:
+        if self.tobase64 and image:
             image = image.toBase64()
             return image.data()
 
