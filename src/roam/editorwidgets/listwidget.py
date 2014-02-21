@@ -1,4 +1,4 @@
-from PyQt4.QtGui import QComboBox, QListView, QWidget
+from PyQt4.QtGui import QComboBox, QListView, QWidget, QStandardItem, QStandardItemModel, QIcon, QPixmap
 from PyQt4.QtCore import QSize, Qt, pyqtSignal, QModelIndex
 
 from qgis.core import QgsMessageLog, QgsMapLayerRegistry, QgsExpression, QgsFeatureRequest
@@ -46,6 +46,7 @@ class ListWidget(EditorWidget):
     widgettype = 'List'
     def __init__(self, *args):
         super(ListWidget, self).__init__(*args)
+        self.listmodel = QStandardItemModel()
 
     def createWidget(self, parent):
         return QComboBox(parent)
@@ -60,7 +61,16 @@ class ListWidget(EditorWidget):
             except IndexError:
                 desc = data
 
-            widget.addItem(desc, data)
+            try:
+                path = parts[2]
+                icon = QIcon(path)
+            except:
+                icon = QIcon()
+
+            item = QStandardItem(desc)
+            item.setData(data, Qt.UserRole)
+            item.setIcon(icon)
+            self.listmodel.appendRow(item)
 
     def _buildfromlayer(self, widget, layerconfig):
         layername = layerconfig['layer']
@@ -81,17 +91,25 @@ class ListWidget(EditorWidget):
             return
 
         if self.allownulls:
-            widget.addItem('(no selection)', None)
+            item = QStandardItem('(no selection)')
+            item.setData(None, Qt.UserRole)
+            self.listmodel.appendRow(item)
 
         if not filterexp and valuefieldindex == keyfieldindex:
             values = layer.uniqueValues(keyfieldindex)
             for value in values:
                 value = nullconvert(value)
-                widget.addItem(value, value)
+                item = QStandardItem(value)
+                item.setData(value, Qt.UserRole)
+                self.listmodel.appendRow(item)
             return
 
         attributes = {keyfieldindex, valuefieldindex}
         flags = QgsFeatureRequest.NoGeometry
+
+        iconfieldindex =  layer.fieldNameIndex('icon')
+        if iconfieldindex > -1:
+            attributes.add(iconfieldindex)
 
         expression = None
         if filterexp:
@@ -115,19 +133,30 @@ class ListWidget(EditorWidget):
 
             keyvalue = nullconvert(feature[keyfieldindex])
             valuvalue = nullconvert(feature[valuefield])
-            widget.addItem(unicode(keyvalue), unicode(valuvalue))
+            try:
+                path = feature[iconfieldindex]
+                icon = QIcon(path)
+            except KeyError:
+                icon = QIcon()
+
+            item = QStandardItem(unicode(keyvalue))
+            item.setData(unicode(valuvalue), Qt.UserRole)
+            item.setIcon(icon)
+            self.listmodel.appendRow(item)
 
     def initWidget(self, widget):
         if widget.isEditable():
             widget.editTextChanged.connect(self.validate)
 
         widget.currentIndexChanged.connect(self.validate)
+        widget.setModel(self.listmodel)
         self.biglist = BigList(self.widget.parent().parent())
         self.biglist.setlabel(self.labeltext)
-        self.biglist.setmodel(widget.model())
+        self.biglist.setmodel(self.listmodel)
         self.biglist.itemselected.connect(self.itemselected)
         self.biglist.hide()
         widget.showPopup = self.showpopup
+        widget.setIconSize(QSize(24,24))
 
     def itemselected(self, index):
         self.biglist.hide()
@@ -140,7 +169,7 @@ class ListWidget(EditorWidget):
         self.biglist.show()
 
     def updatefromconfig(self):
-        self.widget.clear()
+        self.listmodel.clear()
         if 'list' in self.config:
             listconfig = self.config['list']
             self._buildfromlist(self.widget, listconfig)
