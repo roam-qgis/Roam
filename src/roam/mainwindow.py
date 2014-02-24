@@ -44,6 +44,7 @@ from roam.listfeatureform import ListFeaturesForm
 from roam.infodock import InfoDock
 from roam.syncwidget import SyncWidget
 from roam.helpviewdialog import HelpPage
+from roam.biglist import BigList
 from roam.imageviewerwidget import ImageViewer
 
 import roam.messagebaritems
@@ -199,8 +200,15 @@ class MainWindow(mainwindow_widget, mainwindow_base):
         self.dataentrycombo.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Expanding)
         self.dataentrycombo.setSizeAdjustPolicy(QComboBox.AdjustToContents)
         self.dataentrycombo.setModel(self.dataentrymodel)
-        self.dataentrycombo.currentIndexChanged.connect(self.dataentrychanged)
         self.dataentrycomboaction = self.projecttoolbar.insertWidget(self.topspaceraction, self.dataentrycombo)
+
+        self.dataentrycombo.showPopup = self.selectdataentry
+
+        self.biglist = BigList(self.canvas)
+        self.biglist.setlabel("Select data entry form")
+        self.biglist.setmodel(self.dataentrymodel)
+        self.biglist.itemselected.connect(self.dataentrychanged)
+        self.biglist.hide()
 
         self.centralwidget.layout().addWidget(self.statusbar)
 
@@ -215,6 +223,12 @@ class MainWindow(mainwindow_widget, mainwindow_base):
         self.hidedataentry()
         self.canvas.extentsChanged.connect(self.updatestatuslabel)
         self.projecttoolbar.toolButtonStyleChanged.connect(self.updatecombo)
+
+    def selectdataentry(self, ):
+        if self.dataentrycombo.count() == 0:
+            return
+
+        self.biglist.show()
 
     def viewurl(self, url):
         """
@@ -298,8 +312,13 @@ class MainWindow(mainwindow_widget, mainwindow_base):
     def dataentrychanged(self, index):
         wasactive = self.clearCapatureTools()
 
-        modelindex = self.dataentrymodel.index(index, 0)
+        if not index.isValid():
+            return
+
+        modelindex = index
+        # modelindex = self.dataentrymodel.index(index, 0)
         form = modelindex.data(Qt.UserRole + 1)
+        self.dataentrycombo.setCurrentIndex(index.row())
         self.createCaptureButtons(form, wasactive)
 
     def raiseerror(self, *exinfo):
@@ -463,7 +482,9 @@ class MainWindow(mainwindow_widget, mainwindow_base):
         # We have to do this because the combobox will reset it size with AdjustToContents
         self.dataentrycombo.setMinimumHeight(self.projecttoolbar.height())
         self.dataentrycomboaction.setVisible(visible)
-        self.dataentrycombo.setCurrentIndex(0)
+
+        index = self.dataentrymodel.index(0, 0)
+        self.dataentrychanged(index)
 
     def addFeatureAtGPS(self):
         """

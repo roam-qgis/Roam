@@ -120,5 +120,21 @@ QListView::item {
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>listView</sender>
+   <signal>clicked(QModelIndex)</signal>
+   <receiver>BigList</receiver>
+   <slot>close()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>96</x>
+     <y>203</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>255</x>
+     <y>-26</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
 </ui>
