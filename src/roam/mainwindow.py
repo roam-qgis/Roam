@@ -505,7 +505,6 @@ class MainWindow(mainwindow_widget, mainwindow_base):
 
     def featureSaved(self):
         self.dataentryfinished()
-        self.bar.pushMessage("Saved", "Changes Saved", QgsMessageBar.INFO, 1)
         self.canvas.refresh()
 
     def failSave(self, messages):
