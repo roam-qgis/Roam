@@ -192,7 +192,7 @@ class InfoDock(infodock_widget, QWidget):
         items = []
         for field, value in zip(fields, feature.attributes()):
             data[field] = value
-            item = "<tr><th>{0}</th> <td>${{{0}}}</td></tr>".format(field)
+            item = u"<tr><th>{0}</th> <td>${{{0}}}</td></tr>".format(field)
             items.append(item)
         rowtemple = Template(''.join(items))
         rowshtml = updateTemplate(data, rowtemple)
