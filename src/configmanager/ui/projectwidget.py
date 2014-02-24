@@ -1,6 +1,9 @@
 import os
 import copy
 import subprocess
+import shutil
+
+from datetime import datetime
 
 from PyQt4.QtCore import Qt, QDir, QFileInfo, pyqtSignal, QModelIndex, QFileSystemWatcher
 from PyQt4.QtGui import QWidget, QStandardItemModel, QStandardItem, QIcon
@@ -18,6 +21,7 @@ import roam.editorwidgets
 import roam.projectparser
 import roam.yaml
 import roam
+import roam.project
 
 
 readonlyvalues = [('Never', 'never'),
@@ -68,6 +72,10 @@ class ProjectWidget(Ui_Form, QWidget):
         self.widgetmodel.rowsInserted.connect(self.setwidgetconfigvisiable)
         self.widgetmodel.modelReset.connect(self.setwidgetconfigvisiable)
 
+        self.formmodel.rowsRemoved.connect(self.setformconfigvisible)
+        self.formmodel.rowsInserted.connect(self.setformconfigvisible)
+        self.formmodel.modelReset.connect(self.setformconfigvisible)
+
         self.formlist.setModel(self.formmodel)
         self.formlist.selectionModel().currentChanged.connect(self.updatecurrentform)
 
@@ -87,6 +95,8 @@ class ProjectWidget(Ui_Form, QWidget):
         self.addWidgetButton.pressed.connect(self.newwidget)
         self.removeWidgetButton.pressed.connect(self.removewidget)
 
+        self.addFormButton.pressed.connect(self.newform)
+
         self.roamVersionLabel.setText("You are running IntraMaps Roam version {}".format(roam.__version__))
 
         self.openProjectFolderButton.pressed.connect(self.openprojectfolder)
@@ -105,7 +115,7 @@ class ProjectWidget(Ui_Form, QWidget):
         self.setproject(self.project)
 
     def projectupdated(self, path):
-        self.projectupdatedlabel.setText("Project has been updated. <a href='reload'> Click to reload<a>")
+        self.projectupdatedlabel.setText("The QGIS project has been updated. <a href='reload'> Click to reload<a>. <b>Unsaved data will be lost</b>")
 
     def openinqgis(self):
         projectfile = self.project.projectfile
@@ -120,6 +130,10 @@ class ProjectWidget(Ui_Form, QWidget):
         folder = self.project.folder
         openfolder(folder)
 
+    def setformconfigvisible(self, *args):
+        hasforms = self.formmodel.rowCount() > 0
+        self.formframe.setVisible(hasforms)
+
     def setwidgetconfigvisiable(self, *args):
         haswidgets = self.widgetmodel.rowCount() > 0
         self.groupBox_2.setVisible(haswidgets)
@@ -131,6 +145,25 @@ class ProjectWidget(Ui_Form, QWidget):
         widget, index = self.currentuserwidget
         if index.isValid():
             self.widgetmodel.removeRow(index.row())
+
+    def newform(self):
+        def newformname():
+            return "form_{}".format(datetime.today().strftime('%d%m%y%f'))
+
+        folder = self.project.folder
+        foldername = newformname()
+
+        formfolder = os.path.join(folder, foldername)
+        templateProject = os.path.join(os.path.dirname(__file__), "..", "templates/templateProject/form1")
+        shutil.copytree(templateProject, formfolder)
+
+        layer = self.layerCombo.currentText()
+        config = dict(label='New Form', layer=layer, type='auto', widgets=[])
+        form = self.project.addformconfig(foldername, config)
+
+        index = self.formmodel.addform(form)
+        self.formlist.setCurrentIndex(index)
+        return config
 
     def newwidget(self):
         """
@@ -387,7 +420,7 @@ class ProjectWidget(Ui_Form, QWidget):
         form = index.data(Qt.UserRole)
         settings = form.settings
         label = settings['label']
-        layer = settings['layer']
+        layer = settings.get('layer', None)
         version = settings.get('version', roam.__version__)
         formtype = settings.get('type', 'auto')
         widgets = settings.get('widgets', [])
@@ -525,6 +558,11 @@ class ProjectWidget(Ui_Form, QWidget):
         settings['title'] = title
         settings['description'] = description
         settings['version'] = version
+
+        # Rewrite out the forms.
+        settings['forms'] = {}
+        for form in self.formmodel.forms:
+            settings['forms'][form.name] = form.settings
 
         self.projectsaved.emit(self.startsettings, self.project)
 

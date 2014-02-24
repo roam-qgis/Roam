@@ -79,6 +79,7 @@ class ConfigManagerDialog(ui_configmanager.Ui_ProjectInstallerDialog, QDialog):
         newfolder = os.path.join(self.projectfolder, "newProject{}".format(random.randint(1, 100)))
         shutil.copytree(templateProject, newfolder)
         project = roam.project.Project.from_folder(newfolder)
+        project.settings['forms'] = {}
         newindex = self.projectmodel.addproject(project)
         self.projectList.setCurrentIndex(newindex)
 

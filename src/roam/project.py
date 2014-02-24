@@ -7,6 +7,8 @@ import imp
 import importlib
 import sys
 
+from datetime import datetime
+
 from PyQt4.QtGui import QAction, QIcon
 
 from qgis.core import QgsMapLayerRegistry, QGis, QgsTolerance, QgsVectorLayer, QgsMapLayer
@@ -69,6 +71,7 @@ def getProjects(projectpath):
         yield project
 
 
+
 class Form(object):
     def __init__(self, name, config, rootfolder):
         self._name = name
@@ -89,7 +92,7 @@ class Form(object):
                 return None
 
         form = cls(name, config, folder)
-        form.QGISLayer = getlayer(config['layer'])
+        form.QGISLayer = getlayer(config.get('layer', None))
         form._loadmodule()
         form.init_form()
         return form
@@ -290,7 +293,6 @@ class Project(object):
                 return layer
 
     def getPanels(self):
-        log("getPanels")
         for module in glob.iglob(os.path.join(self.folder, "_panels", '*.py')):
             modulename = os.path.splitext(os.path.basename(module))[0]
             try:
@@ -341,3 +343,10 @@ class Project(object):
 
     def historyenabled(self, layer):
         return layer.name() in self.settings.get('historylayers', [])
+
+    def addformconfig(self, name, config):
+        forms = self.settings.get('forms', {})
+        forms[name] = config
+        self._forms = []
+        folder = os.path.join(self.folder, name)
+        return Form.from_config(name, config, folder)

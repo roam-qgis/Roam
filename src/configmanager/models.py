@@ -48,6 +48,7 @@ class FormModel(QAbstractItemModel):
         self.beginInsertRows(QModelIndex(), self.rowCount(), self.rowCount() + 1)
         self.forms.append(form)
         self.endInsertRows()
+        return self.index(self.rowCount() - 1, 0)
 
     def addforms(self, forms):
         self.beginResetModel()
