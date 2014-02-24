@@ -539,14 +539,13 @@ class MainWindow(mainwindow_widget, mainwindow_base):
         feature = QgsFeature(fields)
         feature.setGeometry(geometry)
 
-        # Disable getting provider defaults for now as it seems to
-        # cause issues.
-        #for indx in xrange(fields.count()):
-        #    value = layer.dataProvider().defaultValue(indx)
-        #    if value is qgis.core.NULL:
-        #        # Oh QPyNullVariant how I hate you so.
-        #        value = None
-        #    feature[indx] = layer.dataProvider().defaultValue(indx)
+        for index in xrange(fields.count()):
+            pkindexes = layer.dataProvider().pkAttributeIndexes()
+            if index in pkindexes and layer.dataProvider().name() == 'spatialite':
+                continue
+
+            value = layer.dataProvider().defaultValue(index)
+            feature[index] = value
 
         self.openForm(form, feature)
 

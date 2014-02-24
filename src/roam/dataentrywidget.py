@@ -242,8 +242,9 @@ class DataEntryWidget(dataentry_widget, dataentry_base):
 
         defaults = {}
         editing = feature.id() > 0
+        layer = form.QGISLayer
         if not editing:
-            defaults = getdefaults(form.widgetswithdefaults(), feature, form.QGISLayer, self.canvas)
+            defaults = getdefaults(form.widgetswithdefaults(), feature, layer, self.canvas)
 
         self.actionDelete.setVisible(editing)
 
@@ -264,7 +265,15 @@ class DataEntryWidget(dataentry_widget, dataentry_base):
 
         self.project = project
         fields = [field.name().lower() for field in self.fields]
-        values = CaseInsensitiveDict(zip(fields, feature.attributes()))
+        attributes = feature.attributes()
+
+        if layer.dataProvider().name() == 'spatialite':
+            pkindexes = layer.dataProvider().pkAttributeIndexes()
+            for index in pkindexes:
+                del fields[index]
+                del attributes[index]
+
+        values = CaseInsensitiveDict(zip(fields, attributes))
 
         try:
             self.featureform.load(feature, layers, values)

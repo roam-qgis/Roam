@@ -185,6 +185,7 @@ class FeatureFormBase(QWidget):
         self.requiredfields = CaseInsensitiveDict()
         self.feature = feature
         self.defaults = defaults
+        self.bindingvalues = {}
 
     def _installeventfilters(self, widgettype):
         for widget in self.findChildren(widgettype):
@@ -269,6 +270,7 @@ class FeatureFormBase(QWidget):
         """
         Bind the values to the form.
         """
+        self.bindingvalues = values
         for field, value in values.iteritems():
             value = nullcheck(value)
             try:
@@ -286,7 +288,7 @@ class FeatureFormBase(QWidget):
                 return button.isChecked()
 
         savedvalues = {}
-        values = CaseInsensitiveDict()
+        values = CaseInsensitiveDict(self.bindingvalues)
         for field, wrapper in self.boundwidgets.iteritems():
             value = wrapper.value()
             if shouldsave(field):
