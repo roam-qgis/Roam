@@ -54,8 +54,8 @@ class ListWidgetConfig(Ui_Form, ConfigWidget):
             self.list = [item for item in self.listText.toPlainText().split('\n')]
         else:
             self.layer = self.layerCombo.currentText()
-            index_key = self.keyCombo.view().currentIndex()
-            index_value = self.valueCombo.view().currentIndex()
+            index_key = self.fieldmodel.index(self.keyCombo.currentIndex(), 0)
+            index_value = self.fieldmodel.index(self.valueCombo.currentIndex(), 0)
             fieldname_key = self.fieldmodel.data(index_key, QgsFieldModel.FieldNameRole)
             fieldname_value = self.fieldmodel.data(index_value, QgsFieldModel.FieldNameRole)
             self.key = fieldname_key
@@ -66,7 +66,6 @@ class ListWidgetConfig(Ui_Form, ConfigWidget):
 
     def getconfig(self):
         config = {}
-        print self.allownull
         config['allownull'] = self.allownull
         config['orderbyvalue'] = self.orderby
         if self.layerRadio.isChecked():
