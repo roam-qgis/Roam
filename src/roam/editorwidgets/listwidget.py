@@ -1,45 +1,17 @@
-from PyQt4.QtGui import QComboBox, QListView, QWidget, QStandardItem, QStandardItemModel, QIcon, QPixmap
-from PyQt4.QtCore import QSize, Qt, pyqtSignal, QModelIndex
-
+from PyQt4.QtGui import QComboBox, QStandardItem, QStandardItemModel, QIcon
+from PyQt4.QtCore import QSize, Qt
 from qgis.core import QgsMessageLog, QgsMapLayerRegistry, QgsExpression, QgsFeatureRequest
-
-from roam.flickwidget import FlickCharm
-from roam.editorwidgets.uifiles.ui_list import Ui_BigList
-
-import roam.utils
 import qgis.core
 
-from roam.editorwidgets.core import WidgetsRegistry, EditorWidget
+import roam.utils
+from roam.editorwidgets.core import EditorWidget
+from roam.biglist import BigList
+
 
 def nullconvert(value):
     if value == qgis.core.NULL:
         return None
     return value
-
-
-class BigList(Ui_BigList, QWidget):
-    itemselected = pyqtSignal(QModelIndex)
-
-    def __init__(self, parent=None):
-        super(BigList, self).__init__(parent)
-        self.setupUi(self)
-        self.listView.clicked.connect(self.itemselected)
-        self.charm = FlickCharm()
-        self.charm.activateOn(self.listView)
-
-    def setmodel(self, model):
-        self.listView.setModel(model)
-
-    def setlabel(self, fieldname):
-        self.fieldnameLabel.setText(fieldname)
-
-    def show(self):
-        super(BigList, self).show()
-
-        width = self.parent().width()
-        height = self.parent().height()
-        self.move(width / 4, 0)
-        self.resize(QSize(width / 2, height))
 
 
 class ListWidget(EditorWidget):

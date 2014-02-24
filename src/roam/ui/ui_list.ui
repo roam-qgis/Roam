@@ -81,8 +81,8 @@ QListView::item {
          <string>...</string>
         </property>
         <property name="icon">
-         <iconset resource="images.qrc">
-          <normaloff>:/images/images/cancel.svg</normaloff>:/images/images/cancel.svg</iconset>
+         <iconset resource="../resources.qrc">
+          <normaloff>:/icons/cancel</normaloff>:/icons/cancel</iconset>
         </property>
         <property name="iconSize">
          <size>
@@ -101,7 +101,7 @@ QListView::item {
   </layout>
  </widget>
  <resources>
-  <include location="images.qrc"/>
+  <include location="../resources.qrc"/>
  </resources>
  <connections>
   <connection>
