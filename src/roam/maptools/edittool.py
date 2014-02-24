@@ -128,8 +128,7 @@ class EditTool(MapTool):
         self.selectband.reset()
             
         features = dict(self.getFeatures(rect))
-        print features
-            
+
         if len(features) == 1:
             feature = features.keys()[0]
             forms = features.values()[0]

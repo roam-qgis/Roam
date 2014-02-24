@@ -37,7 +37,6 @@ class QMapImageWidget(ui_imagewidget.Ui_imagewidget, QWidget):
     def selectImage(self):
         # Show the file picker
         defaultlocation = os.path.expandvars(self.defaultlocation)
-        print defaultlocation
         image = QFileDialog.getOpenFileName(self, "Select Image", defaultlocation)
         roam.utils.debug(image)
         if image is None or not image:

@@ -40,7 +40,6 @@ from roam.settingswidget import SettingsWidget
 from roam.projectparser import ProjectParser
 from roam.project import Project, NoMapToolConfigured, ErrorInMapTool
 from roam.maptools import MoveTool, InfoTool, EditTool, PointTool, TouchMapTool
-from roam.listfeatureform import ListFeaturesForm
 from roam.infodock import InfoDock
 from roam.syncwidget import SyncWidget
 from roam.helpviewdialog import HelpPage
@@ -112,8 +111,6 @@ class MainWindow(mainwindow_widget, mainwindow_base):
         self.editgroup.addAction(self.actionZoom_In)
         self.editgroup.addAction(self.actionZoom_Out)
         self.editgroup.addAction(self.actionInfo)
-        self.editgroup.addAction(self.actionEdit_Tools)
-        self.editgroup.addAction(self.actionEdit_Attributes)
 
         #TODO Extract GPS out into a service and remove UI stuff
         self.actionGPS = GPSAction(":/icons/gps", self.canvas, self.settings, self)
@@ -237,8 +234,6 @@ class MainWindow(mainwindow_widget, mainwindow_base):
         :return:
         """
         key = url.toString().lstrip('file://')
-        print key
-        print roam.htmlviewer.images
         try:
             # Hack. Eww fix me.
             data, imagetype = roam.htmlviewer.images[os.path.basename(key)]
@@ -351,14 +346,12 @@ class MainWindow(mainwindow_widget, mainwindow_base):
         self.panTool = TouchMapTool(self.canvas)
         self.moveTool = MoveTool(self.canvas, [])
         self.infoTool = InfoTool(self.canvas)
-        self.editTool = EditTool(self.canvas, [])
 
         connectAction(self.actionZoom_In, self.zoomInTool)
         connectAction(self.actionZoom_Out, self.zoomOutTool)
         connectAction(self.actionPan, self.panTool)
         connectAction(self.actionMove, self.moveTool)
         connectAction(self.actionInfo, self.infoTool)
-        connectAction(self.actionEdit_Attributes, self.editTool)
 
         self.zoomInTool.setCursor(cursor(':/icons/in'))
         self.zoomOutTool.setCursor(cursor(':/icons/out'))
@@ -368,14 +361,8 @@ class MainWindow(mainwindow_widget, mainwindow_base):
 
         self.infoTool.infoResults.connect(self.showInfoResults)
 
-        self.editTool.finished.connect(self.openForm)
-        self.editTool.featuresfound.connect(self.showFeatureSelection)
-        self.editTool.radius = 10
-
-        self.editTool.layersupdated.connect(self.actionEdit_Attributes.setEnabled)
-        self.moveTool.layersupdated.connect(self.actionMove.setEnabled)
-
         # The edit toolbutton is currently not being used but leaving it for feature.
+        self.moveTool.layersupdated.connect(self.actionMove.setEnabled)
         self.moveTool.layersupdated.connect(self.actionEdit_Tools.setEnabled)
 
         self.actionGPSFeature.triggered.connect(self.addFeatureAtGPS)
@@ -428,16 +415,9 @@ class MainWindow(mainwindow_widget, mainwindow_base):
         """
             Create buttons for each form that is defined
         """
-        self.editTool.reset()
         self.moveTool.reset()
         self.dataentrymodel.clear()
         self.clearCapatureTools()
-
-        def editFeature(form):
-            self.editTool.addForm(form)
-
-        def moveFeature(form):
-            self.moveTool.addLayer(form.QGISLayer)
 
         def captureFeature(form):
             item = QStandardItem(QIcon(form.icon), form.icontext)
@@ -445,9 +425,7 @@ class MainWindow(mainwindow_widget, mainwindow_base):
             item.setSizeHint(QSize(item.sizeHint().width(), self.projecttoolbar.height()))
             self.dataentrymodel.appendRow(item)
 
-        capabilitityhandlers = {"capture": captureFeature,
-                                "edit": editFeature,
-                                "move": moveFeature}
+        capabilitityhandlers = {"capture": captureFeature}
 
         failedforms = []
         for form in forms:
@@ -468,12 +446,14 @@ class MainWindow(mainwindow_widget, mainwindow_base):
                                                 error.message,
                                                 level=QgsMessageBar.WARNING)
                     continue
+                except KeyError:
+                    # Just ignore capabilities we don't support yet.
+                    continue
 
         if failedforms:
             for form, reasons in failedforms:
                 html = "<h3>{}</h3><br>{}".format(form.label,
                                              "<br>".join(reasons))
-                print html
             self.bar.pushMessage("Form errors",
                                  "Looks like some forms couldn't be loaded",
                                  level=QgsMessageBar.WARNING, extrainfo=html)
@@ -586,15 +566,6 @@ class MainWindow(mainwindow_widget, mainwindow_base):
 
         self.infodock.setResults(results, forms)
         self.infodock.show()
-
-    def showFeatureSelection(self, features):
-        """
-        Show a list of features for user selection.
-        """
-        listUi = ListFeaturesForm(self)
-        listUi.loadFeatureList(features)
-        listUi.openFeatureForm.connect(self.openForm)
-        listUi.exec_()
 
     def toggleRasterLayers(self):
         """

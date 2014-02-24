@@ -88,7 +88,6 @@ class ListWidgetConfig(Ui_Form, ConfigWidget):
         super(ListWidgetConfig, self).blockSignals(bool)
 
     def setconfig(self, config):
-        print "Set config"
         self.blockSignals(True)
         self.allownull = config.get('allownull', True)
         self.orderby = config.get('orderbyvalue', False)

@@ -15,7 +15,6 @@ class ProjectParser(object):
 
     @classmethod
     def fromFile(cls, filename):
-        print filename
         xml = open(filename).read()
         doc = QDomDocument()
         doc.setContent(xml)

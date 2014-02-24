@@ -20,9 +20,7 @@ class SyncWidget(sync_widget, sync_base):
     def loadprojects(self, projects):
         root = self.synctree.invisibleRootItem()
         for project in projects:
-            print project
             providers = list(project.syncprovders())
-            print providers
             if not providers:
                 continue
 

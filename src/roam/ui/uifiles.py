@@ -4,13 +4,12 @@ from PyQt4.QtGui import QWidget, QDialog, QMainWindow
 
 from roam import resources_rc
 
-from roam.ui import (ui_projectwidget, ui_listmodules, ui_listfeatures, ui_helpviewer,
+from roam.ui import (ui_projectwidget, ui_listmodules, ui_helpviewer,
                  ui_helppage, ui_datatimerpicker, ui_settings, ui_infodock, ui_mainwindow, ui_sync,
                  ui_dataentrywidget, ui_deletefeature, ui_imageviewer)
 
 project_widget, project_base = ui_projectwidget.Ui_Form, QWidget
 modules_widget, modules_base = ui_listmodules.Ui_ListModules, QWidget
-features_widget, features_base = ui_listfeatures.Ui_ListFeatueForm, QDialog
 helpviewer_widget, helpviewer_base = ui_helpviewer.Ui_HelpViewer, QDialog
 helppage_widget, helppage_base = ui_helppage.Ui_apphelpwidget, QWidget
 datepicker_widget, datepicker_base = ui_datatimerpicker.Ui_datatimerpicker, QWidget
