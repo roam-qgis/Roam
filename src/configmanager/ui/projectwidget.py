@@ -115,7 +115,7 @@ class ProjectWidget(Ui_Form, QWidget):
         self.setproject(self.project)
 
     def projectupdated(self, path):
-        self.projectupdatedlabel.setText("The QGIS project has been updated. <a href='reload'> Click to reload<a>. <b>Unsaved data will be lost</b>")
+        self.projectupdatedlabel.setText("The QGIS project has been updated. <a href='reload'> Click to reload</a>. <b>Unsaved data will be lost</b>")
 
     def openinqgis(self):
         projectfile = self.project.projectfile
