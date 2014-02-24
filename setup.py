@@ -22,15 +22,29 @@ qgisresources = os.path.join(osgeopath, "apps", "qgis", "resources")
 svgs = os.path.join(osgeopath, "apps", "qgis", "svg")
 qgispluginpath = os.path.join(osgeopath, r'apps\qgis\plugins\*provider.dll' )
 
-def svgfiles():
-    for path, dirs, files in os.walk(svgs):
-        if not files: continue
-        newpath = r'libs\qgis\svg\{}'.format(os.path.basename(path))
+def getfiles(folder, outpath):
+    """
+    Walks a given folder and converts all paths to outpath root.
+    """
+    def filecollection(files):
         collection = []
         for f in files:
             filename = os.path.join(path, f)
             collection.append(filename)
-        yield (newpath, collection)
+
+        return newpath, collection
+
+    for path, dirs, files in os.walk(folder):
+        if not files: continue
+
+        newpath = r'{}\{}'.format(outpath, os.path.basename(path))
+
+        newpath, collection = filecollection(files)
+        yield newpath, collection
+
+        for dir in dirs:
+            for path, collection in getfiles(os.path.join(path, dir), newpath):
+                yield (path, collection)
 
 ecwfiles = [os.path.join(osgeobin, 'gdalplugins', 'gdal_ECW_JP2ECW.dll'),
             os.path.join(osgeobin, 'NCSEcw.dll')]
@@ -47,7 +61,10 @@ datafiles = [(".", [r'src\settings.config']),
                                  os.path.join(qgisresources, 'srs.db')]),
             (r'libs', ecwfiles)]
 
-for path, collection in svgfiles():
+for path, collection in getfiles(svgs, r'libs\qgis\svg'):
+    datafiles.append((path, collection))
+
+for path, collection in getfiles(r'src\configmanager\templates', r'libs\configmanager\templates'):
     datafiles.append((path, collection))
 
 roam_target = dict(
