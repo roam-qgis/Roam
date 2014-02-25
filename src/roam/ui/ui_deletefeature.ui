@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>808</width>
-    <height>173</height>
+    <height>137</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -35,6 +35,11 @@
 QPushButton#deleteButton {
 	background-color: rgb(255, 134, 125);
    color: white;
+	font: 75 17pt &quot;Segoe UI&quot;;
+}
+
+QLabel#headerlabel {
+	color: rgb(255, 134, 125);
 	font: 75 17pt &quot;Segoe UI&quot;;
 }</string>
   </property>
@@ -69,7 +74,7 @@ QPushButton#deleteButton {
       </item>
       <item>
        <layout class="QGridLayout" name="gridLayout">
-        <item row="0" column="0">
+        <item row="1" column="0">
          <widget class="QLabel" name="deletelabel">
           <property name="text">
            <string>Do you really want to delete this feature?</string>
@@ -79,7 +84,7 @@ QPushButton#deleteButton {
           </property>
          </widget>
         </item>
-        <item row="1" column="0">
+        <item row="2" column="0">
          <layout class="QHBoxLayout" name="horizontalLayout">
           <item>
            <widget class="QPushButton" name="cancelButton">
@@ -96,6 +101,28 @@ QPushButton#deleteButton {
            </widget>
           </item>
          </layout>
+        </item>
+        <item row="0" column="0">
+         <widget class="QLabel" name="headerlabel">
+          <property name="font">
+           <font>
+            <family>Segoe UI</family>
+            <pointsize>17</pointsize>
+            <weight>9</weight>
+            <italic>false</italic>
+            <bold>false</bold>
+           </font>
+          </property>
+          <property name="styleSheet">
+           <string notr="true"/>
+          </property>
+          <property name="text">
+           <string>Delete feature?</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+          </property>
+         </widget>
         </item>
        </layout>
       </item>

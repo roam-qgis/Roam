@@ -20,7 +20,7 @@
    <string>IntraMaps Roam: Moblie Data Collection</string>
   </property>
   <property name="windowIcon">
-   <iconset resource="resources.qrc">
+   <iconset resource="../resources.qrc">
     <normaloff>:/branding/logo</normaloff>:/branding/logo</iconset>
   </property>
   <property name="windowOpacity">
@@ -321,7 +321,7 @@ QToolButton:checked {
 }
 
 QWidget {
-	background-color: rgb(250, 250, 250);
+	background-color: rgb(255, 255, 255);
 }
 
 </string>
@@ -360,7 +360,7 @@ QWidget {
     <bool>true</bool>
    </property>
    <property name="icon">
-    <iconset resource="resources.qrc">
+    <iconset resource="../resources.qrc">
      <normaloff>:/icons/map</normaloff>:/icons/map</iconset>
    </property>
    <property name="text">
@@ -378,7 +378,7 @@ QWidget {
     <bool>true</bool>
    </property>
    <property name="icon">
-    <iconset resource="resources.qrc">
+    <iconset resource="../resources.qrc">
      <normaloff>:/icons/open</normaloff>:/icons/open</iconset>
    </property>
    <property name="text">
@@ -396,7 +396,7 @@ QWidget {
     <bool>true</bool>
    </property>
    <property name="icon">
-    <iconset resource="resources.qrc">
+    <iconset resource="../resources.qrc">
      <normaloff>:/icons/config</normaloff>:/icons/config</iconset>
    </property>
    <property name="text">
@@ -411,7 +411,7 @@ QWidget {
   </action>
   <action name="actionQuit">
    <property name="icon">
-    <iconset resource="resources.qrc">
+    <iconset resource="../resources.qrc">
      <normaloff>:/icons/quit</normaloff>:/icons/quit</iconset>
    </property>
    <property name="text">
@@ -423,7 +423,7 @@ QWidget {
   </action>
   <action name="actionHome">
    <property name="icon">
-    <iconset resource="resources.qrc">
+    <iconset resource="../resources.qrc">
      <normaloff>:/icons/home</normaloff>:/icons/home</iconset>
    </property>
    <property name="text">
@@ -438,7 +438,7 @@ QWidget {
     <bool>true</bool>
    </property>
    <property name="icon">
-    <iconset resource="resources.qrc">
+    <iconset resource="../resources.qrc">
      <normaloff>:/icons/pan</normaloff>:/icons/pan</iconset>
    </property>
    <property name="text">
@@ -450,7 +450,7 @@ QWidget {
     <bool>true</bool>
    </property>
    <property name="icon">
-    <iconset resource="resources.qrc">
+    <iconset resource="../resources.qrc">
      <normaloff>:/icons/in</normaloff>:/icons/in</iconset>
    </property>
    <property name="text">
@@ -462,7 +462,7 @@ QWidget {
     <bool>true</bool>
    </property>
    <property name="icon">
-    <iconset resource="resources.qrc">
+    <iconset resource="../resources.qrc">
      <normaloff>:/icons/out</normaloff>:/icons/out</iconset>
    </property>
    <property name="text">
@@ -471,7 +471,7 @@ QWidget {
   </action>
   <action name="actionRaster">
    <property name="icon">
-    <iconset resource="resources.qrc">
+    <iconset resource="../resources.qrc">
      <normaloff>:/icons/photo</normaloff>:/icons/photo</iconset>
    </property>
    <property name="text">
@@ -495,7 +495,7 @@ QWidget {
     <bool>true</bool>
    </property>
    <property name="icon">
-    <iconset resource="resources.qrc">
+    <iconset resource="../resources.qrc">
      <normaloff>:/icons/edit</normaloff>:/icons/edit</iconset>
    </property>
    <property name="text">
@@ -504,7 +504,7 @@ QWidget {
   </action>
   <action name="actionEnable_GPS">
    <property name="icon">
-    <iconset resource="resources.qrc">
+    <iconset resource="../resources.qrc">
      <normaloff>:/icons/gps</normaloff>:/icons/gps</iconset>
    </property>
    <property name="text">
@@ -516,7 +516,7 @@ QWidget {
     <bool>true</bool>
    </property>
    <property name="icon">
-    <iconset resource="resources.qrc">
+    <iconset resource="../resources.qrc">
      <normaloff>:/icons/sync</normaloff>:/icons/sync</iconset>
    </property>
    <property name="text">
@@ -534,7 +534,7 @@ QWidget {
     <bool>true</bool>
    </property>
    <property name="icon">
-    <iconset resource="resources.qrc">
+    <iconset resource="../resources.qrc">
      <normaloff>:/icons/move</normaloff>:/icons/move</iconset>
    </property>
    <property name="text">
@@ -543,7 +543,7 @@ QWidget {
   </action>
   <action name="actionGPSFeature">
    <property name="icon">
-    <iconset resource="resources.qrc">
+    <iconset resource="../resources.qrc">
      <normaloff>:/icons/gpsadd</normaloff>:/icons/gpsadd</iconset>
    </property>
    <property name="text">
@@ -558,7 +558,7 @@ QWidget {
     <bool>true</bool>
    </property>
    <property name="icon">
-    <iconset resource="resources.qrc">
+    <iconset resource="../resources.qrc">
      <normaloff>:/icons/dataentry</normaloff>:/icons/dataentry</iconset>
    </property>
    <property name="text">
@@ -576,7 +576,7 @@ QWidget {
     <bool>true</bool>
    </property>
    <property name="icon">
-    <iconset resource="resources.qrc">
+    <iconset resource="../resources.qrc">
      <normaloff>:/icons/info</normaloff>:/icons/info</iconset>
    </property>
    <property name="text">
@@ -598,7 +598,7 @@ QWidget {
   </customwidget>
  </customwidgets>
  <resources>
-  <include location="resources.qrc"/>
+  <include location="../resources.qrc"/>
  </resources>
  <connections/>
 </ui>
