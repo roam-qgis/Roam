@@ -139,7 +139,7 @@ class ProjectWidget(Ui_Form, QWidget):
 
     def setwidgetconfigvisiable(self, *args):
         haswidgets = self.widgetmodel.rowCount() > 0
-        self.groupBox_2.setVisible(haswidgets)
+        self.widgetframe.setVisible(haswidgets)
 
     def removewidget(self):
         """
