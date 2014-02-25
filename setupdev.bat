@@ -1,4 +1,11 @@
 @ECHO OFF
+REM ---------------------------------------------------------------------------------------
+
+REM Script to install the needed dev tools into the Python install that comes with OSGeo4W
+REM Change %OSGEO4W_ROOT% in setenv.bat to change in the install folder.
+
+REM ---------------------------------------------------------------------------------------
+
 IF NOT EXIST "%VS90COMNTOOLS%" GOTO NOVS
 
 pushd %~dp0
