@@ -15,7 +15,12 @@ import shutil
 # setup.py so no big deal.
 import roam
 
-osgeopath = r'C:\OSGeo4W'
+try:
+    osgeopath = os.environ['OSGEO4W_ROOT']
+except KeyError:
+    print "Key Error"
+    osgeopath = r'C:\OSGeo4W'
+
 osgeobin = os.path.join(osgeopath, 'bin')
 qtimageforms = os.path.join(osgeopath,r'apps\qt4\plugins\imageformats\*')
 qgisresources = os.path.join(osgeopath, "apps", "qgis", "resources")
@@ -67,25 +72,27 @@ for path, collection in getfiles(svgs, r'libs\qgis\svg'):
 for path, collection in getfiles(r'src\configmanager\templates', r'libs\configmanager\templates'):
     datafiles.append((path, collection))
 
+icon = r'src\roam\resources\branding\icon.ico'
+
 roam_target = dict(
                 script=r'src\roam\__main__.py',
                 dest_base='Roam',
-                icon_resources=[(1, "src\icon.ico")])
+                icon_resources=[(1, icon)])
 
 tests_target = dict(
                 script=r'tests\__main__.py',
                 dest_base='Roam_tests',
-                icon_resources=[(1, "src\icon.ico")])
+                icon_resources=[(1, icon)])
 
 projectupdater_target = dict(
                 script=r'src\project_installer\__main__.py',
                 dest_base='Roam Project Updater',
-                icon_resources=[(1, "src\icon.ico")])
+                icon_resources=[(1, icon)])
 
 configmanager_target = dict(
                 script=r'src\configmanager\__main__.py',
                 dest_base='Roam Config Manager',
-                icon_resources=[(1, "src\icon.ico")])
+                icon_resources=[(1, icon)])
 
 curpath = os.path.dirname(os.path.realpath(__file__))
 appsrcopyFilesath = os.path.join(curpath, "src", 'roam')
