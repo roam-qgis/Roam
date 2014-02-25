@@ -139,7 +139,7 @@ QListWidget::item::selected {
            <string>Edit Attributes</string>
           </property>
           <property name="icon">
-           <iconset resource="resources.qrc">
+           <iconset resource="../resources.qrc">
             <normaloff>:/icons/edit</normaloff>:/icons/edit</iconset>
           </property>
           <property name="iconSize">
@@ -181,7 +181,7 @@ QListWidget::item::selected {
            <string>Close Panel</string>
           </property>
           <property name="icon">
-           <iconset resource="resources.qrc">
+           <iconset resource="../resources.qrc">
             <normaloff>:/icons/cancel</normaloff>:/icons/cancel</iconset>
           </property>
           <property name="iconSize">
@@ -213,11 +213,17 @@ QListWidget::item::selected {
           <number>0</number>
          </property>
          <item>
-          <widget class="QLabel" name="displaylabel">
-           <property name="text">
-            <string/>
+          <spacer name="horizontalSpacer_2">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
            </property>
-          </widget>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>40</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
          </item>
          <item>
           <widget class="QToolButton" name="backButton">
@@ -225,7 +231,7 @@ QListWidget::item::selected {
             <string>&lt;</string>
            </property>
            <property name="icon">
-            <iconset resource="resources.qrc">
+            <iconset resource="../resources.qrc">
              <normaloff>:/icons/previous</normaloff>:/icons/previous</iconset>
            </property>
            <property name="iconSize">
@@ -258,7 +264,7 @@ QListWidget::item::selected {
             <string>&gt;</string>
            </property>
            <property name="icon">
-            <iconset resource="resources.qrc">
+            <iconset resource="../resources.qrc">
              <normaloff>:/icons/next</normaloff>:/icons/next</iconset>
            </property>
            <property name="iconSize">
@@ -273,10 +279,6 @@ QListWidget::item::selected {
           </widget>
          </item>
         </layout>
-        <zorder>nextButton</zorder>
-        <zorder>backButton</zorder>
-        <zorder>displaylabel</zorder>
-        <zorder>countlabel</zorder>
        </widget>
       </item>
      </layout>
@@ -292,7 +294,7 @@ QListWidget::item::selected {
   </customwidget>
  </customwidgets>
  <resources>
-  <include location="resources.qrc"/>
+  <include location="../resources.qrc"/>
  </resources>
  <connections>
   <connection>
@@ -302,8 +304,8 @@ QListWidget::item::selected {
    <slot>close()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>604</x>
-     <y>570</y>
+     <x>623</x>
+     <y>644</y>
     </hint>
     <hint type="destinationlabel">
      <x>615</x>
@@ -318,7 +320,7 @@ QListWidget::item::selected {
    <slot>pagenext()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>637</x>
+     <x>624</x>
      <y>25</y>
     </hint>
     <hint type="destinationlabel">
@@ -334,7 +336,7 @@ QListWidget::item::selected {
    <slot>pageback()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>525</x>
+     <x>524</x>
      <y>18</y>
     </hint>
     <hint type="destinationlabel">

@@ -209,14 +209,7 @@ class InfoDock(infodock_widget, QWidget):
 
         html = updateTemplate(info, template)
 
-        if form:
-            displaytext = form.settings.get('display', None)
-            display = QgsExpression.replaceExpressionText(displaytext, feature, layer )
-        else:
-            display = str(feature[0])
-
         self.countlabel.setText(str(cursor))
-        self.displaylabel.setText(display)
         self.attributesView.setHtml(html, templates.baseurl)
         self.editButton.setVisible(not form is None)
         self.featureupdated.emit(layer, feature, cursor.features)
