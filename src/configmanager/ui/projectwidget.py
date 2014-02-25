@@ -188,14 +188,11 @@ class ProjectWidget(Ui_Form, QWidget):
                 continue
 
             configwidget = configclass()
-            samplewidget = roam.editorwidgets.WidgetsRegistry.createwidget(widgettype.widgettype)
             item = QStandardItem(widgettype.widgettype)
             item.setData(configwidget, Qt.UserRole)
-            item.setData(samplewidget, ProjectWidget.SampleWidgetRole)
             item.setIcon(QIcon(widgeticon(widgettype.widgettype)))
             self.widgetCombo.model().appendRow(item)
             self.widgetstack.addWidget(configwidget)
-            self.samplestack.addWidget(samplewidget)
         self.widgetCombo.blockSignals(False)
 
     @property
@@ -221,7 +218,7 @@ class ProjectWidget(Ui_Form, QWidget):
         """
         index = self.widgetCombo.currentIndex()
         index = self.possiblewidgetsmodel.index(index, 0)
-        return index.data(Qt.UserRole), index, index.data(ProjectWidget.SampleWidgetRole), index.data(Qt.DisplayRole)
+        return index.data(Qt.UserRole), index
 
     def _save_selectedwidget(self, index):
         configwidget, index, _, widgetype = self.currentwidgetconfig
@@ -374,8 +371,8 @@ class ProjectWidget(Ui_Form, QWidget):
         self.projectupdated.emit()
 
     def updatewidgetconfig(self, config):
-        widgetconfig, index, sample, widgettype = self.currentwidgetconfig
-        self.setconfigwidget(widgetconfig, config, sample, widgettype)
+        widgetconfig, index = self.currentwidgetconfig
+        self.setconfigwidget(widgetconfig, config)
 
     def updateformpreview(self, index):
         def removewidget():
@@ -464,31 +461,21 @@ class ProjectWidget(Ui_Form, QWidget):
         """
         self.fieldsmodel.setLayer(layer)
 
-    def setconfigwidget(self, configwidget, config, samplewidget, widgettype):
+    def setconfigwidget(self, configwidget, config):
         """
         Set the active config widget.
         """
 
-        self.samplewrapper = roam.editorwidgets.WidgetsRegistry.widgetwrapper(widgettype,
-                                                                             samplewidget,
-                                                                             {},
-                                                                             None,
-                                                                             None,
-                                                                             None)
         try:
-            configwidget.widgetdirty.disconnect(self.samplewrapper.setconfig)
             configwidget.widgetdirty.disconnect(self._save_selectedwidget)
         except TypeError:
             pass
 
         self.descriptionLabel.setText(configwidget.description)
-        self.samplestack.setCurrentWidget(samplewidget)
         self.widgetstack.setCurrentWidget(configwidget)
         configwidget.setconfig(config)
-        self.samplewrapper.setconfig(config)
 
         configwidget.widgetdirty.connect(self._save_selectedwidget)
-        configwidget.widgetdirty.connect(self.samplewrapper.setconfig)
 
     def updatecurrentwidget(self, index, _):
         """
