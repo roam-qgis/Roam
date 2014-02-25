@@ -40,6 +40,7 @@ def openqgis(project):
 class ProjectWidget(Ui_Form, QWidget):
     SampleWidgetRole = Qt.UserRole + 1
     projectsaved = pyqtSignal(object, object)
+    projectupdated = pyqtSignal()
 
     def __init__(self, parent=None):
         super(ProjectWidget, self).__init__(parent)
@@ -82,6 +83,8 @@ class ProjectWidget(Ui_Form, QWidget):
         self.formpreviewList.setModel(self.formmodel)
         self.formpreviewList.clicked.connect(self.updateformpreview)
 
+        self.titleText.textChanged.connect(self.updatetitle)
+
         self.selectLayers.setModel(self.selectlayerfilter)
 
         self.fieldList.setModel(self.fieldsmodel)
@@ -104,7 +107,7 @@ class ProjectWidget(Ui_Form, QWidget):
         self.openinQGISButton.pressed.connect(self.openinqgis)
 
         self.filewatcher = QFileSystemWatcher()
-        self.filewatcher.fileChanged.connect(self.projectupdated)
+        self.filewatcher.fileChanged.connect(self.qgisprojectupdated)
 
         self.projectupdatedlabel.linkActivated.connect(self.reloadproject)
 
@@ -114,7 +117,7 @@ class ProjectWidget(Ui_Form, QWidget):
     def reloadproject(self, *args):
         self.setproject(self.project)
 
-    def projectupdated(self, path):
+    def qgisprojectupdated(self, path):
         self.projectupdatedlabel.setText("The QGIS project has been updated. <a href='reload'> Click to reload</a>. <b>Unsaved data will be lost</b>")
 
     def openinqgis(self):
@@ -365,6 +368,10 @@ class ProjectWidget(Ui_Form, QWidget):
 
     def swapwidgetconfig(self, index):
         self.updatewidgetconfig({})
+
+    def updatetitle(self, text):
+        self.project.settings['title'] = text
+        self.projectupdated.emit()
 
     def updatewidgetconfig(self, config):
         widgetconfig, index, sample, widgettype = self.currentwidgetconfig

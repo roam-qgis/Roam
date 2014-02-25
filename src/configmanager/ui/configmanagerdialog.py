@@ -73,6 +73,7 @@ class ConfigManagerDialog(ui_configmanager.Ui_ProjectInstallerDialog, QDialog):
         self.setWindowFlags(Qt.Window)
         self.projectfolder = projectfolder
         self.newProjectButton.pressed.connect(self.newproject)
+        self.projectwidget.projectupdated.connect(self.projectupdated)
 
     def newproject(self):
         templateProject = os.path.join(os.path.dirname(__file__), "..", "templates/templateProject")
@@ -90,8 +91,8 @@ class ConfigManagerDialog(ui_configmanager.Ui_ProjectInstallerDialog, QDialog):
 
     def updatecurrentproject(self, index, _):
         project = index.data(Qt.UserRole)
-        self.projectwidget.setproject(project, loadqgis=True)
+        self.projectwidget.setproject(project)
 
-
-
-
+    def projectupdated(self):
+        index = self.projectList.currentIndex()
+        self.projectmodel.dataChanged.emit(index, index)
