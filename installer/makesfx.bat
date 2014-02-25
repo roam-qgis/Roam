@@ -1,23 +1,22 @@
-@rem MakeSFX
-@rem Makes the Self-extracting archive for patching IntraMaps
-@rem
-@setlocal
 @echo off
 
+REM MakeSFX
+REM Makes the Self-extracting archive for patching IntraMaps
+REM
+setlocal
 
-if %1=="" GOTO Usage
-
+if %1=="" GOTO USAGE
 
 set path="C:\Program Files\WINRAR";%path%
-:run
+:RUN
+
 cd %2
 winrar a -r -sfx %1 -z"%~dp0sfx.cfg" -iimg"%~dp0logo.bmp" -iicon"%~dp0icon.ico"
 
 GOTO Exit
 
-:Usage
-echo Usage:
-echo     makesfx ^<sfxname^> [working_folder]
-echo. 
+:USAGE
+ECHO Usage:
+ECHO     makesfx ^<sfxname^> [working_folder]
 
 :Exit
