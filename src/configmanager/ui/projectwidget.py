@@ -190,6 +190,7 @@ class ProjectWidget(Ui_Form, QWidget):
             configwidget = configclass()
             item = QStandardItem(widgettype.widgettype)
             item.setData(configwidget, Qt.UserRole)
+            item.setData(widgettype.widgettype, Qt.UserRole + 1)
             item.setIcon(QIcon(widgeticon(widgettype.widgettype)))
             self.widgetCombo.model().appendRow(item)
             self.widgetstack.addWidget(configwidget)
@@ -218,15 +219,15 @@ class ProjectWidget(Ui_Form, QWidget):
         """
         index = self.widgetCombo.currentIndex()
         index = self.possiblewidgetsmodel.index(index, 0)
-        return index.data(Qt.UserRole), index
+        return index.data(Qt.UserRole), index, index.data(Qt.UserRole + 1)
 
     def _save_selectedwidget(self, index):
-        configwidget, index, _, widgetype = self.currentwidgetconfig
+        configwidget, index, widgettype = self.currentwidgetconfig
         widget, index = self.currentuserwidget
         if not widget:
             return
 
-        widget['widget'] = widgetype
+        widget['widget'] = widgettype
         widget['required'] = self.requiredCheck.isChecked()
         row = self.fieldList.currentIndex()
         field = self.fieldsmodel.index(row, 0).data(QgsFieldModel.FieldNameRole)
@@ -371,7 +372,7 @@ class ProjectWidget(Ui_Form, QWidget):
         self.projectupdated.emit()
 
     def updatewidgetconfig(self, config):
-        widgetconfig, index = self.currentwidgetconfig
+        widgetconfig, index, widgettype = self.currentwidgetconfig
         self.setconfigwidget(widgetconfig, config)
 
     def updateformpreview(self, index):
