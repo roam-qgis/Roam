@@ -82,7 +82,7 @@
         <number>0</number>
        </property>
        <item>
-        <widget class="QFrame" name="">
+        <widget class="QFrame" name="frame">
          <property name="styleSheet">
           <string notr="true">QFrame { 
 background-color: rgb(85,85,85);

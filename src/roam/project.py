@@ -63,6 +63,9 @@ def getProjects(projectpath):
                        for item in os.walk(projectpath).next()[1]]))
     
     for folder in folders:
+        if os.path.basename(folder).startswith("_"):
+            # Ignore hidden folders.
+            continue
         project = Project.from_folder(folder)
         if not checkversion(roam.__version__, project.version):
             project.valid = False

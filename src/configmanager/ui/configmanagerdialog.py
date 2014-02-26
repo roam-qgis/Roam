@@ -1,7 +1,10 @@
 import os
+import shutil
 import random
 
-from PyQt4.QtGui import QDialog, QFont, QColor, QIcon
+from datetime import datetime
+
+from PyQt4.QtGui import QDialog, QFont, QColor, QIcon, QMessageBox
 from PyQt4.QtCore import QAbstractItemModel, QModelIndex, Qt
 
 from configmanager.ui import ui_configmanager
@@ -25,6 +28,12 @@ class ProjectModel(QAbstractItemModel):
         self.projects.append(project)
         self.endInsertRows()
         return self.index(self.rowCount() - 1, 0)
+
+    def removeRow(self, row, parent=None):
+        self.beginRemoveRows(QModelIndex(), row, row)
+        del self.projects[row]
+        self.endRemoveRows()
+        return True
 
     def flags(self, index):
         return Qt.ItemIsSelectable | Qt.ItemIsEnabled
@@ -73,11 +82,33 @@ class ConfigManagerDialog(ui_configmanager.Ui_ProjectInstallerDialog, QDialog):
         self.setWindowFlags(Qt.Window)
         self.projectfolder = projectfolder
         self.newProjectButton.pressed.connect(self.newproject)
+        self.removeProjectButton.pressed.connect(self.removeproject)
         self.projectwidget.projectupdated.connect(self.projectupdated)
+
+    def removeproject(self):
+        index = self.projectList.currentIndex()
+        currentproject = index.data(Qt.UserRole)
+        archivefolder = os.path.join(self.projectfolder, "_archive")
+
+        message = ("Do you want to delete this project? <br><br> "
+                   "Deleted projects will be moved to the _archive folder in {}<br><br>"
+                   "<i>Projects can be recovered by moving the folder back to the projects folder</i>".format(self.projectfolder))
+        button = QMessageBox.warning(self, "Remove project?", message,
+                                         QMessageBox.Yes | QMessageBox.No)
+        if button == QMessageBox.Yes:
+            newindex = self.projectmodel.index(index.row() + 1, 0)
+            if not newindex.isValid():
+                newindex = self.projectmodel.index(0, 0)
+
+            # Move to a different project to unlock the current one.
+            self.projectList.setCurrentIndex(newindex)
+
+            shutil.move(currentproject.folder, archivefolder)
+            self.projectmodel.removeRow(index.row())
 
     def newproject(self):
         templateProject = os.path.join(os.path.dirname(__file__), "..", "templates/templateProject")
-        newfolder = os.path.join(self.projectfolder, "newProject{}".format(random.randint(1, 100)))
+        newfolder = os.path.join(self.projectfolder, "newProject{}".format(datetime.today().strftime('%d%m%y%f')))
         shutil.copytree(templateProject, newfolder)
         project = roam.project.Project.from_folder(newfolder)
         project.settings['forms'] = {}
