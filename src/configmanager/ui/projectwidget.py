@@ -6,7 +6,7 @@ import shutil
 from datetime import datetime
 
 from PyQt4.QtCore import Qt, QDir, QFileInfo, pyqtSignal, QModelIndex, QFileSystemWatcher
-from PyQt4.QtGui import QWidget, QStandardItemModel, QStandardItem, QIcon
+from PyQt4.QtGui import QWidget, QStandardItemModel, QStandardItem, QIcon, QMessageBox
 
 from qgis.core import QgsProject, QgsMapLayerRegistry, QgsPalLabeling
 from qgis.gui import QgsMapCanvas
@@ -99,6 +99,7 @@ class ProjectWidget(Ui_Form, QWidget):
         self.removeWidgetButton.pressed.connect(self.removewidget)
 
         self.addFormButton.pressed.connect(self.newform)
+        self.removeFormButton.pressed.connect(self.removeform)
 
         self.roamVersionLabel.setText("You are running IntraMaps Roam version {}".format(roam.__version__))
 
@@ -149,6 +150,39 @@ class ProjectWidget(Ui_Form, QWidget):
         if index.isValid():
             self.widgetmodel.removeRow(index.row())
 
+    def removeform(self):
+        form, index = self.currentform
+        archivefolder = os.path.join(self.project.folder, "_archive")
+        formachivefolder = os.path.join(archivefolder, form.name)
+
+        configname = "{}.config".format(form.name)
+        # Backup of the old form settings.
+        config = {form.name : form.settings}
+
+        message = ("<b>Do you want to delete this form from the project?</b> <br><br> "
+                   "Deleted forms will be moved to the _archive folder in {}<br><br>"
+                   "<i>Forms can be restored by moving the folder back to the project folder"
+                   " and restoring the content in {} to the settings.config</i>".format(self.project.folder, configname))
+
+        button = QMessageBox.warning(self, "Remove form?", message,
+                                     QMessageBox.Yes | QMessageBox.No)
+        if button == QMessageBox.Yes:
+            newindex = self.formmodel.index(index.row() + 1, 0)
+            if not newindex.isValid():
+                newindex = self.formmodel.index(0, 0)
+
+            # Move to a different project to unlock the current one.
+            self.formlist.setCurrentIndex(newindex)
+
+            shutil.move(form.folder, formachivefolder)
+            configlocation = os.path.join(archivefolder, configname)
+
+            with open(configlocation, 'w') as f:
+                roam.yaml.dump(data=config, stream=f, default_flow_style=False)
+
+            self.formmodel.removeRow(index.row())
+            self._saveproject()
+
     def newform(self):
         def newformname():
             return "form_{}".format(datetime.today().strftime('%d%m%y%f'))
@@ -157,8 +191,8 @@ class ProjectWidget(Ui_Form, QWidget):
         foldername = newformname()
 
         formfolder = os.path.join(folder, foldername)
-        templateProject = os.path.join(os.path.dirname(__file__), "..", "templates/templateProject/form1")
-        shutil.copytree(templateProject, formfolder)
+        templateform = os.path.join(os.path.dirname(__file__), "..", "templates", "templateform")
+        shutil.copytree(templateform, formfolder)
 
         layer = self.layerCombo.currentText()
         config = dict(label='New Form', layer=layer, type='auto', widgets=[])

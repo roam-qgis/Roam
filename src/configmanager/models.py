@@ -55,6 +55,12 @@ class FormModel(QAbstractItemModel):
         self.forms = forms
         self.endResetModel()
 
+    def removeRow(self, row, parent=None):
+        self.beginRemoveRows(QModelIndex(), row, row)
+        del self.forms[row]
+        self.endRemoveRows()
+        return True
+
     def index(self, row, column, parnet=QModelIndex()):
         try:
             form = self.forms[row]
