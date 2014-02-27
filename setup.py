@@ -27,6 +27,11 @@ qgisresources = os.path.join(osgeopath, "apps", "qgis", "resources")
 svgs = os.path.join(osgeopath, "apps", "qgis", "svg")
 qgispluginpath = os.path.join(osgeopath, r'apps\qgis\plugins\*provider.dll' )
 
+curpath = os.path.dirname(os.path.realpath(__file__))
+appsrcopyFilesath = os.path.join(curpath, "src", 'roam')
+projectinstallerpath = os.path.join(curpath, "src", 'project_installer')
+configmangerpath = os.path.join(curpath, "src", 'configmanager')
+
 def getfiles(folder, outpath):
     """
     Walks a given folder and converts all paths to outpath root.
@@ -51,8 +56,10 @@ def getfiles(folder, outpath):
             for path, collection in getfiles(os.path.join(path, dir), newpath):
                 yield (path, collection)
 
-ecwfiles = [os.path.join(osgeobin, 'gdalplugins', 'gdal_ECW_JP2ECW.dll'),
-            os.path.join(osgeobin, 'NCSEcw.dll')]
+utils = ['ogr2ogr.exe', 'ogrinfo.exe', 'gdalinfo.exe', 'NCSEcw.dll',
+         os.path.join('gdalplugins', 'gdal_ECW_JP2ECW.dll')]
+
+extrafiles = [os.path.join(osgeobin, path) for path in utils]
 
 datafiles = [(".", [r'src\settings.config']),
             (r'libs\roam\templates', [r'src\roam\templates\info.html',
@@ -64,7 +71,7 @@ datafiles = [(".", [r'src\settings.config']),
             (r'libs\qgis\plugins', glob.glob(qgispluginpath)),
             (r'libs\qgis\resources', [os.path.join(qgisresources, 'qgis.db'),
                                  os.path.join(qgisresources, 'srs.db')]),
-            (r'libs', ecwfiles)]
+            (r'libs', extrafiles)]
 
 for path, collection in getfiles(svgs, r'libs\qgis\svg'):
     datafiles.append((path, collection))
@@ -93,11 +100,6 @@ configmanager_target = dict(
                 script=r'src\configmanager\__main__.py',
                 dest_base='Roam Config Manager',
                 icon_resources=[(1, icon)])
-
-curpath = os.path.dirname(os.path.realpath(__file__))
-appsrcopyFilesath = os.path.join(curpath, "src", 'roam')
-projectinstallerpath = os.path.join(curpath, "src", 'project_installer')
-configmangerpath = os.path.join(curpath, "src", 'configmanager')
 
 def buildqtfiles():
     for folder in [appsrcopyFilesath, projectinstallerpath, configmangerpath]:
