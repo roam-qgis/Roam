@@ -198,6 +198,9 @@ QTreeView::item {
          <property name="editTriggers">
           <set>QAbstractItemView::NoEditTriggers</set>
          </property>
+         <property name="selectionBehavior">
+          <enum>QAbstractItemView::SelectItems</enum>
+         </property>
          <property name="iconSize">
           <size>
            <width>32</width>

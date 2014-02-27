@@ -354,13 +354,13 @@ class ProjectWidget(Ui_Form, QWidget):
             except TypeError:
                 pass
 
-        print "Loading project {}".format(project.name)
         disconnectsignals()
         self.filewatcher.removePaths(self.filewatcher.files())
         self.projectupdatedlabel.setText("")
 
         self.startsettings = copy.deepcopy(project.settings)
         self.project = project
+        self.projectlabel.setText(project.name)
         self.selectlayermodel.config = project.settings
         if loadqgis:
             self.loadqgisproject(project, self.project.projectfile)
