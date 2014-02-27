@@ -47,10 +47,7 @@ class FormNode(Treenode):
         super(FormNode, self).__init__(form.label, parent=parent, project=project)
         self.icon = QIcon(form.icon)
         self.form = form
-        if type(parent) == PreviewFormsNode:
-            self.page = 2
-        else:
-            self.page = 1
+        self.page = 1
 
 class FormsNode(Treenode):
     def __init__(self, text, parent, project):
@@ -69,11 +66,6 @@ class FormsNode(Treenode):
         return "{} ({})".format(self._text, len(self))
 
 
-class PreviewFormsNode(FormsNode):
-    def __init__(self, text, parent, project):
-        super(FormsNode, self).__init__(text, parent=parent, project=project)
-
-
 class ProjectNode(Treenode):
     def __init__(self, project, parent=None):
         super(ProjectNode, self).__init__(project.name, parent)
@@ -82,13 +74,10 @@ class ProjectNode(Treenode):
         self.project = project
         self.formsnode = self.createnode(FormsNode, "Forms")
         self.formsnode.addforms(project.forms)
-        self.formpreviewnode = self.createnode(PreviewFormsNode, "Form Previews")
-        self.formpreviewnode.addforms(project.forms)
         self.mapnode = self.createnode(Treenode, "Map")
         self.mapnode.page = 3
         self.mapnode.icon = QIcon(":/icons/map")
         self.appendchild(self.formsnode)
-        self.appendchild(self.formpreviewnode)
         self.appendchild(self.mapnode)
 
     def createnode(self, nodeclass, text):

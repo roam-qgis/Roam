@@ -85,7 +85,6 @@ class ProjectWidget(Ui_Form, QWidget):
         self.formlist.setModel(self.formmodel)
 
         self.formpreviewList.setModel(self.formmodel)
-        self.formpreviewList.clicked.connect(self.updateformpreview)
 
         self.titleText.textChanged.connect(self.updatetitle)
 
@@ -113,11 +112,19 @@ class ProjectWidget(Ui_Form, QWidget):
         self.filewatcher.fileChanged.connect(self.qgisprojectupdated)
 
         self.projectupdatedlabel.linkActivated.connect(self.reloadproject)
+        self.formtab.currentChanged.connect(self.formtabchanged)
 
         for item, data in readonlyvalues:
             self.readonlyCombo.addItem(item, data)
 
         self.setpage(4)
+        self.form = None
+
+    def formtabchanged(self, index):
+        # preview
+        print index
+        if index == 1:
+            self.setformpreview(self.form)
 
     def setpage(self, page):
         print page
@@ -418,14 +425,13 @@ class ProjectWidget(Ui_Form, QWidget):
         widgetconfig, index, widgettype = self.currentwidgetconfig
         self.setconfigwidget(widgetconfig, config)
 
-    def updateformpreview(self, index):
+    def setformpreview(self, form):
         def removewidget():
             item = self.frame_2.layout().itemAt(0)
             if item and item.widget():
                 item.widget().setParent(None)
 
         removewidget()
-        form = index.data(Qt.UserRole)
 
         featureform = FeatureForm.from_form(form, form.settings, None, {})
 
@@ -494,8 +500,8 @@ class ProjectWidget(Ui_Form, QWidget):
             self.widgetlist.setCurrentIndex(index)
             self.updatecurrentwidget(index, None)
 
-
         connectsignals()
+        self.form = form
 
     def updatefields(self, layer):
         """

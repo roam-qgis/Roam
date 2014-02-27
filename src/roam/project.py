@@ -114,7 +114,7 @@ class Form(object):
         return iconpath
 
     @property
-    def QGISLayer(self, value):
+    def QGISLayer(self):
         def getlayer(name):
             try:
                 return QgsMapLayerRegistry.instance().mapLayersByName(name)[0]
@@ -122,7 +122,8 @@ class Form(object):
                 utils.log(e)
                 return None
         if self._qgislayer is None:
-            self._qgislayer = self.settings.get('layer', None)
+            layer = self.settings.get('layer', None)
+            self._qgislayer = getlayer(layer)
         return self._qgislayer
 
     def getMaptool(self, canvas):
