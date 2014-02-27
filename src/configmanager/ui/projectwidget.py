@@ -79,13 +79,6 @@ class ProjectWidget(Ui_Form, QWidget):
         self.formmodel.rowsInserted.connect(self.setformconfigvisible)
         self.formmodel.modelReset.connect(self.setformconfigvisible)
 
-        self.frame_3.hide()
-        self.formpreviewList.hide()
-
-        self.formlist.setModel(self.formmodel)
-
-        self.formpreviewList.setModel(self.formmodel)
-
         self.titleText.textChanged.connect(self.updatetitle)
 
         self.selectLayers.setModel(self.selectlayerfilter)
@@ -98,9 +91,6 @@ class ProjectWidget(Ui_Form, QWidget):
 
         self.addWidgetButton.pressed.connect(self.newwidget)
         self.removeWidgetButton.pressed.connect(self.removewidget)
-
-        self.addFormButton.pressed.connect(self.newform)
-        self.removeFormButton.pressed.connect(self.removeform)
 
         self.roamVersionLabel.setText("You are running IntraMaps Roam version {}".format(roam.__version__))
 
@@ -166,7 +156,9 @@ class ProjectWidget(Ui_Form, QWidget):
             self.widgetmodel.removeRow(index.row())
 
     def removeform(self):
-        form, index = self.currentform
+        raise NotImplementedError("Fix me")
+
+        form = self.currentform
         archivefolder = os.path.join(self.project.folder, "_archive")
         formachivefolder = os.path.join(archivefolder, form.name)
 
@@ -250,8 +242,7 @@ class ProjectWidget(Ui_Form, QWidget):
         """
         Return the current selected form.
         """
-        index = self.formlist.selectionModel().currentIndex()
-        return index.data(Qt.UserRole), index
+        return self.form
 
     @property
     def currentuserwidget(self):
@@ -307,7 +298,7 @@ class ProjectWidget(Ui_Form, QWidget):
 
     def _save_formtype(self, index):
         formtype = self.formtypeCombo.currentText()
-        form, index = self.currentform
+        form = self.currentform
         form.settings['type'] = formtype
 
     def _save_formname(self, text):
@@ -315,9 +306,10 @@ class ProjectWidget(Ui_Form, QWidget):
         Save the form label to the settings file.
         """
         try:
-            form, index = self.currentform
+            form = self.currentform
+            if form is None:
+                return
             form.settings['label'] = text
-            self.formmodel.dataChanged.emit(index, index)
         except IndexError:
             return
 
@@ -330,9 +322,11 @@ class ProjectWidget(Ui_Form, QWidget):
         if not layer:
             return
 
-        form, index = self.currentform
+        form = self.currentform
+        if form is None:
+            return
+
         form.settings['layer'] = layer.name()
-        self.formmodel.dataChanged.emit(index, index)
         self.updatefields(layer)
 
     def setproject(self, project, loadqgis=True):
@@ -400,19 +394,8 @@ class ProjectWidget(Ui_Form, QWidget):
         self._updateforproject(self.project)
 
     def _updateforproject(self, project):
-        def _loadforms(forms):
-            self.formmodel.addforms(forms)
-
-            index = self.formmodel.index(0, 0)
-            if index.isValid():
-                self.formlist.setCurrentIndex(index)
-                self.formframe.show()
-            else:
-                self.formframe.hide()
-
         self.titleText.setText(project.name)
         self.descriptionText.setPlainText(project.description)
-        _loadforms(project.forms)
 
     def swapwidgetconfig(self, index):
         self.updatewidgetconfig({})
