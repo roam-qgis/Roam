@@ -18,6 +18,7 @@ def setup(argv):
     # Not sure why we have to set these here but GDAL doesn't like it if we
     # don't
     os.environ['PATH'] += ";{}".format(os.path.join(apppath, 'libs'))
+    os.environ['PATH'] += ";{}".format(apppath)
     os.environ["GDAL_DRIVER_PATH"] = os.path.join(apppath, 'libs')
 
     if RUNNING_FROM_FILE:
