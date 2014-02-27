@@ -415,9 +415,9 @@ class MainWindow(mainwindow_widget, mainwindow_base):
         """
             Create buttons for each form that is defined
         """
-        self.moveTool.reset()
         self.dataentrymodel.clear()
         self.clearCapatureTools()
+
 
         def captureFeature(form):
             item = QStandardItem(QIcon(form.icon), form.icontext)
@@ -459,9 +459,8 @@ class MainWindow(mainwindow_widget, mainwindow_base):
                                  level=QgsMessageBar.WARNING, extrainfo=html)
 
         visible = self.dataentrymodel.rowCount() > 0
-        # We have to do this because the combobox will reset it size with AdjustToContents
-        self.dataentrycombo.setMinimumHeight(self.projecttoolbar.height())
         self.dataentrycomboaction.setVisible(visible)
+        #self.dataentrycombo.setMinimumHeight(self.projecttoolbar.height())
 
         index = self.dataentrymodel.index(0, 0)
         self.dataentrychanged(index)
@@ -642,14 +641,15 @@ class MainWindow(mainwindow_widget, mainwindow_base):
         """
         parser = ProjectParser(doc)
         canvasnode = parser.canvasnode
+        self.canvas.freeze()
         self.canvas.mapRenderer().readXML(canvasnode)
         self.canvaslayers = parser.canvaslayers()
         self.canvas.setLayerSet(self.canvaslayers)
         self.canvas.updateScale()
+        self.projectOpened()
         self.canvas.freeze(False)
         self.canvas.refresh()
         self.showmap()
-        self.projectOpened()
 
     @roam.utils.timeit
     def projectOpened(self):
@@ -710,7 +710,6 @@ class MainWindow(mainwindow_widget, mainwindow_base):
 
         self.actionMap.trigger()
         self.closeProject()
-        self.canvas.freeze()
         self.infodock.clearResults()
 
         # No idea why we have to set this each time.  Maybe QGIS deletes it for
