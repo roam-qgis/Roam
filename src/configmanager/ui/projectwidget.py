@@ -45,6 +45,8 @@ class ProjectWidget(Ui_Form, QWidget):
     def __init__(self, parent=None):
         super(ProjectWidget, self).__init__(parent)
         self.setupUi(self)
+        self.project = None
+
         self.canvas.setCanvasColor(Qt.white)
         self.canvas.enableAntiAliasing(True)
         self.canvas.setWheelAction(QgsMapCanvas.WheelZoomToMouseCursor)
@@ -77,8 +79,10 @@ class ProjectWidget(Ui_Form, QWidget):
         self.formmodel.rowsInserted.connect(self.setformconfigvisible)
         self.formmodel.modelReset.connect(self.setformconfigvisible)
 
+        self.frame_3.hide()
+        self.formpreviewList.hide()
+
         self.formlist.setModel(self.formmodel)
-        self.formlist.selectionModel().currentChanged.connect(self.updatecurrentform)
 
         self.formpreviewList.setModel(self.formmodel)
         self.formpreviewList.clicked.connect(self.updateformpreview)
@@ -90,8 +94,6 @@ class ProjectWidget(Ui_Form, QWidget):
         self.fieldList.setModel(self.fieldsmodel)
 
         QgsProject.instance().readProject.connect(self._readproject)
-
-        self.menuList.setCurrentRow(0)
 
         self.loadwidgettypes()
 
@@ -114,6 +116,12 @@ class ProjectWidget(Ui_Form, QWidget):
 
         for item, data in readonlyvalues:
             self.readonlyCombo.addItem(item, data)
+
+        self.setpage(4)
+
+    def setpage(self, page):
+        print page
+        self.stackedWidget.setCurrentIndex(page)
 
     def reloadproject(self, *args):
         self.setproject(self.project)
@@ -339,6 +347,7 @@ class ProjectWidget(Ui_Form, QWidget):
             except TypeError:
                 pass
 
+        print "Loading project {}".format(project.name)
         disconnectsignals()
         self.filewatcher.removePaths(self.filewatcher.files())
         self.projectupdatedlabel.setText("")
@@ -422,8 +431,7 @@ class ProjectWidget(Ui_Form, QWidget):
 
         self.frame_2.layout().addWidget(featureform)
 
-
-    def updatecurrentform(self, index, _):
+    def setform(self, form):
         """
         Update the UI with the currently selected form.
         """
@@ -456,7 +464,6 @@ class ProjectWidget(Ui_Form, QWidget):
 
         disconnectsignals()
 
-        form = index.data(Qt.UserRole)
         settings = form.settings
         label = settings['label']
         layer = settings.get('layer', None)

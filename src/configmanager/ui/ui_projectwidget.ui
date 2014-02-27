@@ -85,91 +85,7 @@ QLabel[isheader=true]
    <property name="margin">
     <number>0</number>
    </property>
-   <item row="0" column="0" rowspan="4">
-    <widget class="QListWidget" name="menuList">
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="Maximum" vsizetype="Expanding">
-       <horstretch>0</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
-     </property>
-     <property name="minimumSize">
-      <size>
-       <width>150</width>
-       <height>0</height>
-      </size>
-     </property>
-     <property name="maximumSize">
-      <size>
-       <width>150</width>
-       <height>16777215</height>
-      </size>
-     </property>
-     <property name="styleSheet">
-      <string notr="true">QListView {
-	background-color: rgb(85,85,85);
-	outline: 0;
-}
-
-QListView::item::selected {
-  background-color:white;
-  color: black;
-  padding-right: 0px;
-}
-
-QListView::item {
-  padding: 5px;
-  color: white;
-}
-</string>
-     </property>
-     <property name="frameShape">
-      <enum>QFrame::NoFrame</enum>
-     </property>
-     <property name="horizontalScrollBarPolicy">
-      <enum>Qt::ScrollBarAlwaysOff</enum>
-     </property>
-     <property name="editTriggers">
-      <set>QAbstractItemView::NoEditTriggers</set>
-     </property>
-     <property name="iconSize">
-      <size>
-       <width>32</width>
-       <height>32</height>
-      </size>
-     </property>
-     <property name="textElideMode">
-      <enum>Qt::ElideNone</enum>
-     </property>
-     <property name="resizeMode">
-      <enum>QListView::Adjust</enum>
-     </property>
-     <property name="wordWrap">
-      <bool>true</bool>
-     </property>
-     <item>
-      <property name="text">
-       <string>Project Info</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
-       <string>Forms</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
-       <string>Form Preview</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
-       <string>Map</string>
-      </property>
-     </item>
-    </widget>
-   </item>
-   <item row="1" column="1" colspan="2">
+   <item row="0" column="0" colspan="2">
     <layout class="QHBoxLayout" name="horizontalLayout_4">
      <property name="leftMargin">
       <number>0</number>
@@ -304,7 +220,7 @@ QListView::item {
      </item>
     </layout>
    </item>
-   <item row="3" column="2">
+   <item row="1" column="1">
     <widget class="QStackedWidget" name="stackedWidget">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
@@ -313,9 +229,9 @@ QListView::item {
       </sizepolicy>
      </property>
      <property name="currentIndex">
-      <number>1</number>
+      <number>2</number>
      </property>
-     <widget class="QWidget" name="page">
+     <widget class="QWidget" name="project_info_page">
       <layout class="QFormLayout" name="formLayout">
        <item row="0" column="0">
         <widget class="QLabel" name="label_2">
@@ -390,7 +306,7 @@ QListView::item {
        </item>
       </layout>
      </widget>
-     <widget class="QWidget" name="page_2">
+     <widget class="QWidget" name="form_config_page">
       <property name="sizePolicy">
        <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
         <horstretch>0</horstretch>
@@ -848,7 +764,7 @@ p, li { white-space: pre-wrap; }
         </widget>
        </item>
        <item row="0" column="0">
-        <widget class="QFrame" name="frame">
+        <widget class="QFrame" name="frame_3">
          <property name="maximumSize">
           <size>
            <width>300</width>
@@ -956,7 +872,7 @@ p, li { white-space: pre-wrap; }
        </item>
       </layout>
      </widget>
-     <widget class="QWidget" name="form_preview">
+     <widget class="QWidget" name="form_preview_page">
       <layout class="QGridLayout" name="gridLayout_2">
        <property name="margin">
         <number>0</number>
@@ -1009,7 +925,7 @@ p, li { white-space: pre-wrap; }
        </item>
       </layout>
      </widget>
-     <widget class="QWidget" name="page_3">
+     <widget class="QWidget" name="map_page">
       <layout class="QVBoxLayout" name="verticalLayout_3">
        <property name="leftMargin">
         <number>0</number>
@@ -1032,6 +948,9 @@ p, li { white-space: pre-wrap; }
        </item>
       </layout>
      </widget>
+     <widget class="QWidget" name="blank">
+      <layout class="QGridLayout" name="gridLayout_8"/>
+     </widget>
     </widget>
    </item>
   </layout>
@@ -1049,22 +968,6 @@ p, li { white-space: pre-wrap; }
   <include location="../../roam/resources.qrc"/>
  </resources>
  <connections>
-  <connection>
-   <sender>menuList</sender>
-   <signal>currentRowChanged(int)</signal>
-   <receiver>stackedWidget</receiver>
-   <slot>setCurrentIndex(int)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>149</x>
-     <y>286</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>589</x>
-     <y>253</y>
-    </hint>
-   </hints>
-  </connection>
   <connection>
    <sender>toolButton_6</sender>
    <signal>pressed()</signal>

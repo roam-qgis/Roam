@@ -87,15 +87,7 @@ class Form(object):
 
     @classmethod
     def from_config(cls, name, config, folder):
-        def getlayer(name):
-            try:
-                return QgsMapLayerRegistry.instance().mapLayersByName(name)[0]
-            except IndexError as e:
-                utils.log(e)
-                return None
-
         form = cls(name, config, folder)
-        form.QGISLayer = getlayer(config.get('layer', None))
         form._loadmodule()
         form.init_form()
         return form
@@ -122,12 +114,16 @@ class Form(object):
         return iconpath
 
     @property
-    def QGISLayer(self):
-        return self._qgislayer
-
-    @QGISLayer.setter
     def QGISLayer(self, value):
-        self._qgislayer = value
+        def getlayer(name):
+            try:
+                return QgsMapLayerRegistry.instance().mapLayersByName(name)[0]
+            except IndexError as e:
+                utils.log(e)
+                return None
+        if self._qgislayer is None:
+            self._qgislayer = self.settings.get('layer', None)
+        return self._qgislayer
 
     def getMaptool(self, canvas):
         """

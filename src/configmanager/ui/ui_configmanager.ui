@@ -158,7 +158,7 @@ background-color: rgb(85,85,85);
         </widget>
        </item>
        <item>
-        <widget class="QListView" name="projectList">
+        <widget class="QTreeView" name="projectList">
          <property name="minimumSize">
           <size>
            <width>58</width>
@@ -172,18 +172,18 @@ background-color: rgb(85,85,85);
           </size>
          </property>
          <property name="styleSheet">
-          <string notr="true">QListView {
+          <string notr="true">QTreeView {
 	background-color: rgb(85,85,85);
 	outline: 0;
 }
 
-QListView::item::selected {
+QTreeView::item::selected {
   background-color:white;
   color: black;
   padding-right: 0px;
 }
 
-QListView::item {
+QTreeView::item {
   padding: 5px;
   color: white;
 }
@@ -206,12 +206,6 @@ QListView::item {
          </property>
          <property name="textElideMode">
           <enum>Qt::ElideNone</enum>
-         </property>
-         <property name="resizeMode">
-          <enum>QListView::Adjust</enum>
-         </property>
-         <property name="wordWrap">
-          <bool>true</bool>
          </property>
         </widget>
        </item>
