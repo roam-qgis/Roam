@@ -386,7 +386,7 @@ class MainWindow(mainwindow_widget, mainwindow_base):
         return captureselected
 
     def createCaptureButtons(self, form, wasselected):
-        tool = form.getMaptool(self.canvas)
+        tool = form.getMaptool()(self.canvas)
         action = QAction(QIcon(":/icons/capture"), "Capture", None)
         action.setObjectName("capture")
         action.setCheckable(True)
@@ -438,14 +438,6 @@ class MainWindow(mainwindow_widget, mainwindow_base):
             for capability in form.capabilities:
                 try:
                     capabilitityhandlers[capability](form)
-                except NoMapToolConfigured:
-                    roam.utils.log("No map tool configured")
-                    continue
-                except ErrorInMapTool as error:
-                    self.bar.pushMessage("Error configuring map tool",
-                                                error.message,
-                                                level=QgsMessageBar.WARNING)
-                    continue
                 except KeyError:
                     # Just ignore capabilities we don't support yet.
                     continue
