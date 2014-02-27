@@ -95,7 +95,6 @@ class ProjectWidget(Ui_Form, QWidget):
         self.roamVersionLabel.setText("You are running IntraMaps Roam version {}".format(roam.__version__))
 
         self.openProjectFolderButton.pressed.connect(self.openprojectfolder)
-        self.openDataButton.pressed.connect(self.opendatafolder)
         self.openinQGISButton.pressed.connect(self.openinqgis)
 
         self.filewatcher = QFileSystemWatcher()
@@ -129,11 +128,6 @@ class ProjectWidget(Ui_Form, QWidget):
     def openinqgis(self):
         projectfile = self.project.projectfile
         openqgis(projectfile)
-
-    def opendatafolder(self):
-        folder = self.project.folder
-        folder = os.path.join(folder, "_data")
-        openfolder(folder)
 
     def openprojectfolder(self):
         folder = self.project.folder
