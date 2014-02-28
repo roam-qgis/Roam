@@ -168,7 +168,7 @@ class ProjectNode(Treenode):
 
     def __init__(self, project, parent=None):
         super(ProjectNode, self).__init__(project.name, parent)
-        self.icon = QIcon(":/icons/open")
+        self.icon = QIcon(":/icons/project")
         self.project = project
         self.formsnode = self.createnode(FormsNode, "Forms")
         self.formsnode.addforms(project.forms)
