@@ -26,6 +26,7 @@ qtimageforms = os.path.join(osgeopath,r'apps\qt4\plugins\imageformats\*')
 qgisresources = os.path.join(osgeopath, "apps", "qgis", "resources")
 svgs = os.path.join(osgeopath, "apps", "qgis", "svg")
 qgispluginpath = os.path.join(osgeopath, r'apps\qgis\plugins\*provider.dll' )
+gdalsharepath = os.path.join(osgeopath, 'share', 'gdal')
 
 curpath = os.path.dirname(os.path.realpath(__file__))
 appsrcopyFilesath = os.path.join(curpath, "src", 'roam')
@@ -71,7 +72,8 @@ datafiles = [(".", [r'src\settings.config']),
             (r'libs\qgis\plugins', glob.glob(qgispluginpath)),
             (r'libs\qgis\resources', [os.path.join(qgisresources, 'qgis.db'),
                                  os.path.join(qgisresources, 'srs.db')]),
-            (r'libs', extrafiles)]
+            (r'libs', extrafiles),
+            (r'libs\gdal', glob.glob(gdalsharepath + "\*\*"))]
 
 for path, collection in getfiles(svgs, r'libs\qgis\svg'):
     datafiles.append((path, collection))

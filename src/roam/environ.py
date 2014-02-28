@@ -20,6 +20,7 @@ def setup(argv):
     os.environ['PATH'] += ";{}".format(os.path.join(apppath, 'libs'))
     os.environ['PATH'] += ";{}".format(apppath)
     os.environ["GDAL_DRIVER_PATH"] = os.path.join(apppath, 'libs')
+    os.environ["GDAL_DATA"] = os.path.join(apppath, 'libs', 'gdal')
 
     if RUNNING_FROM_FILE:
         print "Running from file"
