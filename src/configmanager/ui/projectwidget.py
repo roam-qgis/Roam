@@ -6,7 +6,7 @@ import shutil
 from datetime import datetime
 
 from PyQt4.QtCore import Qt, QDir, QFileInfo, pyqtSignal, QModelIndex, QFileSystemWatcher
-from PyQt4.QtGui import QWidget, QStandardItemModel, QStandardItem, QIcon, QMessageBox
+from PyQt4.QtGui import QWidget, QStandardItemModel, QStandardItem, QIcon, QMessageBox, QPixmap
 
 from qgis.core import QgsProject, QgsMapLayerRegistry, QgsPalLabeling
 from qgis.gui import QgsMapCanvas
@@ -125,7 +125,9 @@ class ProjectWidget(Ui_Form, QWidget):
         self.setproject(self.project)
 
     def qgisprojectupdated(self, path):
-        self.projectupdatedlabel.setText("The QGIS project has been updated. <a href='reload'> Click to reload</a>. <b>Unsaved data will be lost</b>")
+        self.projectupdatedlabel.show()
+        self.projectupdatedlabel.setText("The QGIS project has been updated. <a href='reload'> "
+                                         "Click to reload</a>. <b style=\"color:red\">Unsaved data will be lost</b>")
 
     def openinqgis(self):
         projectfile = self.project.projectfile
@@ -296,7 +298,12 @@ class ProjectWidget(Ui_Form, QWidget):
         self.startsettings = copy.deepcopy(project.settings)
         self.project = project
         self.projectlabel.setText(project.name)
+        self.versionText.setText(project.version)
         self.selectlayermodel.config = project.settings
+        pixmap = QPixmap(project.splash)
+        w = self.splashlabel.width()
+        h = self.splashlabel.height()
+        self.splashlabel.setPixmap(pixmap.scaled(w,h, Qt.KeepAspectRatio))
         if loadqgis:
             self.loadqgisproject(project, self.project.projectfile)
         else:
@@ -397,12 +404,10 @@ class ProjectWidget(Ui_Form, QWidget):
         settings = form.settings
         label = settings['label']
         layer = settings.get('layer', None)
-        version = settings.get('version', roam.__version__)
         formtype = settings.get('type', 'auto')
         widgets = settings.get('widgets', [])
 
         self.formLabelText.setText(label)
-        self.versionText.setText(version)
         index = self.layermodel.findlayer(layer)
         index = self.layerfilter.mapFromSource(index)
         if index.isValid():
