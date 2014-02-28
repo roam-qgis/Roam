@@ -141,7 +141,7 @@ class ProjectWidget(Ui_Form, QWidget):
 
     def setwidgetconfigvisiable(self, *args):
         haswidgets = self.widgetmodel.rowCount() > 0
-        self.widgetframe.setVisible(haswidgets)
+        self.widgetframe.setEnabled(haswidgets)
 
     def removewidget(self):
         """

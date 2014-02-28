@@ -160,7 +160,6 @@ class FormsNode(Treenode):
         form = self.project.addformconfig(foldername, config)
         node = FormNode(form, self, self.project)
         self.appendchild(node)
-        print self.project.settings
         self.project.save()
         return node.row()
 

@@ -147,7 +147,7 @@ QLabel[isheader=true]
            </size>
           </property>
           <property name="toolButtonStyle">
-           <enum>Qt::ToolButtonTextBesideIcon</enum>
+           <enum>Qt::ToolButtonTextUnderIcon</enum>
           </property>
           <property name="autoRaise">
            <bool>true</bool>
@@ -176,7 +176,7 @@ QLabel[isheader=true]
            </size>
           </property>
           <property name="toolButtonStyle">
-           <enum>Qt::ToolButtonTextBesideIcon</enum>
+           <enum>Qt::ToolButtonTextUnderIcon</enum>
           </property>
           <property name="autoRaise">
            <bool>true</bool>
@@ -199,7 +199,7 @@ QLabel[isheader=true]
            </size>
           </property>
           <property name="toolButtonStyle">
-           <enum>Qt::ToolButtonTextBesideIcon</enum>
+           <enum>Qt::ToolButtonTextUnderIcon</enum>
           </property>
           <property name="autoRaise">
            <bool>true</bool>
@@ -220,7 +220,7 @@ QLabel[isheader=true]
       </sizepolicy>
      </property>
      <property name="currentIndex">
-      <number>4</number>
+      <number>1</number>
      </property>
      <widget class="QWidget" name="project_info_page">
       <layout class="QFormLayout" name="formLayout">
@@ -449,11 +449,14 @@ QLabel[isheader=true]
                      <item>
                       <widget class="QToolButton" name="addWidgetButton">
                        <property name="text">
-                        <string>Add</string>
+                        <string>Add Attribute</string>
                        </property>
                        <property name="icon">
                         <iconset resource="../../roam/resources.qrc">
                          <normaloff>:/icons/add</normaloff>:/icons/add</iconset>
+                       </property>
+                       <property name="toolButtonStyle">
+                        <enum>Qt::ToolButtonTextUnderIcon</enum>
                        </property>
                        <property name="autoRaise">
                         <bool>true</bool>
@@ -476,11 +479,14 @@ QLabel[isheader=true]
                      <item>
                       <widget class="QToolButton" name="removeWidgetButton">
                        <property name="text">
-                        <string>Remove</string>
+                        <string>Remove Attribute</string>
                        </property>
                        <property name="icon">
                         <iconset resource="../../roam/resources.qrc">
                          <normaloff>:/icons/remove</normaloff>:/icons/remove</iconset>
+                       </property>
+                       <property name="toolButtonStyle">
+                        <enum>Qt::ToolButtonTextUnderIcon</enum>
                        </property>
                        <property name="autoRaise">
                         <bool>true</bool>
