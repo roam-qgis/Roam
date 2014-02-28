@@ -53,9 +53,9 @@ class ProjectWidget(Ui_Form, QWidget):
         self.canvas.mapRenderer().setLabelingEngine(QgsPalLabeling())
 
         self.fieldsmodel = QgsFieldModel()
-        self.formmodel = FormModel()
         self.widgetmodel = WidgetsModel()
         self.possiblewidgetsmodel = QStandardItemModel()
+
         self.layermodel = QgsLayerModel(watchregistry=False)
         self.selectlayermodel = QgsLayerModel(watchregistry=False, checkselect=True)
         self.selectlayermodel.layerchecked.connect(self._save_selectionlayers)

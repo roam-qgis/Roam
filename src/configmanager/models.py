@@ -347,8 +347,10 @@ class WidgetsModel(QAbstractItemModel):
 
         widget = index.internalPointer()
         if role == Qt.DisplayRole:
-            field = widget.get('field', '') or ''
-            return "{} ({})".format(field.lower(), widget['widget'])
+            name = widget.get('name', None)
+            field = (widget.get('field', '')  or '').lower()
+            text = name or field
+            return "{} ({})".format(text, widget['widget'])
         elif role == Qt.UserRole:
             return widget
         elif role == Qt.DecorationRole:
