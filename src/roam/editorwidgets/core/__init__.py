@@ -146,7 +146,19 @@ class EditorWidget(QObject):
         self.updatefromconfig()
 
     def updatefromconfig(self):
-        pass
+        """
+        Called when the config of the widget changes.
+
+        When overloading you should call this base class function
+        in order to save the current value before updating from the config.
+
+        Your overloaded method should call endupdatefromconfig in order
+        to restore the last value.
+        """
+        self._lastvalue = self.value()
+
+    def endupdatefromconfig(self):
+        self.setvalue(self._lastvalue)
 
     def createWidget(self, parent):
         pass
