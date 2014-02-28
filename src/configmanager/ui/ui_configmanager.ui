@@ -195,6 +195,9 @@ QTreeView::item {
          <property name="horizontalScrollBarPolicy">
           <enum>Qt::ScrollBarAlwaysOff</enum>
          </property>
+         <property name="autoScrollMargin">
+          <number>16</number>
+         </property>
          <property name="editTriggers">
           <set>QAbstractItemView::NoEditTriggers</set>
          </property>
@@ -203,8 +206,8 @@ QTreeView::item {
          </property>
          <property name="iconSize">
           <size>
-           <width>32</width>
-           <height>32</height>
+           <width>24</width>
+           <height>24</height>
           </size>
          </property>
          <property name="textElideMode">
