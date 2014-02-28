@@ -153,6 +153,10 @@ QLabel[isheader=true]
           <property name="text">
            <string>Open Project Folder</string>
           </property>
+          <property name="icon">
+           <iconset resource="../../roam/resources.qrc">
+            <normaloff>:/icons/folder</normaloff>:/icons/folder</iconset>
+          </property>
           <property name="iconSize">
            <size>
             <width>24</width>
@@ -233,7 +237,7 @@ QLabel[isheader=true]
       </sizepolicy>
      </property>
      <property name="currentIndex">
-      <number>0</number>
+      <number>1</number>
      </property>
      <widget class="QWidget" name="project_info_page">
       <layout class="QFormLayout" name="formLayout">

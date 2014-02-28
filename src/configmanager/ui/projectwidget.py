@@ -75,10 +75,6 @@ class ProjectWidget(Ui_Form, QWidget):
         self.widgetmodel.rowsInserted.connect(self.setwidgetconfigvisiable)
         self.widgetmodel.modelReset.connect(self.setwidgetconfigvisiable)
 
-        self.formmodel.rowsRemoved.connect(self.setformconfigvisible)
-        self.formmodel.rowsInserted.connect(self.setformconfigvisible)
-        self.formmodel.modelReset.connect(self.setformconfigvisible)
-
         self.titleText.textChanged.connect(self.updatetitle)
 
         self.selectLayers.setModel(self.selectlayerfilter)
@@ -136,10 +132,6 @@ class ProjectWidget(Ui_Form, QWidget):
     def openprojectfolder(self):
         folder = self.project.folder
         openfolder(folder)
-
-    def setformconfigvisible(self, *args):
-        hasforms = self.formmodel.rowCount() > 0
-        self.formframe.setVisible(hasforms)
 
     def setwidgetconfigvisiable(self, *args):
         haswidgets = self.widgetmodel.rowCount() > 0
@@ -254,6 +246,7 @@ class ProjectWidget(Ui_Form, QWidget):
             if form is None:
                 return
             form.settings['label'] = text
+            self.projectupdated.emit()
         except IndexError:
             return
 
@@ -530,12 +523,7 @@ class ProjectWidget(Ui_Form, QWidget):
         settings['description'] = description
         settings['version'] = version
 
-        # Rewrite out the forms.
-        settings['forms'] = {}
-        for form in self.formmodel.forms:
-            settings['forms'][form.name] = form.settings
-
-        self.projectsaved.emit(self.startsettings, self.project)
+        self.project.save()
 
 
 

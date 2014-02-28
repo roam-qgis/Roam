@@ -98,6 +98,9 @@ class FormNode(Treenode):
                                                "<i>Forms can be restored by moving the folder back to the project folder"
                                                " and restoring the content in {} to the settings.config</i>".format(self.project.folder, configname)))
 
+    @property
+    def text(self):
+        return self.form.label
 
 
 class FormsNode(Treenode):
