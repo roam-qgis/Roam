@@ -30,6 +30,7 @@ class Treenode(object):
         self.icon = None
         self.project = project
         self.removemessage = (None, None)
+        self.canremove = False
 
     def appendchild(self, child):
         child.parent = self
@@ -57,8 +58,7 @@ class Treenode(object):
         return 0
 
     def removerow(self, index):
-        print "Remove Row", index
-        return True
+        return False
 
 class RoamNode(Treenode):
     nodetype = Treenode.RoamNode
@@ -83,6 +83,14 @@ class FormNode(Treenode):
         super(FormNode, self).__init__(form.label, parent=parent, project=project)
         self.icon = QIcon(form.icon)
         self.form = form
+        self.canremove = True
+
+        configname = "{}.config".format(form.name)
+        self.removemessage = ("Remove form?", ("<b>Do you want to delete this form from the project?</b> <br><br> "
+                                               "Deleted forms will be moved to the _archive folder in {}<br><br>"
+                                               "<i>Forms can be restored by moving the folder back to the project folder"
+                                               " and restoring the content in {} to the settings.config</i>".format(self.project.folder, configname)))
+
 
 
 class FormsNode(Treenode):
@@ -103,6 +111,30 @@ class FormsNode(Treenode):
     def text(self):
         return "{} ({})".format(self._text, len(self))
 
+    def removerow(self, index):
+        """
+        Removes the given form at the index from the project.
+        """
+        formnode = self.children[index]
+        form = formnode.form
+
+        archivefolder = os.path.join(self.project.folder, "_archive")
+        formachivefolder = os.path.join(archivefolder, form.name)
+        configname = "{}.config".format(form.name)
+        config = {form.name : form.settings}
+        try:
+            shutil.move(form.folder, formachivefolder)
+            configlocation = os.path.join(archivefolder, configname)
+
+            with open(configlocation, 'w') as f:
+                roam.yaml.dump(data=config, stream=f, default_flow_style=False)
+            del self.project.settings['forms'][form.name]
+            self.project.save()
+        except Exception as ex:
+            print ex
+            return False
+
+        return True
 
 class ProjectNode(Treenode):
     nodetype = Treenode.ProjectNode
@@ -119,6 +151,7 @@ class ProjectNode(Treenode):
         self.removemessage = ("Delete Project?", ("Do you want to delete this project? <br><br> "
                                "Deleted projects will be moved to the _archive folder in projects folder<br><br>"
                                "<i>Projects can be recovered by moving the folder back to the projects folder</i>"))
+        self.canremove = True
 
     def createnode(self, nodeclass, text):
         node = nodeclass(text, parent=self, project=self.project)
@@ -146,9 +179,9 @@ class ProjectsNode(Treenode):
 
         return True
 
-class ProjectTree(QAbstractItemModel):
+class ConfigTreeModel(QAbstractItemModel):
     def __init__(self, parent=None):
-        super(ProjectTree, self).__init__(parent)
+        super(ConfigTreeModel, self).__init__(parent)
         self.rootitem = ProjectsNode("Projects")
         self.roamnode = RoamNode("Roam", parent=self.rootitem)
         self.rootitem.appendchild(self.roamnode)
@@ -261,71 +294,12 @@ class ProjectTree(QAbstractItemModel):
             newindex = self.index(index.row() - 1, 0, index.parent())
         return newindex
 
-class ProjectModel(QAbstractItemModel):
-    def __init__(self, parent=None):
-        super(ProjectModel, self).__init__(parent)
-        self.projects = []
-
-
-    def loadprojects(self, projects):
-        self.beginResetModel()
-        self.projects = list(projects)
-        self.endResetModel()
-
-    def addproject(self, project):
-        count = self.rowCount()
-        self.beginInsertRows(QModelIndex(), count, count + 1)
-        self.projects.append(project)
-        self.endInsertRows()
-        return self.index(self.rowCount() - 1, 0)
-
-    def removeRow(self, row, parent=None):
-        self.beginRemoveRows(QModelIndex(), row, row)
-        del self.projects[row]
-        self.endRemoveRows()
-        return True
-
-    def flags(self, index):
-        return Qt.ItemIsSelectable | Qt.ItemIsEnabled
-
-    def index(self, row, column, parent=QModelIndex()):
-        try:
-            layer = self.projects[row]
-        except IndexError:
-            return QModelIndex()
-
-        return self.createIndex(row, column, layer)
-
-    def parent(self, index):
-        return QModelIndex()
-
-    def rowCount(self, parent=QModelIndex()):
-        return len(self.projects)
-
-    def columnCount(self, parent=QModelIndex()):
-        return 1
-
-    def data(self, index, role):
-        if not index.isValid() or index.internalPointer() is None:
-            return
-
-        project = index.internalPointer()
-        if role == Qt.DisplayRole:
-            return project.name
-        elif role == Qt.DecorationRole:
-            return QIcon(project.splash)
-        elif role == Qt.UserRole:
-            return project
-        elif role == Qt.ForegroundRole:
-            if not project.valid:
-                return QColor(Qt.red)
-
 
 class ConfigManagerDialog(ui_configmanager.Ui_ProjectInstallerDialog, QDialog):
     def __init__(self, projectfolder, parent=None):
         super(ConfigManagerDialog, self).__init__(parent)
         self.setupUi(self)
-        self.projectmodel = ProjectTree()
+        self.projectmodel = ConfigTreeModel()
         self.projectList.setModel(self.projectmodel)
 
         self.projectList.selectionModel().currentChanged.connect(self.nodeselected)
@@ -345,8 +319,8 @@ class ConfigManagerDialog(ui_configmanager.Ui_ProjectInstallerDialog, QDialog):
             self.projectwidget._closeqgisproject()
 
         title, removemessage = node.removemessage
-        delete = True
-        if removemessage:
+        delete = node.canremove
+        if node.canremove and removemessage:
             button = QMessageBox.warning(self, title, removemessage, QMessageBox.Yes | QMessageBox.No)
             delete = button == QMessageBox.Yes
 
@@ -372,6 +346,9 @@ class ConfigManagerDialog(ui_configmanager.Ui_ProjectInstallerDialog, QDialog):
 
     def nodeselected(self, index, _):
         node = index.data(Qt.UserRole)
+        if node is None:
+            return
+
         self.projectwidget.setpage(node.nodetype)
         project = node.project
         if project and not self.projectwidget.project == project:

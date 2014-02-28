@@ -26,21 +26,7 @@ QApplication.setWindowIcon(QIcon(':/branding/logo'))
 projectpath = roam.environ.projectpath(sys.argv)
 projects = list(roam.project.getProjects(projectpath))
 
-
-def saveproject(oldsettings, project):
-    """
-    Save the project config to disk.
-    """
-    def writesettings(settings, path):
-        with open(path, 'w') as f:
-            roam.yaml.dump(data=settings, stream=f, default_flow_style=False)
-
-    settingspath = os.path.join(project.folder, "settings.config")
-    writesettings(oldsettings, settingspath + '~')
-    writesettings(project.settings, settingspath)
-
 dialog = ConfigManagerDialog(projectpath)
-dialog.projectwidget.projectsaved.connect(saveproject)
 dialog.loadprojects(projects)
 dialog.showMaximized()
 

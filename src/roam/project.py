@@ -351,3 +351,15 @@ class Project(object):
         self._forms = []
         folder = os.path.join(self.folder, name)
         return Form.from_config(name, config, folder)
+
+    def save(self):
+        """
+        Save the project config to disk.
+        """
+        def writesettings(settings, path):
+            with open(path, 'w') as f:
+                roam.yaml.dump(data=settings, stream=f, default_flow_style=False)
+
+        settingspath = os.path.join(self.folder, "settings.config")
+        writesettings(self.settings, settingspath)
+
