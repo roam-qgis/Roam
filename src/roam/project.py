@@ -348,6 +348,7 @@ class Project(object):
     def addformconfig(self, name, config):
         forms = self.settings.get('forms', {})
         forms[name] = config
+        self.settings['forms'] = forms
         self._forms = []
         folder = os.path.join(self.folder, name)
         return Form.from_config(name, config, folder)

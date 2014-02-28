@@ -151,25 +151,6 @@ class ProjectWidget(Ui_Form, QWidget):
         if index.isValid():
             self.widgetmodel.removeRow(index.row())
 
-    def newform(self):
-        def newformname():
-            return "form_{}".format(datetime.today().strftime('%d%m%y%f'))
-
-        folder = self.project.folder
-        foldername = newformname()
-
-        formfolder = os.path.join(folder, foldername)
-        templateform = os.path.join(os.path.dirname(__file__), "..", "templates", "templateform")
-        shutil.copytree(templateform, formfolder)
-
-        layer = self.layerCombo.currentText()
-        config = dict(label='New Form', layer=layer, type='auto', widgets=[])
-        form = self.project.addformconfig(foldername, config)
-
-        index = self.formmodel.addform(form)
-        self.formlist.setCurrentIndex(index)
-        return config
-
     def newwidget(self):
         """
         Create a new widget.  The default is a list.

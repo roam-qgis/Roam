@@ -31,6 +31,7 @@ class Treenode(object):
         self.project = project
         self.removemessage = (None, None)
         self.canremove = False
+        self.canadd = False
 
     def appendchild(self, child):
         child.parent = self
@@ -59,6 +60,12 @@ class Treenode(object):
 
     def removerow(self, index):
         return False
+
+    def insertrow(self, index):
+        if self.parent:
+            return self.parent.insertrow(index)
+
+        return self.row()
 
 class RoamNode(Treenode):
     nodetype = Treenode.RoamNode
@@ -100,6 +107,7 @@ class FormsNode(Treenode):
         super(FormsNode, self).__init__(text, parent=parent, project=project)
         self.forms = []
         self.icon = QIcon(":/icons/dataentry")
+        self.canadd = True
 
     def addforms(self, forms):
         forms = list(forms)
@@ -136,6 +144,26 @@ class FormsNode(Treenode):
 
         return True
 
+    def insertrow(self, index):
+        def newformname():
+            from datetime import datetime
+            return "form_{}".format(datetime.today().strftime('%d%m%y%f'))
+
+        folder = self.project.folder
+        foldername = newformname()
+
+        formfolder = os.path.join(folder, foldername)
+        templateform = os.path.join(os.path.dirname(__file__), "..", "templates", "templateform")
+        shutil.copytree(templateform, formfolder)
+
+        config = dict(label='New Form', layer='', type='auto', widgets=[])
+        form = self.project.addformconfig(foldername, config)
+        node = FormNode(form, self, self.project)
+        self.appendchild(node)
+        print self.project.settings
+        self.project.save()
+        return node.row()
+
 class ProjectNode(Treenode):
     nodetype = Treenode.ProjectNode
 
@@ -152,10 +180,14 @@ class ProjectNode(Treenode):
                                "Deleted projects will be moved to the _archive folder in projects folder<br><br>"
                                "<i>Projects can be recovered by moving the folder back to the projects folder</i>"))
         self.canremove = True
+        self.canadd = True
 
     def createnode(self, nodeclass, text):
         node = nodeclass(text, parent=self, project=self.project)
         return node
+
+    def insertrow(self, index):
+        self.parent.insertrow(index)
 
     @property
     def text(self):
@@ -163,13 +195,13 @@ class ProjectNode(Treenode):
 
 
 class ProjectsNode(Treenode):
-    def __init__(self, text, parent=None):
+    def __init__(self, text, parent=None, folder=None):
         super(ProjectsNode, self).__init__(text, parent)
+        self.projectfolder = folder
 
     def removerow(self, index):
         projectnode = self[index]
         project = projectnode.project
-        print "Delete", project
         try:
             archivefolder = os.path.join(project.basepath, "_archive")
             shutil.move(project.folder, archivefolder)
@@ -179,10 +211,21 @@ class ProjectsNode(Treenode):
 
         return True
 
+    def insertrow(self, index):
+        templateProject = os.path.join(os.path.dirname(__file__), "..", "templates/templateProject")
+        newfolder = os.path.join(self.projectfolder, "newProject{}".format(datetime.today().strftime('%d%m%y%f')))
+        shutil.copytree(templateProject, newfolder)
+        project = roam.project.Project.from_folder(newfolder)
+        project.settings['forms'] = {}
+        node = ProjectNode(project, self)
+        self.appendchild(node)
+        return node.row()
+
+
 class ConfigTreeModel(QAbstractItemModel):
-    def __init__(self, parent=None):
+    def __init__(self, projectsfolder, parent=None):
         super(ConfigTreeModel, self).__init__(parent)
-        self.rootitem = ProjectsNode("Projects")
+        self.rootitem = ProjectsNode("Projects", folder=projectsfolder)
         self.roamnode = RoamNode("Roam", parent=self.rootitem)
         self.rootitem.appendchild(self.roamnode)
 
@@ -256,25 +299,12 @@ class ConfigTreeModel(QAbstractItemModel):
             self.rootitem.appendchild(node)
         self.endInsertRows()
 
-    def addproject(self, project):
-        """
-        Add a new project to the model.
-        :param project:
-        :return: The index of the newly added project.
-        """
-        count = self.rowCount(QModelIndex())
-        self.beginInsertRows(QModelIndex(), count, count + 1)
-        node = ProjectNode(project, self.rootitem)
-        self.rootitem.appendchild(node)
-        self.endInsertRows()
-        return self.index(count, 0, QModelIndex())
-
     def getnode(self, index):
         if not index.isValid():
             return self.rootitem
 
         item = index.internalPointer()
-        if item:
+        if not item is None:
             return item
 
     def removeRow(self, row, parent=None):
@@ -282,6 +312,13 @@ class ConfigTreeModel(QAbstractItemModel):
         self.beginRemoveRows(parent, row, row)
         del node[row]
         self.endRemoveRows()
+
+    def insertRow(self, row, parent=None):
+        node = self.getnode(parent)
+        self.beginInsertRows(parent, row, row)
+        newrow = node.insertrow(row)
+        self.endInsertRows()
+        return self.index(newrow, 0, parent)
 
     def nextindex(self, index):
         """
@@ -299,8 +336,8 @@ class ConfigManagerDialog(ui_configmanager.Ui_ProjectInstallerDialog, QDialog):
     def __init__(self, projectfolder, parent=None):
         super(ConfigManagerDialog, self).__init__(parent)
         self.setupUi(self)
-        self.projectmodel = ConfigTreeModel()
-        self.projectList.setModel(self.projectmodel)
+        self.treemodel = ConfigTreeModel(projectfolder)
+        self.projectList.setModel(self.treemodel)
 
         self.projectList.selectionModel().currentChanged.connect(self.nodeselected)
 
@@ -308,9 +345,17 @@ class ConfigManagerDialog(ui_configmanager.Ui_ProjectInstallerDialog, QDialog):
         self.setWindowFlags(Qt.Window)
         self.projectfolder = projectfolder
 
-        self.newProjectButton.pressed.connect(self.newproject)
+        self.newProjectButton.pressed.connect(self.addbuttonpressed)
         self.removeProjectButton.pressed.connect(self.deletebuttonpressed)
         self.projectwidget.projectupdated.connect(self.projectupdated)
+
+    def addbuttonpressed(self):
+        index = self.projectList.currentIndex()
+        node = index.data(Qt.UserRole)
+        if node.canadd:
+            row = index.row() + 1
+            newindex = self.treemodel.insertRow(row, index)
+            self.projectList.setCurrentIndex(newindex)
 
     def deletebuttonpressed(self):
         index = self.projectList.currentIndex()
@@ -325,22 +370,13 @@ class ConfigManagerDialog(ui_configmanager.Ui_ProjectInstallerDialog, QDialog):
             delete = button == QMessageBox.Yes
 
         if delete:
-            self.projectmodel.removeRow(index.row(), index.parent())
-            newindex = self.projectmodel.nextindex(index)
+            self.treemodel.removeRow(index.row(), index.parent())
+            newindex = self.treemodel.nextindex(index)
             self.projectList.setCurrentIndex(newindex)
 
-    def newproject(self):
-        templateProject = os.path.join(os.path.dirname(__file__), "..", "templates/templateProject")
-        newfolder = os.path.join(self.projectfolder, "newProject{}".format(datetime.today().strftime('%d%m%y%f')))
-        shutil.copytree(templateProject, newfolder)
-        project = roam.project.Project.from_folder(newfolder)
-        project.settings['forms'] = {}
-        newindex = self.projectmodel.addproject(project)
-        self.projectList.setCurrentIndex(newindex)
-
     def loadprojects(self, projects):
-        self.projectmodel.loadprojects(projects)
-        index = self.projectmodel.index(0, 0, QModelIndex())
+        self.treemodel.loadprojects(projects)
+        index = self.treemodel.index(0, 0, QModelIndex())
         self.projectList.setCurrentIndex(index)
         self.projectwidget.setprojectsfolder(self.projectfolder)
 
@@ -350,6 +386,9 @@ class ConfigManagerDialog(ui_configmanager.Ui_ProjectInstallerDialog, QDialog):
             return
 
         self.projectwidget.setpage(node.nodetype)
+        self.removeProjectButton.setEnabled(node.canremove)
+        self.newProjectButton.setEnabled(node.canadd)
+
         project = node.project
         if project and not self.projectwidget.project == project:
             # Only load the project if it's different the current one.
@@ -364,4 +403,4 @@ class ConfigManagerDialog(ui_configmanager.Ui_ProjectInstallerDialog, QDialog):
 
     def projectupdated(self):
         index = self.projectList.currentIndex()
-        self.projectmodel.dataChanged.emit(index, index)
+        self.treemodel.dataChanged.emit(index, index)
