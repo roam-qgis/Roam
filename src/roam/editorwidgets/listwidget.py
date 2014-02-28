@@ -19,6 +19,7 @@ class ListWidget(EditorWidget):
     def __init__(self, *args):
         super(ListWidget, self).__init__(*args)
         self.listmodel = QStandardItemModel()
+        self._bindvalue = None
 
     def createWidget(self, parent):
         return QComboBox(parent)
@@ -149,6 +150,8 @@ class ListWidget(EditorWidget):
             layerconfig = self.config['layer']
             self._buildfromlayer(self.widget, layerconfig)
 
+        self.setvalue(self._bindvalue)
+
     @property
     def allownulls(self):
         return self.config.get('allownull', False)
@@ -163,6 +166,7 @@ class ListWidget(EditorWidget):
         self.emitvaluechanged()
 
     def setvalue(self, value):
+        self._bindvalue = value
         index = self.widget.findData(value)
         self.widget.setCurrentIndex(index)
         if index == -1 and self.widget.isEditable():

@@ -220,6 +220,7 @@ class Project(object):
         self.settings = settings
         self._forms = []
         self.error = ''
+        self.basepath = os.path.join(rootfolder,"..")
 
     @classmethod
     def from_folder(cls, rootfolder):

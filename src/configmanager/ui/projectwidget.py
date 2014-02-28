@@ -101,6 +101,7 @@ class ProjectWidget(Ui_Form, QWidget):
         self.filewatcher.fileChanged.connect(self.qgisprojectupdated)
 
         self.projectupdatedlabel.linkActivated.connect(self.reloadproject)
+        self.projectupdatedlabel.hide()
         self.formtab.currentChanged.connect(self.formtabchanged)
 
         for item, data in readonlyvalues:
@@ -114,8 +115,10 @@ class ProjectWidget(Ui_Form, QWidget):
         if index == 1:
             self.setformpreview(self.form)
 
+    def setprojectsfolder(self, location):
+        self.projectlocationlabel.setText(location)
+
     def setpage(self, page):
-        print page
         self.stackedWidget.setCurrentIndex(page)
 
     def reloadproject(self, *args):
@@ -343,8 +346,7 @@ class ProjectWidget(Ui_Form, QWidget):
 
         disconnectsignals()
         self.filewatcher.removePaths(self.filewatcher.files())
-        self.projectupdatedlabel.setText("")
-
+        self.projectupdatedlabel.hide()
         self.startsettings = copy.deepcopy(project.settings)
         self.project = project
         self.projectlabel.setText(project.name)
