@@ -14,13 +14,21 @@ import shutil
 import roam.project
 
 class Treenode(object):
+    ProjectNode = 0
+    FormNode = 1
+    MapNode = 2
+    TreeNode = 3
+    FormsNode = 3
+    RoamNode = 4
+
+    nodetype = TreeNode
+
     def __init__(self, text, icon=None, project=None, parent=None):
         self._text = text
         self.parent = parent
         self.children = []
         self.icon = None
         self.project = project
-        self.page = 4
 
     def appendchild(self, child):
         child.parent = self
@@ -42,14 +50,34 @@ class Treenode(object):
 
         return 0
 
+class RoamNode(Treenode):
+    nodetype = Treenode.RoamNode
+
+    def __init__(self, text, parent, project=None):
+        super(RoamNode, self).__init__(text, parent=parent, project=project)
+        self.icon = QIcon(":/icons/open")
+
+
+class MapNode(Treenode):
+    nodetype = Treenode.MapNode
+
+    def __init__(self, text, parent, project):
+        super(MapNode, self).__init__(text, parent=parent, project=project)
+        self.icon = QIcon(":/icons/map")
+
+
 class FormNode(Treenode):
+    nodetype = Treenode.FormNode
+
     def __init__(self, form, parent, project):
         super(FormNode, self).__init__(form.label, parent=parent, project=project)
         self.icon = QIcon(form.icon)
         self.form = form
-        self.page = 1
+
 
 class FormsNode(Treenode):
+    nodetype = Treenode.FormsNode
+
     def __init__(self, text, parent, project):
         super(FormsNode, self).__init__(text, parent=parent, project=project)
         self.forms = []
@@ -67,16 +95,15 @@ class FormsNode(Treenode):
 
 
 class ProjectNode(Treenode):
+    nodetype = Treenode.ProjectNode
+
     def __init__(self, project, parent=None):
         super(ProjectNode, self).__init__(project.name, parent)
-        self.page = 0
         self.icon = QIcon(":/icons/open")
         self.project = project
         self.formsnode = self.createnode(FormsNode, "Forms")
         self.formsnode.addforms(project.forms)
-        self.mapnode = self.createnode(Treenode, "Map")
-        self.mapnode.page = 3
-        self.mapnode.icon = QIcon(":/icons/map")
+        self.mapnode = self.createnode(MapNode, "Map")
         self.appendchild(self.formsnode)
         self.appendchild(self.mapnode)
 
@@ -93,6 +120,8 @@ class ProjectTree(QAbstractItemModel):
         super(ProjectTree, self).__init__(parent)
         self.projects = []
         self.rootitem = Treenode("Projects")
+        self.roamnode = RoamNode("Roam", parent=self.rootitem)
+        self.rootitem.appendchild(self.roamnode)
 
     def columnCount(self, QModelIndex_parent=None, *args, **kwargs):
         return 1
@@ -100,7 +129,7 @@ class ProjectTree(QAbstractItemModel):
     def headerData(self, p_int, Qt_Orientation, int_role=None):
         return "Projects"
 
-    def index(self, row, column, parent):
+    def index(self, row, column, parent=QModelIndex()):
         if not parent.isValid():
             node = self.rootitem
         else:
@@ -150,10 +179,13 @@ class ProjectTree(QAbstractItemModel):
         return len(node)
 
     def loadprojects(self, projects):
+        self.beginResetModel()
         self.projects = projects
+        self.beginInsertRows(QModelIndex(), self.roamnode.row(), len(self.projects))
         for project in self.projects:
-            node = ProjectNode(project)
+            node = ProjectNode(project, self.rootitem)
             self.rootitem.appendchild(node)
+        self.endInsertRows()
 
 
 class ProjectModel(QAbstractItemModel):
@@ -269,13 +301,13 @@ class ConfigManagerDialog(ui_configmanager.Ui_ProjectInstallerDialog, QDialog):
 
     def nodeselected(self, index, _):
         node = index.data(Qt.UserRole)
-        print "Current project", node.project
-        self.projectwidget.setpage(node.page)
-        if not self.projectwidget.project == node.project:
+        self.projectwidget.setpage(node.nodetype)
+        project = node.project
+        if project and not self.projectwidget.project == project:
             # Only load the project if it's different the current one.
-            self.projectwidget.setproject(node.project)
+            self.projectwidget.setproject(project)
 
-        if type(node) == FormNode:
+        if node.nodetype == Treenode.FormNode:
             self.projectwidget.setform(node.form)
 
     def projectupdated(self):

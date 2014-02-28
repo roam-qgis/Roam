@@ -111,7 +111,6 @@ class ProjectWidget(Ui_Form, QWidget):
 
     def formtabchanged(self, index):
         # preview
-        print index
         if index == 1:
             self.setformpreview(self.form)
 
