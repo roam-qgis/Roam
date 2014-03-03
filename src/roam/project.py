@@ -126,12 +126,12 @@ class Form(object):
             self._qgislayer = getlayer(layer)
         return self._qgislayer
 
-    def getMaptool(self, canvas):
+    def getMaptool(self):
         """
             Returns the map tool configured for this layer.
         """
         if self.QGISLayer.geometryType() == QGis.Point:
-            return PointTool(canvas)
+            return PointTool
         
         raise NoMapToolConfigured
 
@@ -155,8 +155,12 @@ class Form(object):
 
         if self.QGISLayer is None:
             self.errors.append("Layer {} not found in project".format(self.layername))
+
         elif not self.QGISLayer.type() == QgsMapLayer.VectorLayer:
             self.errors.append("We can only support vector layers for data entry")
+
+        if not self.QGISLayer.geometryType() == QGis.Point:
+            self.errors.append("Currently we only support point capture layers")
 
         if self.errors:
             return False, self.errors

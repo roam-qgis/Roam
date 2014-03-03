@@ -142,6 +142,8 @@ class ListWidget(EditorWidget):
         self.biglist.show()
 
     def updatefromconfig(self):
+        super(ListWidget, self).updatefromconfig()
+
         self.listmodel.clear()
         if 'list' in self.config:
             listconfig = self.config['list']
@@ -150,7 +152,7 @@ class ListWidget(EditorWidget):
             layerconfig = self.config['layer']
             self._buildfromlayer(self.widget, layerconfig)
 
-        self.setvalue(self._bindvalue)
+        super(ListWidget, self).endupdatefromconfig()
 
     @property
     def allownulls(self):
