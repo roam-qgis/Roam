@@ -1,7 +1,7 @@
 """
 Template custom logic module.
 """
-from roam.featureform import FeatureForm
+from roam.api import FeatureForm
 
 
 class TemplateFeatureForm(FeatureForm):
@@ -10,4 +10,6 @@ class TemplateFeatureForm(FeatureForm):
 
 
 def init_form(form):
-    pass
+    # Remove the following return in order to override the feature form logic.
+    return
+    form.registerform(TemplateFeatureForm)
