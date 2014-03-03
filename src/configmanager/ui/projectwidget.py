@@ -6,13 +6,13 @@ import shutil
 from datetime import datetime
 
 from PyQt4.QtCore import Qt, QDir, QFileInfo, pyqtSignal, QModelIndex, QFileSystemWatcher
-from PyQt4.QtGui import QWidget, QStandardItemModel, QStandardItem, QIcon, QMessageBox
+from PyQt4.QtGui import QWidget, QStandardItemModel, QStandardItem, QIcon, QMessageBox, QPixmap
 
 from qgis.core import QgsProject, QgsMapLayerRegistry, QgsPalLabeling
 from qgis.gui import QgsMapCanvas
 
 from configmanager.ui.ui_projectwidget import Ui_Form
-from configmanager.models import widgeticon, WidgetsModel, QgsLayerModel, QgsFieldModel, LayerFilter, FormModel
+from configmanager.models import widgeticon, WidgetsModel, QgsLayerModel, QgsFieldModel, LayerTypeFilter, CaptureLayerFilter, CaptureLayersModel
 
 from roam.featureform import FeatureForm
 
@@ -29,6 +29,8 @@ readonlyvalues = [('Never', 'never'),
                   ('When editing', 'editing'),
                   ('When inserting', 'insert')]
 
+def layer(name):
+    return QgsMapLayerRegistry.instance.mapLayersByName(name)[0]
 
 def openfolder(folder):
     subprocess.Popen('explorer "{}"'.format(folder))
@@ -39,33 +41,36 @@ def openqgis(project):
 
 class ProjectWidget(Ui_Form, QWidget):
     SampleWidgetRole = Qt.UserRole + 1
-    projectsaved = pyqtSignal(object, object)
+    projectsaved = pyqtSignal()
     projectupdated = pyqtSignal()
 
     def __init__(self, parent=None):
         super(ProjectWidget, self).__init__(parent)
         self.setupUi(self)
+        self.project = None
+
         self.canvas.setCanvasColor(Qt.white)
         self.canvas.enableAntiAliasing(True)
         self.canvas.setWheelAction(QgsMapCanvas.WheelZoomToMouseCursor)
         self.canvas.mapRenderer().setLabelingEngine(QgsPalLabeling())
 
         self.fieldsmodel = QgsFieldModel()
-        self.formmodel = FormModel()
         self.widgetmodel = WidgetsModel()
         self.possiblewidgetsmodel = QStandardItemModel()
-        self.layermodel = QgsLayerModel(watchregistry=False)
-        self.selectlayermodel = QgsLayerModel(watchregistry=False, checkselect=True)
-        self.selectlayermodel.layerchecked.connect(self._save_selectionlayers)
 
-        self.layerfilter = LayerFilter()
-        self.layerfilter.setSourceModel(self.layermodel)
+        self.formlayersmodel = QgsLayerModel(watchregistry=False)
+        self.formlayers = CaptureLayerFilter()
+        self.formlayers.setSourceModel(self.formlayersmodel)
 
-        self.selectlayerfilter = LayerFilter()
+        self.selectlayermodel = CaptureLayersModel(watchregistry=False)
+        self.selectlayerfilter = LayerTypeFilter()
         self.selectlayerfilter.setSourceModel(self.selectlayermodel)
+        self.selectlayermodel.dataChanged.connect(self.selectlayerschanged)
 
-        self.layerCombo.setModel(self.layerfilter)
+        self.layerCombo.setModel(self.formlayers)
         self.widgetCombo.setModel(self.possiblewidgetsmodel)
+        self.selectLayers.setModel(self.selectlayerfilter)
+        self.fieldList.setModel(self.fieldsmodel)
 
         self.widgetlist.setModel(self.widgetmodel)
         self.widgetlist.selectionModel().currentChanged.connect(self.updatecurrentwidget)
@@ -73,74 +78,66 @@ class ProjectWidget(Ui_Form, QWidget):
         self.widgetmodel.rowsInserted.connect(self.setwidgetconfigvisiable)
         self.widgetmodel.modelReset.connect(self.setwidgetconfigvisiable)
 
-        self.formmodel.rowsRemoved.connect(self.setformconfigvisible)
-        self.formmodel.rowsInserted.connect(self.setformconfigvisible)
-        self.formmodel.modelReset.connect(self.setformconfigvisible)
-
-        self.formlist.setModel(self.formmodel)
-        self.formlist.selectionModel().currentChanged.connect(self.updatecurrentform)
-
-        self.formpreviewList.setModel(self.formmodel)
-        self.formpreviewList.clicked.connect(self.updateformpreview)
-
         self.titleText.textChanged.connect(self.updatetitle)
 
-        self.selectLayers.setModel(self.selectlayerfilter)
-
-        self.fieldList.setModel(self.fieldsmodel)
-
         QgsProject.instance().readProject.connect(self._readproject)
-
-        self.menuList.setCurrentRow(0)
 
         self.loadwidgettypes()
 
         self.addWidgetButton.pressed.connect(self.newwidget)
         self.removeWidgetButton.pressed.connect(self.removewidget)
 
-        self.addFormButton.pressed.connect(self.newform)
-        self.removeFormButton.pressed.connect(self.removeform)
-
         self.roamVersionLabel.setText("You are running IntraMaps Roam version {}".format(roam.__version__))
 
         self.openProjectFolderButton.pressed.connect(self.openprojectfolder)
-        self.openDataButton.pressed.connect(self.opendatafolder)
         self.openinQGISButton.pressed.connect(self.openinqgis)
 
         self.filewatcher = QFileSystemWatcher()
         self.filewatcher.fileChanged.connect(self.qgisprojectupdated)
 
         self.projectupdatedlabel.linkActivated.connect(self.reloadproject)
+        self.projectupdatedlabel.hide()
+        self.formtab.currentChanged.connect(self.formtabchanged)
 
         for item, data in readonlyvalues:
             self.readonlyCombo.addItem(item, data)
+
+        self.setpage(4)
+        self.form = None
+
+    def selectlayerschanged(self, *args):
+        self.formlayers.setSelectLayers(self.project.selectlayers)
+
+    def formtabchanged(self, index):
+        # preview
+        if index == 1:
+            self.setformpreview(self.form)
+
+    def setprojectsfolder(self, location):
+        self.projectlocationlabel.setText(location)
+
+    def setpage(self, page):
+        self.stackedWidget.setCurrentIndex(page)
 
     def reloadproject(self, *args):
         self.setproject(self.project)
 
     def qgisprojectupdated(self, path):
-        self.projectupdatedlabel.setText("The QGIS project has been updated. <a href='reload'> Click to reload</a>. <b>Unsaved data will be lost</b>")
+        self.projectupdatedlabel.show()
+        self.projectupdatedlabel.setText("The QGIS project has been updated. <a href='reload'> "
+                                         "Click to reload</a>. <b style=\"color:red\">Unsaved data will be lost</b>")
 
     def openinqgis(self):
         projectfile = self.project.projectfile
         openqgis(projectfile)
 
-    def opendatafolder(self):
-        folder = self.project.folder
-        folder = os.path.join(folder, "_data")
-        openfolder(folder)
-
     def openprojectfolder(self):
         folder = self.project.folder
         openfolder(folder)
 
-    def setformconfigvisible(self, *args):
-        hasforms = self.formmodel.rowCount() > 0
-        self.formframe.setVisible(hasforms)
-
     def setwidgetconfigvisiable(self, *args):
         haswidgets = self.widgetmodel.rowCount() > 0
-        self.widgetframe.setVisible(haswidgets)
+        self.widgetframe.setEnabled(haswidgets)
 
     def removewidget(self):
         """
@@ -149,58 +146,6 @@ class ProjectWidget(Ui_Form, QWidget):
         widget, index = self.currentuserwidget
         if index.isValid():
             self.widgetmodel.removeRow(index.row())
-
-    def removeform(self):
-        form, index = self.currentform
-        archivefolder = os.path.join(self.project.folder, "_archive")
-        formachivefolder = os.path.join(archivefolder, form.name)
-
-        configname = "{}.config".format(form.name)
-        # Backup of the old form settings.
-        config = {form.name : form.settings}
-
-        message = ("<b>Do you want to delete this form from the project?</b> <br><br> "
-                   "Deleted forms will be moved to the _archive folder in {}<br><br>"
-                   "<i>Forms can be restored by moving the folder back to the project folder"
-                   " and restoring the content in {} to the settings.config</i>".format(self.project.folder, configname))
-
-        button = QMessageBox.warning(self, "Remove form?", message,
-                                     QMessageBox.Yes | QMessageBox.No)
-        if button == QMessageBox.Yes:
-            newindex = self.formmodel.index(index.row() + 1, 0)
-            if not newindex.isValid():
-                newindex = self.formmodel.index(0, 0)
-
-            # Move to a different project to unlock the current one.
-            self.formlist.setCurrentIndex(newindex)
-
-            shutil.move(form.folder, formachivefolder)
-            configlocation = os.path.join(archivefolder, configname)
-
-            with open(configlocation, 'w') as f:
-                roam.yaml.dump(data=config, stream=f, default_flow_style=False)
-
-            self.formmodel.removeRow(index.row())
-            self._saveproject()
-
-    def newform(self):
-        def newformname():
-            return "form_{}".format(datetime.today().strftime('%d%m%y%f'))
-
-        folder = self.project.folder
-        foldername = newformname()
-
-        formfolder = os.path.join(folder, foldername)
-        templateform = os.path.join(os.path.dirname(__file__), "..", "templates", "templateform")
-        shutil.copytree(templateform, formfolder)
-
-        layer = self.layerCombo.currentText()
-        config = dict(label='New Form', layer=layer, type='auto', widgets=[])
-        form = self.project.addformconfig(foldername, config)
-
-        index = self.formmodel.addform(form)
-        self.formlist.setCurrentIndex(index)
-        return config
 
     def newwidget(self):
         """
@@ -235,8 +180,7 @@ class ProjectWidget(Ui_Form, QWidget):
         """
         Return the current selected form.
         """
-        index = self.formlist.selectionModel().currentIndex()
-        return index.data(Qt.UserRole), index
+        return self.form
 
     @property
     def currentuserwidget(self):
@@ -281,18 +225,12 @@ class ProjectWidget(Ui_Form, QWidget):
 
     def _save_selectionlayers(self, index, layer, value):
         config = self.project.settings
-        selectlayers = config.get('selectlayers', [])
-        layername = unicode(layer.name())
-        if value == Qt.Checked:
-            selectlayers.append(layername)
-        else:
-            selectlayers.remove(layername)
 
         self.selectlayermodel.dataChanged.emit(index, index)
 
     def _save_formtype(self, index):
         formtype = self.formtypeCombo.currentText()
-        form, index = self.currentform
+        form = self.currentform
         form.settings['type'] = formtype
 
     def _save_formname(self, text):
@@ -300,9 +238,11 @@ class ProjectWidget(Ui_Form, QWidget):
         Save the form label to the settings file.
         """
         try:
-            form, index = self.currentform
+            form = self.currentform
+            if form is None:
+                return
             form.settings['label'] = text
-            self.formmodel.dataChanged.emit(index, index)
+            self.projectupdated.emit()
         except IndexError:
             return
 
@@ -310,48 +250,39 @@ class ProjectWidget(Ui_Form, QWidget):
         """
         Save the selected layer to the settings file.
         """
-        index = self.layerfilter.index(index, 0)
+        index = self.formlayers.index(index, 0)
         layer = index.data(Qt.UserRole)
         if not layer:
             return
 
-        form, index = self.currentform
+        form = self.currentform
+        if form is None:
+            return
+
         form.settings['layer'] = layer.name()
-        self.formmodel.dataChanged.emit(index, index)
         self.updatefields(layer)
 
     def setproject(self, project, loadqgis=True):
         """
         Set the widgets active project.
         """
-        def connectsignals():
-            # Form settings
-            self.formLabelText.textChanged.connect(self._save_formname)
-            self.layerCombo.currentIndexChanged.connect(self._save_layer)
-            self.formtypeCombo.currentIndexChanged.connect(self._save_formtype)
-
-        def disconnectsignals():
-            try:
-                 # Form settings
-                self.formLabelText.textChanged.disconnect(self._save_formname)
-                self.layerCombo.currentIndexChanged.disconnect(self._save_layer)
-                self.formtypeCombo.currentIndexChanged.disconnect(self._save_formtype)
-            except TypeError:
-                pass
-
-        disconnectsignals()
         self.filewatcher.removePaths(self.filewatcher.files())
-        self.projectupdatedlabel.setText("")
-
+        self.projectupdatedlabel.hide()
         self.startsettings = copy.deepcopy(project.settings)
         self.project = project
+        self.projectlabel.setText(project.name)
+        self.versionText.setText(project.version)
         self.selectlayermodel.config = project.settings
+        self.formlayers.setSelectLayers(self.project.selectlayers)
+        pixmap = QPixmap(project.splash)
+        w = self.splashlabel.width()
+        h = self.splashlabel.height()
+        self.splashlabel.setPixmap(pixmap.scaled(w,h, Qt.KeepAspectRatio))
         if loadqgis:
             self.loadqgisproject(project, self.project.projectfile)
         else:
             self._updateforproject(self.project)
         self.filewatcher.addPath(self.project.projectfile)
-        connectsignals()
 
     def loadqgisproject(self, project, projectfile):
         self._closeqgisproject()
@@ -364,7 +295,7 @@ class ProjectWidget(Ui_Form, QWidget):
             return
 
         self.canvas.freeze(True)
-        self.layermodel.removeall()
+        self.formlayersmodel.removeall()
         self.selectlayermodel.removeall()
         QgsMapLayerRegistry.instance().removeAllMapLayers()
         self.canvas.freeze(False)
@@ -379,55 +310,47 @@ class ProjectWidget(Ui_Form, QWidget):
         self.canvas.freeze(False)
         self.canvas.refresh()
         layers = QgsMapLayerRegistry.instance().mapLayers().values()
-        self.layermodel.addlayers(layers, removeall=True)
+        self.formlayersmodel.addlayers(layers, removeall=True)
         self.selectlayermodel.addlayers(layers, removeall=True)
         self._updateforproject(self.project)
 
     def _updateforproject(self, project):
-        def _loadforms(forms):
-            self.formmodel.addforms(forms)
-
-            index = self.formmodel.index(0, 0)
-            if index.isValid():
-                self.formlist.setCurrentIndex(index)
-                self.formframe.show()
-            else:
-                self.formframe.hide()
-
         self.titleText.setText(project.name)
         self.descriptionText.setPlainText(project.description)
-        _loadforms(project.forms)
 
     def swapwidgetconfig(self, index):
         self.updatewidgetconfig({})
 
     def updatetitle(self, text):
         self.project.settings['title'] = text
+        self.projectlabel.setText(text)
         self.projectupdated.emit()
 
     def updatewidgetconfig(self, config):
         widgetconfig, index, widgettype = self.currentwidgetconfig
         self.setconfigwidget(widgetconfig, config)
 
-    def updateformpreview(self, index):
+    def setformpreview(self, form):
         def removewidget():
             item = self.frame_2.layout().itemAt(0)
             if item and item.widget():
                 item.widget().setParent(None)
 
         removewidget()
-        form = index.data(Qt.UserRole)
 
         featureform = FeatureForm.from_form(form, form.settings, None, {})
 
         self.frame_2.layout().addWidget(featureform)
 
-
-    def updatecurrentform(self, index, _):
+    def setform(self, form):
         """
         Update the UI with the currently selected form.
         """
         def connectsignals():
+            self.formLabelText.textChanged.connect(self._save_formname)
+            self.layerCombo.currentIndexChanged.connect(self._save_layer)
+            self.formtypeCombo.currentIndexChanged.connect(self._save_formtype)
+
             #widget settings
             self.fieldList.currentIndexChanged.connect(self._save_selectedwidget)
             self.fieldList.editTextChanged.connect(self._save_selectedwidget)
@@ -441,6 +364,10 @@ class ProjectWidget(Ui_Form, QWidget):
 
         def disconnectsignals():
             try:
+                self.formLabelText.textChanged.disconnect(self._save_formname)
+                self.layerCombo.currentIndexChanged.disconnect(self._save_layer)
+                self.formtypeCombo.currentIndexChanged.disconnect(self._save_formtype)
+
                 #widget settings
                 self.fieldList.currentIndexChanged.disconnect(self._save_selectedwidget)
                 self.fieldList.editTextChanged.disconnect(self._save_selectedwidget)
@@ -456,21 +383,24 @@ class ProjectWidget(Ui_Form, QWidget):
 
         disconnectsignals()
 
-        form = index.data(Qt.UserRole)
         settings = form.settings
         label = settings['label']
         layer = settings.get('layer', None)
-        version = settings.get('version', roam.__version__)
         formtype = settings.get('type', 'auto')
         widgets = settings.get('widgets', [])
 
+        if not layer:
+            print "No layer current set, setting the first one."
+            index = self.formlayers.index(0,0)
+            layer = index.data(Qt.UserRole)
+            layername = layer.name()
+            settings['layer'] = layername
+
         self.formLabelText.setText(label)
-        self.versionText.setText(version)
-        index = self.layermodel.findlayer(layer)
-        index = self.layerfilter.mapFromSource(index)
-        if index.isValid():
-            self.layerCombo.setCurrentIndex(index.row())
-            self.updatefields(index.data(Qt.UserRole))
+        index = self.formlayersmodel.findlayer(layer)
+        index = self.formlayers.mapFromSource(index)
+        self.layerCombo.setCurrentIndex(index.row())
+        self.updatefields(index.data(Qt.UserRole))
 
         index = self.formtypeCombo.findText(formtype)
         if index == -1:
@@ -487,8 +417,8 @@ class ProjectWidget(Ui_Form, QWidget):
             self.widgetlist.setCurrentIndex(index)
             self.updatecurrentwidget(index, None)
 
-
         connectsignals()
+        self.form = form
 
     def updatefields(self, layer):
         """
@@ -588,13 +518,9 @@ class ProjectWidget(Ui_Form, QWidget):
         settings['description'] = description
         settings['version'] = version
 
-        # Rewrite out the forms.
-        settings['forms'] = {}
-        for form in self.formmodel.forms:
-            settings['forms'][form.name] = form.settings
+        self.project.save()
+        self.projectsaved.emit()
 
-        self.projectsaved.emit(self.startsettings, self.project)
 
-        self.startsettings = copy.deepcopy(settings)
 
 
