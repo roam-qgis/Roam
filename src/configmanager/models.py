@@ -20,12 +20,12 @@ icons = {
 }
 
 
-class SelectLayerFilter(QSortFilterProxyModel):
+class CaptureLayerFilter(QSortFilterProxyModel):
     """
     Filter a layer model to only show select layers.
     """
     def __init__(self, parent=None):
-        super(SelectLayerFilter, self).__init__(parent)
+        super(CaptureLayerFilter, self).__init__(parent)
         self.selectlayers = []
         self.setDynamicSortFilter(True)
 
@@ -39,7 +39,7 @@ class SelectLayerFilter(QSortFilterProxyModel):
             return False
 
         layer = index.data(Qt.UserRole)
-        if layer.name() in self.selectlayers:
+        if layer.name() in self.selectlayers and layer.geometryType() == QGis.Point:
             return True
 
         return False
@@ -162,9 +162,9 @@ class QgsLayerModel(QAbstractItemModel):
             return layer
 
 
-class SelectLayerModel(QgsLayerModel):
+class CaptureLayersModel(QgsLayerModel):
     def __init__(self, watchregistry=True, parent=None):
-        super(SelectLayerModel, self).__init__(watchregistry, parent)
+        super(CaptureLayersModel, self).__init__(watchregistry, parent)
         self.config = {}
 
     def setData(self, index, value, role=None):
@@ -181,7 +181,7 @@ class SelectLayerModel(QgsLayerModel):
                 selectlayers.remove(layername)
             self.dataChanged.emit(index, index)
 
-        return super(SelectLayerModel, self).setData(index, value, role)
+        return super(CaptureLayersModel, self).setData(index, value, role)
 
     def data(self, index, role):
         if not index.isValid() or index.internalPointer() is None:
@@ -194,7 +194,7 @@ class SelectLayerModel(QgsLayerModel):
             else:
                 return Qt.Unchecked
         else:
-            return super(SelectLayerModel, self).data(index, role)
+            return super(CaptureLayersModel, self).data(index, role)
 
 class QgsFieldModel(QAbstractItemModel):
     FieldNameRole = Qt.UserRole + 1

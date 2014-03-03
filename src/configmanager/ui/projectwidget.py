@@ -12,7 +12,7 @@ from qgis.core import QgsProject, QgsMapLayerRegistry, QgsPalLabeling
 from qgis.gui import QgsMapCanvas
 
 from configmanager.ui.ui_projectwidget import Ui_Form
-from configmanager.models import widgeticon, WidgetsModel, QgsLayerModel, QgsFieldModel, LayerTypeFilter, SelectLayerFilter, SelectLayerModel
+from configmanager.models import widgeticon, WidgetsModel, QgsLayerModel, QgsFieldModel, LayerTypeFilter, CaptureLayerFilter, CaptureLayersModel
 
 from roam.featureform import FeatureForm
 
@@ -59,10 +59,10 @@ class ProjectWidget(Ui_Form, QWidget):
         self.possiblewidgetsmodel = QStandardItemModel()
 
         self.formlayersmodel = QgsLayerModel(watchregistry=False)
-        self.formlayers = SelectLayerFilter()
+        self.formlayers = CaptureLayerFilter()
         self.formlayers.setSourceModel(self.formlayersmodel)
 
-        self.selectlayermodel = SelectLayerModel(watchregistry=False)
+        self.selectlayermodel = CaptureLayersModel(watchregistry=False)
         self.selectlayerfilter = LayerTypeFilter()
         self.selectlayerfilter.setSourceModel(self.selectlayermodel)
         self.selectlayermodel.dataChanged.connect(self.selectlayerschanged)
