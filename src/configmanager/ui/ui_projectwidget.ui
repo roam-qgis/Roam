@@ -241,6 +241,9 @@ QLabel[isheader=true]
      </property>
      <widget class="QWidget" name="project_info_page">
       <layout class="QFormLayout" name="formLayout">
+       <property name="fieldGrowthPolicy">
+        <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
+       </property>
        <item row="0" column="0">
         <widget class="QLabel" name="label_2">
          <property name="text">
@@ -382,17 +385,17 @@ QLabel[isheader=true]
          <property name="fieldGrowthPolicy">
           <enum>QFormLayout::ExpandingFieldsGrow</enum>
          </property>
-         <item row="0" column="0">
+         <item row="1" column="0">
           <widget class="QLabel" name="label_6">
            <property name="text">
             <string>Label</string>
            </property>
           </widget>
          </item>
-         <item row="0" column="1">
+         <item row="1" column="1">
           <widget class="QLineEdit" name="formLabelText"/>
          </item>
-         <item row="1" column="0">
+         <item row="2" column="0">
           <widget class="QLabel" name="label_7">
            <property name="toolTip">
             <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
@@ -410,21 +413,21 @@ p, li { white-space: pre-wrap; }
            </property>
           </widget>
          </item>
-         <item row="1" column="1">
+         <item row="2" column="1">
           <widget class="QComboBox" name="layerCombo">
            <property name="editable">
             <bool>false</bool>
            </property>
           </widget>
          </item>
-         <item row="2" column="0">
+         <item row="3" column="0">
           <widget class="QLabel" name="label_5">
            <property name="text">
             <string>Type</string>
            </property>
           </widget>
          </item>
-         <item row="2" column="1">
+         <item row="3" column="1">
           <layout class="QHBoxLayout" name="horizontalLayout">
            <item>
             <widget class="QComboBox" name="formtypeCombo">
@@ -436,6 +439,20 @@ p, li { white-space: pre-wrap; }
             </widget>
            </item>
           </layout>
+         </item>
+         <item row="0" column="0">
+          <widget class="QLabel" name="label_16">
+           <property name="text">
+            <string>Form folder</string>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="1">
+          <widget class="QLabel" name="formfolderLabel">
+           <property name="text">
+            <string/>
+           </property>
+          </widget>
          </item>
         </layout>
        </item>
@@ -960,7 +977,7 @@ p, li { white-space: pre-wrap; }
    <slot>_saveproject()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>433</x>
+     <x>773</x>
      <y>11</y>
     </hint>
     <hint type="destinationlabel">

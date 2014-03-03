@@ -95,6 +95,7 @@ class ProjectWidget(Ui_Form, QWidget):
         self.filewatcher = QFileSystemWatcher()
         self.filewatcher.fileChanged.connect(self.qgisprojectupdated)
 
+        self.formfolderLabel.linkActivated.connect(self.openformfolder)
         self.projectupdatedlabel.linkActivated.connect(self.reloadproject)
         self.projectupdatedlabel.hide()
         self.formtab.currentChanged.connect(self.formtabchanged)
@@ -104,6 +105,9 @@ class ProjectWidget(Ui_Form, QWidget):
 
         self.setpage(4)
         self.form = None
+
+    def openformfolder(self, url):
+        openfolder(url)
 
     def selectlayerschanged(self, *args):
         self.formlayers.setSelectLayers(self.project.selectlayers)
@@ -397,6 +401,8 @@ class ProjectWidget(Ui_Form, QWidget):
             settings['layer'] = layername
 
         self.formLabelText.setText(label)
+        folderurl = "<a href='{path}'>{name}</a>".format(path=form.folder, name=os.path.basename(form.folder))
+        self.formfolderLabel.setText(folderurl)
         index = self.formlayersmodel.findlayer(layer)
         index = self.formlayers.mapFromSource(index)
         self.layerCombo.setCurrentIndex(index.row())
