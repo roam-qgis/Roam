@@ -20,12 +20,37 @@ icons = {
 }
 
 
-class LayerFilter(QSortFilterProxyModel):
+class SelectLayerFilter(QSortFilterProxyModel):
+    """
+    Filter a layer model to only show select layers.
+    """
+    def __init__(self, parent=None):
+        super(SelectLayerFilter, self).__init__(parent)
+        self.selectlayers = []
+        self.setDynamicSortFilter(True)
+
+    def setSelectLayers(self, layers):
+        self.selectlayers = layers
+        self.invalidateFilter()
+
+    def filterAcceptsRow(self, sourcerow, soureparent):
+        index = self.sourceModel().index(sourcerow, 0, soureparent)
+        if not index.isValid():
+            return False
+
+        layer = index.data(Qt.UserRole)
+        if layer.name() in self.selectlayers:
+            return True
+
+        return False
+
+
+class LayerTypeFilter(QSortFilterProxyModel):
     """
     Filter a model to hide the given types of layers
     """
     def __init__(self, geomtypes=[QGis.NoGeometry], parent=None):
-        super(LayerFilter, self).__init__(parent)
+        super(LayerTypeFilter, self).__init__(parent)
         self.geomtypes = geomtypes
         self.setDynamicSortFilter(True)
 
@@ -34,70 +59,23 @@ class LayerFilter(QSortFilterProxyModel):
         if not index.isValid():
             return False
 
+        layer = index.data(Qt.UserRole)
+        if not layer:
+            return False
+
         if index.data(Qt.UserRole).type() == QgsMapLayer.RasterLayer:
             return False
 
         return not index.data(Qt.UserRole).geometryType() in self.geomtypes
 
-class FormModel(QAbstractItemModel):
-    def __init__(self, parent=None):
-        super(FormModel, self).__init__(parent)
-        self.forms = []
-
-    def addform(self, form):
-        self.beginInsertRows(QModelIndex(), self.rowCount(), self.rowCount() + 1)
-        self.forms.append(form)
-        self.endInsertRows()
-        return self.index(self.rowCount() - 1, 0)
-
-    def addforms(self, forms):
-        self.beginResetModel()
-        self.forms = forms
-        self.endResetModel()
-
-    def removeRow(self, row, parent=None):
-        self.beginRemoveRows(QModelIndex(), row, row)
-        del self.forms[row]
-        self.endRemoveRows()
-        return True
-
-    def index(self, row, column, parnet=QModelIndex()):
-        try:
-            form = self.forms[row]
-            return self.createIndex(row, column, form)
-        except IndexError:
-            return QModelIndex()
-
-    def data(self, index, role):
-        if not index.isValid() or index.internalPointer() is None:
-            return
-
-        form = index.internalPointer()
-        if role == Qt.DisplayRole:
-            return form.label
-        if role == Qt.UserRole:
-            return form
-        if role == Qt.DecorationRole:
-            return QIcon(form.icon)
-
-    def rowCount(self, QModelIndex_parent=None, *args, **kwargs):
-        return len(self.forms)
-
-    def columnCount(self, QModelIndex_parent=None, *args, **kwargs):
-        return 1
-
-    def parent(self, parent=None):
-        return QModelIndex()
 
 class QgsLayerModel(QAbstractItemModel):
     layerchecked = pyqtSignal(object, object, int)
 
-    def __init__(self, watchregistry=True, checkselect=False, parent=None):
+    def __init__(self, watchregistry=True, parent=None):
         super(QgsLayerModel, self).__init__(parent)
-        self.config = {}
         self.layerfilter = [QgsMapLayer.VectorLayer, QgsMapLayer.RasterLayer]
         self.layers = []
-        self.checkselect = checkselect
 
         if watchregistry:
             QgsMapLayerRegistry.instance().layerWasAdded.connect(self.addlayer)
@@ -167,12 +145,6 @@ class QgsLayerModel(QAbstractItemModel):
     def columnCount(self, parent=QModelIndex()):
         return 1
 
-    def setData(self, index, value, role=None):
-        if role == Qt.CheckStateRole:
-            self.layerchecked.emit(index, index.data(Qt.UserRole), value)
-
-        return super(QgsLayerModel, self).setData(index, value, role)
-
     def data(self, index, role):
         if not index.isValid() or index.internalPointer() is None:
             return
@@ -188,21 +160,41 @@ class QgsLayerModel(QAbstractItemModel):
             return QIcon(icons.get(geomtype, None))
         elif role == Qt.UserRole:
             return layer
-        elif role == Qt.CheckStateRole:
-            if not self.checkselect:
-                return
-            try:
-                if layer.name() in self.config['selectlayers']:
-                    return Qt.Checked
-                else:
-                    return Qt.Unchecked
-            except KeyError:
+
+
+class SelectLayerModel(QgsLayerModel):
+    def __init__(self, watchregistry=True, parent=None):
+        super(SelectLayerModel, self).__init__(watchregistry, parent)
+        self.config = {}
+
+    def setData(self, index, value, role=None):
+        if role == Qt.CheckStateRole:
+            selectlayers = self.config.get('selectlayers', [])
+            self.config['selectlayers'] = selectlayers
+
+            layer = index.internalPointer()
+            layername = unicode(layer.name())
+
+            if value == Qt.Checked:
+                selectlayers.append(layername)
+            else:
+                selectlayers.remove(layername)
+            self.dataChanged.emit(index, index)
+
+        return super(SelectLayerModel, self).setData(index, value, role)
+
+    def data(self, index, role):
+        if not index.isValid() or index.internalPointer() is None:
+            return
+
+        layer = index.internalPointer()
+        if role == Qt.CheckStateRole:
+            if layer.name() in self.config.get('selectlayers', {}):
+                return Qt.Checked
+            else:
                 return Qt.Unchecked
-
-    def configchanged(self):
-        lastindex = self.index(self.rowCount(), self.rowCount())
-        self.dataChanged.emit(self.index(0,0), lastindex)
-
+        else:
+            return super(SelectLayerModel, self).data(index, role)
 
 class QgsFieldModel(QAbstractItemModel):
     FieldNameRole = Qt.UserRole + 1

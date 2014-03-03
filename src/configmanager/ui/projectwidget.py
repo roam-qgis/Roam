@@ -12,7 +12,7 @@ from qgis.core import QgsProject, QgsMapLayerRegistry, QgsPalLabeling
 from qgis.gui import QgsMapCanvas
 
 from configmanager.ui.ui_projectwidget import Ui_Form
-from configmanager.models import widgeticon, WidgetsModel, QgsLayerModel, QgsFieldModel, LayerFilter, FormModel
+from configmanager.models import widgeticon, WidgetsModel, QgsLayerModel, QgsFieldModel, LayerTypeFilter, SelectLayerFilter, SelectLayerModel
 
 from roam.featureform import FeatureForm
 
@@ -29,6 +29,8 @@ readonlyvalues = [('Never', 'never'),
                   ('When editing', 'editing'),
                   ('When inserting', 'insert')]
 
+def layer(name):
+    return QgsMapLayerRegistry.instance.mapLayersByName(name)[0]
 
 def openfolder(folder):
     subprocess.Popen('explorer "{}"'.format(folder))
@@ -56,18 +58,19 @@ class ProjectWidget(Ui_Form, QWidget):
         self.widgetmodel = WidgetsModel()
         self.possiblewidgetsmodel = QStandardItemModel()
 
-        self.layermodel = QgsLayerModel(watchregistry=False)
-        self.selectlayermodel = QgsLayerModel(watchregistry=False, checkselect=True)
-        self.selectlayermodel.layerchecked.connect(self._save_selectionlayers)
+        self.formlayersmodel = QgsLayerModel(watchregistry=False)
+        self.formlayers = SelectLayerFilter()
+        self.formlayers.setSourceModel(self.formlayersmodel)
 
-        self.layerfilter = LayerFilter()
-        self.layerfilter.setSourceModel(self.layermodel)
-
-        self.selectlayerfilter = LayerFilter()
+        self.selectlayermodel = SelectLayerModel(watchregistry=False)
+        self.selectlayerfilter = LayerTypeFilter()
         self.selectlayerfilter.setSourceModel(self.selectlayermodel)
+        self.selectlayermodel.dataChanged.connect(self.selectlayerschanged)
 
-        self.layerCombo.setModel(self.layerfilter)
+        self.layerCombo.setModel(self.formlayers)
         self.widgetCombo.setModel(self.possiblewidgetsmodel)
+        self.selectLayers.setModel(self.selectlayerfilter)
+        self.fieldList.setModel(self.fieldsmodel)
 
         self.widgetlist.setModel(self.widgetmodel)
         self.widgetlist.selectionModel().currentChanged.connect(self.updatecurrentwidget)
@@ -76,10 +79,6 @@ class ProjectWidget(Ui_Form, QWidget):
         self.widgetmodel.modelReset.connect(self.setwidgetconfigvisiable)
 
         self.titleText.textChanged.connect(self.updatetitle)
-
-        self.selectLayers.setModel(self.selectlayerfilter)
-
-        self.fieldList.setModel(self.fieldsmodel)
 
         QgsProject.instance().readProject.connect(self._readproject)
 
@@ -105,6 +104,9 @@ class ProjectWidget(Ui_Form, QWidget):
 
         self.setpage(4)
         self.form = None
+
+    def selectlayerschanged(self, *args):
+        self.formlayers.setSelectLayers(self.project.selectlayers)
 
     def formtabchanged(self, index):
         # preview
@@ -223,12 +225,6 @@ class ProjectWidget(Ui_Form, QWidget):
 
     def _save_selectionlayers(self, index, layer, value):
         config = self.project.settings
-        selectlayers = config.get('selectlayers', [])
-        layername = unicode(layer.name())
-        if value == Qt.Checked:
-            selectlayers.append(layername)
-        else:
-            selectlayers.remove(layername)
 
         self.selectlayermodel.dataChanged.emit(index, index)
 
@@ -254,7 +250,7 @@ class ProjectWidget(Ui_Form, QWidget):
         """
         Save the selected layer to the settings file.
         """
-        index = self.layerfilter.index(index, 0)
+        index = self.formlayers.index(index, 0)
         layer = index.data(Qt.UserRole)
         if not layer:
             return
@@ -277,6 +273,7 @@ class ProjectWidget(Ui_Form, QWidget):
         self.projectlabel.setText(project.name)
         self.versionText.setText(project.version)
         self.selectlayermodel.config = project.settings
+        self.formlayers.setSelectLayers(self.project.selectlayers)
         pixmap = QPixmap(project.splash)
         w = self.splashlabel.width()
         h = self.splashlabel.height()
@@ -298,7 +295,7 @@ class ProjectWidget(Ui_Form, QWidget):
             return
 
         self.canvas.freeze(True)
-        self.layermodel.removeall()
+        self.formlayersmodel.removeall()
         self.selectlayermodel.removeall()
         QgsMapLayerRegistry.instance().removeAllMapLayers()
         self.canvas.freeze(False)
@@ -313,7 +310,7 @@ class ProjectWidget(Ui_Form, QWidget):
         self.canvas.freeze(False)
         self.canvas.refresh()
         layers = QgsMapLayerRegistry.instance().mapLayers().values()
-        self.layermodel.addlayers(layers, removeall=True)
+        self.formlayersmodel.addlayers(layers, removeall=True)
         self.selectlayermodel.addlayers(layers, removeall=True)
         self._updateforproject(self.project)
 
@@ -391,9 +388,10 @@ class ProjectWidget(Ui_Form, QWidget):
         formtype = settings.get('type', 'auto')
         widgets = settings.get('widgets', [])
 
+
         self.formLabelText.setText(label)
-        index = self.layermodel.findlayer(layer)
-        index = self.layerfilter.mapFromSource(index)
+        index = self.formlayersmodel.findlayer(layer)
+        index = self.formlayers.mapFromSource(index)
         if index.isValid():
             self.layerCombo.setCurrentIndex(index.row())
             self.updatefields(index.data(Qt.UserRole))
