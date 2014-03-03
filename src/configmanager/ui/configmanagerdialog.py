@@ -4,7 +4,7 @@ import random
 
 from datetime import datetime
 
-from PyQt4.QtGui import QDialog, QFont, QColor, QIcon, QMessageBox
+from PyQt4.QtGui import QDialog, QFont, QColor, QIcon, QMessageBox, QStandardItem, QStandardItemModel
 from PyQt4.QtCore import QAbstractItemModel, QModelIndex, Qt
 
 from configmanager.ui import ui_configmanager
@@ -13,84 +13,102 @@ import roam.resources_rc
 import shutil
 import roam.project
 
-class Treenode(object):
-    ProjectNode = 0
-    FormNode = 1
-    MapNode = 2
-    TreeNode = 3
-    FormsNode = 3
-    RoamNode = 4
+templatefolder = os.path.join(os.path.dirname(__file__), "..", "templates")
+
+def newproject(projectfolder):
+    """
+    Create a new folder in the projects folder.
+    :param projectfolder: The root project folder
+    :return: The new project that was created
+    """
+    def newname():
+        return "newProject{}".format(datetime.today().strftime('%d%m%y%f'))
+
+    templateproject = os.path.join(templatefolder, "templateProject")
+    newfolder = os.path.join(projectfolder, newname())
+    shutil.copytree(templateproject, newfolder)
+    project = roam.project.Project.from_folder(newfolder)
+    project.settings['forms'] = {}
+    return project
+
+def newform(project):
+    def newformname():
+        return "form_{}".format(datetime.today().strftime('%d%m%y%f'))
+
+    folder = project.folder
+    foldername = newformname()
+
+    formfolder = os.path.join(folder, foldername)
+    templateform = os.path.join(templatefolder, "templateform")
+    shutil.copytree(templateform, formfolder)
+
+    config = dict(label='New Form', layer='', type='auto', widgets=[])
+    form = project.addformconfig(foldername, config)
+    return form
+
+
+ProjectRole = Qt.UserRole + 20
+
+class Treenode(QStandardItem):
+    ProjectNode = QStandardItem.UserType + 0
+    FormNode = QStandardItem.UserType + 1
+    MapNode = QStandardItem.UserType + 2
+    TreeNode = QStandardItem.UserType + 3
+    FormsNode = QStandardItem.UserType + 3
+    RoamNode = QStandardItem.UserType + 4
 
     nodetype = TreeNode
-
-    def __init__(self, text, icon=None, project=None, parent=None):
-        self._text = text
-        self.parent = parent
-        self.children = []
-        self.icon = None
+    def __init__(self, text, icon, project=None):
+        super(Treenode, self).__init__(QIcon(icon), text)
         self.project = project
-        self.removemessage = (None, None)
-        self.canremove = False
         self.canadd = False
+        self.canremove = False
+        self.addtext = ''
+        self.removetext = ''
 
-    def appendchild(self, child):
-        child.parent = self
-        self.children.append(child)
+    def data(self, role=None):
+        if role == Qt.UserRole:
+            return self
+        if role == ProjectRole:
+            return self.project
+
+        return super(Treenode, self).data(role)
+
+    def type(self):
+        return self.nodetype
 
     @property
-    def text(self):
-        return self._text
+    def page(self):
+        return self.type() - QStandardItem.UserType
 
-    def __getitem__(self, item):
-        return self.children[item]
+    def additem(self):
+        pass
 
-    def __delitem__(self, key):
-        passed = self.removerow(key)
-        if passed:
-            del self.children[key]
-
-    def __len__(self):
-        return len(self.children)
-
-    def row(self):
-        if self.parent:
-            return self.parent.children.index(self)
-
-        return 0
-
-    def removerow(self, index):
-        return False
-
-    def insertrow(self, index):
-        if self.parent:
-            return self.parent.insertrow(index)
-
-        return self.row()
 
 class RoamNode(Treenode):
     nodetype = Treenode.RoamNode
 
-    def __init__(self, text, parent, project=None):
-        super(RoamNode, self).__init__(text, parent=parent, project=project)
-        self.icon = QIcon(":/icons/open")
+    def __init__(self, text="Roam", project=None):
+        super(RoamNode, self).__init__(text ,QIcon(":/icons/open"))
 
 
 class MapNode(Treenode):
     nodetype = Treenode.MapNode
 
-    def __init__(self, text, parent, project):
-        super(MapNode, self).__init__(text, parent=parent, project=project)
-        self.icon = QIcon(":/icons/map")
+    def __init__(self, text, project):
+        super(MapNode, self).__init__(text,QIcon(":/icons/map"), project=project)
 
 
 class FormNode(Treenode):
     nodetype = Treenode.FormNode
 
-    def __init__(self, form, parent, project):
-        super(FormNode, self).__init__(form.label, parent=parent, project=project)
-        self.icon = QIcon(form.icon)
+    def __init__(self, form, project):
+        super(FormNode, self).__init__(form.label, QIcon(form.icon), project=project)
         self.form = form
         self.canremove = True
+        self.canadd = True
+        self.addtext = 'Add new form'
+        self.removetext = 'Remove selected form'
 
         configname = "{}.config".format(form.name)
         self.removemessage = ("Remove form?", ("<b>Do you want to delete this form from the project?</b> <br><br> "
@@ -98,35 +116,43 @@ class FormNode(Treenode):
                                                "<i>Forms can be restored by moving the folder back to the project folder"
                                                " and restoring the content in {} to the settings.config</i>".format(self.project.folder, configname)))
 
-    @property
-    def text(self):
-        return self.form.label
+    def data(self, role):
+        if role == Qt.DisplayRole:
+            return self.form.label
 
+        return super(FormNode, self).data(role)
+
+    def additem(self):
+        return self.parent().additem()
 
 class FormsNode(Treenode):
     nodetype = Treenode.FormsNode
 
-    def __init__(self, text, parent, project):
-        super(FormsNode, self).__init__(text, parent=parent, project=project)
+    def __init__(self, text, project):
+        super(FormsNode, self).__init__(text, QIcon(":/icons/dataentry"), project)
         self.forms = []
-        self.icon = QIcon(":/icons/dataentry")
         self.canadd = True
+        self._text = text
+        self.addtext = 'Add new form'
+        self.loadforms()
 
-    def addforms(self, forms):
-        forms = list(forms)
+    def loadforms(self):
+        forms = self.project.forms
         for form in forms:
-            formnode = FormNode(form, parent=self, project=self.project)
-            self.appendchild(formnode)
+            item = FormNode(form, self.project)
+            self.appendRow(item)
 
-    @property
-    def text(self):
-        return "{} ({})".format(self._text, len(self))
+    def data(self, role):
+        if role == Qt.DisplayRole:
+            return "{} ({})".format(self._text, self.rowCount())
 
-    def removerow(self, index):
+        return super(FormsNode, self).data(role)
+
+    def removeRow(self, index):
         """
         Removes the given form at the index from the project.
         """
-        formnode = self.children[index]
+        formnode = self.takeRow(index)[0]
         form = formnode.form
 
         archivefolder = os.path.join(self.project.folder, "_archive")
@@ -147,62 +173,53 @@ class FormsNode(Treenode):
 
         return True
 
-    def insertrow(self, index):
-        def newformname():
-            from datetime import datetime
-            return "form_{}".format(datetime.today().strftime('%d%m%y%f'))
-
-        folder = self.project.folder
-        foldername = newformname()
-
-        formfolder = os.path.join(folder, foldername)
-        templateform = os.path.join(os.path.dirname(__file__), "..", "templates", "templateform")
-        shutil.copytree(templateform, formfolder)
-
-        config = dict(label='New Form', layer='', type='auto', widgets=[])
-        form = self.project.addformconfig(foldername, config)
-        node = FormNode(form, self, self.project)
-        self.appendchild(node)
+    def additem(self):
+        form = newform(self.project)
         self.project.save()
-        return node.row()
+        item = FormNode(form, self.project)
+        self.appendRow(item)
+        return item
+
 
 class ProjectNode(Treenode):
     nodetype = Treenode.ProjectNode
 
-    def __init__(self, project, parent=None):
-        super(ProjectNode, self).__init__(project.name, parent)
-        self.icon = QIcon(":/icons/project")
+    def __init__(self, project):
+        super(ProjectNode, self).__init__(project.name,QIcon(":/icons/project"))
         self.project = project
-        self.formsnode = self.createnode(FormsNode, "Forms")
-        self.formsnode.addforms(project.forms)
-        self.mapnode = self.createnode(MapNode, "Map")
-        self.appendchild(self.formsnode)
-        self.appendchild(self.mapnode)
+        self.formsnode = FormsNode("Forms", project=project)
+        self.mapnode = MapNode("Map", project=project)
+        self.appendRows([self.mapnode, self.formsnode])
         self.removemessage = ("Delete Project?", ("Do you want to delete this project? <br><br> "
                                "Deleted projects will be moved to the _archive folder in projects folder<br><br>"
                                "<i>Projects can be recovered by moving the folder back to the projects folder</i>"))
         self.canremove = True
         self.canadd = True
+        self.removetext = 'Remove selected project'
+        self.addtext = 'Add new project'
 
-    def createnode(self, nodeclass, text):
-        node = nodeclass(text, parent=self, project=self.project)
-        return node
+    def additem(self):
+        return self.parent().additem()
 
-    def insertrow(self, index):
-        self.parent.insertrow(index)
-
-    @property
-    def text(self):
-        return self.project.name
+    def data(self, role=None):
+        if role == Qt.DisplayRole:
+            return self.project.name
+        return super(ProjectNode, self).data(role)
 
 
 class ProjectsNode(Treenode):
-    def __init__(self, text, parent=None, folder=None):
-        super(ProjectsNode, self).__init__(text, parent)
+    def __init__(self, text="Projects", folder=None):
+        super(ProjectsNode, self).__init__(text, None)
         self.projectfolder = folder
+        self.canadd = True
+        self.addtext = 'Add new project'
+        self._text = text
 
-    def removerow(self, index):
-        projectnode = self[index]
+    def removeRow(self, index):
+        nodes = self.takeRow(index)
+        if not nodes:
+            return
+        projectnode = nodes[0]
         project = projectnode.project
         try:
             archivefolder = os.path.join(project.basepath, "_archive")
@@ -213,133 +230,25 @@ class ProjectsNode(Treenode):
 
         return True
 
-    def insertrow(self, index):
-        templateProject = os.path.join(os.path.dirname(__file__), "..", "templates/templateProject")
-        newfolder = os.path.join(self.projectfolder, "newProject{}".format(datetime.today().strftime('%d%m%y%f')))
-        shutil.copytree(templateProject, newfolder)
-        project = roam.project.Project.from_folder(newfolder)
-        project.settings['forms'] = {}
-        node = ProjectNode(project, self)
-        self.appendchild(node)
-        return node.row()
+    def additem(self):
+        project = newproject(self.projectfolder)
+        item = ProjectNode(project)
+        self.appendRow(item)
+        return item
 
-
-class ConfigTreeModel(QAbstractItemModel):
-    def __init__(self, projectsfolder, parent=None):
-        super(ConfigTreeModel, self).__init__(parent)
-        self.rootitem = ProjectsNode("Projects", folder=projectsfolder)
-        self.roamnode = RoamNode("Roam", parent=self.rootitem)
-        self.rootitem.appendchild(self.roamnode)
-
-    def columnCount(self, QModelIndex_parent=None, *args, **kwargs):
-        return 1
-
-    def headerData(self, p_int, Qt_Orientation, int_role=None):
-        return "Projects"
-
-    def index(self, row, column, parent=QModelIndex()):
-        if not parent.isValid():
-            node = self.rootitem
-        else:
-            node = parent.internalPointer()
-
-        try:
-            childitem = node[row]
-        except IndexError:
-            return QModelIndex()
-
-        if childitem is None:
-            return QModelIndex()
-        else:
-            return self.createIndex(row, column, childitem)
-
-    def data(self, index, role):
-        if not index.isValid():
-            return None
-
-        item = index.internalPointer()
+    def data(self, role):
         if role == Qt.DisplayRole:
-            return item.text
-        elif role == Qt.DecorationRole:
-            return item.icon
-        elif role == Qt.UserRole:
-            return item
-        else:
-            return None
-
-    def parent(self, index=None):
-        if not index.isValid():
-            return QModelIndex()
-
-        childitem = index.internalPointer()
-        parent = childitem.parent
-
-        if parent == self.rootitem:
-            return QModelIndex()
-
-        return self.createIndex(parent.row(), 0, parent)
-
-    def rowCount(self, parent=None, *args, **kwargs):
-        if parent.column() > 0:
-            return 0
-
-        if not parent.isValid():
-            node = self.rootitem
-        else:
-            node = parent.internalPointer()
-
-        return len(node)
-
-    def loadprojects(self, projects):
-        """
-        Bulk load a list of project into the widget.
-        :param projects: list of projects to be loaded.
-        """
-        self.beginInsertRows(QModelIndex(), self.roamnode.row(), len(projects))
-        for project in projects:
-            node = ProjectNode(project, self.rootitem)
-            self.rootitem.appendchild(node)
-        self.endInsertRows()
-
-    def getnode(self, index):
-        if not index.isValid():
-            return self.rootitem
-
-        item = index.internalPointer()
-        if not item is None:
-            return item
-
-    def removeRow(self, row, parent=None):
-        node = self.getnode(parent)
-        self.beginRemoveRows(parent, row, row)
-        del node[row]
-        self.endRemoveRows()
-
-    def insertRow(self, row, parent=None):
-        node = self.getnode(parent)
-        self.beginInsertRows(parent, row, row)
-        newrow = node.insertrow(row)
-        self.endInsertRows()
-        return self.index(newrow, 0, parent)
-
-    def nextindex(self, index):
-        """
-        Return the next index under the given one, or wrap to the top.
-        :param index:
-        :return:
-        """
-        newindex = self.index(index.row(), 0, index.parent())
-        if not newindex.isValid():
-            newindex = self.index(index.row() - 1, 0, index.parent())
-        return newindex
+            return "{} ({})".format(self._text, self.rowCount())
+        return super(ProjectsNode, self).data(role)
 
 
 class ConfigManagerDialog(ui_configmanager.Ui_ProjectInstallerDialog, QDialog):
     def __init__(self, projectfolder, parent=None):
         super(ConfigManagerDialog, self).__init__(parent)
         self.setupUi(self)
-        self.treemodel = ConfigTreeModel(projectfolder)
+        self.treemodel = QStandardItemModel()
         self.projectList.setModel(self.treemodel)
+        self.projectList.setHeaderHidden(True)
 
         self.projectList.selectionModel().currentChanged.connect(self.nodeselected)
 
@@ -350,19 +259,26 @@ class ConfigManagerDialog(ui_configmanager.Ui_ProjectInstallerDialog, QDialog):
         self.newProjectButton.pressed.connect(self.addbuttonpressed)
         self.removeProjectButton.pressed.connect(self.deletebuttonpressed)
         self.projectwidget.projectupdated.connect(self.projectupdated)
+        self.projectwidget.projectsaved.connect(self.projectupdated)
+
+        self.setuprootitems()
+
+    def setuprootitems(self):
+        self.roamnode = RoamNode()
+        self.treemodel.invisibleRootItem().appendRow(self.roamnode)
 
     def addbuttonpressed(self):
         index = self.projectList.currentIndex()
         node = index.data(Qt.UserRole)
-        if node.canadd:
-            row = index.row() + 1
-            newindex = self.treemodel.insertRow(row, index)
+        if node and node.canadd:
+            item = node.additem()
+            newindex = self.treemodel.indexFromItem(item)
             self.projectList.setCurrentIndex(newindex)
 
     def deletebuttonpressed(self):
         index = self.projectList.currentIndex()
         node = index.data(Qt.UserRole)
-        if node.nodetype == Treenode.ProjectNode:
+        if node.type() == Treenode.ProjectNode:
             self.projectwidget._closeqgisproject()
 
         title, removemessage = node.removemessage
@@ -372,24 +288,38 @@ class ConfigManagerDialog(ui_configmanager.Ui_ProjectInstallerDialog, QDialog):
             delete = button == QMessageBox.Yes
 
         if delete:
-            self.treemodel.removeRow(index.row(), index.parent())
-            newindex = self.treemodel.nextindex(index)
+            parentindex = index.parent()
+            newindex = self.treemodel.index(index.row(), 0, parentindex)
+            if parentindex.isValid():
+                parent = parentindex.data(Qt.UserRole)
+                parent.removeRow(index.row())
+
             self.projectList.setCurrentIndex(newindex)
 
     def loadprojects(self, projects):
-        self.treemodel.loadprojects(projects)
+        rootitem = self.treemodel.invisibleRootItem()
+        projectsnode = ProjectsNode(folder=self.projectfolder)
+        rootitem.appendRow(projectsnode)
+        for project in projects:
+            node = ProjectNode(project)
+            projectsnode.appendRow(node)
+
         index = self.treemodel.index(0, 0, QModelIndex())
         self.projectList.setCurrentIndex(index)
         self.projectwidget.setprojectsfolder(self.projectfolder)
+        index = self.treemodel.indexFromItem(projectsnode)
+        self.projectList.expand(index)
 
     def nodeselected(self, index, _):
         node = index.data(Qt.UserRole)
         if node is None:
             return
 
-        self.projectwidget.setpage(node.nodetype)
+        self.projectwidget.setpage(node.page)
         self.removeProjectButton.setEnabled(node.canremove)
         self.newProjectButton.setEnabled(node.canadd)
+        #self.newProjectButton.setText(node.addtext)
+        #self.removeProjectButton.setText(node.removetext)
 
         project = node.project
         if project and not self.projectwidget.project == project:

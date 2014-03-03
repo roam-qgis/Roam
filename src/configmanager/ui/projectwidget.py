@@ -39,7 +39,7 @@ def openqgis(project):
 
 class ProjectWidget(Ui_Form, QWidget):
     SampleWidgetRole = Qt.UserRole + 1
-    projectsaved = pyqtSignal(object, object)
+    projectsaved = pyqtSignal()
     projectupdated = pyqtSignal()
 
     def __init__(self, parent=None):
@@ -270,22 +270,6 @@ class ProjectWidget(Ui_Form, QWidget):
         """
         Set the widgets active project.
         """
-        def connectsignals():
-            # Form settings
-            self.formLabelText.textChanged.connect(self._save_formname)
-            self.layerCombo.currentIndexChanged.connect(self._save_layer)
-            self.formtypeCombo.currentIndexChanged.connect(self._save_formtype)
-
-        def disconnectsignals():
-            try:
-                 # Form settings
-                self.formLabelText.textChanged.disconnect(self._save_formname)
-                self.layerCombo.currentIndexChanged.disconnect(self._save_layer)
-                self.formtypeCombo.currentIndexChanged.disconnect(self._save_formtype)
-            except TypeError:
-                pass
-
-        disconnectsignals()
         self.filewatcher.removePaths(self.filewatcher.files())
         self.projectupdatedlabel.hide()
         self.startsettings = copy.deepcopy(project.settings)
@@ -302,7 +286,6 @@ class ProjectWidget(Ui_Form, QWidget):
         else:
             self._updateforproject(self.project)
         self.filewatcher.addPath(self.project.projectfile)
-        connectsignals()
 
     def loadqgisproject(self, project, projectfile):
         self._closeqgisproject()
@@ -366,6 +349,10 @@ class ProjectWidget(Ui_Form, QWidget):
         Update the UI with the currently selected form.
         """
         def connectsignals():
+            self.formLabelText.textChanged.connect(self._save_formname)
+            self.layerCombo.currentIndexChanged.connect(self._save_layer)
+            self.formtypeCombo.currentIndexChanged.connect(self._save_formtype)
+
             #widget settings
             self.fieldList.currentIndexChanged.connect(self._save_selectedwidget)
             self.fieldList.editTextChanged.connect(self._save_selectedwidget)
@@ -379,6 +366,10 @@ class ProjectWidget(Ui_Form, QWidget):
 
         def disconnectsignals():
             try:
+                self.formLabelText.textChanged.disconnect(self._save_formname)
+                self.layerCombo.currentIndexChanged.disconnect(self._save_layer)
+                self.formtypeCombo.currentIndexChanged.disconnect(self._save_formtype)
+
                 #widget settings
                 self.fieldList.currentIndexChanged.disconnect(self._save_selectedwidget)
                 self.fieldList.editTextChanged.disconnect(self._save_selectedwidget)
@@ -524,6 +515,7 @@ class ProjectWidget(Ui_Form, QWidget):
         settings['version'] = version
 
         self.project.save()
+        self.projectsaved.emit()
 
 
 
