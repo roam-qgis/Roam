@@ -323,6 +323,7 @@ class ProjectWidget(Ui_Form, QWidget):
 
     def updatetitle(self, text):
         self.project.settings['title'] = text
+        self.projectlabel.setText(text)
         self.projectupdated.emit()
 
     def updatewidgetconfig(self, config):
@@ -388,13 +389,18 @@ class ProjectWidget(Ui_Form, QWidget):
         formtype = settings.get('type', 'auto')
         widgets = settings.get('widgets', [])
 
+        if not layer:
+            print "No layer current set, setting the first one."
+            index = self.formlayers.index(0,0)
+            layer = index.data(Qt.UserRole)
+            layername = layer.name()
+            settings['layer'] = layername
 
         self.formLabelText.setText(label)
         index = self.formlayersmodel.findlayer(layer)
         index = self.formlayers.mapFromSource(index)
-        if index.isValid():
-            self.layerCombo.setCurrentIndex(index.row())
-            self.updatefields(index.data(Qt.UserRole))
+        self.layerCombo.setCurrentIndex(index.row())
+        self.updatefields(index.data(Qt.UserRole))
 
         index = self.formtypeCombo.findText(formtype)
         if index == -1:
