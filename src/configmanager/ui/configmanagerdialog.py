@@ -1,17 +1,21 @@
 import os
 import shutil
 import random
+import traceback
 
 from datetime import datetime
 
 from PyQt4.QtGui import QDialog, QFont, QColor, QIcon, QMessageBox, QStandardItem, QStandardItemModel
 from PyQt4.QtCore import QAbstractItemModel, QModelIndex, Qt
 
+
 from configmanager.ui import ui_configmanager
-import roam.resources_rc
+from roam import resources_rc
 
 import shutil
 import roam.project
+import roam.messagebaritems
+
 
 templatefolder = os.path.join(os.path.dirname(__file__), "..", "templates")
 
@@ -246,6 +250,8 @@ class ConfigManagerDialog(ui_configmanager.Ui_ProjectInstallerDialog, QDialog):
     def __init__(self, projectfolder, parent=None):
         super(ConfigManagerDialog, self).__init__(parent)
         self.setupUi(self)
+        self.bar = roam.messagebaritems.MessageBar(self)
+
         self.treemodel = QStandardItemModel()
         self.projectList.setModel(self.treemodel)
         self.projectList.setHeaderHidden(True)
@@ -262,6 +268,11 @@ class ConfigManagerDialog(ui_configmanager.Ui_ProjectInstallerDialog, QDialog):
         self.projectwidget.projectsaved.connect(self.projectupdated)
 
         self.setuprootitems()
+
+    def raiseerror(self, *exinfo):
+        info = traceback.format_exception(*exinfo)
+        self.bar.pushError('Seems something has gone wrong. Press for more details',
+                                  info)
 
     def setuprootitems(self):
         self.roamnode = RoamNode()

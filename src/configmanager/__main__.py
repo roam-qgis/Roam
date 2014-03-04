@@ -1,7 +1,7 @@
 import os
 import sys
 
-print sys.path
+from functools import partial
 
 from qgis.core import QgsApplication
 
@@ -27,7 +27,11 @@ QApplication.setApplicationName("IntraMaps Roam Config Manager")
 projectpath = roam.environ.projectpath(sys.argv)
 projects = list(roam.project.getProjects(projectpath))
 
+def excepthook(errorhandler, exctype, value, traceback):
+    errorhandler(exctype, value, traceback)
+
 dialog = ConfigManagerDialog(projectpath)
+sys.excepthook = partial(excepthook, dialog.raiseerror)
 dialog.loadprojects(projects)
 dialog.showMaximized()
 

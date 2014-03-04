@@ -12,8 +12,7 @@ from roam import utils
 import templates
 
 images = {}
-formats = [f.data() for f in QImageReader.supportedImageFormats()]
-
+supportedformats = []
 
 def image_handler(key, value, **kwargs):
     imageblock = '''
@@ -35,13 +34,17 @@ def default_handler(key, value):
 
 
 def string_handler(key, value):
+    if not supportedformats:
+        global supportedformats
+        supportedformats = [f.data() for f in QImageReader.supportedImageFormats()]
+
     base64 = QByteArray.fromBase64(value)
     image = QPixmap()
     loaded = image.loadFromData(base64)
     if loaded:
         return image_handler(key, base64, imagetype='base64')
     _, extension = os.path.splitext(value)
-    if extension[1:] in formats:
+    if extension[1:] in supportedformats:
         return image_handler(key, value, imagetype='file')
 
     return value
@@ -87,7 +90,7 @@ class HtmlViewerDialog(QDialog):
         self.layout().setContentsMargins(0,0,0,0)
         self.htmlviewer = HtmlViewerWidget(self)
         self.layout().addWidget(self.htmlviewer)
-        
+
     def showHTML(self, html, data):
         self.htmlviewer.showHTML(html, data)
 
@@ -100,7 +103,7 @@ class HtmlViewerWidget(QWidget):
         self.view = QWebView()
         self.view.page().setLinkDelegationPolicy(QWebPage.DelegateAllLinks)
         self.layout().addWidget(self.view)
-        
+
     def showHTML(self, html, data):
         if os.path.isfile(html):
             html = open(html).read()
