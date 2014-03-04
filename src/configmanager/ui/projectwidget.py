@@ -9,7 +9,7 @@ from PyQt4.QtCore import Qt, QDir, QFileInfo, pyqtSignal, QModelIndex, QFileSyst
 from PyQt4.QtGui import QWidget, QStandardItemModel, QStandardItem, QIcon, QMessageBox, QPixmap
 
 from qgis.core import QgsProject, QgsMapLayerRegistry, QgsPalLabeling
-from qgis.gui import QgsMapCanvas
+from qgis.gui import QgsMapCanvas, QgsExpressionBuilderDialog
 
 from configmanager.ui.ui_projectwidget import Ui_Form
 from configmanager.models import widgeticon, WidgetsModel, QgsLayerModel, QgsFieldModel, LayerTypeFilter, CaptureLayerFilter, CaptureLayersModel
@@ -100,6 +100,8 @@ class ProjectWidget(Ui_Form, QWidget):
         self.projectupdatedlabel.hide()
         self.formtab.currentChanged.connect(self.formtabchanged)
 
+        self.expressionButton.clicked.connect(self.opendefaultexpression)
+
         self.fieldList.currentIndexChanged.connect(self.updatewidgetname)
 
         for item, data in readonlyvalues:
@@ -108,6 +110,13 @@ class ProjectWidget(Ui_Form, QWidget):
         self.setpage(4)
         self.form = None
 
+    def opendefaultexpression(self):
+        layer = self.currentform.QGISLayer
+        dlg = QgsExpressionBuilderDialog(layer, "Create default value expression", self)
+        text = self.defaultvalueText.text().strip('[%').strip('%]').strip()
+        dlg.setExpressionText(text)
+        if dlg.exec_():
+            self.defaultvalueText.setText('[% {} %]'.format(dlg.expressionText()))
 
     def openformfolder(self, url):
         openfolder(url)

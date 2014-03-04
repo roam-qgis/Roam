@@ -10,5 +10,6 @@
       <file alias="PointLayer">mIconPointLayer.svg</file>
       <file alias="PolygonLayer">mIconPolygonLayer.svg</file>
       <file alias="TableLayer">mIconTableLayer.svg</file>
+      <file alias="Expression">expression.svg</file>
   </qresource>
 </RCC>
