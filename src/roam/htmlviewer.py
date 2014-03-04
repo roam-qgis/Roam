@@ -34,8 +34,8 @@ def default_handler(key, value):
 
 
 def string_handler(key, value):
+    global supportedformats
     if not supportedformats:
-        global supportedformats
         supportedformats = [f.data() for f in QImageReader.supportedImageFormats()]
 
     base64 = QByteArray.fromBase64(value)
