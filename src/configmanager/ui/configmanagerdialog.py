@@ -307,8 +307,7 @@ class ConfigManagerDialog(ui_configmanager.Ui_ProjectInstallerDialog, QDialog):
         index = self.treemodel.index(0, 0, QModelIndex())
         self.projectList.setCurrentIndex(index)
         self.projectwidget.setprojectsfolder(self.projectfolder)
-        index = self.treemodel.indexFromItem(projectsnode)
-        self.projectList.expand(index)
+        self.projectList.expandAll()
 
     def nodeselected(self, index, _):
         node = index.data(Qt.UserRole)
