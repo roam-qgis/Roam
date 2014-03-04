@@ -241,7 +241,7 @@ class FeatureFormBase(QWidget):
                                                               label=label,
                                                               config=widgetconfig)
             except EditorWidgetException as ex:
-                utils.warning(ex.msg)
+                utils.warning(ex.message)
                 continue
 
             # Connect the
