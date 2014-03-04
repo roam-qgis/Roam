@@ -185,7 +185,7 @@ class ProjectNode(Treenode):
     nodetype = Treenode.ProjectNode
 
     def __init__(self, project):
-        super(ProjectNode, self).__init__(project.name,QIcon(":/icons/project"))
+        super(ProjectNode, self).__init__(project.name,QIcon(":/icons/folder"))
         self.project = project
         self.formsnode = FormsNode("Forms", project=project)
         self.mapnode = MapNode("Map", project=project)
