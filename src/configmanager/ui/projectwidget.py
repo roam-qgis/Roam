@@ -100,11 +100,14 @@ class ProjectWidget(Ui_Form, QWidget):
         self.projectupdatedlabel.hide()
         self.formtab.currentChanged.connect(self.formtabchanged)
 
+        self.fieldList.currentIndexChanged.connect(self.updatewidgetname)
+
         for item, data in readonlyvalues:
             self.readonlyCombo.addItem(item, data)
 
         self.setpage(4)
         self.form = None
+
 
     def openformfolder(self, url):
         openfolder(url)
@@ -202,6 +205,15 @@ class ProjectWidget(Ui_Form, QWidget):
         index = self.widgetCombo.currentIndex()
         index = self.possiblewidgetsmodel.index(index, 0)
         return index.data(Qt.UserRole), index, index.data(Qt.UserRole + 1)
+
+    def updatewidgetname(self, index):
+        # Only change the edit text on name field if it's not already set to something other then the
+        # field name.
+        field = self.fieldsmodel.index(index, 0).data(QgsFieldModel.FieldNameRole)
+        currenttext = self.nameText.text()
+        foundfield = self.fieldsmodel.findfield(currenttext)
+        if foundfield:
+            self.nameText.setText(field)
 
     def _save_selectedwidget(self, index):
         configwidget, index, widgettype = self.currentwidgetconfig
