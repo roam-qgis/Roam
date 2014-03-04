@@ -18,14 +18,19 @@ import roam
 try:
     osgeopath = os.environ['OSGEO4W_ROOT']
 except KeyError:
-    print "Key Error"
     osgeopath = r'C:\OSGeo4W'
+
+try:
+    qgisname = os.environ['QGISNAME']
+except KeyError:
+    qgisname = 'qgis'
+
 
 osgeobin = os.path.join(osgeopath, 'bin')
 qtimageforms = os.path.join(osgeopath,r'apps\qt4\plugins\imageformats\*')
-qgisresources = os.path.join(osgeopath, "apps", "qgis", "resources")
-svgs = os.path.join(osgeopath, "apps", "qgis", "svg")
-qgispluginpath = os.path.join(osgeopath, r'apps\qgis\plugins\*provider.dll' )
+qgisresources = os.path.join(osgeopath, "apps", qgisname, "resources")
+svgs = os.path.join(osgeopath, "apps", qgisname, "svg")
+qgispluginpath = os.path.join(osgeopath, "apps", qgisname, "plugins", "*provider.dll")
 gdalsharepath = os.path.join(osgeopath, 'share', 'gdal')
 
 curpath = os.path.dirname(os.path.realpath(__file__))

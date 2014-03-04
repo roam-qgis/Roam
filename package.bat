@@ -10,9 +10,14 @@ REM ----------------------------------------------------------------------------
 
 pushd %~dp0
 
+call setenv.bat
+
 ECHO Building Roam package
 
-call setenv.bat
+ECHO OSGeo path is: %OSGEO4W_ROOT%
+ECHO Getting QGIS libs from: %QGIS%
+ECHO Python loaded from: %PYTHONHOME%
+
 >package.log (
 	python setup.py clean && python setup.py py2exe
 )
