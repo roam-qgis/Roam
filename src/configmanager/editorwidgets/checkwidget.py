@@ -9,7 +9,7 @@ from roam.editorwidgets.checkboxwidget import CheckboxWidget
 
 
 class CheckboxWidgetConfig(Ui_Form, ConfigWidget):
-    description = "Checkbox with changeable true false values"
+    description = 'Checkbox with changeable true false values'
 
     def __init__(self, parent=None):
         super(CheckboxWidgetConfig, self).__init__(parent)

@@ -14,7 +14,7 @@ from configmanager.editorwidgets.uifiles.listwidget_config import Ui_Form
 
 
 class ListWidgetConfig(Ui_Form, ConfigWidget):
-    description = "Select an item from a predefined list"
+    description = 'Select an item from a predefined list'
 
     def __init__(self, parent=None):
         super(ListWidgetConfig, self).__init__(parent)
