@@ -22,6 +22,7 @@ QgsApplication.initQgis()
 QApplication.setStyle("Plastique")
 QApplication.setFont(QFont('Segoe UI'))
 QApplication.setWindowIcon(QIcon(':/branding/logo'))
+QApplication.setApplicationName("IntraMaps Roam Config Manager")
 
 projectpath = roam.environ.projectpath(sys.argv)
 projects = list(roam.project.getProjects(projectpath))
