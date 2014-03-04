@@ -221,6 +221,9 @@ class MainWindow(mainwindow_widget, mainwindow_base):
         self.canvas.extentsChanged.connect(self.updatestatuslabel)
         self.projecttoolbar.toolButtonStyleChanged.connect(self.updatecombo)
 
+        self.canvas.refresh()
+        self.canvas.repaint()
+
     def selectdataentry(self, ):
         if self.dataentrycombo.count() == 0:
             return
@@ -452,7 +455,7 @@ class MainWindow(mainwindow_widget, mainwindow_base):
 
         visible = self.dataentrymodel.rowCount() > 0
         self.dataentrycomboaction.setVisible(visible)
-        #self.dataentrycombo.setMinimumHeight(self.projecttoolbar.height())
+        self.dataentrycombo.setMinimumHeight(self.projecttoolbar.height())
 
         index = self.dataentrymodel.index(0, 0)
         self.dataentrychanged(index)
