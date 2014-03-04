@@ -1,12 +1,13 @@
-from PyQt4.QtCore import QAbstractItemModel, QModelIndex, Qt, pyqtSignal
+from PyQt4.QtCore import QAbstractItemModel, QModelIndex, Qt, pyqtSignal, QMimeData, QByteArray
 from PyQt4.QtGui import (QComboBox, QListView, QDialog, QGridLayout, QIcon, QFont, QTextBlockUserData,
-                         QItemDelegate, QSortFilterProxyModel)
+                         QItemDelegate, QSortFilterProxyModel, QStandardItem, QStandardItemModel)
 
 from qgis.core import QGis, QgsMapLayerRegistry, QgsMessageLog, QgsMapLayer
 
 import os
 
 import roam.editorwidgets
+import roam.yaml
 
 import configmanager.ui.resources_rc
 
@@ -278,75 +279,72 @@ class QgsFieldModel(QAbstractItemModel):
         self.dataChanged.emit(self.index(0,0), lastindex)
 
 
-class WidgetsModel(QAbstractItemModel):
+class WidgetItem(QStandardItem):
+    def __init__(self, widget):
+        super(WidgetItem, self).__init__()
+        self.widget = widget
+        self.setDropEnabled(False)
+
+    def data(self, role):
+        if role == Qt.DisplayRole:
+            name = self.widget.get('name', None)
+            field = (self.widget.get('field', '')  or '').lower()
+            text = name or field
+            return "{} ({})".format(text, self.widget['widget'])
+        elif role == Qt.UserRole:
+            return self.widget
+        elif role == Qt.DecorationRole:
+            return widgeticon(self.widget['widget'])
+
+    def iscontainor(self):
+        return self.widget.get('config', {}).get('container')
+
+
+class WidgetsModel(QStandardItemModel):
     def __init__(self, parent=None):
         super(WidgetsModel, self).__init__(parent)
-        self.widgets = []
 
-    def addwidget(self, widget):
-        count = self.rowCount()
-        self.beginInsertRows(QModelIndex(), count, count + 1)
-        self.widgets.append(widget)
-        self.endInsertRows()
-        return self.index(self.rowCount() - 1, 0)
-
-    def loadwidgets(self, widgets):
-        self.beginResetModel()
-        self.widgets = widgets
-        self.endResetModel()
-
-    def index(self, row, column, parent=QModelIndex()):
-        widget = self.getWidget(row)
-        if not widget:
-            return QModelIndex()
-        return self.createIndex(row, column, widget)
-
-    def parent(self, index):
-        return QModelIndex()
-
-    def rowCount(self, parent=QModelIndex()):
-        return len(self.widgets)
-
-    def columnCount(self, parent=QModelIndex()):
-        return 1
-
-    def getWidget(self, index):
-        try:
-            return self.widgets[index]
-        except IndexError:
-            return None
-
-    def removeRow(self, row, parent=None):
-        self.beginRemoveRows(QModelIndex(), row, row)
-        del self.widgets[row]
-        self.endRemoveRows()
-        return True
-
-    def setData(self, index, value, role=None):
-        if role == Qt.UserRole and index.isValid():
-            widget = self.data(index, Qt.UserRole)
-            widget.update(value)
-            self.dataChanged.emit(index, index)
-            return True
-
-        return False
-
-    def data(self, index, role):
+    def flags(self, index):
         if not index.isValid():
-            return None
-        if not index.internalPointer():
-            return None
+            return Qt.ItemIsDropEnabled
 
-        widget = index.internalPointer()
-        if role == Qt.DisplayRole:
-            name = widget.get('name', None)
-            field = (widget.get('field', '')  or '').lower()
-            text = name or field
-            return "{} ({})".format(text, widget['widget'])
-        elif role == Qt.UserRole:
-            return widget
-        elif role == Qt.DecorationRole:
-            return widgeticon(widget['widget'])
+        flags = Qt.ItemIsEnabled | Qt.ItemIsSelectable | Qt.ItemIsDragEnabled | Qt.ItemIsDropEnabled
+        return flags
+
+    def supportedDropActions(self):
+        return Qt.MoveAction
+
+    def mimeTypes(self):
+        return ["application/x-roamwidget"]
+
+    def mimeData(self, indexes):
+        data = QMimeData()
+        widgets = []
+        for index in indexes:
+            widget = index.data(Qt.UserRole)
+            widgets.append(widget)
+
+        widgettext = roam.yaml.dump(widgets)
+        bytes = QByteArray(widgettext)
+        data.setData(self.mimeTypes()[0], bytes)
+        return data
+
+    def dropMimeData(self, mimedata, action, row, column, parent):
+        data = mimedata.data(self.mimeTypes()[0]).data()
+        widgets = roam.yaml.load(data)
+
+        droptarget = self.itemFromIndex(parent)
+        if not droptarget:
+            droptarget = self.invisibleRootItem()
+
+        for widget in widgets:
+            item = WidgetItem(widget)
+            if not parent.isValid():
+                droptarget.insertRow(row, item)
+            else:
+                droptarget.appendRow(item)
+
+        return True
 
 
 def widgeticon(widgettype):

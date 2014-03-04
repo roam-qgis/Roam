@@ -12,7 +12,7 @@ from qgis.core import QgsProject, QgsMapLayerRegistry, QgsPalLabeling
 from qgis.gui import QgsMapCanvas
 
 from configmanager.ui.ui_projectwidget import Ui_Form
-from configmanager.models import widgeticon, WidgetsModel, QgsLayerModel, QgsFieldModel, LayerTypeFilter, CaptureLayerFilter, CaptureLayersModel
+from configmanager.models import widgeticon, WidgetItem, WidgetsModel, QgsLayerModel, QgsFieldModel, LayerTypeFilter, CaptureLayerFilter, CaptureLayersModel
 
 from roam.featureform import FeatureForm
 
@@ -385,6 +385,15 @@ class ProjectWidget(Ui_Form, QWidget):
             except TypeError:
                 pass
 
+        def loadwidgets(widget):
+            """
+            Load the widgets into widgets model
+            """
+            self.widgetmodel.clear()
+            for widget in form.widgets:
+                item = WidgetItem(widget)
+                self.widgetmodel.invisibleRootItem().appendRow(item)
+
         disconnectsignals()
 
         settings = form.settings
@@ -415,7 +424,7 @@ class ProjectWidget(Ui_Form, QWidget):
         else:
             self.formtypeCombo.setCurrentIndex(index)
 
-        self.widgetmodel.loadwidgets(widgets)
+        loadwidgets(widgets)
 
         # Set the first widget
         index = self.widgetmodel.index(0, 0)

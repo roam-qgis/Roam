@@ -586,9 +586,15 @@ p, li { white-space: pre-wrap; }
                     </layout>
                    </item>
                    <item>
-                    <widget class="QListView" name="widgetlist">
+                    <widget class="QTreeView" name="widgetlist">
                      <property name="frameShape">
                       <enum>QFrame::NoFrame</enum>
+                     </property>
+                     <property name="dragEnabled">
+                      <bool>true</bool>
+                     </property>
+                     <property name="dragDropMode">
+                      <enum>QAbstractItemView::DragDrop</enum>
                      </property>
                      <property name="alternatingRowColors">
                       <bool>true</bool>
@@ -604,6 +610,9 @@ p, li { white-space: pre-wrap; }
                        <width>24</width>
                        <height>24</height>
                       </size>
+                     </property>
+                     <property name="headerHidden">
+                      <bool>true</bool>
                      </property>
                     </widget>
                    </item>
@@ -932,7 +941,7 @@ p, li { white-space: pre-wrap; }
      <widget class="QWidget" name="blank">
       <layout class="QGridLayout" name="gridLayout_8"/>
      </widget>
-     <widget class="QWidget" name="roam_page">
+     <widget class="QWidget" name="project_page">
       <layout class="QFormLayout" name="formLayout_4">
        <property name="fieldGrowthPolicy">
         <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
@@ -953,6 +962,7 @@ p, li { white-space: pre-wrap; }
        </item>
       </layout>
      </widget>
+     <widget class="QWidget" name="roampage"/>
     </widget>
    </item>
   </layout>

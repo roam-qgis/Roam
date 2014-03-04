@@ -56,6 +56,7 @@ class Treenode(QStandardItem):
     TreeNode = QStandardItem.UserType + 3
     FormsNode = QStandardItem.UserType + 3
     RoamNode = QStandardItem.UserType + 4
+    ProjectsNode = QStandardItem.UserType + 4
 
     nodetype = TreeNode
     def __init__(self, text, icon, project=None):
@@ -208,6 +209,8 @@ class ProjectNode(Treenode):
 
 
 class ProjectsNode(Treenode):
+    nodetype = Treenode.ProjectsNode
+
     def __init__(self, text="Projects", folder=None):
         super(ProjectsNode, self).__init__(text, None)
         self.projectfolder = folder
