@@ -344,6 +344,10 @@ class ProjectWidget(Ui_Form, QWidget):
         self.descriptionText.setPlainText(project.description)
 
     def swapwidgetconfig(self, index):
+        widgetconfig, _, _ = self.currentwidgetconfig
+        defaultvalue = widgetconfig.defaultvalue
+        self.defaultvalueText.setText(defaultvalue)
+
         self.updatewidgetconfig({})
 
     def updatetitle(self, text):

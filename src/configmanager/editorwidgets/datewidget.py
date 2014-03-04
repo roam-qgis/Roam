@@ -12,3 +12,4 @@ class DateWidgetConfig(Ui_Form, ConfigWidget):
     def __init__(self, parent=None):
         super(DateWidgetConfig, self).__init__(parent)
         self.setupUi(self)
+        self.defaultvalue = '[% $now %]'

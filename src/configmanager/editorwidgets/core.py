@@ -13,6 +13,7 @@ class ConfigWidget(QWidget):
 
     def __init__(self, parent=None):
         super(ConfigWidget, self).__init__(parent)
+        self.defaultvalue = None
 
     def widgetchanged(self, *args, **kwargs):
         self.widgetdirty.emit(self.getconfig())
