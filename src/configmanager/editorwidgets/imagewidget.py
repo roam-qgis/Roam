@@ -1,3 +1,4 @@
+from PyQt4.QtGui import QFileDialog
 from roam.editorwidgets.imagewidget import ImageWidget
 
 from configmanager.editorwidgets.core import ConfigWidget
@@ -11,6 +12,12 @@ class ImageWidgetConfig(Ui_Form, ConfigWidget):
         super(ImageWidgetConfig, self).__init__(parent)
         self.setupUi(self)
         self.defaultLocationText.textChanged.connect(self.widgetchanged)
+        self.locatioButton.pressed.connect(self.openfilepicker)
+
+    def openfilepicker(self):
+        startpath = self.defaultLocationText.text() or '/home'
+        path = QFileDialog.getExistingDirectory(self.parent(), "Select default photo location", startpath)
+        self.defaultLocationText.setText(path)
 
     def getconfig(self):
         location = self.defaultLocationText.text()
