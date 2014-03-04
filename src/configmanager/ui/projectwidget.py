@@ -48,6 +48,7 @@ class ProjectWidget(Ui_Form, QWidget):
         super(ProjectWidget, self).__init__(parent)
         self.setupUi(self)
         self.project = None
+        self.mapisloaded = False
 
         self.canvas.setCanvasColor(Qt.white)
         self.canvas.enableAntiAliasing(True)
@@ -291,6 +292,7 @@ class ProjectWidget(Ui_Form, QWidget):
         """
         Set the widgets active project.
         """
+        self.mapisloaded = False
         self.filewatcher.removePaths(self.filewatcher.files())
         self.projectupdatedlabel.hide()
         self.startsettings = copy.deepcopy(project.settings)
@@ -325,15 +327,28 @@ class ProjectWidget(Ui_Form, QWidget):
         QgsMapLayerRegistry.instance().removeAllMapLayers()
         self.canvas.freeze(False)
 
-    def _readproject(self, doc):
-        parser = roam.projectparser.ProjectParser(doc)
+    def loadmap(self):
+        if self.mapisloaded:
+            return
+
+        # This is a dirty hack to work around the timer that is in QgsMapCanvas in 2.2.
+        # Refresh will stop the canvas timer
+        # Repaint will redraw the widget.
+        # loadmap is only called once per project load so it's safe to do this here.
+        self.canvas.refresh()
+        self.canvas.repaint()
+
+        parser = roam.projectparser.ProjectParser.fromFile(self.project.projectfile)
         canvasnode = parser.canvasnode
         self.canvas.mapRenderer().readXML(canvasnode)
         self.canvaslayers = parser.canvaslayers()
         self.canvas.setLayerSet(self.canvaslayers)
         self.canvas.updateScale()
-        self.canvas.freeze(False)
         self.canvas.refresh()
+
+        self.mapisloaded = True
+
+    def _readproject(self, doc):
         layers = QgsMapLayerRegistry.instance().mapLayers().values()
         self.formlayersmodel.addlayers(layers, removeall=True)
         self.selectlayermodel.addlayers(layers, removeall=True)

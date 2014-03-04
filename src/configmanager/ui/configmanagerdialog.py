@@ -342,6 +342,9 @@ class ConfigManagerDialog(ui_configmanager.Ui_ProjectInstallerDialog, QDialog):
         elif node.nodetype == Treenode.RoamNode:
             self.projectwidget.projectlabel.setText("IntraMaps Roam Config Manager")
 
+        if node.nodetype == Treenode.MapNode:
+            self.projectwidget.loadmap()
+
         self.projectwidget.projectbuttonframe.setVisible(not project is None)
 
     def projectupdated(self):
