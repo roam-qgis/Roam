@@ -406,28 +406,32 @@ class ProjectWidget(Ui_Form, QWidget):
             except TypeError:
                 pass
 
+        def getfirstlayer():
+            index = self.formlayers.index(0,0)
+            layer = index.data(Qt.UserRole)
+            layer = layer.name()
+            return layer
+
         disconnectsignals()
 
         settings = form.settings
         label = settings['label']
-        layer = settings.get('layer', None)
-        formtype = settings.get('type', 'auto')
-        widgets = settings.get('widgets', [])
+        layer = settings.setdefault('layer', getfirstlayer())
+        formtype = settings.setdefault('type', 'auto')
+        widgets = settings.setdefault('widgets', [])
 
-        if not layer:
-            print "No layer current set, setting the first one."
-            index = self.formlayers.index(0,0)
-            layer = index.data(Qt.UserRole)
-            layername = layer.name()
-            settings['layer'] = layername
+        if layer is None:
+            return
 
         self.formLabelText.setText(label)
         folderurl = "<a href='{path}'>{name}</a>".format(path=form.folder, name=os.path.basename(form.folder))
         self.formfolderLabel.setText(folderurl)
         index = self.formlayersmodel.findlayer(layer)
         index = self.formlayers.mapFromSource(index)
+        layer = index.data(Qt.UserRole)
         self.layerCombo.setCurrentIndex(index.row())
-        self.updatefields(index.data(Qt.UserRole))
+
+        self.updatefields(layer)
 
         index = self.formtypeCombo.findText(formtype)
         if index == -1:
@@ -479,11 +483,11 @@ class ProjectWidget(Ui_Form, QWidget):
         widget = index.data(Qt.UserRole)
         widgettype = widget['widget']
         field = widget['field']
-        required = widget.get('required', False)
-        name = widget.get('name', field)
-        default = widget.get('default', '')
-        readonly = widget.get('read-only-rules', [])
-        hidden = widget.get('hidden', False)
+        required = widget.setdefault('required', False)
+        name = widget.setdefault('name', field)
+        default = widget.setdefault('default', '')
+        readonly = widget.setdefault('read-only-rules', [])
+        hidden = widget.setdefault('hidden', False)
 
         try:
             data = readonly[0]
@@ -530,7 +534,7 @@ class ProjectWidget(Ui_Form, QWidget):
             self.widgetCombo.setCurrentIndex(index)
         self.widgetCombo.blockSignals(False)
 
-        self.updatewidgetconfig(config=widget.get('config', {}))
+        self.updatewidgetconfig(config=widget.setdefault('config', {}))
 
     def _saveproject(self):
         """

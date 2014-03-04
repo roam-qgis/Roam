@@ -42,7 +42,7 @@ def newform(project):
     templateform = os.path.join(templatefolder, "templateform")
     shutil.copytree(templateform, formfolder)
 
-    config = dict(label='New Form', layer='', type='auto', widgets=[])
+    config = dict(label='New Form', type='auto', widgets=[])
     form = project.addformconfig(foldername, config)
     return form
 
