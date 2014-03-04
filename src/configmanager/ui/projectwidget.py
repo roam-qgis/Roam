@@ -471,7 +471,7 @@ class ProjectWidget(Ui_Form, QWidget):
         except TypeError:
             pass
 
-        self.descriptionLabel.setText(configwidget.description)
+        #self.descriptionLabel.setText(configwidget.description)
         self.widgetstack.setCurrentWidget(configwidget)
         configwidget.setconfig(config)
 

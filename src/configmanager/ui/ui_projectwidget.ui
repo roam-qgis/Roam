@@ -655,6 +655,29 @@ p, li { white-space: pre-wrap; }
                    </property>
                   </widget>
                  </item>
+                 <item row="2" column="0">
+                  <widget class="QLabel" name="label_4">
+                   <property name="text">
+                    <string>Field</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="2" column="1">
+                  <widget class="QComboBox" name="fieldList">
+                   <property name="enabled">
+                    <bool>true</bool>
+                   </property>
+                   <property name="sizePolicy">
+                    <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                     <horstretch>0</horstretch>
+                     <verstretch>0</verstretch>
+                    </sizepolicy>
+                   </property>
+                   <property name="editable">
+                    <bool>false</bool>
+                   </property>
+                  </widget>
+                 </item>
                  <item row="3" column="0">
                   <widget class="QLabel" name="label_11">
                    <property name="text">
@@ -682,32 +705,7 @@ p, li { white-space: pre-wrap; }
                    </property>
                   </widget>
                  </item>
-                 <item row="6" column="1">
-                  <widget class="QLabel" name="descriptionLabel">
-                   <property name="sizePolicy">
-                    <sizepolicy hsizetype="Expanding" vsizetype="Maximum">
-                     <horstretch>0</horstretch>
-                     <verstretch>0</verstretch>
-                    </sizepolicy>
-                   </property>
-                   <property name="font">
-                    <font>
-                     <family>Segoe UI</family>
-                     <pointsize>-1</pointsize>
-                     <weight>50</weight>
-                     <italic>false</italic>
-                     <bold>false</bold>
-                    </font>
-                   </property>
-                   <property name="text">
-                    <string/>
-                   </property>
-                   <property name="wordWrap">
-                    <bool>true</bool>
-                   </property>
-                  </widget>
-                 </item>
-                 <item row="7" column="0">
+                 <item row="6" column="0">
                   <widget class="QLabel" name="label_10">
                    <property name="toolTip">
                     <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
@@ -732,14 +730,14 @@ p, li { white-space: pre-wrap; }
                    </property>
                   </widget>
                  </item>
-                 <item row="7" column="1">
+                 <item row="6" column="1">
                   <widget class="QCheckBox" name="requiredCheck">
                    <property name="text">
                     <string/>
                    </property>
                   </widget>
                  </item>
-                 <item row="8" column="0">
+                 <item row="7" column="0">
                   <widget class="QLabel" name="label_12">
                    <property name="toolTip">
                     <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
@@ -764,14 +762,14 @@ p, li { white-space: pre-wrap; }
                    </property>
                   </widget>
                  </item>
-                 <item row="8" column="1">
+                 <item row="7" column="1">
                   <widget class="QCheckBox" name="hiddenCheck">
                    <property name="text">
                     <string/>
                    </property>
                   </widget>
                  </item>
-                 <item row="9" column="0">
+                 <item row="8" column="0">
                   <widget class="QLabel" name="label_13">
                    <property name="whatsThis">
                     <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
@@ -787,7 +785,7 @@ p, li { white-space: pre-wrap; }
                    </property>
                   </widget>
                  </item>
-                 <item row="9" column="1">
+                 <item row="8" column="1">
                   <widget class="QComboBox" name="readonlyCombo">
                    <property name="sizePolicy">
                     <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
@@ -797,14 +795,38 @@ p, li { white-space: pre-wrap; }
                    </property>
                   </widget>
                  </item>
-                 <item row="10" column="0">
+                 <item row="9" column="0">
                   <widget class="QLabel" name="label">
                    <property name="text">
                     <string>Default Value</string>
                    </property>
                   </widget>
                  </item>
-                 <item row="13" column="0" colspan="2">
+                 <item row="9" column="1">
+                  <layout class="QHBoxLayout" name="horizontalLayout_7">
+                   <item>
+                    <widget class="QLineEdit" name="defaultvalueText"/>
+                   </item>
+                   <item>
+                    <widget class="QPushButton" name="expressionButton">
+                     <property name="text">
+                      <string/>
+                     </property>
+                     <property name="icon">
+                      <iconset resource="resources.qrc">
+                       <normaloff>:/icons/Expression</normaloff>:/icons/Expression</iconset>
+                     </property>
+                     <property name="iconSize">
+                      <size>
+                       <width>24</width>
+                       <height>24</height>
+                      </size>
+                     </property>
+                    </widget>
+                   </item>
+                  </layout>
+                 </item>
+                 <item row="12" column="0" colspan="2">
                   <widget class="QFrame" name="widgetFrame_2">
                    <property name="enabled">
                     <bool>true</bool>
@@ -842,53 +864,6 @@ p, li { white-space: pre-wrap; }
                     </item>
                    </layout>
                   </widget>
-                 </item>
-                 <item row="2" column="1">
-                  <widget class="QComboBox" name="fieldList">
-                   <property name="enabled">
-                    <bool>true</bool>
-                   </property>
-                   <property name="sizePolicy">
-                    <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-                     <horstretch>0</horstretch>
-                     <verstretch>0</verstretch>
-                    </sizepolicy>
-                   </property>
-                   <property name="editable">
-                    <bool>false</bool>
-                   </property>
-                  </widget>
-                 </item>
-                 <item row="2" column="0">
-                  <widget class="QLabel" name="label_4">
-                   <property name="text">
-                    <string>Field</string>
-                   </property>
-                  </widget>
-                 </item>
-                 <item row="10" column="1">
-                  <layout class="QHBoxLayout" name="horizontalLayout_7">
-                   <item>
-                    <widget class="QLineEdit" name="defaultvalueText"/>
-                   </item>
-                   <item>
-                    <widget class="QPushButton" name="expressionButton">
-                     <property name="text">
-                      <string/>
-                     </property>
-                     <property name="icon">
-                      <iconset resource="resources.qrc">
-                       <normaloff>:/icons/Expression</normaloff>:/icons/Expression</iconset>
-                     </property>
-                     <property name="iconSize">
-                      <size>
-                       <width>24</width>
-                       <height>24</height>
-                      </size>
-                     </property>
-                    </widget>
-                   </item>
-                  </layout>
                  </item>
                 </layout>
                </widget>

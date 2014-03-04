@@ -20,6 +20,11 @@ class ListWidgetConfig(Ui_Form, ConfigWidget):
         super(ListWidgetConfig, self).__init__(parent)
         self.setupUi(self)
 
+        self.allownull = False
+        self.orderby = False
+
+        self.orderbyCheck.hide()
+
         self.layerRadio.clicked.connect(partial(self.stackedWidget.setCurrentIndex, 0))
         self.listRadio.clicked.connect(partial(self.stackedWidget.setCurrentIndex, 1))
 
