@@ -1,4 +1,7 @@
-Roam is a field data collection application built using the QGIS libraries and Python. It was built to be easy to use on (windows) based tablet devices, with Android planned for the future.
+IntraMaps Roam is a field data collection application built using the QGIS libraries and Python. It was built to be easy to use on (windows) based tablet devices, with Android planned for the future.
+
+IntraMaps Roam is built as a standalone fully packaged Python application with everything included. QGIS is **not** required to be installed on the client machine and only on the machine that builds Roam from source.  Pre-built binary packages will be available after the first release. 
+
 
 ![a](http://i.imgur.com/F4TZScJ.png)
 
