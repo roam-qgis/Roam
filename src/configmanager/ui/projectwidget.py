@@ -43,6 +43,8 @@ class ProjectWidget(Ui_Form, QWidget):
     SampleWidgetRole = Qt.UserRole + 1
     projectsaved = pyqtSignal()
     projectupdated = pyqtSignal()
+    projectloaded = pyqtSignal(object)
+    selectlayersupdated = pyqtSignal(list)
 
     def __init__(self, parent=None):
         super(ProjectWidget, self).__init__(parent)
@@ -71,6 +73,7 @@ class ProjectWidget(Ui_Form, QWidget):
         self.layerCombo.setModel(self.formlayers)
         self.widgetCombo.setModel(self.possiblewidgetsmodel)
         self.selectLayers.setModel(self.selectlayerfilter)
+        self.selectLayers_2.setModel(self.selectlayerfilter)
         self.fieldList.setModel(self.fieldsmodel)
 
         self.widgetlist.setModel(self.widgetmodel)
@@ -112,6 +115,11 @@ class ProjectWidget(Ui_Form, QWidget):
         self.setpage(4)
         self.form = None
 
+    def checkcapturelayers(self):
+        haslayers = self.project.hascapturelayers()
+        self.formslayerlabel.setVisible(not haslayers)
+        return haslayers
+
     def opendefaultexpression(self):
         layer = self.currentform.QGISLayer
         dlg = QgsExpressionBuilderDialog(layer, "Create default value expression", self)
@@ -125,6 +133,8 @@ class ProjectWidget(Ui_Form, QWidget):
 
     def selectlayerschanged(self, *args):
         self.formlayers.setSelectLayers(self.project.selectlayers)
+        self.checkcapturelayers()
+        self.selectlayersupdated.emit(self.project.selectlayers)
 
     def formtabchanged(self, index):
         # preview
@@ -332,6 +342,7 @@ class ProjectWidget(Ui_Form, QWidget):
         else:
             self._updateforproject(self.project)
         self.filewatcher.addPath(self.project.projectfile)
+        self.projectloaded.emit(self.project)
 
     def loadqgisproject(self, project, projectfile):
         self._closeqgisproject()

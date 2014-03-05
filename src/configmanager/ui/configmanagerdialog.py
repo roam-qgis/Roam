@@ -71,7 +71,7 @@ class Treenode(QStandardItem):
     FormNode = QStandardItem.UserType + 1
     MapNode = QStandardItem.UserType + 2
     TreeNode = QStandardItem.UserType + 3
-    FormsNode = QStandardItem.UserType + 3
+    FormsNode = QStandardItem.UserType + 5
     RoamNode = QStandardItem.UserType + 4
 
     nodetype = TreeNode
@@ -279,8 +279,17 @@ class ConfigManagerDialog(ui_configmanager.Ui_ProjectInstallerDialog, QDialog):
         self.removeProjectButton.pressed.connect(self.deletebuttonpressed)
         self.projectwidget.projectupdated.connect(self.projectupdated)
         self.projectwidget.projectsaved.connect(self.projectupdated)
+        self.projectwidget.projectloaded.connect(self.updateformsnode)
+        self.projectwidget.selectlayersupdated.connect(self.updateformsnode)
 
         self.setuprootitems()
+
+    def updateformsnode(self, *args):
+        haslayers = self.projectwidget.checkcapturelayers()
+        index = self.projectList.currentIndex()
+        node = index.data(Qt.UserRole)
+        if node.nodetype == Treenode.FormsNode:
+            self.newProjectButton.setEnabled(haslayers)
 
     def raiseerror(self, *exinfo):
         info = traceback.format_exception(*exinfo)
@@ -354,9 +363,11 @@ class ConfigManagerDialog(ui_configmanager.Ui_ProjectInstallerDialog, QDialog):
             self.projectwidget.setform(node.form)
         elif node.nodetype == Treenode.RoamNode:
             self.projectwidget.projectlabel.setText("IntraMaps Roam Config Manager")
-
-        if node.nodetype == Treenode.MapNode:
+        elif node.nodetype == Treenode.MapNode:
             self.projectwidget.loadmap()
+        elif node.nodetype == Treenode.FormsNode:
+            haslayers = self.projectwidget.checkcapturelayers()
+            self.newProjectButton.setEnabled(haslayers)
 
         self.projectwidget.projectbuttonframe.setVisible(not project is None)
 

@@ -368,3 +368,11 @@ class Project(object):
         settingspath = os.path.join(self.folder, "settings.config")
         writesettings(self.settings, settingspath)
 
+    def hascapturelayers(self):
+        layers = QgsMapLayerRegistry.instance().mapLayers().values()
+        layers = [layer.name() for layer in layers]
+        for layer in self.selectlayers:
+            if layer in layers:
+                return True
+        return False
+
