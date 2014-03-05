@@ -25,8 +25,10 @@ def newfoldername(basetext, basefolder, formtype, alreadyexists=False):
         message += "<br> {} folder already exists please select a new one.".format(formtype)
 
     name, ok = QInputDialog.getText(None, "New {} folder name".format(formtype), message)
+    if not ok:
+        raise ValueError
 
-    if not ok or not name:
+    if not name:
         return "{}_{}".format(basetext, datetime.today().strftime('%d%m%y%f'))
     else:
         name = name.replace(" ", "_")
@@ -309,7 +311,10 @@ class ConfigManagerDialog(ui_configmanager.Ui_ProjectInstallerDialog, QDialog):
         index = self.projectList.currentIndex()
         node = index.data(Qt.UserRole)
         if node and node.canadd:
-            item = node.additem()
+            try:
+                item = node.additem()
+            except ValueError:
+                return
             newindex = self.treemodel.indexFromItem(item)
             self.projectList.setCurrentIndex(newindex)
 
