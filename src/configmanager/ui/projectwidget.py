@@ -104,6 +104,7 @@ class ProjectWidget(Ui_Form, QWidget):
         self.expressionButton.clicked.connect(self.opendefaultexpression)
 
         self.fieldList.currentIndexChanged.connect(self.updatewidgetname)
+        self.fieldwarninglabel.hide()
 
         for item, data in readonlyvalues:
             self.readonlyCombo.addItem(item, data)
@@ -171,7 +172,8 @@ class ProjectWidget(Ui_Form, QWidget):
         widget = {}
         widget['widget'] = 'List'
         # Grab the first field.
-        widget['field'] = self.fieldsmodel.index(0, 0).data(QgsFieldModel.FieldNameRole)
+        field = self.fieldsmodel.index(0, 0).data(QgsFieldModel.FieldNameRole)
+        widget['field'] = field
         index = self.widgetmodel.addwidget(widget)
         self.widgetlist.setCurrentIndex(index)
 
@@ -191,6 +193,13 @@ class ProjectWidget(Ui_Form, QWidget):
             self.widgetCombo.model().appendRow(item)
             self.widgetstack.addWidget(configwidget)
         self.widgetCombo.blockSignals(False)
+
+    def usedfields(self):
+        """
+        Return the list of fields that have been used by the the current form's widgets
+        """
+        for widget in self.currentform.widgets:
+            yield widget['field']
 
     @property
     def currentform(self):
@@ -225,6 +234,22 @@ class ProjectWidget(Ui_Form, QWidget):
         if foundfield:
             self.nameText.setText(field)
 
+    def _save_widgetfield(self, index):
+        """
+        Save the selected field for the current widget.
+
+        Shows a error if the field is already used but will allow
+        the user to still set it in the case of extra logic for that field
+        in the forms Python logic.
+        """
+        widget, index = self.currentuserwidget
+        row = self.fieldList.currentIndex()
+        field = self.fieldsmodel.index(row, 0).data(QgsFieldModel.FieldNameRole)
+        showwarning = field in self.usedfields()
+        self.fieldwarninglabel.setVisible(showwarning)
+        widget['field'] = field
+        self.widgetmodel.setData(index, widget, Qt.UserRole)
+
     def _save_selectedwidget(self, index):
         configwidget, index, widgettype = self.currentwidgetconfig
         widget, index = self.currentuserwidget
@@ -233,9 +258,6 @@ class ProjectWidget(Ui_Form, QWidget):
 
         widget['widget'] = widgettype
         widget['required'] = self.requiredCheck.isChecked()
-        row = self.fieldList.currentIndex()
-        field = self.fieldsmodel.index(row, 0).data(QgsFieldModel.FieldNameRole)
-        widget['field'] = field
         widget['config'] = configwidget.getconfig()
         widget['name'] = self.nameText.text()
         widget['read-only-rules'] = [self.readonlyCombo.itemData(self.readonlyCombo.currentIndex())]
@@ -396,8 +418,7 @@ class ProjectWidget(Ui_Form, QWidget):
             self.formtypeCombo.currentIndexChanged.connect(self._save_formtype)
 
             #widget settings
-            self.fieldList.currentIndexChanged.connect(self._save_selectedwidget)
-            self.fieldList.editTextChanged.connect(self._save_selectedwidget)
+            self.fieldList.currentIndexChanged.connect(self._save_widgetfield)
             self.requiredCheck.toggled.connect(self._save_selectedwidget)
             self.defaultvalueText.textChanged.connect(self._save_default)
             self.widgetCombo.currentIndexChanged.connect(self._save_selectedwidget)
@@ -413,8 +434,7 @@ class ProjectWidget(Ui_Form, QWidget):
                 self.formtypeCombo.currentIndexChanged.disconnect(self._save_formtype)
 
                 #widget settings
-                self.fieldList.currentIndexChanged.disconnect(self._save_selectedwidget)
-                self.fieldList.editTextChanged.disconnect(self._save_selectedwidget)
+                self.fieldList.currentIndexChanged.disconnect(self._save_widgetfield)
                 self.requiredCheck.toggled.disconnect(self._save_selectedwidget)
                 self.defaultvalueText.textChanged.disconnect(self._save_default)
                 self.widgetCombo.currentIndexChanged.disconnect(self._save_selectedwidget)

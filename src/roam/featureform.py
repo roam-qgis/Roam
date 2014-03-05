@@ -218,6 +218,11 @@ class FeatureFormBase(QWidget):
         for config in widgetsconfig:
             widgettype = config['widget']
             field = config['field'].lower()
+            if field in self.boundwidgets:
+                utils.warning("Sorry you can't bind the same field ({}) twice.".format(field))
+                utils.warning("{} for field {} has been ignored in setup".format(widget, field))
+                continue
+
             widget = self.findcontrol(field)
             if widget is None:
                 utils.warning("No widget named {} found".format(field))
