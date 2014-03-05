@@ -14,6 +14,8 @@ class CheckboxWidgetConfig(Ui_Form, ConfigWidget):
     def __init__(self, parent=None):
         super(CheckboxWidgetConfig, self).__init__(parent)
         self.setupUi(self)
+        self.checkedText.textChanged.connect(self.widgetchanged)
+        self.uncheckedText.textChanged.connect(self.widgetchanged)
 
     def getconfig(self):
         config = {}
