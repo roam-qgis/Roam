@@ -71,8 +71,9 @@ class Treenode(QStandardItem):
     FormNode = QStandardItem.UserType + 1
     MapNode = QStandardItem.UserType + 2
     TreeNode = QStandardItem.UserType + 3
-    FormsNode = QStandardItem.UserType + 5
     RoamNode = QStandardItem.UserType + 4
+    FormsNode = QStandardItem.UserType + 5
+    ProjectsNode = QStandardItem.UserType + 6
 
     nodetype = TreeNode
     def __init__(self, text, icon, project=None):
@@ -225,6 +226,8 @@ class ProjectNode(Treenode):
 
 
 class ProjectsNode(Treenode):
+    nodetype = Treenode.ProjectsNode
+
     def __init__(self, text="Projects", folder=None):
         super(ProjectsNode, self).__init__(text, None)
         self.projectfolder = folder
@@ -281,6 +284,8 @@ class ConfigManagerDialog(ui_configmanager.Ui_ProjectInstallerDialog, QDialog):
         self.projectwidget.projectsaved.connect(self.projectupdated)
         self.projectwidget.projectloaded.connect(self.updateformsnode)
         self.projectwidget.selectlayersupdated.connect(self.updateformsnode)
+
+        self.projectwidget.setaboutinfo()
 
         self.setuprootitems()
 

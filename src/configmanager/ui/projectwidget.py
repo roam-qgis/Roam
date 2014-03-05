@@ -8,7 +8,7 @@ from datetime import datetime
 from PyQt4.QtCore import Qt, QDir, QFileInfo, pyqtSignal, QModelIndex, QFileSystemWatcher
 from PyQt4.QtGui import QWidget, QStandardItemModel, QStandardItem, QIcon, QMessageBox, QPixmap
 
-from qgis.core import QgsProject, QgsMapLayerRegistry, QgsPalLabeling
+from qgis.core import QgsProject, QgsMapLayerRegistry, QgsPalLabeling, QGis
 from qgis.gui import QgsMapCanvas, QgsExpressionBuilderDialog
 
 from configmanager.ui.ui_projectwidget import Ui_Form
@@ -114,6 +114,10 @@ class ProjectWidget(Ui_Form, QWidget):
 
         self.setpage(4)
         self.form = None
+
+    def setaboutinfo(self):
+        self.versionLabel.setText(roam.__version__)
+        self.qgisapiLabel.setText(str(QGis.QGIS_VERSION))
 
     def checkcapturelayers(self):
         haslayers = self.project.hascapturelayers()
