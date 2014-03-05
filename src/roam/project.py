@@ -368,9 +368,13 @@ class Project(object):
         settingspath = os.path.join(self.folder, "settings.config")
         writesettings(self.settings, settingspath)
 
+    @property
+    def supportedgeometry(self):
+        return [QGis.Point]
+
     def hascapturelayers(self):
         layers = QgsMapLayerRegistry.instance().mapLayers().values()
-        layers = [layer.name() for layer in layers]
+        layers = [layer.name() for layer in layers if layer.geometryType() in self.supportedgeometry]
         for layer in self.selectlayers:
             if layer in layers:
                 return True
