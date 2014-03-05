@@ -77,13 +77,15 @@ datafiles = [(".", [r'src\settings.config']),
             (r'libs\qgis\plugins', glob.glob(qgispluginpath)),
             (r'libs\qgis\resources', [os.path.join(qgisresources, 'qgis.db'),
                                  os.path.join(qgisresources, 'srs.db')]),
-            (r'libs', extrafiles),
-            (r'libs\gdal', glob.glob(gdalsharepath + "\*\*"))]
+            (r'libs', extrafiles)]
 
 for path, collection in getfiles(svgs, r'libs\qgis\svg'):
     datafiles.append((path, collection))
 
 for path, collection in getfiles(r'src\configmanager\templates', r'libs\configmanager\templates'):
+    datafiles.append((path, collection))
+
+for path, collection in getfiles(gdalsharepath, r'libs'):
     datafiles.append((path, collection))
 
 icon = r'src\roam\resources\branding\icon.ico'
