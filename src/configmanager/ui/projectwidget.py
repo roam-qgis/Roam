@@ -12,7 +12,7 @@ from qgis.core import QgsProject, QgsMapLayerRegistry, QgsPalLabeling, QGis
 from qgis.gui import QgsMapCanvas, QgsExpressionBuilderDialog
 
 from configmanager.ui.ui_projectwidget import Ui_Form
-from configmanager.models import widgeticon, WidgetsModel, QgsLayerModel, QgsFieldModel, LayerTypeFilter, CaptureLayerFilter, CaptureLayersModel
+from configmanager.models import widgeticon, WidgetItem, WidgetsModel, QgsLayerModel, QgsFieldModel, LayerTypeFilter, CaptureLayerFilter, CaptureLayersModel
 
 from roam.featureform import FeatureForm
 
@@ -177,7 +177,7 @@ class ProjectWidget(Ui_Form, QWidget):
         """
         widget, index = self.currentuserwidget
         if index.isValid():
-            self.widgetmodel.removeRow(index.row())
+            self.widgetmodel.removeRow(index.row(), index.parent())
 
     def newwidget(self):
         """
@@ -186,9 +186,14 @@ class ProjectWidget(Ui_Form, QWidget):
         widget = {}
         widget['widget'] = 'List'
         # Grab the first field.
-        field = self.fieldsmodel.index(0, 0).data(QgsFieldModel.FieldNameRole)
-        widget['field'] = field
-        index = self.widgetmodel.addwidget(widget)
+        widget['field'] = self.fieldsmodel.index(0, 0).data(QgsFieldModel.FieldNameRole)
+        currentindex = self.widgetlist.currentIndex()
+        currentitem = self.widgetmodel.itemFromIndex(currentindex)
+        if currentitem and currentitem.iscontainor():
+            parent = currentindex
+        else:
+            parent = currentindex.parent()
+        index = self.widgetmodel.addwidget(widget, parent)
         self.widgetlist.setCurrentIndex(index)
 
     def loadwidgettypes(self):
@@ -227,7 +232,7 @@ class ProjectWidget(Ui_Form, QWidget):
         """
         Return the selected user widget.
         """
-        index = self.widgetlist.selectionModel().currentIndex()
+        index = self.widgetlist.currentIndex()
         return index.data(Qt.UserRole), index
 
     @property
@@ -466,6 +471,13 @@ class ProjectWidget(Ui_Form, QWidget):
             layer = layer.name()
             return layer
 
+        def loadwidgets(widget):
+            """
+            Load the widgets into widgets model
+            """
+            self.widgetmodel.clear()
+            self.widgetmodel.loadwidgets(form.widgets)
+
         disconnectsignals()
 
         settings = form.settings
@@ -494,7 +506,7 @@ class ProjectWidget(Ui_Form, QWidget):
         else:
             self.formtypeCombo.setCurrentIndex(index)
 
-        self.widgetmodel.loadwidgets(widgets)
+        loadwidgets(widgets)
 
         # Set the first widget
         index = self.widgetmodel.index(0, 0)
@@ -602,6 +614,12 @@ class ProjectWidget(Ui_Form, QWidget):
         settings['title'] = title
         settings['description'] = description
         settings['version'] = version
+
+        form = self.currentform
+        if form:
+            form.settings['widgets'] = list(self.widgetmodel.widgets())
+
+        print form.settings['widgets']
 
         self.project.save()
         self.projectsaved.emit()

@@ -169,7 +169,7 @@ class Form(object):
 
     @property
     def widgets(self):
-        return self.settings.get('widgets', [])
+        return self.settings.setdefault('widgets', [])
 
     def init_form(self):
         try:
@@ -363,7 +363,7 @@ class Project(object):
         """
         def writesettings(settings, path):
             with open(path, 'w') as f:
-                roam.yaml.dump(data=settings, stream=f, default_flow_style=False)
+                roam.yaml.safe_dump(data=settings, stream=f, default_flow_style=False)
 
         settingspath = os.path.join(self.folder, "settings.config")
         writesettings(self.settings, settingspath)

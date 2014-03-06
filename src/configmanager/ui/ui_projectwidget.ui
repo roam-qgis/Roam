@@ -99,7 +99,7 @@ QLabel[warning=true]
       </sizepolicy>
      </property>
      <property name="currentIndex">
-      <number>4</number>
+      <number>1</number>
      </property>
      <widget class="QWidget" name="project_info_page">
       <layout class="QFormLayout" name="formLayout">
@@ -448,9 +448,15 @@ p, li { white-space: pre-wrap; }
                     </layout>
                    </item>
                    <item>
-                    <widget class="QListView" name="widgetlist">
+                    <widget class="QTreeView" name="widgetlist">
                      <property name="frameShape">
                       <enum>QFrame::NoFrame</enum>
+                     </property>
+                     <property name="dragEnabled">
+                      <bool>true</bool>
+                     </property>
+                     <property name="dragDropMode">
+                      <enum>QAbstractItemView::DragDrop</enum>
                      </property>
                      <property name="alternatingRowColors">
                       <bool>true</bool>
@@ -467,6 +473,12 @@ p, li { white-space: pre-wrap; }
                        <height>24</height>
                       </size>
                      </property>
+                     <property name="animated">
+                      <bool>true</bool>
+                     </property>
+                     <attribute name="headerVisible">
+                      <bool>false</bool>
+                     </attribute>
                     </widget>
                    </item>
                   </layout>
@@ -1263,7 +1275,8 @@ p, li { white-space: pre-wrap; }
  <resources>
   <include location="resources.qrc"/>
   <include location="../../roam/resources.qrc"/>
-  <include location="../resources.qrc"/>
+  <include location="resources.qrc"/>
+  <include location="../../roam/resources.qrc"/>
   <include location="../../roam/resources.qrc"/>
  </resources>
  <connections>
