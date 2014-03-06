@@ -10,6 +10,7 @@ from PyQt4.QtCore import QAbstractItemModel, QModelIndex, Qt
 
 
 from configmanager.ui import ui_configmanager
+import configmanager.logger as logger
 from roam import resources_rc
 
 import shutil
@@ -22,6 +23,7 @@ templatefolder = os.path.join(os.path.dirname(__file__), "..", "templates")
 def newfoldername(basetext, basefolder, formtype, alreadyexists=False):
     message = "Please enter a new folder name for the {}".format(formtype)
     if alreadyexists:
+        logger.log("Folder {} already exists.")
         message += "<br> {} folder already exists please select a new one.".format(formtype)
 
     name, ok = QInputDialog.getText(None, "New {} folder name".format(formtype), message)
@@ -188,7 +190,7 @@ class FormsNode(Treenode):
             del self.project.settings['forms'][form.name]
             self.project.save()
         except Exception as ex:
-            print ex
+            logger.error("Could not remove folder", exc_info=(exctype, value, traceback))
             return False
 
         return True
@@ -247,7 +249,7 @@ class ProjectsNode(Treenode):
             archivefolder = os.path.join(project.basepath, "_archive")
             shutil.move(project.folder, archivefolder)
         except Exception as ex:
-            print ex.message
+            logger.error("Could not remove project folder", exc_info=(exctype, value, traceback))
             return False
 
         return True
@@ -340,6 +342,8 @@ class ConfigManagerDialog(ui_configmanager.Ui_ProjectInstallerDialog, QDialog):
             self.projectList.setCurrentIndex(newindex)
 
     def loadprojects(self, projects):
+        logger.info("Loading {} projects".format(len(projects)))
+
         rootitem = self.treemodel.invisibleRootItem()
         projectsnode = ProjectsNode(folder=self.projectfolder)
         rootitem.appendRow(projectsnode)
