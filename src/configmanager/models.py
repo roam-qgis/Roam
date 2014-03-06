@@ -292,7 +292,6 @@ class WidgetItem(QStandardItem):
         return flags
 
     def setData(self, value, role=None):
-        print "set data"
         if role == Qt.UserRole:
             self.widget = value
 
@@ -301,6 +300,10 @@ class WidgetItem(QStandardItem):
     def data(self, role):
         if role == Qt.DisplayRole:
             name = self.widget.get('name', None)
+            if self.iscontainor():
+                length = len(self.widget.get('config', {}).get('widgets', []))
+                return "{} ({} items)".format(name, length)
+
             field = (self.widget.get('field', '')  or '').lower()
             text = name or field
             return "{} ({})".format(text, self.widget['widget'])

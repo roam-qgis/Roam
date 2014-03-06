@@ -619,8 +619,6 @@ class ProjectWidget(Ui_Form, QWidget):
         if form:
             form.settings['widgets'] = list(self.widgetmodel.widgets())
 
-        print form.settings['widgets']
-
         self.project.save()
         self.projectsaved.emit()
 
