@@ -159,7 +159,13 @@ class ProjectWidget(Ui_Form, QWidget):
         widget['widget'] = 'List'
         # Grab the first field.
         widget['field'] = self.fieldsmodel.index(0, 0).data(QgsFieldModel.FieldNameRole)
-        index = self.widgetmodel.addwidget(widget)
+        currentindex = self.widgetlist.currentIndex()
+        currentitem = self.widgetmodel.itemFromIndex(currentindex)
+        if currentitem.iscontainor():
+            parent = currentindex
+        else:
+            parent = currentindex.parent()
+        index = self.widgetmodel.addwidget(widget, parent)
         self.widgetlist.setCurrentIndex(index)
 
     def loadwidgettypes(self):
@@ -390,9 +396,7 @@ class ProjectWidget(Ui_Form, QWidget):
             Load the widgets into widgets model
             """
             self.widgetmodel.clear()
-            for widget in form.widgets:
-                item = WidgetItem(widget)
-                self.widgetmodel.invisibleRootItem().appendRow(item)
+            self.widgetmodel.loadwidgets(form.widgets)
 
         disconnectsignals()
 

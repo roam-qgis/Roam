@@ -310,12 +310,43 @@ class WidgetItem(QStandardItem):
             return widgeticon(self.widget['widget'])
 
     def iscontainor(self):
-        return self.widget.get('config', {}).get('container')
+        return self.widget['widget'] == 'Group'
+
+    def loadchildren(self):
+        if not self.iscontainor():
+            return
+
+        for widget in self.widget['config'].get('widgets', []):
+            item = WidgetItem(widget)
+            if item.iscontainor():
+                item.loadchildren()
+            self.appendRow(item)
 
 
 class WidgetsModel(QStandardItemModel):
     def __init__(self, parent=None):
         super(WidgetsModel, self).__init__(parent)
+
+    def addwidget(self, widget, parent):
+        item = WidgetItem(widget)
+        if not parent.isValid():
+            self.invisibleRootItem().appendRow(item)
+        else:
+            parentitem = self.itemFromIndex(parent)
+            parentitem.appendRow(item)
+
+        index = self.indexFromItem(item)
+        return index
+
+    def loadwidgets(self, widgets):
+        """
+        Load the widgets into the model.
+        """
+        for widget in widgets:
+            item = WidgetItem(widget)
+            if item.iscontainor():
+                item.loadchildren()
+            self.invisibleRootItem().appendRow(item)
 
     def flags(self, index):
         if not index.isValid():
@@ -352,10 +383,11 @@ class WidgetsModel(QStandardItemModel):
 
         for widget in widgets:
             item = WidgetItem(widget)
-            if not parent.isValid():
-                droptarget.insertRow(row, item)
-            else:
+            if getattr(droptarget, "iscontainor", False):
                 droptarget.appendRow(item)
+            else:
+                droptarget.insertRow(row, item)
+            item.loadchildren()
 
         return True
 
