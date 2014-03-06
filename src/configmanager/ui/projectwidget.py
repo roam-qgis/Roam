@@ -191,7 +191,7 @@ class ProjectWidget(Ui_Form, QWidget):
         """
         Return the selected user widget.
         """
-        index = self.widgetlist.selectionModel().currentIndex()
+        index = self.widgetlist.currentIndex()
         return index.data(Qt.UserRole), index
 
     @property

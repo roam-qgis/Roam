@@ -285,6 +285,19 @@ class WidgetItem(QStandardItem):
         self.widget = widget
         self.setDropEnabled(False)
 
+    def flags(self):
+        flags = Qt.ItemIsEnabled | Qt.ItemIsSelectable | Qt.ItemIsDragEnabled
+        if self.iscontainor():
+            flags |= Qt.ItemIsDropEnabled
+        return flags
+
+    def setData(self, value, role=None):
+        print "set data"
+        if role == Qt.UserRole:
+            self.widget = value
+
+        super(WidgetItem, self).setData(value, role)
+
     def data(self, role):
         if role == Qt.DisplayRole:
             name = self.widget.get('name', None)
@@ -308,8 +321,8 @@ class WidgetsModel(QStandardItemModel):
         if not index.isValid():
             return Qt.ItemIsDropEnabled
 
-        flags = Qt.ItemIsEnabled | Qt.ItemIsSelectable | Qt.ItemIsDragEnabled | Qt.ItemIsDropEnabled
-        return flags
+        item = self.itemFromIndex(index)
+        return item.flags()
 
     def supportedDropActions(self):
         return Qt.MoveAction
