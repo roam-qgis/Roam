@@ -36,12 +36,14 @@ class WidgetsRegistry(object):
         except KeyError:
             raise EditorWidgetException("No widget wrapper for type {} was found".format(widgettype))
 
-        return wrapper.createwidget(parent=parent)
+        return wrapper.createwidget(parent=parent), wrapper
 
 
 class EditorWidget(QObject):
     validationupdate = pyqtSignal(object, bool)
     valuechanged = pyqtSignal(object)
+
+    isgroup = False
 
     def __init__(self, widget=None, layer=None, label=None, field=None, parent=None):
         super(EditorWidget, self).__init__(parent)

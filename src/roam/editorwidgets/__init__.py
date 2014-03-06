@@ -15,11 +15,12 @@ from roam.editorwidgets.datewidget import DateWidget
 from roam.editorwidgets.textwidget import TextBlockWidget, TextWidget
 from roam.editorwidgets.imagewidget import ImageWidget
 from roam.editorwidgets.numberwidget import NumberWidget
+from roam.editorwidgets.groupwidget import GroupWidget
 
 from roam.editorwidgets.core import WidgetsRegistry
 
 supportedwidgets = [ListWidget, CheckboxWidget, DateWidget, TextBlockWidget,
-                   TextWidget, ImageWidget, NumberWidget]
+                   TextWidget, ImageWidget, NumberWidget, GroupWidget]
 
 WidgetsRegistry.registerwidgets(supportedwidgets)
 

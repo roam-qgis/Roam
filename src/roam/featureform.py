@@ -114,30 +114,39 @@ def buildfromui(uifile, base):
     return installflickcharm(widget)
 
 
-def buildfromauto(formconfig, base):
-    widgetsconfig = formconfig['widgets']
+def buildfromauto(widgets, base):
+    widgetsconfig = widgets
 
     outlayout = QFormLayout()
     outlayout.setFieldGrowthPolicy(QFormLayout.AllNonFixedFieldsGrow)
     outwidget = base
     outwidget.setLayout(outlayout)
     for config in widgetsconfig:
-        widgettype = config['widget']
         field = config['field']
         name = config.get('name', field)
-        label = QLabel(name)
-        label.setObjectName(field + "_label")
-        widget = WidgetsRegistry.createwidget(widgettype, parent=base)
-        widget.setObjectName(field)
-        layoutwidget = QWidget()
-        layoutwidget.setLayout(QBoxLayout(QBoxLayout.LeftToRight))
-        layoutwidget.layout().addWidget(widget)
+        widgettype = config['widget']
+        widget, wrappertype = WidgetsRegistry.createwidget(widgettype, parent=base)
+
+        if wrappertype.isgroup:
+            subwidgets = config['config']['widgets']
+            widget = buildfromauto(subwidgets, widget)
+            widget.setObjectName(name)
+        else:
+            label = QLabel(name)
+            label.setObjectName(field + "_label")
+            widget.setObjectName(field)
+
         if config.get('rememberlastvalue', False):
+            layoutwidget = QWidget()
+            layoutwidget.setLayout(QBoxLayout(QBoxLayout.LeftToRight))
+            layoutwidget.layout().addWidget(widget)
+
             savebutton = QToolButton()
             savebutton.setObjectName('{}_save'.format(field))
             layoutwidget.layout().addWidget(savebutton)
-
-        outlayout.addRow(label, layoutwidget)
+            outlayout.addRow(label, layoutwidget)
+        else:
+            outlayout.addRow(label, widget)
 
     outlayout.addItem(QSpacerItem(10, 10))
     installflickcharm(outwidget)
@@ -217,6 +226,10 @@ class FeatureFormBase(QWidget):
 
         for config in widgetsconfig:
             widgettype = config['widget']
+            wrappertype = WidgetsRegistry.widgets[widgettype]
+            if wrappertype.isgroup:
+                continue
+
             field = config['field'].lower()
             if field in self.boundwidgets:
                 utils.warning("Sorry you can't bind the same field ({}) twice.".format(field))
@@ -416,7 +429,7 @@ class FeatureForm(FeatureFormBase):
             uifile = os.path.join(form.folder, "form.ui")
             featureform = buildfromui(uifile, base=featureform)
         elif formtype == 'auto':
-            featureform = buildfromauto(formconfig, base=featureform)
+            featureform = buildfromauto(formconfig['widgets'], base=featureform)
         else:
             raise NotImplemented('Other form types not supported yet')
 

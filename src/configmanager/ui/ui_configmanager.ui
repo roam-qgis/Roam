@@ -272,6 +272,7 @@ QTreeView::item {
  </customwidgets>
  <resources>
   <include location="../../roam/resources.qrc"/>
+  <include location="../resources.qrc"/>
  </resources>
  <connections/>
 </ui>
