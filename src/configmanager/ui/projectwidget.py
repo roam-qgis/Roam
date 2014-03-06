@@ -143,6 +143,7 @@ class ProjectWidget(Ui_Form, QWidget):
     def formtabchanged(self, index):
         # preview
         if index == 1:
+            self.form.settings['widgets'] = list(self.widgetmodel.widgets())
             self.setformpreview(self.form)
 
     def setprojectsfolder(self, location):
