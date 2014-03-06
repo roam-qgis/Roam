@@ -149,7 +149,7 @@ class ProjectWidget(Ui_Form, QWidget):
         """
         widget, index = self.currentuserwidget
         if index.isValid():
-            self.widgetmodel.removeRow(index.row())
+            self.widgetmodel.removeRow(index.row(), index.parent())
 
     def newwidget(self):
         """
