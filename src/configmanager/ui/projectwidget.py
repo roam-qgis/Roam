@@ -161,7 +161,7 @@ class ProjectWidget(Ui_Form, QWidget):
         widget['field'] = self.fieldsmodel.index(0, 0).data(QgsFieldModel.FieldNameRole)
         currentindex = self.widgetlist.currentIndex()
         currentitem = self.widgetmodel.itemFromIndex(currentindex)
-        if currentitem.iscontainor():
+        if currentitem and currentitem.iscontainor():
             parent = currentindex
         else:
             parent = currentindex.parent()
@@ -536,6 +536,12 @@ class ProjectWidget(Ui_Form, QWidget):
         settings['title'] = title
         settings['description'] = description
         settings['version'] = version
+
+        form = self.currentform
+        if form:
+            form.settings['widgets'] = list(self.widgetmodel.widgets())
+
+        print form.settings['widgets']
 
         self.project.save()
         self.projectsaved.emit()

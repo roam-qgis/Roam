@@ -322,10 +322,29 @@ class WidgetItem(QStandardItem):
                 item.loadchildren()
             self.appendRow(item)
 
+    def getwidget(self):
+        if self.iscontainor():
+            # If this is a group then loop over all the sub items.
+            rows = self.rowCount()
+            widgets = self.widget['config']['widgets'] = []
+            for row in xrange(rows):
+                item = self.child(row, 0)
+                widgets.append(item.getwidget())
+
+        return self.widget
+
 
 class WidgetsModel(QStandardItemModel):
     def __init__(self, parent=None):
         super(WidgetsModel, self).__init__(parent)
+
+    def widgets(self):
+        """
+        Return the widgets in the model in a list.
+        """
+        for row in xrange(self.rowCount()):
+            item = self.item(row, 0)
+            yield item.getwidget()
 
     def addwidget(self, widget, parent):
         item = WidgetItem(widget)
