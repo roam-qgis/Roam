@@ -1,0 +1,2 @@
+The _data folder can be used to store the data that belongs to the QGIS project. The template QGIS project will save relative
+paths allowing you to copy the whole project folder on the device including data.
