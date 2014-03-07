@@ -18,6 +18,8 @@ from roam.maptools import PointTool, PolygonTool, PolylineTool
 from roam.utils import log
 from roam.syncing import replication
 from roam.api import FeatureForm
+from roam.report import Report
+
 from roam.structs import OrderedDictYAMLLoader
 
 import roam.utils
@@ -76,7 +78,49 @@ def getProjects(paths):
 
             yield project
 
+class ReportFactory(object):
+    def __init__(self, config, rootfolder):
+	self.settings = config
+	self.folder = rootfolder
+	self.errors = []
+	self._module = None
+	self._reportclass = None
 
+    @classmethod
+    def from_config(cls, config, folder):
+	report = cls(config, folder)
+	report._loadmodule()
+	report.init_report()
+	return report
+
+    def _loadmodule(self):
+	name = os.path.basename(self.folder)
+	try:
+	    self._module = importlib.import_module(name)
+	except ImportError as err:
+	    log(sys.path)
+	    log(err)
+            self.errors.append(err.message)
+	    self._module = None
+
+    def init_report(self):
+	try:
+            self.module.init_report(self)
+	except AttributeError:
+	    pass
+
+    @property
+    def reportclass(self):
+        return self._reportclass or Report
+
+    def create_report(self):
+	"""
+	creates and returns the Report widget for this Roam project
+	"""
+	return self.reportclass.from_factory(self.settings, self.folder, None)
+
+    def module(self):
+	return self._module
 
 class Form(object):
     def __init__(self, name, config, rootfolder):
@@ -227,6 +271,7 @@ class Project(object):
         self.valid = True
         self.settings = settings
         self._forms = []
+	self._report = None
         self.error = ''
         self.basepath = os.path.join(rootfolder,"..")
 
@@ -345,6 +390,12 @@ class Project(object):
                 form = Form.from_config(formname, config, folder)
                 self._forms.append(form)
         return self._forms
+
+    @property
+    def report(self):
+	if not self._report:
+	    self._report = ReportFactory.from_config(self.settings, self.folder)
+	return self._report
 
     @property
     def selectlayers(self):

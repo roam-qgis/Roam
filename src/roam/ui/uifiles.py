@@ -19,6 +19,7 @@ infodock_widget, infodock_base = ui_infodock.Ui_Form, QWidget
 mainwindow_widget, mainwindow_base = ui_mainwindow.Ui_MainWindow, QMainWindow
 sync_widget, sync_base = ui_sync.Ui_Form, QWidget
 dataentry_widget, dataentry_base = ui_dataentrywidget.Ui_Form, QWidget
+report_widget, report_base = ui_reportwidget.Ui_Form, QWidget
 featurefeature_dialog = ui_deletefeature.Ui_DeleteFeatureDialog
 imageviewer_widget, imageviewer_base = ui_imageviewer.Ui_imageviewer, QWidget
 actionpicker_widget, actionpicker_base = ui_actionpicker.Ui_ActionPickerDialog, QDialog
