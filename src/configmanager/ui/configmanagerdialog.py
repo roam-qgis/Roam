@@ -190,7 +190,7 @@ class FormsNode(Treenode):
             del self.project.settings['forms'][form.name]
             self.project.save()
         except Exception as ex:
-            logger.error("Could not remove folder", exc_info=(exctype, value, traceback))
+            logger.exception("Could not remove folder")
             return False
 
         return True
@@ -249,7 +249,7 @@ class ProjectsNode(Treenode):
             archivefolder = os.path.join(project.basepath, "_archive")
             shutil.move(project.folder, archivefolder)
         except Exception as ex:
-            logger.error("Could not remove project folder", exc_info=(exctype, value, traceback))
+            logger.exception("Could not remove form folder")
             return False
 
         return True

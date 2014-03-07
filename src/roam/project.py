@@ -374,6 +374,7 @@ class Project(object):
 
     def hascapturelayers(self):
         layers = QgsMapLayerRegistry.instance().mapLayers().values()
+        layers = (layer for layer in layers if layer.type() == QgsMapLayer.VectorLayer)
         layers = [layer.name() for layer in layers if layer.geometryType() in self.supportedgeometry]
         for layer in self.selectlayers:
             if layer in layers:
