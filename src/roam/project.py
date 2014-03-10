@@ -321,7 +321,11 @@ class Project(object):
                 self._splash = ''
             
         return self._splash
-    
+
+    @property 
+    def hasReport(self):
+	return self.settings.get('hasReport', False)
+
     def syncprovders(self):
         providers = self.settings.get("providers", {})
         for name, config in providers.iteritems():

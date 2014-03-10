@@ -781,4 +781,3 @@ class MainWindow(mainwindow_widget, mainwindow_base):
         self.hidedataentry()
 	self.hidereport()
         self.infodock.close()
-
