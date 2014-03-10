@@ -1,15 +1,15 @@
 import getpass
-
+from roam import utils
 from SampleReport import SampleReport
 
 def init_report(report):
-    report.registerReport(SampleReport)
+    report.registerreport(SampleReport)
 
 def onProjectLoad():
     """
         Return (False, Message) if project shouldn't be loaded, else return (True, None).
     """
-
+    utils.log("On Project Load")
     # We just return True here because it's a demo project.
     return True, None
 

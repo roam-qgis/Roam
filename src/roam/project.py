@@ -96,6 +96,8 @@ class ReportFactory(object):
     def _loadmodule(self):
 	name = os.path.basename(self.folder)
 	try:
+	    #Hack Hack Hack.  I can't import sqlite3 from dist for the life of me. 
+	    import sqlite3
 	    self._module = importlib.import_module(name)
 	except ImportError as err:
 	    log(sys.path)
@@ -107,7 +109,10 @@ class ReportFactory(object):
 	try:
             self.module.init_report(self)
 	except AttributeError:
-	    pass
+	    utils.log("ReportFactory init_report: Failed to load module")
+
+    def registerreport(self, reportclass):
+	self._reportclass = reportclass
 
     @property
     def reportclass(self):
@@ -119,6 +124,7 @@ class ReportFactory(object):
 	"""
 	return self.reportclass.from_factory(self.settings, self.folder, None)
 
+    @property
     def module(self):
 	return self._module
 
@@ -398,7 +404,8 @@ class Project(object):
     @property
     def report(self):
 	if not self._report:
-	    self._report = ReportFactory.from_config(self.settings, self.folder)
+	    if self.hasReport:
+	        self._report = ReportFactory.from_config(self.settings, self.folder)
 	return self._report
 
     @property

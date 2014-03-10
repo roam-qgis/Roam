@@ -61,40 +61,16 @@
     </widget>
    </item>
   </layout>
-  <action name="actionSave">
-   <property name="icon">
-    <iconset resource="../resources.qrc">
-     <normaloff>:/icons/save</normaloff>:/icons/save</iconset>
-   </property>
-   <property name="text">
-    <string>Save</string>
-   </property>
-   <property name="toolTip">
-    <string>Save</string>
-   </property>
-  </action>
-  <action name="actionCancel">
+  <action name="actionClose">
    <property name="icon">
     <iconset resource="../resources.qrc">
      <normaloff>:/icons/cancel</normaloff>:/icons/cancel</iconset>
    </property>
    <property name="text">
-    <string>Cancel</string>
+    <string>Close</string>
    </property>
    <property name="toolTip">
-    <string>Cancel</string>
-   </property>
-  </action>
-  <action name="actionDelete">
-   <property name="icon">
-    <iconset resource="../resources.qrc">
-     <normaloff>:/icons/delete</normaloff>:/icons/delete</iconset>
-   </property>
-   <property name="text">
-    <string>Delete</string>
-   </property>
-   <property name="toolTip">
-    <string>Delete</string>
+    <string>Close Window</string>
    </property>
   </action>
  </widget>

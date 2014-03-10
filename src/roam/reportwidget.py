@@ -1,17 +1,8 @@
-import functools
-import os.path
-import os
-import getpass
-
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 
-from qgis.gui import QgsMessageBar
-
-from roam.utils import log, error
 from roam.ui.uifiles import report_widget, report_base
 from roam.flickwidget import FlickCharm
-from roam.structs import CaseInsensitiveDict
 
 
 class DefaultError(Exception):
@@ -36,8 +27,7 @@ class ReportWidget(report_widget, report_base):
         toolbar.setIconSize(size)
         style = Qt.ToolButtonTextUnderIcon
         toolbar.setToolButtonStyle(style)
-        self.actionSave.triggered.connect(self.saveChanges)
-        self.actionCancel.triggered.connect(self.closeReport)
+        self.actionClose.triggered.connect(self.closeReport)
 
         spacer = QWidget()
         spacer2 = QWidget()
@@ -45,14 +35,9 @@ class ReportWidget(report_widget, report_base):
         spacer.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
         spacer2.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
         toolbar.addWidget(spacer)
-        toolbar.addAction(self.actionCancel)
+        toolbar.addAction(self.actionClose)
         toolbar.addWidget(spacer2)
-        toolbar.addAction(self.actionSave)
         self.layout().insertWidget(0, toolbar)
-
-    def saveChanges(self):
-        #run user defined save code
-        self.closeReport()
 
     def closeReport(self):
         self.clear()
@@ -78,6 +63,4 @@ class ReportWidget(report_widget, report_base):
 	"""
 	self.report = project.report.create_report()
 	self.setwidget(self.report)
-	self.report.loaded()
 
-	

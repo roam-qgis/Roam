@@ -1,34 +1,11 @@
 import os
-import sys
-import subprocess
-import types
-import json
-
-from functools import partial
 
 from PyQt4 import uic
-from PyQt4.QtCore import pyqtSignal, QObject, QSize, QEvent, QProcess, Qt, QPyNullVariant, QRegExp
-from PyQt4.QtGui import (QWidget,
-                         QDialogButtonBox,
-                         QStatusBar,
-                         QLabel,
-                         QGridLayout,
-                         QToolButton,
-                         QIcon,
-                         QLineEdit,
-                         QPlainTextEdit,
-                         QComboBox,
-                         QDateTimeEdit,
-                         QBoxLayout,
-                         QSpacerItem,
-                         QFormLayout)
+from PyQt4.QtCore import pyqtSignal, QEvent 
+from PyQt4.QtGui import QWidget, QLabel, QComboBox
 
-from qgis.core import QgsFields, QgsFeature, QgsGPSConnectionRegistry
-
-from roam.editorwidgets.core import WidgetsRegistry, EditorWidgetException
 from roam import utils
 from roam.flickwidget import FlickCharm
-from roam.structs import CaseInsensitiveDict
 
 settings = {}
 
@@ -41,8 +18,8 @@ style = """
             * {
                 font: 20px "Segoe UI" ;
             }
-
-            QLabel {
+	    
+	    QLabel {
                 color: #4f4f4f;
             }
 
@@ -74,15 +51,6 @@ style = """
             }
 """
 
-
-
-def nullcheck(value):
-    if isinstance(value, QPyNullVariant):
-        return None
-    else:
-        return value
-
-
 def buildfromui(uifile, base):
     widget = uic.loadUi(uifile, base)
     return installflickcharm(widget)
@@ -107,19 +75,10 @@ class RejectedException(Exception):
 
 
 class ReportBase(QWidget):
-    requiredfieldsupdated = pyqtSignal(bool)
-    formvalidation = pyqtSignal(bool)
-    helprequest = pyqtSignal(str)
-    showwidget = pyqtSignal(QWidget)
-    loadform = pyqtSignal()
-    rejected = pyqtSignal(str)
-    enablesave = pyqtSignal(bool)
 
-
-    def __init__(self, config, parent=None):
+    def __init__(self, folder, config, parent=None):
         super(ReportBase, self).__init__(parent)
-        self.config = config
-
+        settings = config
 
     def _installeventfilters(self, widgettype):
         for widget in self.findChildren(widgettype):
@@ -134,56 +93,41 @@ class ReportBase(QWidget):
 
         return False
 
-    def setupui(self):
-        """
-        Setup the widget in the form
-        """
 
 class Report(ReportBase):
+
     """
-    You may override this in project __init__.py module in order to add custom logic in the following
+    You may override this in project __init__.py module 
+    in order to add custom logic in the following
     places:
 
-        - loading
-        - loaded
-        - save
-        - close
-
+        - uisetup
 
     class MyModule(Report):
         def __init__(self, widget, formconfig):
             super(MyModule, self).__init__(widget, formconfig)
 
-        def save(self):
+        def uisetup(self):
             ....
 
-
-    In order to register your report class you need to call `report.registerform` from the init_report method
+    In order to register your report class you 
+    need to call `report.registerform` from the init_report method
     in your report module
 
     def init_report(report):
         report.registerReport(MyModule)
-
-
   
     """
-
-    def __init__(self, reportconfig, reportparent=None):
-        super(Report, self).__init__(config=reportconfig, parent=reportparent)
-
+    def __init__(self, folder, config, parent=None):
+        super(Report, self).__init__(folder, config, parent)
 
     @classmethod
     def from_factory(cls, config, folder, parent=None):
         """
         Create a report widget from the given Roam report.
-        :param report: A Roam report
-        :param parent:
-        :return:
         """
- 
-        report = cls(reportconfig=config, reportparent=parent)
+        report = cls(folder, config, parent)
 
-        utils.log("folder " + folder)        
         uifile = os.path.join(folder, "report.ui")
         report = buildfromui(uifile, base=report)
 
@@ -192,48 +136,17 @@ class Report(ReportBase):
         reportstyle += report.styleSheet()
         report.setStyleSheet(reportstyle)
         report.setProperty('report', report)
-        report.setupui()
         report.uisetup()
         return report
 
-    def toNone(self, value):
-        """
-        Convert the value to a None type if it is a QPyNullVariant, because noone likes that
-        crappy QPyNullVariant type.
-
-        :return: A None if the the value is a instance of QPyNullVariant. Returns the given value
-                if not.
-        """
-        return nullcheck(value)
 
     def uisetup(self):
         """
-        Called when the UI is fully constructed.  You should connect any signals here.
+        Called when the UI is constructed.  
+	Connect any signals here and load widgets with data.
         """
         pass
 
-    def load(self):
-        """
-        Called before the report is loaded. This method can be used to do pre checks and halt the loading of the report
-        if needed.
 
-        When implemented, this method should always return a tuple with a pass state and a message.
-
-        Calling self.reject("Your message") will stop the opening of the report and show the message to the user.
-
-        """
-        pass
-
-    def loaded(self):
-        pass
-
-    def accept(self):
-        return True
-
-    def cancelload(self, message=None, level=RejectedException.WARNING):
-        raise RejectedException(message, level)
-
-    def saveenabled(self, enabled):
-        self.enablesave.emit(enabled)
 
 
