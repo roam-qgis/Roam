@@ -782,5 +782,3 @@ class MainWindow(mainwindow_widget, mainwindow_base):
 	self.hidereport()
         self.infodock.close()
 
-
-

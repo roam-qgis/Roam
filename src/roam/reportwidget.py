@@ -52,7 +52,7 @@ class ReportWidget(report_widget, report_base):
 
     def saveChanges(self):
         #run user defined save code
-        closeReport()
+        self.closeReport()
 
     def closeReport(self):
         self.clear()
