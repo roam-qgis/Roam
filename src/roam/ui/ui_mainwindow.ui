@@ -17,7 +17,7 @@
    </sizepolicy>
   </property>
   <property name="windowTitle">
-   <string>IntraMaps Roam: Moblie Data Collection</string>
+   <string>IntraMaps Roam: Mobile Data Collection</string>
   </property>
   <property name="windowIcon">
    <iconset resource="../resources.qrc">
