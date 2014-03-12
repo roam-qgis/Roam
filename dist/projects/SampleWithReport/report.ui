@@ -111,6 +111,11 @@
          </property>
          <column>
           <property name="text">
+           <string>ID</string>
+          </property>
+         </column>
+         <column>
+          <property name="text">
            <string>Job ID</string>
           </property>
          </column>
@@ -173,6 +178,11 @@
          <attribute name="horizontalHeaderCascadingSectionResizes">
           <bool>true</bool>
          </attribute>
+         <column>
+          <property name="text">
+           <string>ID</string>
+          </property>
+         </column>
          <column>
           <property name="text">
            <string>Job ID</string>

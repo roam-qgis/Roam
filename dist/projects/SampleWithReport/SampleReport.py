@@ -33,32 +33,34 @@ class SampleReport(Report):
 	""" populate Jobs Table """
 	self.dbcur.execute("select job_id, job_date, inspector, territory, job, hours from jobs")
         jlist = self.dbcur.fetchall()
-        self.addRows("jobsTable", jlist)
+        self.addRows("jobsTable", jlist, True, False)
     
     def popInfestations(self):
 	self.infestationsTable.setRowCount(0)
 	""" populate Infestations Table """
-	self.dbcur.execute("select job_id, kind, species, severity from infestations")
+	self.dbcur.execute("select id, job_id, kind, species, severity from infestations")
         ilist = self.dbcur.fetchall()
-        self.addRows("infestationsTable", ilist)
+        self.addRows("infestationsTable", ilist, True, True)
 
     def popContractors(self):
 	self.contractorsTable.setRowCount(0)
 	""" populate Contractors Table """
-	self.dbcur.execute("select job_id, contractor, hours from contractors")
+	self.dbcur.execute("select id, job_id, contractor, hours from contractors")
         clist = self.dbcur.fetchall()
-        self.addRows("contractorsTable", clist)
+        self.addRows("contractorsTable", clist, True, True)
 
     
-    def addRows(self, tablename, rows):
+    def addRows(self, tablename, rows, ro1=False, ro2=False):
         for ridx, row in enumerate(rows):
 	    self.tables[tablename].insertRow(ridx)
 	    for cidx, cell in enumerate(row):
 		item = QTableWidgetItem(str(cell))
-		if cidx == 0:
+		if (cidx == 0 and ro1) or (cidx == 1 and ro2):
 		    item.setFlags(Qt.ItemIsEnabled | Qt.ItemIsSelectable)
 
                 self.tables[tablename].setItem(ridx, cidx, item)
+        self.tables[tablename].resizeColumnsToContents()
+
   
     def connectButtons(self):
 	self.deleteJob.pressed.connect(self.deletejob)
@@ -85,9 +87,13 @@ class SampleReport(Report):
 	self.popJobs()
 
     def deletejob(self):
-	x = self.jobsTable.currentRow()
-	job_id = self.jobsTable.item(x,0).text()
-	self.removeCurrentRow("jobsTable")
+	row = self.jobsTable.currentRow()
+	job_id = self.jobsTable.item(row,0).text()
+	self.jobsTable.removeRow(row)
+	sql = u"delete from infestations where job_id = \'{}\'".format(job_id)
+	self.dbcur.execute(sql)
+	sql = u"delete from contractors where job_id = \'{}\'".format(job_id)
+	self.dbcur.execute(sql)   
 	sql = u"delete from jobs where job_id = \'{}\'".format(job_id)
 	self.dbcur.execute(sql)
 	self.popJobs()
@@ -98,13 +104,21 @@ class SampleReport(Report):
 	pass
 
     def deleteinfestation(self):
-	self.removeCurrentRow("infestationsTable")
+	row = self.infestationsTable.currentRow()
+	id = self.infestationsTable.item(row, 0).text()
+	self.infestationsTable.removeRow(row)
+	sql = u"delete from infestations where id = \'{}\'".format(id)
+        self.dbcur.execute(sql)
+	self.popInfestations()
 
     def savecontractors(self):
 	pass
 
     def deletecontractor(self):
-	self.removeCurrentRow("contractorsTable")
-
-    def removeCurrentRow(self, tablename):
-        self.tables[tablename].removeRow(self.tables[tablename].currentRow())
+	row = self.contractorsTable.currentRow()
+	id = self.contractorsTable.item(row, 0).text()
+	self.contractorsTable.removeRow(row)
+	sql = u"delete from contractors where id = \'{}\'".format(id)
+	self.popContractors()
+        self.dbcur.execute(sql)
+	self.popContractors()
