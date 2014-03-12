@@ -1,5 +1,6 @@
 import os
-from PyQt4.QtGui import QTableWidget, QTableWidgetItem, QPushButton
+from PyQt4.QtCore import Qt
+from PyQt4.QtGui import  QTableWidget, QTableWidgetItem, QPushButton
 from roam.report import Report
 from roam import utils
 
@@ -52,8 +53,12 @@ class SampleReport(Report):
     def addRows(self, tablename, rows):
         for ridx, row in enumerate(rows):
 	    self.tables[tablename].insertRow(ridx)
-	    for cidx, cell in enumerate(row): 
-                self.tables[tablename].setItem(ridx, cidx, QTableWidgetItem(str(cell)))
+	    for cidx, cell in enumerate(row):
+		item = QTableWidgetItem(str(cell))
+		if cidx == 0:
+		    item.setFlags(Qt.ItemIsEnabled | Qt.ItemIsSelectable)
+
+                self.tables[tablename].setItem(ridx, cidx, item)
   
     def connectButtons(self):
 	self.deleteJob.pressed.connect(self.deletejob)
