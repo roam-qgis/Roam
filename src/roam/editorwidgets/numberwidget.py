@@ -45,6 +45,10 @@ class NumberWidget(EditorWidget):
         self.widget.setSuffix(suffix)
 
     def setvalue(self, value):
+        if not value:
+            value = 0.00
+
+        value = float(value)
         self.widget.setValue(value)
 
     def value(self):
