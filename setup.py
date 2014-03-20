@@ -128,8 +128,6 @@ class qtbuild(build):
     def run(self):
         buildqtfiles()
         build.run(self)
-        dst = os.path.join(appsrcopyFilesath, "ui", "resources_rc.py")
-        shutil.copy(os.path.join(appsrcopyFilesath, "resources_rc.py"), dst)
 
 
 setup(
