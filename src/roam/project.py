@@ -50,8 +50,9 @@ def checkversion(roamversion, projectversion):
 
     min = versiontuple(roamversion)
     project = versiontuple(projectversion)
+    # Only match major for now because API is only broken between major versions.
     majormatch = min[0] == project[0]
-    return majormatch and (project > min or project == min)
+    return majormatch
 
 
 def getProjects(projectpath):
