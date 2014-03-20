@@ -221,9 +221,6 @@ class MainWindow(mainwindow_widget, mainwindow_base):
         self.canvas.extentsChanged.connect(self.updatestatuslabel)
         self.projecttoolbar.toolButtonStyleChanged.connect(self.updatecombo)
 
-        self.canvas.refresh()
-        self.canvas.repaint()
-
     def selectdataentry(self, ):
         if self.dataentrycombo.count() == 0:
             return
@@ -704,7 +701,12 @@ class MainWindow(mainwindow_widget, mainwindow_base):
             return
 
         self.actionMap.trigger()
+
         self.closeProject()
+
+        self.canvas.refresh()
+        self.canvas.repaint()
+
         self.infodock.clearResults()
 
         # No idea why we have to set this each time.  Maybe QGIS deletes it for
