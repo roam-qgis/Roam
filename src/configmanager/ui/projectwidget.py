@@ -9,7 +9,7 @@ from PyQt4.QtCore import Qt, QDir, QFileInfo, pyqtSignal, QModelIndex, QFileSyst
 from PyQt4.QtGui import QWidget, QStandardItemModel, QStandardItem, QIcon, QMessageBox, QPixmap
 
 from qgis.core import QgsProject, QgsMapLayerRegistry, QgsPalLabeling, QGis
-from qgis.gui import QgsMapCanvas, QgsExpressionBuilderDialog
+from qgis.gui import QgsMapCanvas, QgsExpressionBuilderDialog, QgsMessageBar
 
 from configmanager.ui.ui_projectwidget import Ui_Form
 from configmanager.models import widgeticon, WidgetItem, WidgetsModel, QgsLayerModel, QgsFieldModel, LayerTypeFilter, CaptureLayerFilter, CaptureLayersModel
@@ -23,6 +23,7 @@ import roam.yaml
 import roam
 import roam.project
 
+import configmanager.settings as settings
 
 readonlyvalues = [('Never', 'never'),
                   ('Always', 'always'),
@@ -35,9 +36,9 @@ def layer(name):
 def openfolder(folder):
     subprocess.Popen('explorer "{}"'.format(folder))
 
-def openqgis(project):
+def openqgis(project, qgislocation):
     # TODO This needs to look in other places for QGIS.
-    subprocess.Popen([r'C:\OSGeo4W\bin\qgis.bat', "--noplugins", project])
+    subprocess.Popen([qgislocation, "--noplugins", project])
 
 class ProjectWidget(Ui_Form, QWidget):
     SampleWidgetRole = Qt.UserRole + 1
@@ -51,6 +52,7 @@ class ProjectWidget(Ui_Form, QWidget):
         self.setupUi(self)
         self.project = None
         self.mapisloaded = False
+        self.bar = None
 
         self.canvas.setCanvasColor(Qt.white)
         self.canvas.enableAntiAliasing(True)
@@ -162,7 +164,15 @@ class ProjectWidget(Ui_Form, QWidget):
 
     def openinqgis(self):
         projectfile = self.project.projectfile
-        openqgis(projectfile)
+        qgislocation = r'C:\OSGeo4W\bin\qgis.bat'
+        qgislocation = settings.settings.setdefault('configmanager', {}) \
+                                        .setdefault('qgislocation', qgislocation)
+
+        try:
+            openqgis(projectfile, qgislocation)
+        except WindowsError:
+            self.bar.pushMessage("Looks like I couldn't find QGIS",
+                               "Check qgislocation in settings.config", QgsMessageBar.WARNING)
 
     def openprojectfolder(self):
         folder = self.project.folder

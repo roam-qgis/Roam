@@ -271,6 +271,7 @@ class ConfigManagerDialog(ui_configmanager.Ui_ProjectInstallerDialog, QDialog):
         super(ConfigManagerDialog, self).__init__(parent)
         self.setupUi(self)
         self.bar = roam.messagebaritems.MessageBar(self)
+        self.projectwidget.bar = self.bar
 
         self.treemodel = QStandardItemModel()
         self.projectList.setModel(self.treemodel)
