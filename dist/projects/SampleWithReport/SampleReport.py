@@ -1,6 +1,6 @@
 import os
 from PyQt4.QtCore import Qt
-from PyQt4.QtGui import  QTableWidget, QTableWidgetItem, QPushButton
+from PyQt4.QtGui import  QTableWidget, QTableWidgetItem, QPushButton, QHeaderView
 from roam.report import Report
 from roam import utils
 
@@ -23,10 +23,12 @@ class SampleReport(Report):
 			"contractorsTable": self.contractorsTable,
 	                "infestationsTable": self.infestationsTable
 		      }
+	self.contractorsTable.horizontalHeader().setResizeMode(QHeaderView.ResizeToContents)
         self.popJobs()
 	self.popInfestations()
 	self.popContractors()
 	self.connectButtons()
+	
 
     def popJobs(self):
 	self.jobsTable.setRowCount(0)
@@ -72,8 +74,11 @@ class SampleReport(Report):
 	self.savejobs()
 	self.saveinfestations()
 	self.savecontractors()
-	#self.dbcur.commit()
-	
+	self.db.commit()
+	self.popInfestations()
+        self.popContractors()
+        self.popJobs()
+
     def savejobs(self):
 	for x in range(0, self.jobsTable.rowCount()):
             job_id = self.jobsTable.item(x, 0).text()
@@ -82,9 +87,8 @@ class SampleReport(Report):
 	    territory = self.jobsTable.item(x, 3).text()
 	    job = self.jobsTable.item(x, 4).text()
 	    hours = self.jobsTable.item(x, 5).text()
-	    sql = u"update jobs set job_date = \'{}\', territory = \'{}\', inspector = \'{}\', job = \'{}\',  hours = \'{}\' where job_id = \'{}\')".format(date, inspector, territory, job, hours, job_id)
-	    self.dbcur.execute(u"select * from jobs")
-	self.popJobs()
+	    sql = u"update jobs set job_date = \'{}\', territory = \'{}\', inspector = \'{}\', job = \'{}\',  hours = \'{}\' where job_id = \'{}\'".format(date, inspector, territory, job, hours, job_id)
+	    self.dbcur.execute(sql)
 
     def deletejob(self):
 	row = self.jobsTable.currentRow()
@@ -101,7 +105,14 @@ class SampleReport(Report):
 	self.popContractors()
 
     def saveinfestations(self):
-	pass
+	for x in range(0, self.infestationsTable.rowCount()):
+            iid = self.infestationsTable.item(x, 0).text()
+	    kind = self.infestationsTable.item(x, 2).text()
+	    species = self.infestationsTable.item(x, 3).text()
+	    severity = self.infestationsTable.item(x, 4).text()
+	    sql = u"update infestations set kind = \'{}\', species = \'{}\', severity = \'{}\' where id = \'{}\'".format(kind, species, severity, iid)
+	    self.dbcur.execute(sql)
+
 
     def deleteinfestation(self):
 	row = self.infestationsTable.currentRow()
@@ -112,7 +123,13 @@ class SampleReport(Report):
 	self.popInfestations()
 
     def savecontractors(self):
-	pass
+	for x in range(0, self.contractorsTable.rowCount()):
+            iid = self.contractorsTable.item(x, 0).text()
+	    contractor = self.contractorsTable.item(x, 2).text()
+	    hours = self.contractorsTable.item(x, 3).text()
+	    sql = u"update contractors set contractor = \'{}\', hours = \'{}\' where id = \'{}\'".format(contractor, hours, iid)
+	    self.dbcur.execute(sql)
+
 
     def deletecontractor(self):
 	row = self.contractorsTable.currentRow()
