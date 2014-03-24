@@ -28,6 +28,14 @@ uic.properties.logger.setLevel(logging.INFO)
 # We have to start this here or else the image drivers don't load for some reason
 app = QgsApplication(sys.argv, True)
 
+apppath = os.path.dirname(os.path.realpath(sys.argv[0]))
+i18path = os.path.join(apppath, 'i18n')
+translationFile = os.path.join(i18path, 'de_DE')
+
+translator = PyQt4.QtCore.QTranslator()
+translator.load(translationFile, "i18n")
+app.installTranslator(translator)
+
 import roam
 import roam.yaml as yaml
 import roam.utils
