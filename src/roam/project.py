@@ -118,11 +118,11 @@ class ReportFactory(object):
     def reportclass(self):
         return self._reportclass or Report
 
-    def create_report(self):
+    def create_report(self, errorbar):
 	"""
 	creates and returns the Report widget for this Roam project
 	"""
-	return self.reportclass.from_factory(self.settings, self.folder, None)
+	return self.reportclass.from_factory(self.settings, self.folder, errorbar, None)
 
     @property
     def module(self):

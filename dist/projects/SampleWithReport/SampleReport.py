@@ -5,8 +5,8 @@ from roam.report import Report
 from roam import utils
 
 class SampleReport(Report):
-    def __init__(self, folder, config, parent):
-        super(SampleReport, self).__init__(folder, config, parent)
+    def __init__(self, folder, config, errorbar, parent=None):
+        super(SampleReport, self).__init__(folder, config, errorbar, parent)
 	self.tables = {}
 	self.dbpath = os.path.join(folder, "data", "sampledata.sqlite")
 	self.db = None
@@ -78,6 +78,7 @@ class SampleReport(Report):
 	self.popInfestations()
         self.popContractors()
         self.popJobs()
+	self.bar.pushMessage("Saved Changes")
 
     def savejobs(self):
 	for x in range(0, self.jobsTable.rowCount()):

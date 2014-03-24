@@ -76,9 +76,11 @@ class RejectedException(Exception):
 
 class ReportBase(QWidget):
 
-    def __init__(self, folder, config, parent=None):
+    def __init__(self, folder, config, errorbar, parent=None):
         super(ReportBase, self).__init__(parent)
-        settings = config
+        self.settings = config
+        self.bar = errorbar
+
 
     def _installeventfilters(self, widgettype):
         for widget in self.findChildren(widgettype):
@@ -108,25 +110,26 @@ class Report(ReportBase):
             super(MyModule, self).__init__(widget, formconfig)
 
         def uisetup(self):
-            ....
+            
 
-    In order to register your report class you 
-    need to call `report.registerform` from the init_report method
+    In order to register your report class you
+
+    need to call report.registerform from the init_report method
     in your report module
 
     def init_report(report):
         report.registerReport(MyModule)
   
     """
-    def __init__(self, folder, config, parent=None):
-        super(Report, self).__init__(folder, config, parent)
+    def __init__(self, folder, config, errorbar, parent=None):
+        super(Report, self).__init__(folder, config, errorbar, parent)
 
     @classmethod
-    def from_factory(cls, config, folder, parent=None):
+    def from_factory(cls, config, folder, errorbar, parent=None):
         """
         Create a report widget from the given Roam report.
         """
-        report = cls(folder, config, parent)
+        report = cls(folder, config, errorbar, parent)
 
         uifile = os.path.join(folder, "report.ui")
         report = buildfromui(uifile, base=report)

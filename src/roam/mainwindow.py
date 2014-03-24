@@ -149,7 +149,6 @@ class MainWindow(mainwindow_widget, mainwindow_base):
         self.reportpage.layout().addWidget(self.reportwidget)
         self.reportwidget.closed.connect(self.reportclosed)
 
-
         def createSpacer(width=0, height=0):
             widget = QWidget()
             widget.setMinimumWidth(width)
@@ -228,9 +227,6 @@ class MainWindow(mainwindow_widget, mainwindow_base):
 	self.hidereport()
         self.canvas.extentsChanged.connect(self.updatestatuslabel)
         self.projecttoolbar.toolButtonStyleChanged.connect(self.updatecombo)
-        
-	self.canvas.refresh()
-	self.canvas.repaint()
 
         RoamEvents.openimage.connect(self.openimage)
         RoamEvents.openurl.connect(self.viewurl)

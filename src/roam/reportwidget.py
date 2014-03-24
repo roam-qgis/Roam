@@ -61,6 +61,6 @@ class ReportWidget(report_widget, report_base):
 	"""
 	opens report widget for a given project
 	"""
-	self.report = project.report.create_report()
+	self.report = project.report.create_report(self.bar)
 	self.setwidget(self.report)
 
