@@ -13,7 +13,7 @@ import roam.environ
 
 from functools import partial
 
-prefixpath, settingspath = roam.environ.setup(sys.argv)
+roamapp = roam.environ.setup(sys.argv)
 
 from qgis.core import QgsApplication, QgsProviderRegistry
 
@@ -49,9 +49,12 @@ def excepthook(errorhandler, exctype, value, traceback):
 start = time.time()
 roam.utils.info("Loading Roam")
 
+
 roam.utils.info("Attempted to load translation file: " + translationFile)
 
-QgsApplication.setPrefixPath(prefixpath, True)
+
+QgsApplication.setPrefixPath(roamapp.prefixpath, True)
+
 QgsApplication.initQgis()
 
 roam.utils.info(QgsApplication.showSettings())
@@ -77,7 +80,7 @@ class Settings:
         with open(self.path, 'w') as f:
             yaml.dump(data=self.settings, stream=f, default_flow_style=False)
 
-settings = Settings(settingspath)
+settings = Settings(roamapp.settingspath)
 settings.load()
 
 window = MainWindow(settings=settings)
