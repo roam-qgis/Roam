@@ -3,7 +3,7 @@ import sys
 
 from collections import namedtuple
 
-RoamApp = namedtuple('RoamApp', 'apppath prefixpath settingspath libspath')
+RoamApp = namedtuple('RoamApp', 'apppath prefixpath settingspath libspath i18npath')
 
 
 def setup(argv):
@@ -17,6 +17,7 @@ def setup(argv):
     apppath = os.path.dirname(os.path.realpath(argv[0]))
     prefixpath = os.path.join(apppath, "libs", "qgis")
     libspath = os.path.join(apppath, "libs", "roam")
+    i18npath = os.path.join(libspath, "i18n")
     settingspath = os.path.join(apppath, "settings.config")
 
     # Set the PATH and GDAL_DRIVER_PATH for gdal to find the plugins.
@@ -39,7 +40,7 @@ def setup(argv):
         prefixpath = r"C:\OSGeo4W\apps\qgis"
         settingspath = os.path.join(apppath, "..", "settings.config")
 
-    return RoamApp(apppath, prefixpath, settingspath, libspath)
+    return RoamApp(apppath, prefixpath, settingspath, libspath, i18npath)
 
 
 def projectpath(argv):

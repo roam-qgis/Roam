@@ -67,6 +67,8 @@ utils = ['ogr2ogr.exe', 'ogrinfo.exe', 'gdalinfo.exe', 'NCSEcw.dll',
 
 extrafiles = [os.path.join(osgeobin, path) for path in utils]
 
+i18npath = os.path.join(appsrcopyFilesath, 'i18n')
+
 datafiles = [(".", [r'src\settings.config']),
             (r'libs\roam\templates', [r'src\roam\templates\info.html',
                                       r'src\roam\templates\error.html']),
@@ -86,6 +88,9 @@ for path, collection in getfiles(r'src\configmanager\templates', r'libs\configma
     datafiles.append((path, collection))
 
 for path, collection in getfiles(gdalsharepath, r'libs'):
+    datafiles.append((path, collection))
+
+for path, collection in getfiles(i18npath, r'libs\roam'):
     datafiles.append((path, collection))
 
 icon = r'src\roam\resources\branding\icon.ico'
