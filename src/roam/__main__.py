@@ -27,10 +27,11 @@ uic.properties.logger.setLevel(logging.INFO)
 
 # We have to start this here or else the image drivers don't load for some reason
 app = QgsApplication(sys.argv, True)
+locale = PyQt4.QtCore.QLocale.system().name()
 
 apppath = os.path.dirname(os.path.realpath(sys.argv[0]))
 i18path = os.path.join(apppath, 'i18n')
-translationFile = os.path.join(i18path, 'de_DE')
+translationFile = os.path.join(i18path, '{0}.qm'.format(locale))
 
 translator = PyQt4.QtCore.QTranslator()
 translator.load(translationFile, "i18n")
@@ -47,6 +48,8 @@ def excepthook(errorhandler, exctype, value, traceback):
 
 start = time.time()
 roam.utils.info("Loading Roam")
+
+roam.utils.info("Attempted to load translation file: " + translationFile)
 
 QgsApplication.setPrefixPath(prefixpath, True)
 QgsApplication.initQgis()
