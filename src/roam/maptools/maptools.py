@@ -19,8 +19,8 @@ class EndCaptureAction(QAction):
 
 
 class CaptureAction(QAction):
-    def __init__(self, tool, parent=None):
-        super(CaptureAction, self).__init__(QIcon(":/icons/capture"), "Capture", parent)
+    def __init__(self, tool, geomtype, parent=None):
+        super(CaptureAction, self).__init__(QIcon(":/icons/capture-{}".format(geomtype)), "Capture", parent)
         self.setObjectName("capture")
         self.setCheckable(True)
         self.tool = tool
@@ -61,7 +61,7 @@ class PolylineTool(QgsMapTool):
             "      ++.++     ",
             "       +.+      "]))
 
-        self.captureaction = CaptureAction(self)
+        self.captureaction = CaptureAction(self, "line")
         self.endcaptureaction = EndCaptureAction(self)
 
         self.captureaction.toggled.connect(self.endcaptureaction.setEnabled)
@@ -140,6 +140,7 @@ class PolygonTool(PolylineTool):
 
     def __init__(self, canvas):
         super(PolygonTool, self).__init__(canvas)
+        self.captureaction = CaptureAction(self, "polygon")
         self.reset()
 
     def reset(self):
@@ -177,7 +178,7 @@ class PointTool(TouchMapTool):
             "      ++.++     ",
             "       +.+      "]))
 
-        self.captureaction = CaptureAction(self)
+        self.captureaction = CaptureAction(self, 'point')
 
     @property
     def actions(self):

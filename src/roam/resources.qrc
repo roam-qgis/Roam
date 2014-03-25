@@ -31,7 +31,9 @@
     <file alias="info">resources/images/info.svg</file>
     <file alias="save">resources/images/save.svg</file>
     <file alias="dataentry">resources/images/data.png</file>
-    <file alias="capture">resources/images/capture.svg</file>
+    <file alias="capture-point">resources/images/capture-point.svg</file>
+    <file alias="capture-line">resources/images/capture-line.svg</file>
+    <file alias="capture-polygon">resources/images/capture-polygon.svg</file>
     <file alias="down">resources/images/down.svg</file>
     <file alias="remove">resources/images/remove.svg</file>
     <file alias="next">resources/images/next.svg</file>
