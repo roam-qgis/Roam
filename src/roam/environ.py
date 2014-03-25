@@ -37,6 +37,8 @@ def setup(argv):
         os.environ["GDAL_DATA"] = r"C:\OSGeo4W\share\gdal"
         os.environ["GDAL_DRIVER_PATH"] = r"C:\OSGeo4W\bin\gdalplugins"
         os.environ["QT_PLUGIN_PATH"] = r"C:\OSGeo4W\apps\Qt4\plugins"
+        libspath = os.path.join(apppath)
+        i18npath = os.path.join(libspath, "i18n")
         prefixpath = r"C:\OSGeo4W\apps\qgis"
         settingspath = os.path.join(apppath, "..", "settings.config")
 
