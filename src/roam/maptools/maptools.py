@@ -10,7 +10,7 @@ import roam.resources_rc
 
 class EndCaptureAction(QAction):
     def __init__(self, tool, parent=None):
-        super(EndCaptureAction, self).__init__(QIcon(), "End Capture", parent)
+        super(EndCaptureAction, self).__init__(QIcon(":/icons/stop-capture"), "End Capture", parent)
         self.setObjectName("endcapture")
         self.setCheckable(False)
         self.tool = tool
