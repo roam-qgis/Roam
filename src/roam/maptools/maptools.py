@@ -39,6 +39,9 @@ class PolylineTool(QgsMapTool):
         self.band = QgsRubberBand(self.canvas, QGis.Line)
         self.band.setColor(QColor.fromRgb(224,162,16, 75))
         self.band.setWidth(5)
+        self.pointband = QgsRubberBand(self.canvas, QGis.Point)
+        self.pointband.setColor(QColor.fromRgb(224,162,16, 100))
+        self.pointband.setIconSize(20)
         self.capturing = False
         self.cursor = QCursor(QPixmap(["16 16 3 1",
             "      c None",
@@ -97,7 +100,9 @@ class PolylineTool(QgsMapTool):
             qgspoint = QgsPoint(point)
             self.points.append(qgspoint)
             self.band.addPoint(point)
+            self.pointband.addPoint(point)
             self.capturing = True
+            self.endcaptureaction.setEnabled(True)
 
     def endcapture(self):
         self.capturing = False
@@ -113,6 +118,7 @@ class PolylineTool(QgsMapTool):
 
     def reset(self):
         self.band.reset(QGis.Line)
+        self.pointband.reset(QGis.Point)
         self.points = []
 
     def activate(self):
@@ -144,8 +150,8 @@ class PolygonTool(PolylineTool):
         self.reset()
 
     def reset(self):
+        super(PolygonTool, self).reset()
         self.band.reset(QGis.Polygon)
-        self.points = []
 
 
 class PointTool(TouchMapTool):
