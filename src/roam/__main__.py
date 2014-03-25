@@ -29,9 +29,7 @@ uic.properties.logger.setLevel(logging.INFO)
 app = QgsApplication(sys.argv, True)
 locale = PyQt4.QtCore.QLocale.system().name()
 
-apppath = os.path.dirname(os.path.realpath(sys.argv[0]))
-i18path = os.path.join(apppath, 'i18n')
-translationFile = os.path.join(i18path, '{0}.qm'.format(locale))
+translationFile = os.path.join(roamapp.i18npath, '{0}.qm'.format(locale))
 
 translator = PyQt4.QtCore.QTranslator()
 translator.load(translationFile, "i18n")
