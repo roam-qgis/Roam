@@ -40,7 +40,7 @@ class CaptureLayerFilter(QSortFilterProxyModel):
             return False
 
         layer = index.data(Qt.UserRole)
-        if layer.name() in self.selectlayers and layer.geometryType() == QGis.Point:
+        if layer.name() in self.selectlayers:
             return True
 
         return False

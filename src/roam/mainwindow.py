@@ -387,29 +387,29 @@ class MainWindow(mainwindow_widget, mainwindow_base):
 
     def createCaptureButtons(self, form, wasselected):
         tool = form.getMaptool()(self.canvas)
-        action = QAction(QIcon(":/icons/capture"), "Capture", None)
-        action.setObjectName("capture")
-        action.setCheckable(True)
-        action.toggled.connect(partial(self.setMapTool, tool))
+        for action in tool.actions:
+            # Create the action here.
+            if action.ismaptool:
+                action.toggled.connect(partial(self.setMapTool, tool))
 
-        if isinstance(tool, PointTool):
+            # Set the action as a data entry button so we can remove it later.
+            action.setProperty("dataentry", True)
+            self.editgroup.addAction(action)
+            self.layerbuttons.append(action)
+            self.projecttoolbar.insertAction(self.topspaceraction, action)
+
+            if action.isdefault:
+                action.setChecked(wasselected)
+
+        if hasattr(tool, 'geometryComplete'):
             add = partial(self.addNewFeature, form)
             tool.geometryComplete.connect(add)
         else:
             tool.finished.connect(self.openForm)
             tool.error.connect(partial(self.showToolError, form.label))
 
-        # Set the action as a data entry button so we can remove it later.
-        action.setProperty("dataentry", True)
-
-        self.actionGPSFeature.setVisible(not tool.isEditTool())
-
-        self.projecttoolbar.insertAction(self.topspaceraction, action)
         self.projecttoolbar.insertAction(self.topspaceraction, self.actionGPSFeature)
-        self.editgroup.addAction(action)
-        self.layerbuttons.append(action)
-
-        action.setChecked(wasselected)
+        self.actionGPSFeature.setVisible(not tool.isEditTool())
 
     def createFormButtons(self, forms):
         """

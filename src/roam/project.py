@@ -13,7 +13,7 @@ from PyQt4.QtGui import QAction, QIcon
 
 from qgis.core import QgsMapLayerRegistry, QGis, QgsTolerance, QgsVectorLayer, QgsMapLayer
 
-from roam.maptools import PointTool, InspectionTool, EditTool
+from roam.maptools import PointTool, PolygonTool, PolylineTool
 from roam.utils import log
 from roam.syncing import replication
 from roam.featureform import FeatureForm
@@ -133,7 +133,11 @@ class Form(object):
         """
         if self.QGISLayer.geometryType() == QGis.Point:
             return PointTool
-        
+        elif self.QGISLayer.geometryType() == QGis.Polygon:
+            return PolygonTool
+        elif self.QGISLayer.geometryType() == QGis.Line:
+            return PolylineTool
+
         raise NoMapToolConfigured
 
     @property
@@ -159,9 +163,6 @@ class Form(object):
 
         elif not self.QGISLayer.type() == QgsMapLayer.VectorLayer:
             self.errors.append("We can only support vector layers for data entry")
-
-        if not self.QGISLayer.geometryType() == QGis.Point:
-            self.errors.append("Currently we only support point capture layers")
 
         if self.errors:
             return False, self.errors
@@ -371,7 +372,7 @@ class Project(object):
 
     @property
     def supportedgeometry(self):
-        return [QGis.Point]
+        return [QGis.Point, QGis.Polygon, QGis.Line]
 
     def hascapturelayers(self):
         layers = QgsMapLayerRegistry.instance().mapLayers().values()

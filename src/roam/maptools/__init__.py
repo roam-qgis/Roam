@@ -1,4 +1,4 @@
-from roam.maptools.maptools import PointTool, PolygonTool
+from roam.maptools.maptools import PointTool, PolygonTool, PolylineTool
 from roam.maptools.inspectiontool import InspectionTool
 from roam.maptools.movetool import MoveTool
 from roam.maptools.edittool import EditTool

@@ -5,17 +5,39 @@ from qgis.gui import *
 
 from roam.maptools.touchtool import TouchMapTool
 
-class PolygonTool(QgsMapTool):
+import roam.resources_rc
+
+
+class EndCaptureAction(QAction):
+    def __init__(self, tool, parent=None):
+        super(EndCaptureAction, self).__init__(QIcon(), "End Capture", parent)
+        self.setObjectName("endcapture")
+        self.setCheckable(False)
+        self.tool = tool
+        self.isdefault = False
+        self.ismaptool = False
+
+
+class CaptureAction(QAction):
+    def __init__(self, tool, parent=None):
+        super(CaptureAction, self).__init__(QIcon(":/icons/capture"), "Capture", parent)
+        self.setObjectName("capture")
+        self.setCheckable(True)
+        self.tool = tool
+        self.isdefault = True
+        self.ismaptool = True
+
+
+class PolylineTool(QgsMapTool):
     mouseClicked = pyqtSignal(QgsPoint)
     geometryComplete = pyqtSignal(QgsGeometry)
 
-    def __init__(self):
-        QgsMapTool.__init__(self)
-        raise NotImplementedError
-    
+    def __init__(self, canvas):
+        super(PolylineTool, self).__init__(canvas)
         self.points = []
-        self.band = QgsRubberBand(self.canvas(), True)
-        self.band.setColor(QColor.fromRgb(224,162,16))
+        self.canvas = canvas
+        self.band = QgsRubberBand(self.canvas, QGis.Line)
+        self.band.setColor(QColor.fromRgb(224,162,16, 75))
         self.band.setWidth(5)
         self.capturing = False
         self.cursor = QCursor(QPixmap(["16 16 3 1",
@@ -39,6 +61,18 @@ class PolygonTool(QgsMapTool):
             "      ++.++     ",
             "       +.+      "]))
 
+        self.captureaction = CaptureAction(self)
+        self.endcaptureaction = EndCaptureAction(self)
+
+        self.captureaction.toggled.connect(self.endcaptureaction.setEnabled)
+        self.endcaptureaction.setEnabled(False)
+
+        self.endcaptureaction.triggered.connect(self.endcapture)
+
+    @property
+    def actions(self):
+        return [self.captureaction, self.endcaptureaction]
+
     def canvasPressEvent(self, event):
         # TODO Add node dragging support.
         pass
@@ -47,7 +81,7 @@ class PolygonTool(QgsMapTool):
         x = event.pos().x()
         y = event.pos().y()
 
-        point = self.canvas().getCoordinateTransform().toMapCoordinates(x, y)
+        point = self.canvas.getCoordinateTransform().toMapCoordinates(x, y)
         return point
 
     def canvasMoveEvent(self, event):
@@ -56,14 +90,29 @@ class PolygonTool(QgsMapTool):
             self.band.movePoint(point)
         
     def canvasReleaseEvent(self, event):
-        point = self.getPointFromEvent(event)
-        qgspoint = QgsPoint(point)
-        self.points.append(qgspoint)
-        self.band.addPoint(point)
-        self.capturing = True
+        if event.button() == Qt.RightButton:
+            self.endcapture()
+        else:
+            point = self.getPointFromEvent(event)
+            qgspoint = QgsPoint(point)
+            self.points.append(qgspoint)
+            self.band.addPoint(point)
+            self.capturing = True
+
+    def endcapture(self):
+        self.capturing = False
+        self.band.removeLastPoint()
+        geometry = self.band.asGeometry()
+        if not geometry:
+            return
+
+        self.geometryComplete.emit(geometry)
+
+    def clearBand(self):
+        self.reset()
 
     def reset(self):
-        self.band.reset()
+        self.band.reset(QGis.Line)
         self.points = []
 
     def activate(self):
@@ -83,6 +132,19 @@ class PolygonTool(QgsMapTool):
 
     def isEditTool(self):
         return True
+
+
+class PolygonTool(PolylineTool):
+    mouseClicked = pyqtSignal(QgsPoint)
+    geometryComplete = pyqtSignal(QgsGeometry)
+
+    def __init__(self, canvas):
+        super(PolygonTool, self).__init__(canvas)
+        self.reset()
+
+    def reset(self):
+        self.band.reset(QGis.Polygon)
+        self.points = []
 
 
 class PointTool(TouchMapTool):
@@ -115,6 +177,12 @@ class PointTool(TouchMapTool):
             "      ++.++     ",
             "       +.+      "]))
 
+        self.captureaction = CaptureAction(self)
+
+    @property
+    def actions(self):
+        return [self.captureaction]
+
     def canvasReleaseEvent(self, event):
         if self.pinching:
             return
@@ -140,6 +208,9 @@ class PointTool(TouchMapTool):
         Deactive the tool.
         """
         pass
+
+    def clearBand(self):
+        self.band.reset()
 
     def isZoomTool(self):
         return False
