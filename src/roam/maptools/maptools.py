@@ -10,7 +10,7 @@ import roam.resources_rc
 
 class EndCaptureAction(QAction):
     def __init__(self, tool, parent=None):
-        super(EndCaptureAction, self).__init__(QIcon(":/icons/stop-capture"), "End Capture", parent)
+        super(EndCaptureAction, self).__init__(QIcon(":/icons/stop-capture"), QApplication.translate("EndCaptureAction", "End Capture", None, QApplication.UnicodeUTF8), parent)
         self.setObjectName("endcapture")
         self.setCheckable(False)
         self.tool = tool
@@ -20,7 +20,7 @@ class EndCaptureAction(QAction):
 
 class CaptureAction(QAction):
     def __init__(self, tool, geomtype, parent=None):
-        super(CaptureAction, self).__init__(QIcon(":/icons/capture-{}".format(geomtype)), "Capture", parent)
+        super(CaptureAction, self).__init__(QIcon(":/icons/capture-{}".format(geomtype)), QApplication.translate("CaptureAction", "Capture", None, QApplication.UnicodeUTF8), parent)
         self.setObjectName("capture")
         self.setCheckable(True)
         self.tool = tool
