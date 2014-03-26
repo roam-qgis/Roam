@@ -7,6 +7,55 @@ from roam.maptools.touchtool import TouchMapTool
 
 import roam.resources_rc
 
+class RubberBand(QgsRubberBand):
+    def __init__(self, canvas, geometrytype, width=5, iconsize=20):
+        super(RubberBand, self).__init__(canvas, geometrytype)
+        self.canvas = canvas
+        self.setIconSize(iconsize)
+        self.setWidth(width)
+        self.iconsize = iconsize
+        self.textpen = QPen(Qt.black)
+        self.textpen.setWidth(2)
+        self.distancearea = QgsDistanceArea()
+        self.createdistancearea()
+        self.unit = self.canvas.mapRenderer().destinationCrs().mapUnits()
+
+    def createdistancearea(self):
+        self.distancearea.setSourceCrs( self.canvas.mapRenderer().destinationCrs().srsid())
+        ellispoid = QgsProject.instance().readEntry("Measure", "/Ellipsoid", GEO_NONE)
+        self.distancearea.setEllipsoid(ellispoid[0])
+        ellispoidemode = self.canvas.mapRenderer().hasCrsTransformEnabled()
+        self.distancearea.setEllipsoidalMode(ellispoidemode)
+
+    def paint(self, p, option, widget):
+        super(RubberBand, self).paint(p)
+
+        offset = QPointF(self.iconsize - 5, 0)
+        for index in xrange(self.numberOfVertices(), -1, -1):
+            if index == 0:
+                return
+
+            qgspoint = self.getPoint(0, index)
+            qgspointbefore = self.getPoint(0, index - 1)
+            # No point before means we are the first index and there is nothing
+            # before us.
+            if not qgspointbefore:
+                return
+
+            if qgspoint and qgspointbefore:
+                distance = self.distancearea.measureLine( qgspoint, qgspointbefore)
+                point = self.toCanvasCoordinates(qgspoint) - self.pos()
+                point += offset
+                p.setPen(self.textpen)
+                text = QgsDistanceArea.textUnit(distance, 3, self.unit, False)
+                p.drawText(point, text)
+
+    def boundingRect(self):
+        rect = super(RubberBand, self).boundingRect()
+        width = rect.size().width()
+        rect.setWidth(width + 200)
+        return rect
+
 
 class EndCaptureAction(QAction):
     def __init__(self, tool, parent=None):
@@ -36,9 +85,8 @@ class PolylineTool(QgsMapTool):
         super(PolylineTool, self).__init__(canvas)
         self.points = []
         self.canvas = canvas
-        self.band = QgsRubberBand(self.canvas, QGis.Line)
+        self.band = RubberBand(self.canvas, QGis.Line, width=5, iconsize=20)
         self.band.setColor(QColor.fromRgb(224,162,16, 75))
-        self.band.setWidth(5)
         self.pointband = QgsRubberBand(self.canvas, QGis.Point)
         self.pointband.setColor(QColor.fromRgb(224,162,16, 100))
         self.pointband.setIconSize(20)
