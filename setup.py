@@ -67,7 +67,7 @@ utils = ['ogr2ogr.exe', 'ogrinfo.exe', 'gdalinfo.exe', 'NCSEcw.dll',
 
 extrafiles = [os.path.join(osgeobin, path) for path in utils]
 
-i18npath = os.path.join(appsrcopyFilesath, 'i18n')
+i18nfiles = os.path.join(appsrcopyFilesath, 'i18n\*.qm')
 
 datafiles = [(".", [r'src\settings.config']),
             (r'libs\roam\templates', [r'src\roam\templates\info.html',
@@ -79,7 +79,8 @@ datafiles = [(".", [r'src\settings.config']),
             (r'libs\qgis\plugins', glob.glob(qgispluginpath)),
             (r'libs\qgis\resources', [os.path.join(qgisresources, 'qgis.db'),
                                  os.path.join(qgisresources, 'srs.db')]),
-            (r'libs', extrafiles)]
+            (r'libs', extrafiles),
+            (r'libs\roam\i18n', glob.glob(i18nfiles))]
 
 for path, collection in getfiles(svgs, r'libs\qgis\svg'):
     datafiles.append((path, collection))
@@ -88,9 +89,6 @@ for path, collection in getfiles(r'src\configmanager\templates', r'libs\configma
     datafiles.append((path, collection))
 
 for path, collection in getfiles(gdalsharepath, r'libs'):
-    datafiles.append((path, collection))
-
-for path, collection in getfiles(i18npath, r'libs\roam'):
     datafiles.append((path, collection))
 
 icon = r'src\roam\resources\branding\icon.ico'
@@ -115,6 +113,7 @@ configmanager_target = dict(
                 dest_base='Roam Config Manager',
                 icon_resources=[(1, icon)])
 
+
 def buildqtfiles():
     for folder in [appsrcopyFilesath, projectinstallerpath, configmangerpath]:
         for root, dirs, files in os.walk(folder):
@@ -127,6 +126,9 @@ def buildqtfiles():
                 elif ext == '.qrc':
                     newfile = file + "_rc.py"
                     run('pyrcc4', '-o', newfile, filepath)
+                elif ext == '.ts':
+                    newfile = file + '.qm'
+                    run('lrelease', filepath, '-qm', newfile)
 
 
 class qtbuild(build):
