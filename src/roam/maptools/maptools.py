@@ -30,8 +30,9 @@ class RubberBand(QgsRubberBand):
     def paint(self, p, option, widget):
         super(RubberBand, self).paint(p)
 
-        offset = QPointF(self.iconsize - 5, 0)
-        for index in xrange(self.numberOfVertices(), -1, -1):
+        offset = QPointF(self.iconsize + 10, 0)
+        nodescount = self.numberOfVertices()
+        for index in xrange(nodescount, -1, -1):
             if index == 0:
                 return
 
