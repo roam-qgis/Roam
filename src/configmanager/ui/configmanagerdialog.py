@@ -49,6 +49,7 @@ def newproject(projectfolder):
     newfolder = os.path.join(projectfolder, foldername)
     shutil.copytree(templateproject, newfolder)
     project = roam.project.Project.from_folder(newfolder)
+    project.settings['title'] = foldername
     project.settings['forms'] = {}
     return project
 
@@ -61,7 +62,7 @@ def newform(project):
     templateform = os.path.join(templatefolder, "templateform")
     shutil.copytree(templateform, formfolder)
 
-    config = dict(label='New Form', type='auto', widgets=[])
+    config = dict(label=foldername, type='auto', widgets=[])
     form = project.addformconfig(foldername, config)
     return form
 
