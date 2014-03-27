@@ -4,6 +4,7 @@ import getpass
 import traceback
 import os
 
+
 from PyQt4.QtCore import Qt, QFileInfo, QDir, QSize
 from PyQt4.QtGui import (QActionGroup,
                         QApplication,
