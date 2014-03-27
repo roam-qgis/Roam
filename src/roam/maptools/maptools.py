@@ -192,7 +192,6 @@ class PolylineTool(QgsMapTool):
             point = results[0].snappedVertex
             return point
         except IndexError:
-            print "Index"
             return self.canvas.getCoordinateTransform().toMapCoordinates(point)
 
 
