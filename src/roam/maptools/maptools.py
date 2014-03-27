@@ -30,7 +30,7 @@ class RubberBand(QgsRubberBand):
     def paint(self, p, option, widget):
         super(RubberBand, self).paint(p)
 
-        offset = QPointF(self.iconsize + 10, 0)
+        offset = QPointF(self.iconsize + 25, 0)
         nodescount = self.numberOfVertices()
         for index in xrange(nodescount, -1, -1):
             if index == 0:
@@ -91,6 +91,7 @@ class PolylineTool(QgsMapTool):
         self.pointband = QgsRubberBand(self.canvas, QGis.Point)
         self.pointband.setColor(QColor.fromRgb(224,162,16, 100))
         self.pointband.setIconSize(20)
+        self.snapper = QgsMapCanvasSnapper(self.canvas)
         self.capturing = False
         self.cursor = QCursor(QPixmap(["16 16 3 1",
             "      c None",
@@ -130,22 +131,19 @@ class PolylineTool(QgsMapTool):
         pass
 
     def getPointFromEvent(self, event):
-        x = event.pos().x()
-        y = event.pos().y()
-
-        point = self.canvas.getCoordinateTransform().toMapCoordinates(x, y)
+        point = self.canvas.getCoordinateTransform().toMapCoordinates(event.pos())
         return point
 
     def canvasMoveEvent(self, event):
-        point = self.getPointFromEvent(event)
         if self.capturing:
+            point = self.snappoint(event.pos())
             self.band.movePoint(point)
         
     def canvasReleaseEvent(self, event):
         if event.button() == Qt.RightButton:
             self.endcapture()
         else:
-            point = self.getPointFromEvent(event)
+            point = self.snappoint(event.pos())
             qgspoint = QgsPoint(point)
             self.points.append(qgspoint)
             self.band.addPoint(point)
@@ -187,6 +185,15 @@ class PolylineTool(QgsMapTool):
 
     def isEditTool(self):
         return True
+
+    def snappoint(self, point):
+        try:
+            _, results = self.snapper.snapToBackgroundLayers(point)
+            point = results[0].snappedVertex
+            return point
+        except IndexError:
+            print "Index"
+            return self.canvas.getCoordinateTransform().toMapCoordinates(point)
 
 
 class PolygonTool(PolylineTool):
