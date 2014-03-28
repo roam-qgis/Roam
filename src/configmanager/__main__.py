@@ -7,6 +7,9 @@ from qgis.core import QgsApplication, QgsProviderRegistry, QGis
 
 from PyQt4.QtGui import QApplication, QFont, QIcon
 
+apppath = os.path.dirname(os.path.realpath(sys.argv[0]))
+sys.path.append(apppath)
+
 import roam
 import roam.environ
 import roam.project
@@ -38,7 +41,7 @@ QApplication.setApplicationName("IntraMaps Roam Config Manager")
 
 configmanager.settings.load(roamapp.settingspath)
 
-projectpath = roam.environ.projectpath(sys.argv)
+projectpath = roam.environ.projectpath(sys.argv, roamapp)
 projects = list(roam.project.getProjects(projectpath))
 
 def excepthook(errorhandler, exctype, value, traceback):
