@@ -39,15 +39,15 @@ def setup(argv):
         os.environ["QT_PLUGIN_PATH"] = r"C:\OSGeo4W\apps\Qt4\plugins"
         libspath = os.path.join(apppath)
         i18npath = os.path.join(libspath, "i18n")
-        prefixpath = r"C:\OSGeo4W\apps\qgis"
+        prefixpath = os.environ['QGIS_PREFIX_PATH']
 
     return RoamApp(apppath, prefixpath, settingspath, libspath, i18npath)
 
 
-def projectpath(argv):
+def projectpath(argv, roamapp):
     try:
         _projectpath = argv[1]
     except IndexError:
-        _projectpath = os.path.join(os.getcwd(), "projects")
+        _projectpath = os.path.join(roamapp.apppath, "projects")
     sys.path.append(_projectpath)
     return _projectpath

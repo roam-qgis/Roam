@@ -92,12 +92,7 @@ window = MainWindow(settings=settings)
 app.setActiveWindow(window)
 sys.excepthook = partial(excepthook, window.raiseerror)
 
-try:
-    projectpath = sys.argv[1]
-except IndexError:
-    projectpath = os.path.join(os.getcwd(), "projects")
-
-projectpath = roam.environ.projectpath(sys.argv)
+projectpath = roam.environ.projectpath(sys.argv, roamapp)
 projects = roam.project.getProjects(projectpath)
 window.loadprojects(projects)
 
