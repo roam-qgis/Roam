@@ -2,13 +2,20 @@ from PyQt4.QtCore import Qt, QRect
 from PyQt4.QtGui import QColor
 
 from qgis.core import QGis
-from qgis.gui import QgsMapToolTouch, QgsRubberBand, QgsMapToolPan
+from qgis.gui import QgsMapTool, QgsRubberBand, QgsMapToolPan
+
+try:
+	from qgis.gui import QgsMapToolTouch
+	maptooltype = QgsMapToolTouch
+except ImportError:
+	maptooltype = QgsMapTool
+
 
 from roam.utils import log
 from roam.maptools import maptoolutils
 
 
-class TouchMapTool(QgsMapToolTouch):
+class TouchMapTool(maptooltype):
     def __init__(self, canvas):
         super(TouchMapTool, self).__init__(canvas)
         self.pinching = False

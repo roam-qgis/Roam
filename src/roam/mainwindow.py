@@ -28,7 +28,6 @@ from qgis.core import (QgsProjectBadLayerHandler,
                         QgsGeometry)
 from qgis.gui import (QgsMessageBar,
                         QgsMapToolZoom,
-                        QgsMapToolTouch,
                         QgsRubberBand,
                         QgsMapCanvas)
 

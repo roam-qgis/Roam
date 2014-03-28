@@ -9,6 +9,10 @@ import sys
 
 import logging
 import time
+
+apppath = os.path.dirname(os.path.realpath(sys.argv[0]))
+sys.path.append(apppath)
+
 import roam.environ
 
 from functools import partial
@@ -19,19 +23,22 @@ from qgis.core import QgsApplication, QgsProviderRegistry
 
 from PyQt4 import uic
 from PyQt4.QtGui import QApplication, QFont, QImageReader, QImageWriter
-from PyQt4.QtCore import QDir, QCoreApplication, QLibrary
-import PyQt4.QtSql
+from PyQt4.QtCore import QDir, QCoreApplication, QLibrary, QTranslator, QLocale
+try:
+    import PyQt4.QtSql
+except ImportError:
+    pass
 
 uic.uiparser.logger.setLevel(logging.INFO)
 uic.properties.logger.setLevel(logging.INFO)
 
 # We have to start this here or else the image drivers don't load for some reason
 app = QgsApplication(sys.argv, True)
-locale = PyQt4.QtCore.QLocale.system().name()
+locale = QLocale.system().name()
 
 translationFile = os.path.join(roamapp.i18npath, '{0}.qm'.format(locale))
 
-translator = PyQt4.QtCore.QTranslator()
+translator = QTranslator()
 translator.load(translationFile, "i18n")
 app.installTranslator(translator)
 

@@ -3,6 +3,7 @@ import sys
 import subprocess
 import types
 import json
+import tempfile
 
 from functools import partial
 
@@ -74,7 +75,7 @@ style = """
             }
 """
 
-values_file = os.path.join(os.environ['APPDATA'], "Roam")
+values_file = os.path.join(tempfile.gettempdir(), "Roam")
 
 
 def loadsavedvalues(layer):

@@ -40,7 +40,6 @@ def setup(argv):
         libspath = os.path.join(apppath)
         i18npath = os.path.join(libspath, "i18n")
         prefixpath = r"C:\OSGeo4W\apps\qgis"
-        settingspath = os.path.join(apppath, "..", "settings.config")
 
     return RoamApp(apppath, prefixpath, settingspath, libspath, i18npath)
 

@@ -1,8 +1,8 @@
 <RCC>
   <qresource prefix="images">
-    <file>images\cancel.svg</file>
-    <file>images\delete.png</file>
-    <file>images\add.png</file>
-    <file>images\reload.png</file>
+    <file>images/cancel.svg</file>
+    <file>images/delete.png</file>
+    <file>images/add.png</file>
+    <file>images/reload.png</file>
   </qresource>
 </RCC>
