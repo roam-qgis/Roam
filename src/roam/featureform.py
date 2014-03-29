@@ -6,6 +6,7 @@ import json
 import tempfile
 
 from functools import partial
+from subprocess import Popen
 
 from PyQt4 import uic
 from PyQt4.QtCore import pyqtSignal, QObject, QSize, QEvent, QProcess, Qt, QPyNullVariant, QRegExp
@@ -196,8 +197,13 @@ class FeatureFormBase(QWidget):
         # Hack I really don't like this but there doesn't seem to be a better way at the
         # moment.
         if event.type() == QEvent.FocusIn and settings.get('keyboard', True):
-            cmd = r'C:\Program Files\Common Files\Microsoft Shared\ink\TabTip.exe'
-            os.startfile(cmd)
+            if sys.platform == 'win32':
+                cmd = r'C:\Program Files\Common Files\Microsoft Shared\ink\TabTip.exe'
+            elif sys.platform == 'linux2':
+                cmd = 'onboard'
+            else:
+                return False
+            Popen(cmd)
 
         return False
 
