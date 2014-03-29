@@ -4,8 +4,10 @@ import getpass
 import traceback
 import os
 
+
 from PyQt4.QtCore import Qt, QFileInfo, QDir, QSize
 from PyQt4.QtGui import (QActionGroup,
+                        QApplication,
                         QWidget,
                         QSizePolicy,
                         QLabel,
@@ -31,6 +33,7 @@ from qgis.gui import (QgsMessageBar,
                         QgsMapToolTouch,
                         QgsRubberBand,
                         QgsMapCanvas)
+
 
 from roam.gps_action import GPSAction
 from roam.dataentrywidget import DataEntryWidget
@@ -318,7 +321,7 @@ class MainWindow(mainwindow_widget, mainwindow_base):
 
     def raiseerror(self, *exinfo):
         info = traceback.format_exception(*exinfo)
-        item = self.bar.pushError('Seems something has gone wrong. Press for more details',
+        item = self.bar.pushError(QApplication.translate('MainWindowPy','Seems something has gone wrong. Press for more details', None, QApplication.UnicodeUTF8),
                                   info)
 
     def setMapTool(self, tool, *args):
@@ -446,8 +449,8 @@ class MainWindow(mainwindow_widget, mainwindow_base):
             for form, reasons in failedforms:
                 html = "<h3>{}</h3><br>{}".format(form.label,
                                              "<br>".join(reasons))
-            self.bar.pushMessage("Form errors",
-                                 "Looks like some forms couldn't be loaded",
+            self.bar.pushMessage(QApplication.translate("MainWindowPy", "Form errors", None, QApplication.UnicodeUTF8),
+                                 QApplication.translate("MainWindowPy", "Looks like some forms couldn't be loaded", None, QApplication.UnicodeUTF8),
                                  level=QgsMessageBar.WARNING, extrainfo=html)
 
         visible = self.dataentrymodel.rowCount() > 0

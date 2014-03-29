@@ -23,7 +23,7 @@ class GPSAction(QAction):
     gpsfixed = pyqtSignal(bool)
 
     def __init__(self, icon, canvas, settings, parent):
-        QAction.__init__(self, QIcon(icon), "Enable GPS", parent)
+        QAction.__init__(self, QIcon(icon), QApplication.translate("GPSAction", "Enable GPS", None, QApplication.UnicodeUTF8), parent)
         self.canvas = canvas
         self._position = None
         self.settings = settings
@@ -52,7 +52,7 @@ class GPSAction(QAction):
         if not self.isConnected:
             #Enable GPS
             self.setIcon(QIcon(":/icons/gps"))
-            self.setIconText("Connecting")
+            self.setIconText(QApplication.translate("GPSAction", "Connecting", None, QApplication.UnicodeUTF8))
             self.setEnabled(False)
 
             portname = self.settings.settings.get("gpsport", '')
