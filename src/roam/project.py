@@ -14,7 +14,7 @@ from PyQt4.QtGui import QAction, QIcon
 
 from qgis.core import QgsMapLayerRegistry, QGis, QgsTolerance, QgsVectorLayer, QgsMapLayer
 
-from roam.maptools import PointTool, PolygonTool, PolylineTool
+from roam.maptools import PointTool, PolygonTool, PolylineTool, InspectionTool
 from roam.utils import log
 from roam.syncing import replication
 from roam.api import FeatureForm
@@ -87,6 +87,8 @@ class Form(object):
         self.errors = []
         self._qgislayer = None
         self._formclass = None
+	self._captureMode = None
+	self._outputLayer = None
 
     @classmethod
     def from_config(cls, name, config, folder):
@@ -129,6 +131,43 @@ class Form(object):
             self._qgislayer = getlayer(layer)
         return self._qgislayer
 
+    @property
+    def captureMode(self):
+	if self._captureMode is None:
+	   self._captureMode = self.settings.get('captureMode', 'new')
+	   if self.captureMode == "copy":
+              self.OutputLayer = self.settings.get('outputLayer')
+           else:
+              self.OutputLayer = None
+        return self._captureMode
+
+    @property
+    def outputLayer(self):
+	def getlayer(name):
+            try:
+                return QgsMapLayerRegistry.instance().mapLayersByName(name)[0]
+            except IndexError as e:
+                utils.log(e)
+                return None
+	if self._outputLayer is None:
+	   layer = self.settings.get('outputLayer', None)
+	   self._outputLayer = getlayer(layer)
+	return self._outputLayer
+
+    def getInspectionMaptool(self, canvas):
+
+        for key, val in self.settings.get("fieldmap", {}).iteritems():
+            utils.log(key +": " + val)
+            mapping = self.settings.get("fieldmap", {})
+	    reg = QgsMapLayerRegistry.instance()
+	    layerfrom = self.QGISLayer
+	    layerto = self.outputLayer
+	    return InspectionTool(canvas
+        		    , layerfrom
+        		    , layerto
+        		    , mapping
+			    , snapradius=5
+         		    )
     def getMaptool(self):
         """
             Returns the map tool configured for this layer.
@@ -166,6 +205,8 @@ class Form(object):
         elif not self.QGISLayer.type() == QgsMapLayer.VectorLayer:
             self.errors.append("We can only support vector layers for data entry")
 
+
+
         if self.errors:
             return False, self.errors
         else:
@@ -198,9 +239,10 @@ class Form(object):
         """
         Return any widget configs that have default values needed
         """
-        for config in self.widgets:
-            if 'default' in config:
-                yield config['field'], config
+	if self.widgets:
+           for config in self.widgets:
+              if 'default' in config:
+                 yield config['field'], config
 
     def _loadmodule(self):
         projectfolder = os.path.abspath(os.path.join(self.folder, '..'))

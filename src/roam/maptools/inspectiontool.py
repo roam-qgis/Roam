@@ -5,8 +5,10 @@ from qgis.core import (QgsPoint, QgsRectangle, QgsTolerance,
                        QgsVectorLayer, QGis)
 from qgis.gui import QgsMapTool, QgsRubberBand
 
+from roam.maptools.touchtool import TouchMapTool
 
-class InspectionTool(QgsMapTool):
+
+class InspectionTool(TouchMapTool):
     """
         Inspection tool which copies the feature to a new layer
         and copies selected data from the underlying feature.
@@ -16,20 +18,26 @@ class InspectionTool(QgsMapTool):
     error = pyqtSignal(str)
     
     def __init__(self, canvas, layerfrom, layerto, 
-                        mapping, validation_method):
+                        mapping, validation_method=None, snapradius = 2):
+	   
         """
             mapping - A dict of field - field mapping with values to
                             copy to the new layer
         """
-        QgsMapTool.__init__(self, canvas)
+        super(InspectionTool, self).__init__(canvas)
+
+        self.radius = snapradius        
         self.layerfrom = layerfrom
         self.layerto = layerto
         self.fields = mapping
         self.validation_method = validation_method
+
         self.band = QgsRubberBand(canvas, QGis.Polygon )
         self.band.setColor(QColor.fromRgb(255,0,0, 65))
         self.band.setWidth(5)
         
+	self.dragging = False
+
         self.cursor = QCursor(QPixmap(["16 16 3 1",
             "      c None",
             ".     c #FF0000",
@@ -55,10 +63,10 @@ class InspectionTool(QgsMapTool):
         self.band.reset()
         
     def canvasReleaseEvent(self, event):
-        searchRadius = (QgsTolerance.toleranceInMapUnits( 5, self.layerfrom,
-                                                           self.canvas().mapRenderer(), QgsTolerance.Pixels))
+        searchRadius = (QgsTolerance.toleranceInMapUnits( self.radius, self.layerfrom,
+                                                           self.canvas.mapRenderer(), QgsTolerance.Pixels))
 
-        point = self.toMapCoordinates(event.pos())
+	point = self.toMapCoordinates(event.pos())
 
         rect = QgsRectangle()                                                 
         rect.setXMinimum(point.x() - searchRadius)
@@ -88,8 +96,10 @@ class InspectionTool(QgsMapTool):
             # Assign the old values to the new feature
             for fieldfrom, fieldto in self.fields.iteritems():      
                 newfeature[fieldto] = feature[fieldfrom]
-            
-            passed, message = self.validation_method(feature=newfeature,
+
+            passed = True 
+	    if self.validation_method is not None:
+                passed, message = self.validation_method(feature=newfeature,
                                                      layerto=self.layerto)
             
             if passed:
@@ -108,7 +118,7 @@ class InspectionTool(QgsMapTool):
         @note: Should be moved out into qmap.py 
                and just expose a cursor to be used
         """
-        self.canvas().setCursor(self.cursor)
+        self.canvas.setCursor(self.cursor)
 
     def deactivate(self):
         """

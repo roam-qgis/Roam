@@ -141,7 +141,7 @@ class DataEntryWidget(dataentry_widget, dataentry_base):
             userdeleted = self.featureform.deletefeature()
 
             if not userdeleted:
-                # If the user didn't add there own feature delete logic
+                # If the user didn't add their own feature delete logic
                 # we will just do it for them.
                 layer = self.featureform.form.QGISLayer
                 layer.startEditing()
@@ -159,7 +159,7 @@ class DataEntryWidget(dataentry_widget, dataentry_base):
         self.featuredeleted.emit()
 
     def accept(self):
-        def updatefeautrefields(feature):
+        def updatefeaturefields(feature):
             for key, value in values.iteritems():
                 try:
                     feature[key] = value
@@ -177,8 +177,18 @@ class DataEntryWidget(dataentry_widget, dataentry_base):
 
         if not self.featureform.accept():
             return
-
+        
+        if self.featureform.customSave:
+            self.featureform.featuresaved(self.feature, None)
+            self.featuresaved.emit()
+            self.accepted.emit()
+	    self.featureform = None
+	    return
+        
         layer = self.featureform.form.QGISLayer
+        if self.featureform.form.OutputLayer:
+	    layer = self.featureform.form.OutputLayer
+
         before = QgsFeature(self.feature)
         before.setFields(self.fields, initAttributes=False)
 
@@ -186,7 +196,7 @@ class DataEntryWidget(dataentry_widget, dataentry_base):
 
         after = QgsFeature(self.feature)
         after.setFields(self.fields, initAttributes=False)
-        after = updatefeautrefields(after)
+        after = updatefeaturefields(after)
 
         layer.startEditing()
         if after.id() > 0:
@@ -312,5 +322,4 @@ class DataEntryWidget(dataentry_widget, dataentry_base):
 
         self.actionSave.setVisible(True)
         self.setwidget(self.featureform)
-
         self.featureform.loaded()
