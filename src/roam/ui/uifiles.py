@@ -6,7 +6,8 @@ from roam import resources_rc
 
 from roam.ui import (ui_projectwidget, ui_listmodules, ui_helpviewer,
                  ui_helppage, ui_datatimerpicker, ui_settings, ui_infodock, ui_mainwindow, ui_sync,
-                 ui_dataentrywidget, ui_deletefeature, ui_imageviewer, ui_actionpicker)
+                 ui_dataentrywidget, ui_reportwidget, ui_deletefeature, ui_imageviewer, ui_actionpicker)
+
 
 project_widget, project_base = ui_projectwidget.Ui_Form, QWidget
 modules_widget, modules_base = ui_listmodules.Ui_ListModules, QWidget
