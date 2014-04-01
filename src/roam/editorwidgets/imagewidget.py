@@ -74,8 +74,11 @@ class _CameraWidget(QWidget):
             self.cam = vc.Device(dev)
             self.currentdevice = dev
         except vidcap.error:
-            self.cam = vc.Device(0)
-            self.currentdevice = 0
+            if dev == 0:
+                utils.error("Could not start camera")
+                return
+            self.start(dev=0)
+            return
 
         self.timer.start()
 
