@@ -30,10 +30,8 @@ class _CameraWidget(QWidget):
         self.cameralabel = QLabel()
         self.cameralabel.setScaledContents(True)
         self.setLayout(QGridLayout())
-        self.toolbar = QToolBar()
-        self.captureAction = self.toolbar.addAction("Take Photo")
-        self.captureAction.triggered.connect(self.takeimage)
-        self.layout().addWidget(self.toolbar)
+        self.cameralabel.mouseReleaseEvent = self.takeimage
+        self.layout().setContentsMargins(0,0,0,0)
         self.layout().addWidget(self.cameralabel)
         self.timer = QTimer()
         self.timer.setInterval(20)
@@ -53,7 +51,7 @@ class _CameraWidget(QWidget):
         pixmap = QPixmap.fromImage(self.image)
         self.cameralabel.setPixmap(pixmap)
 
-    def takeimage(self):
+    def takeimage(self, *args):
         self.timer.stop()
 
         img = self.cam.getImage()
@@ -67,11 +65,10 @@ class _CameraWidget(QWidget):
         self.cam = vc.Device()
         self.timer.start()
 
-    def __del__(self):
+    def stop(self):
         self.timer.stop()
         del self.cam
         self.cam = None
-
 
 class CameraWidget(LargeEditorWidget):
     def __init__(self, *args):
@@ -89,7 +86,8 @@ class CameraWidget(LargeEditorWidget):
         return self.widget.pixmap
 
     def __del__(self):
-        del self.widget
+        if self.widget:
+            self.widget.stop()
 
 
 class ImageWidget(EditorWidget):

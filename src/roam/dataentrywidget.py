@@ -225,6 +225,7 @@ class DataEntryWidget(dataentry_widget, dataentry_base):
     def setlargewidget(self, widgettype, callback):
         def cleanup():
             self.stackedWidget.setCurrentIndex(0)
+            self.clearcurrentwidget(self.fullscreenwidget)
             del self.largewidgetwrapper
 
         widget = widgettype.createwidget()
