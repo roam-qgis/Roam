@@ -16,6 +16,7 @@ from PIL.ImageQt import ImageQt
 
 from roam.editorwidgets.core import EditorWidget, LargeEditorWidget
 from roam.editorwidgets.uifiles.imagewidget import QMapImageWidget
+from roam.editorwidgets.uifiles import drawingpad
 from roam.ui.uifiles import actionpicker_widget, actionpicker_base
 from roam.popupdialogs import PickActionDialog
 from roam import utils
@@ -107,6 +108,22 @@ class CameraWidget(LargeEditorWidget):
             self.widget.stop()
 
 
+
+class DrawingPadWidget(LargeEditorWidget):
+    def __init__(self, *args):
+        super(DrawingPadWidget, self).__init__(*args)
+
+    def createWidget(self, parent=None):
+        return drawingpad.DrawingPad(parent=parent)
+
+    def initWidget(self, widget):
+        widget.actionSave.triggered.connect(self.emitfished)
+        widget.actionCancel.triggered.connect(self.cancel.emit)
+
+    def value(self):
+        return self.widget.pixmap
+
+
 class ImageWidget(EditorWidget):
     widgettype = 'Image'
     openimage = pyqtSignal(object)
@@ -118,9 +135,11 @@ class ImageWidget(EditorWidget):
 
         self.selectAction = QAction(QIcon(r":\images\folder"), "From folder", None)
         self.cameraAction = QAction(QIcon(":\images\camera"), "Camera", None)
+        self.drawingAction = QAction(QIcon(":\images\drawing"), "Drawing", None)
 
         self.selectAction.triggered.connect(self._selectImage)
         self.cameraAction.triggered.connect(self._selectCamera)
+        self.drawingAction.triggered.connect(self._selectDrawing)
 
         if self.field and self.field.type() == QVariant.String:
             self.tobase64 = True
@@ -144,6 +163,7 @@ class ImageWidget(EditorWidget):
         yield self.selectAction
         if hascamera:
             yield self.cameraAction
+        yield self.drawingAction
 
     def _selectImage(self):
         # Show the file picker
@@ -154,6 +174,9 @@ class ImageWidget(EditorWidget):
             return
 
         self.widget.loadImage(image)
+
+    def _selectDrawing(self):
+        self.largewidgetrequest.emit(DrawingPadWidget, self.phototaken)
 
     def _selectCamera(self):
         self.largewidgetrequest.emit(CameraWidget, self.phototaken)

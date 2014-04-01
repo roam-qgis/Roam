@@ -191,6 +191,7 @@ class LargeEditorWidget(EditorWidget):
     The only thing this class has extra is a finished signal and emits that once input is complete.
     """
     finished = pyqtSignal(object)
+    cancel = pyqtSignal()
 
     def emitfished(self):
         self.finished.emit(self.value())

@@ -1,20 +1,39 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
  <class>DrawingWindow</class>
- <widget class="QDialog" name="DrawingWindow">
+ <widget class="QWidget" name="DrawingWindow">
+  <property name="modal" stdset="0">
+   <bool>false</bool>
+  </property>
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>493</width>
-    <height>476</height>
+    <width>896</width>
+    <height>583</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Dialog</string>
   </property>
-  <property name="modal">
-   <bool>false</bool>
+  <property name="styleSheet">
+   <string notr="true">* {
+	color: #4f4f4f;
+	font: 14pt &quot;Segoe UI&quot; ;
+    background-color: rgb(255, 255, 255);
+}
+
+        QPushButton, QToolButton { 
+            border: 1px solid #e1e1e1;
+            padding: 6px;
+            color: #4f4f4f;
+         }	
+
+        QToolButton::checked { 
+            border: 1px solid #e1e1e1;
+            padding: 6px;
+	background-color: rgba(85, 85, 255, 50);
+         }	</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <property name="spacing">
@@ -58,6 +77,9 @@
        <property name="orientation">
         <enum>Qt::Horizontal</enum>
        </property>
+       <property name="sizeType">
+        <enum>QSizePolicy::Expanding</enum>
+       </property>
        <property name="sizeHint" stdset="0">
         <size>
          <width>40</width>
@@ -69,7 +91,7 @@
      <item>
       <widget class="QToolButton" name="toolMapSnapshot">
        <property name="text">
-        <string>...</string>
+        <string>Map Snapshot</string>
        </property>
        <property name="iconSize">
         <size>
@@ -247,14 +269,17 @@
       <property name="margin">
        <number>0</number>
       </property>
+      <property name="spacing">
+       <number>0</number>
+      </property>
      </layout>
     </widget>
    </item>
   </layout>
   <action name="actionClearDrawing">
    <property name="icon">
-    <iconset resource="resources.qrc">
-     <normaloff>:/icons/clearimage</normaloff>:/icons/clearimage</iconset>
+    <iconset resource="../../resources.qrc">
+     <normaloff>:/icons/remove</normaloff>:/icons/remove</iconset>
    </property>
    <property name="text">
     <string>Clear Drawing</string>
@@ -268,11 +293,11 @@
     <bool>true</bool>
    </property>
    <property name="icon">
-    <iconset resource="resources.qrc">
-     <normaloff>:/icons/redpen</normaloff>:/icons/redpen</iconset>
+    <iconset resource="images.qrc">
+     <normaloff>:/images/red</normaloff>:/images/red</iconset>
    </property>
    <property name="text">
-    <string>Red Pen</string>
+    <string>Red</string>
    </property>
    <property name="toolTip">
     <string>Change pen colour to red</string>
@@ -283,11 +308,11 @@
     <bool>true</bool>
    </property>
    <property name="icon">
-    <iconset resource="resources.qrc">
-     <normaloff>:/icons/bluepen</normaloff>:/icons/bluepen</iconset>
+    <iconset resource="images.qrc">
+     <normaloff>:/images/blue</normaloff>:/images/blue</iconset>
    </property>
    <property name="text">
-    <string>Blue Pen</string>
+    <string>Blue</string>
    </property>
    <property name="toolTip">
     <string>Change pen colour to blue</string>
@@ -298,11 +323,11 @@
     <bool>true</bool>
    </property>
    <property name="icon">
-    <iconset resource="resources.qrc">
-     <normaloff>:/icons/blackpen</normaloff>:/icons/blackpen</iconset>
+    <iconset resource="images.qrc">
+     <normaloff>:/images/black</normaloff>:/images/black</iconset>
    </property>
    <property name="text">
-    <string>Black Pen</string>
+    <string>Black</string>
    </property>
    <property name="toolTip">
     <string>Change pen colour to black</string>
@@ -310,8 +335,8 @@
   </action>
   <action name="actionSave">
    <property name="icon">
-    <iconset resource="resources.qrc">
-     <normaloff>:/icons/tick</normaloff>:/icons/tick</iconset>
+    <iconset resource="../../resources.qrc">
+     <normaloff>:/icons/save</normaloff>:/icons/save</iconset>
    </property>
    <property name="text">
     <string>Save</string>
@@ -322,7 +347,7 @@
   </action>
   <action name="actionCancel">
    <property name="icon">
-    <iconset resource="resources.qrc">
+    <iconset resource="../../resources.qrc">
      <normaloff>:/icons/cancel</normaloff>:/icons/cancel</iconset>
    </property>
    <property name="text">
@@ -334,11 +359,11 @@
   </action>
   <action name="actionMapSnapshot">
    <property name="icon">
-    <iconset resource="resources.qrc">
+    <iconset resource="../../resources.qrc">
      <normaloff>:/icons/map</normaloff>:/icons/map</iconset>
    </property>
    <property name="text">
-    <string>Take Map Snapshot</string>
+    <string>Map Snapshot</string>
    </property>
   </action>
   <action name="actionEraser">
@@ -346,7 +371,7 @@
     <bool>true</bool>
    </property>
    <property name="icon">
-    <iconset resource="resources.qrc">
+    <iconset>
      <normaloff>:/icons/eraser</normaloff>:/icons/eraser</iconset>
    </property>
    <property name="text">
@@ -355,42 +380,10 @@
   </action>
  </widget>
  <resources>
-  <include location="resources.qrc"/>
+  <include location="images.qrc"/>
+  <include location="../../resources.qrc"/>
  </resources>
- <connections>
-  <connection>
-   <sender>toolSave</sender>
-   <signal>pressed()</signal>
-   <receiver>DrawingWindow</receiver>
-   <slot>accept()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>435</x>
-     <y>125</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>426</x>
-     <y>-30</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>toolCancel</sender>
-   <signal>pressed()</signal>
-   <receiver>DrawingWindow</receiver>
-   <slot>reject()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>476</x>
-     <y>122</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>481</x>
-     <y>-46</y>
-    </hint>
-   </hints>
-  </connection>
- </connections>
+ <connections/>
  <buttongroups>
   <buttongroup name="buttonGroup"/>
  </buttongroups>

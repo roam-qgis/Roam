@@ -6,5 +6,9 @@
     <file>images/reload.png</file>
     <file alias="folder">images/folder-open.svg</file>
     <file alias="camera">images/camera.svg</file>
+    <file alias="drawing">images/drawing.svg</file>
+      <file alias="red">images/red.svg</file>
+      <file alias="black">images/black.svg</file>
+      <file alias="blue">images/blue.svg</file>
   </qresource>
 </RCC>

@@ -232,6 +232,7 @@ class DataEntryWidget(dataentry_widget, dataentry_base):
         self.largewidgetwrapper = widgettype.for_widget(widget, None, None, None, None)
         self.largewidgetwrapper.finished.connect(callback)
         self.largewidgetwrapper.finished.connect(cleanup)
+        self.largewidgetwrapper.cancel.connect(cleanup)
 
         self.clearcurrentwidget(self.fullscreenwidget)
         self.fullscreenwidget.layout().insertWidget(0, widget)
