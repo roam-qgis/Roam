@@ -1,12 +1,51 @@
 import os
+import sys
 
-from PyQt4.QtGui import QDialog, QGridLayout, QLabel, QLayout, QPixmap, QFileDialog
-from PyQt4.QtCore import QByteArray, pyqtSignal, QVariant
+try:
+    import VideoCapture as vc
+    hascamera = True
+except ImportError:
+    hascamera = False
+
+from PyQt4.QtGui import QDialog, QGridLayout, QLabel, QLayout, QPixmap, QFileDialog, QAction, QToolButton
+from PyQt4.QtCore import QByteArray, pyqtSignal, QVariant, QTimer
+
+from PIL.ImageQt import ImageQt
 
 from roam.editorwidgets.core import EditorWidget
 from roam.editorwidgets.uifiles.imagewidget import QMapImageWidget
+from roam.ui.uifiles import actionpicker_widget, actionpicker_base
 from roam import utils
 
+class CameraDialog(QDialog):
+    def __init__(self, parent=None):
+        super(CameraDialog, self).__init__(parent)
+        self.cameralabel = QLabel()
+        self.cameralabel.setScaledContents(True)
+        self.setLayout(QGridLayout())
+        self.layout().addWidget(self.cameralabel)
+        self.timer = QTimer()
+        self.timer.setInterval(20)
+        self.timer.timeout.connect(self.showimage)
+        self.cam = None
+
+    def showimage(self):
+        if self.cam is None:
+            return
+
+        img = self.cam.getImage()
+        self.image = ImageQt(img)
+        pixmap = QPixmap.fromImage(self.image)
+        self.cameralabel.setPixmap(pixmap)
+
+    def start(self):
+        self.cam = vc.Device()
+        self.timer.start()
+
+    def closeEvent(self, QCloseEvent):
+        self.timer.stop()
+        del self.cam
+        self.cam = None
 
 
 class ImageWidget(EditorWidget):
@@ -18,6 +57,14 @@ class ImageWidget(EditorWidget):
         self.tobase64 = False
         self.defaultlocation = ''
 
+        self.selectAction = QAction("Image", None)
+        self.cameraAction = QAction("Camera", None)
+
+        self.cameradialog = CameraDialog()
+
+        self.selectAction.triggered.connect(self._selectImage)
+        self.cameraAction.triggered.connect(self._selectCamera)
+
         if self.field and self.field.type() == QVariant.String:
             self.tobase64 = True
 
@@ -28,7 +75,26 @@ class ImageWidget(EditorWidget):
         widget.openRequest.connect(self.showlargeimage)
         widget.imageloaded.connect(self.validate)
         widget.imageremoved.connect(self.validate)
-        widget.imageloadrequest.connect(self._selectImage)
+        widget.imageloadrequest.connect(self.showpicker)
+
+    def showpicker(self):
+        widget = actionpicker_widget()
+        dlg = QDialog(self.widget)
+        widget.setupUi(dlg)
+        for action in self.actions:
+            button = QToolButton()
+            button.setDefaultAction(action)
+            action.triggered.connect(dlg.close)
+
+            widget.actionsLayout.addWidget(button)
+
+        dlg.exec_()
+
+    @property
+    def actions(self):
+        yield self.selectAction
+        if hascamera:
+            yield self.cameraAction
 
     def _selectImage(self):
         # Show the file picker
@@ -39,6 +105,10 @@ class ImageWidget(EditorWidget):
             return
 
         self.widget.loadImage(image)
+
+    def _selectCamera(self):
+        self.cameradialog.start()
+        self.cameradialog.exec_()
 
     def updatefromconfig(self):
         self.defaultlocation = self.config.get('defaultlocation', '')
