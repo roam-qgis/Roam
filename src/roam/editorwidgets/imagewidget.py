@@ -7,12 +7,13 @@ try:
 except ImportError:
     hascamera = False
 
-from PyQt4.QtGui import QDialog, QGridLayout, QLabel, QLayout, QPixmap, QFileDialog, QAction, QToolButton, QIcon
+from PyQt4.QtGui import QDialog, QGridLayout, QLabel, QLayout, QPixmap, QFileDialog, QAction, QToolButton, QIcon, QToolBar
+from PyQt4.QtGui import QWidget
 from PyQt4.QtCore import QByteArray, pyqtSignal, QVariant, QTimer, Qt, QSize
 
 from PIL.ImageQt import ImageQt
 
-from roam.editorwidgets.core import EditorWidget
+from roam.editorwidgets.core import EditorWidget, LargeEditorWidget
 from roam.editorwidgets.uifiles.imagewidget import QMapImageWidget
 from roam.ui.uifiles import actionpicker_widget, actionpicker_base
 from roam.popupdialogs import PickActionDialog
@@ -20,17 +21,28 @@ from roam import utils
 
 import roam.editorwidgets.uifiles.images_rc
 
-class CameraDialog(QDialog):
+class _CameraWidget(QWidget):
+    imagecaptured = pyqtSignal(QPixmap)
+    done = pyqtSignal()
+
     def __init__(self, parent=None):
-        super(CameraDialog, self).__init__(parent)
+        super(_CameraWidget, self).__init__(parent)
         self.cameralabel = QLabel()
         self.cameralabel.setScaledContents(True)
         self.setLayout(QGridLayout())
+        self.toolbar = QToolBar()
+        self.captureAction = self.toolbar.addAction("Take Photo")
+        self.captureAction.triggered.connect(self.takeimage)
+        self.layout().addWidget(self.toolbar)
         self.layout().addWidget(self.cameralabel)
         self.timer = QTimer()
         self.timer.setInterval(20)
         self.timer.timeout.connect(self.showimage)
         self.cam = None
+        self.imagecaptured.connect(self.printvalue)
+
+    def printvalue(self, value):
+        print value
 
     def showimage(self):
         if self.cam is None:
@@ -41,14 +53,43 @@ class CameraDialog(QDialog):
         pixmap = QPixmap.fromImage(self.image)
         self.cameralabel.setPixmap(pixmap)
 
+    def takeimage(self):
+        self.timer.stop()
+
+        img = self.cam.getImage()
+        self.image = ImageQt(img)
+        self.pixmap = QPixmap.fromImage(self.image)
+        self.cameralabel.setPixmap(self.pixmap)
+        self.imagecaptured.emit(self.pixmap)
+        self.done.emit()
+
     def start(self):
         self.cam = vc.Device()
         self.timer.start()
 
-    def closeEvent(self, QCloseEvent):
+    def __del__(self):
         self.timer.stop()
         del self.cam
         self.cam = None
+
+
+class CameraWidget(LargeEditorWidget):
+    def __init__(self, *args):
+        super(CameraWidget, self).__init__(*args)
+
+    def createWidget(self, parent):
+        return _CameraWidget(parent)
+
+    def initWidget(self, widget):
+        widget.imagecaptured.connect(self.emitvaluechanged)
+        widget.done.connect(self.emitfished)
+        widget.start()
+
+    def value(self):
+        return self.widget.pixmap
+
+    def __del__(self):
+        del self.widget
 
 
 class ImageWidget(EditorWidget):
@@ -62,8 +103,6 @@ class ImageWidget(EditorWidget):
 
         self.selectAction = QAction(QIcon(r":\images\folder"), "From folder", None)
         self.cameraAction = QAction(QIcon(":\images\camera"), "Camera", None)
-
-        self.cameradialog = CameraDialog()
 
         self.selectAction.triggered.connect(self._selectImage)
         self.cameraAction.triggered.connect(self._selectCamera)
@@ -102,8 +141,10 @@ class ImageWidget(EditorWidget):
         self.widget.loadImage(image)
 
     def _selectCamera(self):
-        self.cameradialog.start()
-        self.cameradialog.exec_()
+        self.largewidgetrequest.emit(CameraWidget, self.phototaken)
+
+    def phototaken(self, value):
+        self.setvalue(value)
 
     def updatefromconfig(self):
         self.defaultlocation = self.config.get('defaultlocation', '')
@@ -116,7 +157,7 @@ class ImageWidget(EditorWidget):
         self.openimage.emit(pixmap)
 
     def setvalue(self, value):
-        if self.tobase64 and value:
+        if self.tobase64 and value and not isinstance(value, QPixmap):
             value = QByteArray.fromBase64(value)
 
         self.widget.loadImage(value)

@@ -98,6 +98,7 @@ class DataEntryWidget(dataentry_widget, dataentry_base):
         self.project = None
         self.canvas = canvas
         self.bar = bar
+        self.largewidgetwrapper = None
 
         self.flickwidget = FlickCharm()
         self.flickwidget.activateOn(self.scrollArea)
@@ -125,7 +126,8 @@ class DataEntryWidget(dataentry_widget, dataentry_base):
         toolbar.addAction(self.actionCancel)
         toolbar.addWidget(spacer2)
         toolbar.addAction(self.actionSave)
-        self.layout().insertWidget(0, toolbar)
+
+        self.data_entry_page.layout().insertWidget(0, toolbar)
 
     def deletefeature(self):
         msg = self.featureform.deletemessage
@@ -220,16 +222,34 @@ class DataEntryWidget(dataentry_widget, dataentry_base):
     def formvalidation(self, passed):
         self.missingfieldaction.setVisible(not passed)
 
+    def setlargewidget(self, widgettype, callback):
+        def cleanup():
+            self.stackedWidget.setCurrentIndex(0)
+            del self.largewidgetwrapper
+
+        widget = widgettype.createwidget()
+        self.largewidgetwrapper = widgettype.for_widget(widget, None, None, None, None)
+        self.largewidgetwrapper.finished.connect(callback)
+        self.largewidgetwrapper.finished.connect(cleanup)
+
+        self.clearcurrentwidget(self.fullscreenwidget)
+        self.fullscreenwidget.layout().insertWidget(0, widget)
+        self.stackedWidget.setCurrentIndex(1)
+
+        self.largewidgetwrapper.initWidget(widget)
+
     def setwidget(self, widget):
-        self.clearcurrentwidget()
+        self.clearcurrentwidget(self.scrollAreaWidgetContents)
         self.scrollAreaWidgetContents.layout().insertWidget(0, widget)
+        self.stackedWidget.setCurrentIndex(0)
 
     def clear(self):
         self.featureform = None
-        self.clearcurrentwidget()
+        self.clearcurrentwidget(self.fullscreenwidget)
+        self.clearcurrentwidget(self.scrollAreaWidgetContents)
 
-    def clearcurrentwidget(self):
-        item = self.scrollAreaWidgetContents.layout().itemAt(0)
+    def clearcurrentwidget(self, parent):
+        item = parent.layout().itemAt(0)
         if item and item.widget():
             widget = item.widget()
             widget.setParent(None)
@@ -285,6 +305,7 @@ class DataEntryWidget(dataentry_widget, dataentry_base):
         self.featureform.openimage.connect(self.openimage.emit)
         self.featureform.helprequest.connect(self.helprequest.emit)
         self.featureform.bindvalues(values)
+        self.featureform.showlargewidget.connect(self.setlargewidget)
 
         self.actionSave.setVisible(True)
         self.setwidget(self.featureform)
