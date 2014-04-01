@@ -3,6 +3,7 @@ import sys
 
 try:
     import VideoCapture as vc
+    import vidcap
     hascamera = True
 except ImportError:
     hascamera = False
@@ -30,17 +31,24 @@ class _CameraWidget(QWidget):
         self.cameralabel = QLabel()
         self.cameralabel.setScaledContents(True)
         self.setLayout(QGridLayout())
+        self.toolbar = QToolBar()
+        self.swapaction = self.toolbar.addAction("Swap Camera")
+        self.swapaction.triggered.connect(self.swapcamera)
         self.cameralabel.mouseReleaseEvent = self.takeimage
         self.layout().setContentsMargins(0,0,0,0)
+        self.layout().addWidget(self.toolbar)
         self.layout().addWidget(self.cameralabel)
         self.timer = QTimer()
         self.timer.setInterval(20)
         self.timer.timeout.connect(self.showimage)
         self.cam = None
-        self.imagecaptured.connect(self.printvalue)
 
-    def printvalue(self, value):
-        print value
+    def swapcamera(self):
+        self.stop()
+        if self.currentdevice == 0:
+            self.start(1)
+        else:
+            self.start(0)
 
     def showimage(self):
         if self.cam is None:
@@ -61,8 +69,14 @@ class _CameraWidget(QWidget):
         self.imagecaptured.emit(self.pixmap)
         self.done.emit()
 
-    def start(self):
-        self.cam = vc.Device()
+    def start(self, dev=1):
+        try:
+            self.cam = vc.Device(dev)
+            self.currentdevice = dev
+        except vidcap.error:
+            self.cam = vc.Device(0)
+            self.currentdevice = 0
+
         self.timer.start()
 
     def stop(self):
