@@ -1,8 +1,12 @@
-from PyQt4.QtGui import QDialog, QGridLayout, QLabel, QLayout, QPixmap
+import os
+
+from PyQt4.QtGui import QDialog, QGridLayout, QLabel, QLayout, QPixmap, QFileDialog
 from PyQt4.QtCore import QByteArray, pyqtSignal, QVariant
 
 from roam.editorwidgets.core import EditorWidget
 from roam.editorwidgets.uifiles.imagewidget import QMapImageWidget
+from roam import utils
+
 
 
 class ImageWidget(EditorWidget):
@@ -12,6 +16,7 @@ class ImageWidget(EditorWidget):
     def __init__(self, *args):
         super(ImageWidget, self).__init__(*args)
         self.tobase64 = False
+        self.defaultlocation = ''
 
         if self.field and self.field.type() == QVariant.String:
             self.tobase64 = True
@@ -23,9 +28,20 @@ class ImageWidget(EditorWidget):
         widget.openRequest.connect(self.showlargeimage)
         widget.imageloaded.connect(self.validate)
         widget.imageremoved.connect(self.validate)
+        widget.imageloadrequest.connect(self._selectImage)
+
+    def _selectImage(self):
+        # Show the file picker
+        defaultlocation = os.path.expandvars(self.defaultlocation)
+        image = QFileDialog.getOpenFileName(self.widget, "Select Image", defaultlocation)
+        utils.debug(image)
+        if image is None or not image:
+            return
+
+        self.widget.loadImage(image)
 
     def updatefromconfig(self):
-        self.widget.defaultlocation = self.config.get('defaultlocation', '')
+        self.defaultlocation = self.config.get('defaultlocation', '')
 
     def validate(self, *args):
         self.raisevalidationupdate(not self.widget.isDefault)
