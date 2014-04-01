@@ -13,7 +13,7 @@ from roam.utils import log, error
 from roam import featureform
 from roam.ui.uifiles import dataentry_widget, dataentry_base
 from roam.flickwidget import FlickCharm
-from roam.deletefeaturedialog import DeleteFeatureDialog
+from roam.popupdialogs import DeleteFeatureDialog
 from roam.structs import CaseInsensitiveDict
 
 

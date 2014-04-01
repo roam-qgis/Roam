@@ -7,15 +7,18 @@ try:
 except ImportError:
     hascamera = False
 
-from PyQt4.QtGui import QDialog, QGridLayout, QLabel, QLayout, QPixmap, QFileDialog, QAction, QToolButton
-from PyQt4.QtCore import QByteArray, pyqtSignal, QVariant, QTimer
+from PyQt4.QtGui import QDialog, QGridLayout, QLabel, QLayout, QPixmap, QFileDialog, QAction, QToolButton, QIcon
+from PyQt4.QtCore import QByteArray, pyqtSignal, QVariant, QTimer, Qt, QSize
 
 from PIL.ImageQt import ImageQt
 
 from roam.editorwidgets.core import EditorWidget
 from roam.editorwidgets.uifiles.imagewidget import QMapImageWidget
 from roam.ui.uifiles import actionpicker_widget, actionpicker_base
+from roam.popupdialogs import PickActionDialog
 from roam import utils
+
+import roam.editorwidgets.uifiles.images_rc
 
 class CameraDialog(QDialog):
     def __init__(self, parent=None):
@@ -57,8 +60,8 @@ class ImageWidget(EditorWidget):
         self.tobase64 = False
         self.defaultlocation = ''
 
-        self.selectAction = QAction("Image", None)
-        self.cameraAction = QAction("Camera", None)
+        self.selectAction = QAction(QIcon(r":\images\folder"), "From folder", None)
+        self.cameraAction = QAction(QIcon(":\images\camera"), "Camera", None)
 
         self.cameradialog = CameraDialog()
 
@@ -78,17 +81,9 @@ class ImageWidget(EditorWidget):
         widget.imageloadrequest.connect(self.showpicker)
 
     def showpicker(self):
-        widget = actionpicker_widget()
-        dlg = QDialog(self.widget)
-        widget.setupUi(dlg)
-        for action in self.actions:
-            button = QToolButton()
-            button.setDefaultAction(action)
-            action.triggered.connect(dlg.close)
-
-            widget.actionsLayout.addWidget(button)
-
-        dlg.exec_()
+        actionpicker = PickActionDialog(msg="Select image source")
+        actionpicker.addactions(self.actions)
+        actionpicker.exec_()
 
     @property
     def actions(self):
