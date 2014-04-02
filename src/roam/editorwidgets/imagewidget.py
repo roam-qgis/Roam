@@ -110,8 +110,9 @@ class CameraWidget(LargeEditorWidget):
 
 
 class DrawingPadWidget(LargeEditorWidget):
-    def __init__(self, *args):
-        super(DrawingPadWidget, self).__init__(*args)
+    def __init__(self, *args, **kwargs):
+        super(DrawingPadWidget, self).__init__(*args, **kwargs)
+        self.canvas = kwargs.get('map', None)
 
     def createWidget(self, parent=None):
         return drawingpad.DrawingPad(parent=parent)
@@ -119,6 +120,7 @@ class DrawingPadWidget(LargeEditorWidget):
     def initWidget(self, widget):
         widget.actionSave.triggered.connect(self.emitfished)
         widget.actionCancel.triggered.connect(self.cancel.emit)
+        widget.canvas = self.canvas
 
     def value(self):
         return self.widget.pixmap

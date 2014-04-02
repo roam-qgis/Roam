@@ -47,7 +47,7 @@ class EditorWidget(QObject):
     # Signal to emit when you need to show a large widget in the UI.
     largewidgetrequest = pyqtSignal(object, object)
 
-    def __init__(self, widget=None, layer=None, label=None, field=None, parent=None):
+    def __init__(self, widget=None, layer=None, label=None, field=None, parent=None, *args, **kwargs):
         super(EditorWidget, self).__init__(parent)
         self._config = {}
         self.widget = widget
@@ -63,11 +63,11 @@ class EditorWidget(QObject):
         self.validationupdate.connect(self.updatecontrolstate)
 
     @classmethod
-    def for_widget(cls, widget, layer, label, field, parent):
+    def for_widget(cls, widget, layer, label, field, parent, *args, **kwargs):
         """
         Create a new editor wrapper for the given widget.
         """
-        editor = cls(widget, layer, label, field, parent)
+        editor = cls(widget, layer, label, field, parent, *args, **kwargs)
         return editor
 
     @classmethod

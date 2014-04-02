@@ -229,7 +229,7 @@ class DataEntryWidget(dataentry_widget, dataentry_base):
             del self.largewidgetwrapper
 
         widget = widgettype.createwidget()
-        self.largewidgetwrapper = widgettype.for_widget(widget, None, None, None, None)
+        self.largewidgetwrapper = widgettype.for_widget(widget, None, None, None, None, map=self.canvas)
         self.largewidgetwrapper.finished.connect(callback)
         self.largewidgetwrapper.finished.connect(cleanup)
         self.largewidgetwrapper.cancel.connect(cleanup)

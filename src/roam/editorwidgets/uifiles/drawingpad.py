@@ -3,7 +3,7 @@ import functools
 
 from PyQt4 import QtCore, QtGui
 
-from PyQt4.QtGui import QWidget, QPixmap
+from PyQt4.QtGui import QWidget, QPixmap, QPainter
 
 from roam.editorwidgets.uifiles.ui_drawingpad import Ui_DrawingWindow
 
@@ -75,6 +75,11 @@ class ScribbleArea(QWidget):
         painter = QtGui.QPainter(self)
         painter.drawImage(event.rect(), self.image)
 
+    def addMap(self, pixmap):
+        painter = QtGui.QPainter(self.image)
+        painter.drawPixmap(QtCore.QPoint(0,0), pixmap)
+        self.update()
+
     def resizeEvent(self, event):
         self.resizeImage(self.image, event.size())
         super(ScribbleArea, self).resizeEvent(event)
@@ -134,9 +139,30 @@ class DrawingPad(Ui_DrawingWindow, QWidget):
 
         self.openImage(startimage)
 
+        self.canvas = None
+
+    @property
+    def canvas(self):
+        return self._canvas
+
+    @canvas.setter
+    def canvas(self, value):
+        enabled = True if value else False
+        self.actionMapSnapshot.setEnabled(enabled)
+        self._canvas = value
+
     @property
     def pixmap(self):
         return self.scribbleArea.pixmap
+
+    def getmap(self):
+        if self.canvas:
+            painter = QPainter()
+            pixmap = QPixmap(self.canvas.size())
+            painter.begin(pixmap)
+            renderer = self.canvas.mapRenderer()
+            renderer.render(painter)
+            self.scribbleArea.addMap(pixmap)
 
     def openImage(self, image):
         if not image is None and os.path.exists(image):
@@ -167,6 +193,7 @@ class DrawingPad(Ui_DrawingWindow, QWidget):
         self.actionEraser.triggered.connect(functools.partial(self.setPen, QtCore.Qt.white, 9))
         self.toolEraser.setDefaultAction(self.actionEraser)
 
+        self.actionMapSnapshot.triggered.connect(self.getmap)
         self.toolMapSnapshot.setDefaultAction(self.actionMapSnapshot)
 
         self.toolSave.setDefaultAction(self.actionSave)
