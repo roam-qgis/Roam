@@ -24,13 +24,11 @@
 }
 
         QPushButton, QToolButton { 
-            border: 1px solid #e1e1e1;
             padding: 6px;
             color: #4f4f4f;
          }	
 
         QToolButton::checked { 
-            border: 1px solid #e1e1e1;
             padding: 6px;
 	background-color: rgba(85, 85, 255, 50);
          }	</string>
@@ -218,9 +216,9 @@
       </spacer>
      </item>
      <item>
-      <widget class="QToolButton" name="toolSave">
+      <widget class="QToolButton" name="toolCancel">
        <property name="text">
-        <string>Save</string>
+        <string>Cancel</string>
        </property>
        <property name="iconSize">
         <size>
@@ -237,9 +235,9 @@
       </widget>
      </item>
      <item>
-      <widget class="QToolButton" name="toolCancel">
+      <widget class="QToolButton" name="toolSave">
        <property name="text">
-        <string>Cancel</string>
+        <string>Save</string>
        </property>
        <property name="iconSize">
         <size>
