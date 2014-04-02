@@ -677,7 +677,7 @@ class MainWindow(mainwindow_widget, mainwindow_base):
                 try:
                     layer = QgsMapLayerRegistry.instance().mapLayersByName(layername)[0]
                 except IndexError:
-                    roam.utils.warning("Can't find QGIS layer for select layer {}".format(layername))
+                    roam.utils.warning(u"Can't find QGIS layer for select layer {}".format(layername))
                     continue
                 selectionlayers.append(layer)
 
