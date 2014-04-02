@@ -109,6 +109,11 @@ class ScribbleArea(QWidget):
     def pixmap(self):
         return QPixmap.fromImage(self.image)
 
+    @pixmap.setter
+    def pixmap(self, value):
+        if value:
+            self.addMap(value)
+
     def isModified(self):
         return self.modified
 
@@ -154,6 +159,10 @@ class DrawingPad(Ui_DrawingWindow, QWidget):
     @property
     def pixmap(self):
         return self.scribbleArea.pixmap
+
+    @pixmap.setter
+    def pixmap(self, value):
+        self.scribbleArea.pixmap = value
 
     def getmap(self):
         if self.canvas:

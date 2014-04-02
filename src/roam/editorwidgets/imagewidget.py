@@ -125,6 +125,9 @@ class DrawingPadWidget(LargeEditorWidget):
     def value(self):
         return self.widget.pixmap
 
+    def setvalue(self, value):
+        self.widget.pixmap = value
+
 
 class ImageWidget(EditorWidget):
     widgettype = 'Image'
@@ -178,10 +181,11 @@ class ImageWidget(EditorWidget):
         self.widget.loadImage(image)
 
     def _selectDrawing(self):
-        self.largewidgetrequest.emit(DrawingPadWidget, self.phototaken)
+        image = self.widget.orignalimage
+        self.largewidgetrequest.emit(DrawingPadWidget, image, self.phototaken)
 
     def _selectCamera(self):
-        self.largewidgetrequest.emit(CameraWidget, self.phototaken)
+        self.largewidgetrequest.emit(CameraWidget, None, self.phototaken)
 
     def phototaken(self, value):
         self.setvalue(value)

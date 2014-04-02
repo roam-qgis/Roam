@@ -45,7 +45,7 @@ class EditorWidget(QObject):
     valuechanged = pyqtSignal(object)
 
     # Signal to emit when you need to show a large widget in the UI.
-    largewidgetrequest = pyqtSignal(object, object)
+    largewidgetrequest = pyqtSignal(object, object, object)
 
     def __init__(self, widget=None, layer=None, label=None, field=None, parent=None, *args, **kwargs):
         super(EditorWidget, self).__init__(parent)

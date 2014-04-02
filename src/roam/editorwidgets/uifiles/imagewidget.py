@@ -20,6 +20,7 @@ class QMapImageWidget(ui_imagewidget.Ui_imagewidget, QWidget):
         super(QMapImageWidget, self).__init__(parent)
         self.setupUi(self)
 
+        self._orignalimage = None
         self.setStyleSheet(":hover {background-color: #dddddd;}")
         self.selectbutton.clicked.connect(self.imageloadrequest.emit)
         self.deletebutton.clicked.connect(self.removeImage)
@@ -45,7 +46,13 @@ class QMapImageWidget(ui_imagewidget.Ui_imagewidget, QWidget):
         if self.isDefault:
             self.imageloadrequest.emit()
         else:
-            self.openRequest.emit(self.image.pixmap())
+            self.openRequest.emit(self.orignalimage)
+
+    @property
+    def orignalimage(self):
+        if self.isDefault:
+            return None
+        return self._orignalimage
 
     def loadImage(self, data, scaled=True):
         """
@@ -65,6 +72,8 @@ class QMapImageWidget(ui_imagewidget.Ui_imagewidget, QWidget):
             r = pix.loadFromData(data, 'JPG')
             if not r:
                 pix = QPixmap(data)
+
+        self._orignalimage = pix
 
         h = self.maximumHeight()
         if scaled:
@@ -92,7 +101,7 @@ class QMapImageWidget(ui_imagewidget.Ui_imagewidget, QWidget):
         if self.isDefault:
             return None
 
-        pix = self.image.pixmap()
+        pix = self.orignalimage
         by = QByteArray()
         buf = QBuffer(by)
         buf.open(QIODevice.WriteOnly)
