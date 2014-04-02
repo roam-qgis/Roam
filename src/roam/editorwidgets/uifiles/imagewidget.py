@@ -73,7 +73,7 @@ class QMapImageWidget(ui_imagewidget.Ui_imagewidget, QWidget):
             if not r:
                 pix = QPixmap(data)
 
-        self._orignalimage = pix
+        self._orignalimage = QPixmap(pix)
 
         h = self.maximumHeight()
         if scaled:

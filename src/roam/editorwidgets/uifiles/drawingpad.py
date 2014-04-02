@@ -4,6 +4,7 @@ import functools
 from PyQt4 import QtCore, QtGui
 
 from PyQt4.QtGui import QWidget, QPixmap, QPainter
+from PyQt4.QtCore import Qt
 
 from roam.editorwidgets.uifiles.ui_drawingpad import Ui_DrawingWindow
 
@@ -112,6 +113,7 @@ class ScribbleArea(QWidget):
     @pixmap.setter
     def pixmap(self, value):
         if value:
+            value = value.scaledToHeight(self.height(), Qt.SmoothTransformation)
             self.addMap(value)
 
     def isModified(self):

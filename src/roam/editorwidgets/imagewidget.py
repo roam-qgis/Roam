@@ -66,6 +66,7 @@ class _CameraWidget(QWidget):
         img = self.cam.getImage()
         self.image = ImageQt(img)
         self.pixmap = QPixmap.fromImage(self.image)
+        print self.pixmap.width(), self.pixmap.height()
         self.cameralabel.setPixmap(self.pixmap)
         self.imagecaptured.emit(self.pixmap)
         self.done.emit()
