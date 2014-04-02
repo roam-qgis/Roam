@@ -41,7 +41,7 @@ from roam.listmodulesdialog import ProjectsWidget
 from roam.settingswidget import SettingsWidget
 from roam.projectparser import ProjectParser
 from roam.project import Project, NoMapToolConfigured, ErrorInMapTool
-from roam.maptools import MoveTool, InfoTool, EditTool, PointTool, InspectionTool, TouchMapTool
+from roam.maptools import MoveTool, InfoTool, EditTool, PointTool, CopyTool, TouchMapTool
 from roam.infodock import InfoDock
 from roam.syncwidget import SyncWidget
 from roam.helpviewdialog import HelpPage
@@ -398,7 +398,7 @@ class MainWindow(mainwindow_widget, mainwindow_base):
     def createCaptureButtons(self, form, wasselected):
         """check capture mode and construct map too accordingly """
         if form.captureMode == "copy":
-            tool = form.getInspectionMaptool(self.canvas)
+            tool = form.getCopytool(self.canvas)
         else:
             tool = form.getMaptool()(self.canvas)
 
@@ -419,7 +419,7 @@ class MainWindow(mainwindow_widget, mainwindow_base):
         if hasattr(tool, 'geometryComplete'):
             add = partial(self.addNewFeature, form)
             tool.geometryComplete.connect(add)
-	elif isinstance(tool, InspectionTool):
+	elif isinstance(tool, CopyTool):
             add = partial(self.captureData, form)
 	    tool.finished.connect(add)
 	    tool.error.connect(partial(self.showToolError, form.label))

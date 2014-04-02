@@ -14,7 +14,7 @@ from PyQt4.QtGui import QAction, QIcon
 
 from qgis.core import QgsMapLayerRegistry, QGis, QgsTolerance, QgsVectorLayer, QgsMapLayer
 
-from roam.maptools import PointTool, PolygonTool, PolylineTool, InspectionTool
+from roam.maptools import PointTool, PolygonTool, PolylineTool, CopyTool
 from roam.utils import log
 from roam.syncing import replication
 from roam.api import FeatureForm
@@ -154,7 +154,7 @@ class Form(object):
 	   self._outputLayer = getlayer(layer)
 	return self._outputLayer
 
-    def getInspectionMaptool(self, canvas):
+    def getCopytool(self, canvas):
 
         for key, val in self.settings.get("fieldmap", {}).iteritems():
             utils.log(key +": " + val)
@@ -162,7 +162,7 @@ class Form(object):
 	    reg = QgsMapLayerRegistry.instance()
 	    layerfrom = self.QGISLayer
 	    layerto = self.outputLayer
-	    return InspectionTool(canvas
+	    return CopyTool(canvas
         		    , layerfrom
         		    , layerto
         		    , mapping
