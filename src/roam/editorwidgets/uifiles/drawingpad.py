@@ -18,40 +18,23 @@ class ScribbleArea(QWidget):
         self.scribbling = False
         imageSize = QtCore.QSize(500, 500)
         self.image = QtGui.QImage(imageSize, QtGui.QImage.Format_RGB16)
+        self.painter = QtGui.QPainter()
         self.lastPoint = QtCore.QPoint()
-
-    def openImage(self, fileName):
-        loadedImage = QtGui.QImage()
-        if not loadedImage.load(fileName):
-            return False
-        
-        self.image = loadedImage
-        self.modified = False
-        self.update()
-        return True
-
-    def saveImage(self, fileName, fileFormat):
-        visibleImage = self.image
-        self.resizeImage(visibleImage, self.size())
-
-        path = os.path.dirname(fileName)
-
-        if not os.path.exists(path):
-            os.makedirs(path)
-            
-        if visibleImage.save(fileName, fileFormat):
-            self.modified = False
-            log("Saved")
-            return True
-        else:
-            log("Didn't save")
-            return False
+        self.pen = QtGui.QPen()
 
     def setPenColor(self, newColor):
         self.myPenColor = newColor
+        self.pen.setColor(newColor)
 
     def setPenWidth(self, newWidth):
         self.myPenWidth = newWidth
+        self.pen.setWidth(newWidth)
+
+    def penColor(self):
+        return self.myPenColor
+
+    def penWidth(self):
+        return self.myPenWidth
 
     def clearImage(self):
         self.image.fill(QtGui.qRgb(255, 255, 255))
@@ -59,6 +42,8 @@ class ScribbleArea(QWidget):
         self.update()
 
     def mousePressEvent(self, event):
+        self.painter.begin(self.image)
+        self.painter.setRenderHints(QPainter.Antialiasing, True)
         if event.button() == QtCore.Qt.LeftButton:
             self.lastPoint = event.pos()
             self.scribbling = True
@@ -71,14 +56,18 @@ class ScribbleArea(QWidget):
         if event.button() == QtCore.Qt.LeftButton and self.scribbling:
             self.drawLineTo(event.pos())
             self.scribbling = False
+        self.painter.end()
 
     def paintEvent(self, event):
         painter = QtGui.QPainter(self)
         painter.drawImage(event.rect(), self.image)
+        del painter
 
     def addMap(self, pixmap):
-        painter = QtGui.QPainter(self.image)
-        painter.drawPixmap(QtCore.QPoint(0,0), pixmap)
+        self.painter.begin(self.image)
+        self.painter.setRenderHints(QPainter.Antialiasing, True)
+        self.painter.drawPixmap(QtCore.QPoint(0,0), pixmap)
+        self.painter.end()
         self.update()
 
     def resizeEvent(self, event):
@@ -86,13 +75,11 @@ class ScribbleArea(QWidget):
         super(ScribbleArea, self).resizeEvent(event)
 
     def drawLineTo(self, endPoint):
-        painter = QtGui.QPainter(self.image)
-        painter.setPen(QtGui.QPen(self.myPenColor, self.myPenWidth,
-            QtCore.Qt.SolidLine, QtCore.Qt.RoundCap, QtCore.Qt.RoundJoin))
-        painter.drawLine(self.lastPoint, endPoint)
+        self.painter.setPen(self.pen)
+        self.painter.drawLine(self.lastPoint, endPoint)
+        self.lastPoint = QtCore.QPoint(endPoint)
         self.modified = True
         self.update()
-        self.lastPoint = QtCore.QPoint(endPoint)
 
     def resizeImage(self, image, newSize):
         if image.size() == newSize:
@@ -101,10 +88,8 @@ class ScribbleArea(QWidget):
         # this resizes the canvas without resampling the image
         newImage = QtGui.QImage(newSize, QtGui.QImage.Format_RGB32)
         newImage.fill(QtGui.qRgb(255, 255, 255))
-        painter = QtGui.QPainter(newImage)
-        painter.drawImage(QtCore.QPoint(0, 0), image)
-
         self.image = newImage
+        self.update()
 
     @property
     def pixmap(self):
@@ -119,11 +104,6 @@ class ScribbleArea(QWidget):
     def isModified(self):
         return self.modified
 
-    def penColor(self):
-        return self.myPenColor
-
-    def penWidth(self):
-        return self.myPenWidth
 
 
 class DrawingPad(Ui_DrawingWindow, QWidget):
@@ -168,11 +148,11 @@ class DrawingPad(Ui_DrawingWindow, QWidget):
 
     def getmap(self):
         if self.canvas:
-            painter = QPainter()
             pixmap = QPixmap(self.canvas.size())
-            painter.begin(pixmap)
+            painter = QPainter(pixmap)
             renderer = self.canvas.mapRenderer()
             renderer.render(painter)
+            del painter
             self.scribbleArea.addMap(pixmap)
 
     def openImage(self, image):
