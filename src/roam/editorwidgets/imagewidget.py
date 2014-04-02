@@ -2,8 +2,8 @@ import os
 import sys
 
 try:
-    import VideoCapture as vc
     import vidcap
+    from roam.editorwidgets import VideoCapture as vc
     hascamera = True
 except ImportError:
     hascamera = False
@@ -89,8 +89,8 @@ class _CameraWidget(QWidget):
         self.cam = None
 
 class CameraWidget(LargeEditorWidget):
-    def __init__(self, *args):
-        super(CameraWidget, self).__init__(*args)
+    def __init__(self, *args, **kwargs):
+        super(CameraWidget, self).__init__(*args, **kwargs)
 
     def createWidget(self, parent):
         return _CameraWidget(parent)
