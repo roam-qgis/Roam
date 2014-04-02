@@ -18,6 +18,7 @@ from roam import utils
 from roam.flickwidget import FlickCharm
 from roam.htmlviewer import updateTemplate
 from roam.ui.uifiles import (infodock_widget)
+from roam.events import RoamEvents
 
 import templates
 
@@ -73,10 +74,8 @@ class FeatureCursor(object):
 
 
 class InfoDock(infodock_widget, QWidget):
-    requestopenform = pyqtSignal(object, QgsFeature)
     featureupdated = pyqtSignal(object, object, list)
     resultscleared = pyqtSignal()
-    openurl = pyqtSignal(object)
 
     def __init__(self, parent):
         super(InfoDock, self).__init__(parent)
@@ -85,7 +84,7 @@ class InfoDock(infodock_widget, QWidget):
         self.charm = FlickCharm()
         self.charm.activateOn(self.attributesView)
         self.layerList.currentRowChanged.connect(self.layerIndexChanged)
-        self.attributesView.linkClicked.connect(self.openurl.emit)
+        self.attributesView.linkClicked.connect(RoamEvents.openurl.emit)
         self.attributesView.page().setLinkDelegationPolicy(QWebPage.DelegateAllLinks)
         self.grabGesture(Qt.SwipeGesture)
         self.setAttribute(Qt.WA_AcceptTouchEvents)
@@ -121,7 +120,7 @@ class InfoDock(infodock_widget, QWidget):
 
     def openform(self):
         cursor = self.selection
-        self.requestopenform.emit(cursor.form, cursor.feature)
+        RoamEvents.openfeatureform.emit(cursor.form, cursor.feature)
 
     def pageback(self):
         cursor = self.selection

@@ -48,6 +48,7 @@ from roam.syncwidget import SyncWidget
 from roam.helpviewdialog import HelpPage
 from roam.biglist import BigList
 from roam.imageviewerwidget import ImageViewer
+from roam.events import RoamEvents
 
 import roam.messagebaritems
 import roam.utils
@@ -141,7 +142,6 @@ class MainWindow(mainwindow_widget, mainwindow_base):
         self.dataentrywidget.featuredeleted.connect(self.featuredeleted)
         self.dataentrywidget.failedsave.connect(self.failSave)
         self.dataentrywidget.helprequest.connect(self.showhelp)
-        self.dataentrywidget.openimage.connect(self.openimage)
 
         def createSpacer(width=0, height=0):
             widget = QWidget()
@@ -215,14 +215,16 @@ class MainWindow(mainwindow_widget, mainwindow_base):
         self.actionGPSFeature.setProperty('dataentry', True)
 
         self.infodock = InfoDock(self.canvas)
-        self.infodock.requestopenform.connect(self.openForm)
         self.infodock.featureupdated.connect(self.highlightfeature)
         self.infodock.resultscleared.connect(self.clearselection)
-        self.infodock.openurl.connect(self.viewurl)
         self.infodock.hide()
         self.hidedataentry()
         self.canvas.extentsChanged.connect(self.updatestatuslabel)
         self.projecttoolbar.toolButtonStyleChanged.connect(self.updatecombo)
+
+        RoamEvents.openimage.connect(self.openimage)
+        RoamEvents.openurl.connect(self.viewurl)
+        RoamEvents.openfeatureform.connect(self.openForm)
 
     def selectdataentry(self, ):
         if self.dataentrycombo.count() == 0:

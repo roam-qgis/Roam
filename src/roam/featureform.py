@@ -175,7 +175,6 @@ class FeatureFormBase(QWidget):
     loadform = pyqtSignal()
     rejected = pyqtSignal(str)
     enablesave = pyqtSignal(bool)
-    openimage = pyqtSignal(object)
     showlargewidget = pyqtSignal(object, object, object)
 
     def __init__(self, form, formconfig, feature, defaults, parent):
@@ -250,10 +249,6 @@ class FeatureFormBase(QWidget):
             except EditorWidgetException as ex:
                 utils.warning(ex.message)
                 continue
-
-            # Connect the
-            if hasattr(widgetwrapper, "openimage"):
-                widgetwrapper.openimage.connect(self.openimage.emit)
 
             readonlyrules = config.get('read-only-rules', [])
 

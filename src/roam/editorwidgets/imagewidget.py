@@ -20,6 +20,7 @@ from roam.editorwidgets.uifiles import drawingpad
 from roam.ui.uifiles import actionpicker_widget, actionpicker_base
 from roam.popupdialogs import PickActionDialog
 from roam import utils
+from roam.events import RoamEvents
 
 import roam.editorwidgets.uifiles.images_rc
 
@@ -132,7 +133,6 @@ class DrawingPadWidget(LargeEditorWidget):
 
 class ImageWidget(EditorWidget):
     widgettype = 'Image'
-    openimage = pyqtSignal(object)
 
     def __init__(self, *args):
         super(ImageWidget, self).__init__(*args)
@@ -199,7 +199,7 @@ class ImageWidget(EditorWidget):
         self.emitvaluechanged()
 
     def showlargeimage(self, pixmap):
-        self.openimage.emit(pixmap)
+        RoamEvents.openimage.emit(pixmap)
 
     def setvalue(self, value):
         if self.tobase64 and value and not isinstance(value, QPixmap):

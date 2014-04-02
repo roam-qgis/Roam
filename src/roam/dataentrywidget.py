@@ -305,7 +305,6 @@ class DataEntryWidget(dataentry_widget, dataentry_base):
             return
 
         self.featureform.formvalidation.connect(self.formvalidation)
-        self.featureform.openimage.connect(self.openimage.emit)
         self.featureform.helprequest.connect(self.helprequest.emit)
         self.featureform.bindvalues(values)
         self.featureform.showlargewidget.connect(self.setlargewidget)
