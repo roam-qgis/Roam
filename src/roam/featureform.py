@@ -176,6 +176,7 @@ class FeatureFormBase(QWidget):
     rejected = pyqtSignal(str)
     enablesave = pyqtSignal(bool)
     openimage = pyqtSignal(object)
+    showlargewidget = pyqtSignal(object, object, object)
 
     def __init__(self, form, formconfig, feature, defaults, parent):
         super(FeatureFormBase, self).__init__(parent)
@@ -268,6 +269,8 @@ class FeatureFormBase(QWidget):
                 self.requiredfields[field] = False
                 widgetwrapper.setrequired()
                 widgetwrapper.validationupdate.connect(self.updaterequired)
+
+            widgetwrapper.largewidgetrequest.connect(self.showlargewidget.emit)
 
             self._bindsavebutton(field)
             self.boundwidgets[field] = widgetwrapper

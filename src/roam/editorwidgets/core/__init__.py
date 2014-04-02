@@ -1,3 +1,4 @@
+from PyQt4.QtGui import QWidget
 from PyQt4.QtCore import QObject, pyqtSignal
 
 
@@ -43,7 +44,10 @@ class EditorWidget(QObject):
     validationupdate = pyqtSignal(object, bool)
     valuechanged = pyqtSignal(object)
 
-    def __init__(self, widget=None, layer=None, label=None, field=None, parent=None):
+    # Signal to emit when you need to show a large widget in the UI.
+    largewidgetrequest = pyqtSignal(object, object, object)
+
+    def __init__(self, widget=None, layer=None, label=None, field=None, parent=None, *args, **kwargs):
         super(EditorWidget, self).__init__(parent)
         self._config = {}
         self.widget = widget
@@ -59,11 +63,11 @@ class EditorWidget(QObject):
         self.validationupdate.connect(self.updatecontrolstate)
 
     @classmethod
-    def for_widget(cls, widget, layer, label, field, parent):
+    def for_widget(cls, widget, layer, label, field, parent, *args, **kwargs):
         """
         Create a new editor wrapper for the given widget.
         """
-        editor = cls(widget, layer, label, field, parent)
+        editor = cls(widget, layer, label, field, parent, *args, **kwargs)
         return editor
 
     @classmethod
@@ -177,4 +181,19 @@ class EditorWidget(QObject):
         :return:
         """
         self.valuechanged.emit(self.value())
+
+
+class LargeEditorWidget(EditorWidget):
+    """
+    A large editor widget will take up all the UI before the action is finished.
+    These can be used to show things like camera capture, drawing pads, etc
+
+    The only thing this class has extra is a finished signal and emits that once input is complete.
+    """
+    finished = pyqtSignal(object)
+    cancel = pyqtSignal()
+
+    def emitfished(self):
+        self.finished.emit(self.value())
+
 

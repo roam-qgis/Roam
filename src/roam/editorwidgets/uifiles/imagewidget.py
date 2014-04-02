@@ -14,13 +14,15 @@ class QMapImageWidget(ui_imagewidget.Ui_imagewidget, QWidget):
     openRequest = pyqtSignal(QPixmap)
     imageloaded = pyqtSignal()
     imageremoved = pyqtSignal()
+    imageloadrequest = pyqtSignal()
 
     def __init__(self, parent=None):
         super(QMapImageWidget, self).__init__(parent)
         self.setupUi(self)
 
+        self._orignalimage = None
         self.setStyleSheet(":hover {background-color: #dddddd;}")
-        self.selectbutton.clicked.connect(self.selectImage)
+        self.selectbutton.clicked.connect(self.imageloadrequest.emit)
         self.deletebutton.clicked.connect(self.removeImage)
         self.image.mouseReleaseEvent = self.imageClick
         self.installEventFilter(self)
@@ -34,16 +36,6 @@ class QMapImageWidget(ui_imagewidget.Ui_imagewidget, QWidget):
 
         return super(QMapImageWidget, self).eventFilter(object, event)
 
-    def selectImage(self):
-        # Show the file picker
-        defaultlocation = os.path.expandvars(self.defaultlocation)
-        image = QFileDialog.getOpenFileName(self, "Select Image", defaultlocation)
-        roam.utils.debug(image)
-        if image is None or not image:
-            return
-
-        self.loadImage(image)
-
     def removeImage(self):
         self.loadImage(":/images/images/add.png", scaled=False)
         self.image.setScaledContents(False)
@@ -52,9 +44,15 @@ class QMapImageWidget(ui_imagewidget.Ui_imagewidget, QWidget):
 
     def imageClick(self, event):
         if self.isDefault:
-            self.selectImage()
+            self.imageloadrequest.emit()
         else:
-            self.openRequest.emit(self.image.pixmap())
+            self.openRequest.emit(self.orignalimage)
+
+    @property
+    def orignalimage(self):
+        if self.isDefault:
+            return None
+        return self._orignalimage
 
     def loadImage(self, data, scaled=True):
         """
@@ -67,10 +65,15 @@ class QMapImageWidget(ui_imagewidget.Ui_imagewidget, QWidget):
             self.removeImage()
             return
 
-        pix = QPixmap()
-        r = pix.loadFromData(data, 'JPG')
-        if not r:
-            pix = QPixmap(data)
+        if isinstance(data, QPixmap):
+            pix = data
+        else:
+            pix = QPixmap()
+            r = pix.loadFromData(data, 'JPG')
+            if not r:
+                pix = QPixmap(data)
+
+        self._orignalimage = QPixmap(pix)
 
         h = self.maximumHeight()
         if scaled:
@@ -98,7 +101,7 @@ class QMapImageWidget(ui_imagewidget.Ui_imagewidget, QWidget):
         if self.isDefault:
             return None
 
-        pix = self.image.pixmap()
+        pix = self.orignalimage
         by = QByteArray()
         buf = QBuffer(by)
         buf.open(QIODevice.WriteOnly)

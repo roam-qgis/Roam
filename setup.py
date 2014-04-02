@@ -9,6 +9,7 @@ except ImportError:
 
 import glob
 import os
+import sys
 import shutil
 
 # You are not meant to do this but we don't install using
@@ -35,8 +36,10 @@ gdalsharepath = os.path.join(osgeopath, 'share', 'gdal')
 
 curpath = os.path.dirname(os.path.realpath(__file__))
 appsrcopyFilesath = os.path.join(curpath, "src", 'roam')
+srceditorwidgets = os.path.join(curpath, "src", 'roam', 'editorwidgets')
 projectinstallerpath = os.path.join(curpath, "src", 'project_installer')
 configmangerpath = os.path.join(curpath, "src", 'configmanager')
+
 
 def getfiles(folder, outpath):
     """
@@ -80,7 +83,10 @@ datafiles = [(".", [r'src\settings.config']),
             (r'libs\qgis\resources', [os.path.join(qgisresources, 'qgis.db'),
                                  os.path.join(qgisresources, 'srs.db')]),
             (r'libs', extrafiles),
-            (r'libs\roam\i18n', glob.glob(i18nfiles))]
+            (r'libs\roam\i18n', glob.glob(i18nfiles)),
+            (r'libs\roam\editorwidgets', glob.glob(os.path.join(srceditorwidgets, "*.pil"))),
+            (r'libs\roam\editorwidgets', glob.glob(os.path.join(srceditorwidgets, "*.pyd"))),
+            (r'libs\roam\editorwidgets', glob.glob(os.path.join(srceditorwidgets, "*.png")))]
 
 for path, collection in getfiles(svgs, r'libs\qgis\svg'):
     datafiles.append((path, collection))

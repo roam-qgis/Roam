@@ -8,6 +8,7 @@ import os
 
 uipath = os.path.join(os.path.dirname(__file__), 'uifiles')
 sys.path.append(uipath)
+sys.path.append(os.path.dirname(__file__))
 
 from roam.editorwidgets.listwidget import ListWidget
 from roam.editorwidgets.checkboxwidget import CheckboxWidget
