@@ -6,8 +6,6 @@ from qgis.core import (QgsPoint, QgsRectangle, QgsTolerance,
 from qgis.gui import QgsMapTool, QgsRubberBand
 
 
-
-
 class InspectionTool(QgsMapTool):
     """
         Inspection tool which copies the feature to a new layer
@@ -60,9 +58,7 @@ class InspectionTool(QgsMapTool):
         searchRadius = (QgsTolerance.toleranceInMapUnits( 5, self.layerfrom,
                                                            self.canvas().mapRenderer(), QgsTolerance.Pixels))
 
-
         point = self.toMapCoordinates(event.pos())
-
 
         rect = QgsRectangle()                                                 
         rect.setXMinimum(point.x() - searchRadius)
@@ -105,17 +101,14 @@ class InspectionTool(QgsMapTool):
         except StopIteration:
             pass
 
-
     def activate(self):
         """
         Set the tool as the active tool in the canvas. 
-
 
         @note: Should be moved out into qmap.py 
                and just expose a cursor to be used
         """
         self.canvas().setCursor(self.cursor)
-
 
     def deactivate(self):
         """
@@ -123,15 +116,11 @@ class InspectionTool(QgsMapTool):
         """
         pass
 
-
     def isZoomTool(self):
         return False
-
 
     def isTransient(self):
         return False
 
-
     def isEditTool(self):
         return True
- 

@@ -186,8 +186,6 @@ class DataEntryWidget(dataentry_widget, dataentry_base):
 	    return
         
         layer = self.featureform.form.QGISLayer
-        if self.featureform.form.OutputLayer:
-	    layer = self.featureform.form.OutputLayer
 
         before = QgsFeature(self.feature)
         before.setFields(self.fields, initAttributes=False)

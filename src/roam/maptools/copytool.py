@@ -18,7 +18,7 @@ class CopyTool(TouchMapTool):
     error = pyqtSignal(str)
     
     def __init__(self, canvas, layerfrom, layerto, 
-                        mapping, validation_method=None, snapradius = 2):
+                        mapping, validation_method=None):
 	   
         """
             mapping - A dict of field - field mapping with values to
@@ -26,7 +26,7 @@ class CopyTool(TouchMapTool):
         """
         super(CopyTool, self).__init__(canvas)
 
-        self.radius = snapradius        
+        self.radius = 5        
         self.layerfrom = layerfrom
         self.layerto = layerto
         self.fields = mapping
@@ -88,26 +88,29 @@ class CopyTool(TouchMapTool):
             # TODO build picker to select which feature to inspect
             feature = self.layerfrom.getFeatures(rq).next()
             self.band.setToGeometry(feature.geometry(), self.layerfrom)
+	    if not self.layerto:
+                newfeature = feature
+		passed = True
+	    else:
+                fields = self.layerto.pendingFields()
+                newfeature = QgsFeature(fields)
+                if self.layerto.geometryType() == QGis.Point:
+                    newfeature.setGeometry(QgsGeometry.fromPoint(point))
+                else:
+                    newfeature.setGeometry(QgsGeometry(feature.geometry()))
              
-            fields = self.layerto.pendingFields()
-            newfeature = QgsFeature(fields)
-            if self.layerto.geometryType() == QGis.Point:
-                newfeature.setGeometry(QgsGeometry.fromPoint(point))
-            else:
-                newfeature.setGeometry(QgsGeometry(feature.geometry()))
+                #Set the default values
+                for indx in xrange(fields.count()):
+                    newfeature[indx] = self.layerto.dataProvider().defaultValue( indx )
              
-            #Set the default values
-            for indx in xrange(fields.count()):
-                newfeature[indx] = self.layerto.dataProvider().defaultValue( indx )
-             
-            # Assign the old values to the new feature
-            for fieldfrom, fieldto in self.fields.iteritems():      
-                newfeature[fieldto] = feature[fieldfrom]
+                # Assign the old values to the new feature
+                for fieldfrom, fieldto in self.fields.iteritems():      
+                    newfeature[fieldto] = feature[fieldfrom]
 
-            passed = True 
-	    if self.validation_method is not None:
-                passed, message = self.validation_method(feature=newfeature,
-                                                     layerto=self.layerto)
+                passed = True 
+	        if self.validation_method is not None:
+                    passed, message = self.validation_method(feature=newfeature,
+                                                         layerto=self.layerto)
             
             if passed:
                 self.finished.emit(self.layerto, newfeature)

@@ -88,7 +88,6 @@ class Form(object):
         self._qgislayer = None
         self._formclass = None
 	self._captureMode = None
-	self._outputLayer = None
 
     @classmethod
     def from_config(cls, name, config, folder):
@@ -135,39 +134,17 @@ class Form(object):
     def captureMode(self):
 	if self._captureMode is None:
 	   self._captureMode = self.settings.get('captureMode', 'new')
-	   if self.captureMode == "copy":
-              self.OutputLayer = self.settings.get('outputLayer')
-           else:
-              self.OutputLayer = None
         return self._captureMode
 
-    @property
-    def outputLayer(self):
-	def getlayer(name):
-            try:
-                return QgsMapLayerRegistry.instance().mapLayersByName(name)[0]
-            except IndexError as e:
-                utils.log(e)
-                return None
-	if self._outputLayer is None:
-	   layer = self.settings.get('outputLayer', None)
-	   self._outputLayer = getlayer(layer)
-	return self._outputLayer
-
     def getCopytool(self, canvas):
-
-        for key, val in self.settings.get("fieldmap", {}).iteritems():
-            utils.log(key +": " + val)
-            mapping = self.settings.get("fieldmap", {})
-	    reg = QgsMapLayerRegistry.instance()
-	    layerfrom = self.QGISLayer
-	    layerto = self.outputLayer
-	    return CopyTool(canvas
-        		    , layerfrom
-        		    , layerto
-        		    , mapping
-			    , snapradius=5
-         		    )
+ 
+        mapping = None
+	layerfrom = self.QGISLayer
+	return CopyTool(canvas
+        		, layerfrom
+			, None
+        		, mapping
+         		)
     def getMaptool(self):
         """
             Returns the map tool configured for this layer.
