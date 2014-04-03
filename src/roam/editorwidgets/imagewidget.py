@@ -22,7 +22,7 @@ from roam.popupdialogs import PickActionDialog
 from roam import utils
 from roam.api import RoamEvents
 
-import roam.editorwidgets.uifiles.images_rc
+import roam.resources_rc
 
 class _CameraWidget(QWidget):
     imagecaptured = pyqtSignal(QPixmap)
@@ -139,9 +139,9 @@ class ImageWidget(EditorWidget):
         self.tobase64 = False
         self.defaultlocation = ''
 
-        self.selectAction = QAction(QIcon(r":\images\folder"), "From folder", None)
-        self.cameraAction = QAction(QIcon(":\images\camera"), "Camera", None)
-        self.drawingAction = QAction(QIcon(":\images\drawing"), "Drawing", None)
+        self.selectAction = QAction(QIcon(r":\widgets\folder"), "From folder", None)
+        self.cameraAction = QAction(QIcon(":\widgets\camera"), "Camera", None)
+        self.drawingAction = QAction(QIcon(":\widgets\drawing"), "Drawing", None)
 
         self.selectAction.triggered.connect(self._selectImage)
         self.cameraAction.triggered.connect(self._selectCamera)

@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>94</width>
-    <height>84</height>
+    <width>96</width>
+    <height>88</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -62,7 +62,7 @@
       <enum>Qt::RichText</enum>
      </property>
      <property name="pixmap">
-      <pixmap resource="images.qrc">:/images/images/add.png</pixmap>
+      <pixmap resource="../../resources.qrc">:/widgets/add</pixmap>
      </property>
      <property name="scaledContents">
       <bool>true</bool>
@@ -96,13 +96,13 @@
       <string/>
      </property>
      <property name="icon">
-      <iconset resource="images.qrc">
-       <normaloff>:/images/images/reload.png</normaloff>:/images/images/reload.png</iconset>
+      <iconset resource="../../resources.qrc">
+       <normaloff>:/widgets/reload</normaloff>:/widgets/reload</iconset>
      </property>
      <property name="iconSize">
       <size>
-       <width>18</width>
-       <height>18</height>
+       <width>24</width>
+       <height>24</height>
       </size>
      </property>
      <property name="flat">
@@ -131,13 +131,13 @@
       <string/>
      </property>
      <property name="icon">
-      <iconset resource="images.qrc">
-       <normaloff>:/images/images/delete.png</normaloff>:/images/images/delete.png</iconset>
+      <iconset resource="../../resources.qrc">
+       <normaloff>:/widgets/delete</normaloff>:/widgets/delete</iconset>
      </property>
      <property name="iconSize">
       <size>
-       <width>18</width>
-       <height>18</height>
+       <width>24</width>
+       <height>24</height>
       </size>
      </property>
      <property name="flat">
@@ -161,7 +161,7 @@
   </layout>
  </widget>
  <resources>
-  <include location="images.qrc"/>
+  <include location="../../resources.qrc"/>
  </resources>
  <connections/>
 </ui>

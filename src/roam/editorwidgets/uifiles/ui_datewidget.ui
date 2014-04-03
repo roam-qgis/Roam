@@ -29,8 +29,8 @@
       <string>Select</string>
      </property>
      <property name="icon">
-      <iconset>
-       <normaloff>../../resources/images/calender2.png</normaloff>../../resources/images/calender2.png</iconset>
+      <iconset resource="../../resources.qrc">
+       <normaloff>:/icons/calender</normaloff>:/icons/calender</iconset>
      </property>
      <property name="iconSize">
       <size>
@@ -42,6 +42,8 @@
    </item>
   </layout>
  </widget>
- <resources/>
+ <resources>
+  <include location="../../resources.qrc"/>
+ </resources>
  <connections/>
 </ui>

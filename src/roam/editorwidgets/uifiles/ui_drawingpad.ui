@@ -291,8 +291,8 @@
     <bool>true</bool>
    </property>
    <property name="icon">
-    <iconset resource="images.qrc">
-     <normaloff>:/images/red</normaloff>:/images/red</iconset>
+    <iconset resource="../../resources.qrc">
+     <normaloff>:/widgets/red</normaloff>:/widgets/red</iconset>
    </property>
    <property name="text">
     <string>Red</string>
@@ -306,8 +306,8 @@
     <bool>true</bool>
    </property>
    <property name="icon">
-    <iconset resource="images.qrc">
-     <normaloff>:/images/blue</normaloff>:/images/blue</iconset>
+    <iconset resource="../../resources.qrc">
+     <normaloff>:/widgets/blue</normaloff>:/widgets/blue</iconset>
    </property>
    <property name="text">
     <string>Blue</string>
@@ -321,8 +321,8 @@
     <bool>true</bool>
    </property>
    <property name="icon">
-    <iconset resource="images.qrc">
-     <normaloff>:/images/black</normaloff>:/images/black</iconset>
+    <iconset resource="../../resources.qrc">
+     <normaloff>:/widgets/black</normaloff>:/widgets/black</iconset>
    </property>
    <property name="text">
     <string>Black</string>
@@ -378,7 +378,6 @@
   </action>
  </widget>
  <resources>
-  <include location="images.qrc"/>
   <include location="../../resources.qrc"/>
  </resources>
  <connections/>

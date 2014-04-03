@@ -6,8 +6,10 @@ from PyQt4.QtGui import (QLabel, QDialog, QFileDialog,
 from PyQt4.QtCore import (QByteArray, QBuffer,
                         QIODevice, QEvent, QObject, pyqtSignal, Qt)
 
-from roam.editorwidgets.uifiles import images_rc, ui_imagewidget
+
+from roam.editorwidgets.uifiles import ui_imagewidget
 import roam.utils
+import roam.resources_rc
 
 
 class QMapImageWidget(ui_imagewidget.Ui_imagewidget, QWidget):
@@ -37,7 +39,7 @@ class QMapImageWidget(ui_imagewidget.Ui_imagewidget, QWidget):
         return super(QMapImageWidget, self).eventFilter(object, event)
 
     def removeImage(self):
-        self.loadImage(":/images/images/add.png", scaled=False)
+        self.loadImage(":/widgets/add", scaled=False)
         self.image.setScaledContents(False)
         self.imageremoved.emit()
         self.isDefault = True
