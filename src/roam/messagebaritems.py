@@ -12,8 +12,6 @@ from PyQt4.QtCore import QEvent, QObject, Qt, QSize
 
 from qgis.gui import QgsMessageBarItem, QgsMessageBar
 
-from roam.popdialog import PopDownReport
-
 import roam.htmlviewer
 import roam.utils
 
