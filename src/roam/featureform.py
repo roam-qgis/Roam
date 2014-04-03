@@ -29,6 +29,7 @@ from roam.editorwidgets.core import WidgetsRegistry, EditorWidgetException
 from roam import utils
 from roam.flickwidget import FlickCharm
 from roam.structs import CaseInsensitiveDict
+from roam.events import RoamEvents
 
 settings = {}
 
@@ -396,9 +397,7 @@ class FeatureForm(FeatureFormBase):
     def __init__(self, form, formconfig, feature, defaults, parent):
         super(FeatureForm, self).__init__(form, formconfig, feature, defaults, parent)
         self.deletemessage = 'Do you really want to delete this feature?'
-        self.connection = self.gpsconnection
-        if self.connection:
-            self.connection.stateChanged.connect(self.ongpsupdate)
+        RoamEvents.gpspostion.connect(self.ongpsupdated)
 
     @classmethod
     def from_form(cls, form, formconfig, feature, defaults, parent=None):
@@ -503,7 +502,14 @@ class FeatureForm(FeatureFormBase):
         except IndexError:
             return None
 
+    def ongpsupdated(self, position, info):
+        self.ongpsupdate(info)
+
     def ongpsupdate(self, info):
+        """
+        This method has been replaced with ongpsupdated. To handle GPS information in your form use
+        it instead or listen to RoamEvent.gpspostion signal.
+        """
         pass
 
     def cancelload(self, message=None, level=RejectedException.WARNING):

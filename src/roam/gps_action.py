@@ -9,6 +9,7 @@ from qgis.gui import *
 
 from roam import resources_rc, utils
 from roam.utils import log
+from roam.events import RoamEvents
 
 if os.name == 'nt':
     try:
@@ -141,6 +142,8 @@ class GPSAction(QAction):
             map_pos = transform.transform(myPoistion)
         except QgsCsException:
             return
+
+        RoamEvents.gpspostion.emit(myPoistion, gpsInfo)
 
         if self._position is None and self.zoomtolocation:
             self.canvas.zoomScale(1000)
