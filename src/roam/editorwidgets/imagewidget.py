@@ -20,7 +20,7 @@ from roam.editorwidgets.uifiles import drawingpad
 from roam.ui.uifiles import actionpicker_widget, actionpicker_base
 from roam.popupdialogs import PickActionDialog
 from roam import utils
-from roam.api import RoamEvents
+from roam.events import RoamEvents
 
 import roam.resources_rc
 

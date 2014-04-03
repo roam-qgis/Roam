@@ -48,7 +48,7 @@ from roam.syncwidget import SyncWidget
 from roam.helpviewdialog import HelpPage
 from roam.biglist import BigList
 from roam.imageviewerwidget import ImageViewer
-from roam.api import RoamEvents
+from roam.events import RoamEvents
 
 import roam.messagebaritems
 import roam.utils
