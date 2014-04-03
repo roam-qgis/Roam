@@ -29,7 +29,7 @@ from roam.editorwidgets.core import WidgetsRegistry, EditorWidgetException
 from roam import utils
 from roam.flickwidget import FlickCharm
 from roam.structs import CaseInsensitiveDict
-from roam.events import RoamEvents
+from roam.api import RoamEvents
 
 settings = {}
 

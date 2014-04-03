@@ -9,7 +9,7 @@ from qgis.gui import *
 
 from roam import resources_rc, utils
 from roam.utils import log
-from roam.events import RoamEvents
+from roam.api import RoamEvents
 
 if os.name == 'nt':
     try:
