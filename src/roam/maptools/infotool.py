@@ -102,5 +102,4 @@ class InfoTool(TouchMapTool):
         self.selectband.reset()
 
         results = OrderedDict((l,f) for l, f in self.getFeatures(rect))
-        print results
         self.infoResults.emit(results)
