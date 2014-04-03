@@ -1,3 +1,4 @@
+from setuptools import find_packages
 from distutils.core import setup
 from distutils.command.build import build
 from fabricate import run
@@ -146,8 +147,7 @@ class qtbuild(build):
 setup(
     name='roam',
     version=roam.__version__,
-    packages=['roam', 'roam.yaml', 'roam.syncing', 'roam.maptools', 'roam.editorwidgets', 'roam.editorwidgets.core',
-              'roam.editorwidgets.uifiles', 'roam.ui', 'roam.templates', 'project_installer', 'tests'],
+    packages=find_packages('./src'),
     package_dir={'': 'src', 'tests': 'tests'},
     url='',
     license='GPL',
