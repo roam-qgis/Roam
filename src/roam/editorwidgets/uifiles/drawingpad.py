@@ -3,7 +3,7 @@ import functools
 
 from PyQt4 import QtCore, QtGui
 
-from PyQt4.QtGui import QWidget, QPixmap, QPainter
+from PyQt4.QtGui import QWidget, QPixmap, QPainter, QColorDialog
 from PyQt4.QtCore import Qt
 
 from roam.editorwidgets.uifiles.ui_drawingpad import Ui_DrawingWindow
@@ -125,8 +125,10 @@ class DrawingPad(Ui_DrawingWindow, QWidget):
         self.resize(500, 500)
 
         self.openImage(startimage)
+        self.colorPickerButton.clicked.connect(self.pickcolour)
 
         self.canvas = None
+
 
     @property
     def canvas(self):
@@ -145,6 +147,10 @@ class DrawingPad(Ui_DrawingWindow, QWidget):
     @pixmap.setter
     def pixmap(self, value):
         self.scribbleArea.pixmap = value
+
+    def pickcolour(self):
+        colour = QColorDialog.getColor(Qt.black, self)
+        self.scribbleArea.setPenColor(colour)
 
     def getmap(self):
         if self.canvas:
