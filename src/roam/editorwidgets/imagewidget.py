@@ -14,13 +14,13 @@ from PyQt4.QtCore import QByteArray, pyqtSignal, QVariant, QTimer, Qt, QSize
 
 from PIL.ImageQt import ImageQt
 
-from roam.editorwidgets.core import EditorWidget, LargeEditorWidget
+from roam.editorwidgets.core import EditorWidget, LargeEditorWidget, registerwidgets
 from roam.editorwidgets.uifiles.imagewidget import QMapImageWidget
 from roam.editorwidgets.uifiles import drawingpad
 from roam.ui.uifiles import actionpicker_widget, actionpicker_base
 from roam.popupdialogs import PickActionDialog
 from roam import utils
-from roam.events import RoamEvents
+from roam.api import RoamEvents
 
 import roam.resources_rc
 
@@ -215,3 +215,4 @@ class ImageWidget(EditorWidget):
 
         return image
 
+registerwidgets(ImageWidget)

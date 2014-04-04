@@ -1,6 +1,6 @@
 from PyQt4.QtGui import QDoubleSpinBox
 
-from roam.editorwidgets.core import EditorWidget
+from roam.editorwidgets.core import EditorWidget, registerwidgets
 
 
 class NumberWidget(EditorWidget):
@@ -53,3 +53,5 @@ class NumberWidget(EditorWidget):
 
     def value(self):
         return self.widget.value()
+
+registerwidgets(NumberWidget)

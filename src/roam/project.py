@@ -16,7 +16,7 @@ from qgis.core import QgsMapLayerRegistry, QGis, QgsTolerance, QgsVectorLayer, Q
 from roam.maptools import PointTool, PolygonTool, PolylineTool
 from roam.utils import log
 from roam.syncing import replication
-from roam.featureform import FeatureForm
+from roam.api import FeatureForm
 from roam.structs import OrderedDictYAMLLoader
 
 import roam.utils

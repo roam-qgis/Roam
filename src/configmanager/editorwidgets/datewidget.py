@@ -1,7 +1,5 @@
 from PyQt4.QtGui import QDateTimeEdit
 
-from roam.editorwidgets.datewidget import DateWidget
-
 from configmanager.editorwidgets.core import ConfigWidget
 from configmanager.editorwidgets.uifiles.datewidget_config import Ui_Form
 

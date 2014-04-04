@@ -1,5 +1,3 @@
-from roam.editorwidgets.textwidget import TextWidget, TextBlockWidget
-
 from configmanager.editorwidgets.core import ConfigWidget
 from configmanager.editorwidgets.uifiles.textwidget_config import Ui_Form
 

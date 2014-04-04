@@ -6,7 +6,6 @@ from qgis.core import QGis, QgsMapLayerRegistry, QgsMessageLog, QgsMapLayer
 
 import os
 
-import roam.editorwidgets
 import roam.yaml
 
 import configmanager.ui.resources_rc

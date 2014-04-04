@@ -20,4 +20,7 @@ class _Events(QObject):
     # Connect to listen to GPS status updates.
     gpspostion = pyqtSignal(QgsPoint, object)
 
+    # Emit when you need to open the on screen keyboard
+    openkeyboard = pyqtSignal()
+
 RoamEvents = _Events()

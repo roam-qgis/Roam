@@ -1,6 +1,6 @@
 from PyQt4.QtGui import QLineEdit, QPlainTextEdit
 
-from roam.editorwidgets.core import EditorWidget
+from roam.editorwidgets.core import EditorWidget, registerwidgets
 
 
 class TextWidget(EditorWidget):
@@ -48,3 +48,5 @@ class TextBlockWidget(TextWidget):
 
     def createWidget(self, parent):
         return QPlainTextEdit(parent)
+
+registerwidgets(TextWidget, TextWidget)

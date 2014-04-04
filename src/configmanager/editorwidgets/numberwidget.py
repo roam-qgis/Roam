@@ -5,8 +5,6 @@ from PyQt4.QtGui import QComboBox, QDoubleValidator
 
 from configmanager.editorwidgets.core import ConfigWidget
 from configmanager.editorwidgets.uifiles.numberwidget_config import Ui_Form
-from roam.editorwidgets.numberwidget import NumberWidget
-
 
 class NumberWidgetConfig(Ui_Form, ConfigWidget):
     description = 'Number entry widget'

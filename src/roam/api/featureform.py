@@ -25,13 +25,13 @@ from PyQt4.QtGui import (QWidget,
 
 from qgis.core import QgsFields, QgsFeature, QgsGPSConnectionRegistry
 
-from roam.editorwidgets.core import WidgetsRegistry, EditorWidgetException
+from roam.editorwidgets.core import EditorWidgetException
 from roam import utils
 from roam.flickwidget import FlickCharm
 from roam.structs import CaseInsensitiveDict
-from roam.events import RoamEvents
+from roam.api import RoamEvents
 
-settings = {}
+import roam.editorwidgets.core
 
 style = """
             QCheckBox::indicator {
@@ -128,7 +128,7 @@ def buildfromauto(formconfig, base):
         name = config.get('name', field)
         label = QLabel(name)
         label.setObjectName(field + "_label")
-        widget = WidgetsRegistry.createwidget(widgettype, parent=base)
+        widget = roam.editorwidgets.core.createwidget(widgettype, parent=base)
         widget.setObjectName(field)
         layoutwidget = QWidget()
         layoutwidget.setLayout(QBoxLayout(QBoxLayout.LeftToRight))
@@ -194,11 +194,9 @@ class FeatureFormBase(QWidget):
 
     def eventFilter(self, object, event):
         # Hack I really don't like this but there doesn't seem to be a better way at the
-        # moment.
-        if event.type() == QEvent.FocusIn and settings.get('keyboard', True):
-            cmd = r'C:\Program Files\Common Files\Microsoft Shared\ink\TabTip.exe'
-            os.startfile(cmd)
-
+        # moment
+        if event.type() == QEvent.FocusIn:
+            RoamEvents.openkeyboard.emit()
         return False
 
     def updaterequired(self, field, passed):
@@ -241,12 +239,12 @@ class FeatureFormBase(QWidget):
             widgetconfig = config.get('config', {})
             qgsfield = fields[field]
             try:
-                widgetwrapper = WidgetsRegistry.widgetwrapper(widgettype=widgettype,
-                                                              layer=self.form.QGISLayer,
-                                                              field=qgsfield,
-                                                              widget=widget,
-                                                              label=label,
-                                                              config=widgetconfig)
+                widgetwrapper = roam.editorwidgets.core.widgetwrapper(widgettype=widgettype,
+                                                                      layer=self.form.QGISLayer,
+                                                                      field=qgsfield,
+                                                                      widget=widget,
+                                                                      label=label,
+                                                                      config=widgetconfig)
             except EditorWidgetException as ex:
                 utils.warning(ex.message)
                 continue

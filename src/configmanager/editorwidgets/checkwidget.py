@@ -5,7 +5,6 @@ from PyQt4.QtGui import QComboBox
 
 from configmanager.editorwidgets.core import ConfigWidget
 from configmanager.editorwidgets.uifiles.checkwidget_config import Ui_Form
-from roam.editorwidgets.checkboxwidget import CheckboxWidget
 
 
 class CheckboxWidgetConfig(Ui_Form, ConfigWidget):

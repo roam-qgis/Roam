@@ -164,7 +164,7 @@ setup(
                         'powrprof.dll', 'mswsock.dll',
                         'w9xpopen.exe', 'MSVCP90.dll'],
         'excludes': ['PyQt4.uic.port_v3'],
-        'includes': ['PyQt4.QtNetwork', 'sip', 'PyQt4.QtSql', 'roam.api'],
+        'includes': ['PyQt4.QtNetwork', 'sip', 'PyQt4.QtSql'],
         'skip_archive': True,
       }},
 )

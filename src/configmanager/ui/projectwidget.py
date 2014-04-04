@@ -14,7 +14,7 @@ from qgis.gui import QgsMapCanvas, QgsExpressionBuilderDialog, QgsMessageBar
 from configmanager.ui.ui_projectwidget import Ui_Form
 from configmanager.models import widgeticon, WidgetItem, WidgetsModel, QgsLayerModel, QgsFieldModel, LayerTypeFilter, CaptureLayerFilter, CaptureLayersModel
 
-from roam.featureform import FeatureForm
+from roam.api import FeatureForm
 
 import configmanager.editorwidgets
 import roam.editorwidgets
@@ -209,17 +209,17 @@ class ProjectWidget(Ui_Form, QWidget):
 
     def loadwidgettypes(self):
         self.widgetCombo.blockSignals(True)
-        for widgettype in roam.editorwidgets.supportedwidgets:
+        for widgettype in roam.editorwidgets.core.supportedwidgets():
             try:
-                configclass = configmanager.editorwidgets.widgetconfigs[widgettype.widgettype]
+                configclass = configmanager.editorwidgets.widgetconfigs[widgettype]
             except KeyError:
                 continue
 
             configwidget = configclass()
-            item = QStandardItem(widgettype.widgettype)
+            item = QStandardItem(widgettype)
             item.setData(configwidget, Qt.UserRole)
-            item.setData(widgettype.widgettype, Qt.UserRole + 1)
-            item.setIcon(QIcon(widgeticon(widgettype.widgettype)))
+            item.setData(widgettype, Qt.UserRole + 1)
+            item.setIcon(QIcon(widgeticon(widgettype)))
             self.widgetCombo.model().appendRow(item)
             self.widgetstack.addWidget(configwidget)
         self.widgetCombo.blockSignals(False)

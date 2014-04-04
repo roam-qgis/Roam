@@ -48,12 +48,12 @@ from roam.syncwidget import SyncWidget
 from roam.helpviewdialog import HelpPage
 from roam.biglist import BigList
 from roam.imageviewerwidget import ImageViewer
-from roam.events import RoamEvents
+from roam.api import RoamEvents
 
 import roam.messagebaritems
 import roam.utils
 import roam.htmlviewer
-import roam.featureform
+import roam.api.featureform
 
 
 class BadLayerHandler(QgsProjectBadLayerHandler):
@@ -84,7 +84,6 @@ class MainWindow(mainwindow_widget, mainwindow_base):
         super(MainWindow, self).__init__()
         self.setupUi(self)
         self.settings = settings
-        roam.featureform.settings = settings.settings
         self.canvaslayers = []
         self.layerbuttons = []
         self.project = None
@@ -225,6 +224,12 @@ class MainWindow(mainwindow_widget, mainwindow_base):
         RoamEvents.openimage.connect(self.openimage)
         RoamEvents.openurl.connect(self.viewurl)
         RoamEvents.openfeatureform.connect(self.openForm)
+        RoamEvents.openkeyboard.connect(self.openkeyboard)
+
+    def openkeyboard(self):
+        if self.settings.get('keyboard', True):
+            cmd = r'C:\Program Files\Common Files\Microsoft Shared\ink\TabTip.exe'
+            os.startfile(cmd)
 
     def selectdataentry(self, ):
         if self.dataentrycombo.count() == 0:

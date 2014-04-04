@@ -10,7 +10,8 @@ from qgis.core import QgsMapLayerRegistry, QgsFeatureRequest, QgsFeature, QgsExp
 from qgis.gui import QgsMessageBar
 
 from roam.utils import log, error
-from roam import featureform
+from roam.api import featureform
+from roam.api import RoamEvents
 from roam.ui.uifiles import dataentry_widget, dataentry_base
 from roam.flickwidget import FlickCharm
 from roam.popupdialogs import DeleteFeatureDialog

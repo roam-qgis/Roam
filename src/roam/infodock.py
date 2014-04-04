@@ -18,7 +18,7 @@ from roam import utils
 from roam.flickwidget import FlickCharm
 from roam.htmlviewer import updateTemplate
 from roam.ui.uifiles import (infodock_widget)
-from roam.events import RoamEvents
+from roam.api import RoamEvents
 
 import templates
 

@@ -1,5 +1,4 @@
 from PyQt4.QtGui import QFileDialog
-from roam.editorwidgets.imagewidget import ImageWidget
 
 from configmanager.editorwidgets.core import ConfigWidget
 from configmanager.editorwidgets.uifiles.photowidget_config import Ui_Form

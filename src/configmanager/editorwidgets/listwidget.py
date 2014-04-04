@@ -6,8 +6,6 @@ from PyQt4.QtGui import QWidget
 from PyQt4.QtCore import Qt
 from qgis.core import QgsMapLayer
 
-from roam.editorwidgets.listwidget import ListWidget
-
 from configmanager.models import QgsLayerModel, QgsFieldModel
 from configmanager.editorwidgets.core import ConfigWidget
 from configmanager.editorwidgets.uifiles.listwidget_config import Ui_Form

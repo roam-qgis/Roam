@@ -3,7 +3,7 @@ from functools import partial
 from PyQt4.QtGui import QPushButton, QDateTimeEdit, QIcon, QDateEdit, QWidget
 from PyQt4.QtCore import QDateTime, Qt, QSize
 
-from roam.editorwidgets.core import EditorWidget
+from roam.editorwidgets.core import EditorWidget, registerwidgets
 from roam.editorwidgets.uifiles import ui_datewidget
 from roam.datatimerpickerwidget import DateTimePickerDialog
 
@@ -98,3 +98,4 @@ class DateWidget(EditorWidget):
         else:
             return datetime.toString(Qt.ISODate)
 
+registerwidgets(DateWidget)

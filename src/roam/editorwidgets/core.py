@@ -1,43 +1,52 @@
 from PyQt4.QtGui import QWidget
 from PyQt4.QtCore import QObject, pyqtSignal
 
+widgets = {}
 
 class EditorWidgetException(Exception):
     pass
 
-# HACK I really don't like all this static state here. Fix me!
-class WidgetsRegistry(object):
-    widgets = {}
+def registerwidgets(*widgetclasses):
+    for widgetclass in widgetclasses:
+        widgets[widgetclass.widgettype] = widgetclass
 
-    @staticmethod
-    def registerwidgets(widgets):
-        for widget in widgets:
-            WidgetsRegistry.addWidget(widget.widgettype, widget)
+def registerallwidgets():
+    import roam.editorwidgets.imagewidget
+    import roam.editorwidgets.listwidget
+    import roam.editorwidgets.checkboxwidget
+    import roam.editorwidgets.datewidget
+    import roam.editorwidgets.numberwidget
+    import roam.editorwidgets.textwidget
 
-    @staticmethod
-    def addWidget(widgettype, widget):
-        WidgetsRegistry.widgets[widgettype] = widget
+def supportedwidgets():
+    registerallwidgets()
+    return widgets.keys()
 
-    @staticmethod
-    def widgetwrapper(widgettype, widget, config, layer, label, field, parent=None):
-        try:
-            editorwidget = WidgetsRegistry.widgets[widgettype]
-        except KeyError:
-            raise EditorWidgetException("No widget wrapper for type {} was found".format(widgettype))
+def widgetwrapper(widgettype, widget, config, layer, label, field, parent=None):
+    if not widgets:
+        registerallwidgets()
 
-        widgetwrapper = editorwidget.for_widget(widget, layer, label, field, parent)
-        widgetwrapper.initWidget(widget)
-        widgetwrapper.config = config
-        return widgetwrapper
+    try:
+        editorwidget = widgets[widgettype]
+    except KeyError:
+        raise EditorWidgetException("No widget wrapper for type {} was found".format(widgettype))
 
-    @staticmethod
-    def createwidget(widgettype, parent=None):
-        try:
-            wrapper = WidgetsRegistry.widgets[widgettype]
-        except KeyError:
-            raise EditorWidgetException("No widget wrapper for type {} was found".format(widgettype))
+    widgetwrapper = editorwidget.for_widget(widget, layer, label, field, parent)
+    widgetwrapper.initWidget(widget)
+    widgetwrapper.config = config
+    return widgetwrapper
 
-        return wrapper.createwidget(parent=parent)
+
+def createwidget(widgettype, parent=None):
+    if not widgets:
+        registerallwidgets()
+
+    try:
+        wrapper = widgets[widgettype]
+    except KeyError:
+        raise EditorWidgetException("No widget wrapper for type {} was found".format(widgettype))
+
+    return wrapper.createwidget(parent=parent)
 
 
 class EditorWidget(QObject):
