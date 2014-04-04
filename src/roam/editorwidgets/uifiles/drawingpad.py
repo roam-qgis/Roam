@@ -155,6 +155,7 @@ class DrawingPad(Ui_DrawingWindow, QWidget):
     def getmap(self):
         if self.canvas:
             pixmap = QPixmap(self.canvas.size())
+            pixmap.fill(self.canvas.canvasColor())
             painter = QPainter(pixmap)
             renderer = self.canvas.mapRenderer()
             renderer.render(painter)
