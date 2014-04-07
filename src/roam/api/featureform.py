@@ -178,7 +178,7 @@ class FeatureFormBase(QWidget):
     enablesave = pyqtSignal(bool)
     showlargewidget = pyqtSignal(object, object, object)
 
-    def __init__(self, form, formconfig, feature, defaults, parent):
+    def __init__(self, form, formconfig, feature, defaults, parent, *args, **kwargs):
         super(FeatureFormBase, self).__init__(parent)
         self.form = form
         self.formconfig = formconfig
@@ -392,13 +392,13 @@ class FeatureForm(FeatureFormBase):
         >>> self.form.QGISLayer/
     """
 
-    def __init__(self, form, formconfig, feature, defaults, parent):
-        super(FeatureForm, self).__init__(form, formconfig, feature, defaults, parent)
+    def __init__(self, form, formconfig, feature, defaults, parent, *args, **kwargs):
+        super(FeatureForm, self).__init__(form, formconfig, feature, defaults, parent, *args, **kwargs)
         self.deletemessage = 'Do you really want to delete this feature?'
         RoamEvents.gpspostion.connect(self.ongpsupdated)
 
     @classmethod
-    def from_form(cls, form, formconfig, feature, defaults, parent=None):
+    def from_form(cls, form, formconfig, feature, defaults, parent=None, *args, **kwargs):
         """
         Create a feature form the given Roam form.
         :param form: A Roam form
@@ -406,7 +406,7 @@ class FeatureForm(FeatureFormBase):
         :return:
         """
         formtype = formconfig['type']
-        featureform = cls(form, formconfig, feature, defaults, parent)
+        featureform = cls(form, formconfig, feature, defaults, parent, *args, **kwargs)
 
         if formtype == 'custom':
             uifile = os.path.join(form.folder, "form.ui")

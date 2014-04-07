@@ -280,7 +280,7 @@ class DataEntryWidget(dataentry_widget, dataentry_base):
         # Hold a reference to the fields because QGIS will let the
         # go out of scope and we get crashes. Yay!
         self.fields = self.feature.fields()
-        self.featureform = form.create_featureform(feature, defaults)
+        self.featureform = form.create_featureform(feature, defaults, canvas=self.canvas)
         self.featureform.rejected.connect(self.formrejected)
         self.featureform.enablesave.connect(self.actionSave.setEnabled)
 
