@@ -14,8 +14,10 @@ class RubberBand(QgsRubberBand):
         self.setIconSize(iconsize)
         self.setWidth(width)
         self.iconsize = iconsize
-        self.textpen = QPen(Qt.black)
-        self.textpen.setWidth(2)
+        self.blackpen = QPen(Qt.black)
+        self.blackpen.setWidth(3)
+        self.whitepen = QPen(Qt.white)
+        self.whitepen.setWidth(0)
         self.distancearea = QgsDistanceArea()
         self.createdistancearea()
         self.unit = self.canvas.mapRenderer().destinationCrs().mapUnits()
@@ -30,7 +32,7 @@ class RubberBand(QgsRubberBand):
     def paint(self, p, option, widget):
         super(RubberBand, self).paint(p)
 
-        offset = QPointF(self.iconsize + 25, 0)
+        offset = QPointF(5,5)
         nodescount = self.numberOfVertices()
         for index in xrange(nodescount, -1, -1):
             if index == 0:
@@ -45,11 +47,15 @@ class RubberBand(QgsRubberBand):
 
             if qgspoint and qgspointbefore:
                 distance = self.distancearea.measureLine( qgspoint, qgspointbefore)
-                point = self.toCanvasCoordinates(qgspoint) - self.pos()
-                point += offset
-                p.setPen(self.textpen)
                 text = QgsDistanceArea.textUnit(distance, 3, self.unit, False)
-                p.drawText(point, text)
+                linegeom = QgsGeometry.fromPolyline([qgspoint, qgspointbefore])
+                midpoint = linegeom.centroid().asPoint()
+                midpoint = self.toCanvasCoordinates(midpoint) - self.pos()
+                midpoint += offset
+                p.setPen(self.blackpen)
+                p.drawText(midpoint, text)
+                #p.setPen(self.whitepen)
+                #p.drawText(midpoint, text)
 
     def boundingRect(self):
         rect = super(RubberBand, self).boundingRect()
@@ -87,9 +93,9 @@ class PolylineTool(QgsMapTool):
         self.points = []
         self.canvas = canvas
         self.band = RubberBand(self.canvas, QGis.Line, width=5, iconsize=20)
-        self.band.setColor(QColor.fromRgb(224,162,16, 75))
+        self.band.setColor(QColor.fromRgb(0,0,255, 100))
         self.pointband = QgsRubberBand(self.canvas, QGis.Point)
-        self.pointband.setColor(QColor.fromRgb(224,162,16, 100))
+        self.pointband.setColor(QColor.fromRgb(0,0,255, 100))
         self.pointband.setIconSize(20)
         self.snapper = QgsMapCanvasSnapper(self.canvas)
         self.capturing = False
