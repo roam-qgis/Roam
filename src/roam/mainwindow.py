@@ -397,7 +397,7 @@ class MainWindow(mainwindow_widget, mainwindow_base):
 
     def createCaptureButtons(self, form, wasselected):
         """check capture mode and construct map too accordingly """
-        if form.captureMode == "copy":
+        if form.captureMode == "custom":
             tool = form.getCopytool(self.canvas)
         else:
             tool = form.getMaptool()(self.canvas)
@@ -542,9 +542,7 @@ class MainWindow(mainwindow_widget, mainwindow_base):
 
     def captureData(self, form, layer, feature):
         """
-	copy feature pluss new attributes from form to layer.
-	fields are already set by inspection tool and geometry 
-	and associated values have been copied in.
+	copy selected feature to memory and handle save in inherited form class.
 	"""
 	self.band.setToGeometry(feature.geometry(), layer)
 	self.showdataentry()

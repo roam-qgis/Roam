@@ -137,7 +137,6 @@ class Form(object):
         return self._captureMode
 
     def getCopytool(self, canvas):
- 
         mapping = None
 	layerfrom = self.QGISLayer
 	return CopyTool(canvas
@@ -182,8 +181,6 @@ class Form(object):
         elif not self.QGISLayer.type() == QgsMapLayer.VectorLayer:
             self.errors.append("We can only support vector layers for data entry")
 
-
-
         if self.errors:
             return False, self.errors
         else:
@@ -216,16 +213,17 @@ class Form(object):
         """
         Return any widget configs that have default values needed
         """
-	if self.widgets:
-           for config in self.widgets:
-              if 'default' in config:
-                 yield config['field'], config
+        for config in self.widgets:
+            if 'default' in config:
+                yield config['field'], config
 
     def _loadmodule(self):
         projectfolder = os.path.abspath(os.path.join(self.folder, '..'))
         projectname = os.path.basename(projectfolder)
         name = "{project}.{formfolder}".format(project=projectname, formfolder=self.name)
         try:
+	    #Hack. See ticket #94
+	    import sqlite3
             self._module = importlib.import_module(name)
         except ImportError as err:
             log(sys.path)
