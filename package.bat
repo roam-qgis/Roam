@@ -19,6 +19,7 @@ ECHO Getting QGIS libs from: %QGIS%
 ECHO Python loaded from: %PYTHONHOME%
 
 >package.log (
+	rmdir build /S/Q
 	python setup.py clean && python setup.py py2exe
 )
 popd
