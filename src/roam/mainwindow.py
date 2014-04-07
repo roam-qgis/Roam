@@ -227,7 +227,7 @@ class MainWindow(mainwindow_widget, mainwindow_base):
         RoamEvents.openkeyboard.connect(self.openkeyboard)
 
     def openkeyboard(self):
-        if self.settings.get('keyboard', True):
+        if self.settings.settings.get('keyboard', True):
             cmd = r'C:\Program Files\Common Files\Microsoft Shared\ink\TabTip.exe'
             os.startfile(cmd)
 
