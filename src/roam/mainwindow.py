@@ -647,11 +647,11 @@ class MainWindow(mainwindow_widget, mainwindow_base):
         self.canvas.mapRenderer().readXML(canvasnode)
         self.canvaslayers = parser.canvaslayers()
         self.canvas.setLayerSet(self.canvaslayers)
-        red = QgsProject.instance().readNumEntry( "Gui", "/CanvasColorRedPart", 255 )[0];
-        green = QgsProject.instance().readNumEntry( "Gui", "/CanvasColorGreenPart", 255 )[0];
-        blue = QgsProject.instance().readNumEntry( "Gui", "/CanvasColorBluePart", 255 )[0];
-        color = QColor(red, green, blue);
-        self.canvas.setCanvasColor(color)
+        #red = QgsProject.instance().readNumEntry( "Gui", "/CanvasColorRedPart", 255 )[0];
+        #green = QgsProject.instance().readNumEntry( "Gui", "/CanvasColorGreenPart", 255 )[0];
+        #blue = QgsProject.instance().readNumEntry( "Gui", "/CanvasColorBluePart", 255 )[0];
+        #color = QColor(red, green, blue);
+        #self.canvas.setCanvasColor(color)
         self.canvas.updateScale()
         self.projectOpened()
         self.canvas.freeze(False)
