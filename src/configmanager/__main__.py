@@ -38,14 +38,14 @@ QApplication.setApplicationName("IntraMaps Roam Config Manager")
 
 configmanager.settings.load(roamapp.settingspath)
 
-projectpath = roam.environ.projectpath(sys.argv)
-projects = list(roam.project.getProjects(projectpath))
+projectpaths = roam.environ.projectpaths(sys.argv)
+projects = list(roam.project.getProjects(projectpaths))
 
 def excepthook(errorhandler, exctype, value, traceback):
     logger.error("Uncaught exception", exc_info=(exctype, value, traceback))
     errorhandler(exctype, value, traceback)
 
-dialog = ConfigManagerDialog(projectpath)
+dialog = ConfigManagerDialog(projectpaths[0])
 sys.excepthook = partial(excepthook, dialog.raiseerror)
 dialog.loadprojects(projects)
 dialog.showMaximized()

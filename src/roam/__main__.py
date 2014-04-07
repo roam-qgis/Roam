@@ -85,7 +85,7 @@ window = MainWindow(settings=settings)
 app.setActiveWindow(window)
 sys.excepthook = partial(excepthook, window.raiseerror)
 
-projectpaths = roam.environ.projectpath(sys.argv, settings.settings)
+projectpaths = roam.environ.projectpaths(sys.argv, settings.settings)
 roam.utils.log("Loading projects from")
 roam.utils.log(projectpaths)
 projects = roam.project.getProjects(projectpaths)

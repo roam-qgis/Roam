@@ -45,7 +45,7 @@ def setup(argv):
     return RoamApp(apppath, prefixpath, settingspath, libspath, i18npath)
 
 
-def projectpath(argv, settings):
+def projectpaths(argv, settings={}):
     # Add the default paths
     paths = []
     try:
