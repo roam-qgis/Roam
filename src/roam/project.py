@@ -55,24 +55,25 @@ def checkversion(roamversion, projectversion):
     return majormatch
 
 
-def getProjects(projectpath):
+def getProjects(paths):
     """
     Return QMapProjects inside the set path.  
     Each folder will be considered a QMap project
     """
-    folders = (sorted([os.path.join(projectpath, item)
-                       for item in os.walk(projectpath).next()[1]]))
-    
-    for folder in folders:
-        if os.path.basename(folder).startswith("_"):
-            # Ignore hidden folders.
-            continue
-        project = Project.from_folder(folder)
-        if not checkversion(roam.__version__, project.version):
-            project.valid = False
-            project.error = "Version mismatch"
+    for projectpath in paths:
+        folders = (sorted([os.path.join(projectpath, item)
+                           for item in os.walk(projectpath).next()[1]]))
 
-        yield project
+        for folder in folders:
+            if os.path.basename(folder).startswith("_"):
+                # Ignore hidden folders.
+                continue
+            project = Project.from_folder(folder)
+            if not checkversion(roam.__version__, project.version):
+                project.valid = False
+                project.error = "Version mismatch"
+
+            yield project
 
 
 

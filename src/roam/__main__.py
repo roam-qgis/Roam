@@ -85,13 +85,10 @@ window = MainWindow(settings=settings)
 app.setActiveWindow(window)
 sys.excepthook = partial(excepthook, window.raiseerror)
 
-try:
-    projectpath = sys.argv[1]
-except IndexError:
-    projectpath = os.path.join(os.getcwd(), "projects")
-
-projectpath = roam.environ.projectpath(sys.argv)
-projects = roam.project.getProjects(projectpath)
+projectpaths = roam.environ.projectpath(sys.argv, settings.settings)
+roam.utils.log("Loading projects from")
+roam.utils.log(projectpaths)
+projects = roam.project.getProjects(projectpaths)
 window.loadprojects(projects)
 
 window.actionProject.toggle()

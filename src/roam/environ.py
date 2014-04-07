@@ -45,10 +45,13 @@ def setup(argv):
     return RoamApp(apppath, prefixpath, settingspath, libspath, i18npath)
 
 
-def projectpath(argv):
+def projectpath(argv, settings):
+    # Add the default paths
+    paths = []
     try:
-        _projectpath = argv[1]
+        paths.append(argv[1])
     except IndexError:
-        _projectpath = os.path.join(os.getcwd(), "projects")
-    sys.path.append(_projectpath)
-    return _projectpath
+        paths.append(os.path.join(os.getcwd(), "projects"))
+    paths.extend(settings.get('projectpaths', []))
+    sys.path.extend(paths)
+    return paths
