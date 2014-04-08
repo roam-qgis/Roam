@@ -14,10 +14,14 @@ class RubberBand(QgsRubberBand):
         self.setIconSize(iconsize)
         self.setWidth(width)
         self.iconsize = iconsize
+        self.font = QFont()
+        self.font.setStyleHint(QFont.Times, QFont.PreferAntialias)
+        self.font.setPointSize(20)
+        self.font.setBold(True)
+
         self.blackpen = QPen(Qt.black)
-        self.blackpen.setWidth(3)
-        self.whitepen = QPen(Qt.white)
-        self.whitepen.setWidth(0)
+        self.blackpen.setWidth(0.5)
+        self.whitebrush = QBrush(Qt.white)
         self.distancearea = QgsDistanceArea()
         self.createdistancearea()
         self.unit = self.canvas.mapRenderer().destinationCrs().mapUnits()
@@ -52,10 +56,13 @@ class RubberBand(QgsRubberBand):
                 midpoint = linegeom.centroid().asPoint()
                 midpoint = self.toCanvasCoordinates(midpoint) - self.pos()
                 midpoint += offset
+                path = QPainterPath()
+                path.addText(midpoint, self.font, text)
                 p.setPen(self.blackpen)
-                p.drawText(midpoint, text)
-                #p.setPen(self.whitepen)
-                #p.drawText(midpoint, text)
+                p.setRenderHints(QPainter.Antialiasing)
+                p.setFont(self.font)
+                p.setBrush(self.whitebrush)
+                p.drawPath(path)
 
     def boundingRect(self):
         rect = super(RubberBand, self).boundingRect()
