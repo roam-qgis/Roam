@@ -8,6 +8,7 @@ import importlib
 import sys
 
 from datetime import datetime
+from collections import OrderedDict
 
 from PyQt4.QtGui import QAction, QIcon
 
@@ -222,7 +223,7 @@ class Project(object):
     def __init__(self, rootfolder, settings):
         self.folder = rootfolder
         self._project = None
-        self._splash = None 
+        self._splash = None
         self.valid = True
         self.settings = settings
         self._forms = []
@@ -348,6 +349,27 @@ class Project(object):
     @property
     def selectlayers(self):
         return self.settings.get('selectlayers', [])
+
+    def selectlayersmapping(self):
+        """
+        Return the mapping between the select layers listed in settings
+        and the QGIS layer itself.
+
+        If no select layers are found in the settings this function will return
+        all layers in the project
+        """
+        qgislayers = QgsMapLayerRegistry.instance().mapLayers().values()
+        qgislayers = {layer.name(): layer for layer in qgislayers if layer.type() == QgsMapLayer.VectorLayer}
+        if not self.selectlayers:
+            return qgislayers
+        else:
+            _qgislayers = OrderedDict()
+            for layername in self.selectlayers:
+                try:
+                    _qgislayers[layername] = qgislayers[layername]
+                except KeyError:
+                    continue
+            return _qgislayers
 
     def historyenabled(self, layer):
         return layer.name() in self.settings.get('historylayers', [])

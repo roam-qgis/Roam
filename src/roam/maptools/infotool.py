@@ -31,7 +31,7 @@ class InfoTool(TouchMapTool):
 
     def getFeatures(self, rect):
         self.band.reset()
-        for layer in self.selectionlayers:
+        for layer in self.selectionlayers.itervalues():
             if (not layer.type() == QgsMapLayer.VectorLayer
                 or layer.geometryType() == QGis.NoGeometry):
                 continue

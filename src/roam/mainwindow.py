@@ -680,20 +680,7 @@ class MainWindow(mainwindow_widget, mainwindow_base):
             self.mainwindow.addDockWidget(Qt.BottomDockWidgetArea, panel)
             self.panels.append(panel)
 
-        # TODO Abstract this out
-        if not self.project.selectlayers:
-            selectionlayers = QgsMapLayerRegistry.instance().mapLayers().values()
-        else:
-            selectionlayers = []
-            for layername in self.project.selectlayers:
-                try:
-                    layer = QgsMapLayerRegistry.instance().mapLayersByName(layername)[0]
-                except IndexError:
-                    roam.utils.warning(u"Can't find QGIS layer for select layer {}".format(layername))
-                    continue
-                selectionlayers.append(layer)
-
-        self.infoTool.selectionlayers = selectionlayers
+        self.infoTool.selectionlayers = self.project.selectlayersmapping()
         self.actionPan.trigger()
 
     #noinspection PyArgumentList
