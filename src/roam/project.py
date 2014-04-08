@@ -14,7 +14,7 @@ from PyQt4.QtGui import QAction, QIcon
 
 from qgis.core import QgsMapLayerRegistry, QGis, QgsTolerance, QgsVectorLayer, QgsMapLayer
 
-from roam.maptools import PointTool, PolygonTool, PolylineTool
+from roam.maptools import PointTool, PolygonTool, PolylineTool, CopyTool
 from roam.utils import log
 from roam.syncing import replication
 from roam.api import FeatureForm
@@ -87,6 +87,7 @@ class Form(object):
         self.errors = []
         self._qgislayer = None
         self._formclass = None
+	self._captureMode = None
 
     @classmethod
     def from_config(cls, name, config, folder):
@@ -129,6 +130,20 @@ class Form(object):
             self._qgislayer = getlayer(layer)
         return self._qgislayer
 
+    @property
+    def captureMode(self):
+	if self._captureMode is None:
+	   self._captureMode = self.settings.get('captureMode', 'new')
+        return self._captureMode
+
+    def getCopytool(self, canvas):
+        mapping = None
+	layerfrom = self.QGISLayer
+	return CopyTool(canvas
+        		, layerfrom
+			, None
+        		, mapping
+         		)
     def getMaptool(self):
         """
             Returns the map tool configured for this layer.
@@ -207,6 +222,8 @@ class Form(object):
         projectname = os.path.basename(projectfolder)
         name = "{project}.{formfolder}".format(project=projectname, formfolder=self.name)
         try:
+	    #Hack. See ticket #94
+	    import sqlite3
             self._module = importlib.import_module(name)
         except ImportError as err:
             log(sys.path)

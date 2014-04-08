@@ -214,6 +214,9 @@ class FeatureFormBase(QWidget):
         """
         widgetsconfig = self.formconfig['widgets']
 
+        if not widgetsconfig:
+	   return 
+
         layer = self.form.QGISLayer
         # Crash in QGIS if you lookup a field that isn't found.
         # We just make a dict with all fields lower because QgsFields is case sensitive.
@@ -520,4 +523,7 @@ class FeatureForm(FeatureFormBase):
     def allpassing(self):
         return all(valid for valid in self.requiredfields.values())
 
+    @property
+    def customSave(self):
+        return False
 

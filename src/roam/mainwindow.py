@@ -4,7 +4,6 @@ import getpass
 import traceback
 import os
 
-
 from PyQt4.QtCore import Qt, QFileInfo, QDir, QSize
 from PyQt4.QtGui import (QActionGroup,
                         QApplication,
@@ -42,7 +41,7 @@ from roam.listmodulesdialog import ProjectsWidget
 from roam.settingswidget import SettingsWidget
 from roam.projectparser import ProjectParser
 from roam.project import Project, NoMapToolConfigured, ErrorInMapTool
-from roam.maptools import MoveTool, InfoTool, EditTool, PointTool, TouchMapTool
+from roam.maptools import MoveTool, InfoTool, EditTool, PointTool, CopyTool, TouchMapTool
 from roam.infodock import InfoDock
 from roam.syncwidget import SyncWidget
 from roam.helpviewdialog import HelpPage
@@ -397,7 +396,12 @@ class MainWindow(mainwindow_widget, mainwindow_base):
         return captureselected
 
     def createCaptureButtons(self, form, wasselected):
-        tool = form.getMaptool()(self.canvas)
+        """check capture mode and construct map too accordingly """
+        if form.captureMode == "custom":
+            tool = form.getCopytool(self.canvas)
+        else:
+            tool = form.getMaptool()(self.canvas)
+
         for action in tool.actions:
             # Create the action here.
             if action.ismaptool:
@@ -415,6 +419,10 @@ class MainWindow(mainwindow_widget, mainwindow_base):
         if hasattr(tool, 'geometryComplete'):
             add = partial(self.addNewFeature, form)
             tool.geometryComplete.connect(add)
+	elif isinstance(tool, CopyTool):
+            add = partial(self.captureData, form)
+	    tool.finished.connect(add)
+	    tool.error.connect(partial(self.showToolError, form.label))
         else:
             tool.finished.connect(self.openForm)
             tool.error.connect(partial(self.showToolError, form.label))
@@ -531,6 +539,14 @@ class MainWindow(mainwindow_widget, mainwindow_base):
         self.band.setToGeometry(feature.geometry(), form.QGISLayer)
         self.showdataentry()
         self.dataentrywidget.openform(feature=feature, form=form, project=self.project)
+
+    def captureData(self, form, layer, feature):
+        """
+	copy selected feature to memory and handle save in inherited form class.
+	"""
+	self.band.setToGeometry(feature.geometry(), layer)
+	self.showdataentry()
+	self.dataentrywidget.openform(feature=feature, form=form, project=self.project)
 
     def addNewFeature(self, form, geometry):
         """
