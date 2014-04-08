@@ -52,8 +52,12 @@ roam.utils.info("Attempted to load translation file: " + translationFile)
 
 
 QgsApplication.setPrefixPath(roamapp.prefixpath, True)
-
 QgsApplication.initQgis()
+
+# Fake this module to maintain API.
+import roam.api.featureform
+sys.modules['roam.featureform'] = roam.api.featureform
+
 
 roam.utils.info(QgsApplication.showSettings())
 roam.utils.info(QgsProviderRegistry.instance().pluginList())
