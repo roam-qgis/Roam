@@ -27,7 +27,8 @@ from qgis.core import (QgsProjectBadLayerHandler,
                         QgsMapLayer,
                         QgsFeature,
                         QgsFields,
-                        QgsGeometry)
+                        QgsGeometry,
+                        QgsRectangle)
 from qgis.gui import (QgsMessageBar,
                         QgsMapToolZoom,
                         QgsMapToolTouch,
@@ -228,28 +229,33 @@ class MainWindow(mainwindow_widget, mainwindow_base):
 
         GPS.gpspostion.connect(self.updatecanvasfromgps)
         GPS.firstfix.connect(self.gpsfirstfix)
+        GPS.gpsdisconnected.connect(self.gpsdisconnected)
 
+        self.lastgpsposition = None
         self.marker = GPSMarker(self.canvas)
         self.marker.hide()
 
     def gpsfirstfix(self, postion, gpsinfo):
-        zoomlocation = self.settings.settings.get('gpszoomonfix', True)
+        zoomtolocation = self.settings.settings.get('gpszoomonfix', True)
         if zoomtolocation:
             self.canvas.zoomScale(1000)
 
-    def updatecanvasfromgps(self, positon, gpsinfo):
-        if not self.lastposition == map_pos:
-            self.lastposition = map_pos
-            rect = QgsRectangle(map_pos, map_pos)
+    def updatecanvasfromgps(self, position, gpsinfo):
+        if not self.lastgpsposition == position:
+            self.lastposition = position
+            rect = QgsRectangle(position, position)
             extentlimt = QgsRectangle(self.canvas.extent())
             extentlimt.scale(0.95)
 
-            if not extentlimt.contains(positon):
+            if not extentlimt.contains(position):
                 self.canvas.setExtent(rect)
                 self.canvas.refresh()
 
         self.marker.show()
-        self.marker.setCenter(map_pos)
+        self.marker.setCenter(position)
+
+    def gpsdisconnected(self):
+        self.marker.hide()
 
     def openkeyboard(self):
         if self.settings.settings.get('keyboard', True):

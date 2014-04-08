@@ -24,12 +24,15 @@ class GPSAction(QAction):
     gpsfixed = pyqtSignal(bool)
 
     def __init__(self, icon, canvas, settings, parent):
-        QAction.__init__(self, QIcon(icon), QApplication.translate("GPSAction", "Enable GPS", None, QApplication.UnicodeUTF8), parent)
+        super(GPSAction, self).__init__(QIcon(icon),
+                                        QApplication.translate("GPSAction", "Enable GPS", None, QApplication.UnicodeUTF8),
+                                        parent)
         self.canvas = canvas
         self.settings = settings
         self.triggered.connect(self.connectGPS)
         GPS.gpsfixed.connect(self.fixed)
         GPS.gpsfailed.connect(self.failed)
+        GPS.gpsdisconnected.connect(self.disconnected)
 
     def updateGPSPort(self):
         if self.isConnected and not self.settings.settings['gpsport'] == self.currentport:
@@ -37,18 +40,17 @@ class GPSAction(QAction):
             self.connectGPS()
 
     def connectGPS(self):
-        if not self.isConnected:
+        if not GPS.isConnected:
             #Enable GPS
             self.setIcon(QIcon(":/icons/gps"))
-            self.setIconText(QApplication.translate("GPSAction", "Connecting", None, QApplication.UnicodeUTF8))
+            self.setIconText(self.tr("Connecting.."))
             self.setEnabled(False)
             portname = self.settings.settings.get("gpsport", '')
             GPS.connectGPS(portname)
         else:
-            self.disconnectGPS(portname)
+            GPS.disconnectGPS()
             
-    def disconnectGPS(self):
-        GPS.disconnectGPS()
+    def disconnected(self):
         self.setIcon(QIcon(":/icons/gps"))
         self.setIconText("Enable GPS")
         self.setEnabled(True)
@@ -56,15 +58,7 @@ class GPSAction(QAction):
     def connected(self, gpsConnection):
         self.setIcon(QIcon(':/icons/gps_looking'))
         self.setIconText("Searching")
-        self.gpsConn = gpsConnection
-        if os.name == 'nt' and powerenabled:
-            self.power = PowerState(self.canvas)
-            self.power.poweroff.connect(self.disconnectGPS)
-            self.power.poweron.connect(self.connectGPS)
-        self.gpsConn.stateChanged.connect(self.gpsStateChanged)
-        self.isConnected = True
         self.setEnabled(True)
-        QgsGPSConnectionRegistry.instance().registerConnection(gpsConnection)
 
     def failed(self):
         self.setEnabled(True)
@@ -74,17 +68,18 @@ class GPSAction(QAction):
 
     def fixed(self, fixed, gpsInfo):
         if fixed:
-            self.setIcon(QIcon(':/icons/gps_failed'))
-            self.setIconText("No fix yet")
-        else:
             self.setIcon(QIcon(':/icons/gps_on'))
             self.setIconText("GPS Fixed")
+            self.setEnabled(True)
+        else:
+            self.setIcon(QIcon(':/icons/gps_failed'))
+            self.setIconText("No fix yet")
 
 
 class GPSMarker(QgsMapCanvasItem):
 
         def __init__(self, canvas):
-            QgsMapCanvasItem.__init__(self, canvas)
+            super(GPSMarker, self).__init__(canvas)
             self.canvas = canvas
             self.size = 24
             self.map_pos = QgsPoint(0.0, 0.0)

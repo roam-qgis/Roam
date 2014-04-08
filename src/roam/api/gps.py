@@ -11,10 +11,11 @@ NMEA_FIX_3D = 3
 class GPSService(QObject):
     gpsfixed = pyqtSignal(bool, object)
     gpsfailed = pyqtSignal()
+    gpsdisconnected = pyqtSignal()
 
     # Connect to listen to GPS status updates.
     gpspostion = pyqtSignal(QgsPoint, object)
-    firstfix = pyqtSignal()
+    firstfix = pyqtSignal(QgsPoint, object)
 
 
     def __init__(self):
@@ -33,7 +34,7 @@ class GPSService(QObject):
                 portname = ''
 
             self.detector = QgsGPSDetector(portname)
-            log("Connecting to:{}".format(portname))
+            log("Connecting to:{}".format(portname or 'scan'))
             self.detector.detected.connect(self._gpsfound)
             self.detector.detectionFailed.connect(self.gpsfailed)
             self.isConnectFailed = False
@@ -47,13 +48,15 @@ class GPSService(QObject):
         log("GPS disconnect")
         self.isConnected = False
         self.postion = None
-        QgsGPSConnectionRegistry.instance().unregisterConnection(gpsConnection)
+        QgsGPSConnectionRegistry.instance().unregisterConnection(self.gpsConn)
+        self.gpsdisconnected.emit()
 
     def _gpsfound(self, gpsConnection):
+        log("GPS found")
         self.gpsConn = gpsConnection
         self.gpsConn.stateChanged.connect(self.gpsStateChanged)
         self.isConnected = True
-        QgsGPSConnectionRegistry.instance().registerConnection(gpsConnection)
+        QgsGPSConnectionRegistry.instance().registerConnection(self.gpsConn)
 
     def gpsStateChanged(self, gpsInfo):
         if gpsInfo.fixType == NMEA_FIX_BAD or gpsInfo.status == 0 or gpsInfo.quality == 0:
@@ -72,6 +75,7 @@ class GPSService(QObject):
             try:
                 map_pos = transform.transform(map_pos)
             except QgsCsException:
+                log("Transform exception")
                 return
 
         if self.postion is None:
