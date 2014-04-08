@@ -23,4 +23,6 @@ class _Events(QObject):
     # Emit when you need to open the on screen keyboard
     openkeyboard = pyqtSignal()
 
+    selectioncleared = pyqtSignal()
+
 RoamEvents = _Events()

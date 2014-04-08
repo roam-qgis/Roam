@@ -215,7 +215,6 @@ class MainWindow(mainwindow_widget, mainwindow_base):
 
         self.infodock = InfoDock(self.canvas)
         self.infodock.featureupdated.connect(self.highlightfeature)
-        self.infodock.resultscleared.connect(self.clearselection)
         self.infodock.hide()
         self.hidedataentry()
         self.canvas.extentsChanged.connect(self.updatestatuslabel)
@@ -225,6 +224,7 @@ class MainWindow(mainwindow_widget, mainwindow_base):
         RoamEvents.openurl.connect(self.viewurl)
         RoamEvents.openfeatureform.connect(self.openForm)
         RoamEvents.openkeyboard.connect(self.openkeyboard)
+        RoamEvents.selectioncleared.connect(self.clearselection)
 
     def openkeyboard(self):
         if self.settings.settings.get('keyboard', True):
@@ -281,9 +281,10 @@ class MainWindow(mainwindow_widget, mainwindow_base):
         self.positionlabel.setText("Map Center: {}".format(extent.center().toString()))
 
     def highlightselection(self, results):
+        self.clearselection()
         for layer, features in results.iteritems():
             band = self.selectionbands[layer]
-            band.setColor(QColor(255, 0, 0, 150))
+            band.setColor(QColor(255, 0, 0, 200))
             band.setIconSize(20)
             band.setWidth(2)
             band.setBrushStyle(Qt.NoBrush)
@@ -558,7 +559,6 @@ class MainWindow(mainwindow_widget, mainwindow_base):
         QApplication.exit(0)
 
     def showInfoResults(self, results):
-        self.infodock.clearResults()
         forms = {}
         for layer in results.keys():
             layername = layer.name()
@@ -709,7 +709,7 @@ class MainWindow(mainwindow_widget, mainwindow_base):
         self.canvas.refresh()
         self.canvas.repaint()
 
-        self.infodock.clearResults()
+        RoamEvents.selectioncleared.emit()
 
         # No idea why we have to set this each time.  Maybe QGIS deletes it for
         # some reason.

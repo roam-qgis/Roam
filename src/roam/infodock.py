@@ -91,6 +91,8 @@ class InfoDock(infodock_widget, QWidget):
         self.editButton.pressed.connect(self.openform)
         self.parent().installEventFilter(self)
 
+        RoamEvents.selectioncleared.connect(self.clearResults)
+
     def eventFilter(self, object, event):
         if event.type() == QEvent.Resize:
             self.resize(self.width(), self.parent().height())
@@ -99,7 +101,7 @@ class InfoDock(infodock_widget, QWidget):
         return super(InfoDock, self).eventFilter(object, event)
 
     def close(self):
-        self.clearResults()
+        RoamEvents.selectioncleared.emit()
         super(InfoDock, self).close()
 
     def event(self, event):
@@ -217,6 +219,5 @@ class InfoDock(infodock_widget, QWidget):
         self.layerList.clear()
         self.attributesView.setHtml('')
         self.editButton.setVisible(False)
-        self.resultscleared.emit()
         self.navwidget.hide()
 
