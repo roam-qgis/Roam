@@ -17,10 +17,6 @@ except ValueError:
     pass
 
 
-import roam.api.featureform
-# Fake this module to maintain API.
-sys.modules['roam.featureform'] = roam.api.featureform
-
 curpath = os.path.dirname(__file__)
 
 sys.path.append(curpath)
