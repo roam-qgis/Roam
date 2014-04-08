@@ -36,6 +36,7 @@ from qgis.gui import (QgsMessageBar,
 
 
 from roam.gps_action import GPSAction
+from roam.reportwidget import ReportWidget
 from roam.dataentrywidget import DataEntryWidget
 from roam.ui.uifiles import mainwindow_widget, mainwindow_base
 from roam.listmodulesdialog import ProjectsWidget
@@ -103,6 +104,7 @@ class MainWindow(mainwindow_widget, mainwindow_base):
 
         self.menuGroup.addAction(self.actionMap)
         self.menuGroup.addAction(self.actionDataEntry)
+        self.menuGroup.addAction(self.actionReport)
         self.menuGroup.addAction(self.actionProject)
         self.menuGroup.addAction(self.actionSync)
         self.menuGroup.addAction(self.actionSettings)
@@ -117,6 +119,7 @@ class MainWindow(mainwindow_widget, mainwindow_base):
 
         #TODO Extract GPS out into a service and remove UI stuff
         self.actionGPS = GPSAction(":/icons/gps", self.canvas, self.settings, self)
+        self.projecttoolbar.addAction(self.actionReport)
         self.projecttoolbar.addAction(self.actionGPS)
 
         self.projectwidget = ProjectsWidget(self)
@@ -141,6 +144,10 @@ class MainWindow(mainwindow_widget, mainwindow_base):
         self.dataentrywidget.featuredeleted.connect(self.featuredeleted)
         self.dataentrywidget.failedsave.connect(self.failSave)
         self.dataentrywidget.helprequest.connect(self.showhelp)
+
+        self.reportwidget = ReportWidget(self.bar)
+        self.reportpage.layout().addWidget(self.reportwidget)
+        self.reportwidget.closed.connect(self.reportclosed)
 
         def createSpacer(width=0, height=0):
             widget = QWidget()
@@ -217,6 +224,7 @@ class MainWindow(mainwindow_widget, mainwindow_base):
         self.infodock.featureupdated.connect(self.highlightfeature)
         self.infodock.hide()
         self.hidedataentry()
+	self.hidereport()
         self.canvas.extentsChanged.connect(self.updatestatuslabel)
         self.projecttoolbar.toolButtonStyleChanged.connect(self.updatecombo)
 
@@ -311,9 +319,16 @@ class MainWindow(mainwindow_widget, mainwindow_base):
     def hidedataentry(self):
         self.actionDataEntry.setVisible(False)
 
+    def hidereport(self):
+	self.actionReport.setVisible(False)
+
     def showdataentry(self):
         self.actionDataEntry.setVisible(True)
         self.actionDataEntry.trigger()
+
+    def showreport(self):
+	self.actionReport.setVisible(True)
+        self.actionReport.trigger()
 
     def dataentrychanged(self, index):
         wasactive = self.clearCapatureTools()
@@ -375,6 +390,8 @@ class MainWindow(mainwindow_widget, mainwindow_base):
         # The edit toolbutton is currently not being used but leaving it for feature.
         self.moveTool.layersupdated.connect(self.actionMove.setEnabled)
         self.moveTool.layersupdated.connect(self.actionEdit_Tools.setEnabled)
+
+        self.actionReport.triggered.connect(self.openReport)
 
         self.actionGPSFeature.triggered.connect(self.addFeatureAtGPS)
         self.actionGPSFeature.setEnabled(self.actionGPS.isConnected)
@@ -517,12 +534,23 @@ class MainWindow(mainwindow_widget, mainwindow_base):
         self.band.reset()
         self.clearToolRubberBand()
 
+    def reportclosed(self):
+	self.showmap()
+	self.cleartempobjects()
+	self.infodock.refreshcurrent()
+
     def formrejected(self, message, level):
         self.dataentryfinished()
         if message:
             self.bar.pushMessage("Form Message", message, level, duration=2)
 
         self.cleartempobjects()
+    
+    def openReport(self):
+	"""
+	open report widget
+	"""
+	self.reportwidget.openReport(self.project)
 
     def openForm(self, form, feature):
         """
@@ -667,7 +695,9 @@ class MainWindow(mainwindow_widget, mainwindow_base):
         self.project = Project.from_folder(os.path.dirname(projectpath))
         self.projectlabel.setText("Project: {}".format(self.project.name))
         self.createFormButtons(forms=self.project.forms)
-
+	
+	if self.project.hasReport:
+	   self.showreport()
         # Enable the raster layers button only if the project contains a raster layer.
         layers = QgsMapLayerRegistry.instance().mapLayers().values()
         hasrasters = any(layer.type() == QgsMapLayer.RasterLayer for layer in layers)
@@ -747,8 +777,11 @@ class MainWindow(mainwindow_widget, mainwindow_base):
         self.panels = []
         self.project = None
         self.dataentrywidget.clear()
+	self.reportwidget.clear()
         self.hidedataentry()
+	self.hidereport()
         self.infodock.close()
+
 
 
 
