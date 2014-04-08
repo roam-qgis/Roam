@@ -26,8 +26,8 @@ class RubberBand(QgsRubberBand):
         self.distancearea.setSourceCrs( self.canvas.mapRenderer().destinationCrs().srsid())
         ellispoid = QgsProject.instance().readEntry("Measure", "/Ellipsoid", GEO_NONE)
         self.distancearea.setEllipsoid(ellispoid[0])
-        ellispoidemode = self.canvas.mapRenderer().hasCrsTransformEnabled()
-        self.distancearea.setEllipsoidalMode(ellispoidemode)
+        #mode = self.canvas.mapRenderer().hasCrsTransformEnabled()
+        #self.distancearea.setEllipsoidalMode(ellispoidemode)
 
     def paint(self, p, option, widget):
         super(RubberBand, self).paint(p)
