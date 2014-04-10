@@ -87,6 +87,7 @@ class Form(object):
         self.errors = []
         self._qgislayer = None
         self._formclass = None
+        self._action = None
 
     @classmethod
     def from_config(cls, name, config, folder):
@@ -102,6 +103,13 @@ class Form(object):
     @property
     def name(self):
         return self._name
+
+    def createuiaction(self):
+        action = QAction(QIcon(self.icon), self.icontext, None)
+        if not self.valid[0]:
+            action.setEnabled(False)
+            action.setText(action.text() + " (invalid)")
+        return action
 
     @property
     def icontext(self):

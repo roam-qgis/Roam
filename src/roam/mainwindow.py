@@ -19,7 +19,7 @@ from PyQt4.QtGui import (QActionGroup,
                         QIcon,
                         QComboBox,
                         QAction,
-                        QCursor, QFrame, QDesktopServices)
+                        QCursor, QFrame, QDesktopServices, QToolButton)
 from qgis.core import (QgsProjectBadLayerHandler,
                         QgsPalLabeling,
                         QgsMapLayerRegistry,
@@ -48,6 +48,7 @@ from roam.infodock import InfoDock
 from roam.syncwidget import SyncWidget
 from roam.helpviewdialog import HelpPage
 from roam.biglist import BigList
+from roam.popupdialogs import PickActionDialog
 from roam.imageviewerwidget import ImageViewer
 from roam.gpswidget import GPSWidget
 from roam.api import RoamEvents, GPS
@@ -203,21 +204,9 @@ class MainWindow(mainwindow_widget, mainwindow_base):
         self.band.setColor(QColor(186, 93, 212, 76))
 
         self.canvas_page.layout().insertWidget(0, self.projecttoolbar)
-        self.dataentrymodel = QStandardItemModel(self)
-        self.dataentrycombo = QComboBox(self.projecttoolbar)
-        self.dataentrycombo.setIconSize(QSize(48,48))
-        self.dataentrycombo.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Expanding)
-        self.dataentrycombo.setSizeAdjustPolicy(QComboBox.AdjustToContents)
-        self.dataentrycombo.setModel(self.dataentrymodel)
-        self.dataentrycomboaction = self.projecttoolbar.insertWidget(self.topspaceraction, self.dataentrycombo)
-
-        self.dataentrycombo.showPopup = self.selectdataentry
-
-        self.biglist = BigList(self.canvas)
-        self.biglist.setlabel("Select data entry form")
-        self.biglist.setmodel(self.dataentrymodel)
-        self.biglist.itemselected.connect(self.dataentrychanged)
-        self.biglist.hide()
+        self.dataentryselection = QAction(self.projecttoolbar)
+        self.dataentryaction = self.projecttoolbar.insertAction(self.topspaceraction, self.dataentryselection)
+        self.dataentryselection.triggered.connect(self.selectdataentry)
 
         self.centralwidget.layout().addWidget(self.statusbar)
 
@@ -228,7 +217,6 @@ class MainWindow(mainwindow_widget, mainwindow_base):
         self.infodock.hide()
         self.hidedataentry()
         self.canvas.extentsChanged.connect(self.updatestatuslabel)
-        self.projecttoolbar.toolButtonStyleChanged.connect(self.updatecombo)
 
         RoamEvents.openimage.connect(self.openimage)
         RoamEvents.openurl.connect(self.viewurl)
@@ -243,6 +231,7 @@ class MainWindow(mainwindow_widget, mainwindow_base):
         self.lastgpsposition = None
         self.marker = GPSMarker(self.canvas)
         self.marker.hide()
+
 
     def gpsfirstfix(self, postion, gpsinfo):
         zoomtolocation = self.settings.settings.get('gpszoomonfix', True)
@@ -276,11 +265,24 @@ class MainWindow(mainwindow_widget, mainwindow_base):
             cmd = r'C:\Program Files\Common Files\Microsoft Shared\ink\TabTip.exe'
             os.startfile(cmd)
 
-    def selectdataentry(self, ):
-        if self.dataentrycombo.count() == 0:
-            return
+    def selectdataentry(self):
+        forms = self.project.forms
+        formpicker = PickActionDialog(msg="Select data entry form")
+        for form in forms:
+            action = form.createuiaction()
+            valid, failreasons = form.valid
+            if not valid:
+                roam.utils.warning("Form {} failed to load".format(form.label))
+                roam.utils.warning("Reasons {}".format(failreasons))
+                action.triggered.connect(partial(self.showformerror, form))
+            else:
+                action.triggered.connect(partial(self.loadform, form))
+            formpicker.addAction(action)
 
-        self.biglist.show()
+        formpicker.exec_()
+
+    def showformerror(self, form):
+        pass
 
     def viewurl(self, url):
         """
@@ -311,15 +313,10 @@ class MainWindow(mainwindow_widget, mainwindow_base):
         viewer.resize(self.stackedWidget.size())
         viewer.openimage(pixmap)
 
-    def updatecombo(self, *args):
-        self.dataentrycombo.setMinimumHeight(0)
-
     def settingsupdated(self, settings):
         settings.save()
         self.show()
         self.actionGPS.updateGPSPort()
-        # eww!
-        roam.featureform.settings = settings.settings
 
     def updatestatuslabel(self):
         extent = self.canvas.extent()
@@ -369,7 +366,7 @@ class MainWindow(mainwindow_widget, mainwindow_base):
         modelindex = index
         # modelindex = self.dataentrymodel.index(index, 0)
         form = modelindex.data(Qt.UserRole + 1)
-        self.dataentrycombo.setCurrentIndex(index.row())
+        self.dataentryselection.setCurrentIndex(index.row())
         self.createCaptureButtons(form, wasactive)
 
     def raiseerror(self, *exinfo):
@@ -463,57 +460,17 @@ class MainWindow(mainwindow_widget, mainwindow_base):
         #self.projecttoolbar.insertAction(self.topspaceraction, self.actionGPSFeature)
         #self.actionGPSFeature.setVisible(not tool.isEditTool())
 
-    def createFormButtons(self, forms):
-        """
-            Create buttons for each form that is defined
-        """
-        self.dataentrymodel.clear()
-        self.clearCapatureTools()
-
-
-        def captureFeature(form):
-            item = QStandardItem(QIcon(form.icon), form.icontext)
-            item.setData(form, Qt.UserRole + 1)
-            item.setSizeHint(QSize(item.sizeHint().width(), self.projecttoolbar.height()))
-            self.dataentrymodel.appendRow(item)
-
-        capabilitityhandlers = {"capture": captureFeature}
-
-        failedforms = []
-        for form in forms:
-            valid, reasons = form.valid
-            if not valid:
-                roam.utils.log("Form is invalid for data entry because {}".format(reasons))
-                failedforms.append((form, reasons))
-                continue
-
-            for capability in form.capabilities:
-                try:
-                    capabilitityhandlers[capability](form)
-                except KeyError:
-                    # Just ignore capabilities we don't support yet.
-                    continue
-
-        if failedforms:
-            for form, reasons in failedforms:
-                html = "<h3>{}</h3><br>{}".format(form.label,
-                                             "<br>".join(reasons))
-            self.bar.pushMessage(QApplication.translate("MainWindowPy", "Form errors", None, QApplication.UnicodeUTF8),
-                                 QApplication.translate("MainWindowPy", "Looks like some forms couldn't be loaded", None, QApplication.UnicodeUTF8),
-                                 level=QgsMessageBar.WARNING, extrainfo=html)
-
-        visible = self.dataentrymodel.rowCount() > 0
-        self.dataentrycomboaction.setVisible(visible)
-        self.dataentrycombo.setMinimumHeight(self.projecttoolbar.height())
-
-        index = self.dataentrymodel.index(0, 0)
-        self.dataentrychanged(index)
+    def loadform(self, form):
+        captureactive = self.clearCapatureTools()
+        self.dataentryselection.setIcon(QIcon(form.icon))
+        self.dataentryselection.setText(form.icontext)
+        self.createCaptureButtons(form, captureactive)
 
     def addFeatureAtGPS(self):
         """
         Add a record at the current GPS location.
         """
-        index = self.dataentrycombo.currentIndex()
+        index = self.dataentryselection.currentIndex()
         modelindex = self.dataentrymodel.index(index, 0)
         form = modelindex.data(Qt.UserRole + 1)
         point = self.actionGPS.position
@@ -708,7 +665,12 @@ class MainWindow(mainwindow_widget, mainwindow_base):
         projectpath = QgsProject.instance().fileName()
         self.project = Project.from_folder(os.path.dirname(projectpath))
         self.projectlabel.setText("Project: {}".format(self.project.name))
-        self.createFormButtons(forms=self.project.forms)
+        try:
+            firstform = self.project.forms[0]
+            self.loadform(self.project.forms[0])
+            self.dataentryselection.setVisible(True)
+        except IndexError:
+            self.dataentryselection.setVisible(False)
 
         # Enable the raster layers button only if the project contains a raster layer.
         layers = QgsMapLayerRegistry.instance().mapLayers().values()
@@ -774,6 +736,7 @@ class MainWindow(mainwindow_widget, mainwindow_base):
         """
         Close the current open project
         """
+        self.clearCapatureTools()
         self.canvas.freeze()
         QgsMapLayerRegistry.instance().removeAllMapLayers()
         self.canvas.clear()
@@ -785,7 +748,6 @@ class MainWindow(mainwindow_widget, mainwindow_base):
         for action in self.layerbuttons:
             self.editgroup.removeAction(action)
 
-        self.dataentrymodel.clear()
         self.panels = []
         self.project = None
         self.dataentrywidget.clear()

@@ -35,12 +35,16 @@ class PickActionDialog(actionpicker_widget, Dialogbase):
         if msg:
             self.label.setText(msg)
 
+    def addAction(self, action):
+        button = QToolButton()
+        button.setIconSize(QSize(64,64))
+        button.setToolButtonStyle(Qt.ToolButtonTextUnderIcon)
+        button.setDefaultAction(action)
+        action.triggered.connect(self.close)
+
+        self.actionsLayout.addWidget(button)
+
+
     def addactions(self, actions):
         for action in actions:
-            button = QToolButton()
-            button.setIconSize(QSize(64,64))
-            button.setToolButtonStyle(Qt.ToolButtonTextUnderIcon)
-            button.setDefaultAction(action)
-            action.triggered.connect(self.close)
-
-            self.actionsLayout.addWidget(button)
+            self.addAction(action)
