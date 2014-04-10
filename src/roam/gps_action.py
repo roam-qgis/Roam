@@ -35,6 +35,8 @@ class GPSAction(QAction):
         GPS.gpsdisconnected.connect(self.disconnected)
 
     def updateGPSPort(self):
+        return
+
         if self.isConnected and not self.settings.settings['gpsport'] == self.currentport:
             self.disconnectGPS()
             self.connectGPS()
