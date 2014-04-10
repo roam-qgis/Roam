@@ -17,6 +17,8 @@ class QMapImageWidget(ui_imagewidget.Ui_imagewidget, QWidget):
     imageloaded = pyqtSignal()
     imageremoved = pyqtSignal()
     imageloadrequest = pyqtSignal()
+    annotateimage = pyqtSignal(QPixmap)
+
 
     def __init__(self, parent=None):
         super(QMapImageWidget, self).__init__(parent)
@@ -26,6 +28,7 @@ class QMapImageWidget(ui_imagewidget.Ui_imagewidget, QWidget):
         self.setStyleSheet(":hover {background-color: #dddddd;}")
         self.selectbutton.clicked.connect(self.imageloadrequest.emit)
         self.deletebutton.clicked.connect(self.removeImage)
+        self.editButton.clicked.connect(self._annotateimage)
         self.image.mouseReleaseEvent = self.imageClick
         self.installEventFilter(self)
         self.removeImage()
@@ -49,6 +52,9 @@ class QMapImageWidget(ui_imagewidget.Ui_imagewidget, QWidget):
             self.imageloadrequest.emit()
         else:
             self.openRequest.emit(self.orignalimage)
+
+    def _annotateimage(self):
+        self.annotateimage.emit(self.orignalimage)
 
     @property
     def orignalimage(self):
@@ -93,6 +99,7 @@ class QMapImageWidget(ui_imagewidget.Ui_imagewidget, QWidget):
         self._isdefault = value
         self.selectbutton.setVisible(not value)
         self.deletebutton.setVisible(not value)
+        self.editButton.setVisible(not value)
         if value:
             self.imageloaded.emit()
         else:

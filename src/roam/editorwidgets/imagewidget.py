@@ -158,6 +158,7 @@ class ImageWidget(EditorWidget):
         widget.imageloaded.connect(self.validate)
         widget.imageremoved.connect(self.validate)
         widget.imageloadrequest.connect(self.showpicker)
+        widget.annotateimage.connect(self._selectDrawing)
 
     def showpicker(self):
         actionpicker = PickActionDialog(msg="Select image source")
@@ -181,7 +182,7 @@ class ImageWidget(EditorWidget):
 
         self.widget.loadImage(image)
 
-    def _selectDrawing(self):
+    def _selectDrawing(self, *args):
         image = self.widget.orignalimage
         self.largewidgetrequest.emit(DrawingPadWidget, image, self.phototaken)
 
