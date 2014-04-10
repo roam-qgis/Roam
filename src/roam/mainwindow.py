@@ -241,6 +241,7 @@ class MainWindow(mainwindow_widget, mainwindow_base):
             self.canvas.zoomScale(1000)
 
     def updatecanvasfromgps(self, position, gpsinfo):
+        # Recenter map if we go outside of the 95% of the area
         if not self.lastgpsposition == position:
             self.lastposition = position
             rect = QgsRectangle(position, position)

@@ -77,13 +77,13 @@ class GPSAction(QAction):
 
 
 class GPSMarker(QgsMapCanvasItem):
-
         def __init__(self, canvas):
             super(GPSMarker, self).__init__(canvas)
             self.canvas = canvas
             self.size = 24
+            self.pointbrush = QBrush(QColor(129,173,210))
+            self.pointpen = QPen(QColor(129,173,210))
             self.map_pos = QgsPoint(0.0, 0.0)
-            self.svgrender = QSvgRenderer(":/icons/gps_marker")
 
         def setSize(self, size):
             self.size = size
@@ -92,7 +92,11 @@ class GPSMarker(QgsMapCanvasItem):
             self.setPos(self.toCanvasCoordinates(self.map_pos))
 
             halfSize = self.size / 2.0
-            self.svgrender.render(painter, QRectF(0 - halfSize, 0 - halfSize, self.size, self.size ) )
+            rect = QRectF(0 - halfSize, 0 - halfSize, self.size, self.size)
+            painter.setRenderHint(QPainter.Antialiasing)
+            painter.setBrush(self.pointbrush)
+            painter.setPen(self.pointpen)
+            painter.drawEllipse(rect)
 
         def boundingRect(self):
             halfSize = self.size / 2.0

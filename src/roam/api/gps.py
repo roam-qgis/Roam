@@ -70,7 +70,6 @@ class GPSService(QObject):
         map_pos = QgsPoint(gpsInfo.longitude, gpsInfo.latitude)
 
         if self.crs:
-            # Recenter map if we go outside of the 95% of the area
             transform = QgsCoordinateTransform(self.wgs84CRS, self.crs)
             try:
                 map_pos = transform.transform(map_pos)
