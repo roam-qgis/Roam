@@ -4,6 +4,7 @@ from qgis.core import *
 from qgis.gui import *
 
 from roam.maptools.touchtool import TouchMapTool
+from roam.api import GPS
 
 import roam.resources_rc
 
@@ -104,6 +105,11 @@ class GPSCaptureAction(BaseAction):
                                                 parent)
         self.setObjectName("GPSCaptureAction")
         self.setText(self.tr("GPS Capture"))
+
+        GPS.gpsfixed.connect(self.setstate)
+
+    def setstate(self, fixed, *args):
+        self.setEnabled(fixed)
 
 
 class PolylineTool(QgsMapTool):
@@ -287,8 +293,8 @@ class PointTool(TouchMapTool):
         self.geometryComplete.emit(QgsGeometry.fromPoint(point))
 
     def addatgps(self):
-        return
-        #self.geometryComplete.emit(GPS .point)
+        location = GPS.postion
+        self.geometryComplete.emit(QgsGeometry.fromPoint(location))
 
         
     def activate(self):
