@@ -177,12 +177,17 @@ class MainWindow(mainwindow_widget, mainwindow_base):
         self.projectlabel = createlabel("Project: {project}")
         self.userlabel = createlabel("User: {user}".format(user=getpass.getuser()))
         self.positionlabel = createlabel('')
+        self.gpslabel = createlabel("GPS: Not active")
         self.statusbar.addWidget(self.projectlabel)
         self.statusbar.addWidget(self.userlabel)
         spacer = createSpacer()
+        spacer2 = createSpacer()
         spacer.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
+        spacer2.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
         self.statusbar.addWidget(spacer)
         self.statusbar.addWidget(self.positionlabel)
+        self.statusbar.addWidget(spacer2)
+        self.statusbar.addWidget(self.gpslabel)
 
         self.menutoolbar.insertWidget(self.actionQuit, sidespacewidget2)
         self.menutoolbar.insertWidget(self.actionProject, sidespacewidget)
@@ -258,9 +263,13 @@ class MainWindow(mainwindow_widget, mainwindow_base):
 
         self.marker.show()
         self.marker.setCenter(position)
+        self.gpslabel.setText("GPS: PDOP {}   HDOP {}    VDOP {}".format(gpsinfo.pdop,
+                                                                        gpsinfo.hdop,
+                                                                        gpsinfo.vdop))
 
     def gpsdisconnected(self):
         self.marker.hide()
+        self.gpslabel.setText("GPS Not Active")
 
     def openkeyboard(self):
         if self.settings.settings.get('keyboard', True):
