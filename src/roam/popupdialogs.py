@@ -21,7 +21,8 @@ class Dialogbase(QDialog):
         self.resize(width, self.sizeHint().height())
         y = self.parent().y()
         y += self.parent().height() / 2
-        self.move(self.parent().pos().x(), y)
+        half = self.height() / 2
+        self.move(self.parent().geometry().x(), y - half)
 
 class DeleteFeatureDialog(featurefeature_dialog, Dialogbase):
     def __init__(self, msg=None, parent=None):
