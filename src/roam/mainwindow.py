@@ -49,6 +49,7 @@ from roam.syncwidget import SyncWidget
 from roam.helpviewdialog import HelpPage
 from roam.biglist import BigList
 from roam.imageviewerwidget import ImageViewer
+from roam.gpswidget import GPSWidget
 from roam.api import RoamEvents, GPS
 
 import roam.messagebaritems
@@ -107,6 +108,7 @@ class MainWindow(mainwindow_widget, mainwindow_base):
         self.menuGroup.addAction(self.actionProject)
         self.menuGroup.addAction(self.actionSync)
         self.menuGroup.addAction(self.actionSettings)
+        self.menuGroup.addAction(self.actionGPS)
         self.menuGroup.triggered.connect(self.updatePage)
 
         self.editgroup = QActionGroup(self)
@@ -116,7 +118,6 @@ class MainWindow(mainwindow_widget, mainwindow_base):
         self.editgroup.addAction(self.actionZoom_Out)
         self.editgroup.addAction(self.actionInfo)
 
-        #TODO Extract GPS out into a service and remove UI stuff
         self.actionGPS = GPSAction(":/icons/gps", self.canvas, self.settings, self)
         self.projecttoolbar.addAction(self.actionGPS)
 
@@ -124,6 +125,9 @@ class MainWindow(mainwindow_widget, mainwindow_base):
         self.projectwidget.requestOpenProject.connect(self.loadProject)
         QgsProject.instance().readProject.connect(self._readProject)
         self.project_page.layout().addWidget(self.projectwidget)
+
+        self.gpswidget = GPSWidget(gps=GPS, parent=self)
+        self.gpspage.layout().addWidget(self.gpswidget)
 
         self.syncwidget = SyncWidget()
         self.syncpage.layout().addWidget(self.syncwidget)

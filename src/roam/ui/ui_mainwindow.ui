@@ -110,7 +110,7 @@
        <string notr="true">background-color: rgb(255, 255, 255);</string>
       </property>
       <property name="currentIndex">
-       <number>0</number>
+       <number>6</number>
       </property>
       <widget class="QWidget" name="canvas_page">
        <property name="styleSheet">
@@ -244,6 +244,13 @@
         </property>
        </layout>
       </widget>
+      <widget class="QWidget" name="gpspage">
+       <layout class="QGridLayout" name="gridLayout_6">
+        <property name="margin">
+         <number>0</number>
+        </property>
+       </layout>
+      </widget>
      </widget>
     </item>
    </layout>
@@ -304,6 +311,7 @@ QToolButton:checked {
    <addaction name="actionDataEntry"/>
    <addaction name="actionProject"/>
    <addaction name="actionSync"/>
+   <addaction name="actionGPS"/>
    <addaction name="actionSettings"/>
    <addaction name="actionQuit"/>
   </widget>
@@ -581,6 +589,24 @@ QWidget {
    </property>
    <property name="text">
     <string>Select</string>
+   </property>
+  </action>
+  <action name="actionGPS">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../resources.qrc">
+     <normaloff>:/icons/gps</normaloff>:/icons/gps</iconset>
+   </property>
+   <property name="text">
+    <string>GPS</string>
+   </property>
+   <property name="iconText">
+    <string>GPS           </string>
+   </property>
+   <property name="page" stdset="0">
+    <number>6</number>
    </property>
   </action>
  </widget>
