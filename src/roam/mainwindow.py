@@ -27,7 +27,8 @@ from qgis.core import (QgsProjectBadLayerHandler,
                         QgsMapLayer,
                         QgsFeature,
                         QgsFields,
-                        QgsGeometry)
+                        QgsGeometry,
+                        QgsRectangle)
 from qgis.gui import (QgsMessageBar,
                         QgsMapToolZoom,
                         QgsMapToolTouch,
@@ -35,7 +36,7 @@ from qgis.gui import (QgsMessageBar,
                         QgsMapCanvas)
 
 
-from roam.gps_action import GPSAction
+from roam.gps_action import GPSAction, GPSMarker
 from roam.dataentrywidget import DataEntryWidget
 from roam.ui.uifiles import mainwindow_widget, mainwindow_base
 from roam.listmodulesdialog import ProjectsWidget
@@ -48,7 +49,7 @@ from roam.syncwidget import SyncWidget
 from roam.helpviewdialog import HelpPage
 from roam.biglist import BigList
 from roam.imageviewerwidget import ImageViewer
-from roam.api import RoamEvents
+from roam.api import RoamEvents, GPS
 
 import roam.messagebaritems
 import roam.utils
@@ -226,6 +227,37 @@ class MainWindow(mainwindow_widget, mainwindow_base):
         RoamEvents.openkeyboard.connect(self.openkeyboard)
         RoamEvents.selectioncleared.connect(self.clearselection)
 
+        GPS.gpspostion.connect(self.updatecanvasfromgps)
+        GPS.firstfix.connect(self.gpsfirstfix)
+        GPS.gpsdisconnected.connect(self.gpsdisconnected)
+
+        self.lastgpsposition = None
+        self.marker = GPSMarker(self.canvas)
+        self.marker.hide()
+
+    def gpsfirstfix(self, postion, gpsinfo):
+        zoomtolocation = self.settings.settings.get('gpszoomonfix', True)
+        if zoomtolocation:
+            self.canvas.zoomScale(1000)
+
+    def updatecanvasfromgps(self, position, gpsinfo):
+        # Recenter map if we go outside of the 95% of the area
+        if not self.lastgpsposition == position:
+            self.lastposition = position
+            rect = QgsRectangle(position, position)
+            extentlimt = QgsRectangle(self.canvas.extent())
+            extentlimt.scale(0.95)
+
+            if not extentlimt.contains(position):
+                self.canvas.setExtent(rect)
+                self.canvas.refresh()
+
+        self.marker.show()
+        self.marker.setCenter(position)
+
+    def gpsdisconnected(self):
+        self.marker.hide()
+
     def openkeyboard(self):
         if self.settings.settings.get('keyboard', True):
             cmd = r'C:\Program Files\Common Files\Microsoft Shared\ink\TabTip.exe'
@@ -376,10 +408,6 @@ class MainWindow(mainwindow_widget, mainwindow_base):
         self.moveTool.layersupdated.connect(self.actionMove.setEnabled)
         self.moveTool.layersupdated.connect(self.actionEdit_Tools.setEnabled)
 
-        self.actionGPSFeature.triggered.connect(self.addFeatureAtGPS)
-        self.actionGPSFeature.setEnabled(self.actionGPS.isConnected)
-        self.actionGPS.gpsfixed.connect(self.actionGPSFeature.setEnabled)
-
         self.actionHome.triggered.connect(self.homeview)
         self.actionQuit.triggered.connect(self.exit)
 
@@ -419,8 +447,8 @@ class MainWindow(mainwindow_widget, mainwindow_base):
             tool.finished.connect(self.openForm)
             tool.error.connect(partial(self.showToolError, form.label))
 
-        self.projecttoolbar.insertAction(self.topspaceraction, self.actionGPSFeature)
-        self.actionGPSFeature.setVisible(not tool.isEditTool())
+        #self.projecttoolbar.insertAction(self.topspaceraction, self.actionGPSFeature)
+        #self.actionGPSFeature.setVisible(not tool.isEditTool())
 
     def createFormButtons(self, forms):
         """
@@ -656,6 +684,7 @@ class MainWindow(mainwindow_widget, mainwindow_base):
         self.projectOpened()
         self.canvas.freeze(False)
         self.canvas.refresh()
+        GPS.crs = self.canvas.mapRenderer().destinationCrs()
         self.showmap()
 
     @roam.utils.timeit

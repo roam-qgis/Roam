@@ -17,9 +17,6 @@ class _Events(QObject):
     # Emit when requesting to open a feature form
     openfeatureform = pyqtSignal(object, QgsFeature)
 
-    # Connect to listen to GPS status updates.
-    gpspostion = pyqtSignal(QgsPoint, object)
-
     # Emit when you need to open the on screen keyboard
     openkeyboard = pyqtSignal()
 

@@ -4,6 +4,7 @@ from qgis.core import *
 from qgis.gui import *
 
 from roam.maptools.touchtool import TouchMapTool
+from roam.api import GPS
 
 import roam.resources_rc
 
@@ -71,24 +72,51 @@ class RubberBand(QgsRubberBand):
         return rect
 
 
-class EndCaptureAction(QAction):
-    def __init__(self, tool, parent=None):
-        super(EndCaptureAction, self).__init__(QIcon(":/icons/stop-capture"), QApplication.translate("EndCaptureAction", "End Capture", None, QApplication.UnicodeUTF8), parent)
-        self.setObjectName("endcapture")
+class BaseAction(QAction):
+    def __init__(self, icon, name, tool, parent=None):
+        super(BaseAction, self).__init__(icon, name, parent)
         self.setCheckable(False)
         self.tool = tool
         self.isdefault = False
         self.ismaptool = False
 
 
-class CaptureAction(QAction):
+class EndCaptureAction(BaseAction):
+    def __init__(self, tool, parent=None):
+        super(EndCaptureAction, self).__init__(QIcon(":/icons/stop-capture"),
+                                                "End Capture",
+                                               tool,
+                                               parent)
+        self.setObjectName("EnaCaptureAction")
+        self.setText(self.tr("End Capture"))
+
+
+class CaptureAction(BaseAction):
     def __init__(self, tool, geomtype, parent=None):
-        super(CaptureAction, self).__init__(QIcon(":/icons/capture-{}".format(geomtype)), QApplication.translate("CaptureAction", "Capture", None, QApplication.UnicodeUTF8), parent)
-        self.setObjectName("capture")
+        super(CaptureAction, self).__init__(QIcon(":/icons/capture-{}".format(geomtype)),
+                                               "Capture",
+                                               tool,
+                                               parent)
+        self.setObjectName("CaptureAction")
+        self.setText(self.tr("Capture"))
         self.setCheckable(True)
-        self.tool = tool
         self.isdefault = True
         self.ismaptool = True
+
+
+class GPSCaptureAction(BaseAction):
+    def __init__(self, tool, parent=None):
+        super(GPSCaptureAction, self).__init__(QIcon(":/icons/gpsadd"),
+                                                "GPS Capture",
+                                                tool,
+                                                parent)
+        self.setObjectName("GPSCaptureAction")
+        self.setText(self.tr("GPS Capture"))
+
+        GPS.gpsfixed.connect(self.setstate)
+
+    def setstate(self, fixed, *args):
+        self.setEnabled(fixed)
 
 
 class PolylineTool(QgsMapTool):
@@ -253,10 +281,12 @@ class PointTool(TouchMapTool):
             "       +.+      "]))
 
         self.captureaction = CaptureAction(self, 'point')
+        self.gpscapture = GPSCaptureAction(self)
+        self.gpscapture.triggered.connect(self.addatgps)
 
     @property
     def actions(self):
-        return [self.captureaction]
+        return [self.captureaction, self.gpscapture]
 
     def canvasReleaseEvent(self, event):
         if self.pinching:
@@ -268,6 +298,11 @@ class PointTool(TouchMapTool):
 
         point = self.toMapCoordinates(event.pos())
         self.geometryComplete.emit(QgsGeometry.fromPoint(point))
+
+    def addatgps(self):
+        location = GPS.postion
+        self.geometryComplete.emit(QgsGeometry.fromPoint(location))
+
         
     def activate(self):
         """
