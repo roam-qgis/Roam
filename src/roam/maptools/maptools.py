@@ -112,6 +112,7 @@ class GPSCaptureAction(BaseAction):
                                                 parent)
         self.setObjectName("GPSCaptureAction")
         self.setText(self.tr("GPS Capture"))
+        self.setEnabled(False)
 
         GPS.gpsfixed.connect(self.setstate)
 
