@@ -110,7 +110,7 @@
        <string notr="true">background-color: rgb(255, 255, 255);</string>
       </property>
       <property name="currentIndex">
-       <number>6</number>
+       <number>7</number>
       </property>
       <widget class="QWidget" name="canvas_page">
        <property name="styleSheet">
@@ -251,6 +251,13 @@
         </property>
        </layout>
       </widget>
+      <widget class="LegendWidget" name="legendpage">
+       <layout class="QGridLayout" name="gridLayout_7">
+        <property name="margin">
+         <number>0</number>
+        </property>
+       </layout>
+      </widget>
      </widget>
     </item>
    </layout>
@@ -309,6 +316,7 @@ QToolButton:checked {
    </attribute>
    <addaction name="actionMap"/>
    <addaction name="actionDataEntry"/>
+   <addaction name="actionLegend"/>
    <addaction name="actionProject"/>
    <addaction name="actionSync"/>
    <addaction name="actionGPS"/>
@@ -609,6 +617,24 @@ QWidget {
     <number>6</number>
    </property>
   </action>
+  <action name="actionLegend">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../resources.qrc">
+     <normaloff>:/icons/open</normaloff>:/icons/open</iconset>
+   </property>
+   <property name="text">
+    <string>Legend</string>
+   </property>
+   <property name="iconText">
+    <string>Legend      </string>
+   </property>
+   <property name="page" stdset="0">
+    <number>7</number>
+   </property>
+  </action>
  </widget>
  <customwidgets>
   <customwidget>
@@ -621,6 +647,12 @@ QWidget {
    <class>HideableToolbar</class>
    <extends>QToolBar</extends>
    <header>roam.gui</header>
+  </customwidget>
+  <customwidget>
+   <class>LegendWidget</class>
+   <extends>QWidget</extends>
+   <header>roam.gui</header>
+   <container>1</container>
   </customwidget>
  </customwidgets>
  <resources>

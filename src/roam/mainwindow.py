@@ -19,7 +19,7 @@ from PyQt4.QtGui import (QActionGroup,
                         QIcon,
                         QComboBox,
                         QAction,
-                        QCursor, QFrame, QDesktopServices, QToolButton)
+                        QCursor, QFrame, QDesktopServices, QToolButton, QPushButton)
 from qgis.core import (QgsProjectBadLayerHandler,
                         QgsPalLabeling,
                         QgsMapLayerRegistry,
@@ -38,7 +38,6 @@ from qgis.gui import (QgsMessageBar,
 
 from roam.gps_action import GPSAction, GPSMarker
 from roam.dataentrywidget import DataEntryWidget
-from roam.ui.uifiles import mainwindow_widget, mainwindow_base
 from roam.listmodulesdialog import ProjectsWidget
 from roam.settingswidget import SettingsWidget
 from roam.projectparser import ProjectParser
@@ -52,6 +51,9 @@ from roam.popupdialogs import PickActionDialog
 from roam.imageviewerwidget import ImageViewer
 from roam.gpswidget import GPSWidget
 from roam.api import RoamEvents, GPS
+from roam.ui import ui_mainwindow
+from PyQt4.QtGui import QMainWindow
+
 
 import roam.messagebaritems
 import roam.utils
@@ -78,7 +80,7 @@ class BadLayerHandler(QgsProjectBadLayerHandler):
         self.callback(layers)
 
 
-class MainWindow(mainwindow_widget, mainwindow_base):
+class MainWindow(ui_mainwindow.Ui_MainWindow, QMainWindow):
     """
     Main application window
     """
@@ -97,6 +99,7 @@ class MainWindow(mainwindow_widget, mainwindow_base):
         self.bar = roam.messagebaritems.MessageBar(self)
 
         self.actionMap.setVisible(False)
+        self.actionLegend.setVisible(False)
 
         pal = QgsPalLabeling()
         self.canvas.mapRenderer().setLabelingEngine(pal)
@@ -106,6 +109,7 @@ class MainWindow(mainwindow_widget, mainwindow_base):
 
         self.menuGroup.addAction(self.actionMap)
         self.menuGroup.addAction(self.actionDataEntry)
+        self.menuGroup.addAction(self.actionLegend)
         self.menuGroup.addAction(self.actionProject)
         self.menuGroup.addAction(self.actionSync)
         self.menuGroup.addAction(self.actionSettings)
@@ -118,6 +122,8 @@ class MainWindow(mainwindow_widget, mainwindow_base):
         self.editgroup.addAction(self.actionZoom_In)
         self.editgroup.addAction(self.actionZoom_Out)
         self.editgroup.addAction(self.actionInfo)
+
+        self.actionLegend.triggered.connect(self.updatelegend)
 
         self.actionGPS = GPSAction(":/icons/gps", self.canvas, self.settings, self)
         self.projecttoolbar.addAction(self.actionGPS)
@@ -232,6 +238,10 @@ class MainWindow(mainwindow_widget, mainwindow_base):
         self.marker = GPSMarker(self.canvas)
         self.marker.hide()
 
+    def updatelegend(self):
+        self.legendpage.updatelegend(self.canvas)
+        layers = QgsMapLayerRegistry.instance().mapLayers().values()
+        self.legendpage.updateitems(layers)
 
     def gpsfirstfix(self, postion, gpsinfo):
         zoomtolocation = self.settings.settings.get('gpszoomonfix', True)
@@ -348,6 +358,7 @@ class MainWindow(mainwindow_widget, mainwindow_base):
 
     def showmap(self):
         self.actionMap.setVisible(True)
+        self.actionLegend.setVisible(True)
         self.actionMap.trigger()
 
     def hidedataentry(self):
