@@ -1,4 +1,4 @@
-from PyQt4.QtCore import Qt, QSize, QRect, QPoint
+from PyQt4.QtCore import Qt, QSize, QRect, QPoint, pyqtSignal
 from PyQt4.QtGui import  QWidget, QPixmap, QPainter, QLabel, QBrush, QColor, QPen
 
 from qgis.core import QgsMapLayer
@@ -7,11 +7,14 @@ from roam.ui.uifiles import legend_widget
 
 
 class LegendWidget(legend_widget, QWidget):
+    showmap = pyqtSignal()
+
     def __init__(self, parent=None):
         super(LegendWidget, self).__init__(parent)
         self.setupUi(self)
         self.pixmap = None
         self.items = {}
+        self.framerect = QRect()
 
         self.legendareabrush = QBrush(QColor(255,255,255,200))
         self.legendareapen = QPen(QColor(255,255,255,20))
@@ -33,12 +36,13 @@ class LegendWidget(legend_widget, QWidget):
         painter.drawPixmap(event.rect(), self.pixmap)
 
         rect = event.rect()
-        newrect = QRect(rect)
+        framerect = QRect(rect)
         newwidth = (rect.width() / 100) * 40
-        newrect.setWidth(newwidth)
+        framerect.setWidth(newwidth)
         painter.setBrush(self.legendareabrush)
         painter.setPen(self.legendareapen)
-        painter.drawRect(newrect)
+        painter.drawRect(framerect)
+        self.framerect = framerect
 
         painter.setPen(Qt.black)
 
@@ -59,6 +63,12 @@ class LegendWidget(legend_widget, QWidget):
                     itemy += 40
 
             position.setY(titley + itemy + 50)
+
+    def mouseReleaseEvent(self, event):
+        if self.framerect.contains(event.pos()):
+            return
+
+        self.showmap.emit()
 
 
     def updateitems(self, layers):

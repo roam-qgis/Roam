@@ -238,6 +238,8 @@ class MainWindow(ui_mainwindow.Ui_MainWindow, QMainWindow):
         self.marker = GPSMarker(self.canvas)
         self.marker.hide()
 
+        self.legendpage.showmap.connect(self.showmap)
+
     def updatelegend(self):
         self.legendpage.updatelegend(self.canvas)
         layers = QgsMapLayerRegistry.instance().mapLayers().values()
