@@ -53,7 +53,6 @@ class LegendWidget(legend_widget, QWidget):
                     itemy += 40
 
             position.setY(titley + itemy + 50)
-            print position
 
 
     def updateitems(self, layers):
