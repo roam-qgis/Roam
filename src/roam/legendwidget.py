@@ -1,5 +1,5 @@
-from PyQt4.QtCore import Qt, QSize, QRect, QPoint, pyqtSignal
-from PyQt4.QtGui import  QWidget, QPixmap, QPainter, QLabel, QBrush, QColor, QPen
+from PyQt4.QtCore import Qt, QSize, QRect, QPoint, pyqtSignal, QRectF
+from PyQt4.QtGui import  QWidget, QPixmap, QPainter, QLabel, QBrush, QColor, QPen, QTextOption
 
 from qgis.core import QgsMapLayer
 
@@ -21,12 +21,13 @@ class LegendWidget(legend_widget, QWidget):
         self.legendareapen.setWidth(0.5)
 
     def paintEvent(self, event):
-        def _drawitem(pixmap, text, postion):
-            textpositon = QPoint(postion)
-            textpositon.setX(pixmap.width() + 40)
-            textpositon.setY(postion.y() + (pixmap.height() / 2))
-            painter.drawPixmap(postion, pixmap)
-            painter.drawText(textpositon, text)
+        def _drawitem(pixmap, text, itempostion):
+            painter.drawPixmap(itempostion, pixmap)
+            textrect = QRectF(pixmap.width() + 40,
+                              itempostion.y(),
+                              framerect.width() - pixmap.width() - 40,
+                              pixmap.height())
+            painter.drawText(textrect, text, QTextOption(Qt.AlignVCenter))
 
         if not self.pixmap:
             return
@@ -46,25 +47,24 @@ class LegendWidget(legend_widget, QWidget):
 
         painter.setPen(Qt.black)
 
-        titley = 50
-        itemy = 40
-        position = rect.topLeft() + QPoint(30, titley)
+        currenty = 40
+        position = rect.topLeft() + QPoint(30, currenty)
         for layer, items in self.items.iteritems():
             if len(items) == 1:
                 itempostion = QPoint(position)
-                itempostion.setY(itemy)
+                itempostion.setY(currenty)
                 _drawitem(items[0][1], layer, itempostion)
-                itemy += 40
+                currenty += 40
             else:
                 for text, icon in items:
                     if not text:
                         continue
                     itempostion = QPoint(position)
-                    itempostion.setY(itemy)
+                    itempostion.setY(currenty)
                     _drawitem(icon, text, itempostion)
-                    itemy += 40
+                    currenty += 40
 
-            position.setY(titley + itemy + 50)
+            position.setY(currenty + 40)
 
     def mouseReleaseEvent(self, event):
         if self.framerect.contains(event.pos()):
