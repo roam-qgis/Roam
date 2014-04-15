@@ -219,7 +219,7 @@ QListWidget::item::selected {
            </property>
            <property name="icon">
             <iconset resource="../resources.qrc">
-             <normaloff>:/icons/edit</normaloff>:/icons/edit</iconset>
+             <normaloff>:/icons/editgeom</normaloff>:/icons/editgeom</iconset>
            </property>
            <property name="iconSize">
             <size>

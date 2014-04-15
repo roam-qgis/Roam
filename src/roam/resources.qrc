@@ -14,6 +14,7 @@
     <file alias="cancel">resources/images/cancel.svg</file>
     <file alias="delete">resources/images/delete.svg</file>
     <file alias="edit">resources/images/edit.svg</file>
+    <file alias="editgeom">resources/images/edit_geom.svg</file>
     <file alias="home">resources/images/home.svg</file>
     <file alias="in">resources/images/in.svg</file>
     <file alias="out">resources/images/out.svg</file>
