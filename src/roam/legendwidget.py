@@ -57,6 +57,8 @@ class LegendWidget(legend_widget, QWidget):
                 itemy += 40
             else:
                 for text, icon in items:
+                    if not text:
+                        continue
                     itempostion = QPoint(position)
                     itempostion.setY(itemy)
                     _drawitem(icon, text, itempostion)
