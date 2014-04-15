@@ -623,7 +623,7 @@ QWidget {
    </property>
    <property name="icon">
     <iconset resource="../resources.qrc">
-     <normaloff>:/icons/open</normaloff>:/icons/open</iconset>
+     <normaloff>:/icons/legend</normaloff>:/icons/legend</iconset>
    </property>
    <property name="text">
     <string>Legend</string>

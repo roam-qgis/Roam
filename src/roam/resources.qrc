@@ -53,6 +53,7 @@
     <file alias="add">resources/images/add.svg</file>
     <file alias="project">resources/images/file.svg</file>
     <file alias="folder">resources/images/folder.svg</file>
+    <file alias="legend">resources/images/legend.svg</file>
   </qresource>
   <qresource prefix="branding">
     <file alias="logo">resources/branding/logo.png</file>
