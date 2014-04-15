@@ -242,7 +242,7 @@ class MainWindow(ui_mainwindow.Ui_MainWindow, QMainWindow):
 
     def updatelegend(self):
         self.legendpage.updatelegend(self.canvas)
-        layers = QgsMapLayerRegistry.instance().mapLayers().values()
+        layers = self.project.legendlayersmapping().values()
         self.legendpage.updateitems(layers)
 
     def gpsfirstfix(self, postion, gpsinfo):

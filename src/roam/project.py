@@ -358,6 +358,20 @@ class Project(object):
     def selectlayers(self):
         return self.settings.get('selectlayers', [])
 
+    def _layersfromlist(self, layerlist):
+        qgislayers = QgsMapLayerRegistry.instance().mapLayers().values()
+        qgislayers = {layer.name(): layer for layer in qgislayers if layer.type() == QgsMapLayer.VectorLayer}
+        if not layerlist:
+            return qgislayers
+        else:
+            _qgislayers = OrderedDict()
+            for layername in layerlist:
+                try:
+                    _qgislayers[layername] = qgislayers[layername]
+                except KeyError:
+                    continue
+            return _qgislayers
+
     def selectlayersmapping(self):
         """
         Return the mapping between the select layers listed in settings
@@ -366,18 +380,14 @@ class Project(object):
         If no select layers are found in the settings this function will return
         all layers in the project
         """
-        qgislayers = QgsMapLayerRegistry.instance().mapLayers().values()
-        qgislayers = {layer.name(): layer for layer in qgislayers if layer.type() == QgsMapLayer.VectorLayer}
-        if not self.selectlayers:
-            return qgislayers
-        else:
-            _qgislayers = OrderedDict()
-            for layername in self.selectlayers:
-                try:
-                    _qgislayers[layername] = qgislayers[layername]
-                except KeyError:
-                    continue
-            return _qgislayers
+        return self._layersfromlist(self.selectlayers)
+
+    @property
+    def legendlayers(self):
+        return self.settings.get('legendlayers', [])
+
+    def legendlayersmapping(self):
+        return self._layersfromlist(self.legendlayers)
 
     def historyenabled(self, layer):
         return layer.name() in self.settings.get('historylayers', [])
