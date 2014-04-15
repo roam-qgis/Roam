@@ -81,6 +81,9 @@ class LegendWidget(legend_widget, QWidget):
             self.items[layer.name()] = items
 
     def updatelegend(self, canvas):
+        if canvas.isDrawing():
+            return
+
         pixmap = QPixmap(self.size())
         pixmap.fill(canvas.canvasColor())
         painter = QPainter(pixmap)
