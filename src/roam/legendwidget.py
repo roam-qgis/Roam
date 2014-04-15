@@ -1,5 +1,5 @@
 from PyQt4.QtCore import Qt, QSize, QRect, QPoint
-from PyQt4.QtGui import  QWidget, QPixmap, QPainter, QLabel, QBrush, QColor
+from PyQt4.QtGui import  QWidget, QPixmap, QPainter, QLabel, QBrush, QColor, QPen
 
 from qgis.core import QgsMapLayer
 
@@ -13,7 +13,9 @@ class LegendWidget(legend_widget, QWidget):
         self.pixmap = None
         self.items = {}
 
-        self.legendareabrush = QBrush(QColor(255,255,255,150))
+        self.legendareabrush = QBrush(QColor(255,255,255,200))
+        self.legendareapen = QPen(QColor(255,255,255,20))
+        self.legendareapen.setWidth(0.5)
 
     def paintEvent(self, event):
         def _drawitem(pixmap, text, postion):
@@ -32,9 +34,13 @@ class LegendWidget(legend_widget, QWidget):
 
         rect = event.rect()
         newrect = QRect(rect)
-        newrect.setWidth(newrect.width() / 2)
+        newwidth = (rect.width() / 100) * 40
+        newrect.setWidth(newwidth)
         painter.setBrush(self.legendareabrush)
+        painter.setPen(self.legendareapen)
         painter.drawRect(newrect)
+
+        painter.setPen(Qt.black)
 
         titley = 50
         itemy = 40
@@ -65,7 +71,7 @@ class LegendWidget(legend_widget, QWidget):
             self.items[layer.name()] = items
 
     def updatelegend(self, canvas):
-        pixmap = QPixmap(canvas.size())
+        pixmap = QPixmap(self.size())
         pixmap.fill(canvas.canvasColor())
         painter = QPainter(pixmap)
         painter.setRenderHints(QPainter.Antialiasing)
