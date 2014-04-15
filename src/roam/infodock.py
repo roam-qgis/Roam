@@ -89,9 +89,11 @@ class InfoDock(infodock_widget, QWidget):
         self.grabGesture(Qt.SwipeGesture)
         self.setAttribute(Qt.WA_AcceptTouchEvents)
         self.editButton.pressed.connect(self.openform)
+        self.editGeomButton.pressed.connect(self.editgeom)
         self.parent().installEventFilter(self)
 
         RoamEvents.selectioncleared.connect(self.clearResults)
+        RoamEvents.editgeometry_complete.connect(self.refreshcurrent)
 
     def eventFilter(self, object, event):
         if event.type() == QEvent.Resize:
@@ -123,6 +125,10 @@ class InfoDock(infodock_widget, QWidget):
     def openform(self):
         cursor = self.selection
         RoamEvents.openfeatureform.emit(cursor.form, cursor.feature)
+
+    def editgeom(self):
+        cursor = self.selection
+        RoamEvents.editgeometry.emit(cursor.form, cursor.feature)
 
     def pageback(self):
         cursor = self.selection

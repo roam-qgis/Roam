@@ -229,6 +229,7 @@ class MainWindow(ui_mainwindow.Ui_MainWindow, QMainWindow):
         RoamEvents.openfeatureform.connect(self.openForm)
         RoamEvents.openkeyboard.connect(self.openkeyboard)
         RoamEvents.selectioncleared.connect(self.clearselection)
+        RoamEvents.editgeometry.connect(self.addforedit)
 
         GPS.gpspostion.connect(self.updatecanvasfromgps)
         GPS.firstfix.connect(self.gpsfirstfix)
@@ -239,6 +240,17 @@ class MainWindow(ui_mainwindow.Ui_MainWindow, QMainWindow):
         self.marker.hide()
 
         self.legendpage.showmap.connect(self.showmap)
+
+        self.editfeaturestack = []
+
+    def addforedit(self, form, feature):
+        self.editfeaturestack.append((form, feature))
+        self.loadform(form)
+        actions = self.getcaptureactions()
+        for action in actions:
+            if action.isdefault:
+                action.trigger()
+                break
 
     def updatelegend(self):
         self.legendpage.updatelegend(self.canvas)
@@ -353,6 +365,8 @@ class MainWindow(ui_mainwindow.Ui_MainWindow, QMainWindow):
         for band in self.selectionbands.itervalues():
             band.reset()
 
+        self.editfeaturestack = []
+
     def highlightfeature(self, layer, feature, features):
         self.clearselection()
         self.highlightselection({layer: features})
@@ -436,6 +450,11 @@ class MainWindow(ui_mainwindow.Ui_MainWindow, QMainWindow):
 
     def showToolError(self, label, message):
         self.bar.pushMessage(label, message, QgsMessageBar.WARNING)
+
+    def getcaptureactions(self):
+        for action in self.projecttoolbar.actions():
+            if action.property('dataentry'):
+                yield action
 
     def clearCapatureTools(self):
         captureselected = False
@@ -543,10 +562,27 @@ class MainWindow(ui_mainwindow.Ui_MainWindow, QMainWindow):
         self.showdataentry()
         self.dataentrywidget.openform(feature=feature, form=form, project=self.project)
 
+    def editfeaturegeometry(self, form, feature, newgeometry):
+        layer = form.QGISLayer
+        layer.startEditing()
+        feature.setGeometry(newgeometry)
+        layer.updateFeature(feature)
+        saved = layer.commitChanges()
+        map(roam.utils.error, layer.commitErrors())
+        self.canvas.refresh()
+        RoamEvents.editgeometry_complete.emit(form, feature)
+
     def addNewFeature(self, form, geometry):
         """
         Add a new new feature to the given layer
         """
+        try:
+            form, feature = self.editfeaturestack.pop()
+            self.editfeaturegeometry(form, feature, newgeometry=geometry)
+            return
+        except IndexError:
+            pass
+
         layer = form.QGISLayer
         fields = layer.pendingFields()
 

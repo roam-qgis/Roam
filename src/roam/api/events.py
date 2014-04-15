@@ -17,6 +17,10 @@ class _Events(QObject):
     # Emit when requesting to open a feature form
     openfeatureform = pyqtSignal(object, QgsFeature)
 
+    editgeometry = pyqtSignal(object, QgsFeature)
+
+    editgeometry_complete = pyqtSignal(object, QgsFeature)
+
     # Emit when you need to open the on screen keyboard
     openkeyboard = pyqtSignal()
 
