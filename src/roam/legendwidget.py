@@ -66,7 +66,7 @@ class LegendWidget(legend_widget, QWidget):
 
             position.setY(currenty + 40)
 
-    def mouseReleaseEvent(self, event):
+    def mousePressEvent(self, event):
         if self.framerect.contains(event.pos()):
             return
 
