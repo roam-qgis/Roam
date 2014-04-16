@@ -28,7 +28,7 @@ from qgis.core import (QgsProjectBadLayerHandler,
                         QgsFeature,
                         QgsFields,
                         QgsGeometry,
-                        QgsRectangle)
+                        QgsRectangle, QGis)
 from qgis.gui import (QgsMessageBar,
                         QgsMapToolZoom,
                         QgsMapToolTouch,
@@ -575,6 +575,10 @@ class MainWindow(ui_mainwindow.Ui_MainWindow, QMainWindow):
         """
         Add a new new feature to the given layer
         """
+        layer = form.QGISLayer
+        if layer.geometryType() in [QGis.WKBMultiLineString, QGis.WKBMultiPoint, QGis.WKBMultiPolygon]:
+            geometry.convertToMultiType()
+
         try:
             form, feature = self.editfeaturestack.pop()
             self.editfeaturegeometry(form, feature, newgeometry=geometry)
