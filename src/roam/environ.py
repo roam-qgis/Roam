@@ -84,8 +84,8 @@ def setup(argv):
         os.environ["QT_PLUGIN_PATH"] = r"C:\OSGeo4W\apps\Qt4\plugins"
         libspath = os.path.join(apppath)
         i18npath = os.path.join(libspath, "i18n")
-        prefixpath = r"C:\OSGeo4W\apps\qgis"
-        settingspath = os.path.join(apppath, "..", "settings.config")
+        prefixpath = os.environ['QGIS_PREFIX_PATH']
+
 
     return RoamApp(argv, apppath, prefixpath, settingspath, libspath, i18npath).init()
 
