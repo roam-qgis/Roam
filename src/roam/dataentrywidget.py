@@ -336,7 +336,7 @@ class DataEntryWidget(dataentry_widget, dataentry_base):
         """
 
         defaults = {}
-        editing = feature.id() > 0
+        editing = feature.id() >= 0
         layer = form.QGISLayer
         if not editing:
             defaults = getdefaults(form.widgetswithdefaults(), feature, layer, self.canvas)

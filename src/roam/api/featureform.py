@@ -353,7 +353,7 @@ class FeatureFormBase(QWidget):
         if not self.feature:
             return True
 
-        return self.feature.id() > 0
+        return self.feature.id() >= 0
 
 
 class FeatureForm(FeatureFormBase):
