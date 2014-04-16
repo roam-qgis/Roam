@@ -191,7 +191,6 @@ class MainWindow(ui_mainwindow.Ui_MainWindow, QMainWindow):
 
         self.menutoolbar.insertWidget(self.actionQuit, sidespacewidget2)
         self.menutoolbar.insertWidget(self.actionProject, sidespacewidget)
-        self.stackedWidget.currentChanged.connect(self.updateUIState)
 
         self.panels = []
 
@@ -657,13 +656,6 @@ class MainWindow(ui_mainwindow.Ui_MainWindow, QMainWindow):
 
     def viewprojects(self):
         self.stackedWidget.setCurrentIndex(1)
-
-    def updateUIState(self, page):
-        """
-        Update the UI state to reflect the currently selected
-        page in the stacked widget
-        """
-        pass
 
     @roam.utils.timeit
     def _readProject(self, doc):

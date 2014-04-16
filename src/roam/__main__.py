@@ -97,7 +97,6 @@ window.loadprojects(projects)
 
 window.actionProject.toggle()
 window.viewprojects()
-window.updateUIState(1)
 window.show()
 
 roam.utils.info("Roam Loaded in {}".format(str(time.time() - start)))
