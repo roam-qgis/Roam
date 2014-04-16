@@ -6,6 +6,7 @@
     <file alias="Text">..\editorwidgets\icons\text.svg</file>
     <file alias="TextBlock">..\editorwidgets\icons\text.svg</file>
     <file alias="Date">..\editorwidgets\icons\date.svg</file>
+     <file alias="Number">..\editorwidgets\icons\number.svg</file>
     <file alias="LineLayer">mIconLineLayer.svg</file>
       <file alias="PointLayer">mIconPointLayer.svg</file>
       <file alias="PolygonLayer">mIconPolygonLayer.svg</file>
