@@ -195,10 +195,10 @@ class MainWindow(ui_mainwindow.Ui_MainWindow, QMainWindow):
 
         self.connectButtons()
 
-        self.band = QgsRubberBand(self.canvas)
-        self.band.setIconSize(20)
-        self.band.setWidth(10)
-        self.band.setColor(QColor(186, 93, 212, 76))
+        self.currentfeatureband = QgsRubberBand(self.canvas)
+        self.currentfeatureband.setIconSize(20)
+        self.currentfeatureband.setWidth(10)
+        self.currentfeatureband.setColor(QColor(186, 93, 212, 76))
 
         self.canvas_page.layout().insertWidget(0, self.projecttoolbar)
         self.dataentryselection = QAction(self.projecttoolbar)
@@ -221,6 +221,7 @@ class MainWindow(ui_mainwindow.Ui_MainWindow, QMainWindow):
         RoamEvents.openkeyboard.connect(self.openkeyboard)
         RoamEvents.selectioncleared.connect(self.clearselection)
         RoamEvents.editgeometry.connect(self.addforedit)
+        RoamEvents.editgeometry_complete.connect(self.on_geometryedit)
         RoamEvents.onShowMessage.connect(self.showUIMessage)
 
         GPS.gpspostion.connect(self.updatecanvasfromgps)
@@ -234,6 +235,7 @@ class MainWindow(ui_mainwindow.Ui_MainWindow, QMainWindow):
         self.legendpage.showmap.connect(self.showmap)
 
         self.editfeaturestack = []
+        self.currentselection = {}
 
     def showUIMessage(self, label, message, level=QgsMessageBar.INFO, time=0, extra=''):
         self.bar.pushMessage(label, message, level, duration=time, extrainfo=extra)
@@ -340,8 +342,25 @@ class MainWindow(ui_mainwindow.Ui_MainWindow, QMainWindow):
         extent = self.canvas.extent()
         self.positionlabel.setText("Map Center: {}".format(extent.center().toString()))
 
+    def on_geometryedit(self, form, feature):
+        layer = form.QGISLayer
+        try:
+            selectedfeatures = self.currentselection[layer]
+            oldfeature = [f for f in selectedfeatures if f.id() == feature.id()][0]
+            self.currentselection[layer].remove(oldfeature)
+            self.currentselection[layer].append(feature)
+        except KeyError:
+            return
+        except IndexError:
+            return
+
+        self.currentfeatureband.setToGeometry(feature.geometry(), layer)
+        self.highlightselection(self.currentselection)
+
+
     def highlightselection(self, results):
         self.clearselection()
+        self.currentselection = results
         for layer, features in results.iteritems():
             band = self.selectionbands[layer]
             band.setColor(QColor(255, 0, 0, 200))
@@ -354,7 +373,7 @@ class MainWindow(ui_mainwindow.Ui_MainWindow, QMainWindow):
 
     def clearselection(self):
         # Clear the main selection rubber band
-        self.band.reset()
+        self.currentfeatureband.reset()
         # Clear the rest
         for band in self.selectionbands.itervalues():
             band.reset()
@@ -364,7 +383,7 @@ class MainWindow(ui_mainwindow.Ui_MainWindow, QMainWindow):
     def highlightfeature(self, layer, feature, features):
         self.clearselection()
         self.highlightselection({layer: features})
-        self.band.setToGeometry(feature.geometry(), layer)
+        self.currentfeatureband.setToGeometry(feature.geometry(), layer)
 
     def showmap(self):
         self.actionMap.setVisible(True)
@@ -524,7 +543,7 @@ class MainWindow(ui_mainwindow.Ui_MainWindow, QMainWindow):
         self.bar.pushError("Error when saving changes.", messages)
 
     def cleartempobjects(self):
-        self.band.reset()
+        self.currentfeatureband.reset()
         self.clearToolRubberBand()
 
     def formrejected(self, message, level):
@@ -538,7 +557,7 @@ class MainWindow(ui_mainwindow.Ui_MainWindow, QMainWindow):
         """
         Open the form that is assigned to the layer
         """
-        self.band.setToGeometry(feature.geometry(), form.QGISLayer)
+        self.currentfeatureband.setToGeometry(feature.geometry(), form.QGISLayer)
         self.showdataentry()
         self.dataentrywidget.openform(feature=feature, form=form, project=self.project)
 
