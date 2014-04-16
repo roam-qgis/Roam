@@ -12,9 +12,10 @@ class LegendWidget(legend_widget, QWidget):
     def __init__(self, parent=None):
         super(LegendWidget, self).__init__(parent)
         self.setupUi(self)
-        self.pixmap = None
+        self.pixmap = QPixmap()
         self.items = {}
         self.framerect = QRect()
+        self._lastextent = None
 
         self.legendareabrush = QBrush(QColor(255,255,255,200))
         self.legendareapen = QPen(QColor(255,255,255,20))
@@ -81,11 +82,16 @@ class LegendWidget(legend_widget, QWidget):
 
             items = layer.rendererV2().legendSymbologyItems(QSize(32, 32))
             self.items[layer.name()] = items
+        self.update()
 
-    def updatelegend(self, canvas):
-        if canvas.isDrawing():
+    def updatecanvas(self, canvas):
+        """
+        Update the canvas object for the legend background.
+        """
+        if canvas.isDrawing() or self._lastextent == canvas.extent():
             return
 
+        self._lastextent = canvas.extent()
         pixmap = QPixmap(self.size())
         pixmap.fill(canvas.canvasColor())
         painter = QPainter(pixmap)

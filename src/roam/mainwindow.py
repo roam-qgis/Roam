@@ -250,9 +250,7 @@ class MainWindow(ui_mainwindow.Ui_MainWindow, QMainWindow):
                 break
 
     def updatelegend(self):
-        self.legendpage.updatelegend(self.canvas)
-        layers = self.project.legendlayersmapping().values()
-        self.legendpage.updateitems(layers)
+        self.legendpage.updatecanvas(self.canvas)
 
     def gpsfirstfix(self, postion, gpsinfo):
         zoomtolocation = roam.config.settings.get('gpszoomonfix', True)
@@ -730,6 +728,8 @@ class MainWindow(ui_mainwindow.Ui_MainWindow, QMainWindow):
             self.panels.append(panel)
 
         self.infoTool.selectionlayers = self.project.selectlayersmapping()
+        layers = self.project.legendlayersmapping().values()
+        self.legendpage.updateitems(layers)
         self.actionPan.trigger()
 
     #noinspection PyArgumentList
