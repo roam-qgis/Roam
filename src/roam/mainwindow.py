@@ -59,6 +59,7 @@ import roam.messagebaritems
 import roam.utils
 import roam.htmlviewer
 import roam.api.featureform
+import roam.config
 
 
 class BadLayerHandler(QgsProjectBadLayerHandler):
@@ -85,10 +86,9 @@ class MainWindow(ui_mainwindow.Ui_MainWindow, QMainWindow):
     Main application window
     """
 
-    def __init__(self, settings):
+    def __init__(self):
         super(MainWindow, self).__init__()
         self.setupUi(self)
-        self.settings = settings
         self.canvaslayers = []
         self.layerbuttons = []
         self.project = None
@@ -125,14 +125,13 @@ class MainWindow(ui_mainwindow.Ui_MainWindow, QMainWindow):
 
         self.actionLegend.triggered.connect(self.updatelegend)
 
-        self.actionGPS = GPSAction(":/icons/gps", self.canvas, self.settings, self)
+        self.actionGPS = GPSAction(":/icons/gps", self.canvas, self)
         self.projecttoolbar.addAction(self.actionGPS)
 
         self.projectwidget.requestOpenProject.connect(self.loadProject)
         QgsProject.instance().readProject.connect(self._readProject)
 
         self.gpswidget.setgps(GPS)
-        self.settingswidget.settings = settings
 
         self.actionSettings.toggled.connect(self.settingswidget.populateControls)
         self.actionSettings.toggled.connect(self.settingswidget.readSettings)
@@ -254,7 +253,7 @@ class MainWindow(ui_mainwindow.Ui_MainWindow, QMainWindow):
         self.legendpage.updateitems(layers)
 
     def gpsfirstfix(self, postion, gpsinfo):
-        zoomtolocation = self.settings.settings.get('gpszoomonfix', True)
+        zoomtolocation = roam.config.settings.get('gpszoomonfix', True)
         if zoomtolocation:
             self.canvas.zoomScale(1000)
 
@@ -281,7 +280,7 @@ class MainWindow(ui_mainwindow.Ui_MainWindow, QMainWindow):
         self.gpslabel.setText("GPS Not Active")
 
     def openkeyboard(self):
-        if self.settings.settings.get('keyboard', True):
+        if roam.config.settings.get('keyboard', True):
             cmd = r'C:\Program Files\Common Files\Microsoft Shared\ink\TabTip.exe'
             os.startfile(cmd)
 
@@ -334,7 +333,6 @@ class MainWindow(ui_mainwindow.Ui_MainWindow, QMainWindow):
         viewer.openimage(pixmap)
 
     def settingsupdated(self, settings):
-        settings.save()
         self.show()
         self.actionGPS.updateGPSPort()
 
@@ -648,7 +646,7 @@ class MainWindow(ui_mainwindow.Ui_MainWindow, QMainWindow):
         Override show method. Handles showing the app in fullscreen
         mode or just maximized
         """
-        fullscreen = self.settings.settings.get("fullscreen", False)
+        fullscreen = roam.config.settings.get("fullscreen", False)
         if fullscreen:
             self.showFullScreen()
         else:

@@ -3,6 +3,7 @@ from qgis.core import QgsGPSDetector, QGis
 
 import roam
 import roam.utils as utils
+import roam.config
 from roam.ui.uifiles import settings_widget, settings_base
 
 
@@ -22,14 +23,11 @@ class SettingsWidget(settings_widget, settings_base):
 
     @property
     def settings(self):
-        return self._settings.settings
-
-    @settings.setter
-    def settings(self, value):
-        self._settings = value
+        return roam.config.settings
 
     def notifysettingsupdate(self):
-        self.settingsupdated.emit(self._settings)
+        roam.config.save()
+        self.settingsupdated.emit(self.settings)
 
     def gpslocationCheck_toggled(self, checked):
         self.settings['gpszoomonfix'] = checked

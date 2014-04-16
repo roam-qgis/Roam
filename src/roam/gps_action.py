@@ -11,6 +11,8 @@ from roam import resources_rc, utils
 from roam.utils import log
 from roam.api import RoamEvents, GPS
 
+import roam.config
+
 if os.name == 'nt':
     try:
         from power import PowerState
@@ -23,12 +25,11 @@ if os.name == 'nt':
 class GPSAction(QAction):
     gpsfixed = pyqtSignal(bool)
 
-    def __init__(self, icon, canvas, settings, parent):
+    def __init__(self, icon, canvas, parent):
         super(GPSAction, self).__init__(QIcon(icon),
                                         QApplication.translate("GPSAction", "Enable GPS", None, QApplication.UnicodeUTF8),
                                         parent)
         self.canvas = canvas
-        self.settings = settings
         self.triggered.connect(self.connectGPS)
         GPS.gpsfixed.connect(self.fixed)
         GPS.gpsfailed.connect(self.failed)
@@ -37,7 +38,7 @@ class GPSAction(QAction):
     def updateGPSPort(self):
         return
 
-        if self.isConnected and not self.settings.settings['gpsport'] == self.currentport:
+        if self.isConnected and not roam.config.settings['gpsport'] == self.currentport:
             self.disconnectGPS()
             self.connectGPS()
 
@@ -47,7 +48,7 @@ class GPSAction(QAction):
             self.setIcon(QIcon(":/icons/gps"))
             self.setIconText(self.tr("Connecting.."))
             self.setEnabled(False)
-            portname = self.settings.settings.get("gpsport", '')
+            portname = roam.config.settings.get("gpsport", '')
             GPS.connectGPS(portname)
         else:
             GPS.disconnectGPS()

@@ -68,28 +68,14 @@ roam.utils.info(QgsApplication.libraryPaths())
 QApplication.setStyle("Plastique")
 QApplication.setFont(QFont('Segoe UI'))
 
-class Settings:
-    def __init__(self, path):
-        self.path = path
-        self.settings = {}
+import roam.config
+roam.config.load(roamapp.settingspath)
 
-    def load(self):
-        settingspath = self.path
-        with open(settingspath, 'r') as f:
-            self.settings = yaml.load(f)
-
-    def save(self):
-        with open(self.path, 'w') as f:
-            yaml.dump(data=self.settings, stream=f, default_flow_style=False)
-
-settings = Settings(roamapp.settingspath)
-settings.load()
-
-window = MainWindow(settings=settings)
+window = MainWindow()
 app.setActiveWindow(window)
 sys.excepthook = partial(excepthook, window.raiseerror)
 
-projectpaths = roam.environ.projectpaths(sys.argv, settings.settings)
+projectpaths = roam.environ.projectpaths(sys.argv, roam.config.settings)
 roam.utils.log("Loading projects from")
 roam.utils.log(projectpaths)
 projects = roam.project.getProjects(projectpaths)
