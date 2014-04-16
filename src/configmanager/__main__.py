@@ -14,7 +14,6 @@ import roam.resources_rc
 
 from configmanager.ui.configmanagerdialog import ConfigManagerDialog
 
-import configmanager.settings
 import configmanager.logger as logger
 
 logger.info("Loading Roam Config Manager")
@@ -36,7 +35,8 @@ QApplication.setFont(QFont('Segoe UI'))
 QApplication.setWindowIcon(QIcon(':/branding/logo'))
 QApplication.setApplicationName("IntraMaps Roam Config Manager")
 
-configmanager.settings.load(roamapp.settingspath)
+import roam.config
+roam.config.load(roamapp.settingspath)
 
 projectpaths = roam.environ.projectpaths(sys.argv)
 projects = list(roam.project.getProjects(projectpaths))
@@ -52,7 +52,7 @@ dialog.showMaximized()
 
 app.exec_()
 
-configmanager.settings.save(roamapp.settingspath)
+roam.config.save()
 
 QgsApplication.exitQgis()
 sys.exit()

@@ -22,8 +22,7 @@ import roam.projectparser
 import roam.yaml
 import roam
 import roam.project
-
-import configmanager.settings as settings
+import roam.config
 
 readonlyvalues = [('Never', 'never'),
                   ('Always', 'always'),
@@ -165,7 +164,7 @@ class ProjectWidget(Ui_Form, QWidget):
     def openinqgis(self):
         projectfile = self.project.projectfile
         qgislocation = r'C:\OSGeo4W\bin\qgis.bat'
-        qgislocation = settings.settings.setdefault('configmanager', {}) \
+        qgislocation = roam.config.settings.setdefault('configmanager', {}) \
                                         .setdefault('qgislocation', qgislocation)
 
         try:
