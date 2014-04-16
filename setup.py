@@ -12,9 +12,14 @@ import glob
 import os
 import sys
 import shutil
+import sys
+from sys import platform
+
+curpath = os.path.dirname(os.path.realpath(__file__))
 
 # You are not meant to do this but we don't install using
 # setup.py so no big deal.
+sys.path.append(os.path.join(curpath, 'src'))
 import roam
 
 try:
@@ -35,7 +40,6 @@ svgs = os.path.join(osgeopath, "apps", qgisname, "svg")
 qgispluginpath = os.path.join(osgeopath, "apps", qgisname, "plugins", "*provider.dll")
 gdalsharepath = os.path.join(osgeopath, 'share', 'gdal')
 
-curpath = os.path.dirname(os.path.realpath(__file__))
 appsrcopyFilesath = os.path.join(curpath, "src", 'roam')
 srceditorwidgets = os.path.join(curpath, "src", 'roam', 'editorwidgets')
 projectinstallerpath = os.path.join(curpath, "src", 'project_installer')
@@ -122,6 +126,9 @@ configmanager_target = dict(
 
 
 def buildqtfiles():
+    pyuic4 = 'pyuic4'
+    if platform == 'win32':
+        pyuic4 += '.bat'
     for folder in [appsrcopyFilesath, projectinstallerpath, configmangerpath]:
         for root, dirs, files in os.walk(folder):
             for file in files:
@@ -129,13 +136,13 @@ def buildqtfiles():
                 file, ext = os.path.splitext(filepath)
                 if ext == '.ui':
                     newfile = file + ".py"
-                    run('pyuic4.bat', '-o', newfile, filepath, shell=True)
+                    run(pyuic4, '-o', newfile, filepath, shell=True)
                 elif ext == '.qrc':
                     newfile = file + "_rc.py"
                     run('pyrcc4', '-o', newfile, filepath)
                 elif ext == '.ts':
                     newfile = file + '.qm'
-                    run('lrelease', filepath, '-qm', newfile)
+                    #run('lrelease', filepath, '-qm', newfile)
 
 
 class qtbuild(build):

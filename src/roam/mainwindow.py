@@ -1,5 +1,6 @@
 from functools import partial
 from collections import defaultdict
+from subprocess import Popen
 import getpass
 import traceback
 import os
@@ -31,7 +32,6 @@ from qgis.core import (QgsProjectBadLayerHandler,
                         QgsRectangle, QGis)
 from qgis.gui import (QgsMessageBar,
                         QgsMapToolZoom,
-                        QgsMapToolTouch,
                         QgsRubberBand,
                         QgsMapCanvas)
 
@@ -60,6 +60,13 @@ import roam.utils
 import roam.htmlviewer
 import roam.api.featureform
 import roam.config
+
+try:
+   from qgis.gui import QgsMapToolTouch
+   PanTool = TouchMapTool
+except ImportError:
+   from qgis.gui import QgsMapToolPan
+   PanTool = QgsMapToolPan
 
 
 class BadLayerHandler(QgsProjectBadLayerHandler):
@@ -280,9 +287,15 @@ class MainWindow(ui_mainwindow.Ui_MainWindow, QMainWindow):
         self.gpslabel.setText("GPS Not Active")
 
     def openkeyboard(self):
-        if roam.config.settings.get('keyboard', True):
+        if not roam.config.settings.get('keyboard', True):
+	    return
+
+	if sys.platform == 'win32':
             cmd = r'C:\Program Files\Common Files\Microsoft Shared\ink\TabTip.exe'
-            os.startfile(cmd)
+	else:
+	    cmd = 'onboard'
+
+        Popen(cmd)
 
     def selectdataentry(self):
         forms = self.project.forms
@@ -434,7 +447,7 @@ class MainWindow(ui_mainwindow.Ui_MainWindow, QMainWindow):
 
         self.zoomInTool = QgsMapToolZoom(self.canvas, False)
         self.zoomOutTool = QgsMapToolZoom(self.canvas, True)
-        self.panTool = TouchMapTool(self.canvas)
+        self.panTool = PanTool(self.canvas)
         self.moveTool = MoveTool(self.canvas, [])
         self.infoTool = InfoTool(self.canvas)
 

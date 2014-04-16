@@ -34,7 +34,7 @@ class RubberBand(QgsRubberBand):
         #mode = self.canvas.mapRenderer().hasCrsTransformEnabled()
         #self.distancearea.setEllipsoidalMode(ellispoidemode)
 
-    def paint(self, p, option, widget):
+    def paint(self, p, *args):
         super(RubberBand, self).paint(p)
 
         offset = QPointF(5,5)

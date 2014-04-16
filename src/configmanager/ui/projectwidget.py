@@ -1,3 +1,4 @@
+import sys
 import os
 import copy
 import subprocess
@@ -5,8 +6,8 @@ import shutil
 
 from datetime import datetime
 
-from PyQt4.QtCore import Qt, QDir, QFileInfo, pyqtSignal, QModelIndex, QFileSystemWatcher
-from PyQt4.QtGui import QWidget, QStandardItemModel, QStandardItem, QIcon, QMessageBox, QPixmap
+from PyQt4.QtCore import Qt, QDir, QFileInfo, pyqtSignal, QModelIndex, QFileSystemWatcher, QUrl
+from PyQt4.QtGui import QWidget, QStandardItemModel, QStandardItem, QIcon, QMessageBox, QPixmap, QDesktopServices
 
 from qgis.core import QgsProject, QgsMapLayerRegistry, QgsPalLabeling, QGis
 from qgis.gui import QgsMapCanvas, QgsExpressionBuilderDialog, QgsMessageBar
@@ -33,11 +34,14 @@ def layer(name):
     return QgsMapLayerRegistry.instance.mapLayersByName(name)[0]
 
 def openfolder(folder):
-    subprocess.Popen('explorer "{}"'.format(folder))
+    QDesktopServices.openUrl(QUrl.fromLocalFile(folder)) 
 
 def openqgis(project, qgislocation):
     # TODO This needs to look in other places for QGIS.
-    subprocess.Popen([qgislocation, "--noplugins", project])
+    cmd = 'qgis'
+    if sys.platform == 'win32':
+        cmd = qgislocation
+    subprocess.Popen([cmd, "--noplugins", project])
 
 class ProjectWidget(Ui_Form, QWidget):
     SampleWidgetRole = Qt.UserRole + 1

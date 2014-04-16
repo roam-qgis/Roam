@@ -112,4 +112,3 @@ class HtmlViewerWidget(QWidget):
         templte = Template(html)
         html = updateTemplate(data, templte)
         self.view.setHtml(html, templates.baseurl)
-

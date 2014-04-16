@@ -244,12 +244,13 @@ class Project(object):
 
     @classmethod
     def from_folder(cls, rootfolder):
-        settings = os.path.join(rootfolder, "settings.config")
+        settingspath = os.path.join(rootfolder, "settings.config")
         project = cls(rootfolder, {})
         try:
-            with open(settings, 'r') as f:
+            with open(settingspath, 'r') as f:
                 settings = yaml.load(f)
-                project.settings = settings
+            project.settings = settings
+            print settings
         except IOError as e:
             project.valid = False
             project.error = "No settings.config found in {} project folder".format(rootfolder)
