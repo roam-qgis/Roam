@@ -230,13 +230,23 @@ class DataEntryWidget(dataentry_widget, dataentry_base):
         self.featuredeleted.emit()
 
     def accept(self):
+        fields = [w['field'] for w in self.featureform.formconfig['widgets']]
+
         def updatefeautrefields(feature):
             for key, value in values.iteritems():
                 try:
-                    feature[key] = value
+                    if key in fields:
+                        feature[key] = field_or_null(value)
+                    else:
+                        feature[key] = value
                 except KeyError:
                     continue
             return feature
+
+        def field_or_null(field):
+            if field == '' or field is None or isinstance(field, QPyNullVariant):
+                return QPyNullVariant(str)
+            return field
 
         if not self.featureform.allpassing:
             RoamEvents.raisemessage("Missing fields", "Some fields are still required.",
