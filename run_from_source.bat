@@ -5,4 +5,4 @@ ECHO If you get errors make sure you run build.bat first to build the resources 
 
 pushd %~dp0
 CALL setenv.bat
-python src\roam\__main__.py "%~dp0\src\projects"
+python src\roam "%~dp0\src\projects"

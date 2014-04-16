@@ -8,6 +8,7 @@ import importlib
 import sys
 
 from datetime import datetime
+from collections import OrderedDict
 
 from PyQt4.QtGui import QAction, QIcon
 
@@ -16,7 +17,7 @@ from qgis.core import QgsMapLayerRegistry, QGis, QgsTolerance, QgsVectorLayer, Q
 from roam.maptools import PointTool, PolygonTool, PolylineTool
 from roam.utils import log
 from roam.syncing import replication
-from roam.featureform import FeatureForm
+from roam.api import FeatureForm
 from roam.structs import OrderedDictYAMLLoader
 
 import roam.utils
@@ -55,24 +56,25 @@ def checkversion(roamversion, projectversion):
     return majormatch
 
 
-def getProjects(projectpath):
+def getProjects(paths):
     """
     Return QMapProjects inside the set path.  
     Each folder will be considered a QMap project
     """
-    folders = (sorted([os.path.join(projectpath, item)
-                       for item in os.walk(projectpath).next()[1]]))
-    
-    for folder in folders:
-        if os.path.basename(folder).startswith("_"):
-            # Ignore hidden folders.
-            continue
-        project = Project.from_folder(folder)
-        if not checkversion(roam.__version__, project.version):
-            project.valid = False
-            project.error = "Version mismatch"
+    for projectpath in paths:
+        folders = (sorted([os.path.join(projectpath, item)
+                           for item in os.walk(projectpath).next()[1]]))
 
-        yield project
+        for folder in folders:
+            if os.path.basename(folder).startswith("_"):
+                # Ignore hidden folders.
+                continue
+            project = Project.from_folder(folder)
+            if not checkversion(roam.__version__, project.version):
+                project.valid = False
+                project.error = "Version mismatch"
+
+            yield project
 
 
 
@@ -85,6 +87,7 @@ class Form(object):
         self.errors = []
         self._qgislayer = None
         self._formclass = None
+        self._action = None
 
     @classmethod
     def from_config(cls, name, config, folder):
@@ -100,6 +103,13 @@ class Form(object):
     @property
     def name(self):
         return self._name
+
+    def createuiaction(self):
+        action = QAction(QIcon(self.icon), self.icontext, None)
+        if not self.valid[0]:
+            action.setEnabled(False)
+            action.setText(action.text() + " (invalid)")
+        return action
 
     @property
     def icontext(self):
@@ -186,11 +196,11 @@ class Form(object):
     def formclass(self):
         return self._formclass or FeatureForm
 
-    def create_featureform(self, feature, defaults):
+    def create_featureform(self, feature, defaults, *args, **kwargs):
         """
         Creates and returns the feature form for this Roam form
         """
-        return self.formclass.from_form(self, self.settings, feature, defaults)
+        return self.formclass.from_form(self, self.settings, feature, defaults, *args, **kwargs)
 
     def widgetswithdefaults(self):
         """
@@ -201,9 +211,13 @@ class Form(object):
                 yield config['field'], config
 
     def _loadmodule(self):
+        rootfolder = os.path.abspath(os.path.join(self.folder, '..', '..'))
         projectfolder = os.path.abspath(os.path.join(self.folder, '..'))
+        rootname = os.path.basename(rootfolder)
         projectname = os.path.basename(projectfolder)
-        name = "{project}.{formfolder}".format(project=projectname, formfolder=self.name)
+        name = "{root}.{project}.{formfolder}".format(root=rootname,
+                                                      project=projectname,
+                                                      formfolder=self.name)
         try:
             self._module = importlib.import_module(name)
         except ImportError as err:
@@ -221,7 +235,7 @@ class Project(object):
     def __init__(self, rootfolder, settings):
         self.folder = rootfolder
         self._project = None
-        self._splash = None 
+        self._splash = None
         self.valid = True
         self.settings = settings
         self._forms = []
@@ -348,6 +362,37 @@ class Project(object):
     @property
     def selectlayers(self):
         return self.settings.get('selectlayers', [])
+
+    def _layersfromlist(self, layerlist):
+        qgislayers = QgsMapLayerRegistry.instance().mapLayers().values()
+        qgislayers = {layer.name(): layer for layer in qgislayers if layer.type() == QgsMapLayer.VectorLayer}
+        if not layerlist:
+            return qgislayers
+        else:
+            _qgislayers = OrderedDict()
+            for layername in layerlist:
+                try:
+                    _qgislayers[layername] = qgislayers[layername]
+                except KeyError:
+                    continue
+            return _qgislayers
+
+    def selectlayersmapping(self):
+        """
+        Return the mapping between the select layers listed in settings
+        and the QGIS layer itself.
+
+        If no select layers are found in the settings this function will return
+        all layers in the project
+        """
+        return self._layersfromlist(self.selectlayers)
+
+    @property
+    def legendlayers(self):
+        return self.settings.get('legendlayers', [])
+
+    def legendlayersmapping(self):
+        return self._layersfromlist(self.legendlayers)
 
     def historyenabled(self, layer):
         return layer.name() in self.settings.get('historylayers', [])

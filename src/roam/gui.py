@@ -1,6 +1,12 @@
 from PyQt4.QtGui import QToolBar
 from PyQt4.QtCore import Qt
 
+from roam.legendwidget import LegendWidget
+from roam.gpswidget import GPSWidget
+from roam.syncwidget import SyncWidget
+from roam.settingswidget import SettingsWidget
+from roam.listmodulesdialog import ProjectsWidget
+
 
 class HideableToolbar(QToolBar):
     def __init__(self, parent=None):

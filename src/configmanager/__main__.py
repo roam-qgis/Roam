@@ -7,9 +7,6 @@ from qgis.core import QgsApplication, QgsProviderRegistry, QGis
 
 from PyQt4.QtGui import QApplication, QFont, QIcon
 
-apppath = os.path.dirname(os.path.realpath(sys.argv[0]))
-sys.path.append(apppath)
-
 import roam
 import roam.environ
 import roam.project
@@ -17,7 +14,6 @@ import roam.resources_rc
 
 from configmanager.ui.configmanagerdialog import ConfigManagerDialog
 
-import configmanager.settings
 import configmanager.logger as logger
 
 logger.info("Loading Roam Config Manager")
@@ -39,23 +35,24 @@ QApplication.setFont(QFont('Segoe UI'))
 QApplication.setWindowIcon(QIcon(':/branding/logo'))
 QApplication.setApplicationName("IntraMaps Roam Config Manager")
 
-configmanager.settings.load(roamapp.settingspath)
+import roam.config
+roam.config.load(roamapp.settingspath)
 
-projectpath = roam.environ.projectpath(sys.argv, roamapp)
-projects = list(roam.project.getProjects(projectpath))
+projectpaths = roam.environ.projectpaths(sys.argv)
+projects = list(roam.project.getProjects(projectpaths))
 
 def excepthook(errorhandler, exctype, value, traceback):
     logger.error("Uncaught exception", exc_info=(exctype, value, traceback))
     errorhandler(exctype, value, traceback)
 
-dialog = ConfigManagerDialog(projectpath)
+dialog = ConfigManagerDialog(projectpaths[0])
 sys.excepthook = partial(excepthook, dialog.raiseerror)
 dialog.loadprojects(projects)
 dialog.showMaximized()
 
 app.exec_()
 
-configmanager.settings.save(roamapp.settingspath)
+roam.config.save()
 
 QgsApplication.exitQgis()
 sys.exit()

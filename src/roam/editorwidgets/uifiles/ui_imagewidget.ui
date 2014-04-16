@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>94</width>
-    <height>84</height>
+    <width>141</width>
+    <height>112</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -41,7 +41,7 @@
    <property name="spacing">
     <number>0</number>
    </property>
-   <item row="0" column="0" colspan="3">
+   <item row="0" column="0" colspan="4">
     <widget class="QLabel" name="image">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
@@ -62,10 +62,10 @@
       <enum>Qt::RichText</enum>
      </property>
      <property name="pixmap">
-      <pixmap resource="images.qrc">:/images/images/add.png</pixmap>
+      <pixmap resource="../../resources.qrc">:/widgets/add</pixmap>
      </property>
      <property name="scaledContents">
-      <bool>true</bool>
+      <bool>false</bool>
      </property>
      <property name="alignment">
       <set>Qt::AlignCenter</set>
@@ -96,13 +96,13 @@
       <string/>
      </property>
      <property name="icon">
-      <iconset resource="images.qrc">
-       <normaloff>:/images/images/reload.png</normaloff>:/images/images/reload.png</iconset>
+      <iconset resource="../../resources.qrc">
+       <normaloff>:/widgets/reload</normaloff>:/widgets/reload</iconset>
      </property>
      <property name="iconSize">
       <size>
-       <width>18</width>
-       <height>18</height>
+       <width>24</width>
+       <height>24</height>
       </size>
      </property>
      <property name="flat">
@@ -110,7 +110,7 @@
      </property>
     </widget>
    </item>
-   <item row="1" column="2">
+   <item row="1" column="3">
     <widget class="QPushButton" name="deletebutton">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
@@ -131,13 +131,13 @@
       <string/>
      </property>
      <property name="icon">
-      <iconset resource="images.qrc">
-       <normaloff>:/images/images/delete.png</normaloff>:/images/images/delete.png</iconset>
+      <iconset resource="../../resources.qrc">
+       <normaloff>:/icons/remove</normaloff>:/icons/remove</iconset>
      </property>
      <property name="iconSize">
       <size>
-       <width>18</width>
-       <height>18</height>
+       <width>24</width>
+       <height>24</height>
       </size>
      </property>
      <property name="flat">
@@ -145,7 +145,7 @@
      </property>
     </widget>
    </item>
-   <item row="1" column="1">
+   <item row="1" column="2">
     <spacer name="horizontalSpacer">
      <property name="orientation">
       <enum>Qt::Horizontal</enum>
@@ -158,10 +158,46 @@
      </property>
     </spacer>
    </item>
+   <item row="1" column="1">
+    <widget class="QPushButton" name="editButton">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="maximumSize">
+      <size>
+       <width>40</width>
+       <height>40</height>
+      </size>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">border-color: none;</string>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+     <property name="icon">
+      <iconset resource="../../resources.qrc">
+       <normaloff>:/widgets/blue</normaloff>:/widgets/blue</iconset>
+     </property>
+     <property name="iconSize">
+      <size>
+       <width>24</width>
+       <height>24</height>
+      </size>
+     </property>
+     <property name="flat">
+      <bool>true</bool>
+     </property>
+    </widget>
+   </item>
   </layout>
  </widget>
  <resources>
-  <include location="images.qrc"/>
+  <include location="../../resources.qrc"/>
+  <include location="../../resources.qrc"/>
  </resources>
  <connections/>
 </ui>

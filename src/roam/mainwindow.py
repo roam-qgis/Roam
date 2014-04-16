@@ -4,8 +4,10 @@ import getpass
 import traceback
 import os
 
+
 from PyQt4.QtCore import Qt, QFileInfo, QDir, QSize
 from PyQt4.QtGui import (QActionGroup,
+                        QApplication,
                         QWidget,
                         QSizePolicy,
                         QLabel,
@@ -17,7 +19,7 @@ from PyQt4.QtGui import (QActionGroup,
                         QIcon,
                         QComboBox,
                         QAction,
-                        QCursor, QFrame, QDesktopServices)
+                        QCursor, QFrame, QDesktopServices, QToolButton, QPushButton)
 from qgis.core import (QgsProjectBadLayerHandler,
                         QgsPalLabeling,
                         QgsMapLayerRegistry,
@@ -25,15 +27,16 @@ from qgis.core import (QgsProjectBadLayerHandler,
                         QgsMapLayer,
                         QgsFeature,
                         QgsFields,
-                        QgsGeometry)
+                        QgsGeometry,
+                        QgsRectangle, QGis)
 from qgis.gui import (QgsMessageBar,
                         QgsMapToolZoom,
                         QgsRubberBand,
                         QgsMapCanvas)
 
-from roam.gps_action import GPSAction
+
+from roam.gps_action import GPSAction, GPSMarker
 from roam.dataentrywidget import DataEntryWidget
-from roam.ui.uifiles import mainwindow_widget, mainwindow_base
 from roam.listmodulesdialog import ProjectsWidget
 from roam.settingswidget import SettingsWidget
 from roam.projectparser import ProjectParser
@@ -43,19 +46,27 @@ from roam.infodock import InfoDock
 from roam.syncwidget import SyncWidget
 from roam.helpviewdialog import HelpPage
 from roam.biglist import BigList
+from roam.popupdialogs import PickActionDialog
 from roam.imageviewerwidget import ImageViewer
+from roam.gpswidget import GPSWidget
+from roam.api import RoamEvents, GPS
+from roam.ui import ui_mainwindow
+from PyQt4.QtGui import QMainWindow
+
 
 import roam.messagebaritems
 import roam.utils
 import roam.htmlviewer
-import roam.featureform
+import roam.api.featureform
+import roam.config
 
 try:
-    from qgis.gui import QgsMapToolTouch
-    PanTool = TouchMapTool
+   from qgis.gui import QgsMapToolTouch
+   PanTool = TouchMapTool
 except ImportError:
-    from qgis.gui import QgsMapToolPan
-    PanTool = QgsMapToolPan
+   from qgis.gui import QgsMapToolPan
+   PanTool = QgsMapToolPan
+
 
 class BadLayerHandler(QgsProjectBadLayerHandler):
     """
@@ -76,16 +87,14 @@ class BadLayerHandler(QgsProjectBadLayerHandler):
         self.callback(layers)
 
 
-class MainWindow(mainwindow_widget, mainwindow_base):
+class MainWindow(ui_mainwindow.Ui_MainWindow, QMainWindow):
     """
     Main application window
     """
 
-    def __init__(self, settings):
+    def __init__(self):
         super(MainWindow, self).__init__()
         self.setupUi(self)
-        self.settings = settings
-        roam.featureform.settings = settings.settings
         self.canvaslayers = []
         self.layerbuttons = []
         self.project = None
@@ -93,21 +102,24 @@ class MainWindow(mainwindow_widget, mainwindow_base):
         self.canvas.setCanvasColor(Qt.white)
         self.canvas.enableAntiAliasing(True)
         self.canvas.setWheelAction(QgsMapCanvas.WheelZoomToMouseCursor)
-        self.bar = roam.messagebaritems.MessageBar(self)
+        self.bar = roam.messagebaritems.MessageBar(self.centralwidget)
 
         self.actionMap.setVisible(False)
+        self.actionLegend.setVisible(False)
 
         pal = QgsPalLabeling()
         self.canvas.mapRenderer().setLabelingEngine(pal)
         self.canvas.setFrameStyle(QFrame.NoFrame)
+
         self.menuGroup = QActionGroup(self)
         self.menuGroup.setExclusive(True)
-
         self.menuGroup.addAction(self.actionMap)
         self.menuGroup.addAction(self.actionDataEntry)
+        self.menuGroup.addAction(self.actionLegend)
         self.menuGroup.addAction(self.actionProject)
         self.menuGroup.addAction(self.actionSync)
         self.menuGroup.addAction(self.actionSettings)
+        self.menuGroup.addAction(self.actionGPS)
         self.menuGroup.triggered.connect(self.updatePage)
 
         self.editgroup = QActionGroup(self)
@@ -117,20 +129,16 @@ class MainWindow(mainwindow_widget, mainwindow_base):
         self.editgroup.addAction(self.actionZoom_Out)
         self.editgroup.addAction(self.actionInfo)
 
-        #TODO Extract GPS out into a service and remove UI stuff
-        self.actionGPS = GPSAction(":/icons/gps", self.canvas, self.settings, self)
+        self.actionLegend.triggered.connect(self.updatelegend)
+
+        self.actionGPS = GPSAction(":/icons/gps", self.canvas, self)
         self.projecttoolbar.addAction(self.actionGPS)
 
-        self.projectwidget = ProjectsWidget(self)
         self.projectwidget.requestOpenProject.connect(self.loadProject)
         QgsProject.instance().readProject.connect(self._readProject)
-        self.project_page.layout().addWidget(self.projectwidget)
 
-        self.syncwidget = SyncWidget()
-        self.syncpage.layout().addWidget(self.syncwidget)
+        self.gpswidget.setgps(GPS)
 
-        self.settingswidget = SettingsWidget(settings, self)
-        self.settings_page.layout().addWidget(self.settingswidget)
         self.actionSettings.toggled.connect(self.settingswidget.populateControls)
         self.actionSettings.toggled.connect(self.settingswidget.readSettings)
         self.settingswidget.settingsupdated.connect(self.settingsupdated)
@@ -143,7 +151,6 @@ class MainWindow(mainwindow_widget, mainwindow_base):
         self.dataentrywidget.featuredeleted.connect(self.featuredeleted)
         self.dataentrywidget.failedsave.connect(self.failSave)
         self.dataentrywidget.helprequest.connect(self.showhelp)
-        self.dataentrywidget.openimage.connect(self.openimage)
 
         def createSpacer(width=0, height=0):
             widget = QWidget()
@@ -175,62 +182,132 @@ class MainWindow(mainwindow_widget, mainwindow_base):
         self.projectlabel = createlabel("Project: {project}")
         self.userlabel = createlabel("User: {user}".format(user=getpass.getuser()))
         self.positionlabel = createlabel('')
+        self.gpslabel = createlabel("GPS: Not active")
         self.statusbar.addWidget(self.projectlabel)
         self.statusbar.addWidget(self.userlabel)
         spacer = createSpacer()
+        spacer2 = createSpacer()
         spacer.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
+        spacer2.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
         self.statusbar.addWidget(spacer)
         self.statusbar.addWidget(self.positionlabel)
+        self.statusbar.addWidget(spacer2)
+        self.statusbar.addWidget(self.gpslabel)
 
         self.menutoolbar.insertWidget(self.actionQuit, sidespacewidget2)
         self.menutoolbar.insertWidget(self.actionProject, sidespacewidget)
-        self.stackedWidget.currentChanged.connect(self.updateUIState)
 
         self.panels = []
 
         self.connectButtons()
 
-        self.band = QgsRubberBand(self.canvas)
-        self.band.setIconSize(20)
-        self.band.setWidth(10)
-        self.band.setColor(QColor(186, 93, 212, 76))
+        self.currentfeatureband = QgsRubberBand(self.canvas)
+        self.currentfeatureband.setIconSize(20)
+        self.currentfeatureband.setWidth(10)
+        self.currentfeatureband.setColor(QColor(186, 93, 212, 76))
 
         self.canvas_page.layout().insertWidget(0, self.projecttoolbar)
-        self.dataentrymodel = QStandardItemModel(self)
-        self.dataentrycombo = QComboBox(self.projecttoolbar)
-        self.dataentrycombo.setIconSize(QSize(48,48))
-        self.dataentrycombo.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Expanding)
-        self.dataentrycombo.setSizeAdjustPolicy(QComboBox.AdjustToContents)
-        self.dataentrycombo.setModel(self.dataentrymodel)
-        self.dataentrycomboaction = self.projecttoolbar.insertWidget(self.topspaceraction, self.dataentrycombo)
-
-        self.dataentrycombo.showPopup = self.selectdataentry
-
-        self.biglist = BigList(self.canvas)
-        self.biglist.setlabel("Select data entry form")
-        self.biglist.setmodel(self.dataentrymodel)
-        self.biglist.itemselected.connect(self.dataentrychanged)
-        self.biglist.hide()
+        self.dataentryselection = QAction(self.projecttoolbar)
+        self.dataentryaction = self.projecttoolbar.insertAction(self.topspaceraction, self.dataentryselection)
+        self.dataentryselection.triggered.connect(self.selectdataentry)
 
         self.centralwidget.layout().addWidget(self.statusbar)
 
         self.actionGPSFeature.setProperty('dataentry', True)
 
         self.infodock = InfoDock(self.canvas)
-        self.infodock.requestopenform.connect(self.openForm)
         self.infodock.featureupdated.connect(self.highlightfeature)
-        self.infodock.resultscleared.connect(self.clearselection)
-        self.infodock.openurl.connect(self.viewurl)
         self.infodock.hide()
         self.hidedataentry()
         self.canvas.extentsChanged.connect(self.updatestatuslabel)
-        self.projecttoolbar.toolButtonStyleChanged.connect(self.updatecombo)
 
-    def selectdataentry(self, ):
-        if self.dataentrycombo.count() == 0:
-            return
+        RoamEvents.openimage.connect(self.openimage)
+        RoamEvents.openurl.connect(self.viewurl)
+        RoamEvents.openfeatureform.connect(self.openForm)
+        RoamEvents.openkeyboard.connect(self.openkeyboard)
+        RoamEvents.selectioncleared.connect(self.clearselection)
+        RoamEvents.editgeometry.connect(self.addforedit)
+        RoamEvents.editgeometry_complete.connect(self.on_geometryedit)
+        RoamEvents.onShowMessage.connect(self.showUIMessage)
 
-        self.biglist.show()
+        GPS.gpspostion.connect(self.updatecanvasfromgps)
+        GPS.firstfix.connect(self.gpsfirstfix)
+        GPS.gpsdisconnected.connect(self.gpsdisconnected)
+
+        self.lastgpsposition = None
+        self.marker = GPSMarker(self.canvas)
+        self.marker.hide()
+
+        self.legendpage.showmap.connect(self.showmap)
+
+        self.editfeaturestack = []
+        self.currentselection = {}
+
+    def showUIMessage(self, label, message, level=QgsMessageBar.INFO, time=0, extra=''):
+        self.bar.pushMessage(label, message, level, duration=time, extrainfo=extra)
+
+    def addforedit(self, form, feature):
+        self.editfeaturestack.append((form, feature))
+        self.loadform(form)
+        actions = self.getcaptureactions()
+        for action in actions:
+            if action.isdefault:
+                action.trigger()
+                break
+
+    def updatelegend(self):
+        self.legendpage.updatecanvas(self.canvas)
+
+    def gpsfirstfix(self, postion, gpsinfo):
+        zoomtolocation = roam.config.settings.get('gpszoomonfix', True)
+        if zoomtolocation:
+            self.canvas.zoomScale(1000)
+
+    def updatecanvasfromgps(self, position, gpsinfo):
+        # Recenter map if we go outside of the 95% of the area
+        if not self.lastgpsposition == position:
+            self.lastposition = position
+            rect = QgsRectangle(position, position)
+            extentlimt = QgsRectangle(self.canvas.extent())
+            extentlimt.scale(0.95)
+
+            if not extentlimt.contains(position):
+                self.canvas.setExtent(rect)
+                self.canvas.refresh()
+
+        self.marker.show()
+        self.marker.setCenter(position)
+        self.gpslabel.setText("GPS: PDOP {}   HDOP {}    VDOP {}".format(gpsinfo.pdop,
+                                                                        gpsinfo.hdop,
+                                                                        gpsinfo.vdop))
+
+    def gpsdisconnected(self):
+        self.marker.hide()
+        self.gpslabel.setText("GPS Not Active")
+
+    def openkeyboard(self):
+        if roam.config.settings.get('keyboard', True):
+            cmd = r'C:\Program Files\Common Files\Microsoft Shared\ink\TabTip.exe'
+            os.startfile(cmd)
+
+    def selectdataentry(self):
+        forms = self.project.forms
+        formpicker = PickActionDialog(msg="Select data entry form")
+        for form in forms:
+            action = form.createuiaction()
+            valid, failreasons = form.valid
+            if not valid:
+                roam.utils.warning("Form {} failed to load".format(form.label))
+                roam.utils.warning("Reasons {}".format(failreasons))
+                action.triggered.connect(partial(self.showformerror, form))
+            else:
+                action.triggered.connect(partial(self.loadform, form))
+            formpicker.addAction(action)
+
+        formpicker.exec_()
+
+    def showformerror(self, form):
+        pass
 
     def viewurl(self, url):
         """
@@ -261,24 +338,36 @@ class MainWindow(mainwindow_widget, mainwindow_base):
         viewer.resize(self.stackedWidget.size())
         viewer.openimage(pixmap)
 
-    def updatecombo(self, *args):
-        self.dataentrycombo.setMinimumHeight(0)
-
     def settingsupdated(self, settings):
-        settings.save()
         self.show()
         self.actionGPS.updateGPSPort()
-        # eww!
-        roam.featureform.settings = settings.settings
 
     def updatestatuslabel(self):
         extent = self.canvas.extent()
         self.positionlabel.setText("Map Center: {}".format(extent.center().toString()))
 
+    def on_geometryedit(self, form, feature):
+        layer = form.QGISLayer
+        try:
+            selectedfeatures = self.currentselection[layer]
+            oldfeature = [f for f in selectedfeatures if f.id() == feature.id()][0]
+            self.currentselection[layer].remove(oldfeature)
+            self.currentselection[layer].append(feature)
+        except KeyError:
+            return
+        except IndexError:
+            return
+
+        self.currentfeatureband.setToGeometry(feature.geometry(), layer)
+        self.highlightselection(self.currentselection)
+
+
     def highlightselection(self, results):
+        self.clearselection()
+        self.currentselection = results
         for layer, features in results.iteritems():
             band = self.selectionbands[layer]
-            band.setColor(QColor(255, 0, 0, 150))
+            band.setColor(QColor(255, 0, 0, 200))
             band.setIconSize(20)
             band.setWidth(2)
             band.setBrushStyle(Qt.NoBrush)
@@ -288,18 +377,21 @@ class MainWindow(mainwindow_widget, mainwindow_base):
 
     def clearselection(self):
         # Clear the main selection rubber band
-        self.band.reset()
+        self.currentfeatureband.reset()
         # Clear the rest
         for band in self.selectionbands.itervalues():
             band.reset()
 
+        self.editfeaturestack = []
+
     def highlightfeature(self, layer, feature, features):
         self.clearselection()
         self.highlightselection({layer: features})
-        self.band.setToGeometry(feature.geometry(), layer)
+        self.currentfeatureband.setToGeometry(feature.geometry(), layer)
 
     def showmap(self):
         self.actionMap.setVisible(True)
+        self.actionLegend.setVisible(True)
         self.actionMap.trigger()
 
     def hidedataentry(self):
@@ -318,12 +410,12 @@ class MainWindow(mainwindow_widget, mainwindow_base):
         modelindex = index
         # modelindex = self.dataentrymodel.index(index, 0)
         form = modelindex.data(Qt.UserRole + 1)
-        self.dataentrycombo.setCurrentIndex(index.row())
+        self.dataentryselection.setCurrentIndex(index.row())
         self.createCaptureButtons(form, wasactive)
 
     def raiseerror(self, *exinfo):
         info = traceback.format_exception(*exinfo)
-        item = self.bar.pushError('Seems something has gone wrong. Press for more details',
+        item = self.bar.pushError(QApplication.translate('MainWindowPy','Seems something has gone wrong. Press for more details', None, QApplication.UnicodeUTF8),
                                   info)
 
     def setMapTool(self, tool, *args):
@@ -370,15 +462,13 @@ class MainWindow(mainwindow_widget, mainwindow_base):
         self.moveTool.layersupdated.connect(self.actionMove.setEnabled)
         self.moveTool.layersupdated.connect(self.actionEdit_Tools.setEnabled)
 
-        self.actionGPSFeature.triggered.connect(self.addFeatureAtGPS)
-        self.actionGPSFeature.setEnabled(self.actionGPS.isConnected)
-        self.actionGPS.gpsfixed.connect(self.actionGPSFeature.setEnabled)
-
         self.actionHome.triggered.connect(self.homeview)
         self.actionQuit.triggered.connect(self.exit)
 
-    def showToolError(self, label, message):
-        self.bar.pushMessage(label, message, QgsMessageBar.WARNING)
+    def getcaptureactions(self):
+        for action in self.projecttoolbar.actions():
+            if action.property('dataentry'):
+                yield action
 
     def clearCapatureTools(self):
         captureselected = False
@@ -411,67 +501,16 @@ class MainWindow(mainwindow_widget, mainwindow_base):
             tool.geometryComplete.connect(add)
         else:
             tool.finished.connect(self.openForm)
-            tool.error.connect(partial(self.showToolError, form.label))
+            tool.error.connect(partial(self.showUIMessage, form.label))
 
-        self.projecttoolbar.insertAction(self.topspaceraction, self.actionGPSFeature)
-        self.actionGPSFeature.setVisible(not tool.isEditTool())
+        #self.projecttoolbar.insertAction(self.topspaceraction, self.actionGPSFeature)
+        #self.actionGPSFeature.setVisible(not tool.isEditTool())
 
-    def createFormButtons(self, forms):
-        """
-            Create buttons for each form that is defined
-        """
-        self.dataentrymodel.clear()
-        self.clearCapatureTools()
-
-
-        def captureFeature(form):
-            item = QStandardItem(QIcon(form.icon), form.icontext)
-            item.setData(form, Qt.UserRole + 1)
-            item.setSizeHint(QSize(item.sizeHint().width(), self.projecttoolbar.height()))
-            self.dataentrymodel.appendRow(item)
-
-        capabilitityhandlers = {"capture": captureFeature}
-
-        failedforms = []
-        for form in forms:
-            valid, reasons = form.valid
-            if not valid:
-                roam.utils.log("Form is invalid for data entry because {}".format(reasons))
-                failedforms.append((form, reasons))
-                continue
-
-            for capability in form.capabilities:
-                try:
-                    capabilitityhandlers[capability](form)
-                except KeyError:
-                    # Just ignore capabilities we don't support yet.
-                    continue
-
-        if failedforms:
-            for form, reasons in failedforms:
-                html = "<h3>{}</h3><br>{}".format(form.label,
-                                             "<br>".join(reasons))
-            self.bar.pushMessage("Form errors",
-                                 "Looks like some forms couldn't be loaded",
-                                 level=QgsMessageBar.WARNING, extrainfo=html)
-
-        visible = self.dataentrymodel.rowCount() > 0
-        self.dataentrycomboaction.setVisible(visible)
-        self.dataentrycombo.setMinimumHeight(self.projecttoolbar.height())
-
-        index = self.dataentrymodel.index(0, 0)
-        self.dataentrychanged(index)
-
-    def addFeatureAtGPS(self):
-        """
-        Add a record at the current GPS location.
-        """
-        index = self.dataentrycombo.currentIndex()
-        modelindex = self.dataentrymodel.index(index, 0)
-        form = modelindex.data(Qt.UserRole + 1)
-        point = self.actionGPS.position
-        point = QgsGeometry.fromPoint(point)
-        self.addNewFeature(form=form, geometry=point)
+    def loadform(self, form):
+        captureactive = self.clearCapatureTools()
+        self.dataentryselection.setIcon(QIcon(form.icon))
+        self.dataentryselection.setText(form.icontext)
+        self.createCaptureButtons(form, captureactive)
 
     def clearToolRubberBand(self):
         """
@@ -497,7 +536,7 @@ class MainWindow(mainwindow_widget, mainwindow_base):
 
     def featuredeleted(self):
         self.dataentryfinished()
-        self.bar.pushMessage("Deleted", "Feature Deleted", QgsMessageBar.INFO, 1)
+        RoamEvents.raisemessage("Deleted", "Feature Deleted", QgsMessageBar.INFO, 1)
         self.canvas.refresh()
 
     def featureSaved(self):
@@ -508,13 +547,13 @@ class MainWindow(mainwindow_widget, mainwindow_base):
         self.bar.pushError("Error when saving changes.", messages)
 
     def cleartempobjects(self):
-        self.band.reset()
+        self.currentfeatureband.reset()
         self.clearToolRubberBand()
 
     def formrejected(self, message, level):
         self.dataentryfinished()
         if message:
-            self.bar.pushMessage("Form Message", message, level, duration=2)
+            RoamEvents.raisemessage("Form Message", message, level, duration=2)
 
         self.cleartempobjects()
 
@@ -522,14 +561,35 @@ class MainWindow(mainwindow_widget, mainwindow_base):
         """
         Open the form that is assigned to the layer
         """
-        self.band.setToGeometry(feature.geometry(), form.QGISLayer)
+        self.currentfeatureband.setToGeometry(feature.geometry(), form.QGISLayer)
         self.showdataentry()
         self.dataentrywidget.openform(feature=feature, form=form, project=self.project)
+
+    def editfeaturegeometry(self, form, feature, newgeometry):
+        layer = form.QGISLayer
+        layer.startEditing()
+        feature.setGeometry(newgeometry)
+        layer.updateFeature(feature)
+        saved = layer.commitChanges()
+        map(roam.utils.error, layer.commitErrors())
+        self.canvas.refresh()
+        RoamEvents.editgeometry_complete.emit(form, feature)
 
     def addNewFeature(self, form, geometry):
         """
         Add a new new feature to the given layer
         """
+        layer = form.QGISLayer
+        if layer.geometryType() in [QGis.WKBMultiLineString, QGis.WKBMultiPoint, QGis.WKBMultiPolygon]:
+            geometry.convertToMultiType()
+
+        try:
+            form, feature = self.editfeaturestack.pop()
+            self.editfeaturegeometry(form, feature, newgeometry=geometry)
+            return
+        except IndexError:
+            pass
+
         layer = form.QGISLayer
         fields = layer.pendingFields()
 
@@ -553,7 +613,6 @@ class MainWindow(mainwindow_widget, mainwindow_base):
         QApplication.exit(0)
 
     def showInfoResults(self, results):
-        self.infodock.clearResults()
         forms = {}
         for layer in results.keys():
             layername = layer.name()
@@ -614,7 +673,7 @@ class MainWindow(mainwindow_widget, mainwindow_base):
         Override show method. Handles showing the app in fullscreen
         mode or just maximized
         """
-        fullscreen = self.settings.settings.get("fullscreen", False)
+        fullscreen = roam.config.settings.get("fullscreen", False)
         if fullscreen:
             self.showFullScreen()
         else:
@@ -622,13 +681,6 @@ class MainWindow(mainwindow_widget, mainwindow_base):
 
     def viewprojects(self):
         self.stackedWidget.setCurrentIndex(1)
-
-    def updateUIState(self, page):
-        """
-        Update the UI state to reflect the currently selected
-        page in the stacked widget
-        """
-        pass
 
     @roam.utils.timeit
     def _readProject(self, doc):
@@ -642,10 +694,16 @@ class MainWindow(mainwindow_widget, mainwindow_base):
         self.canvas.mapRenderer().readXML(canvasnode)
         self.canvaslayers = parser.canvaslayers()
         self.canvas.setLayerSet(self.canvaslayers)
+        #red = QgsProject.instance().readNumEntry( "Gui", "/CanvasColorRedPart", 255 )[0];
+        #green = QgsProject.instance().readNumEntry( "Gui", "/CanvasColorGreenPart", 255 )[0];
+        #blue = QgsProject.instance().readNumEntry( "Gui", "/CanvasColorBluePart", 255 )[0];
+        #color = QColor(red, green, blue);
+        #self.canvas.setCanvasColor(color)
         self.canvas.updateScale()
         self.projectOpened()
         self.canvas.freeze(False)
         self.canvas.refresh()
+        GPS.crs = self.canvas.mapRenderer().destinationCrs()
         self.showmap()
 
     @roam.utils.timeit
@@ -656,7 +714,12 @@ class MainWindow(mainwindow_widget, mainwindow_base):
         projectpath = QgsProject.instance().fileName()
         self.project = Project.from_folder(os.path.dirname(projectpath))
         self.projectlabel.setText("Project: {}".format(self.project.name))
-        self.createFormButtons(forms=self.project.forms)
+        try:
+            firstform = self.project.forms[0]
+            self.loadform(self.project.forms[0])
+            self.dataentryselection.setVisible(True)
+        except IndexError:
+            self.dataentryselection.setVisible(False)
 
         # Enable the raster layers button only if the project contains a raster layer.
         layers = QgsMapLayerRegistry.instance().mapLayers().values()
@@ -670,20 +733,9 @@ class MainWindow(mainwindow_widget, mainwindow_base):
             self.mainwindow.addDockWidget(Qt.BottomDockWidgetArea, panel)
             self.panels.append(panel)
 
-        # TODO Abstract this out
-        if not self.project.selectlayers:
-            selectionlayers = QgsMapLayerRegistry.instance().mapLayers().values()
-        else:
-            selectionlayers = []
-            for layername in self.project.selectlayers:
-                try:
-                    layer = QgsMapLayerRegistry.instance().mapLayersByName(layername)[0]
-                except IndexError:
-                    roam.utils.warning("Can't find QGIS layer for select layer {}".format(layername))
-                    continue
-                selectionlayers.append(layer)
-
-        self.infoTool.selectionlayers = selectionlayers
+        self.infoTool.selectionlayers = self.project.selectlayersmapping()
+        layers = self.project.legendlayersmapping().values()
+        self.legendpage.updateitems(layers)
         self.actionPan.trigger()
 
     #noinspection PyArgumentList
@@ -712,7 +764,7 @@ class MainWindow(mainwindow_widget, mainwindow_base):
         self.canvas.refresh()
         self.canvas.repaint()
 
-        self.infodock.clearResults()
+        RoamEvents.selectioncleared.emit()
 
         # No idea why we have to set this each time.  Maybe QGIS deletes it for
         # some reason.
@@ -735,6 +787,7 @@ class MainWindow(mainwindow_widget, mainwindow_base):
         """
         Close the current open project
         """
+        self.clearCapatureTools()
         self.canvas.freeze()
         QgsMapLayerRegistry.instance().removeAllMapLayers()
         self.canvas.clear()
@@ -746,7 +799,6 @@ class MainWindow(mainwindow_widget, mainwindow_base):
         for action in self.layerbuttons:
             self.editgroup.removeAction(action)
 
-        self.dataentrymodel.clear()
         self.panels = []
         self.project = None
         self.dataentrywidget.clear()

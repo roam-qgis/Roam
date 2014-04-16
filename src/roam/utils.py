@@ -5,6 +5,7 @@ import json
 import inspect
 import sys
 
+from PyQt4 import uic
 from PyQt4.QtGui import (QLabel, QDialog, QGridLayout, QLayout)
 
 LOG_FILENAME = 'roam.log'
@@ -32,6 +33,9 @@ info = logger.info
 warning = logger.warning
 error = logger.error
 critical = logger.critical
+
+uic.uiparser.logger.setLevel(logging.INFO)
+uic.properties.logger.setLevel(logging.INFO)
 
 
 class Timer():

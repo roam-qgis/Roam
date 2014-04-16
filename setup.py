@@ -1,3 +1,4 @@
+from setuptools import find_packages
 from distutils.core import setup
 from distutils.command.build import build
 from fabricate import run
@@ -9,6 +10,7 @@ except ImportError:
 
 import glob
 import os
+import sys
 import shutil
 import sys
 from sys import platform
@@ -39,8 +41,10 @@ qgispluginpath = os.path.join(osgeopath, "apps", qgisname, "plugins", "*provider
 gdalsharepath = os.path.join(osgeopath, 'share', 'gdal')
 
 appsrcopyFilesath = os.path.join(curpath, "src", 'roam')
+srceditorwidgets = os.path.join(curpath, "src", 'roam', 'editorwidgets')
 projectinstallerpath = os.path.join(curpath, "src", 'project_installer')
 configmangerpath = os.path.join(curpath, "src", 'configmanager')
+
 
 def getfiles(folder, outpath):
     """
@@ -84,7 +88,10 @@ datafiles = [(".", [r'src\settings.config']),
             (r'libs\qgis\resources', [os.path.join(qgisresources, 'qgis.db'),
                                  os.path.join(qgisresources, 'srs.db')]),
             (r'libs', extrafiles),
-            (r'libs\roam\i18n', glob.glob(i18nfiles))]
+            (r'libs\roam\i18n', glob.glob(i18nfiles)),
+            (r'libs\roam\editorwidgets', glob.glob(os.path.join(srceditorwidgets, "*.pil"))),
+            (r'libs\roam\editorwidgets', glob.glob(os.path.join(srceditorwidgets, "*.pyd"))),
+            (r'libs\roam\editorwidgets', glob.glob(os.path.join(srceditorwidgets, "*.png")))]
 
 for path, collection in getfiles(svgs, r'libs\qgis\svg'):
     datafiles.append((path, collection))
@@ -147,8 +154,7 @@ class qtbuild(build):
 setup(
     name='roam',
     version=roam.__version__,
-    packages=['roam', 'roam.yaml', 'roam.syncing', 'roam.maptools', 'roam.editorwidgets', 'roam.editorwidgets.core',
-              'roam.editorwidgets.uifiles', 'roam.ui', 'roam.templates', 'project_installer', 'tests'],
+    packages=find_packages('./src'),
     package_dir={'': 'src', 'tests': 'tests'},
     url='',
     license='GPL',
@@ -165,7 +171,7 @@ setup(
                         'powrprof.dll', 'mswsock.dll',
                         'w9xpopen.exe', 'MSVCP90.dll'],
         'excludes': ['PyQt4.uic.port_v3'],
-        'includes': ['PyQt4.QtNetwork', 'sip', 'PyQt4.QtSql', 'roam.api'],
+        'includes': ['PyQt4.QtNetwork', 'sip', 'PyQt4.QtSql', 'sqlite3'],
         'skip_archive': True,
       }},
 )

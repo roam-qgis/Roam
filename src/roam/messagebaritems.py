@@ -1,12 +1,16 @@
 import os
 import traceback
 
-from PyQt4.QtGui import QPushButton, QIcon, QWidget, QDialog, QToolButton, QFont
+from PyQt4.QtGui import (QApplication, 
+                         QPushButton, 
+			 QIcon, 
+			 QWidget, 
+			 QDialog, 
+			 QToolButton, 
+			 QFont)
 from PyQt4.QtCore import QEvent, QObject, Qt, QSize
 
 from qgis.gui import QgsMessageBarItem, QgsMessageBar
-
-from roam.popdialog import PopDownReport
 
 import roam.htmlviewer
 import roam.utils
@@ -31,7 +35,7 @@ class MessageBar(QgsMessageBar):
         super(MessageBar, self).__init__(parent)
 
         closebutton = self.findChild(QToolButton)
-        closebutton.setText('Dismiss')
+        closebutton.setText(QApplication.translate('MessageBarItems','Dismiss', None, QApplication.UnicodeUTF8))
         closebutton.setToolButtonStyle(Qt.ToolButtonTextOnly)
         closebutton.setStyleSheet(style)
 
@@ -43,7 +47,7 @@ class MessageBar(QgsMessageBar):
         self.pushItem(item)
 
     def pushError(self, text, extrainfo):
-        item = ClickableMessage('Opps', text, QgsMessageBar.CRITICAL, extrainfo=extrainfo)
+        item = ClickableMessage(QApplication.translate('MessageBarItems','Oops', None, QApplication.UnicodeUTF8), text, QgsMessageBar.CRITICAL, extrainfo=extrainfo)
         item.setIcon(QIcon(":/icons/sad"))
         self.pushItem(item)
 

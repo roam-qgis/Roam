@@ -1,9 +1,54 @@
 import os
 import sys
 
-from collections import namedtuple
+from qgis.core import QgsApplication, QgsProviderRegistry
 
-RoamApp = namedtuple('RoamApp', 'apppath prefixpath settingspath libspath i18npath')
+from PyQt4.QtGui import QApplication, QFont, QImageReader, QImageWriter
+from PyQt4.QtCore import QLocale, QTranslator
+import PyQt4.QtSql
+
+
+class RoamApp(object):
+    def __init__(self, sysargv, apppath, prefixpath, settingspath, libspath, i18npath):
+        self.sysargv = sysargv
+        self.apppath = apppath
+        self.prefixpath = prefixpath
+        self.settingspath = settingspath
+        self.libspath = libspath
+        self.i18npath = i18npath
+        self.app = None
+        self.translationFile = None
+
+    def init(self):
+        self.app = QgsApplication(self.sysargv, True)
+        QgsApplication.setPrefixPath(self.prefixpath, True)
+        QgsApplication.initQgis()
+
+        locale = QLocale.system().name()
+        self.translationFile = os.path.join(self.i18npath, '{0}.qm'.format(locale))
+        translator = QTranslator()
+        translator.load(self.translationFile, "i18n")
+        self.app.installTranslator(translator)
+
+        QApplication.setStyle("Plastique")
+        QApplication.setFont(QFont('Segoe UI'))
+        return self
+
+    def exec_(self):
+        self.app.exec_()
+
+    def exit(self):
+        sys.exit()
+
+    def setActiveWindow(self, widget):
+        self.app.setActiveWindow(widget)
+
+    def dump_configinfo(self):
+        yield QgsProviderRegistry.instance().pluginList()
+        yield QImageReader.supportedImageFormats()
+        yield QImageWriter.supportedImageFormats()
+        yield QgsApplication.libraryPaths()
+        yield "Translation file: {}".format(self.translationFile)
 
 
 def setup(argv):
@@ -41,13 +86,22 @@ def setup(argv):
         i18npath = os.path.join(libspath, "i18n")
         prefixpath = os.environ['QGIS_PREFIX_PATH']
 
-    return RoamApp(apppath, prefixpath, settingspath, libspath, i18npath)
+
+    return RoamApp(argv, apppath, prefixpath, settingspath, libspath, i18npath).init()
 
 
-def projectpath(argv, roamapp):
+def projectpaths(argv, settings={}):
+    # Add the default paths
+    paths = []
     try:
-        _projectpath = argv[1]
+        paths.append(argv[1])
     except IndexError:
-        _projectpath = os.path.join(roamapp.apppath, "projects")
-    sys.path.append(_projectpath)
-    return _projectpath
+        paths.append(os.path.join(os.getcwd(), "projects"))
+
+    paths.extend(settings.get('projectpaths', []))
+    for path in paths:
+        rootfolder = os.path.abspath(os.path.join(path, '..'))
+        sys.path.append(rootfolder)
+
+    sys.path.extend(paths)
+    return paths

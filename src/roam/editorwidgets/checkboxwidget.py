@@ -1,6 +1,6 @@
 from PyQt4.QtGui import  QCheckBox
 
-from roam.editorwidgets.core import EditorWidget
+from roam.editorwidgets.core import EditorWidget, registerwidgets
 
 
 class CheckboxWidget(EditorWidget):
@@ -37,3 +37,4 @@ class CheckboxWidget(EditorWidget):
         else:
             return self.config['uncheckedvalue']
 
+registerwidgets(CheckboxWidget)

@@ -4,6 +4,7 @@ from qgis.core import *
 from qgis.gui import *
 
 from roam.maptools.touchtool import TouchMapTool
+from roam.api import GPS
 
 import roam.resources_rc
 
@@ -14,8 +15,14 @@ class RubberBand(QgsRubberBand):
         self.setIconSize(iconsize)
         self.setWidth(width)
         self.iconsize = iconsize
-        self.textpen = QPen(Qt.black)
-        self.textpen.setWidth(2)
+        self.font = QFont()
+        self.font.setStyleHint(QFont.Times, QFont.PreferAntialias)
+        self.font.setPointSize(20)
+        self.font.setBold(True)
+
+        self.blackpen = QPen(Qt.black)
+        self.blackpen.setWidth(0.5)
+        self.whitebrush = QBrush(Qt.white)
         self.distancearea = QgsDistanceArea()
         self.createdistancearea()
         self.unit = self.canvas.mapRenderer().destinationCrs().mapUnits()
@@ -24,13 +31,13 @@ class RubberBand(QgsRubberBand):
         self.distancearea.setSourceCrs( self.canvas.mapRenderer().destinationCrs().srsid())
         ellispoid = QgsProject.instance().readEntry("Measure", "/Ellipsoid", GEO_NONE)
         self.distancearea.setEllipsoid(ellispoid[0])
-        ellispoidemode = self.canvas.mapRenderer().hasCrsTransformEnabled()
-        self.distancearea.setEllipsoidalMode(ellispoidemode)
+        #mode = self.canvas.mapRenderer().hasCrsTransformEnabled()
+        #self.distancearea.setEllipsoidalMode(ellispoidemode)
 
     def paint(self, p, *args):
         super(RubberBand, self).paint(p)
 
-        offset = QPointF(self.iconsize + 25, 0)
+        offset = QPointF(5,5)
         nodescount = self.numberOfVertices()
         for index in xrange(nodescount, -1, -1):
             if index == 0:
@@ -45,11 +52,18 @@ class RubberBand(QgsRubberBand):
 
             if qgspoint and qgspointbefore:
                 distance = self.distancearea.measureLine( qgspoint, qgspointbefore)
-                point = self.toCanvasCoordinates(qgspoint) - self.pos()
-                point += offset
-                p.setPen(self.textpen)
                 text = QgsDistanceArea.textUnit(distance, 3, self.unit, False)
-                p.drawText(point, text)
+                linegeom = QgsGeometry.fromPolyline([qgspoint, qgspointbefore])
+                midpoint = linegeom.centroid().asPoint()
+                midpoint = self.toCanvasCoordinates(midpoint) - self.pos()
+                midpoint += offset
+                path = QPainterPath()
+                path.addText(midpoint, self.font, text)
+                p.setPen(self.blackpen)
+                p.setRenderHints(QPainter.Antialiasing)
+                p.setFont(self.font)
+                p.setBrush(self.whitebrush)
+                p.drawPath(path)
 
     def boundingRect(self):
         rect = super(RubberBand, self).boundingRect()
@@ -58,24 +72,52 @@ class RubberBand(QgsRubberBand):
         return rect
 
 
-class EndCaptureAction(QAction):
-    def __init__(self, tool, parent=None):
-        super(EndCaptureAction, self).__init__(QIcon(":/icons/stop-capture"), "End Capture", parent)
-        self.setObjectName("endcapture")
+class BaseAction(QAction):
+    def __init__(self, icon, name, tool, parent=None):
+        super(BaseAction, self).__init__(icon, name, parent)
         self.setCheckable(False)
         self.tool = tool
         self.isdefault = False
         self.ismaptool = False
 
 
-class CaptureAction(QAction):
+class EndCaptureAction(BaseAction):
+    def __init__(self, tool, parent=None):
+        super(EndCaptureAction, self).__init__(QIcon(":/icons/stop-capture"),
+                                                "End Capture",
+                                               tool,
+                                               parent)
+        self.setObjectName("EnaCaptureAction")
+        self.setText(self.tr("End Capture"))
+
+
+class CaptureAction(BaseAction):
     def __init__(self, tool, geomtype, parent=None):
-        super(CaptureAction, self).__init__(QIcon(":/icons/capture-{}".format(geomtype)), "Capture", parent)
-        self.setObjectName("capture")
+        super(CaptureAction, self).__init__(QIcon(":/icons/capture-{}".format(geomtype)),
+                                               "Capture",
+                                               tool,
+                                               parent)
+        self.setObjectName("CaptureAction")
+        self.setText(self.tr("Capture"))
         self.setCheckable(True)
-        self.tool = tool
         self.isdefault = True
         self.ismaptool = True
+
+
+class GPSCaptureAction(BaseAction):
+    def __init__(self, tool, parent=None):
+        super(GPSCaptureAction, self).__init__(QIcon(":/icons/gpsadd"),
+                                                "GPS Capture",
+                                                tool,
+                                                parent)
+        self.setObjectName("GPSCaptureAction")
+        self.setText(self.tr("GPS Capture"))
+        self.setEnabled(False)
+
+        GPS.gpsfixed.connect(self.setstate)
+
+    def setstate(self, fixed, *args):
+        self.setEnabled(fixed)
 
 
 class PolylineTool(QgsMapTool):
@@ -87,9 +129,9 @@ class PolylineTool(QgsMapTool):
         self.points = []
         self.canvas = canvas
         self.band = RubberBand(self.canvas, QGis.Line, width=5, iconsize=20)
-        self.band.setColor(QColor.fromRgb(224,162,16, 75))
+        self.band.setColor(QColor.fromRgb(0,0,255, 100))
         self.pointband = QgsRubberBand(self.canvas, QGis.Point)
-        self.pointband.setColor(QColor.fromRgb(224,162,16, 100))
+        self.pointband.setColor(QColor.fromRgb(0,0,255, 100))
         self.pointband.setIconSize(20)
         self.snapper = QgsMapCanvasSnapper(self.canvas)
         self.capturing = False
@@ -240,10 +282,12 @@ class PointTool(TouchMapTool):
             "       +.+      "]))
 
         self.captureaction = CaptureAction(self, 'point')
+        self.gpscapture = GPSCaptureAction(self)
+        self.gpscapture.triggered.connect(self.addatgps)
 
     @property
     def actions(self):
-        return [self.captureaction]
+        return [self.captureaction, self.gpscapture]
 
     def canvasReleaseEvent(self, event):
         if self.pinching:
@@ -255,6 +299,11 @@ class PointTool(TouchMapTool):
 
         point = self.toMapCoordinates(event.pos())
         self.geometryComplete.emit(QgsGeometry.fromPoint(point))
+
+    def addatgps(self):
+        location = GPS.postion
+        self.geometryComplete.emit(QgsGeometry.fromPoint(location))
+
         
     def activate(self):
         """

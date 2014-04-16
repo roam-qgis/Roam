@@ -110,7 +110,7 @@
        <string notr="true">background-color: rgb(255, 255, 255);</string>
       </property>
       <property name="currentIndex">
-       <number>0</number>
+       <number>2</number>
       </property>
       <widget class="QWidget" name="canvas_page">
        <property name="styleSheet">
@@ -128,7 +128,7 @@
         </item>
        </layout>
       </widget>
-      <widget class="QWidget" name="project_page">
+      <widget class="ProjectsWidget" name="projectwidget">
        <property name="styleSheet">
         <string notr="true"/>
        </property>
@@ -138,7 +138,7 @@
         </property>
        </layout>
       </widget>
-      <widget class="QWidget" name="settings_page">
+      <widget class="SettingsWidget" name="settingswidget">
        <property name="styleSheet">
         <string notr="true">background-color: rgb(255, 255, 255);</string>
        </property>
@@ -237,8 +237,22 @@
         </property>
        </layout>
       </widget>
-      <widget class="QWidget" name="syncpage">
+      <widget class="SyncWidget" name="syncwidget">
        <layout class="QGridLayout" name="gridLayout_2">
+        <property name="margin">
+         <number>0</number>
+        </property>
+       </layout>
+      </widget>
+      <widget class="GPSWidget" name="gpswidget">
+       <layout class="QGridLayout" name="gridLayout_6">
+        <property name="margin">
+         <number>0</number>
+        </property>
+       </layout>
+      </widget>
+      <widget class="LegendWidget" name="legendpage">
+       <layout class="QGridLayout" name="gridLayout_7">
         <property name="margin">
          <number>0</number>
         </property>
@@ -302,8 +316,10 @@ QToolButton:checked {
    </attribute>
    <addaction name="actionMap"/>
    <addaction name="actionDataEntry"/>
+   <addaction name="actionLegend"/>
    <addaction name="actionProject"/>
    <addaction name="actionSync"/>
+   <addaction name="actionGPS"/>
    <addaction name="actionSettings"/>
    <addaction name="actionQuit"/>
   </widget>
@@ -583,6 +599,42 @@ QWidget {
     <string>Select</string>
    </property>
   </action>
+  <action name="actionGPS">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../resources.qrc">
+     <normaloff>:/icons/gps</normaloff>:/icons/gps</iconset>
+   </property>
+   <property name="text">
+    <string>GPS</string>
+   </property>
+   <property name="iconText">
+    <string>GPS           </string>
+   </property>
+   <property name="page" stdset="0">
+    <number>6</number>
+   </property>
+  </action>
+  <action name="actionLegend">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../resources.qrc">
+     <normaloff>:/icons/legend</normaloff>:/icons/legend</iconset>
+   </property>
+   <property name="text">
+    <string>Legend</string>
+   </property>
+   <property name="iconText">
+    <string>Legend      </string>
+   </property>
+   <property name="page" stdset="0">
+    <number>7</number>
+   </property>
+  </action>
  </widget>
  <customwidgets>
   <customwidget>
@@ -595,6 +647,36 @@ QWidget {
    <class>HideableToolbar</class>
    <extends>QToolBar</extends>
    <header>roam.gui</header>
+  </customwidget>
+  <customwidget>
+   <class>LegendWidget</class>
+   <extends>QWidget</extends>
+   <header>roam.gui</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>GPSWidget</class>
+   <extends>QWidget</extends>
+   <header>roam.gui</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>SyncWidget</class>
+   <extends>QWidget</extends>
+   <header>roam.gui</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>SettingsWidget</class>
+   <extends>QWidget</extends>
+   <header>roam.gui</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>ProjectsWidget</class>
+   <extends>QWidget</extends>
+   <header>roam.gui</header>
+   <container>1</container>
   </customwidget>
  </customwidgets>
  <resources>

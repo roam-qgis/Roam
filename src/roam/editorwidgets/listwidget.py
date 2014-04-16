@@ -4,7 +4,7 @@ from qgis.core import QgsMessageLog, QgsMapLayerRegistry, QgsExpression, QgsFeat
 import qgis.core
 
 import roam.utils
-from roam.editorwidgets.core import EditorWidget
+from roam.editorwidgets.core import EditorWidget, registerwidgets
 from roam.biglist import BigList
 
 
@@ -188,3 +188,4 @@ class ListWidget(EditorWidget):
 
         return value
 
+registerwidgets(ListWidget)

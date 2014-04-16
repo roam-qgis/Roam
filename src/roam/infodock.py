@@ -18,6 +18,7 @@ from roam import utils
 from roam.flickwidget import FlickCharm
 from roam.htmlviewer import updateTemplate
 from roam.ui.uifiles import (infodock_widget)
+from roam.api import RoamEvents
 
 import templates
 
@@ -73,10 +74,8 @@ class FeatureCursor(object):
 
 
 class InfoDock(infodock_widget, QWidget):
-    requestopenform = pyqtSignal(object, QgsFeature)
     featureupdated = pyqtSignal(object, object, list)
     resultscleared = pyqtSignal()
-    openurl = pyqtSignal(object)
 
     def __init__(self, parent):
         super(InfoDock, self).__init__(parent)
@@ -85,12 +84,16 @@ class InfoDock(infodock_widget, QWidget):
         self.charm = FlickCharm()
         self.charm.activateOn(self.attributesView)
         self.layerList.currentRowChanged.connect(self.layerIndexChanged)
-        self.attributesView.linkClicked.connect(self.openurl.emit)
+        self.attributesView.linkClicked.connect(RoamEvents.openurl.emit)
         self.attributesView.page().setLinkDelegationPolicy(QWebPage.DelegateAllLinks)
         self.grabGesture(Qt.SwipeGesture)
         self.setAttribute(Qt.WA_AcceptTouchEvents)
         self.editButton.pressed.connect(self.openform)
+        self.editGeomButton.pressed.connect(self.editgeom)
         self.parent().installEventFilter(self)
+
+        RoamEvents.selectioncleared.connect(self.clearResults)
+        RoamEvents.editgeometry_complete.connect(self.refreshcurrent)
 
     def eventFilter(self, object, event):
         if event.type() == QEvent.Resize:
@@ -100,7 +103,7 @@ class InfoDock(infodock_widget, QWidget):
         return super(InfoDock, self).eventFilter(object, event)
 
     def close(self):
-        self.clearResults()
+        RoamEvents.selectioncleared.emit()
         super(InfoDock, self).close()
 
     def event(self, event):
@@ -121,7 +124,11 @@ class InfoDock(infodock_widget, QWidget):
 
     def openform(self):
         cursor = self.selection
-        self.requestopenform.emit(cursor.form, cursor.feature)
+        RoamEvents.openfeatureform.emit(cursor.form, cursor.feature)
+
+    def editgeom(self):
+        cursor = self.selection
+        RoamEvents.editgeometry.emit(cursor.form, cursor.feature)
 
     def pageback(self):
         cursor = self.selection
@@ -218,6 +225,5 @@ class InfoDock(infodock_widget, QWidget):
         self.layerList.clear()
         self.attributesView.setHtml('')
         self.editButton.setVisible(False)
-        self.resultscleared.emit()
         self.navwidget.hide()
 

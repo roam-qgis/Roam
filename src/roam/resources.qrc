@@ -1,8 +1,20 @@
 <RCC>
+  <qresource prefix="widgets">
+    <file alias="cancel">resources/widgets/cancel.svg</file>
+    <file alias="add">resources/widgets/image.svg</file>
+    <file alias="reload">resources/widgets/reload.svg</file>
+    <file alias="folder">resources/widgets/folder-open.svg</file>
+    <file alias="camera">resources/widgets/camera.svg</file>
+    <file alias="drawing">resources/widgets/drawing.svg</file>
+    <file alias="red">resources/widgets/red.svg</file>
+    <file alias="black">resources/widgets/black.svg</file>
+    <file alias="blue">resources/widgets/blue.svg</file>
+  </qresource>
   <qresource prefix="icons">
     <file alias="cancel">resources/images/cancel.svg</file>
     <file alias="delete">resources/images/delete.svg</file>
     <file alias="edit">resources/images/edit.svg</file>
+    <file alias="editgeom">resources/images/edit_geom.svg</file>
     <file alias="home">resources/images/home.svg</file>
     <file alias="in">resources/images/in.svg</file>
     <file alias="out">resources/images/out.svg</file>
@@ -42,6 +54,7 @@
     <file alias="add">resources/images/add.svg</file>
     <file alias="project">resources/images/file.svg</file>
     <file alias="folder">resources/images/folder.svg</file>
+    <file alias="legend">resources/images/legend.svg</file>
   </qresource>
   <qresource prefix="branding">
     <file alias="logo">resources/branding/logo.png</file>

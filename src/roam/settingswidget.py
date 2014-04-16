@@ -3,16 +3,17 @@ from qgis.core import QgsGPSDetector, QGis
 
 import roam
 import roam.utils as utils
+import roam.config
 from roam.ui.uifiles import settings_widget, settings_base
 
 
 class SettingsWidget(settings_widget, settings_base):
     settingsupdated = pyqtSignal(object)
 
-    def __init__(self, settings, parent=None):
+    def __init__(self, parent=None):
         super(SettingsWidget, self).__init__(parent)
         self.setupUi(self)
-        self._settings = settings
+        self._settings = None
         self.populated = False
         self.fullScreenCheck.toggled.connect(self.fullScreenCheck_stateChanged)
         self.gpsPortCombo.currentIndexChanged.connect(self.gpsPortCombo_currentIndexChanged)
@@ -22,10 +23,11 @@ class SettingsWidget(settings_widget, settings_base):
 
     @property
     def settings(self):
-        return self._settings.settings
+        return roam.config.settings
 
     def notifysettingsupdate(self):
-        self.settingsupdated.emit(self._settings)
+        roam.config.save()
+        self.settingsupdated.emit(self.settings)
 
     def gpslocationCheck_toggled(self, checked):
         self.settings['gpszoomonfix'] = checked
