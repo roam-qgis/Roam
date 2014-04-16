@@ -110,7 +110,7 @@
        <string notr="true">background-color: rgb(255, 255, 255);</string>
       </property>
       <property name="currentIndex">
-       <number>7</number>
+       <number>2</number>
       </property>
       <widget class="QWidget" name="canvas_page">
        <property name="styleSheet">
@@ -128,7 +128,7 @@
         </item>
        </layout>
       </widget>
-      <widget class="QWidget" name="project_page">
+      <widget class="ProjectsWidget" name="projectwidget">
        <property name="styleSheet">
         <string notr="true"/>
        </property>
@@ -138,7 +138,7 @@
         </property>
        </layout>
       </widget>
-      <widget class="QWidget" name="settings_page">
+      <widget class="SettingsWidget" name="settingswidget">
        <property name="styleSheet">
         <string notr="true">background-color: rgb(255, 255, 255);</string>
        </property>
@@ -237,14 +237,14 @@
         </property>
        </layout>
       </widget>
-      <widget class="QWidget" name="syncpage">
+      <widget class="SyncWidget" name="syncwidget">
        <layout class="QGridLayout" name="gridLayout_2">
         <property name="margin">
          <number>0</number>
         </property>
        </layout>
       </widget>
-      <widget class="QWidget" name="gpspage">
+      <widget class="GPSWidget" name="gpswidget">
        <layout class="QGridLayout" name="gridLayout_6">
         <property name="margin">
          <number>0</number>
@@ -650,6 +650,30 @@ QWidget {
   </customwidget>
   <customwidget>
    <class>LegendWidget</class>
+   <extends>QWidget</extends>
+   <header>roam.gui</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>GPSWidget</class>
+   <extends>QWidget</extends>
+   <header>roam.gui</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>SyncWidget</class>
+   <extends>QWidget</extends>
+   <header>roam.gui</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>SettingsWidget</class>
+   <extends>QWidget</extends>
+   <header>roam.gui</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>ProjectsWidget</class>
    <extends>QWidget</extends>
    <header>roam.gui</header>
    <container>1</container>

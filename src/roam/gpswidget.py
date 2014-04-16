@@ -2,10 +2,13 @@ from roam.ui.uifiles import gps_widget, gps_base
 
 
 class GPSWidget(gps_widget, gps_base):
-    def __init__(self, gps, parent=None):
+    def __init__(self, parent=None):
         super(GPSWidget, self).__init__(parent)
-        self.gps = gps
         self.setupUi(self)
+        self.gps = None
+
+    def setgps(self, gps):
+        self.gps = gps
         self.gps.gpspostion.connect(self.updatepostionlabels)
         self.gps.gpsdisconnected.connect(self.disconnected)
 

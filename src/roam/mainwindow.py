@@ -104,9 +104,9 @@ class MainWindow(ui_mainwindow.Ui_MainWindow, QMainWindow):
         pal = QgsPalLabeling()
         self.canvas.mapRenderer().setLabelingEngine(pal)
         self.canvas.setFrameStyle(QFrame.NoFrame)
+
         self.menuGroup = QActionGroup(self)
         self.menuGroup.setExclusive(True)
-
         self.menuGroup.addAction(self.actionMap)
         self.menuGroup.addAction(self.actionDataEntry)
         self.menuGroup.addAction(self.actionLegend)
@@ -128,19 +128,12 @@ class MainWindow(ui_mainwindow.Ui_MainWindow, QMainWindow):
         self.actionGPS = GPSAction(":/icons/gps", self.canvas, self.settings, self)
         self.projecttoolbar.addAction(self.actionGPS)
 
-        self.projectwidget = ProjectsWidget(self)
         self.projectwidget.requestOpenProject.connect(self.loadProject)
         QgsProject.instance().readProject.connect(self._readProject)
-        self.project_page.layout().addWidget(self.projectwidget)
 
-        self.gpswidget = GPSWidget(gps=GPS, parent=self)
-        self.gpspage.layout().addWidget(self.gpswidget)
+        self.gpswidget.setgps(GPS)
+        self.settingswidget.settings = settings
 
-        self.syncwidget = SyncWidget()
-        self.syncpage.layout().addWidget(self.syncwidget)
-
-        self.settingswidget = SettingsWidget(settings, self)
-        self.settings_page.layout().addWidget(self.settingswidget)
         self.actionSettings.toggled.connect(self.settingswidget.populateControls)
         self.actionSettings.toggled.connect(self.settingswidget.readSettings)
         self.settingswidget.settingsupdated.connect(self.settingsupdated)
