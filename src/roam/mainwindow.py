@@ -1,5 +1,6 @@
 from functools import partial
 from collections import defaultdict
+from subprocess import Popen
 import getpass
 import traceback
 import os
@@ -286,9 +287,15 @@ class MainWindow(ui_mainwindow.Ui_MainWindow, QMainWindow):
         self.gpslabel.setText("GPS Not Active")
 
     def openkeyboard(self):
-        if roam.config.settings.get('keyboard', True):
+        if not roam.config.settings.get('keyboard', True):
+	    return
+
+	if sys.platform == 'win32':
             cmd = r'C:\Program Files\Common Files\Microsoft Shared\ink\TabTip.exe'
-            os.startfile(cmd)
+	else:
+	    cmd = 'onboard'
+
+        Popen(cmd)
 
     def selectdataentry(self):
         forms = self.project.forms
