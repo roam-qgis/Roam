@@ -492,17 +492,6 @@ class MainWindow(ui_mainwindow.Ui_MainWindow, QMainWindow):
         self.dataentryselection.setText(form.icontext)
         self.createCaptureButtons(form, captureactive)
 
-    def addFeatureAtGPS(self):
-        """
-        Add a record at the current GPS location.
-        """
-        index = self.dataentryselection.currentIndex()
-        modelindex = self.dataentrymodel.index(index, 0)
-        form = modelindex.data(Qt.UserRole + 1)
-        point = self.actionGPS.position
-        point = QgsGeometry.fromPoint(point)
-        self.addNewFeature(form=form, geometry=point)
-
     def clearToolRubberBand(self):
         """
         Clear the rubber band of the active tool if it has one
