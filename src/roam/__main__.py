@@ -8,10 +8,15 @@ import os
 import sys
 
 import time
-import roam.environ
 import functools
 
+srcpath = os.path.dirname(os.path.realpath(sys.argv[0]))
+print srcpath
+
+sys.path.append(srcpath)
+
 import roam
+import roam.environ
 import roam.mainwindow
 import roam.utils
 import roam.config
@@ -37,7 +42,7 @@ def excepthook(errorhandler, exctype, value, traceback):
 
 sys.excepthook = functools.partial(excepthook, window.raiseerror)
 
-projectpaths = roam.environ.projectpaths(sys.argv, roam.config.settings)
+projectpaths = roam.environ.projectpaths(sys.argv, roamapp, roam.config.settings)
 roam.utils.log("Loading projects from")
 roam.utils.log(projectpaths)
 projects = roam.project.getProjects(projectpaths)

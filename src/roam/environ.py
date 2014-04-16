@@ -5,7 +5,10 @@ from qgis.core import QgsApplication, QgsProviderRegistry
 
 from PyQt4.QtGui import QApplication, QFont, QImageReader, QImageWriter
 from PyQt4.QtCore import QLocale, QTranslator
-import PyQt4.QtSql
+try:
+    import PyQt4.QtSql
+except ImportError:
+    pass
 
 
 class RoamApp(object):
@@ -90,13 +93,13 @@ def setup(argv):
     return RoamApp(argv, apppath, prefixpath, settingspath, libspath, i18npath).init()
 
 
-def projectpaths(argv, settings={}):
+def projectpaths(argv, roamapp, settings={}):
     # Add the default paths
     paths = []
     try:
         paths.append(argv[1])
     except IndexError:
-        paths.append(os.path.join(os.getcwd(), "projects"))
+        paths.append(os.path.join(roamapp.apppath, "projects"))
 
     paths.extend(settings.get('projectpaths', []))
     for path in paths:

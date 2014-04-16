@@ -2,7 +2,7 @@ from PyQt4.QtCore import Qt, QRect
 from PyQt4.QtGui import QColor
 
 from qgis.core import QGis
-from qgis.gui import QgsMapToolTouch, QgsRubberBand, QgsMapToolPan
+from qgis.gui import QgsRubberBand, QgsMapToolPan
 
 from roam.utils import log
 from roam.maptools import maptoolutils
@@ -11,7 +11,7 @@ try:
       from qgis.gui import QgsMapToolTouch
       maptooltype = QgsMapToolTouch
 except ImportError:
-      maptooltype = QgsMapTool
+      maptooltype = QgsMapToolPan
 
 class TouchMapTool(maptooltype):
     def __init__(self, canvas):
