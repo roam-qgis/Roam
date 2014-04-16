@@ -1,9 +1,54 @@
 import os
 import sys
 
-from collections import namedtuple
+from qgis.core import QgsApplication, QgsProviderRegistry
 
-RoamApp = namedtuple('RoamApp', 'apppath prefixpath settingspath libspath i18npath')
+from PyQt4.QtGui import QApplication, QFont, QImageReader, QImageWriter
+from PyQt4.QtCore import QLocale, QTranslator
+import PyQt4.QtSql
+
+
+class RoamApp(object):
+    def __init__(self, sysargv, apppath, prefixpath, settingspath, libspath, i18npath):
+        self.sysargv = sysargv
+        self.apppath = apppath
+        self.prefixpath = prefixpath
+        self.settingspath = settingspath
+        self.libspath = libspath
+        self.i18npath = i18npath
+        self.app = None
+        self.translationFile = None
+
+    def init(self):
+        self.app = QgsApplication(self.sysargv, True)
+        QgsApplication.setPrefixPath(self.prefixpath, True)
+        QgsApplication.initQgis()
+
+        locale = QLocale.system().name()
+        self.translationFile = os.path.join(self.i18npath, '{0}.qm'.format(locale))
+        translator = QTranslator()
+        translator.load(self.translationFile, "i18n")
+        self.app.installTranslator(translator)
+
+        QApplication.setStyle("Plastique")
+        QApplication.setFont(QFont('Segoe UI'))
+        return self
+
+    def exec_(self):
+        self.app.exec_()
+
+    def exit(self):
+        sys.exit()
+
+    def setActiveWindow(self, widget):
+        self.app.setActiveWindow(widget)
+
+    def dump_configinfo(self):
+        yield QgsProviderRegistry.instance().pluginList()
+        yield QImageReader.supportedImageFormats()
+        yield QImageWriter.supportedImageFormats()
+        yield QgsApplication.libraryPaths()
+        yield "Translation file: {}".format(self.translationFile)
 
 
 def setup(argv):
@@ -42,7 +87,7 @@ def setup(argv):
         prefixpath = r"C:\OSGeo4W\apps\qgis"
         settingspath = os.path.join(apppath, "..", "settings.config")
 
-    return RoamApp(apppath, prefixpath, settingspath, libspath, i18npath)
+    return RoamApp(argv, apppath, prefixpath, settingspath, libspath, i18npath).init()
 
 
 def projectpaths(argv, settings={}):
