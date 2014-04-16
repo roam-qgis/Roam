@@ -11,8 +11,6 @@ import time
 import functools
 
 srcpath = os.path.dirname(os.path.realpath(sys.argv[0]))
-print srcpath
-
 sys.path.append(srcpath)
 
 import roam

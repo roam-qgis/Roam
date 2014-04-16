@@ -250,7 +250,6 @@ class Project(object):
             with open(settingspath, 'r') as f:
                 settings = yaml.load(f)
             project.settings = settings
-            print settings
         except IOError as e:
             project.valid = False
             project.error = "No settings.config found in {} project folder".format(rootfolder)
