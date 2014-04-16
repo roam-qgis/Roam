@@ -211,9 +211,13 @@ class Form(object):
                 yield config['field'], config
 
     def _loadmodule(self):
+        rootfolder = os.path.abspath(os.path.join(self.folder, '..', '..'))
         projectfolder = os.path.abspath(os.path.join(self.folder, '..'))
+        rootname = os.path.basename(rootfolder)
         projectname = os.path.basename(projectfolder)
-        name = "{project}.{formfolder}".format(project=projectname, formfolder=self.name)
+        name = "{root}.{project}.{formfolder}".format(root=rootname,
+                                                      project=projectname,
+                                                      formfolder=self.name)
         try:
             self._module = importlib.import_module(name)
         except ImportError as err:
