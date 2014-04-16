@@ -163,7 +163,7 @@ class DataEntryWidget(dataentry_widget, dataentry_base):
     helprequest = pyqtSignal(str)
     openimage = pyqtSignal(object)
 
-    def __init__(self, canvas, bar, parent=None):
+    def __init__(self, canvas, parent=None):
         super(DataEntryWidget, self).__init__(parent)
         self.setupUi(self)
         self.featureform = None
@@ -171,8 +171,6 @@ class DataEntryWidget(dataentry_widget, dataentry_base):
         self.fields = None
         self.project = None
         self.canvas = canvas
-        self.bar = bar
-        self.largewidgetwrapper = None
 
         self.flickwidget = FlickCharm()
         self.flickwidget.activateOn(self.scrollArea)
@@ -241,8 +239,8 @@ class DataEntryWidget(dataentry_widget, dataentry_base):
             return feature
 
         if not self.featureform.allpassing:
-            self.bar.pushMessage("Missing fields", "Some fields are still required.",
-                                 QgsMessageBar.WARNING, duration=2)
+            RoamEvents.raisemessage("Missing fields", "Some fields are still required.",
+                                     QgsMessageBar.WARNING, duration=2)
             return
 
         if not self.featureform:

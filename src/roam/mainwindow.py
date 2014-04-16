@@ -96,7 +96,7 @@ class MainWindow(ui_mainwindow.Ui_MainWindow, QMainWindow):
         self.canvas.setCanvasColor(Qt.white)
         self.canvas.enableAntiAliasing(True)
         self.canvas.setWheelAction(QgsMapCanvas.WheelZoomToMouseCursor)
-        self.bar = roam.messagebaritems.MessageBar(self)
+        self.bar = roam.messagebaritems.MessageBar(self.centralwidget)
 
         self.actionMap.setVisible(False)
         self.actionLegend.setVisible(False)
@@ -223,6 +223,7 @@ class MainWindow(ui_mainwindow.Ui_MainWindow, QMainWindow):
         RoamEvents.openkeyboard.connect(self.openkeyboard)
         RoamEvents.selectioncleared.connect(self.clearselection)
         RoamEvents.editgeometry.connect(self.addforedit)
+        RoamEvents.onShowMessage.connect(self.showUIMessage)
 
         GPS.gpspostion.connect(self.updatecanvasfromgps)
         GPS.firstfix.connect(self.gpsfirstfix)
@@ -235,6 +236,9 @@ class MainWindow(ui_mainwindow.Ui_MainWindow, QMainWindow):
         self.legendpage.showmap.connect(self.showmap)
 
         self.editfeaturestack = []
+
+    def showUIMessage(self, label, message, level=QgsMessageBar.INFO, time=0, extra=''):
+        self.bar.pushMessage(label, message, level, duration=time, extrainfo=extra)
 
     def addforedit(self, form, feature):
         self.editfeaturestack.append((form, feature))
@@ -441,9 +445,6 @@ class MainWindow(ui_mainwindow.Ui_MainWindow, QMainWindow):
         self.actionHome.triggered.connect(self.homeview)
         self.actionQuit.triggered.connect(self.exit)
 
-    def showToolError(self, label, message):
-        self.bar.pushMessage(label, message, QgsMessageBar.WARNING)
-
     def getcaptureactions(self):
         for action in self.projecttoolbar.actions():
             if action.property('dataentry'):
@@ -480,7 +481,7 @@ class MainWindow(ui_mainwindow.Ui_MainWindow, QMainWindow):
             tool.geometryComplete.connect(add)
         else:
             tool.finished.connect(self.openForm)
-            tool.error.connect(partial(self.showToolError, form.label))
+            tool.error.connect(partial(self.showUIMessage, form.label))
 
         #self.projecttoolbar.insertAction(self.topspaceraction, self.actionGPSFeature)
         #self.actionGPSFeature.setVisible(not tool.isEditTool())
@@ -526,7 +527,7 @@ class MainWindow(ui_mainwindow.Ui_MainWindow, QMainWindow):
 
     def featuredeleted(self):
         self.dataentryfinished()
-        self.bar.pushMessage("Deleted", "Feature Deleted", QgsMessageBar.INFO, 1)
+        RoamEvents.raisemessage("Deleted", "Feature Deleted", QgsMessageBar.INFO, 1)
         self.canvas.refresh()
 
     def featureSaved(self):
@@ -543,7 +544,7 @@ class MainWindow(ui_mainwindow.Ui_MainWindow, QMainWindow):
     def formrejected(self, message, level):
         self.dataentryfinished()
         if message:
-            self.bar.pushMessage("Form Message", message, level, duration=2)
+            RoamEvents.raisemessage("Form Message", message, level, duration=2)
 
         self.cleartempobjects()
 

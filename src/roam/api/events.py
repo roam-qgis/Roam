@@ -26,4 +26,17 @@ class _Events(QObject):
 
     selectioncleared = pyqtSignal()
 
+    onShowMessage = pyqtSignal(str, str, int, int, str)
+
+    def raisemessage(self, title, message, level=0, duration=0, extra=''):
+        """
+        Raise a message for Roam to show.
+        :param title: The title of the message.
+        :param message: The message body
+        :param level:
+        :param time: How long the message should be shown for.
+        :param extra: Any extra information to show the user on click.
+        """
+        self.onShowMessage.emit(title, message, level, duration, extra)
+
 RoamEvents = _Events()
