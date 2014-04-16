@@ -97,6 +97,11 @@ def projectpaths(argv, settings={}):
         paths.append(argv[1])
     except IndexError:
         paths.append(os.path.join(os.getcwd(), "projects"))
+
     paths.extend(settings.get('projectpaths', []))
+    for path in paths:
+        rootfolder = os.path.abspath(os.path.join(path, '..'))
+        sys.path.append(rootfolder)
+
     sys.path.extend(paths)
     return paths
