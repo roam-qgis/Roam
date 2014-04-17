@@ -564,13 +564,13 @@ class MainWindow(ui_mainwindow.Ui_MainWindow, QMainWindow):
 
         self.cleartempobjects()
 
-    def openForm(self, form, feature):
+    def openForm(self, form, feature, editmode):
         """
         Open the form that is assigned to the layer
         """
         self.currentfeatureband.setToGeometry(feature.geometry(), form.QGISLayer)
         self.showdataentry()
-        self.dataentrywidget.openform(feature=feature, form=form, project=self.project)
+        self.dataentrywidget.openform(feature=feature, form=form, project=self.project, editmode=editmode)
 
     def editfeaturegeometry(self, form, feature, newgeometry):
         layer = form.QGISLayer
@@ -611,7 +611,7 @@ class MainWindow(ui_mainwindow.Ui_MainWindow, QMainWindow):
             value = layer.dataProvider().defaultValue(index)
             feature[index] = value
 
-        self.openForm(form, feature)
+        self.openForm(form, feature, editmode=False)
 
     def exit(self):
         """

@@ -14,8 +14,8 @@ class _Events(QObject):
     #Emit to open a url
     openurl = pyqtSignal(QUrl)
 
-    # Emit when requesting to open a feature form
-    openfeatureform = pyqtSignal(object, QgsFeature)
+    # Emit when requesting to open a feature form.
+    openfeatureform = pyqtSignal(object, QgsFeature, bool)
 
     editgeometry = pyqtSignal(object, QgsFeature)
 

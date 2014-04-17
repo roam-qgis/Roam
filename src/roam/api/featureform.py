@@ -188,6 +188,7 @@ class FeatureFormBase(QWidget):
         self.feature = feature
         self.defaults = defaults
         self.bindingvalues = {}
+        self.editingmode = False
 
     def _installeventfilters(self, widgettype):
         for widget in self.findChildren(widgettype):
@@ -348,13 +349,6 @@ class FeatureFormBase(QWidget):
 
         for label in self.findChildren(QLabel):
             createhelplink(label, self.form.folder)
-
-    @property
-    def editingmode(self):
-        if not self.feature:
-            return True
-
-        return self.feature.id() > 0
 
 
 class FeatureForm(FeatureFormBase):

@@ -340,18 +340,17 @@ class DataEntryWidget(dataentry_widget, dataentry_base):
             widget.setParent(None)
             widget.deleteLater()
 
-    def openform(self, form, feature, project):
+    def openform(self, form, feature, project, editmode):
         """
         Opens a form for the given feature.
         """
 
         defaults = {}
-        editing = feature.id() > 0
         layer = form.QGISLayer
-        if not editing:
+        if not editmode:
             defaults = getdefaults(form.widgetswithdefaults(), feature, layer, self.canvas)
 
-        self.actionDelete.setVisible(editing)
+        self.actionDelete.setVisible(editmode)
 
         for field, value in defaults.iteritems():
             feature[field] = value
@@ -362,6 +361,7 @@ class DataEntryWidget(dataentry_widget, dataentry_base):
         # go out of scope and we get crashes. Yay!
         self.fields = self.feature.fields()
         self.featureform = form.create_featureform(feature, defaults, canvas=self.canvas)
+        self.featureform.editingmode = editmode
         self.featureform.rejected.connect(self.formrejected)
         self.featureform.enablesave.connect(self.actionSave.setEnabled)
 
