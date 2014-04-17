@@ -231,6 +231,8 @@ class MainWindow(ui_mainwindow.Ui_MainWindow, QMainWindow):
         RoamEvents.editgeometry.connect(self.addforedit)
         RoamEvents.editgeometry_complete.connect(self.on_geometryedit)
         RoamEvents.onShowMessage.connect(self.showUIMessage)
+        RoamEvents.selectionchanged.connect(self.highlightselection)
+        RoamEvents.selectionchanged.connect(self.showInfoResults)
 
         GPS.gpspostion.connect(self.updatecanvasfromgps)
         GPS.firstfix.connect(self.gpsfirstfix)
@@ -356,23 +358,39 @@ class MainWindow(ui_mainwindow.Ui_MainWindow, QMainWindow):
 
     def on_geometryedit(self, form, feature):
         layer = form.QGISLayer
-        try:
-            selectedfeatures = self.currentselection[layer]
-            oldfeature = [f for f in selectedfeatures if f.id() == feature.id()][0]
-            self.currentselection[layer].remove(oldfeature)
-            self.currentselection[layer].append(feature)
-        except KeyError:
-            return
-        except IndexError:
-            return
+        self.reloadselection(layer, updated=[feature])
 
         self.currentfeatureband.setToGeometry(feature.geometry(), layer)
-        self.highlightselection(self.currentselection)
 
+    def reloadselection(self, layer, deleted=[], updated=[]):
+        """
+        Reload the selection after features have been updated or deleted.
+        :param layer:
+        :param deleted:
+        :param updated:
+        :return:
+        """
+        selectedfeatures = self.currentselection[layer]
+
+        print self.currentselection
+        # Update any features that have changed.
+        for updatedfeature in updated:
+            oldfeatures = [f for f in selectedfeatures if f.id() == updatedfeature.id()]
+            for feature in oldfeatures:
+                self.currentselection[layer].remove(feature)
+                self.currentselection[layer].append(updatedfeature)
+
+        # Delete any old ones
+        for deletedid in deleted:
+            oldfeatures = [f for f in selectedfeatures if f.id() == deletedid]
+            for feature in oldfeatures:
+                self.currentselection[layer].remove(feature)
+
+        print self.currentselection
+        RoamEvents.selectionchanged.emit(self.currentselection)
 
     def highlightselection(self, results):
         self.clearselection()
-        self.currentselection = results
         for layer, features in results.iteritems():
             band = self.selectionbands[layer]
             band.setColor(QColor(255, 0, 0, 200))
@@ -464,7 +482,7 @@ class MainWindow(ui_mainwindow.Ui_MainWindow, QMainWindow):
 
         self.actionRaster.triggered.connect(self.toggleRasterLayers)
 
-        self.infoTool.infoResults.connect(self.showInfoResults)
+        self.infoTool.infoResults.connect(RoamEvents.selectionchanged.emit)
 
         # The edit toolbutton is currently not being used but leaving it for feature.
         self.moveTool.layersupdated.connect(self.actionMove.setEnabled)
@@ -542,9 +560,9 @@ class MainWindow(ui_mainwindow.Ui_MainWindow, QMainWindow):
         self.cleartempobjects()
         self.infodock.refreshcurrent()
 
-    def featuredeleted(self):
+    def featuredeleted(self, layer, featureid):
         self.dataentryfinished()
-        RoamEvents.raisemessage("Deleted", "Feature Deleted", QgsMessageBar.INFO, 1)
+        self.reloadselection(layer, deleted=[featureid])
         self.canvas.refresh()
 
     def featureSaved(self):
@@ -627,6 +645,7 @@ class MainWindow(ui_mainwindow.Ui_MainWindow, QMainWindow):
             if not layername in forms:
                 forms[layername] = list(self.project.formsforlayer(layername))
 
+        self.currentselection = results
         self.infodock.setResults(results, forms)
         self.infodock.show()
 

@@ -158,7 +158,7 @@ class DataEntryWidget(dataentry_widget, dataentry_base):
     rejected = pyqtSignal(str, int)
     finished = pyqtSignal()
     featuresaved = pyqtSignal()
-    featuredeleted = pyqtSignal()
+    featuredeleted = pyqtSignal(object, object)
     failedsave = pyqtSignal(list)
     helprequest = pyqtSignal(str)
     openimage = pyqtSignal(object)
@@ -208,6 +208,7 @@ class DataEntryWidget(dataentry_widget, dataentry_base):
         if not box.exec_():
             return
 
+        featureid = self.feature.id()
         try:
             userdeleted = self.featureform.deletefeature()
 
@@ -216,7 +217,7 @@ class DataEntryWidget(dataentry_widget, dataentry_base):
                 # we will just do it for them.
                 layer = self.featureform.form.QGISLayer
                 layer.startEditing()
-                layer.deleteFeature(self.feature.id())
+                layer.deleteFeature(featureid)
                 saved = layer.commitChanges()
                 if not saved:
                     raise featureform.DeleteFeatureException(layer.commitErrors())
@@ -227,7 +228,7 @@ class DataEntryWidget(dataentry_widget, dataentry_base):
             return
 
         self.featureform.featuredeleted(self.feature)
-        self.featuredeleted.emit()
+        self.featuredeleted.emit(self.featureform.form.QGISLayer, featureid)
 
     def accept(self):
         fields = [w['field'] for w in self.featureform.formconfig['widgets']]

@@ -25,6 +25,7 @@ class _Events(QObject):
     openkeyboard = pyqtSignal()
 
     selectioncleared = pyqtSignal()
+    selectionchanged = pyqtSignal(dict)
 
     onShowMessage = pyqtSignal(str, str, int, int, str)
 
