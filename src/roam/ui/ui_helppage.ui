@@ -14,43 +14,17 @@
    <string>Form</string>
   </property>
   <property name="styleSheet">
-   <string notr="true">QCheckBox::indicator {
-     width: 40px;
-     height: 40px;
- }
-
-* {
+   <string notr="true">* {
 	font: 20px &quot;Calibri&quot; ;
-font: bold;
+    font: bold;
+	background-color: rgb(255, 255, 255);
 }
 
-QLabel {
-	color: #4f4f4f;
-}
-
-QPushButton { 
-	border: 1px solid #e1e1e1;
-     padding: 6px;
-	color: #4f4f4f;
- }
-
-QPushButton:hover { 
-	border: 1px solid #e1e1e1;
-     padding: 6px;
-	background-color: rgb(211, 228, 255);
- }
-
-QPushButton:checked  { 
-	border: 1px solid #e1e1e1;
-     padding: 6px;
-	background-color: rgb(203, 203, 203);
- }
-
-QCheckBox {
-	color: #4f4f4f;
-}
-
-</string>
+QLabel#headerlabel {
+	
+	color: rgb(97, 97, 97);
+	font: 75 17pt &quot;Segoe UI&quot;;
+}</string>
   </property>
   <layout class="QGridLayout" name="gridLayout">
    <property name="leftMargin">
@@ -83,12 +57,28 @@ QCheckBox {
       <property name="margin">
        <number>0</number>
       </property>
-      <item row="0" column="0">
+      <item row="1" column="0">
        <widget class="QWebView" name="webView">
         <property name="url">
          <url>
           <string>about:blank</string>
          </url>
+        </property>
+        <property name="renderHints">
+         <set>QPainter::Antialiasing|QPainter::HighQualityAntialiasing|QPainter::SmoothPixmapTransform|QPainter::TextAntialiasing</set>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="0">
+       <widget class="QLabel" name="headerlabel">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="text">
+         <string>Help</string>
         </property>
        </widget>
       </item>

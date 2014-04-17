@@ -1,6 +1,9 @@
 from PyQt4.QtGui import QDialog
 from PyQt4.QtCore import QUrl, QEvent, Qt
+from PyQt4.QtWebKit import QWebPage
 
+from roam.flickwidget import FlickCharm
+from roam.api.events import RoamEvents
 from roam.ui.uifiles import (helpviewer_widget, helpviewer_base,
                      helppage_widget, helppage_base)
 
@@ -21,6 +24,11 @@ class HelpPage(helppage_widget, helppage_base):
         self.setupUi(self)
         if self.parent():
             self.parent().installEventFilter(self)
+
+        self.charm = FlickCharm()
+        self.charm.activateOn(self.webView)
+        self.webView.linkClicked.connect(RoamEvents.openurl.emit)
+        self.webView.page().setLinkDelegationPolicy(QWebPage.DelegateAllLinks)
 
     def eventFilter(self, object, event):
         if event.type() == QEvent.Resize:
