@@ -329,19 +329,19 @@ class MainWindow(ui_mainwindow.Ui_MainWindow, QMainWindow):
         try:
             # Hack. Eww fix me.
             data, imagetype = roam.htmlviewer.images[os.path.basename(key)]
+            pix = QPixmap()
+            if imagetype == 'base64':
+                pix.loadFromData(data)
+            else:
+                pix.load(data)
+            self.openimage(pix)
         except KeyError:
-            # It's not a image so lets just pass it of as a normal
-            # URL
-            QDesktopServices.openUrl(url)
-            return
-
-        pix = QPixmap()
-        if imagetype == 'base64':
-            pix.loadFromData(data)
-        else:
-            pix.load(data)
-
-        self.openimage(pix)
+            pix = QPixmap()
+            pix.load(key)
+            if pix.isNull():
+                QDesktopServices.openUrl(url)
+                return
+            self.openimage(pix)
 
     def openimage(self, pixmap):
         viewer = ImageViewer(self.stackedWidget)
