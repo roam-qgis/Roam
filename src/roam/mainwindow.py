@@ -4,6 +4,7 @@ from subprocess import Popen
 import getpass
 import traceback
 import os
+import sys
 
 
 from PyQt4.QtCore import Qt, QFileInfo, QDir, QSize
@@ -288,12 +289,12 @@ class MainWindow(ui_mainwindow.Ui_MainWindow, QMainWindow):
 
     def openkeyboard(self):
         if not roam.config.settings.get('keyboard', True):
-	    return
+            return
 
-	if sys.platform == 'win32':
+        if sys.platform == 'win32':
             cmd = r'C:\Program Files\Common Files\Microsoft Shared\ink\TabTip.exe'
-	else:
-	    cmd = 'onboard'
+        else:
+            cmd = 'onboard'
 
         Popen(cmd)
 
