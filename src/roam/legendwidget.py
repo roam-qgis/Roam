@@ -80,7 +80,10 @@ class LegendWidget(legend_widget, QWidget):
             if not layer.type() == QgsMapLayer.VectorLayer:
                 continue
 
-            items = layer.rendererV2().legendSymbologyItems(QSize(32, 32))
+            try:
+                items = layer.rendererV2().legendSymbologyItems(QSize(32, 32))
+            except AttributeError:
+                continue
             self.items[layer.name()] = items
         self.update()
 
