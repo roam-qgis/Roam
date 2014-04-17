@@ -45,6 +45,8 @@ class PickActionDialog(actionpicker_widget, Dialogbase):
 
         self.actionsLayout.addWidget(button)
 
+    def mousePressEvent(self, *args, **kwargs):
+        self.close()
 
     def addactions(self, actions):
         for action in actions:
