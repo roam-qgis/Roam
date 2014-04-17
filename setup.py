@@ -142,7 +142,7 @@ def buildqtfiles():
                     run('pyrcc4', '-o', newfile, filepath)
                 elif ext == '.ts':
                     newfile = file + '.qm'
-                    #run('lrelease', filepath, '-qm', newfile)
+                    run('lrelease', filepath, '-qm', newfile)
 
 
 class qtbuild(build):
