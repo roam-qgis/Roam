@@ -372,7 +372,6 @@ class MainWindow(ui_mainwindow.Ui_MainWindow, QMainWindow):
         """
         selectedfeatures = self.currentselection[layer]
 
-        print self.currentselection
         # Update any features that have changed.
         for updatedfeature in updated:
             oldfeatures = [f for f in selectedfeatures if f.id() == updatedfeature.id()]
@@ -386,7 +385,6 @@ class MainWindow(ui_mainwindow.Ui_MainWindow, QMainWindow):
             for feature in oldfeatures:
                 self.currentselection[layer].remove(feature)
 
-        print self.currentselection
         RoamEvents.selectionchanged.emit(self.currentselection)
 
     def highlightselection(self, results):
