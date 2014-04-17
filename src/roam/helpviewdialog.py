@@ -25,20 +25,19 @@ class HelpPage(helppage_widget, helppage_base):
     def eventFilter(self, object, event):
         if event.type() == QEvent.Resize:
             self.setsize()
+        elif event.type() == QEvent.MouseButtonPress:
+            self.close()
         return object.eventFilter(object, event)
 
     def setsize(self):
-        width = self.parent().width() * 30 / 100
+        width = self.parent().width() * 50 / 100
         self.resize(width, self.parent().height())
         self.move(self.parent().width() - self.width() -1, 1)
 
     def show(self):
+        super(HelpPage, self).show()
         self.setsize()
         self.setFocus(Qt.PopupFocusReason)
-        super(HelpPage, self).show()
-
-    def focusOutEvent(self, event):
-        self.close()
 
     def setHelpPage(self, helppath):
         self.webView.load(QUrl.fromLocalFile(helppath))
