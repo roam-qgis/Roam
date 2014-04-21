@@ -223,6 +223,7 @@ class InfoDock(infodock_widget, QWidget):
         self.countlabel.setText(str(cursor))
         self.attributesView.setHtml(html, templates.baseurl)
         self.editButton.setVisible(not form is None)
+        self.editGeomButton.setVisible(not form is None)
         self.featureupdated.emit(layer, feature, cursor.features)
 
     def clearResults(self):
