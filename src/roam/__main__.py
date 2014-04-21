@@ -13,15 +13,17 @@ import functools
 srcpath = os.path.dirname(os.path.realpath(sys.argv[0]))
 sys.path.append(srcpath)
 
-import roam
 import roam.environ
-import roam.mainwindow
-import roam.utils
 import roam.config
-import roam.api.featureform
 
 roamapp = roam.environ.setup(sys.argv)
 roam.config.load(roamapp.settingspath)
+
+import roam
+import roam.mainwindow
+import roam.utils
+import roam.api.featureform
+
 
 # Fake this module to maintain API.
 sys.modules['roam.featureform'] = roam.api.featureform

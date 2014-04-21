@@ -1,14 +1,6 @@
 import os
 import sys
 
-from qgis.core import QgsApplication, QgsProviderRegistry
-
-from PyQt4.QtGui import QApplication, QFont, QImageReader, QImageWriter
-from PyQt4.QtCore import QLocale, QTranslator
-try:
-    import PyQt4.QtSql
-except ImportError:
-    pass
 
 
 class RoamApp(object):
@@ -23,6 +15,14 @@ class RoamApp(object):
         self.translationFile = None
 
     def init(self):
+        from qgis.core import QgsApplication
+        from PyQt4.QtGui import QApplication, QFont
+        from PyQt4.QtCore import QLocale, QTranslator
+        try:
+            import PyQt4.QtSql
+        except ImportError:
+            pass
+
         self.app = QgsApplication(self.sysargv, True)
         QgsApplication.setPrefixPath(self.prefixpath, True)
         QgsApplication.initQgis()
@@ -47,6 +47,8 @@ class RoamApp(object):
         self.app.setActiveWindow(widget)
 
     def dump_configinfo(self):
+        from qgis.core import QgsApplication, QgsProviderRegistry
+        from PyQt4.QtGui import QImageReader, QImageWriter
         yield QgsProviderRegistry.instance().pluginList()
         yield QImageReader.supportedImageFormats()
         yield QImageWriter.supportedImageFormats()
