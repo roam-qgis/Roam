@@ -294,11 +294,13 @@ class MainWindow(ui_mainwindow.Ui_MainWindow, QMainWindow):
             return
 
         if sys.platform == 'win32':
-            cmd = r'C:\Program Files\Common Files\Microsoft Shared\ink\TabTip.exe'
+            programfiles = os.environ['ProgramW6432']
+            cmd = r'{path}\Common Files\Microsoft Shared\ink\TabTip.exe'.format(path=programfiles)
+            os.startfile(cmd)
         else:
             cmd = 'onboard'
+            Popen(cmd)
 
-        Popen(cmd)
 
     def selectdataentry(self):
         forms = self.project.forms
