@@ -77,10 +77,11 @@ class GPSService(QObject):
                 log("Transform exception")
                 return
 
-        if self.postion is None:
-            self.firstfix.emit(map_pos, gpsInfo)
+            if self.postion is None:
+                self.firstfix.emit(map_pos, gpsInfo)
 
-        self.gpspostion.emit(map_pos, gpsInfo)
-        self.postion = map_pos
+            self.gpspostion.emit(map_pos, gpsInfo)
+            self.postion = map_pos
+
 
 GPS = GPSService()
