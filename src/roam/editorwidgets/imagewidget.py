@@ -184,10 +184,10 @@ class ImageWidget(EditorWidget):
 
     def _selectDrawing(self, *args):
         image = self.widget.orignalimage
-        self.largewidgetrequest.emit(DrawingPadWidget, image, self.phototaken)
+        self.largewidgetrequest.emit(DrawingPadWidget, image, self.phototaken, {})
 
     def _selectCamera(self):
-        self.largewidgetrequest.emit(CameraWidget, None, self.phototaken)
+        self.largewidgetrequest.emit(CameraWidget, None, self.phototaken, {})
 
     def phototaken(self, value):
         self.setvalue(value)

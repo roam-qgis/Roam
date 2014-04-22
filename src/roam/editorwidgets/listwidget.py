@@ -4,7 +4,7 @@ from qgis.core import QgsMessageLog, QgsMapLayerRegistry, QgsExpression, QgsFeat
 import qgis.core
 
 import roam.utils
-from roam.editorwidgets.core import EditorWidget, registerwidgets
+from roam.editorwidgets.core import EditorWidget, registerwidgets, LargeEditorWidget
 from roam.biglist import BigList
 
 
@@ -12,6 +12,32 @@ def nullconvert(value):
     if value == qgis.core.NULL:
         return None
     return value
+
+
+class BigListWidget(LargeEditorWidget):
+    def __init__(self, *args, **kwargs):
+        super(BigListWidget, self).__init__(*args, **kwargs)
+
+    def createWidget(self, parent):
+        return BigList(parent)
+
+    def initWidget(self, widget):
+        widget.itemselected.connect(self.emitfished)
+        widget.closewidget.connect(self.cancel)
+
+    def updatefromconfig(self):
+        super(BigListWidget, self).updatefromconfig()
+        model = self.config['model']
+        label = self.config['label']
+        self.widget.setlabel(label)
+        self.widget.setmodel(model)
+        self.endupdatefromconfig()
+
+    def setvalue(self, value):
+        self.widget.setcurrentindex(value)
+
+    def value(self):
+        return self.widget.currentindex()
 
 
 class ListWidget(EditorWidget):
@@ -123,23 +149,15 @@ class ListWidget(EditorWidget):
 
         widget.currentIndexChanged.connect(self.validate)
         widget.setModel(self.listmodel)
-        self.biglist = BigList(self.widget.parent().parent())
-        self.biglist.setlabel(self.labeltext)
-        self.biglist.setmodel(self.listmodel)
-        self.biglist.itemselected.connect(self.itemselected)
-        self.biglist.hide()
         widget.showPopup = self.showpopup
         widget.setIconSize(QSize(24,24))
-
-    def itemselected(self, index):
-        self.biglist.hide()
-        self.widget.setCurrentIndex(index.row())
 
     def showpopup(self):
         if self.widget.count() == 0:
             return
 
-        self.biglist.show()
+        self.largewidgetrequest.emit(BigListWidget, self.widget.currentIndex(),
+                                     self._biglistitem, dict(model=self.listmodel, label=self.labeltext))
 
     def updatefromconfig(self):
         super(ListWidget, self).updatefromconfig()
@@ -166,6 +184,9 @@ class ListWidget(EditorWidget):
             self.raisevalidationupdate(True)
 
         self.emitvaluechanged()
+
+    def _biglistitem(self, index):
+        self.widget.setCurrentIndex(index.row())
 
     def setvalue(self, value):
         self._bindvalue = value

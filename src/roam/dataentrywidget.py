@@ -305,7 +305,7 @@ class DataEntryWidget(dataentry_widget, dataentry_base):
     def formvalidation(self, passed):
         self.missingfieldaction.setVisible(not passed)
 
-    def setlargewidget(self, widgettype, lastvalue, callback):
+    def setlargewidget(self, widgettype, lastvalue, callback, config):
         def cleanup():
             self.stackedWidget.setCurrentIndex(0)
             self.clearcurrentwidget(self.fullscreenwidget)
@@ -322,6 +322,7 @@ class DataEntryWidget(dataentry_widget, dataentry_base):
         self.stackedWidget.setCurrentIndex(1)
 
         self.largewidgetwrapper.initWidget(widget)
+        self.largewidgetwrapper.config = config
         self.largewidgetwrapper.setvalue(lastvalue)
 
     def setwidget(self, widget):

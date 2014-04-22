@@ -177,7 +177,7 @@ class FeatureFormBase(QWidget):
     loadform = pyqtSignal()
     rejected = pyqtSignal(str)
     enablesave = pyqtSignal(bool)
-    showlargewidget = pyqtSignal(object, object, object)
+    showlargewidget = pyqtSignal(object, object, object, dict)
 
     def __init__(self, form, formconfig, feature, defaults, parent, *args, **kwargs):
         super(FeatureFormBase, self).__init__(parent)
