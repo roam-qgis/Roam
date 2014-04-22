@@ -43,9 +43,11 @@ class SyncWidget(sync_widget, sync_base):
 
     def updatewitherror(self, message):
         self.updatestatus('<b style="color:red">Error in sync: {}</b>'.format(message))
+        self.updatestatus('')
 
     def updatecomplete(self):
         self.updatestatus('<b style="color:darkgreen">Sync complete</b>')
+        self.updatestatus('')
 
     def runnext(self):
         try:
