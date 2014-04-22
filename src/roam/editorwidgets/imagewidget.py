@@ -44,6 +44,7 @@ class _CameraWidget(QWidget):
         self.timer.setInterval(20)
         self.timer.timeout.connect(self.showimage)
         self.cam = None
+        self.pixmap = None
         self.currentdevice = 1
 
     def swapcamera(self):
