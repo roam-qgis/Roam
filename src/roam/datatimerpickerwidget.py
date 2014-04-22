@@ -1,16 +1,19 @@
-from PyQt4.QtGui import QDialog,QApplication, QButtonGroup
-from PyQt4.QtCore import QTime, Qt, QDateTime
+from PyQt4.QtGui import QWidget, QApplication, QButtonGroup
+from PyQt4.QtCore import QTime, Qt, QDateTime, pyqtSignal
 
 from roam import utils
 from roam.ui.uifiles import datepicker_widget
 
 
-class DateTimePickerDialog(datepicker_widget, QDialog):
+class DateTimePickerWidget(datepicker_widget, QWidget):
+    ok = pyqtSignal()
+    cancel = pyqtSignal()
     """
     A custom date picker with a time and date picker
     """
-    def __init__(self, mode="DateTime"):
-        QDialog.__init__(self)
+    def __init__(self, parent=None, mode="DateTime"):
+        super(DateTimePickerWidget, self).__init__(parent)
+
         self.setupUi(self)
         self.mode = mode
         self.group = QButtonGroup()
@@ -24,20 +27,22 @@ class DateTimePickerDialog(datepicker_widget, QDialog):
         self.hourpicker.itemSelectionChanged.connect(self.isDirty)
         self.minutepicker.itemSelectionChanged.connect(self.isDirty)
 
-        self.buttonBox.accepted.connect(self.accept)
-        self.buttonBox.rejected.connect(self.reject)
         self.setasnowbutton.pressed.connect(self.setAsNow)
         self.setWindowFlags(Qt.Dialog | Qt.CustomizeWindowHint)
 
+        self.okButton.pressed.connect(self.ok.emit)
+        self.closebutton.pressed.connect(self.cancel.emit)
+
+    def setMinValue(self, mindate):
+        self.datepicker.setMinimumDate(mindate)
+
+    def setmode(self, mode):
         if mode == "Date":
             self.timesection.hide()
             self.setasnowbutton.setText("Set as current date")
         elif mode == "Time":
             self.datepicker.hide()
             self.setasnowbutton.setText("Set as current time")
-            
-    def setMinValue(self, mindate):
-        self.datepicker.setMinimumDate(mindate)
 
     def isDirty(self, *args):
         date = self.getSelectedDate()
@@ -128,8 +133,22 @@ class DateTimePickerDialog(datepicker_widget, QDialog):
         """
         return self.datepicker.selectedDate()
 
-if __name__ == "__main__":
-    app = QApplication([])
-    dlg = DateTimePickerDialog()
-    dlg.show()
-    app.exec_()
+    @property
+    def value(self):
+        datetime = QDateTime()
+        datetime.setDate(self.getSelectedDate())
+        datetime.setTime(self.getSelectedTime())
+        return datetime
+
+    @value.setter
+    def value(self, value):
+        if value is None:
+            self.setAsNow()
+            return
+
+        if isinstance(value, basestring):
+            value = QDateTime.fromString(value, Qt.ISODate)
+
+        self.setDate(value.date())
+        self.setTime(value.time())
+

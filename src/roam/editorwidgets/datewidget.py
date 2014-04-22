@@ -3,9 +3,35 @@ from functools import partial
 from PyQt4.QtGui import QPushButton, QDateTimeEdit, QIcon, QDateEdit, QWidget
 from PyQt4.QtCore import QDateTime, Qt, QSize
 
-from roam.editorwidgets.core import EditorWidget, registerwidgets
+from roam.editorwidgets.core import EditorWidget, registerwidgets, LargeEditorWidget
 from roam.editorwidgets.uifiles import ui_datewidget
-from roam.datatimerpickerwidget import DateTimePickerDialog
+from roam.datatimerpickerwidget import DateTimePickerWidget
+
+
+class BigDateWidget(LargeEditorWidget):
+    def __init__(self, *args, **kwargs):
+        super(BigDateWidget, self).__init__(*args, **kwargs)
+
+    def createWidget(self, parent):
+        return DateTimePickerWidget(parent)
+
+    def initWidget(self, widget):
+        widget.ok.connect(self.emitfished)
+        widget.cancel.connect(self.cancel.emit)
+
+    def updatefromconfig(self):
+        super(BigDateWidget, self).updatefromconfig()
+        mode = self.config['mode']
+        mindate = self.config['mindate']
+        self.widget.setMinValue(mindate)
+        self.widget.setmode(mode)
+        self.endupdatefromconfig()
+
+    def setvalue(self, value):
+        self.widget.value = value
+
+    def value(self):
+        return self.widget.value
 
 
 class DateUiWidget(ui_datewidget.Ui_Form, QWidget):
@@ -65,19 +91,11 @@ class DateWidget(EditorWidget):
         else:
             mode = "DateTime"
 
-        dlg = DateTimePickerDialog(mode)
-        dlg.setWindowTitle("Select a date")
-        if self.datewidget.dateTime() == DateWidget.DEFAULTDATE:
-            dlg.setAsNow()
-        else:
-            dlg.setDateTime(self.datewidget.dateTime())
+        config = dict(mode=mode,
+                      mindate=self.datewidget.minimumDate())
 
-        dlg.setMinValue(self.datewidget.minimumDate())
-        if dlg.exec_():
-            datetime = QDateTime()
-            datetime.setDate(dlg.getSelectedDate())
-            datetime.setTime(dlg.getSelectedTime())
-            self.setvalue(datetime)
+        self.largewidgetrequest.emit(BigDateWidget, self.value(),
+                                     self.setvalue, config)
 
     def setvalue(self, value):
         if value is None:
