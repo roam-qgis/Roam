@@ -19,9 +19,16 @@
 }
 
 QListView::item {
-	padding: 4px;
+	padding: 8px;
     border-bottom: 1px solid rgba(208, 208, 208, 50);
-}</string>
+}
+
+QListView::item:selected {
+	padding: 8px;
+	color: rgb(85, 85, 255);
+    border-bottom: 1px solid rgba(208, 208, 208, 50);
+}
+</string>
   </property>
   <layout class="QGridLayout" name="gridLayout">
    <property name="margin">
@@ -88,12 +95,12 @@ QListView::item {
         </property>
         <property name="icon">
          <iconset resource="../resources.qrc">
-          <normaloff>:/icons/cancel</normaloff>:/icons/cancel</iconset>
+          <normaloff>:/widgets/cancel</normaloff>:/widgets/cancel</iconset>
         </property>
         <property name="iconSize">
          <size>
-          <width>34</width>
-          <height>34</height>
+          <width>48</width>
+          <height>48</height>
          </size>
         </property>
         <property name="toolButtonStyle">
