@@ -65,7 +65,7 @@ class FeatureCursor(object):
             rq = QgsFeatureRequest(feature.id())
             return self.layer.getFeatures(rq).next()
         except IndexError:
-            raise NoFeature("No feature with id {}".format(feature.id()))
+            raise NoFeature("No feature in selection at postion".format(self.index))
         except StopIteration:
             raise NoFeature("No feature with id {}".format(feature.id()))
 

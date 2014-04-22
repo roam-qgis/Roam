@@ -1,11 +1,20 @@
 import pytest
+from mock import Mock
 
-from roam.infodock import FeatureCursor
+from roam.infodock import FeatureCursor, NoFeature
+
+featureone = Mock()
+featureone.id = Mock(return_value=1)
+featuretwo = Mock()
+featuretwo.id = Mock(return_value=2)
+
+mocklayer = Mock()
+mocklayer.getFeatures = Mock(return_value=iter([featureone, featuretwo]))
 
 @pytest.fixture
 def cursor():
-    features = ['One', 'Two']
-    return FeatureCursor(layer=None, features=features)
+    features = [featureone, featuretwo]
+    return FeatureCursor(layer=mocklayer, features=features)
 
 def test_should_start_at_index_0(cursor):
     assert cursor.index == 0
@@ -28,10 +37,11 @@ def test_back_should_wrap_to_end_when_on_first(cursor):
     assert cursor.index == last
 
 def test_should_return_feature_at_index(cursor):
-    assert cursor.feature == 'One'
+    assert cursor.feature == featureone
     cursor.next()
-    assert cursor.feature == 'Two'
+    assert cursor.feature == featuretwo
 
-def test_should_return_no_feature_with_invalid_index(cursor):
+def test_should_raise_no_feature_on_invalid_index(cursor):
     cursor.index = 99
-    assert cursor.feature is None
+    with pytest.raises(NoFeature):
+        cursor.feature
