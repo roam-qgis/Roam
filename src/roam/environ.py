@@ -41,7 +41,9 @@ class RoamApp(object):
         self.app.exec_()
 
     def exit(self):
-        sys.exit()
+        from qgis.core import QgsApplication
+        QgsApplication.exitQgis()
+        QgsApplication.quit()
 
     def setActiveWindow(self, widget):
         self.app.setActiveWindow(widget)

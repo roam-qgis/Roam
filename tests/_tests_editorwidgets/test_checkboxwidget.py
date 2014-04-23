@@ -1,17 +1,11 @@
 import pytest
 
-from PyQt4.QtGui import QCheckBox, QApplication
+from PyQt4.QtGui import QCheckBox
 
 from roam.editorwidgets.checkboxwidget import CheckboxWidget
 
-app = None
-
 config = {"checkedvalue":'MyTrue',
           "uncheckedvalue": 'MyFalse'}
-
-def setup_module(module):
-    global app
-    app = QApplication([])
 
 def test_should_set_config_checkedvalue_on_true():
     checkbox = QCheckBox()
@@ -38,5 +32,3 @@ def test_should_return_uncheckedvalue_on_false():
     assert checkbox.isChecked() == False
     assert widget.value() == 'MyFalse'
 
-def teardown_module(module):
-    app.exit()
