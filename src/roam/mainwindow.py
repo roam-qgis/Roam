@@ -526,6 +526,10 @@ class MainWindow(ui_mainwindow.Ui_MainWindow, QMainWindow):
             if action.isdefault:
                 action.setChecked(wasselected)
 
+        if hasattr(tool, 'geometryElevationComplete'):
+            add = partial(self.addNewFeature, form)
+            tool.geometryElevationComplete.connect(add)
+
         if hasattr(tool, 'geometryComplete'):
             add = partial(self.addNewFeature, form)
             tool.geometryComplete.connect(add)
@@ -605,7 +609,7 @@ class MainWindow(ui_mainwindow.Ui_MainWindow, QMainWindow):
         self.canvas.refresh()
         RoamEvents.editgeometry_complete.emit(form, feature)
 
-    def addNewFeature(self, form, geometry):
+    def addNewFeature(self, form, geometry, elevation=None):
         """
         Add a new new feature to the given layer
         """
@@ -626,13 +630,21 @@ class MainWindow(ui_mainwindow.Ui_MainWindow, QMainWindow):
         feature = QgsFeature(fields)
         feature.setGeometry(geometry)
 
+        elevation_column = None
+        if 'elevation_column' in form.settings:
+            elevation_column = form.settings['elevation_column']
+
         for index in xrange(fields.count()):
             pkindexes = layer.dataProvider().pkAttributeIndexes()
             if index in pkindexes and layer.dataProvider().name() == 'spatialite':
                 continue
 
             value = layer.dataProvider().defaultValue(index)
-            feature[index] = value
+
+            if elevation_column is not None and fields[index].name() == elevation_column and elevation is not None:
+                feature[index] = elevation
+            else:
+                feature[index] = value
 
         self.openForm(form, feature, editmode=False)
 

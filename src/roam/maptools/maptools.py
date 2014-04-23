@@ -257,7 +257,8 @@ class PointTool(TouchMapTool):
     point based actions.
     """
     geometryComplete = pyqtSignal(QgsGeometry)
-    
+    geometryElevationComplete = pyqtSignal(QgsGeometry, float)
+
     def __init__(self, canvas):
         super(PointTool, self).__init__(canvas)
         self.cursor = QCursor(QPixmap(["16 16 3 1",
@@ -302,7 +303,11 @@ class PointTool(TouchMapTool):
 
     def addatgps(self):
         location = GPS.postion
-        self.geometryComplete.emit(QgsGeometry.fromPoint(location))
+        elevation = GPS.elevation
+        if elevation is not None:
+            self.geometryElevationComplete.emit(QgsGeometry.fromPoint(location), elevation)
+        else:
+            self.geometryComplete.emit(QgsGeometry.fromPoint(location))
 
         
     def activate(self):

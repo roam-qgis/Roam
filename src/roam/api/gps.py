@@ -23,6 +23,7 @@ class GPSService(QObject):
         self.isConnected = False
         self.currentport = None
         self.postion = None
+        self.elevation = None
         self.wgs84CRS = QgsCoordinateReferenceSystem(4326)
         self.crs = None
 
@@ -82,6 +83,7 @@ class GPSService(QObject):
 
             self.gpspostion.emit(map_pos, gpsInfo)
             self.postion = map_pos
+            self.elevation = gpsInfo.elevation
 
 
 GPS = GPSService()
