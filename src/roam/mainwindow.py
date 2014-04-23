@@ -296,7 +296,11 @@ class MainWindow(ui_mainwindow.Ui_MainWindow, QMainWindow):
         if sys.platform == 'win32':
             programfiles = os.environ['ProgramW6432']
             cmd = r'{path}\Common Files\Microsoft Shared\ink\TabTip.exe'.format(path=programfiles)
-            os.startfile(cmd)
+            try:
+                os.startfile(cmd)
+            except WindowsError:
+                roam.config.settings['keyboard'] = False
+                roam.config.save()
         else:
             cmd = 'onboard'
             Popen(cmd)
