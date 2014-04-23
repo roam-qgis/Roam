@@ -7,6 +7,8 @@ from roam.maptools.touchtool import TouchMapTool
 from roam.api import GPS
 
 import roam.resources_rc
+from roamgeometry import RoamGeometry
+
 
 class RubberBand(QgsRubberBand):
     def __init__(self, canvas, geometrytype, width=5, iconsize=20):
@@ -257,7 +259,6 @@ class PointTool(TouchMapTool):
     point based actions.
     """
     geometryComplete = pyqtSignal(QgsGeometry)
-    geometryElevationComplete = pyqtSignal(QgsGeometry, float)
 
     def __init__(self, canvas):
         super(PointTool, self).__init__(canvas)
@@ -304,10 +305,7 @@ class PointTool(TouchMapTool):
     def addatgps(self):
         location = GPS.postion
         elevation = GPS.elevation
-        if elevation is not None:
-            self.geometryElevationComplete.emit(QgsGeometry.fromPoint(location), elevation)
-        else:
-            self.geometryComplete.emit(QgsGeometry.fromPoint(location))
+        self.geometryComplete.emit(RoamGeometry.fromPointZ(location, elevation))
 
         
     def activate(self):

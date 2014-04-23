@@ -526,10 +526,6 @@ class MainWindow(ui_mainwindow.Ui_MainWindow, QMainWindow):
             if action.isdefault:
                 action.setChecked(wasselected)
 
-        if hasattr(tool, 'geometryElevationComplete'):
-            add = partial(self.addNewFeature, form)
-            tool.geometryElevationComplete.connect(add)
-
         if hasattr(tool, 'geometryComplete'):
             add = partial(self.addNewFeature, form)
             tool.geometryComplete.connect(add)
@@ -609,7 +605,7 @@ class MainWindow(ui_mainwindow.Ui_MainWindow, QMainWindow):
         self.canvas.refresh()
         RoamEvents.editgeometry_complete.emit(form, feature)
 
-    def addNewFeature(self, form, geometry, elevation=None):
+    def addNewFeature(self, form, geometry):
         """
         Add a new new feature to the given layer
         """
@@ -633,6 +629,10 @@ class MainWindow(ui_mainwindow.Ui_MainWindow, QMainWindow):
         elevation_column = None
         if 'elevation_column' in form.settings:
             elevation_column = form.settings['elevation_column']
+
+        elevation = None
+        if hasattr(geometry, 'z'):
+            elevation = geometry.z
 
         for index in xrange(fields.count()):
             pkindexes = layer.dataProvider().pkAttributeIndexes()
