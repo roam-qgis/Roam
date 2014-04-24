@@ -294,7 +294,11 @@ class MainWindow(ui_mainwindow.Ui_MainWindow, QMainWindow):
             return
 
         if sys.platform == 'win32':
-            programfiles = os.environ['ProgramW6432']
+            try:
+                programfiles = os.environ['ProgramW6432']
+            except KeyError:
+                programfiles = os.environ['ProgramFiles']
+
             cmd = r'{path}\Common Files\Microsoft Shared\ink\TabTip.exe'.format(path=programfiles)
             try:
                 os.startfile(cmd)
