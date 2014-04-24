@@ -72,3 +72,10 @@ def roam_geomvertex(values, feature, parent):
 @qgsfunction(0, 'roamgeometry')
 def _roamgeometry(values, feature, parent):
     return capturegeometry
+
+@qgsfunction(0, 'z')
+def _z(values, feature, parent):
+    if hasattr(capturegeometry, 'z'):
+          return capturegeometry.z
+    else:
+          return None

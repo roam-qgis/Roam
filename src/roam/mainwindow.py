@@ -630,14 +630,6 @@ class MainWindow(ui_mainwindow.Ui_MainWindow, QMainWindow):
         feature = QgsFeature(fields)
         feature.setGeometry(geometry)
 
-        elevation_column = None
-        if 'elevation_column' in form.settings:
-            elevation_column = form.settings['elevation_column']
-
-        elevation = None
-        if hasattr(geometry, 'z'):
-            elevation = geometry.z
-
         for index in xrange(fields.count()):
             pkindexes = layer.dataProvider().pkAttributeIndexes()
             if index in pkindexes and layer.dataProvider().name() == 'spatialite':
@@ -645,10 +637,7 @@ class MainWindow(ui_mainwindow.Ui_MainWindow, QMainWindow):
 
             value = layer.dataProvider().defaultValue(index)
 
-            if elevation_column is not None and fields[index].name() == elevation_column and elevation is not None:
-                feature[index] = elevation
-            else:
-                feature[index] = value
+            feature[index] = value
 
         self.openForm(form, feature, editmode=False)
 
