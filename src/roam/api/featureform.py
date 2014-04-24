@@ -296,6 +296,7 @@ class FeatureFormBase(QWidget):
         values = CaseInsensitiveDict(self.bindingvalues)
         for field, wrapper in self.boundwidgets.iteritems():
             value = wrapper.value()
+            print value
             if shouldsave(field):
                 savedvalues[field] = value
             values[field] = value

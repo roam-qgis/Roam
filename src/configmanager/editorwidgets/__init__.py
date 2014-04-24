@@ -15,4 +15,5 @@ widgetconfigs = {"Checkbox" : CheckboxWidgetConfig,
                  "List":  ListWidgetConfig,
                  "Text" : TextWidgetConfig,
                  "TextBlock": TextBlockWidgetConfig,
-                 "Number": NumberWidgetConfig}
+                 "Number": NumberWidgetConfig,
+                 "Number(Double)": NumberWidgetConfig}

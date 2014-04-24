@@ -1,7 +1,8 @@
 from PyQt4.QtGui import QWidget
 from PyQt4.QtCore import QObject, pyqtSignal
+from collections import OrderedDict
 
-widgets = {}
+widgets = OrderedDict()
 
 class EditorWidgetException(Exception):
     pass
