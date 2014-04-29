@@ -26,6 +26,7 @@ class DefaultError(Exception):
 
 def getdefaults(widgets, feature, layer, canvas):
     defaults = {}
+    roam.qgisfunctions.capturegeometry = feature.geometry()
     for field, config in widgets:
         default = config.get("default", None)
         if default is None:
@@ -66,8 +67,6 @@ def layer_value(feature, layer, field, defaultconfig, canvas):
     rect = canvas.mapRenderer().mapToLayerCoordinates(layer, rect)
     rq = QgsFeatureRequest().setFilterRect(rect)
     features = searchlayer.getFeatures(rq)
-
-    roam.qgisfunctions = feature.geometry()
 
     exp = QgsExpression(expression)
     exp.prepare(searchlayer.pendingFields())

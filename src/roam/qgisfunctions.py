@@ -1,4 +1,5 @@
 from qgis.core import QgsExpression
+from roam.api import GPS
 
 capturegeometry = None
 
@@ -55,7 +56,7 @@ def qgsfunction(args, group, **kwargs):
     return wrapper
 
 
-@qgsfunction(1, 'roam_geomvertex')
+@qgsfunction(1, "Roam")
 def roam_geomvertex(values, feature, parent):
     if capturegeometry:
         nodeindex = values[0]
@@ -69,6 +70,13 @@ def roam_geomvertex(values, feature, parent):
             return node
     return None
 
-@qgsfunction(0, 'roamgeometry')
-def _roamgeometry(values, feature, parent):
+@qgsfunction(0, 'Roam')
+def roamgeometry(values, feature, parent):
     return capturegeometry
+
+@qgsfunction(0, "Roam")
+def gps_z(values, feature, parent):
+    if GPS.isConnected:
+        return GPS.elevation
+    else:
+        return None
