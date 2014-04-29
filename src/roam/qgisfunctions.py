@@ -1,4 +1,4 @@
-from qgis.core import QgsExpression
+from qgis.core import QgsExpression, QGis, QgsGeometry
 from roam.api import GPS
 
 capturegeometry = None
