@@ -55,13 +55,24 @@ def checkversion(roamversion, projectversion):
     majormatch = min[0] == project[0]
     return majormatch
 
+def initfound(folder):
+    return os.path.exists(os.path.join(folder, "__init__.py"))
+
+
+def createinifile(folder):
+    with open(os.path.join(folder, "__init__.py"), 'w'):
+        pass
+
 
 def getProjects(paths):
     """
-    Return QMapProjects inside the set path.  
-    Each folder will be considered a QMap project
+    Return projects inside the set path.
+    Each folder will be considered a Roam project
     """
     for projectpath in paths:
+        if not initfound(projectpath):
+            createinifile(projectpath)
+
         folders = (sorted([os.path.join(projectpath, item)
                            for item in os.walk(projectpath).next()[1]]))
 
@@ -69,6 +80,10 @@ def getProjects(paths):
             if os.path.basename(folder).startswith("_"):
                 # Ignore hidden folders.
                 continue
+
+            if not initfound(folder):
+                createinifile(folder)
+
             project = Project.from_folder(folder)
             if not checkversion(roam.__version__, project.version):
                 project.valid = False
@@ -221,10 +236,8 @@ class Form(object):
         try:
             self._module = importlib.import_module(name)
         except ImportError as err:
-            log(sys.path)
-            log(err)
-            self.errors.append(err.message)
-            self._module = None
+            createinifile(self.folder)
+            self._loadmodule()
 
     @property
     def module(self):
