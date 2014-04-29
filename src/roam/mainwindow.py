@@ -636,6 +636,7 @@ class MainWindow(ui_mainwindow.Ui_MainWindow, QMainWindow):
                 continue
 
             value = layer.dataProvider().defaultValue(index)
+
             feature[index] = value
 
         self.openForm(form, feature, editmode=False)
