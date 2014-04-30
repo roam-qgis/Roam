@@ -171,7 +171,7 @@ class FormsNode(Treenode):
 
         return super(FormsNode, self).data(role)
 
-    def removeRow(self, index):
+    def delete(self, index):
         """
         Removes the given form at the index from the project.
         """
@@ -192,9 +192,6 @@ class FormsNode(Treenode):
             self.project.save()
         except Exception as ex:
             logger.exception("Could not remove folder")
-            return False
-
-        return True
 
     def additem(self):
         form = newform(self.project)
@@ -240,7 +237,7 @@ class ProjectsNode(Treenode):
         self.addtext = 'Add new project'
         self._text = text
 
-    def removeRow(self, index):
+    def delete(self, index):
         nodes = self.takeRow(index)
         if not nodes:
             return
@@ -251,8 +248,8 @@ class ProjectsNode(Treenode):
             shutil.move(project.folder, archivefolder)
         except Exception as ex:
             logger.exception("Could not remove form folder")
-            return False
 
+    def removeRow(self, index):
         return True
 
     def additem(self):
@@ -266,9 +263,15 @@ class ProjectsNode(Treenode):
             return "{} ({})".format(self._text, self.rowCount())
         return super(ProjectsNode, self).data(role)
 
+    def loadprojects(self, projects):
+        self.removeRows(0, self.rowCount())
+        for project in projects:
+            node = ProjectNode(project)
+            self.appendRow(node)
+
 
 class ConfigManagerDialog(ui_configmanager.Ui_ProjectInstallerDialog, QDialog):
-    def __init__(self, projectfolder, parent=None):
+    def __init__(self, parent=None):
         super(ConfigManagerDialog, self).__init__(parent)
         self.setupUi(self)
         self.bar = roam.messagebaritems.MessageBar(self)
@@ -282,7 +285,7 @@ class ConfigManagerDialog(ui_configmanager.Ui_ProjectInstallerDialog, QDialog):
 
         self.projectwidget.adjustSize()
         self.setWindowFlags(Qt.Window)
-        self.projectfolder = projectfolder
+
 
         self.newProjectButton.pressed.connect(self.addbuttonpressed)
         self.removeProjectButton.pressed.connect(self.deletebuttonpressed)
@@ -292,7 +295,7 @@ class ConfigManagerDialog(ui_configmanager.Ui_ProjectInstallerDialog, QDialog):
         self.projectwidget.selectlayersupdated.connect(self.updateformsnode)
 
         self.projectwidget.setaboutinfo()
-
+        self.projectwidget.projectlocationchanged.connect(self.loadprojects)
         self.setuprootitems()
 
     def updateformsnode(self, *args):
@@ -308,8 +311,12 @@ class ConfigManagerDialog(ui_configmanager.Ui_ProjectInstallerDialog, QDialog):
                                   info)
 
     def setuprootitems(self):
+        rootitem = self.treemodel.invisibleRootItem()
         self.roamnode = RoamNode()
-        self.treemodel.invisibleRootItem().appendRow(self.roamnode)
+        rootitem.appendRow(self.roamnode)
+
+        self.projectsnode = ProjectsNode(folder=None)
+        rootitem.appendRow(self.projectsnode)
 
     def addbuttonpressed(self):
         index = self.projectList.currentIndex()
@@ -339,24 +346,19 @@ class ConfigManagerDialog(ui_configmanager.Ui_ProjectInstallerDialog, QDialog):
             newindex = self.treemodel.index(index.row(), 0, parentindex)
             if parentindex.isValid():
                 parent = parentindex.data(Qt.UserRole)
-                parent.removeRow(index.row())
+                parent.delete(index.row())
 
             self.projectList.setCurrentIndex(newindex)
 
-    def loadprojects(self, projects):
-        logger.info("Loading {} projects".format(len(projects)))
+    def addprojectfolders(self, folders):
+        self.projectwidget.setprojectfolders(folders)
 
-        rootitem = self.treemodel.invisibleRootItem()
-        projectsnode = ProjectsNode(folder=self.projectfolder)
-        rootitem.appendRow(projectsnode)
-        for project in projects:
-            node = ProjectNode(project)
-            projectsnode.appendRow(node)
+    def loadprojects(self, projectpath):
+        projects = roam.project.getProjects([projectpath])
+        self.projectsnode.loadprojects(projects)
 
-        index = self.treemodel.index(0, 0, QModelIndex())
+        index = self.treemodel.indexFromItem(self.projectsnode)
         self.projectList.setCurrentIndex(index)
-        self.projectwidget.setprojectsfolder(self.projectfolder)
-        index = self.treemodel.indexFromItem(projectsnode)
         self.projectList.expand(index)
 
     def nodeselected(self, index, _):

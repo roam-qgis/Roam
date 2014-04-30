@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>781</width>
-    <height>697</height>
+    <height>733</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -99,7 +99,7 @@ QLabel[warning=true]
       </sizepolicy>
      </property>
      <property name="currentIndex">
-      <number>1</number>
+      <number>6</number>
      </property>
      <widget class="QWidget" name="project_info_page">
       <layout class="QGridLayout" name="gridLayout_11">
@@ -1120,19 +1120,15 @@ p, li { white-space: pre-wrap; }
      </widget>
      <widget class="QWidget" name="projects_page">
       <layout class="QFormLayout" name="formLayout_9">
-       <item row="0" column="0">
+       <item row="1" column="0">
         <widget class="QLabel" name="label_15">
          <property name="text">
           <string>Projects loaded from:</string>
          </property>
         </widget>
        </item>
-       <item row="0" column="1">
-        <widget class="QLabel" name="projectlocationlabel">
-         <property name="text">
-          <string>TextLabel</string>
-         </property>
-        </widget>
+       <item row="1" column="1">
+        <widget class="QComboBox" name="projectlocations"/>
        </item>
       </layout>
      </widget>
@@ -1295,6 +1291,7 @@ p, li { white-space: pre-wrap; }
   <include location="resources.qrc"/>
   <include location="../../roam/resources.qrc"/>
   <include location="resources.qrc"/>
+  <include location="../../roam/resources.qrc"/>
   <include location="../../roam/resources.qrc"/>
   <include location="../../roam/resources.qrc"/>
  </resources>
