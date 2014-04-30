@@ -347,6 +347,12 @@ class ProjectWidget(Ui_Form, QWidget):
         form.settings['layer'] = layer.name()
         self.updatefields(layer)
 
+    def setsplash(self, splash):
+        pixmap = QPixmap(splash)
+        w = self.splashlabel.width()
+        h = self.splashlabel.height()
+        self.splashlabel.setPixmap(pixmap.scaled(w,h, Qt.KeepAspectRatio))
+
     def setproject(self, project, loadqgis=True):
         """
         Set the widgets active project.
@@ -360,10 +366,7 @@ class ProjectWidget(Ui_Form, QWidget):
         self.versionText.setText(project.version)
         self.selectlayermodel.config = project.settings
         self.formlayers.setSelectLayers(self.project.selectlayers)
-        pixmap = QPixmap(project.splash)
-        w = self.splashlabel.width()
-        h = self.splashlabel.height()
-        self.splashlabel.setPixmap(pixmap.scaled(w,h, Qt.KeepAspectRatio))
+        self.setsplash(project.splash)
         if loadqgis:
             self.loadqgisproject(project, self.project.projectfile)
         else:
