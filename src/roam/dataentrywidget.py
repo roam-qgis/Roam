@@ -26,7 +26,6 @@ class DefaultError(Exception):
 
 def getdefaults(widgets, feature, layer, canvas):
     defaults = {}
-    roam.qgisfunctions.capturegeometry = feature.geometry()
     for field, config in widgets:
         default = config.get("default", None)
         if default is None:
@@ -276,6 +275,8 @@ class DataEntryWidget(dataentry_widget, dataentry_base):
         """
         Opens a form for the given feature.
         """
+
+        roam.qgisfunctions.capturegeometry = feature.geometry()
 
         defaults = {}
         layer = form.QGISLayer
