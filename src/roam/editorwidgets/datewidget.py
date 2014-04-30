@@ -1,7 +1,7 @@
 from functools import partial
 
 from PyQt4.QtGui import QPushButton, QDateTimeEdit, QIcon, QDateEdit, QWidget
-from PyQt4.QtCore import QDateTime, Qt, QSize
+from PyQt4.QtCore import QDateTime, Qt, QSize, QDate
 
 from roam.editorwidgets.core import EditorWidget, registerwidgets, LargeEditorWidget
 from roam.editorwidgets.uifiles import ui_datewidget
@@ -100,8 +100,11 @@ class DateWidget(EditorWidget):
     def setvalue(self, value):
         if value is None:
             value = DateWidget.DEFAULTDATE
-        elif not isinstance(value, QDateTime):
+        elif isinstance(value, basestring):
             value = QDateTime.fromString(value, Qt.ISODate)
+
+        if isinstance(value, QDate):
+            value = QDateTime(value)
 
         if hasattr(self.datewidget, 'setDate'):
             self.datewidget.setDate(value.date())
