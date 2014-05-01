@@ -5,6 +5,8 @@ from roam.flickwidget import FlickCharm
 from roam.ui.uifiles import (project_widget, project_base,
                          modules_widget, modules_base)
 
+import roam.utils
+
 
 class ProjectWidget(project_widget, project_base):
     def __init__(self, parent):
@@ -59,8 +61,9 @@ class ProjectsWidget(modules_widget, modules_base):
         self.moduleList.clear()
         for project in projects:
             if not project.valid:
+                roam.utils.warning("Project {} is invalid because {}".format(project.name, project.error))
                 continue
-            
+
             item = QListWidgetItem(self.moduleList, QListWidgetItem.UserType)
             item.setData(QListWidgetItem.UserType, project)
             item.setSizeHint(QSize(150, 150))
@@ -70,7 +73,7 @@ class ProjectsWidget(modules_widget, modules_base):
             projectwidget.name = project.name
             projectwidget.description = project.description
             projectwidget.version = project.version
-            
+
             self.moduleList.addItem(item)
             self.moduleList.setItemWidget(item, projectwidget)
                               

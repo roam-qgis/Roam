@@ -92,6 +92,17 @@ def getProjects(paths):
             yield project
 
 
+def readfolderconfig(folder):
+    settingspath = os.path.join(folder, "settings.config")
+    try:
+        with open(settingspath, 'r') as f:
+            settings = yaml.load(f)
+        return settings
+    except IOError as e:
+        utils.warning(e)
+        return None
+
+
 
 class Form(object):
     def __init__(self, name, config, rootfolder):
@@ -257,17 +268,20 @@ class Project(object):
 
     @classmethod
     def from_folder(cls, rootfolder):
-        settingspath = os.path.join(rootfolder, "settings.config")
         project = cls(rootfolder, {})
-        try:
-            with open(settingspath, 'r') as f:
-                settings = yaml.load(f)
-            project.settings = settings
-        except IOError as e:
-            project.valid = False
-            project.error = "No settings.config found in {} project folder".format(rootfolder)
-            utils.warning(e)
+        project.settings = readfolderconfig(rootfolder)
         return project
+
+    @property
+    def settings(self):
+        return self._settings
+
+    @settings.setter
+    def settings(self, value):
+        self._settings = value
+        if value is None:
+            self.valid = False
+            self.error = "No settings set for project"
 
     @property
     def name(self):
