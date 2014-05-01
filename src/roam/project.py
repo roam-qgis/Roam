@@ -93,6 +93,11 @@ def getProjects(paths):
 
 
 def readfolderconfig(folder):
+    """
+    Read the config file from the given folder. A file called settings.config is expected to be found in the folder.
+    :param folder: The folder to read the config from.
+    :return: Returns None if the settings file could not be read.
+    """
     settingspath = os.path.join(folder, "settings.config")
     try:
         with open(settingspath, 'r') as f:
@@ -101,6 +106,17 @@ def readfolderconfig(folder):
     except IOError as e:
         utils.warning(e)
         return None
+
+
+def writefolderconfig(settings, folder):
+    """
+    Write the given settings out to the folder to a file named settings.config.
+    :param settings: The settings to write to disk.
+    :param folder: The folder to create the settings.config file
+    """
+    settingspath = os.path.join(folder, "settings.config")
+    with open(settingspath, 'w') as f:
+        roam.yaml.safe_dump(data=settings, stream=f, default_flow_style=False)
 
 
 
@@ -435,12 +451,7 @@ class Project(object):
         """
         Save the project config to disk.
         """
-        def writesettings(settings, path):
-            with open(path, 'w') as f:
-                roam.yaml.safe_dump(data=settings, stream=f, default_flow_style=False)
-
-        settingspath = os.path.join(self.folder, "settings.config")
-        writesettings(self.settings, settingspath)
+        writefolderconfig(self.settings, self.folder)
 
     @property
     def supportedgeometry(self):
