@@ -119,11 +119,11 @@ def readfolderconfig(folder):
     settingspath = os.path.join(folder, "settings.config")
     try:
         with open(settingspath, 'r') as f:
-            settings = yaml.load(f)
+            settings = yaml.load(f) or {}
         return settings
     except IOError as e:
         utils.warning(e)
-        utils.warning("Returning empty settings for project")
+        utils.warning("Returning empty settings for settings.config")
         return {}
 
 
@@ -159,7 +159,7 @@ class Form(object):
 
     @property
     def label(self):
-        return self.settings.get('label', self.name)
+        return self.settings.setdefault('label', self.name)
 
     @property
     def name(self):
@@ -289,6 +289,9 @@ class Form(object):
     def module(self):
         return self._module
 
+    def save(self):
+        writefolderconfig(self.settings, self.folder)
+
 
 class Project(object):
     def __init__(self, rootfolder, settings):
@@ -413,11 +416,25 @@ class Project(object):
 
     @property
     def forms(self):
+        def mapformconfig(forms):
+            if hasattr(forms, 'iteritems'):
+                for formname, config in forms.iteritems():
+                    yield formname, config
+            else:
+                for formname in forms:
+                    folder = os.path.join(self.folder, formname)
+                    print folder
+                    config = readfolderconfig(folder)
+                    print config
+                    yield formname, config
+
         if not self._forms:
-            for formname, config in self.settings.get("forms", {}).iteritems():
+            forms = self.settings.setdefault("forms", [])
+            for formname, config in mapformconfig(forms):
                 folder = os.path.join(self.folder, formname)
                 form = Form.from_config(formname, config, folder)
                 self._forms.append(form)
+
         return self._forms
 
     @property
@@ -446,8 +463,12 @@ class Project(object):
         return layer.name() in self.settings.get('historylayers', [])
 
     def addformconfig(self, name, config):
-        forms = self.settings.get('forms', {})
-        forms[name] = config
+        forms = self.settings.setdefault("forms", [])
+        if hasattr(forms, 'iteritems'):
+            forms[name] = config
+        else:
+            forms.append(name)
+
         self.settings['forms'] = forms
         self._forms = []
         folder = os.path.join(self.folder, name)
@@ -458,6 +479,11 @@ class Project(object):
         Save the project config to disk.
         """
         writefolderconfig(self.settings, self.folder)
+
+        forms = self.settings.setdefault("forms", [])
+        if not hasattr(forms, 'iteritems'):
+            for form in self.forms:
+                form.save()
 
     def hascapturelayers(self):
         layers = QgsMapLayerRegistry.instance().mapLayers().values()

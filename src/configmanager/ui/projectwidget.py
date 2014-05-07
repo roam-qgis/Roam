@@ -501,7 +501,7 @@ class ProjectWidget(Ui_Form, QWidget):
         disconnectsignals()
 
         settings = form.settings
-        label = settings['label']
+        label = form.label
         layer = settings.setdefault('layer', getfirstlayer())
         formtype = settings.setdefault('type', 'auto')
         widgets = settings.setdefault('widgets', [])
