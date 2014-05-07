@@ -98,6 +98,7 @@ class MissingLayerItem(ClickableMessage):
         self.setText(message)
         self.setLevel(QgsMessageBar.WARNING)
         self.layers = layers
+        self.setDuration(4)
         self.updatefilters()
 
     def showmessage(self):
