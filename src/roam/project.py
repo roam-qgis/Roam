@@ -23,6 +23,7 @@ from roam.structs import OrderedDictYAMLLoader
 import roam.utils
 import roam
 
+supportedgeometry = [QGis.Point, QGis.Polygon, QGis.Line]
 
 class NoMapToolConfigured(Exception):
     """ 
@@ -37,6 +38,26 @@ class ErrorInMapTool(Exception):
         Raised when there is an error in configuring the map tool  
     """
     pass
+
+
+def layersfromlist(layerlist):
+    """
+    Transform a list of layer names into layer objects from the layer registry.
+    :param layerlist:
+    :return:
+    """
+    qgislayers = QgsMapLayerRegistry.instance().mapLayers().values()
+    qgislayers = {layer.name(): layer for layer in qgislayers if layer.type() == QgsMapLayer.VectorLayer}
+    if not layerlist:
+        return qgislayers
+    else:
+        _qgislayers = OrderedDict()
+        for layername in layerlist:
+            try:
+                _qgislayers[layername] = qgislayers[layername]
+            except KeyError:
+                continue
+        return _qgislayers
 
 
 def checkversion(roamversion, projectversion):
@@ -419,19 +440,6 @@ class Project(object):
     def selectlayers(self):
         return self.settings.get('selectlayers', [])
 
-    def _layersfromlist(self, layerlist):
-        qgislayers = QgsMapLayerRegistry.instance().mapLayers().values()
-        qgislayers = {layer.name(): layer for layer in qgislayers if layer.type() == QgsMapLayer.VectorLayer}
-        if not layerlist:
-            return qgislayers
-        else:
-            _qgislayers = OrderedDict()
-            for layername in layerlist:
-                try:
-                    _qgislayers[layername] = qgislayers[layername]
-                except KeyError:
-                    continue
-            return _qgislayers
 
     def selectlayersmapping(self):
         """
@@ -441,14 +449,14 @@ class Project(object):
         If no select layers are found in the settings this function will return
         all layers in the project
         """
-        return self._layersfromlist(self.selectlayers)
+        return layersfromlist(self.selectlayers)
 
     @property
     def legendlayers(self):
         return self.settings.get('legendlayers', [])
 
     def legendlayersmapping(self):
-        return self._layersfromlist(self.legendlayers)
+        return layersfromlist(self.legendlayers)
 
     def historyenabled(self, layer):
         return layer.name() in self.settings.get('historylayers', [])
@@ -467,14 +475,10 @@ class Project(object):
         """
         writefolderconfig(self.settings, self.folder)
 
-    @property
-    def supportedgeometry(self):
-        return [QGis.Point, QGis.Polygon, QGis.Line]
-
     def hascapturelayers(self):
         layers = QgsMapLayerRegistry.instance().mapLayers().values()
         layers = (layer for layer in layers if layer.type() == QgsMapLayer.VectorLayer)
-        layers = [layer.name() for layer in layers if layer.geometryType() in self.supportedgeometry]
+        layers = [layer.name() for layer in layers if layer.geometryType() in supportedgeometry]
         for layer in self.selectlayers:
             if layer in layers:
                 return True
