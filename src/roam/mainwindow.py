@@ -436,7 +436,7 @@ class MainWindow(ui_mainwindow.Ui_MainWindow, QMainWindow):
         self.actionDataEntry.trigger()
 
     def dataentrychanged(self, index):
-        wasactive = self.clearCapatureTools()
+        self.clearCapatureTools()
 
         if not index.isValid():
             return
@@ -445,7 +445,7 @@ class MainWindow(ui_mainwindow.Ui_MainWindow, QMainWindow):
         # modelindex = self.dataentrymodel.index(index, 0)
         form = modelindex.data(Qt.UserRole + 1)
         self.dataentryselection.setCurrentIndex(index.row())
-        self.createCaptureButtons(form, wasactive)
+        self.createCaptureButtons(form)
 
     def raiseerror(self, *exinfo):
         info = traceback.format_exception(*exinfo)
@@ -514,7 +514,7 @@ class MainWindow(ui_mainwindow.Ui_MainWindow, QMainWindow):
                 self.projecttoolbar.removeAction(action)
         return captureselected
 
-    def createCaptureButtons(self, form, wasselected):
+    def createCaptureButtons(self, form):
         tool = form.getMaptool()(self.canvas)
         for action in tool.actions:
             # Create the action here.
@@ -526,9 +526,7 @@ class MainWindow(ui_mainwindow.Ui_MainWindow, QMainWindow):
             self.editgroup.addAction(action)
             self.layerbuttons.append(action)
             self.projecttoolbar.insertAction(self.topspaceraction, action)
-
-            if action.isdefault:
-                action.setChecked(wasselected)
+            action.setChecked(action.isdefault)
 
         if hasattr(tool, 'geometryComplete'):
             add = partial(self.addNewFeature, form)
@@ -541,10 +539,10 @@ class MainWindow(ui_mainwindow.Ui_MainWindow, QMainWindow):
         #self.actionGPSFeature.setVisible(not tool.isEditTool())
 
     def loadform(self, form):
-        captureactive = self.clearCapatureTools()
+        self.clearCapatureTools()
         self.dataentryselection.setIcon(QIcon(form.icon))
         self.dataentryselection.setText(form.icontext)
-        self.createCaptureButtons(form, captureactive)
+        self.createCaptureButtons(form)
 
     def clearToolRubberBand(self):
         """
