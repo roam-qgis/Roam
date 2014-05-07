@@ -14,7 +14,6 @@ from PyQt4.QtGui import QAction, QIcon
 
 from qgis.core import QgsMapLayerRegistry, QGis, QgsTolerance, QgsVectorLayer, QgsMapLayer
 
-from roam.maptools import PointTool, PolygonTool, PolylineTool
 from roam.utils import log
 from roam.syncing import replication
 from roam.api import FeatureForm
@@ -22,6 +21,7 @@ from roam.structs import OrderedDictYAMLLoader
 
 import roam.utils
 import roam
+import roam.maptools
 
 supportedgeometry = [QGis.Point, QGis.Polygon, QGis.Line]
 
@@ -202,14 +202,11 @@ class Form(object):
         """
             Returns the map tool configured for this layer.
         """
-        if self.QGISLayer.geometryType() == QGis.Point:
-            return PointTool
-        elif self.QGISLayer.geometryType() == QGis.Polygon:
-            return PolygonTool
-        elif self.QGISLayer.geometryType() == QGis.Line:
-            return PolylineTool
-
-        raise NoMapToolConfigured
+        geomtype = self.QGISLayer.geometryType()
+        try:
+            return roam.maptools.tools[geomtype]
+        except KeyError:
+            raise NoMapToolConfigured
 
     @property
     def capabilities(self):
