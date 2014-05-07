@@ -360,22 +360,21 @@ class ProjectWidget(Ui_Form, QWidget):
         self.mapisloaded = False
         self.filewatcher.removePaths(self.filewatcher.files())
         self.projectupdatedlabel.hide()
-        self.startsettings = copy.deepcopy(project.settings)
-        self.project = project
-        self.projectlabel.setText(project.name)
-        self.versionText.setText(project.version)
-        self.selectlayermodel.config = project.settings
-        self.formlayers.setSelectLayers(self.project.selectlayers)
-        self.setsplash(project.splash)
-        if loadqgis:
+        self._closeqgisproject()
+
+        if project.valid:
+            self.startsettings = copy.deepcopy(project.settings)
+            self.project = project
+            self.projectlabel.setText(project.name)
+            self.versionText.setText(project.version)
+            self.selectlayermodel.config = project.settings
+            self.formlayers.setSelectLayers(self.project.selectlayers)
+            self.setsplash(project.splash)
             self.loadqgisproject(project, self.project.projectfile)
-        else:
-            self._updateforproject(self.project)
-        self.filewatcher.addPath(self.project.projectfile)
-        self.projectloaded.emit(self.project)
+            self.filewatcher.addPath(self.project.projectfile)
+            self.projectloaded.emit(self.project)
 
     def loadqgisproject(self, project, projectfile):
-        self._closeqgisproject()
         QDir.setCurrent(os.path.dirname(project.projectfile))
         fileinfo = QFileInfo(project.projectfile)
         QgsProject.instance().read(fileinfo)

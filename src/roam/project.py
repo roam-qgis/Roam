@@ -85,9 +85,6 @@ def getProjects(paths):
                 createinifile(folder)
 
             project = Project.from_folder(folder)
-            if not checkversion(roam.__version__, project.version):
-                project.valid = False
-                project.error = "Version mismatch"
 
             yield project
 
@@ -105,7 +102,8 @@ def readfolderconfig(folder):
         return settings
     except IOError as e:
         utils.warning(e)
-        return None
+        utils.warning("Returning empty settings for project")
+        return {}
 
 
 def writefolderconfig(settings, folder):
@@ -276,7 +274,6 @@ class Project(object):
         self.folder = rootfolder
         self._project = None
         self._splash = None
-        self.valid = True
         self.settings = settings
         self._forms = []
         self.error = ''
@@ -295,33 +292,50 @@ class Project(object):
     @settings.setter
     def settings(self, value):
         self._settings = value
-        if value is None:
-            self.valid = False
-            self.error = "No settings set for project"
 
     @property
     def name(self):
         default = os.path.basename(self.folder)
-        return self.settings.get("title", default)
+        return self.settings.setdefault("title", default)
         
     @property
     def description(self):
-        return self.settings.get("description", '')
+        return self.settings.setdefault("description", '')
         
     @property
     def version(self):
-        return str(self.settings.get("version", roam.__version__))
+        return str(self.settings.setdefault("version", roam.__version__))
     
     @property
     def projectfile(self):
-        if not self._project:
-            try:
-                self._project = glob.glob(os.path.join(self.folder, '*.qgs'))[0]
-            except IndexError:
-                self.error = "No QGIS project found in the {} project folder".format(self.name)
-                self.valid = False
-        return self._project
-    
+        return glob.glob(os.path.join(self.folder, '*.qgs'))[0]
+
+    def validate(self):
+        """
+        Yields messages for each error in the project.
+        """
+        try:
+            projectfile = self.projectfile
+        except IndexError:
+            error = "No QGIS project found in the {} project folder".format(self.name)
+            yield error
+
+        if self.settings is None:
+            error = "No settings set for project"
+            yield error
+
+        if not checkversion(roam.__version__, self.version):
+            error = "Version mismatch"
+            yield error
+
+    @property
+    def valid(self):
+        """
+        Check if this project is valid or not.  Call validate for more detail on errors
+        :return: True if this project is valid.
+        """
+        return not list(self.validate())
+
     @property
     def splash(self):
         if not self._splash:

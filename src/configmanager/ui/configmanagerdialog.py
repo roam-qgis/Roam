@@ -79,6 +79,7 @@ class Treenode(QStandardItem):
     RoamNode = QStandardItem.UserType + 4
     FormsNode = QStandardItem.UserType + 5
     ProjectsNode = QStandardItem.UserType + 6
+    ProjectsNode_Invalid = QStandardItem.UserType + 7
 
     nodetype = TreeNode
     def __init__(self, text, icon, project=None):
@@ -207,9 +208,11 @@ class ProjectNode(Treenode):
     def __init__(self, project):
         super(ProjectNode, self).__init__(project.name,QIcon(":/icons/folder"))
         self.project = project
-        self.formsnode = FormsNode("Forms", project=project)
-        self.mapnode = MapNode("Map", project=project)
-        self.appendRows([self.mapnode, self.formsnode])
+        if project.valid:
+            self.formsnode = FormsNode("Forms", project=project)
+            self.mapnode = MapNode("Map", project=project)
+            self.appendRows([self.mapnode, self.formsnode])
+
         self.removemessage = ("Delete Project?", ("Do you want to delete this project? <br><br> "
                                "Deleted projects will be moved to the _archive folder in projects folder<br><br>"
                                "<i>Projects can be recovered by moving the folder back to the projects folder</i>"))
@@ -221,9 +224,19 @@ class ProjectNode(Treenode):
     def additem(self):
         return self.parent().additem()
 
+    @property
+    def page(self):
+        if not self.project.valid:
+            return Treenode.ProjectsNode_Invalid - QStandardItem.UserType
+        else:
+            return self.type() - QStandardItem.UserType
+
     def data(self, role=None):
         if role == Qt.DisplayRole:
             return self.project.name
+        elif role == Qt.DecorationRole:
+            if not self.project.valid:
+                return QIcon(":/icons/folder_broken")
         return super(ProjectNode, self).data(role)
 
 
@@ -377,6 +390,14 @@ class ConfigManagerDialog(ui_configmanager.Ui_ProjectInstallerDialog, QDialog):
             # Only load the project if it's different the current one.
             self.projectwidget.setproject(project)
 
+            validateresults = list(project.validate())
+            if validateresults:
+                text = "Here are some reasons we found: \n\n"
+                for message in validateresults:
+                    text += "- {} \n".format(message)
+
+                self.projectwidget.reasons_label.setText(text)
+
         if node.nodetype == Treenode.FormNode:
             self.projectwidget.setform(node.form)
         elif node.nodetype == Treenode.RoamNode:
@@ -386,6 +407,7 @@ class ConfigManagerDialog(ui_configmanager.Ui_ProjectInstallerDialog, QDialog):
         elif node.nodetype == Treenode.FormsNode:
             haslayers = self.projectwidget.checkcapturelayers()
             self.newProjectButton.setEnabled(haslayers)
+
 
         self.projectwidget.projectbuttonframe.setVisible(not project is None)
 

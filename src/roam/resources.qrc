@@ -53,6 +53,7 @@
     <file alias="previous">resources/images/previous.svg</file>
     <file alias="add">resources/images/add.svg</file>
     <file alias="project">resources/images/file.svg</file>
+    <file alias="folder_broken">resources/images/folder_broken.svg</file>
     <file alias="folder">resources/images/folder.svg</file>
     <file alias="legend">resources/images/legend.svg</file>
   </qresource>
