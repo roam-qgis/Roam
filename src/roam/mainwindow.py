@@ -475,13 +475,11 @@ class MainWindow(ui_mainwindow.Ui_MainWindow, QMainWindow):
         self.zoomInTool = QgsMapToolZoom(self.canvas, False)
         self.zoomOutTool = QgsMapToolZoom(self.canvas, True)
         self.panTool = PanTool(self.canvas)
-        self.moveTool = MoveTool(self.canvas, [])
         self.infoTool = InfoTool(self.canvas)
 
         connectAction(self.actionZoom_In, self.zoomInTool)
         connectAction(self.actionZoom_Out, self.zoomOutTool)
         connectAction(self.actionPan, self.panTool)
-        connectAction(self.actionMove, self.moveTool)
         connectAction(self.actionInfo, self.infoTool)
 
         self.zoomInTool.setCursor(cursor(':/icons/in'))
@@ -491,10 +489,6 @@ class MainWindow(ui_mainwindow.Ui_MainWindow, QMainWindow):
         self.actionRaster.triggered.connect(self.toggleRasterLayers)
 
         self.infoTool.infoResults.connect(RoamEvents.selectionchanged.emit)
-
-        # The edit toolbutton is currently not being used but leaving it for feature.
-        self.moveTool.layersupdated.connect(self.actionMove.setEnabled)
-        self.moveTool.layersupdated.connect(self.actionEdit_Tools.setEnabled)
 
         self.actionHome.triggered.connect(self.homeview)
         self.actionQuit.triggered.connect(self.exit)
@@ -534,9 +528,6 @@ class MainWindow(ui_mainwindow.Ui_MainWindow, QMainWindow):
         else:
             tool.finished.connect(self.openForm)
             tool.error.connect(partial(self.showUIMessage, form.label))
-
-        #self.projecttoolbar.insertAction(self.topspaceraction, self.actionGPSFeature)
-        #self.actionGPSFeature.setVisible(not tool.isEditTool())
 
     def loadform(self, form):
         self.clearCapatureTools()
