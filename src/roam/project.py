@@ -375,22 +375,6 @@ class Project(object):
             if config['type'] == 'replication' or config['type'] == 'batch':
                 yield replication.BatchFileSync(name, cmd)
     
-    def getConfiguredLayers(self):
-        """
-        Return all the layers that have been configured for this project. Layers are represented as 
-        folders.
-        """
-        for layerfolder in os.walk(self.folder).next()[1]:
-            if layerfolder.startswith('_'):
-                continue
-            
-            yield QMapLayer(os.path.join(self.folder, layerfolder), self)
-
-    def layer(self, layername):
-        for layer in self.getConfiguredLayers():
-            if layer.name == layername:
-                return layer
-
     def getPanels(self):
         for module in glob.iglob(os.path.join(self.folder, "_panels", '*.py')):
             modulename = os.path.splitext(os.path.basename(module))[0]
