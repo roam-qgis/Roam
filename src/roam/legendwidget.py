@@ -1,10 +1,14 @@
 from PyQt4.QtCore import Qt, QSize, QRect, QPoint, pyqtSignal, QRectF
-from PyQt4.QtGui import  QWidget, QPixmap, QPainter, QLabel, QBrush, QColor, QPen, QTextOption
+from PyQt4.QtGui import  QWidget, QPixmap, QPainter, QLabel, QBrush, QColor, QPen, QTextOption, QFontMetrics
 
 from qgis.core import QgsMapLayer
 
 from roam.ui.uifiles import legend_widget
 
+ICON_SIZE = QSize(32, 32)
+
+OFFSET_X = 30
+OFFSET_Y = 40
 
 class LegendWidget(legend_widget, QWidget):
     showmap = pyqtSignal()
@@ -24,11 +28,23 @@ class LegendWidget(legend_widget, QWidget):
     def paintEvent(self, event):
         def _drawitem(pixmap, text, itempostion):
             painter.drawPixmap(itempostion, pixmap)
-            textrect = QRectF(pixmap.width() + 40,
+            textrect = QRectF(pixmap.width() + OFFSET_Y,
                               itempostion.y(),
-                              framerect.width() - pixmap.width() - 40,
+                              event.rect().width() - pixmap.width() - OFFSET_X,
                               pixmap.height())
             painter.drawText(textrect, text, QTextOption(Qt.AlignVCenter))
+
+        def calcframewidth(items):
+            font = painter.font()
+            metrices = QFontMetrics(font)
+            maxwidth = 0
+            for layer, items in self.items.iteritems():
+                if len(items) == 1:
+                    maxwidth = max(metrices.boundingRect(layer).width(), maxwidth)
+                else:
+                    for text, icon in items:
+                        maxwidth = max(metrices.boundingRect(text).width(), maxwidth)
+            return maxwidth
 
         if not self.pixmap:
             return
@@ -39,23 +55,23 @@ class LegendWidget(legend_widget, QWidget):
 
         rect = event.rect()
         framerect = QRect(rect)
-        newwidth = (rect.width() / 100) * 40
-        framerect.setWidth(newwidth)
+        framewidth = calcframewidth(self.items) + OFFSET_X + ICON_SIZE.width() + 100
+        framerect.setWidth(framewidth)
         painter.setBrush(self.legendareabrush)
         painter.setPen(self.legendareapen)
         painter.drawRect(framerect)
         self.framerect = framerect
 
-        painter.setPen(Qt.black)
 
-        currenty = 40
-        position = rect.topLeft() + QPoint(30, currenty)
+        painter.setPen(Qt.black)
+        currenty = OFFSET_Y
+        position = rect.topLeft() + QPoint(OFFSET_X, currenty)
         for layer, items in self.items.iteritems():
             if len(items) == 1:
                 itempostion = QPoint(position)
                 itempostion.setY(currenty)
                 _drawitem(items[0][1], layer, itempostion)
-                currenty += 40
+                currenty += OFFSET_Y
             else:
                 for text, icon in items:
                     if not text:
@@ -63,9 +79,10 @@ class LegendWidget(legend_widget, QWidget):
                     itempostion = QPoint(position)
                     itempostion.setY(currenty)
                     _drawitem(icon, text, itempostion)
-                    currenty += 40
+                    currenty += OFFSET_Y
 
-            position.setY(currenty + 40)
+            position.setY(currenty + OFFSET_Y)
+
 
     def mousePressEvent(self, event):
         if self.framerect.contains(event.pos()):
@@ -81,7 +98,7 @@ class LegendWidget(legend_widget, QWidget):
                 continue
 
             try:
-                items = layer.rendererV2().legendSymbologyItems(QSize(32, 32))
+                items = layer.rendererV2().legendSymbologyItems(ICON_SIZE)
             except AttributeError:
                 continue
             self.items[layer.name()] = items
