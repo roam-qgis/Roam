@@ -506,11 +506,14 @@ class ProjectWidget(Ui_Form, QWidget):
             layer = index.data(Qt.UserRole)
             return index, layer
 
+
         self.disconnectsignals()
+
+        self.form = form
 
         settings = form.settings
         label = form.label
-        layername = settings.get('layer', getfirstlayer())
+        layername = settings.setdefault('layer', getfirstlayer())
         layerindex, layer = findlayer(layername)
         if not layer or not layerindex.isValid():
             return
@@ -540,7 +543,6 @@ class ProjectWidget(Ui_Form, QWidget):
             self.updatecurrentwidget(index, None)
 
         self.connectsignals()
-        self.form = form
 
     def updatefields(self, layer):
         """
