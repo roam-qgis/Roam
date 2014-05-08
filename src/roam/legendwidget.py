@@ -7,9 +7,6 @@ from roam.ui.uifiles import legend_widget
 
 ICON_SIZE = QSize(32, 32)
 
-OFFSET_X = 30
-OFFSET_Y = 40
-
 class LegendWidget(legend_widget, QWidget):
     showmap = pyqtSignal()
 
@@ -26,25 +23,33 @@ class LegendWidget(legend_widget, QWidget):
         self.legendareapen.setWidth(0.5)
 
     def paintEvent(self, event):
+        def itemlist(items):
+            for layer, items in self.items.iteritems():
+                if len(items) == 1:
+                    yield layer, items[0][1]
+                else:
+                    for text, icon in items:
+                        if not text:
+                            continue
+                        yield text, icon
+
         def _drawitem(pixmap, text, itempostion):
             painter.drawPixmap(itempostion, pixmap)
-            textrect = QRectF(pixmap.width() + OFFSET_Y,
+            textrect = QRectF(pixmap.width() + currentx + 10,
                               itempostion.y(),
                               event.rect().width() - pixmap.width() - OFFSET_X,
                               pixmap.height())
             painter.drawText(textrect, text, QTextOption(Qt.AlignVCenter))
 
-        def calcframewidth(items):
+        def calcitems():
             font = painter.font()
             metrices = QFontMetrics(font)
             maxwidth = 0
-            for layer, items in self.items.iteritems():
-                if len(items) == 1:
-                    maxwidth = max(metrices.boundingRect(layer).width(), maxwidth)
-                else:
-                    for text, icon in items:
-                        maxwidth = max(metrices.boundingRect(text).width(), maxwidth)
-            return maxwidth
+            maxheight = 0
+            for item, _ in itemlist(self.items):
+                maxwidth = max(metrices.boundingRect(item).width(), maxwidth)
+                maxheight = max(metrices.boundingRect(item).height(), maxheight)
+            return maxwidth, maxheight
 
         if not self.pixmap:
             return
@@ -53,35 +58,42 @@ class LegendWidget(legend_widget, QWidget):
         painter.setRenderHints(QPainter.Antialiasing)
         painter.drawPixmap(event.rect(), self.pixmap)
 
+        itemwidths, itemmaxheight = calcitems()
+        OFFSET_X = 30
+        OFFSET_Y = itemmaxheight + 10
         rect = event.rect()
+        neededheight = (len(self.items) * OFFSET_Y)
+        runs = 1
+        if neededheight > rect.height():
+            import math
+            runs = math.ceil(neededheight / float(rect.height()))
+            print runs
+
         framerect = QRect(rect)
-        framewidth = calcframewidth(self.items) + OFFSET_X + ICON_SIZE.width() + 100
+        framewidth = (itemwidths + OFFSET_X + ICON_SIZE.width() + 100) * runs
         framerect.setWidth(framewidth)
         painter.setBrush(self.legendareabrush)
         painter.setPen(self.legendareapen)
         painter.drawRect(framerect)
         self.framerect = framerect
 
-
         painter.setPen(Qt.black)
         currenty = OFFSET_Y
+        currentx = OFFSET_X
         position = rect.topLeft() + QPoint(OFFSET_X, currenty)
-        for layer, items in self.items.iteritems():
-            if len(items) == 1:
-                itempostion = QPoint(position)
-                itempostion.setY(currenty)
-                _drawitem(items[0][1], layer, itempostion)
-                currenty += OFFSET_Y
-            else:
-                for text, icon in items:
-                    if not text:
-                        continue
-                    itempostion = QPoint(position)
-                    itempostion.setY(currenty)
-                    _drawitem(icon, text, itempostion)
-                    currenty += OFFSET_Y
+        for text, icon in itemlist(self.items):
+            itempostion = QPoint(position)
+            if currenty > rect.height():
+                currentx = itemwidths + OFFSET_X + 100
+                currenty = itemmaxheight + 10
 
-            position.setY(currenty + OFFSET_Y)
+            itempostion.setX(currentx)
+            itempostion.setY(currenty)
+
+            _drawitem(icon, text, itempostion)
+            currenty += OFFSET_Y
+
+        position.setY(currenty + OFFSET_Y)
 
 
     def mousePressEvent(self, event):
