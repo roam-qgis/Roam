@@ -127,6 +127,10 @@ def buildfromauto(formconfig, base):
         widgettype = config['widget']
         field = config['field']
         name = config.get('name', field)
+        if not field:
+            utils.warning("Field can't be null for {}".format(name))
+            utils.warning("Skipping widget")
+            continue
         label = QLabel(name)
         label.setObjectName(field + "_label")
         widget = roam.editorwidgets.core.createwidget(widgettype, parent=base)
@@ -223,7 +227,13 @@ class FeatureFormBase(QWidget):
 
         for config in widgetsconfig:
             widgettype = config['widget']
-            field = config['field'].lower()
+            field = config['field']
+            if not field:
+                utils.warning("Skipping widget. No field defined")
+                continue
+
+            field = field.lower()
+
             if field in self.boundwidgets:
                 utils.warning("Sorry you can't bind the same field ({}) twice.".format(field))
                 utils.warning("{} for field {} has been ignored in setup".format(widget, field))

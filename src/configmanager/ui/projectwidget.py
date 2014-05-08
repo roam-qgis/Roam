@@ -358,6 +358,7 @@ class ProjectWidget(Ui_Form, QWidget):
         """
         Set the widgets active project.
         """
+        self.disconnectsignals()
         self.mapisloaded = False
         self.filewatcher.removePaths(self.filewatcher.files())
         self.projectupdatedlabel.hide()
@@ -412,9 +413,8 @@ class ProjectWidget(Ui_Form, QWidget):
         self.mapisloaded = True
 
     def _readproject(self, doc):
-        layers = QgsMapLayerRegistry.instance().mapLayers().values()
-        self.formlayersmodel.addlayers(layers, removeall=True)
-        self.selectlayermodel.addlayers(layers, removeall=True)
+        self.formlayersmodel.refresh()
+        self.selectlayermodel.refresh()
         self._updateforproject(self.project)
 
     def _updateforproject(self, project):
@@ -449,42 +449,43 @@ class ProjectWidget(Ui_Form, QWidget):
 
         self.frame_2.layout().addWidget(featureform)
 
+    def connectsignals(self):
+        self.formLabelText.textChanged.connect(self._save_formname)
+        self.layerCombo.currentIndexChanged.connect(self._save_layer)
+        self.formtypeCombo.currentIndexChanged.connect(self._save_formtype)
+
+        #widget settings
+        self.fieldList.currentIndexChanged.connect(self._save_widgetfield)
+        self.requiredCheck.toggled.connect(self._save_selectedwidget)
+        self.defaultvalueText.textChanged.connect(self._save_default)
+        self.widgetCombo.currentIndexChanged.connect(self._save_selectedwidget)
+        self.widgetCombo.currentIndexChanged.connect(self.swapwidgetconfig)
+        self.nameText.textChanged.connect(self._save_selectedwidget)
+        self.readonlyCombo.currentIndexChanged.connect(self._save_selectedwidget)
+        self.hiddenCheck.toggled.connect(self._save_selectedwidget)
+
+    def disconnectsignals(self):
+        try:
+            self.formLabelText.textChanged.disconnect(self._save_formname)
+            self.layerCombo.currentIndexChanged.disconnect(self._save_layer)
+            self.formtypeCombo.currentIndexChanged.disconnect(self._save_formtype)
+
+            #widget settings
+            self.fieldList.currentIndexChanged.disconnect(self._save_widgetfield)
+            self.requiredCheck.toggled.disconnect(self._save_selectedwidget)
+            self.defaultvalueText.textChanged.disconnect(self._save_default)
+            self.widgetCombo.currentIndexChanged.disconnect(self._save_selectedwidget)
+            self.widgetCombo.currentIndexChanged.disconnect(self.swapwidgetconfig)
+            self.nameText.textChanged.disconnect(self._save_selectedwidget)
+            self.readonlyCombo.currentIndexChanged.disconnect(self._save_selectedwidget)
+            self.hiddenCheck.toggled.disconnect(self._save_selectedwidget)
+        except TypeError:
+            pass
+
     def setform(self, form):
         """
         Update the UI with the currently selected form.
         """
-        def connectsignals():
-            self.formLabelText.textChanged.connect(self._save_formname)
-            self.layerCombo.currentIndexChanged.connect(self._save_layer)
-            self.formtypeCombo.currentIndexChanged.connect(self._save_formtype)
-
-            #widget settings
-            self.fieldList.currentIndexChanged.connect(self._save_widgetfield)
-            self.requiredCheck.toggled.connect(self._save_selectedwidget)
-            self.defaultvalueText.textChanged.connect(self._save_default)
-            self.widgetCombo.currentIndexChanged.connect(self._save_selectedwidget)
-            self.widgetCombo.currentIndexChanged.connect(self.swapwidgetconfig)
-            self.nameText.textChanged.connect(self._save_selectedwidget)
-            self.readonlyCombo.currentIndexChanged.connect(self._save_selectedwidget)
-            self.hiddenCheck.toggled.connect(self._save_selectedwidget)
-
-        def disconnectsignals():
-            try:
-                self.formLabelText.textChanged.disconnect(self._save_formname)
-                self.layerCombo.currentIndexChanged.disconnect(self._save_layer)
-                self.formtypeCombo.currentIndexChanged.disconnect(self._save_formtype)
-
-                #widget settings
-                self.fieldList.currentIndexChanged.disconnect(self._save_widgetfield)
-                self.requiredCheck.toggled.disconnect(self._save_selectedwidget)
-                self.defaultvalueText.textChanged.disconnect(self._save_default)
-                self.widgetCombo.currentIndexChanged.disconnect(self._save_selectedwidget)
-                self.widgetCombo.currentIndexChanged.disconnect(self.swapwidgetconfig)
-                self.nameText.textChanged.disconnect(self._save_selectedwidget)
-                self.readonlyCombo.currentIndexChanged.disconnect(self._save_selectedwidget)
-                self.hiddenCheck.toggled.disconnect(self._save_selectedwidget)
-            except TypeError:
-                pass
 
         def getfirstlayer():
             index = self.formlayers.index(0,0)
@@ -499,26 +500,28 @@ class ProjectWidget(Ui_Form, QWidget):
             self.widgetmodel.clear()
             self.widgetmodel.loadwidgets(form.widgets)
 
-        disconnectsignals()
+        def findlayer(layername):
+            index = self.formlayersmodel.findlayer(layername)
+            index = self.formlayers.mapFromSource(index)
+            layer = index.data(Qt.UserRole)
+            return index, layer
+
+        self.disconnectsignals()
 
         settings = form.settings
-        logger.log(settings)
         label = form.label
-        layer = settings.setdefault('layer', getfirstlayer())
+        layername = settings.get('layer', getfirstlayer())
+        layerindex, layer = findlayer(layername)
+        if not layer or not layerindex.isValid():
+            return
+
         formtype = settings.setdefault('type', 'auto')
         widgets = settings.setdefault('widgets', [])
-
-        if layer is None:
-            return
 
         self.formLabelText.setText(label)
         folderurl = "<a href='{path}'>{name}</a>".format(path=form.folder, name=os.path.basename(form.folder))
         self.formfolderLabel.setText(folderurl)
-        index = self.formlayersmodel.findlayer(layer)
-        index = self.formlayers.mapFromSource(index)
-        layer = index.data(Qt.UserRole)
-        self.layerCombo.setCurrentIndex(index.row())
-
+        self.layerCombo.setCurrentIndex(layerindex.row())
         self.updatefields(layer)
 
         index = self.formtypeCombo.findText(formtype)
@@ -536,7 +539,7 @@ class ProjectWidget(Ui_Form, QWidget):
             self.widgetlist.setCurrentIndex(index)
             self.updatecurrentwidget(index, None)
 
-        connectsignals()
+        self.connectsignals()
         self.form = form
 
     def updatefields(self, layer):
@@ -640,7 +643,7 @@ class ProjectWidget(Ui_Form, QWidget):
         form = self.currentform
         if form:
             form.settings['widgets'] = list(self.widgetmodel.widgets())
-            logger.log(form.settings)
+            logger.debug(form.settings)
 
         self.project.save()
         self.projectsaved.emit()

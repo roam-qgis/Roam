@@ -114,6 +114,8 @@ class QgsLayerModel(QAbstractItemModel):
             self.addlayer(layer)
 
     def refresh(self):
+        #import traceback
+        #traceback.print_stack(limit=5)
         self.removeall()
         for layer in QgsMapLayerRegistry.instance().mapLayers().values():
             self.addlayer(layer)
