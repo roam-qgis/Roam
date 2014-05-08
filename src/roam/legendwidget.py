@@ -1,3 +1,4 @@
+import math
 from PyQt4.QtCore import Qt, QSize, QRect, QPoint, pyqtSignal, QRectF
 from PyQt4.QtGui import  QWidget, QPixmap, QPainter, QLabel, QBrush, QColor, QPen, QTextOption, QFontMetrics
 
@@ -23,7 +24,7 @@ class LegendWidget(legend_widget, QWidget):
         self.legendareapen.setWidth(0.5)
 
     def paintEvent(self, event):
-        def itemlist(items):
+        def itemlist():
             for layer, items in self.items.iteritems():
                 if len(items) == 1:
                     yield layer, items[0][1]
@@ -46,7 +47,7 @@ class LegendWidget(legend_widget, QWidget):
             metrices = QFontMetrics(font)
             maxwidth = 0
             maxheight = 0
-            for item, _ in itemlist(self.items):
+            for item, _ in itemlist():
                 maxwidth = max(metrices.boundingRect(item).width(), maxwidth)
                 maxheight = max(metrices.boundingRect(item).height(), maxheight)
             return maxwidth, maxheight
@@ -63,14 +64,12 @@ class LegendWidget(legend_widget, QWidget):
         OFFSET_Y = itemmaxheight + 10
         rect = event.rect()
         neededheight = (len(self.items) * OFFSET_Y)
-        runs = 1
+        columns = 1
         if neededheight > rect.height():
-            import math
-            runs = math.ceil(neededheight / float(rect.height()))
-            print runs
+            columns = math.ceil(neededheight / float(rect.height()))
 
         framerect = QRect(rect)
-        framewidth = (itemwidths + OFFSET_X + ICON_SIZE.width() + 100) * runs
+        framewidth = (itemwidths + OFFSET_X + ICON_SIZE.width() + 100) * columns
         framerect.setWidth(framewidth)
         painter.setBrush(self.legendareabrush)
         painter.setPen(self.legendareapen)
@@ -81,7 +80,7 @@ class LegendWidget(legend_widget, QWidget):
         currenty = OFFSET_Y
         currentx = OFFSET_X
         position = rect.topLeft() + QPoint(OFFSET_X, currenty)
-        for text, icon in itemlist(self.items):
+        for text, icon in itemlist():
             itempostion = QPoint(position)
             if currenty > rect.height():
                 currentx = itemwidths + OFFSET_X + 100
