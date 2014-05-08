@@ -66,6 +66,8 @@ def newform(project):
 
     config = dict(label=foldername, type='auto', widgets=[])
     form = project.addformconfig(foldername, config)
+    logger.debug(form.settings)
+    logger.debug(form.settings == config)
     return form
 
 

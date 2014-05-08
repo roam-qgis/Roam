@@ -14,7 +14,7 @@ from PyQt4.QtGui import QAction, QIcon
 
 from qgis.core import QgsMapLayerRegistry, QGis, QgsTolerance, QgsVectorLayer, QgsMapLayer
 
-from roam.utils import log
+from roam.utils import log, debug
 from roam.syncing import replication
 from roam.api import FeatureForm
 from roam.structs import OrderedDictYAMLLoader
@@ -287,7 +287,11 @@ class Form(object):
         return self._module
 
     def save(self):
-        writefolderconfig(self.settings, self.folder)
+        Form.saveconfig(self.settings, self.folder)
+
+    @classmethod
+    def saveconfig(cls, config, folder):
+        writefolderconfig(config, folder)
 
 
 class Project(object):
@@ -420,9 +424,7 @@ class Project(object):
             else:
                 for formname in forms:
                     folder = os.path.join(self.folder, formname)
-                    print folder
                     config = readfolderconfig(folder)
-                    print config
                     yield formname, config
 
         if not self._forms:
@@ -461,25 +463,31 @@ class Project(object):
 
     def addformconfig(self, name, config):
         forms = self.settings.setdefault("forms", [])
+
+        folder = os.path.join(self.folder, name)
+
         if hasattr(forms, 'iteritems'):
             forms[name] = config
         else:
             forms.append(name)
+            Form.saveconfig(config, folder)
 
         self.settings['forms'] = forms
         self._forms = []
-        folder = os.path.join(self.folder, name)
-        return Form.from_config(name, config, folder)
+        form = [form for form in self.forms if form.name == name][0]
+        debug(config)
+        return form
 
     def save(self):
         """
         Save the project config to disk.
         """
         writefolderconfig(self.settings, self.folder)
-
-        forms = self.settings.setdefault("forms", [])
-        if not hasattr(forms, 'iteritems'):
+        formsstorage = self.settings.setdefault("forms", [])
+        if not hasattr(formsstorage, 'iteritems'):
             for form in self.forms:
+                debug("Saving {}".format(form.name))
+                debug(form.settings)
                 form.save()
 
     def hascapturelayers(self):

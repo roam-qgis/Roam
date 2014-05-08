@@ -24,6 +24,7 @@ import roam.yaml
 import roam
 import roam.project
 import roam.config
+import configmanager.logger as logger
 
 readonlyvalues = [('Never', 'never'),
                   ('Always', 'always'),
@@ -501,6 +502,7 @@ class ProjectWidget(Ui_Form, QWidget):
         disconnectsignals()
 
         settings = form.settings
+        logger.log(settings)
         label = form.label
         layer = settings.setdefault('layer', getfirstlayer())
         formtype = settings.setdefault('type', 'auto')
@@ -638,6 +640,7 @@ class ProjectWidget(Ui_Form, QWidget):
         form = self.currentform
         if form:
             form.settings['widgets'] = list(self.widgetmodel.widgets())
+            logger.log(form.settings)
 
         self.project.save()
         self.projectsaved.emit()
