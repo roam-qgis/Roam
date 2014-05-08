@@ -276,8 +276,9 @@ class ProjectsNode(Treenode):
             return "{} ({})".format(self._text, self.rowCount())
         return super(ProjectsNode, self).data(role)
 
-    def loadprojects(self, projects):
+    def loadprojects(self, projects, projectsbase):
         self.removeRows(0, self.rowCount())
+        self.projectfolder = projectsbase
         for project in projects:
             node = ProjectNode(project)
             self.appendRow(node)
@@ -368,7 +369,7 @@ class ConfigManagerDialog(ui_configmanager.Ui_ProjectInstallerDialog, QDialog):
 
     def loadprojects(self, projectpath):
         projects = roam.project.getProjects([projectpath])
-        self.projectsnode.loadprojects(projects)
+        self.projectsnode.loadprojects(projects, projectsbase=projectpath)
 
         index = self.treemodel.indexFromItem(self.projectsnode)
         self.projectList.setCurrentIndex(index)
