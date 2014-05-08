@@ -463,7 +463,6 @@ class Project(object):
 
     def addformconfig(self, name, config):
         forms = self.settings.setdefault("forms", [])
-
         folder = os.path.join(self.folder, name)
 
         if hasattr(forms, 'iteritems'):
@@ -478,6 +477,14 @@ class Project(object):
         debug(config)
         return form
 
+    def removeform(self, name):
+        forms = self.settings.setdefault("forms", [])
+        if hasattr(forms, 'iteritems'):
+           del self.settings['forms'][name]
+        else:
+            index = forms.index(name)
+            del self.settings['forms'][index]
+
     def save(self):
         """
         Save the project config to disk.
@@ -489,6 +496,12 @@ class Project(object):
                 debug("Saving {}".format(form.name))
                 debug(form.settings)
                 form.save()
+
+    @property
+    def oldformconfigstlye(self):
+        formsstorage = self.settings.get("forms", [])
+        return hasattr(formsstorage, 'iteritems')
+
 
     def hascapturelayers(self):
         layers = QgsMapLayerRegistry.instance().mapLayers().values()

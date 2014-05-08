@@ -52,7 +52,6 @@ def newproject(projectfolder):
     shutil.copytree(templateproject, newfolder)
     project = roam.project.Project.from_folder(newfolder)
     project.settings['title'] = foldername
-    project.settings['forms'] = {}
     return project
 
 def newform(project):
@@ -183,18 +182,22 @@ class FormsNode(Treenode):
 
         archivefolder = os.path.join(self.project.folder, "_archive")
         formachivefolder = os.path.join(archivefolder, form.name)
-        configname = "{}.config".format(form.name)
-        config = {form.name : form.settings}
         try:
             shutil.move(form.folder, formachivefolder)
-            configlocation = os.path.join(archivefolder, configname)
 
-            with open(configlocation, 'w') as f:
-                roam.yaml.dump(data=config, stream=f, default_flow_style=False)
-            del self.project.settings['forms'][form.name]
-            self.project.save()
+            if project.oldformconfigstlye:
+                configname = "{}.config".format(form.name)
+                config = {form.name : form.settings}
+                configlocation = os.path.join(archivefolder, configname)
+                with open(configlocation, 'w') as f:
+                    roam.yaml.dump(data=config, stream=f, default_flow_style=False)
+
         except Exception as ex:
             logger.exception("Could not remove folder")
+            return
+
+        self.project.removeform(form.name)
+        self.project.save()
 
     def additem(self):
         form = newform(self.project)
