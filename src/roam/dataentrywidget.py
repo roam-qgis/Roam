@@ -10,74 +10,14 @@ from qgis.core import QgsMapLayerRegistry, QgsFeatureRequest, QgsFeature, QgsExp
 from qgis.gui import QgsMessageBar
 
 from roam.utils import log, error
-from roam.api import featureform
-from roam.api import RoamEvents
+from roam.api import featureform, RoamEvents
 from roam.ui.uifiles import dataentry_widget, dataentry_base
 from roam.flickwidget import FlickCharm
 from roam.popupdialogs import DeleteFeatureDialog
 from roam.structs import CaseInsensitiveDict
 
 import roam.qgisfunctions
-
-
-class DefaultError(Exception):
-    pass
-
-
-def getdefaults(widgets, feature, layer, canvas):
-    defaults = {}
-    for field, config in widgets:
-        default = config.get("default", None)
-        if default is None:
-            continue
-        if isinstance(default, dict):
-            defaultconfig = default
-            try:
-                defaulttype = defaultconfig['type']
-                defaultprovider = defaultproviders[defaulttype]
-                value = defaultprovider(feature, layer, field, defaultconfig, canvas)
-            except KeyError as ex:
-                log(ex)
-                continue
-            except DefaultError as ex:
-                log(ex)
-                value = None
-        else:
-            # Pass it though a series of filters to get the default value
-            if '[%' in default and '%]' in default:
-                # TODO Use regex
-                default = QgsExpression.replaceExpressionText(default, feature, layer )
-            value = os.path.expandvars(default)
-
-        log("Default value: {}".format(value))
-        defaults[field] = value
-
-    defaults.update(featureform.loadsavedvalues(layer))
-    return defaults
-
-def layer_value(feature, layer, field, defaultconfig, canvas):
-    layername = defaultconfig['layer']
-    expression = defaultconfig['expression']
-    field = defaultconfig['field']
-
-    searchlayer = QgsMapLayerRegistry.instance().mapLayersByName(layername)[0]
-    rect = feature.geometry().boundingBox()
-    rect.scale(10)
-    rect = canvas.mapRenderer().mapToLayerCoordinates(layer, rect)
-    rq = QgsFeatureRequest().setFilterRect(rect)
-    features = searchlayer.getFeatures(rq)
-
-    exp = QgsExpression(expression)
-    exp.prepare(searchlayer.pendingFields())
-
-    for f in features:
-        if exp.evaluate(f):
-            return f[field]
-
-    raise DefaultError('No features found')
-
-defaultproviders = {'spatial-query': layer_value,
-                    'layer-value': layer_value}
+import roam.defaults as defaults
 
 
 class DataEntryWidget(dataentry_widget, dataentry_base):
@@ -281,14 +221,16 @@ class DataEntryWidget(dataentry_widget, dataentry_base):
 
         roam.qgisfunctions.capturegeometry = feature.geometry()
 
-        defaults = {}
+        defaultvalues = {}
         layer = form.QGISLayer
         if not editmode:
-            defaults = getdefaults(form.widgetswithdefaults(), feature, layer, self.canvas)
+            defaultwidgets = form.widgetswithdefaults()
+            defaultvalues = defaults.default_values(defaultwidgets, feature, layer)
+            defaultvalues.update(featureform.loadsavedvalues(layer))
 
         self.actionDelete.setVisible(editmode)
 
-        for field, value in defaults.iteritems():
+        for field, value in defaultvalues.iteritems():
             feature[field] = value
 
         self.formvalidation(passed=True)
@@ -296,7 +238,7 @@ class DataEntryWidget(dataentry_widget, dataentry_base):
         # Hold a reference to the fields because QGIS will let the
         # go out of scope and we get crashes. Yay!
         self.fields = self.feature.fields()
-        self.featureform = form.create_featureform(feature, defaults, canvas=self.canvas)
+        self.featureform = form.create_featureform(feature, defaultvalues, canvas=self.canvas)
         self.featureform.editingmode = editmode
         self.featureform.rejected.connect(self.formrejected)
         self.featureform.enablesave.connect(self.actionSave.setEnabled)

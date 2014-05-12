@@ -61,6 +61,7 @@ import roam.utils
 import roam.htmlviewer
 import roam.api.featureform
 import roam.config
+import roam.defaults
 
 try:
    from qgis.gui import QgsMapToolTouch
@@ -97,6 +98,7 @@ class MainWindow(ui_mainwindow.Ui_MainWindow, QMainWindow):
     def __init__(self):
         super(MainWindow, self).__init__()
         self.setupUi(self)
+        roam.defaults.canvas = self.canvas
         self.canvaslayers = []
         self.layerbuttons = []
         self.project = None

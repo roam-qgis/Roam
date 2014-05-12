@@ -268,6 +268,9 @@ class Form(object):
             if 'default' in config:
                 yield config['field'], config
 
+    def widget_by_field(self, fieldname):
+        return [widget for widget in self.widgets if widget['field'] == fieldname][0]
+
     def _loadmodule(self):
         rootfolder = os.path.abspath(os.path.join(self.folder, '..', '..'))
         projectfolder = os.path.abspath(os.path.join(self.folder, '..'))

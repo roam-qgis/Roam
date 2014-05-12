@@ -33,6 +33,7 @@ from roam.structs import CaseInsensitiveDict
 from roam.api import RoamEvents, GPS
 
 import roam.editorwidgets.core
+import roam.defaults as defaults
 
 style = """
             QCheckBox::indicator {
@@ -360,6 +361,21 @@ class FeatureFormBase(QWidget):
 
         for label in self.findChildren(QLabel):
             createhelplink(label, self.form.folder)
+
+    def widget_default(self, name):
+        """
+        Return the default value for the given widget
+        """
+        try:
+            widgetconfig = self.form.widget_by_field(name)
+        except IndexError:
+            raise KeyError("Widget with name {} not found on form".format(name))
+
+        if not 'default' in widgetconfig:
+            raise KeyError('Default value not defined for this field {}'.format(name))
+
+        return defaults.widget_default(widgetconfig, self.feature, self.form.QGISLayer)
+
 
 
 class FeatureForm(FeatureFormBase):
