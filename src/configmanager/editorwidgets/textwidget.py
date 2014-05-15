@@ -1,5 +1,5 @@
 from configmanager.editorwidgets.core import ConfigWidget
-from configmanager.editorwidgets.uifiles.textwidget_config import Ui_Form
+from configmanager.editorwidgets.uifiles.ui_textwidget_config import Ui_Form
 
 
 class TextWidgetConfig(Ui_Form, ConfigWidget):

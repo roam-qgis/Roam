@@ -8,7 +8,7 @@ from qgis.core import QgsMapLayer
 
 from configmanager.models import QgsLayerModel, QgsFieldModel
 from configmanager.editorwidgets.core import ConfigWidget
-from configmanager.editorwidgets.uifiles.listwidget_config import Ui_Form
+from configmanager.editorwidgets.uifiles.ui_listwidget_config import Ui_Form
 
 
 class ListWidgetConfig(Ui_Form, ConfigWidget):

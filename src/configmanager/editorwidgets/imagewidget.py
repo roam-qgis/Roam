@@ -1,7 +1,7 @@
 from PyQt4.QtGui import QFileDialog
 
 from configmanager.editorwidgets.core import ConfigWidget
-from configmanager.editorwidgets.uifiles.photowidget_config import Ui_Form
+from configmanager.editorwidgets.uifiles.ui_photowidget_config import Ui_Form
 
 
 class ImageWidgetConfig(Ui_Form, ConfigWidget):

@@ -4,7 +4,7 @@ from PyQt4.QtCore import pyqtSignal
 from PyQt4.QtGui import QComboBox
 
 from configmanager.editorwidgets.core import ConfigWidget
-from configmanager.editorwidgets.uifiles.checkwidget_config import Ui_Form
+from configmanager.editorwidgets.uifiles.ui_checkwidget_config import Ui_Form
 
 
 class CheckboxWidgetConfig(Ui_Form, ConfigWidget):
