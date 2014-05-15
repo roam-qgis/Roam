@@ -50,7 +50,6 @@ class ProjectWidget(Ui_Form, QWidget):
     projectupdated = pyqtSignal()
     projectloaded = pyqtSignal(object)
     selectlayersupdated = pyqtSignal(list)
-    projectlocationchanged = pyqtSignal(str)
 
     def __init__(self, parent=None):
         super(ProjectWidget, self).__init__(parent)
@@ -122,8 +121,6 @@ class ProjectWidget(Ui_Form, QWidget):
         self.setpage(4)
         self.form = None
 
-        self.projectlocations.currentIndexChanged[str].connect(self.projectlocationchanged.emit)
-
     def setaboutinfo(self):
         self.versionLabel.setText(roam.__version__)
         self.qgisapiLabel.setText(str(QGis.QGIS_VERSION))
@@ -155,9 +152,6 @@ class ProjectWidget(Ui_Form, QWidget):
             self.form.settings['widgets'] = list(self.widgetmodel.widgets())
             self.setformpreview(self.form)
 
-    def setprojectfolders(self, folders):
-        for folder in folders:
-            self.projectlocations.addItem(folder)
 
     def setpage(self, page):
         self.stackedWidget.setCurrentIndex(page)

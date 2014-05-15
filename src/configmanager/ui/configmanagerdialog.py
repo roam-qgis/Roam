@@ -305,7 +305,6 @@ class ConfigManagerDialog(ui_configmanager.Ui_ProjectInstallerDialog, QDialog):
         self.projectwidget.adjustSize()
         self.setWindowFlags(Qt.Window)
 
-
         self.newProjectButton.pressed.connect(self.addbuttonpressed)
         self.removeProjectButton.pressed.connect(self.deletebuttonpressed)
         self.projectwidget.projectupdated.connect(self.projectupdated)
@@ -314,7 +313,7 @@ class ConfigManagerDialog(ui_configmanager.Ui_ProjectInstallerDialog, QDialog):
         self.projectwidget.selectlayersupdated.connect(self.updateformsnode)
 
         self.projectwidget.setaboutinfo()
-        self.projectwidget.projectlocationchanged.connect(self.loadprojects)
+        self.projectwidget.projects_page.projectlocationchanged.connect(self.loadprojects)
         self.setuprootitems()
 
     def updateformsnode(self, *args):
@@ -370,7 +369,7 @@ class ConfigManagerDialog(ui_configmanager.Ui_ProjectInstallerDialog, QDialog):
             self.projectList.setCurrentIndex(newindex)
 
     def addprojectfolders(self, folders):
-        self.projectwidget.setprojectfolders(folders)
+        self.projectwidget.projects_page.setprojectfolders(folders)
 
     def loadprojects(self, projectpath):
         projects = roam.project.getProjects([projectpath])

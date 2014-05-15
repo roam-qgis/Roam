@@ -99,7 +99,7 @@ QLabel[warning=true]
       </sizepolicy>
      </property>
      <property name="currentIndex">
-      <number>7</number>
+      <number>6</number>
      </property>
      <widget class="QWidget" name="project_info_page">
       <layout class="QGridLayout" name="gridLayout_11">
@@ -1118,19 +1118,8 @@ p, li { white-space: pre-wrap; }
        </item>
       </layout>
      </widget>
-     <widget class="QWidget" name="projects_page">
-      <layout class="QFormLayout" name="formLayout_9">
-       <item row="1" column="0">
-        <widget class="QLabel" name="label_15">
-         <property name="text">
-          <string>Projects loaded from:</string>
-         </property>
-        </widget>
-       </item>
-       <item row="1" column="1">
-        <widget class="QComboBox" name="projectlocations"/>
-       </item>
-      </layout>
+     <widget class="ProjectsNode" name="projects_page">
+      <layout class="QVBoxLayout" name="verticalLayout_4"/>
      </widget>
      <widget class="QWidget" name="invalidproject_page">
       <layout class="QVBoxLayout" name="verticalLayout">
@@ -1336,11 +1325,18 @@ p, li { white-space: pre-wrap; }
    <header>qgis.gui</header>
    <container>1</container>
   </customwidget>
+  <customwidget>
+   <class>ProjectsNode</class>
+   <extends>QWidget</extends>
+   <header>configmanager.gui</header>
+   <container>1</container>
+  </customwidget>
  </customwidgets>
  <resources>
   <include location="resources.qrc"/>
   <include location="../../roam/resources.qrc"/>
   <include location="resources.qrc"/>
+  <include location="../../roam/resources.qrc"/>
   <include location="../../roam/resources.qrc"/>
   <include location="../../roam/resources.qrc"/>
   <include location="../../roam/resources.qrc"/>
