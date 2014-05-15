@@ -40,6 +40,8 @@ class GPSService(QObject):
             return self.postion.y()
         if attribute.lower() == 'z':
             return self.elevation
+        if attribute.lower() == 'portname':
+            return self.currentport
         else:
             return getattr(self.info, attribute)
 

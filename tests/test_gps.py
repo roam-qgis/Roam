@@ -12,7 +12,7 @@ def gpsservice():
     gps = GPSService()
     gps.postion = positon
     gps.elevation = 20
-
+    gps.currentport = 'testport'
     gps.info = info
     return gps
 
@@ -30,3 +30,6 @@ def test_gpsinfo_reads_speed(gpsservice):
 
 def test_gpsinfo_reads_direction(gpsservice):
     assert gpsservice.gpsinfo('direction') == 90.0
+
+def test_gpsinfo_reads_portname(gpsservice):
+    assert gpsservice.gpsinfo('portname') == 'testport'
