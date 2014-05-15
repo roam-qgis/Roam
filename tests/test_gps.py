@@ -36,5 +36,8 @@ def test_gpsinfo_reads_portname(gpsservice):
 
 def test_gpsinfo_reads_returns_scan_on_empty_port():
     gps = GPSService()
-    gps.currentport = 'scan'
+    gps.currentport = ''
     assert gps.gpsinfo('portname') == 'scan'
+    gps.currentport = None
+    assert gps.gpsinfo('portname') == 'scan'
+
