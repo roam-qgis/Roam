@@ -21,7 +21,7 @@ class GPSService(QObject):
     def __init__(self):
         super(GPSService, self).__init__()
         self.isConnected = False
-        self.currentport = None
+        self._currentport = None
         self.postion = None
         self.elevation = None
         self.info = None
@@ -45,9 +45,17 @@ class GPSService(QObject):
         else:
             return getattr(self.info, attribute)
 
+    @property
+    def currentport(self):
+        return 'scan' if not self._currentport else self._currentport
+
+    @currentport.setter
+    def currentport(self, value):
+        self._currentport = value
+
     def connectGPS(self, portname):
         if not self.isConnected:
-            self.currentport = portname
+            self._currentport = portname
             if portname == 'scan' or portname == '':
                 log("Auto scanning for GPS port")
                 portname = ''

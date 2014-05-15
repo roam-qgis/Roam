@@ -33,3 +33,8 @@ def test_gpsinfo_reads_direction(gpsservice):
 
 def test_gpsinfo_reads_portname(gpsservice):
     assert gpsservice.gpsinfo('portname') == 'testport'
+
+def test_gpsinfo_reads_returns_scan_on_empty_port():
+    gps = GPSService()
+    gps.currentport = 'scan'
+    assert gps.gpsinfo('portname') == 'scan'
