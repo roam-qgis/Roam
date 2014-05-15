@@ -109,11 +109,16 @@ class FlickCharm(QObject):
                 QApplication.postEvent(object, event1)
                 QApplication.postEvent(object, event2)
             elif eventType == QEvent.MouseMove:
-                consumed = True
-                data.state = FlickData.ManualScroll
-                data.dragPos = QCursor.pos()
-                if not self.d.ticker.isActive():
-                    self.d.ticker.start(20, self)
+                moved_pos = QCursor.pos() - data.pressPos
+                print moved_pos.manhattanLength()
+                if moved_pos.manhattanLength() < 200:
+                    consumed = False
+                else:
+                    consumed = True
+                    data.state = FlickData.ManualScroll
+                    data.dragPos = QCursor.pos()
+                    if not self.d.ticker.isActive():
+                        self.d.ticker.start(20, self)
 
         elif data.state == FlickData.ManualScroll:
             if eventType == QEvent.MouseMove:
