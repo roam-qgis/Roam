@@ -44,3 +44,6 @@ pip-log.txt
 .mr.developer.cfg
 ui_*.py
 export/
+
+*.qm
+
