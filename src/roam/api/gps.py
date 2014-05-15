@@ -24,8 +24,24 @@ class GPSService(QObject):
         self.currentport = None
         self.postion = None
         self.elevation = None
+        self.info = None
         self.wgs84CRS = QgsCoordinateReferenceSystem(4326)
         self.crs = None
+
+    def gpsinfo(self, attribute):
+        """
+        Return information about the GPS postion.
+        :param attribute:
+        :return:
+        """
+        if attribute.lower() == 'x':
+            return self.postion.x()
+        if attribute.lower() == 'y':
+            return self.postion.y()
+        if attribute.lower() == 'z':
+            return self.elevation
+        else:
+            return getattr(self.info, attribute)
 
     def connectGPS(self, portname):
         if not self.isConnected:

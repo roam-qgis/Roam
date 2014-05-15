@@ -76,7 +76,14 @@ def roamgeometry(values, feature, parent):
 
 @qgsfunction(0, "Roam")
 def gps_z(values, feature, parent):
+    return gps(values, feature, parent)
+
+@qgsfunction(1, "Roam")
+def gps(values, feature, parent):
+    """
+    QGIS expression function to return information about the GPS postion.
+    """
     if GPS.isConnected:
-        return GPS.elevation
+        return GPS.gpsinfo(values[0])
     else:
         return None
