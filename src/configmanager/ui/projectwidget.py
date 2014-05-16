@@ -197,7 +197,7 @@ class ProjectWidget(Ui_Form, QWidget):
         Create a new widget.  The default is a list.
         """
         widget = {}
-        widget['widget'] = 'List'
+        widget['widget'] = 'Text'
         # Grab the first field.
         widget['field'] = self.fieldsmodel.index(0, 0).data(QgsFieldModel.FieldNameRole)
         currentindex = self.widgetlist.currentIndex()
