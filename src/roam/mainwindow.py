@@ -271,15 +271,16 @@ class MainWindow(ui_mainwindow.Ui_MainWindow, QMainWindow):
 
     def updatecanvasfromgps(self, position, gpsinfo):
         # Recenter map if we go outside of the 95% of the area
-        if not self.lastgpsposition == position:
-            self.lastposition = position
-            rect = QgsRectangle(position, position)
-            extentlimt = QgsRectangle(self.canvas.extent())
-            extentlimt.scale(0.95)
+        if roam.config.settings.get('gpscenter', True):
+            if not self.lastgpsposition == position:
+                self.lastposition = position
+                rect = QgsRectangle(position, position)
+                extentlimt = QgsRectangle(self.canvas.extent())
+                extentlimt.scale(0.95)
 
-            if not extentlimt.contains(position):
-                self.canvas.setExtent(rect)
-                self.canvas.refresh()
+                if not extentlimt.contains(position):
+                    self.canvas.setExtent(rect)
+                    self.canvas.refresh()
 
         self.marker.show()
         self.marker.setCenter(position)
