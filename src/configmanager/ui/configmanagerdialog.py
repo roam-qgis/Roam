@@ -305,7 +305,7 @@ class ConfigManagerDialog(ui_configmanager.Ui_ProjectInstallerDialog, QDialog):
         self.projectwidget.adjustSize()
         self.setWindowFlags(Qt.Window)
 
-        self.newProjectButton.pressed.connect(self.addbuttonpressed)
+        self.newProjectButton.pressed.connect(self.newproject)
         self.removeProjectButton.pressed.connect(self.deletebuttonpressed)
         self.projectwidget.projectupdated.connect(self.projectupdated)
         self.projectwidget.projectsaved.connect(self.projectupdated)
@@ -313,6 +313,7 @@ class ConfigManagerDialog(ui_configmanager.Ui_ProjectInstallerDialog, QDialog):
         self.projectwidget.selectlayersupdated.connect(self.updateformsnode)
 
         self.projectwidget.setaboutinfo()
+        self.projectwidget.projects_page.newproject.connect(self.newproject)
         self.projectwidget.projects_page.projectlocationchanged.connect(self.loadprojects)
         self.setuprootitems()
 
@@ -336,7 +337,7 @@ class ConfigManagerDialog(ui_configmanager.Ui_ProjectInstallerDialog, QDialog):
         self.projectsnode = ProjectsNode(folder=None)
         rootitem.appendRow(self.projectsnode)
 
-    def addbuttonpressed(self):
+    def newproject(self):
         index = self.projectList.currentIndex()
         node = index.data(Qt.UserRole)
         if node and node.canadd:

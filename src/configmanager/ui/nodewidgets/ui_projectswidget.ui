@@ -53,7 +53,7 @@
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout_10">
      <item>
-      <widget class="QToolButton" name="toolButton">
+      <widget class="QToolButton" name="newprojectButton">
        <property name="text">
         <string>New project</string>
        </property>
