@@ -1,6 +1,8 @@
 from PyQt4.QtCore import QObject, pyqtSignal
 
-from qgis.core import QgsGPSDetector, QgsGPSConnectionRegistry, QgsPoint, QgsCoordinateTransform, QgsCoordinateReferenceSystem
+from qgis.core import (QgsGPSDetector, QgsGPSConnectionRegistry, QgsPoint, \
+                        QgsCoordinateTransform, QgsCoordinateReferenceSystem, \
+                        QgsGPSInformation)
 from roam.utils import log
 
 NMEA_FIX_BAD = 1
@@ -24,7 +26,7 @@ class GPSService(QObject):
         self._currentport = None
         self.postion = None
         self.elevation = None
-        self.info = None
+        self.info = QgsGPSInformation()
         self.wgs84CRS = QgsCoordinateReferenceSystem(4326)
         self.crs = None
 
@@ -107,6 +109,7 @@ class GPSService(QObject):
             if self.postion is None:
                 self.firstfix.emit(map_pos, gpsInfo)
 
+            self.info = gpsInfo
             self.gpspostion.emit(map_pos, gpsInfo)
             self.postion = map_pos
             self.elevation = gpsInfo.elevation

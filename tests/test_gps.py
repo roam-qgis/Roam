@@ -9,6 +9,7 @@ def gpsservice():
     info = QgsGPSInformation()
     info.speed = 300
     info.direction = 90.0
+    info.latitude = 90.0
     gps = GPSService()
     gps.postion = positon
     gps.elevation = 20
@@ -24,6 +25,9 @@ def test_gpsinfo_reads_y(gpsservice):
 
 def test_gpsinfo_reads_z(gpsservice):
     assert gpsservice.gpsinfo('z') == 20
+
+def test_gpsinfo_reads_latitude(gpsservice):
+    assert gpsservice.gpsinfo('latitude') == 90.0
 
 def test_gpsinfo_reads_speed(gpsservice):
     assert gpsservice.gpsinfo('speed') == 300
