@@ -86,7 +86,7 @@ class QgsLayerModel(QAbstractItemModel):
         Find a layer in the model by it's name
         """
         startindex = self.index(0, 0)
-        items = self.match(startindex, Qt.DisplayRole, name)
+        items = self.match(startindex, Qt.DisplayRole, name, 1, Qt.MatchExactly | Qt.MatchWrap)
         try:
             return items[0]
         except IndexError:
