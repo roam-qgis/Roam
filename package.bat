@@ -10,7 +10,7 @@ REM ----------------------------------------------------------------------------
 
 pushd %~dp0
 
-call setenv.bat
+call scripts/setenv.bat
 
 ECHO Building Roam package
 
