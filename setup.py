@@ -70,37 +70,40 @@ def getfiles(folder, outpath):
             for path, collection in getfiles(os.path.join(path, dir), newpath):
                 yield (path, collection)
 
-utils = ['ogr2ogr.exe', 'ogrinfo.exe', 'gdalinfo.exe', 'NCSEcw.dll',
-         os.path.join('gdalplugins', 'gdal_ECW_JP2ECW.dll')]
+def get_data_files():
+    utils = ['ogr2ogr.exe', 'ogrinfo.exe', 'gdalinfo.exe', 'NCSEcw.dll',
+             os.path.join('gdalplugins', 'gdal_ECW_JP2ECW.dll')]
 
-extrafiles = [os.path.join(osgeobin, path) for path in utils]
+    extrafiles = [os.path.join(osgeobin, path) for path in utils]
 
-i18nfiles = os.path.join(appsrcopyFilesath, 'i18n\*.qm')
+    i18nfiles = os.path.join(appsrcopyFilesath, 'i18n\*.qm')
 
-datafiles = [(".", [r'src\settings.config']),
-            (r'libs\roam\templates', [r'src\roam\templates\info.html',
-                                      r'src\roam\templates\error.html']),
-            (r'libs\roam\templates\bootstrap', glob.glob(r'src\roam\templates\bootstrap\*')),
-            (r'projects', [r'src\projects\__init__.py']),
-            # We have to copy the imageformat drivers to the root folder.
-            (r'imageformats', glob.glob(qtimageforms)),
-            (r'libs\qgis\plugins', glob.glob(qgispluginpath)),
-            (r'libs\qgis\resources', [os.path.join(qgisresources, 'qgis.db'),
-                                 os.path.join(qgisresources, 'srs.db')]),
-            (r'libs', extrafiles),
-            (r'libs\roam\i18n', glob.glob(i18nfiles)),
-            (r'libs\roam\editorwidgets', glob.glob(os.path.join(srceditorwidgets, "*.pil"))),
-            (r'libs\roam\editorwidgets', glob.glob(os.path.join(srceditorwidgets, "*.pyd"))),
-            (r'libs\roam\editorwidgets', glob.glob(os.path.join(srceditorwidgets, "*.png")))]
+    datafiles = [(".", [r'src\settings.config']),
+                (r'libs\roam\templates', [r'src\roam\templates\info.html',
+                                          r'src\roam\templates\error.html']),
+                (r'libs\roam\templates\bootstrap', glob.glob(r'src\roam\templates\bootstrap\*')),
+                (r'projects', [r'src\projects\__init__.py']),
+                # We have to copy the imageformat drivers to the root folder.
+                (r'imageformats', glob.glob(qtimageforms)),
+                (r'libs\qgis\plugins', glob.glob(qgispluginpath)),
+                (r'libs\qgis\resources', [os.path.join(qgisresources, 'qgis.db'),
+                                     os.path.join(qgisresources, 'srs.db')]),
+                (r'libs', extrafiles),
+                (r'libs\roam\i18n', glob.glob(i18nfiles)),
+                (r'libs\roam\editorwidgets', glob.glob(os.path.join(srceditorwidgets, "*.pil"))),
+                (r'libs\roam\editorwidgets', glob.glob(os.path.join(srceditorwidgets, "*.pyd"))),
+                (r'libs\roam\editorwidgets', glob.glob(os.path.join(srceditorwidgets, "*.png")))]
 
-for path, collection in getfiles(svgs, r'libs\qgis\svg'):
-    datafiles.append((path, collection))
+    for path, collection in getfiles(svgs, r'libs\qgis\svg'):
+        datafiles.append((path, collection))
 
-for path, collection in getfiles(r'src\configmanager\templates', r'libs\configmanager\templates'):
-    datafiles.append((path, collection))
+    for path, collection in getfiles(r'src\configmanager\templates', r'libs\configmanager\templates'):
+        datafiles.append((path, collection))
 
-for path, collection in getfiles(gdalsharepath, r'libs'):
-    datafiles.append((path, collection))
+    for path, collection in getfiles(gdalsharepath, r'libs'):
+        datafiles.append((path, collection))
+
+    return datafiles
 
 icon = r'src\roam\resources\branding\icon.ico'
 
@@ -162,7 +165,7 @@ setup(
     author_email='nathan.woodrow@mapsolutions.com.au',
     description='',
     windows=[roam_target, projectupdater_target, configmanager_target],
-    data_files=datafiles,
+    data_files=get_data_files(),
     zipfile='libs\\',
     cmdclass= {'build': qtbuild},
     options={'py2exe': {
