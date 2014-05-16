@@ -589,9 +589,13 @@ class ProjectWidget(Ui_Form, QWidget):
         self.defaultvalueText.blockSignals(True)
         if not isinstance(default, dict):
             self.defaultvalueText.setText(default)
+            self.defaultvalueText.setEnabled(True)
+            self.expressionButton.setEnabled(True)
         else:
             # TODO Handle the more advanced default values.
-            pass
+            self.defaultvalueText.setText("Advanced default set in config")
+            self.defaultvalueText.setEnabled(False)
+            self.expressionButton.setEnabled(False)
         self.defaultvalueText.blockSignals(False)
 
         self.nameText.blockSignals(True)
