@@ -111,7 +111,7 @@
       <item row="2" column="1">
        <widget class="QCheckBox" name="gpscentermapCheck">
         <property name="text">
-         <string>Center map on GPS location when connected</string>
+         <string>Force map to follow GPS location</string>
         </property>
         <property name="checked">
          <bool>true</bool>

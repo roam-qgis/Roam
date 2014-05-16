@@ -268,6 +268,12 @@ class MainWindow(ui_mainwindow.Ui_MainWindow, QMainWindow):
         zoomtolocation = roam.config.settings.get('gpszoomonfix', True)
         if zoomtolocation:
             self.canvas.zoomScale(1000)
+            self.zoom_to_location(postion)
+
+    def zoom_to_location(self, position):
+        rect = QgsRectangle(position, position)
+        self.canvas.setExtent(rect)
+        self.canvas.refresh()
 
     def updatecanvasfromgps(self, position, gpsinfo):
         # Recenter map if we go outside of the 95% of the area
@@ -279,8 +285,7 @@ class MainWindow(ui_mainwindow.Ui_MainWindow, QMainWindow):
                 extentlimt.scale(0.95)
 
                 if not extentlimt.contains(position):
-                    self.canvas.setExtent(rect)
-                    self.canvas.refresh()
+                    self.zoom_to_location(position)
 
         self.marker.show()
         self.marker.setCenter(position)
