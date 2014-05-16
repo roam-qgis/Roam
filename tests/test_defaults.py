@@ -40,3 +40,11 @@ def test_widget_default_returns_value_for_default():
     config = {'default': 'testvalue'}
     assert roam.defaults.widget_default(config, None, None) is 'testvalue'
 
+def test_default_values_empty_with_no_widgets():
+    widgets = {}
+    assert roam.defaults.default_values(widgets, None, None) == {}
+
+def test_default_values_contains_field_default_mappinf():
+    widgets = ('field1', {'default': 'testvalue'})
+    assert roam.defaults.default_values([widgets], None, None) == {'field1': 'testvalue'}
+
