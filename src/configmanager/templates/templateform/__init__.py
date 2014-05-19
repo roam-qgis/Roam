@@ -23,7 +23,7 @@ class TemplateFeatureForm(FeatureForm):
 
             >>> self.cancelload("Sorry you can't load this form now")
 
-        You may alter the QgsFeature given. It will be passed to the form after this method returns.
+        You may alter the values given in the values dict. It will be passed to the form after this method returns.
         """
         pass
 
