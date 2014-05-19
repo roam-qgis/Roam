@@ -1,6 +1,6 @@
 import getpass
 
-from PyQt4.QtCore import Qt, pyqtSignal, QObject
+from PyQt4.QtCore import Qt, pyqtSignal, QObject, QDateTime
 from qgis.core import QgsFeature, QgsGeometry
 
 class GPSLogging(QObject):
@@ -51,6 +51,8 @@ class GPSLogging(QObject):
             name = field.name()
             if name == 'time':
                 value = self.gps.gpsinfo('utcDateTime').toString(Qt.ISODate)
+            elif name == 'localtime':
+                value = QDateTime.currentDateTime().toString(Qt.ISODate)
             elif name == 'user':
                 value = getpass.getuser()
             else:
