@@ -209,6 +209,10 @@ class MainWindow(ui_mainwindow.Ui_MainWindow, QMainWindow):
 
         self.connectButtons()
 
+        self.gpsband = QgsRubberBand(self.canvas)
+        self.gpsband.setColor(QColor(0, 0, 212, 76))
+        self.gpsband.setWidth(5)
+
         self.currentfeatureband = QgsRubberBand(self.canvas)
         self.currentfeatureband.setIconSize(20)
         self.currentfeatureband.setWidth(10)
@@ -253,7 +257,6 @@ class MainWindow(ui_mainwindow.Ui_MainWindow, QMainWindow):
         self.editfeaturestack = []
         self.currentselection = {}
 
-
     def showUIMessage(self, label, message, level=QgsMessageBar.INFO, time=0, extra=''):
         self.bar.pushMessage(label, message, level, duration=time, extrainfo=extra)
 
@@ -282,6 +285,10 @@ class MainWindow(ui_mainwindow.Ui_MainWindow, QMainWindow):
 
     def updatecanvasfromgps(self, position, gpsinfo):
         # Recenter map if we go outside of the 95% of the area
+        if self.tracking.logging:
+            self.gpsband.addPoint(position)
+            self.gpsband.show()
+
         if roam.config.settings.get('gpscenter', True):
             if not self.lastgpsposition == position:
                 self.lastposition = position
@@ -832,6 +839,8 @@ class MainWindow(ui_mainwindow.Ui_MainWindow, QMainWindow):
         Close the current open project
         """
         self.tracking.clear_logging()
+        self.gpsband.reset()
+        self.gpsband.hide()
         self.clearCapatureTools()
         self.canvas.freeze()
         QgsMapLayerRegistry.instance().removeAllMapLayers()
