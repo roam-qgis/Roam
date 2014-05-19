@@ -417,7 +417,7 @@ class FeatureForm(FeatureFormBase):
     def __init__(self, form, formconfig, feature, defaults, parent, *args, **kwargs):
         super(FeatureForm, self).__init__(form, formconfig, feature, defaults, parent, *args, **kwargs)
         self.deletemessage = 'Do you really want to delete this feature?'
-        GPS.gpspostion.connect(self.ongpsupdated)
+        GPS.gpsposition.connect(self.ongpsupdated)
 
     @classmethod
     def from_form(cls, form, formconfig, feature, defaults, parent=None, *args, **kwargs):

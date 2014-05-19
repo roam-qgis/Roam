@@ -6,11 +6,26 @@ class GPSWidget(gps_widget, gps_base):
         super(GPSWidget, self).__init__(parent)
         self.setupUi(self)
         self.gps = None
+        self.logginginfolabel.setVisible(False)
 
     def setgps(self, gps):
         self.gps = gps
-        self.gps.gpspostion.connect(self.updatepostionlabels)
+        self.gps.gpsposition.connect(self.updatepostionlabels)
         self.gps.gpsdisconnected.connect(self.disconnected)
+
+    def settracking(self, trackingobject):
+        self.tracking = trackingobject
+        self.tracking.trackingchanged.connect(self.updatetrackingstate)
+
+    def updatetrackingstate(self, istracking):
+        if istracking:
+            self.trackinglabel.setText("GPS Logging Active")
+        else:
+            self.trackinglabel.setText("GPS Logging Disabled")
+
+        self.trackinglabel.setProperty("active", istracking)
+        self.trackinglabel.style().polish(self.trackinglabel)
+        self.logginginfolabel.setVisible(istracking)
 
     def updatepostionlabels(self, postion, info):
         self.activeLabel.setText("GPS Active")

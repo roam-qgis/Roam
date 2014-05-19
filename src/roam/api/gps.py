@@ -16,7 +16,7 @@ class GPSService(QObject):
     gpsdisconnected = pyqtSignal()
 
     # Connect to listen to GPS status updates.
-    gpspostion = pyqtSignal(QgsPoint, object)
+    gpsposition = pyqtSignal(QgsPoint, object)
     firstfix = pyqtSignal(QgsPoint, object)
 
 
@@ -110,7 +110,7 @@ class GPSService(QObject):
                 self.firstfix.emit(map_pos, gpsInfo)
 
             self.info = gpsInfo
-            self.gpspostion.emit(map_pos, gpsInfo)
+            self.gpsposition.emit(map_pos, gpsInfo)
             self.postion = map_pos
             self.elevation = gpsInfo.elevation
 

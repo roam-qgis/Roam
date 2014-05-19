@@ -49,7 +49,7 @@ QLabel[active=false] {
      </property>
     </widget>
    </item>
-   <item row="1" column="0">
+   <item row="2" column="0">
     <layout class="QGridLayout" name="gridLayout">
      <item row="0" column="0">
       <widget class="QLabel" name="label_3">
@@ -81,7 +81,7 @@ QLabel[active=false] {
      </item>
     </layout>
    </item>
-   <item row="2" column="0">
+   <item row="3" column="0">
     <layout class="QGridLayout" name="gridLayout_2">
      <item row="0" column="1">
       <widget class="QLabel" name="label_2">
@@ -113,7 +113,7 @@ QLabel[active=false] {
      </item>
     </layout>
    </item>
-   <item row="3" column="0">
+   <item row="4" column="0">
     <layout class="QFormLayout" name="formLayout">
      <item row="0" column="0">
       <widget class="QLabel" name="label_5">
@@ -159,7 +159,7 @@ QLabel[active=false] {
      </item>
     </layout>
    </item>
-   <item row="4" column="0">
+   <item row="5" column="0">
     <spacer name="verticalSpacer">
      <property name="orientation">
       <enum>Qt::Vertical</enum>
@@ -171,6 +171,32 @@ QLabel[active=false] {
       </size>
      </property>
     </spacer>
+   </item>
+   <item row="0" column="1">
+    <widget class="QLabel" name="trackinglabel">
+     <property name="text">
+      <string>GPS Logging Disabled</string>
+     </property>
+     <property name="large" stdset="0">
+      <bool>true</bool>
+     </property>
+     <property name="active" stdset="0">
+      <bool>false</bool>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="1" rowspan="3">
+    <widget class="QLabel" name="logginginfolabel">
+     <property name="text">
+      <string>When GPS logging is active all GPS locations are logged into a set layer.</string>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
+     </property>
+     <property name="wordWrap">
+      <bool>true</bool>
+     </property>
+    </widget>
    </item>
   </layout>
  </widget>

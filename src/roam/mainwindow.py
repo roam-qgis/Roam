@@ -54,6 +54,7 @@ from roam.gpswidget import GPSWidget
 from roam.api import RoamEvents, GPS
 from roam.ui import ui_mainwindow
 from PyQt4.QtGui import QMainWindow
+from roam.gpslogging import GPSLogging
 
 
 import roam.messagebaritems
@@ -102,6 +103,8 @@ class MainWindow(ui_mainwindow.Ui_MainWindow, QMainWindow):
         self.canvaslayers = []
         self.layerbuttons = []
         self.project = None
+        self.tracking = GPSLogging(GPS)
+
         self.selectionbands = defaultdict(partial(QgsRubberBand, self.canvas))
         self.canvas.setCanvasColor(Qt.white)
         self.canvas.enableAntiAliasing(True)
@@ -142,6 +145,7 @@ class MainWindow(ui_mainwindow.Ui_MainWindow, QMainWindow):
         QgsProject.instance().readProject.connect(self._readProject)
 
         self.gpswidget.setgps(GPS)
+        self.gpswidget.settracking(self.tracking)
 
         self.actionSettings.toggled.connect(self.settingswidget.populateControls)
         self.actionSettings.toggled.connect(self.settingswidget.readSettings)
@@ -236,7 +240,7 @@ class MainWindow(ui_mainwindow.Ui_MainWindow, QMainWindow):
         RoamEvents.selectionchanged.connect(self.highlightselection)
         RoamEvents.selectionchanged.connect(self.showInfoResults)
 
-        GPS.gpspostion.connect(self.updatecanvasfromgps)
+        GPS.gpsposition.connect(self.updatecanvasfromgps)
         GPS.firstfix.connect(self.gpsfirstfix)
         GPS.gpsdisconnected.connect(self.gpsdisconnected)
 
@@ -248,6 +252,7 @@ class MainWindow(ui_mainwindow.Ui_MainWindow, QMainWindow):
 
         self.editfeaturestack = []
         self.currentselection = {}
+
 
     def showUIMessage(self, label, message, level=QgsMessageBar.INFO, time=0, extra=''):
         self.bar.pushMessage(label, message, level, duration=time, extrainfo=extra)
@@ -770,6 +775,13 @@ class MainWindow(ui_mainwindow.Ui_MainWindow, QMainWindow):
         self.legendpage.updateitems(layers)
         self.actionPan.trigger()
 
+        try:
+            gps_loglayer = QgsMapLayerRegistry.instance().mapLayersByName('gps_log')[0]
+            self.tracking.enable_logging_on(gps_loglayer)
+        except IndexError:
+            roam.utils.info("No gps_log found for GPS logging")
+            self.tracking.clear_logging()
+
     #noinspection PyArgumentList
     @roam.utils.timeit
     def loadProject(self, project):
@@ -819,6 +831,7 @@ class MainWindow(ui_mainwindow.Ui_MainWindow, QMainWindow):
         """
         Close the current open project
         """
+        self.tracking.clear_logging()
         self.clearCapatureTools()
         self.canvas.freeze()
         QgsMapLayerRegistry.instance().removeAllMapLayers()
