@@ -22,4 +22,4 @@ set QGIS_PREFIX_PATH=%QGIS%
 : Python Setup
 set PATH=%OSGEO4W_ROOT%\bin;%QGIS%\bin;%~dp0\src\;%PATH%
 SET PYTHONHOME=%OSGEO4W_ROOT%\apps\Python27
-set PYTHONPATH=%~dp0\src;%QGIS%\python;%PYTHONPATH%
+set PYTHONPATH=%~dp0\..\src;%QGIS%\python;%PYTHONPATH%
