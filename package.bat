@@ -27,4 +27,7 @@ popd
 ECHO Package in dist\
 ECHO Check package.log for build log
 
+if defined INSTALLER GOTO end
 if defined DOUBLECLICKED pause
+
+:end
