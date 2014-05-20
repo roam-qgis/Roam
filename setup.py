@@ -78,7 +78,7 @@ def get_data_files():
 
     i18nfiles = os.path.join(appsrcopyFilesath, 'i18n\*.qm')
 
-    datafiles = [(".", [r'src\settings.config']),
+    datafiles = [(".", [r'src\roam.config']),
                 (r'libs\roam\templates', [r'src\roam\templates\info.html',
                                           r'src\roam\templates\error.html']),
                 (r'libs\roam\templates\bootstrap', glob.glob(r'src\roam\templates\bootstrap\*')),
