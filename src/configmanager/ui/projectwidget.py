@@ -174,7 +174,7 @@ class ProjectWidget(Ui_Form, QWidget):
             openqgis(projectfile, qgislocation)
         except WindowsError:
             self.bar.pushMessage("Looks like I couldn't find QGIS",
-                               "Check qgislocation in settings.config", QgsMessageBar.WARNING)
+                               "Check qgislocation in roam.config", QgsMessageBar.WARNING)
 
     def openprojectfolder(self):
         folder = self.project.folder

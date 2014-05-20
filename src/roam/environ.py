@@ -77,7 +77,9 @@ def setup(argv):
     prefixpath = os.path.join(apppath, "libs", "qgis")
     libspath = os.path.join(apppath, "libs", "roam")
     i18npath = os.path.join(libspath, "i18n")
-    settingspath = os.path.join(apppath, "settings.config")
+    settingspath = os.path.join(apppath, "roam.config")
+    if not os.path.exists(settingspath):
+        settingspath = os.path.join(apppath, "settings.config")
 
     if RUNNING_FROM_FILE:
         print "Running from file"
