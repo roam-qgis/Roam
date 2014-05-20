@@ -185,7 +185,7 @@ class FormsNode(Treenode):
         try:
             shutil.move(form.folder, formachivefolder)
 
-            if project.oldformconfigstlye:
+            if self.project.oldformconfigstlye:
                 configname = "{}.config".format(form.name)
                 config = {form.name : form.settings}
                 configlocation = os.path.join(archivefolder, configname)
