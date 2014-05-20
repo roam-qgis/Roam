@@ -91,23 +91,28 @@ def getProjects(paths):
     Each folder will be considered a Roam project
     """
     for projectpath in paths:
-        if not initfound(projectpath):
-            createinifile(projectpath)
+        try:
+            if not initfound(projectpath):
+                createinifile(projectpath)
 
-        folders = (sorted([os.path.join(projectpath, item)
-                           for item in os.walk(projectpath).next()[1]]))
+            folders = (sorted([os.path.join(projectpath, item)
+                               for item in os.walk(projectpath).next()[1]]))
 
-        for folder in folders:
-            if os.path.basename(folder).startswith("_"):
-                # Ignore hidden folders.
-                continue
+            for folder in folders:
+                if os.path.basename(folder).startswith("_"):
+                    # Ignore hidden folders.
+                    continue
 
-            if not initfound(folder):
-                createinifile(folder)
+                if not initfound(folder):
+                    createinifile(folder)
 
-            project = Project.from_folder(folder)
+                project = Project.from_folder(folder)
 
-            yield project
+                yield project
+        except IOError as ex:
+            roam.utils.warning("Could not load projects from {}".format(projectpath))
+            roam.utils.exception(ex)
+            continue
 
 
 def readfolderconfig(folder):
