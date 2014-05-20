@@ -31,6 +31,7 @@ class SettingsWidget(settings_widget, settings_base):
         self.gpsPortCombo.currentIndexChanged.connect(self.gpsPortCombo_currentIndexChanged)
         self.refreshPortsButton.pressed.connect(self.refreshPortsButton_pressed)
         self.gpslocationCheck.toggled.connect(self.gpslocationCheck_toggled)
+        self.gpsloggingCheck.toggled.connect(self.gpsloggingCheck_toggled)
         self.gpscentermapCheck.toggled.connect(self.gpscentermapCheck_toggled)
         self.keyboardCheck.toggled.connect(self.keyboardCheck_toggled)
         self.portfinder = PortFinder()
@@ -46,6 +47,10 @@ class SettingsWidget(settings_widget, settings_base):
 
     def gpslocationCheck_toggled(self, checked):
         self.settings['gpszoomonfix'] = checked
+        self.notifysettingsupdate()
+
+    def gpsloggingCheck_toggled(self, checked):
+        self.settings['gpslogging'] = checked
         self.notifysettingsupdate()
 
     def gpscentermapCheck_toggled(self, checked):
@@ -105,12 +110,14 @@ class SettingsWidget(settings_widget, settings_base):
         fullscreen = self.settings.get("fullscreen", False)
         gpszoom = self.settings.get('gpszoomonfix', True)
         gpscenter = self.settings.get('gpscenter', True)
+        gpslogging = self.settings.get('gpslogging', True)
         keyboard = self.settings.get('keyboard', True)
 
         self.fullScreenCheck.setChecked(fullscreen)
         self.gpslocationCheck.setChecked(gpszoom)
         self.gpscentermapCheck.setChecked(gpscenter)
         self.keyboardCheck.setChecked(keyboard)
+        self.gpsloggingCheck.setChecked(gpslogging)
 
         self._setgpsport()
 

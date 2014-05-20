@@ -381,6 +381,8 @@ class MainWindow(ui_mainwindow.Ui_MainWindow, QMainWindow):
     def settingsupdated(self, settings):
         self.show()
         self.actionGPS.updateGPSPort()
+        gpslogging = settings.get('gpslogging', True)
+        self.tracking.logging = gpslogging
 
     def updatestatuslabel(self):
         extent = self.canvas.extent()
@@ -784,7 +786,8 @@ class MainWindow(ui_mainwindow.Ui_MainWindow, QMainWindow):
 
         try:
             gps_loglayer = QgsMapLayerRegistry.instance().mapLayersByName('gps_log')[0]
-            self.tracking.enable_logging_on(gps_loglayer)
+            if roam.config.settings.get('gpslogging', True):
+                self.tracking.enable_logging_on(gps_loglayer)
         except IndexError:
             roam.utils.info("No gps_log found for GPS logging")
             self.tracking.clear_logging()
