@@ -739,8 +739,11 @@ class MainWindow(ui_mainwindow.Ui_MainWindow, QMainWindow):
 
     def loadpages(self, pages):
         for page, config in pages.iteritems():
-            action = QAction(config['title'], self.menutoolbar)
+            action = QAction(self.menutoolbar)
             action.setCheckable(True)
+            text = config['title'].ljust(13)
+            action.setIconText(text)
+            action.setIcon(config['icon'])
             if config['projectpage']:
                 action.setVisible(False)
                 self.projectbuttons.append(action)
@@ -749,9 +752,18 @@ class MainWindow(ui_mainwindow.Ui_MainWindow, QMainWindow):
                 self.menutoolbar.insertAction(self.actionProject, action)
 
             PageClass = config['widget']
-            pagewidget = PageClass(roam.api, self)
+
+            class RoamInterface(object):
+                def __init__(self):
+                    self.evnts = RoamEvents
+                    self.gps = GPS
+
+            iface = RoamInterface()
+
+            pagewidget = PageClass(iface, self)
             pageindex = self.stackedWidget.insertWidget(-1, pagewidget)
             action.setProperty('page', pageindex)
+
             self.menuGroup.addAction(action)
             print page, config
 
@@ -820,6 +832,7 @@ class MainWindow(ui_mainwindow.Ui_MainWindow, QMainWindow):
             self.tracking.clear_logging()
 
         self.setprojectbuttonstate(True)
+        RoamEvents.projectloaded.emit(self.project)
 
     #noinspection PyArgumentList
     @roam.utils.timeit

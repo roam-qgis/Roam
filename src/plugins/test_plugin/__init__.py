@@ -1,11 +1,11 @@
-from PyQt4.QtGui import QWidget, QGridLayout, QLabel
+from PyQt4.QtGui import QWidget, QGridLayout, QLabel, QIcon
 
 from roam.api import plugins
 
 __author__ = 'Test User'
 __description__ = "Report plugin to generate simple reports in the field"
 
-@plugins.page(name='TestPlugin', title='Test', icon=":/icons/report", projectpage=True)
+@plugins.page(name='TestPlugin', title='Test', icon=QIcon(r'report_icon.svg'), projectpage=True)
 class ReportPage(QWidget):
     def __init__(self, api, parent=None):
         super(ReportPage, self).__init__(parent)
