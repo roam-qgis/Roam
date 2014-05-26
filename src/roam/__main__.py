@@ -49,6 +49,14 @@ projects = roam.project.getProjects(projectpaths)
 window.loadprojects(projects)
 window.actionProject.toggle()
 window.viewprojects()
+
+from roam.api import plugins
+
+pluginspath = os.path.join(roamapp.apppath, "plugins")
+print pluginspath
+plugins.load_plugins_from([pluginspath])
+
+window.loadpages(plugins.registeredpages)
 window.show()
 
 roam.utils.info("Roam Loaded in {}".format(str(time.time() - start)))

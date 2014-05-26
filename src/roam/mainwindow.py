@@ -102,6 +102,7 @@ class MainWindow(ui_mainwindow.Ui_MainWindow, QMainWindow):
         roam.defaults.canvas = self.canvas
         self.canvaslayers = []
         self.layerbuttons = []
+        self.projectbuttons = []
         self.project = None
         self.tracking = GPSLogging(GPS)
 
@@ -135,6 +136,9 @@ class MainWindow(ui_mainwindow.Ui_MainWindow, QMainWindow):
         self.editgroup.addAction(self.actionZoom_In)
         self.editgroup.addAction(self.actionZoom_Out)
         self.editgroup.addAction(self.actionInfo)
+
+        self.projectbuttons.append(self.actionMap)
+        self.projectbuttons.append(self.actionLegend)
 
         self.actionLegend.triggered.connect(self.updatelegend)
 
@@ -203,7 +207,7 @@ class MainWindow(ui_mainwindow.Ui_MainWindow, QMainWindow):
         self.statusbar.addWidget(self.gpslabel)
 
         self.menutoolbar.insertWidget(self.actionQuit, sidespacewidget2)
-        self.menutoolbar.insertWidget(self.actionProject, sidespacewidget)
+        self.spaceraction = self.menutoolbar.insertWidget(self.actionProject, sidespacewidget)
 
         self.panels = []
 
@@ -445,9 +449,14 @@ class MainWindow(ui_mainwindow.Ui_MainWindow, QMainWindow):
         self.highlightselection({layer: features})
         self.currentfeatureband.setToGeometry(feature.geometry(), layer)
 
+    def setprojectbuttonstate(self, visible):
+        for button in self.projectbuttons:
+            button.setVisible(visible)
+
+        self.actionMap.setVisible(visible)
+        self.actionLegend.setVisible(visible)
+
     def showmap(self):
-        self.actionMap.setVisible(True)
-        self.actionLegend.setVisible(True)
         self.actionMap.trigger()
 
     def hidedataentry(self):
@@ -728,6 +737,24 @@ class MainWindow(ui_mainwindow.Ui_MainWindow, QMainWindow):
     def viewprojects(self):
         self.stackedWidget.setCurrentIndex(1)
 
+    def loadpages(self, pages):
+        for page, config in pages.iteritems():
+            action = QAction(config['title'], self.menutoolbar)
+            action.setCheckable(True)
+            if config['projectpage']:
+                action.setVisible(False)
+                self.projectbuttons.append(action)
+                self.menutoolbar.insertAction(self.spaceraction, action)
+            else:
+                self.menutoolbar.insertAction(self.actionProject, action)
+
+            PageClass = config['widget']
+            pagewidget = PageClass(roam.api, self)
+            pageindex = self.stackedWidget.insertWidget(-1, pagewidget)
+            action.setProperty('page', pageindex)
+            self.menuGroup.addAction(action)
+            print page, config
+
     @roam.utils.timeit
     def _readProject(self, doc):
         """
@@ -791,6 +818,8 @@ class MainWindow(ui_mainwindow.Ui_MainWindow, QMainWindow):
         except IndexError:
             roam.utils.info("No gps_log found for GPS logging")
             self.tracking.clear_logging()
+
+        self.setprojectbuttonstate(True)
 
     #noinspection PyArgumentList
     @roam.utils.timeit

@@ -8,7 +8,7 @@ import json
 from functools import partial
 
 from PyQt4 import uic
-from PyQt4.QtCore import pyqtSignal, QObject, QSize, QEvent, QProcess, Qt, QPyNullVariant, QRegExp
+from PyQt4.QtCore import pyqtSignal, QObject, QSize, QEvent, QProcess, Qt, QRegExp
 from PyQt4.QtGui import (QWidget,
                          QDialogButtonBox,
                          QStatusBar,
@@ -106,6 +106,7 @@ def savevalues(layer, values):
 
 
 def nullcheck(value):
+    from PyQt4.QtCore import QPyNullVariant
     if isinstance(value, QPyNullVariant):
         return None
     else:
