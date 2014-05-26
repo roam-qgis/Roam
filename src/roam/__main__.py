@@ -52,9 +52,11 @@ window.viewprojects()
 
 from roam.api import plugins
 
-pluginspath = os.path.join(roamapp.apppath, "plugins")
-print pluginspath
-plugins.load_plugins_from([pluginspath])
+pluginspaths = [os.path.join(roamapp.libspath, 'plugins'),\
+                os.path.join(roamapp.apppath, "plugins")]
+
+print pluginspaths
+plugins.load_plugins_from(pluginspaths)
 
 window.loadpages(plugins.registeredpages)
 window.show()

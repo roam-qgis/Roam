@@ -83,6 +83,7 @@ def setup(argv):
 
     if RUNNING_FROM_FILE:
         print "Running from file"
+        libspath = os.path.join(apppath, "roam")
         i18npath = os.path.join(apppath, "i18n")
         prefixpath = os.environ['QGIS_PREFIX_PATH']
     else:

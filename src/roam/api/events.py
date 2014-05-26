@@ -28,6 +28,7 @@ class _Events(QObject):
     selectionchanged = pyqtSignal(dict)
 
     projectloaded = pyqtSignal(object)
+    showmap = pyqtSignal()
 
     onShowMessage = pyqtSignal(str, str, int, int, str)
 

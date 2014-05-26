@@ -1,27 +1,38 @@
 import math
 from PyQt4.QtCore import Qt, QSize, QRect, QPoint, pyqtSignal, QRectF
-from PyQt4.QtGui import  QWidget, QPixmap, QPainter, QLabel, QBrush, QColor, QPen, QTextOption, QFontMetrics
+from PyQt4.QtGui import  QIcon, QWidget, QPixmap, QPainter, QLabel, QBrush, QColor, QPen, QTextOption, QFontMetrics
 
 from qgis.core import QgsMapLayer
 
 from roam.ui.uifiles import legend_widget
+from roam.api import plugins
 
 ICON_SIZE = QSize(32, 32)
 
-class LegendWidget(legend_widget, QWidget):
-    showmap = pyqtSignal()
 
-    def __init__(self, parent=None):
+@plugins.page(name='Legend', title='Legned', icon=QIcon(r':/icons/legend'), projectpage=True)
+class LegendWidget(legend_widget, QWidget):
+    def __init__(self, api, parent=None):
         super(LegendWidget, self).__init__(parent)
         self.setupUi(self)
         self.pixmap = QPixmap()
         self.items = {}
         self.framerect = QRect()
         self._lastextent = None
+        self.api = api
 
         self.legendareabrush = QBrush(QColor(255,255,255,200))
         self.legendareapen = QPen(QColor(255,255,255,20))
         self.legendareapen.setWidth(0.5)
+
+        self.api.events.projectloaded.connect(self.projectloaded)
+
+    def projectloaded(self, project):
+        layers = project.legendlayersmapping().values()
+        self.updateitems(layers)
+
+    def showEvent(self, QShowEvent):
+        self.updatecanvas(self.api.canvas)
 
     def paintEvent(self, event):
         def itemlist():
@@ -99,6 +110,7 @@ class LegendWidget(legend_widget, QWidget):
         if self.framerect.contains(event.pos()):
             return
 
+        self.api.events.showmap()
         self.showmap.emit()
 
 

@@ -140,8 +140,6 @@ class MainWindow(ui_mainwindow.Ui_MainWindow, QMainWindow):
         self.projectbuttons.append(self.actionMap)
         self.projectbuttons.append(self.actionLegend)
 
-        self.actionLegend.triggered.connect(self.updatelegend)
-
         self.actionGPS = GPSAction(":/icons/gps", self.canvas, self)
         self.projecttoolbar.addAction(self.actionGPS)
 
@@ -247,6 +245,7 @@ class MainWindow(ui_mainwindow.Ui_MainWindow, QMainWindow):
         RoamEvents.onShowMessage.connect(self.showUIMessage)
         RoamEvents.selectionchanged.connect(self.highlightselection)
         RoamEvents.selectionchanged.connect(self.showInfoResults)
+        RoamEvents.showmap.connect(self.showmap)
 
         GPS.gpsposition.connect(self.updatecanvasfromgps)
         GPS.firstfix.connect(self.gpsfirstfix)
@@ -255,8 +254,6 @@ class MainWindow(ui_mainwindow.Ui_MainWindow, QMainWindow):
         self.lastgpsposition = None
         self.marker = GPSMarker(self.canvas)
         self.marker.hide()
-
-        self.legendpage.showmap.connect(self.showmap)
 
         self.editfeaturestack = []
         self.currentselection = {}
@@ -272,9 +269,6 @@ class MainWindow(ui_mainwindow.Ui_MainWindow, QMainWindow):
             if action.isdefault:
                 action.trigger()
                 break
-
-    def updatelegend(self):
-        self.legendpage.updatecanvas(self.canvas)
 
     def gpsfirstfix(self, postion, gpsinfo):
         zoomtolocation = roam.config.settings.get('gpszoomonfix', True)
@@ -755,10 +749,12 @@ class MainWindow(ui_mainwindow.Ui_MainWindow, QMainWindow):
 
             class RoamInterface(object):
                 def __init__(self):
-                    self.evnts = RoamEvents
+                    self.events = RoamEvents
                     self.gps = GPS
+                    self.canvas = None
 
             iface = RoamInterface()
+            iface.canvas = self.canvas
 
             pagewidget = PageClass(iface, self)
             pageindex = self.stackedWidget.insertWidget(-1, pagewidget)
@@ -819,8 +815,6 @@ class MainWindow(ui_mainwindow.Ui_MainWindow, QMainWindow):
             self.panels.append(panel)
 
         self.infoTool.selectionlayers = self.project.selectlayersmapping()
-        layers = self.project.legendlayersmapping().values()
-        self.legendpage.updateitems(layers)
         self.actionPan.trigger()
 
         try:

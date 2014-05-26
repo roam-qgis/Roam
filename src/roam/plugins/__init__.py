@@ -1,0 +1,1 @@
+from roam.plugins import legend_plugin
