@@ -25,7 +25,7 @@ def default_value(defaultconfig, feature, layer):
         try:
             value = defaultprovider(feature, layer, defaultconfig)
         except DefaultError as ex:
-            log(ex)
+            roam.utils.log(ex)
             value = None
     else:
         # Pass it though a series of filters to get the default value if it's just pain text

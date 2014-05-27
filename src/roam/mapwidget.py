@@ -145,7 +145,7 @@ class MapWidget(Ui_CanvasWidget, QMainWindow):
                     break
 
         self.editfeaturestack.append((form, feature))
-        self.loadform(form)
+        self.load_form(form)
         trigger_default_action()
 
     def clear_temp_objects(self):
@@ -359,7 +359,8 @@ class MapWidget(Ui_CanvasWidget, QMainWindow):
         feature.setGeometry(newgeometry)
         layer.updateFeature(feature)
         saved = layer.commitChanges()
-        map(roam.utils.error, layer.commitErrors())
+        if not saved:
+            map(roam.utils.error, layer.commitErrors())
         self.canvas.refresh()
         self.currentfeatureband.setToGeometry(feature.geometry(), layer)
         RoamEvents.editgeometry_complete.emit(form, feature)
