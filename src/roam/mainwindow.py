@@ -40,12 +40,10 @@ from qgis.gui import (QgsMessageBar,
 from roam.dataentrywidget import DataEntryWidget
 from roam.listmodulesdialog import ProjectsWidget
 from roam.settingswidget import SettingsWidget
-from roam.projectparser import ProjectParser
 from roam.project import Project, NoMapToolConfigured, ErrorInMapTool
 from roam.infodock import InfoDock
 from roam.syncwidget import SyncWidget
 from roam.helpviewdialog import HelpPage
-from roam.biglist import BigList
 from roam.imageviewerwidget import ImageViewer
 from roam.gpswidget import GPSWidget
 from roam.api import RoamEvents, GPS
@@ -90,7 +88,6 @@ class MainWindow(ui_mainwindow.Ui_MainWindow, QMainWindow):
     def __init__(self):
         super(MainWindow, self).__init__()
         self.setupUi(self)
-        self.canvaslayers = []
         self.project = None
         self.tracking = GPSLogging(GPS)
 
@@ -424,23 +421,9 @@ class MainWindow(ui_mainwindow.Ui_MainWindow, QMainWindow):
         readProject is called by QgsProject once the map layer has been
         populated with all the layers
         """
-        parser = ProjectParser(doc)
-        canvasnode = parser.canvasnode
-        self.canvas.freeze()
-        self.canvas.mapRenderer().readXML(canvasnode)
-        self.canvaslayers = parser.canvaslayers()
-        self.canvas.setLayerSet(self.canvaslayers)
-        #red = QgsProject.instance().readNumEntry( "Gui", "/CanvasColorRedPart", 255 )[0];
-        #green = QgsProject.instance().readNumEntry( "Gui", "/CanvasColorGreenPart", 255 )[0];
-        #blue = QgsProject.instance().readNumEntry( "Gui", "/CanvasColorBluePart", 255 )[0];
-        #color = QColor(red, green, blue);
-        #self.canvas.setCanvasColor(color)
-        self.canvas.updateScale()
+        crs = self.canvas_page.init_qgisproject(doc)
         self.projectOpened()
-        self.canvas.freeze(False)
-        self.canvas.refresh()
-        GPS.crs = self.canvas.mapRenderer().destinationCrs()
-        self.showmap()
+        GPS.crs = crs
 
     @roam.utils.timeit
     def projectOpened(self):
@@ -467,9 +450,9 @@ class MainWindow(ui_mainwindow.Ui_MainWindow, QMainWindow):
             roam.utils.info("No gps_log found for GPS logging")
             self.tracking.clear_logging()
 
-        self.canvas_page.projectloaded(self.project)
+        self.canvas_page.project_loaded(self.project)
+        self.showmap()
 
-    #noinspection PyArgumentList
     @roam.utils.timeit
     def loadProject(self, project):
         """
@@ -490,18 +473,14 @@ class MainWindow(ui_mainwindow.Ui_MainWindow, QMainWindow):
 
         self.actionMap.trigger()
 
-        self.closeProject()
-
-        self.canvas.refresh()
-        self.canvas.repaint()
-
-        RoamEvents.selectioncleared.emit()
+        self.close_project()
 
         # No idea why we have to set this each time.  Maybe QGIS deletes it for
         # some reason.
         self.badLayerHandler = BadLayerHandler(callback=self.missingLayers)
         QgsProject.instance().setBadLayerHandler(self.badLayerHandler)
 
+        # Project loading screen
         self.stackedWidget.setCurrentIndex(3)
         self.projectloading_label.setText("Project {} Loading".format(project.name))
         pixmap = QPixmap(project.splash)
@@ -514,7 +493,7 @@ class MainWindow(ui_mainwindow.Ui_MainWindow, QMainWindow):
         fileinfo = QFileInfo(project.projectfile)
         QgsProject.instance().read(fileinfo)
 
-    def closeProject(self):
+    def close_project(self):
         """
         Close the current open project
         """
@@ -531,6 +510,5 @@ class MainWindow(ui_mainwindow.Ui_MainWindow, QMainWindow):
         self.project = None
         self.hidedataentry()
         self.infodock.close()
-
-
+        RoamEvents.selectioncleared.emit()
 

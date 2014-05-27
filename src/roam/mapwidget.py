@@ -6,9 +6,10 @@ from PyQt4.QtGui import QActionGroup, QFrame, QWidget, QSizePolicy, \
                         QAction, QPixmap, QCursor, QIcon, QColor, QMainWindow
 
 from qgis.gui import QgsMapCanvas, QgsMapToolZoom, QgsRubberBand
-from qgis.core import QgsPalLabeling, QgsMapLayerRegistry, QgsMapLayer, QgsFeature, QGis
+from qgis.core import QgsPalLabeling, QgsMapLayerRegistry, QgsMapLayer, QgsFeature, QGis, QgsRectangle
 
 from roam.gps_action import GPSAction, GPSMarker
+from roam.projectparser import ProjectParser
 from roam.maptools import MoveTool, InfoTool, EditTool, PointTool, TouchMapTool
 from roam.api.events import RoamEvents
 from roam.popupdialogs import PickActionDialog
@@ -30,12 +31,13 @@ class MapWidget(Ui_CanvasWidget, QMainWindow):
         super(MapWidget, self).__init__(parent)
         self.setupUi(self)
 
+        self.firstshow = True
         self.layerbuttons = []
         self.editfeaturestack = []
         self.lastgpsposition = None
         self.project = None
         self.gps = None
-        self.logging = None
+        self.gpslogging = None
         self.selectionbands = defaultdict(partial(QgsRubberBand, self.canvas))
 
         self.canvas.setCanvasColor(Qt.white)
@@ -84,6 +86,27 @@ class MapWidget(Ui_CanvasWidget, QMainWindow):
         RoamEvents.featureformloaded.connect(self.feature_form_loaded)
 
         self.connectButtons()
+
+    def init_qgisproject(self, doc):
+        parser = ProjectParser(doc)
+        canvasnode = parser.canvasnode
+        self.canvas.freeze()
+        self.canvas.mapRenderer().readXML(canvasnode)
+        self.canvaslayers = parser.canvaslayers()
+        self.canvas.setLayerSet(self.canvaslayers)
+        #red = QgsProject.instance().readNumEntry( "Gui", "/CanvasColorRedPart", 255 )[0];
+        #green = QgsProject.instance().readNumEntry( "Gui", "/CanvasColorGreenPart", 255 )[0];
+        #blue = QgsProject.instance().readNumEntry( "Gui", "/CanvasColorBluePart", 255 )[0];
+        #color = QColor(red, green, blue);
+        #self.canvas.setCanvasColor(color)
+        self.canvas.updateScale()
+        return self.canvas.mapRenderer().destinationCrs()
+
+    def showEvent(self, *args, **kwargs):
+        if self.firstshow:
+            self.canvas.refresh()
+            self.canvas.repaint()
+            self.firstshow = False
 
     def feature_form_loaded(self, form, feature, project, editmode):
         self.currentfeatureband.setToGeometry(feature.geometry(), form.QGISLayer)
@@ -144,19 +167,19 @@ class MapWidget(Ui_CanvasWidget, QMainWindow):
     def settings_updated(self, settings):
         self.actionGPS.updateGPSPort()
         gpslogging = settings.get('gpslogging', True)
-        if self.logging:
-            self.logging.logging = gpslogging
+        if self.gpslogging:
+            self.gpslogging.logging = gpslogging
 
     def set_gps(self, gps, logging):
         self.gps = gps
-        self.logging = logging
+        self.gpslogging = logging
         self.gps.gpsposition.connect(self.gps_update_canvas)
         self.gps.firstfix.connect(self.gps_first_fix)
         self.gps.gpsdisconnected.connect(self.gps_disconnected)
 
     def gps_update_canvas(self, position, gpsinfo):
         # Recenter map if we go outside of the 95% of the area
-        if self.tracking.logging:
+        if self.gpslogging.logging:
             self.gpsband.addPoint(position)
             self.gpsband.show()
 
@@ -207,7 +230,7 @@ class MapWidget(Ui_CanvasWidget, QMainWindow):
         formpicker.addactions(actions())
         formpicker.exec_()
 
-    def projectloaded(self, project):
+    def project_loaded(self, project):
         self.project = project
         self.actionPan.trigger()
         try:
@@ -225,6 +248,9 @@ class MapWidget(Ui_CanvasWidget, QMainWindow):
         roam.utils.info("Extent: {}".format(self.defaultextent.toString()))
 
         self.infoTool.selectionlayers = project.selectlayersmapping()
+
+        self.canvas.freeze(False)
+        self.canvas.refresh()
 
     def setMapTool(self, tool, *args):
         self.canvas.setMapTool(tool)
@@ -369,6 +395,8 @@ class MapWidget(Ui_CanvasWidget, QMainWindow):
     def cleanup(self):
         self.gpsband.reset()
         self.gpsband.hide()
+        self.clear_selection()
+        self.clear_temp_objects()
         self.clearCapatureTools()
         self.canvas.freeze()
         self.canvas.clear()
