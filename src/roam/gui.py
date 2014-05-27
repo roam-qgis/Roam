@@ -6,6 +6,7 @@ from roam.gpswidget import GPSWidget
 from roam.syncwidget import SyncWidget
 from roam.settingswidget import SettingsWidget
 from roam.listmodulesdialog import ProjectsWidget
+from roam.mapwidget import MapWidget
 
 
 class HideableToolbar(QToolBar):
@@ -14,8 +15,12 @@ class HideableToolbar(QToolBar):
         self.startstyle = None
 
     def mouseDoubleClickEvent(self, *args, **kwargs):
-        style = self.toolButtonStyle()
-        if style != self.startstyle:
+        currentstyle = self.toolButtonStyle()
+
+        if self.startstyle is None:
+            self.startstyle = currentstyle
+
+        if currentstyle == Qt.ToolButtonIconOnly:
             self.setToolButtonStyle(self.startstyle)
         else:
             self.setToolButtonStyle(Qt.ToolButtonIconOnly)
@@ -23,7 +28,4 @@ class HideableToolbar(QToolBar):
         super(HideableToolbar, self).mouseDoubleClickEvent(*args, **kwargs)
 
     def setToolButtonStyle(self, style):
-        if not self.startstyle:
-            self.startstyle = style
-
         super(HideableToolbar, self).setToolButtonStyle(style)

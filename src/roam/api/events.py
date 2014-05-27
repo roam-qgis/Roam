@@ -40,4 +40,9 @@ class _Events(QObject):
         """
         self.onShowMessage.emit(title, message, level, duration, extra)
 
+    def open_feature_form(self, form, feature, editmode=False):
+        self.openfeatureform.emit(form, feature, editmode)
+
+
+
 RoamEvents = _Events()

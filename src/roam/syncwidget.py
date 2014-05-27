@@ -1,12 +1,11 @@
 from functools import partial
 
-from PyQt4.QtGui import QIcon, QTreeWidgetItem, QPushButton
+from PyQt4.QtGui import QIcon, QTreeWidgetItem, QPushButton, QWidget
 
-from roam.ui.uifiles import sync_widget, sync_base
+from ui.ui_sync import Ui_Form
 from roam.flickwidget import FlickCharm
 
-
-class SyncWidget(sync_widget, sync_base):
+class SyncWidget(Ui_Form, QWidget):
     syncqueue = []
     def __init__(self, parent=None):
         super(SyncWidget, self).__init__(parent)

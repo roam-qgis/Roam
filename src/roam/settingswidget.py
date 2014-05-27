@@ -1,10 +1,11 @@
 from PyQt4.QtCore import pyqtSignal, QThread, QObject
+from PyQt4.QtGui import QWidget
 from qgis.core import QgsGPSDetector, QGis
 
 import roam
 import roam.utils as utils
 import roam.config
-from roam.ui.uifiles import settings_widget, settings_base
+from roam.ui.ui_settings import Ui_settingsWidget
 
 
 class PortFinder(QThread):
@@ -19,7 +20,7 @@ class PortFinder(QThread):
         self.finished.emit()
 
 
-class SettingsWidget(settings_widget, settings_base):
+class SettingsWidget(Ui_settingsWidget, QWidget):
     settingsupdated = pyqtSignal(object)
 
     def __init__(self, parent=None):

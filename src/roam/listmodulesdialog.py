@@ -1,14 +1,14 @@
 from PyQt4.QtCore import pyqtSignal, QSize
-from PyQt4.QtGui import QListWidgetItem, QPixmap
+from PyQt4.QtGui import QListWidgetItem, QPixmap, QWidget
 
 from roam.flickwidget import FlickCharm
-from roam.ui.uifiles import (project_widget, project_base,
-                         modules_widget, modules_base)
+from roam.ui.ui_projectwidget import Ui_Form
+from roam.ui.ui_listmodules import Ui_ListModules
 
 import roam.utils
 
 
-class ProjectWidget(project_widget, project_base):
+class ProjectWidget(Ui_Form, QWidget):
     def __init__(self, parent):
         super(ProjectWidget, self).__init__(parent)
         self.setupUi(self)
@@ -48,7 +48,7 @@ class ProjectWidget(project_widget, project_base):
         self.imagelabel.setPixmap(pix)
 
 
-class ProjectsWidget(modules_widget, modules_base):
+class ProjectsWidget(Ui_ListModules, QWidget):
     requestOpenProject = pyqtSignal(object)
     def __init__(self, parent = None):
         super(ProjectsWidget, self).__init__(parent)

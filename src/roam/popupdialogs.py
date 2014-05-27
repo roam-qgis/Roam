@@ -1,8 +1,8 @@
 from PyQt4.QtCore import Qt, QSize, QEvent
 from PyQt4.QtGui import QDialog, QToolButton, QApplication
 
-from roam.ui.uifiles import featurefeature_dialog
-from roam.ui.uifiles import actionpicker_widget
+from roam.ui.ui_deletefeature import Ui_DeleteFeatureDialog
+from roam.ui.ui_actionpicker import Ui_ActionPickerDialog
 
 class Dialogbase(QDialog):
     def __init__(self, parent=None):
@@ -36,13 +36,13 @@ class Dialogbase(QDialog):
     def mousePressEvent(self, *args, **kwargs):
         self.close()
 
-class DeleteFeatureDialog(featurefeature_dialog, Dialogbase):
+class DeleteFeatureDialog(Ui_DeleteFeatureDialog, Dialogbase):
     def __init__(self, msg=None, parent=None):
         super(DeleteFeatureDialog, self).__init__(parent)
         if msg:
             self.deletelabel.setText(msg)
 
-class PickActionDialog(actionpicker_widget, Dialogbase):
+class PickActionDialog(Ui_ActionPickerDialog, Dialogbase):
     def __init__(self, msg=None, parent=None):
         super(PickActionDialog, self).__init__(parent)
         if msg:
