@@ -16,6 +16,7 @@ class _Events(QObject):
 
     # Emit when requesting to open a feature form.
     openfeatureform = pyqtSignal(object, QgsFeature, bool)
+    featureformloaded = pyqtSignal(object, QgsFeature, object, bool)
 
     editgeometry = pyqtSignal(object, QgsFeature)
 

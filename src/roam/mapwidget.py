@@ -81,8 +81,12 @@ class MapWidget(Ui_CanvasWidget, QMainWindow):
         RoamEvents.editgeometry.connect(self.queue_feature_for_edit)
         RoamEvents.selectioncleared.connect(self.clear_selection)
         RoamEvents.selectionchanged.connect(self.highlight_selection)
+        RoamEvents.featureformloaded.connect(self.feature_form_loaded)
 
         self.connectButtons()
+
+    def feature_form_loaded(self, form, feature, project, editmode):
+        self.currentfeatureband.setToGeometry(feature.geometry(), form.QGISLayer)
 
     def highlight_selection(self, results):
         self.clear_selection()
@@ -120,6 +124,22 @@ class MapWidget(Ui_CanvasWidget, QMainWindow):
         self.editfeaturestack.append((form, feature))
         self.loadform(form)
         trigger_default_action()
+
+    def clear_temp_objects(self):
+        def clear_tool_band():
+            """
+            Clear the rubber band of the active tool if it has one
+            """
+            tool = self.canvas.mapTool()
+            try:
+                tool.clearBand()
+            except AttributeError:
+                # No clearBand method found, but that's cool.
+                pass
+
+        self.currentfeatureband.reset()
+        clear_tool_band()
+
 
     def settings_updated(self, settings):
         self.actionGPS.updateGPSPort()

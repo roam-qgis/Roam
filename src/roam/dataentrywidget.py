@@ -273,3 +273,5 @@ class DataEntryWidget(dataentry_widget, dataentry_base):
         self.setwidget(self.featureform)
 
         self.featureform.loaded()
+
+        RoamEvents.featureformloaded.emit(form, feature, project, editmode)

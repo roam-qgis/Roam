@@ -198,6 +198,7 @@ class MainWindow(ui_mainwindow.Ui_MainWindow, QMainWindow):
         RoamEvents.editgeometry_complete.connect(self.on_geometryedit)
         RoamEvents.onShowMessage.connect(self.showUIMessage)
         RoamEvents.selectionchanged.connect(self.showInfoResults)
+        RoamEvents.featureformloaded.connect(self.featureformloaded)
 
         GPS.gpsposition.connect(self.update_gps_label)
         GPS.gpsdisconnected.connect(self.gps_disconnected)
@@ -315,17 +316,6 @@ class MainWindow(ui_mainwindow.Ui_MainWindow, QMainWindow):
 
 
 
-    def clearToolRubberBand(self):
-        """
-        Clear the rubber band of the active tool if it has one
-        """
-        tool = self.canvas.mapTool()
-        try:
-            tool.clearBand()
-        except AttributeError:
-            # No clearBand method found, but that's cool.
-            pass
-
     def showhelp(self, url):
         help = HelpPage(self.stackedWidget)
         help.setHelpPage(url)
@@ -350,8 +340,7 @@ class MainWindow(ui_mainwindow.Ui_MainWindow, QMainWindow):
         self.bar.pushError("Error when saving changes.", messages)
 
     def cleartempobjects(self):
-        self.currentfeatureband.reset()
-        self.clearToolRubberBand()
+        self.canvas_page.clear_temp_objects()
 
     def formrejected(self, message, level):
         self.dataentryfinished()
@@ -360,12 +349,13 @@ class MainWindow(ui_mainwindow.Ui_MainWindow, QMainWindow):
 
         self.cleartempobjects()
 
+    def featureformloaded(self, form, feature, project, editmode):
+        self.showdataentry()
+
     def openForm(self, form, feature, editmode):
         """
         Open the form that is assigned to the layer
         """
-        self.currentfeatureband.setToGeometry(feature.geometry(), form.QGISLayer)
-        self.showdataentry()
         self.dataentrywidget.openform(feature=feature, form=form, project=self.project, editmode=editmode)
 
     def exit(self):
