@@ -98,7 +98,6 @@ class MainWindow(ui_mainwindow.Ui_MainWindow, QMainWindow):
 
         self.canvas = self.canvas_page.canvas
 
-        self.selectionbands = defaultdict(partial(QgsRubberBand, self.canvas))
         roam.defaults.canvas = self.canvas
         self.bar = roam.messagebaritems.MessageBar(self.centralwidget)
 
@@ -182,14 +181,6 @@ class MainWindow(ui_mainwindow.Ui_MainWindow, QMainWindow):
 
         self.panels = []
 
-
-        self.currentfeatureband = QgsRubberBand(self.canvas)
-        self.currentfeatureband.setIconSize(20)
-        self.currentfeatureband.setWidth(10)
-        self.currentfeatureband.setColor(QColor(186, 93, 212, 76))
-
-        #self.canvas_page.layout().insertWidget(0, self.projecttoolbar)
-
         self.centralwidget.layout().addWidget(self.statusbar)
 
         self.actionGPSFeature.setProperty('dataentry', True)
@@ -204,15 +195,12 @@ class MainWindow(ui_mainwindow.Ui_MainWindow, QMainWindow):
         RoamEvents.openurl.connect(self.viewurl)
         RoamEvents.openfeatureform.connect(self.openForm)
         RoamEvents.openkeyboard.connect(self.openkeyboard)
-        RoamEvents.selectioncleared.connect(self.clearselection)
         RoamEvents.editgeometry_complete.connect(self.on_geometryedit)
         RoamEvents.onShowMessage.connect(self.showUIMessage)
-        RoamEvents.selectionchanged.connect(self.highlightselection)
         RoamEvents.selectionchanged.connect(self.showInfoResults)
 
         GPS.gpsposition.connect(self.update_gps_label)
         GPS.gpsdisconnected.connect(self.gps_disconnected)
-
 
         self.legendpage.showmap.connect(self.showmap)
 
@@ -280,8 +268,6 @@ class MainWindow(ui_mainwindow.Ui_MainWindow, QMainWindow):
         layer = form.QGISLayer
         self.reloadselection(layer, updated=[feature])
 
-        self.currentfeatureband.setToGeometry(feature.geometry(), layer)
-
     def reloadselection(self, layer, deleted=[], updated=[]):
         """
         Reload the selection after features have been updated or deleted.
@@ -307,31 +293,8 @@ class MainWindow(ui_mainwindow.Ui_MainWindow, QMainWindow):
 
         RoamEvents.selectionchanged.emit(self.currentselection)
 
-    def highlightselection(self, results):
-        self.clearselection()
-        for layer, features in results.iteritems():
-            band = self.selectionbands[layer]
-            band.setColor(QColor(255, 0, 0, 200))
-            band.setIconSize(20)
-            band.setWidth(2)
-            band.setBrushStyle(Qt.NoBrush)
-            band.reset(layer.geometryType())
-            for feature in features:
-                band.addGeometry(feature.geometry(), layer)
-
-    def clearselection(self):
-        # Clear the main selection rubber band
-        self.currentfeatureband.reset()
-        # Clear the rest
-        for band in self.selectionbands.itervalues():
-            band.reset()
-
-        self.editfeaturestack = []
-
     def highlightfeature(self, layer, feature, features):
-        self.clearselection()
-        self.highlightselection({layer: features})
-        self.currentfeatureband.setToGeometry(feature.geometry(), layer)
+        self.canvas_page.highlight_active_selection(layer, feature, features)
 
     def showmap(self):
         self.actionMap.setVisible(True)
@@ -344,18 +307,6 @@ class MainWindow(ui_mainwindow.Ui_MainWindow, QMainWindow):
     def showdataentry(self):
         self.actionDataEntry.setVisible(True)
         self.actionDataEntry.trigger()
-
-    def dataentrychanged(self, index):
-        self.clearCapatureTools()
-
-        if not index.isValid():
-            return
-
-        modelindex = index
-        # modelindex = self.dataentrymodel.index(index, 0)
-        form = modelindex.data(Qt.UserRole + 1)
-        self.dataentryselection.setCurrentIndex(index.row())
-        self.createCaptureButtons(form)
 
     def raiseerror(self, *exinfo):
         info = traceback.format_exception(*exinfo)

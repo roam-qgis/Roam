@@ -1,4 +1,5 @@
 from functools import partial
+from collections import defaultdict
 
 from PyQt4.QtCore import Qt, pyqtSignal, QSize
 from PyQt4.QtGui import QActionGroup, QFrame, QWidget, QSizePolicy, \
@@ -35,6 +36,7 @@ class MapWidget(Ui_CanvasWidget, QMainWindow):
         self.project = None
         self.gps = None
         self.logging = None
+        self.selectionbands = defaultdict(partial(QgsRubberBand, self.canvas))
 
         self.canvas.setCanvasColor(Qt.white)
         self.canvas.enableAntiAliasing(True)
@@ -67,13 +69,46 @@ class MapWidget(Ui_CanvasWidget, QMainWindow):
         self.marker = GPSMarker(self.canvas)
         self.marker.hide()
 
+        self.currentfeatureband = QgsRubberBand(self.canvas)
+        self.currentfeatureband.setIconSize(20)
+        self.currentfeatureband.setWidth(10)
+        self.currentfeatureband.setColor(QColor(186, 93, 212, 76))
+
         self.gpsband = QgsRubberBand(self.canvas)
         self.gpsband.setColor(QColor(0, 0, 212, 76))
         self.gpsband.setWidth(5)
 
         RoamEvents.editgeometry.connect(self.queue_feature_for_edit)
+        RoamEvents.selectioncleared.connect(self.clear_selection)
+        RoamEvents.selectionchanged.connect(self.highlight_selection)
 
         self.connectButtons()
+
+    def highlight_selection(self, results):
+        self.clear_selection()
+        for layer, features in results.iteritems():
+            band = self.selectionbands[layer]
+            band.setColor(QColor(255, 0, 0, 200))
+            band.setIconSize(20)
+            band.setWidth(2)
+            band.setBrushStyle(Qt.NoBrush)
+            band.reset(layer.geometryType())
+            for feature in features:
+                band.addGeometry(feature.geometry(), layer)
+
+    def highlight_active_selection(self, layer, feature, features):
+        self.clear_selection()
+        self.highlight_selection({layer: features})
+        self.currentfeatureband.setToGeometry(feature.geometry(), layer)
+
+    def clear_selection(self):
+        # Clear the main selection rubber band
+        self.currentfeatureband.reset()
+        # Clear the rest
+        for band in self.selectionbands.itervalues():
+            band.reset()
+
+        self.editfeaturestack = []
 
     def queue_feature_for_edit(self, form, feature):
         def trigger_default_action():
@@ -280,6 +315,7 @@ class MapWidget(Ui_CanvasWidget, QMainWindow):
         saved = layer.commitChanges()
         map(roam.utils.error, layer.commitErrors())
         self.canvas.refresh()
+        self.currentfeatureband.setToGeometry(feature.geometry(), layer)
         RoamEvents.editgeometry_complete.emit(form, feature)
 
     def clearCapatureTools(self):
