@@ -4,11 +4,11 @@ from PyQt4.QtGui import  QWidget, QPixmap, QPainter, QLabel, QBrush, QColor, QPe
 
 from qgis.core import QgsMapLayer
 
-from roam.ui.uifiles import legend_widget
+from ui.ui_legend import Ui_legendsWidget
 
 ICON_SIZE = QSize(32, 32)
 
-class LegendWidget(legend_widget, QWidget):
+class LegendWidget(Ui_legendsWidget, QWidget):
     showmap = pyqtSignal()
 
     def __init__(self, parent=None):

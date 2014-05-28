@@ -7,7 +7,7 @@ from roam import resources_rc
 from roam.ui import (ui_projectwidget, ui_listmodules, ui_helpviewer,
                  ui_helppage, ui_datatimerpicker, ui_settings, ui_infodock, ui_sync,
                  ui_dataentrywidget, ui_deletefeature, ui_imageviewer, ui_actionpicker, ui_gps,
-                 ui_legend)
+                 ui_legend, ui_mapwidget)
 
 project_widget, project_base = ui_projectwidget.Ui_Form, QWidget
 modules_widget, modules_base = ui_listmodules.Ui_ListModules, QWidget
@@ -22,5 +22,3 @@ dataentry_widget, dataentry_base = ui_dataentrywidget.Ui_Form, QWidget
 featurefeature_dialog = ui_deletefeature.Ui_DeleteFeatureDialog
 imageviewer_widget, imageviewer_base = ui_imageviewer.Ui_imageviewer, QWidget
 actionpicker_widget, actionpicker_base = ui_actionpicker.Ui_ActionPickerDialog, QDialog
-gps_widget, gps_base = ui_gps.Ui_gpsWidget, QWidget
-legend_widget, legend_base = ui_legend.Ui_legendsWidget, QWidget

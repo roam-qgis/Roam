@@ -1,7 +1,7 @@
-from roam.ui.uifiles import gps_widget, gps_base
+from PyQt4.QtGui import QWidget
+from ui.ui_gps import Ui_gpsWidget
 
-
-class GPSWidget(gps_widget, gps_base):
+class GPSWidget(Ui_gpsWidget, QWidget):
     def __init__(self, parent=None):
         super(GPSWidget, self).__init__(parent)
         self.setupUi(self)

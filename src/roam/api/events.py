@@ -16,6 +16,7 @@ class _Events(QObject):
 
     # Emit when requesting to open a feature form.
     openfeatureform = pyqtSignal(object, QgsFeature, bool)
+    featureformloaded = pyqtSignal(object, QgsFeature, object, bool)
 
     editgeometry = pyqtSignal(object, QgsFeature)
 
@@ -39,5 +40,10 @@ class _Events(QObject):
         :param extra: Any extra information to show the user on click.
         """
         self.onShowMessage.emit(title, message, level, duration, extra)
+
+    def open_feature_form(self, form, feature, editmode=False):
+        self.openfeatureform.emit(form, feature, editmode)
+
+
 
 RoamEvents = _Events()
