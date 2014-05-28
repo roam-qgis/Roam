@@ -44,6 +44,9 @@ class MapWidget(Ui_CanvasWidget, QMainWindow):
         self.canvas.enableAntiAliasing(True)
         self.canvas.setWheelAction(QgsMapCanvas.WheelZoomToMouseCursor)
 
+        if hasattr(self.canvas, 'setParallelRenderingEnabled'):
+            self.canvas.setParallelRenderingEnabled(True)
+
         pal = QgsPalLabeling()
         self.canvas.mapRenderer().setLabelingEngine(pal)
         self.canvas.setFrameStyle(QFrame.NoFrame)
