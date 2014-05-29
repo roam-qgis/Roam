@@ -1,4 +1,8 @@
-def open_keyboard(self):
+import sys
+import os
+import subprocess
+
+def open_keyboard():
 
     if sys.platform == 'win32':
         try:
@@ -14,4 +18,4 @@ def open_keyboard(self):
             roam.config.save()
     else:
         cmd = 'onboard'
-        Popen(cmd)
+        subprocess.Popen(cmd)
