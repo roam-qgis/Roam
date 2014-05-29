@@ -309,7 +309,7 @@ class ConfigManagerDialog(ui_configmanager.Ui_ProjectInstallerDialog, QDialog):
         self.removeProjectButton.pressed.connect(self.deletebuttonpressed)
         self.projectwidget.projectupdated.connect(self.projectupdated)
         self.projectwidget.projectsaved.connect(self.projectupdated)
-        self.projectwidget.project_loaded.connect(self.updateformsnode)
+        self.projectwidget.projectloaded.connect(self.updateformsnode)
         self.projectwidget.selectlayersupdated.connect(self.updateformsnode)
 
         self.projectwidget.setaboutinfo()
