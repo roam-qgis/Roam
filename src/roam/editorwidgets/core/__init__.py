@@ -2,6 +2,7 @@ from PyQt4.QtGui import QWidget
 from PyQt4.QtCore import QObject, pyqtSignal
 from collections import OrderedDict
 
+
 widgets = OrderedDict()
 
 class EditorWidgetException(Exception):
@@ -12,12 +13,16 @@ def registerwidgets(*widgetclasses):
         widgets[widgetclass.widgettype] = widgetclass
 
 def registerallwidgets():
+    import roam.utils
+    roam.utils.warning("REG WIDGETS")
     import roam.editorwidgets.imagewidget
     import roam.editorwidgets.listwidget
     import roam.editorwidgets.checkboxwidget
     import roam.editorwidgets.datewidget
     import roam.editorwidgets.numberwidget
     import roam.editorwidgets.textwidget
+    roam.utils.warning("Register widgets end")
+    roam.utils.info(widgets)
 
 def supportedwidgets():
     registerallwidgets()
