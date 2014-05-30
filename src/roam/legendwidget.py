@@ -1,8 +1,8 @@
 import math
 from PyQt4.QtCore import Qt, QSize, QRect, QPoint, pyqtSignal, QRectF
-from PyQt4.QtGui import  QWidget, QPixmap, QPainter, QLabel, QBrush, QColor, QPen, QTextOption, QFontMetrics
+from PyQt4.QtGui import  QWidget, QPixmap, QPainter, QLabel, QBrush, QColor, QPen, QTextOption, QFontMetrics, QImage
 
-from qgis.core import QgsMapLayer
+from qgis.core import QgsMapLayer, QGis
 
 from ui.ui_legend import Ui_legendsWidget
 
@@ -14,7 +14,7 @@ class LegendWidget(Ui_legendsWidget, QWidget):
     def __init__(self, parent=None):
         super(LegendWidget, self).__init__(parent)
         self.setupUi(self)
-        self.pixmap = QPixmap()
+        self.canvasimage = QImage()
         self.items = {}
         self.framerect = QRect()
         self._lastextent = None
@@ -52,12 +52,12 @@ class LegendWidget(Ui_legendsWidget, QWidget):
                 maxheight = max(metrices.boundingRect(item).height(), maxheight)
             return maxwidth, maxheight
 
-        if not self.pixmap:
+        if not self.canvasimage:
             return
 
         painter = QPainter(self)
         painter.setRenderHints(QPainter.Antialiasing)
-        painter.drawPixmap(event.rect(), self.pixmap)
+        painter.drawImage(event.rect(), self.canvasimage)
 
         itemwidths, itemmaxheight = calcitems()
         OFFSET_X = 30
@@ -115,21 +115,40 @@ class LegendWidget(Ui_legendsWidget, QWidget):
             self.items[layer.name()] = items
         self.update()
 
+    def _renderimage(self):
+        image = self.renderjob.renderedImage()
+        self.canvasimage = image
+        self.update()
+
     def updatecanvas(self, canvas):
         """
         Update the canvas object for the legend background.
         """
-        if canvas.isDrawing() or self._lastextent == canvas.extent():
+        if self._lastextent == canvas.extent():
             return
 
         self._lastextent = canvas.extent()
-        pixmap = QPixmap(self.size())
-        pixmap.fill(canvas.canvasColor())
-        painter = QPainter(pixmap)
-        painter.setRenderHints(QPainter.Antialiasing)
-        renderer = canvas.mapRenderer()
-        renderer.render(painter)
-        del painter
-        self.pixmap = pixmap
-        self.update()
+        if QGis.QGIS_VERSION_INT > 20200:
+            from qgis.core import QgsMapRendererParallelJob, QgsMapSettings
+            settings = canvas.mapSettings()
+            extent = settings.extent()
+            settings.setOutputSize(self.size())
+            settings.setExtent(extent)
+            #settings.setFlags(QgsMapSettings.Antialiasing | QgsMapSettings.DrawLabeling )
+            self.renderjob = QgsMapRendererParallelJob(settings)
+            self.renderjob.finished.connect(self._renderimage)
+            self.renderjob.start()
+        else:
+            if canvas.isDrawing():
+                return
+
+            pixmap = QPixmap(self.size())
+            pixmap.fill(canvas.canvasColor())
+            painter = QPainter(pixmap)
+            painter.setRenderHints(QPainter.Antialiasing)
+            renderer = canvas.mapRenderer()
+            renderer.render(painter)
+            del painter
+            self.canvasimage = pixmap.toImage()
+            self.update()
 
