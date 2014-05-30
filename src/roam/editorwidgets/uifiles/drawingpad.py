@@ -5,6 +5,7 @@ from PyQt4 import QtCore, QtGui
 
 from PyQt4.QtGui import QWidget, QPixmap, QPainter, QColorDialog
 from PyQt4.QtCore import Qt
+from qgis.core import QGis
 
 from roam.editorwidgets.uifiles.ui_drawingpad import Ui_DrawingWindow
 
@@ -62,6 +63,13 @@ class ScribbleArea(QWidget):
         painter = QtGui.QPainter(self)
         painter.drawImage(event.rect(), self.image)
         del painter
+
+    def addMapImage(self, image):
+        self.painter.begin(self.image)
+        self.painter.setRenderHints(QPainter.Antialiasing, True)
+        self.painter.drawImage(QtCore.QPoint(0,0), image)
+        self.painter.end()
+        self.update()
 
     def addMap(self, pixmap):
         self.painter.begin(self.image)
@@ -129,7 +137,6 @@ class DrawingPad(Ui_DrawingWindow, QWidget):
 
         self.canvas = None
 
-
     @property
     def canvas(self):
         return self._canvas
@@ -152,15 +159,25 @@ class DrawingPad(Ui_DrawingWindow, QWidget):
         colour = QColorDialog.getColor(Qt.black, self)
         self.scribbleArea.setPenColor(colour)
 
+    def rendermap(self):
+        image = self.renderjob.renderedImage()
+        self.scribbleArea.addMapImage(image)
+
     def getmap(self):
         if self.canvas:
-            pixmap = QPixmap(self.canvas.size())
-            pixmap.fill(self.canvas.canvasColor())
-            painter = QPainter(pixmap)
-            renderer = self.canvas.mapRenderer()
-            renderer.render(painter)
-            del painter
-            self.scribbleArea.addMap(pixmap)
+            if QGis.QGIS_VERSION_INT > 20200:
+                from qgis.core import QgsMapRendererParallelJob
+                self.renderjob = QgsMapRendererParallelJob(self.canvas.mapSettings())
+                self.renderjob.finished.connect(self.rendermap)
+                self.renderjob.start()
+            else:
+                pixmap = QPixmap(self.canvas.size())
+                pixmap.fill(self.canvas.canvasColor())
+                painter = QPainter(pixmap)
+                renderer = self.canvas.mapRenderer()
+                renderer.render(painter)
+                del painter
+                self.scribbleArea.addMap(pixmap)
 
     def openImage(self, image):
         if not image is None and os.path.exists(image):
