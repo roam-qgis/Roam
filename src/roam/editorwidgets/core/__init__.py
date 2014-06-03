@@ -20,7 +20,6 @@ def registerallwidgets():
     import roam.editorwidgets.textwidget
 
 def supportedwidgets():
-    registerallwidgets()
     return widgets.keys()
 
 def widgetwrapper(widgettype, widget, config, layer, label, field, parent=None):
