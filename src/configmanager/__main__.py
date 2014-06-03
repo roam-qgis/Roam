@@ -16,6 +16,9 @@ import roam.project
 import roam.resources_rc
 import configmanager.logger as logger
 
+import roam.editorwidgets.core
+roam.editorwidgets.core.registerallwidgets()
+
 from PyQt4.QtGui import QApplication, QFont, QIcon
 from qgis.core import QGis
 from configmanager.ui.configmanagerdialog import ConfigManagerDialog

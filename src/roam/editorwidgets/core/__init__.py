@@ -23,7 +23,6 @@ def registerallwidgets():
                     NumberWidget, DoubleNumberWidget, TextWidget, TextBlockWidget)
 
 def supportedwidgets():
-    registerallwidgets()
     return widgets.keys()
 
 def widgetwrapper(widgettype, widget, config, layer, label, field, parent=None):
