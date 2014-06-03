@@ -88,5 +88,3 @@ class DoubleNumberWidget(NumberWidget):
         value = float(value)
         self.widget.setValue(value)
 
-registerwidgets(NumberWidget)
-registerwidgets(DoubleNumberWidget)

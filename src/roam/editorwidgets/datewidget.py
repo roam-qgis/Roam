@@ -118,5 +118,3 @@ class DateWidget(EditorWidget):
             return None
         else:
             return datetime.toString(Qt.ISODate)
-
-registerwidgets(DateWidget)

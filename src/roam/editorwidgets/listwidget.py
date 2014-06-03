@@ -208,5 +208,3 @@ class ListWidget(EditorWidget):
             return self.widget.currentText()
 
         return value
-
-registerwidgets(ListWidget)

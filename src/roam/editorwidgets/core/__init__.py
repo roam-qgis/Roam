@@ -13,25 +13,20 @@ def registerwidgets(*widgetclasses):
         widgets[widgetclass.widgettype] = widgetclass
 
 def registerallwidgets():
-    import roam.utils
-    roam.utils.warning("REG WIDGETS")
-    import roam.editorwidgets.imagewidget
-    import roam.editorwidgets.listwidget
-    import roam.editorwidgets.checkboxwidget
-    import roam.editorwidgets.datewidget
-    import roam.editorwidgets.numberwidget
-    import roam.editorwidgets.textwidget
-    roam.utils.warning("Register widgets end")
-    roam.utils.info(widgets)
+    from roam.editorwidgets.imagewidget import ImageWidget
+    from roam.editorwidgets.listwidget import ListWidget
+    from roam.editorwidgets.checkboxwidget import CheckboxWidget
+    from roam.editorwidgets.datewidget import DateWidget
+    from roam.editorwidgets.numberwidget import NumberWidget, DoubleNumberWidget
+    from roam.editorwidgets.textwidget import TextWidget, TextBlockWidget
+    registerwidgets(ImageWidget, ListWidget, CheckboxWidget, DateWidget,
+                    NumberWidget, DoubleNumberWidget, TextWidget, TextBlockWidget)
 
 def supportedwidgets():
     registerallwidgets()
     return widgets.keys()
 
 def widgetwrapper(widgettype, widget, config, layer, label, field, parent=None):
-    if not widgets:
-        registerallwidgets()
-
     try:
         editorwidget = widgets[widgettype]
     except KeyError:
@@ -44,9 +39,6 @@ def widgetwrapper(widgettype, widget, config, layer, label, field, parent=None):
 
 
 def createwidget(widgettype, parent=None):
-    if not widgets:
-        registerallwidgets()
-
     try:
         wrapper = widgets[widgettype]
     except KeyError:

@@ -48,5 +48,3 @@ class TextBlockWidget(TextWidget):
 
     def createWidget(self, parent):
         return QPlainTextEdit(parent)
-
-registerwidgets(TextWidget, TextWidget)

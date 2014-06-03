@@ -217,4 +217,3 @@ class ImageWidget(EditorWidget):
 
         return image
 
-registerwidgets(ImageWidget)
