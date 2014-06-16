@@ -22,7 +22,9 @@ from PyQt4.QtGui import (QWidget,
                          QDateTimeEdit,
                          QBoxLayout,
                          QSpacerItem,
-                         QFormLayout)
+                         QFormLayout,
+                         QSpinBox,
+                         QDoubleSpinBox)
 
 from qgis.core import QgsFields, QgsFeature, QgsGPSConnectionRegistry
 
@@ -446,7 +448,7 @@ class FeatureForm(FeatureFormBase):
         featureform.createhelplinks()
         featureform.setProperty('featureform', featureform)
 
-        widgettypes = [QLineEdit, QPlainTextEdit, QDateTimeEdit]
+        widgettypes = [QLineEdit, QPlainTextEdit, QDateTimeEdit, QSpinBox, QDoubleSpinBox]
         map(featureform._installeventfilters, widgettypes)
 
         featureform.setupui()
