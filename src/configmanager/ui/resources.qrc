@@ -1,6 +1,7 @@
 <RCC>
   <qresource prefix="icons">
     <file alias="List">..\editorwidgets\icons\list.svg</file>
+  <file alias="List">..\editorwidgets\icons\mutlilist.svg</file>
     <file alias="Image">..\editorwidgets\icons\picture.svg</file>
     <file alias="Checkbox">..\editorwidgets\icons\check.svg</file>
     <file alias="Text">..\editorwidgets\icons\text.svg</file>
