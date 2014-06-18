@@ -1,7 +1,12 @@
 import logging
 import sys
+import os
+import getpass
 
-LOG_FILENAME = 'configmanager.log'
+if not os.path.exists('log'):
+   os.makedirs('log')
+LOG_FILENAME = os.path.join('log', "{}_configmanager.log".format(getpass.getuser()))
+
 log_format = '%(levelname)s - %(asctime)s - %(module)s-%(funcName)s:%(lineno)d - %(message)s'
 console_format = '%(levelname)s %(module)s-%(funcName)s:%(lineno)d - %(message)s'
 formater = logging.Formatter(log_format)
