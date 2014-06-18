@@ -4,17 +4,20 @@ import os
 import json
 import inspect
 import sys
+import getpass
 
 from PyQt4 import uic
 from PyQt4.QtGui import (QLabel, QDialog, QGridLayout, QLayout)
 
-LOG_FILENAME = 'roam.log'
+if not os.path.exists('log'):
+   os.makedirs('log')
+LOG_FILENAME = os.path.join('log', "{}_roam.log".format(getpass.getuser()))
 log_format = '%(levelname)s - %(asctime)s - %(module)s-%(funcName)s:%(lineno)d - %(message)s'
 console_format = '%(levelname)s %(module)s-%(funcName)s:%(lineno)d - %(message)s'
 formater = logging.Formatter(log_format)
 console_formater = logging.Formatter(console_format)
 
-filehandler = logging.FileHandler('roam.log', mode='at')
+filehandler = logging.FileHandler(LOG_FILENAME, mode='at')
 filehandler.setLevel(logging.DEBUG)
 filehandler.setFormatter(formater)
 
