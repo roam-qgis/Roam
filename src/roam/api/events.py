@@ -32,6 +32,8 @@ class _Events(QObject):
 
     onShowMessage = pyqtSignal(str, str, int, int, str)
 
+    featuresaved = pyqtSignal()
+
     def raisemessage(self, title, message, level=0, duration=0, extra=''):
         """
         Raise a message for Roam to show.
@@ -43,6 +45,7 @@ class _Events(QObject):
         """
         self.onShowMessage.emit(title, message, level, duration, extra)
 
-    showlargewidget = pyqtSignal(object, object, object, dict)
+    show_widget = pyqtSignal(object, object, object, dict)
+
 
 RoamEvents = _Events()

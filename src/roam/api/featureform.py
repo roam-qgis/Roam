@@ -273,7 +273,7 @@ class FeatureFormBase(QWidget):
                 widgetwrapper.setrequired()
                 widgetwrapper.validationupdate.connect(self.updaterequired)
 
-            widgetwrapper.largewidgetrequest.connect(RoamEvents.showlargewidget.emit)
+            widgetwrapper.largewidgetrequest.connect(RoamEvents.show_widget.emit)
 
             self._bindsavebutton(field)
             self.boundwidgets[field] = widgetwrapper
@@ -371,8 +371,6 @@ class FeatureFormBase(QWidget):
             raise KeyError('Default value not defined for this field {}'.format(name))
 
         return defaults.widget_default(widgetconfig, self.feature, self.form.QGISLayer)
-
-
 
 class FeatureForm(FeatureFormBase):
     """
@@ -538,5 +536,86 @@ class FeatureForm(FeatureFormBase):
     @property
     def allpassing(self):
         return all(valid for valid in self.requiredfields.values())
+
+    def save(self):
+        """
+        Save the values from the form into the set feature
+
+        Override this method to handle saving things your own way if needed.
+        """
+        if not self.allpassing:
+            error = ("Missing fields", "Some fields are still required.", QgsMessageBar.WARNING, 2)
+            return False, error
+
+        def updatefeautrefields(feature):
+            def field_or_null(field):
+                if field == '' or field is None or isinstance(field, QPyNullVariant):
+                    return QPyNullVariant(str)
+                return field
+
+            for key, value in values.iteritems():
+                try:
+                    fields = [w['field'] for w in self.formconfig['widgets']]
+                    if key in fields:
+                        feature[key] = field_or_null(value)
+                    else:
+                        feature[key] = value
+                except KeyError:
+                    continue
+            return feature
+
+        if not self.accept():
+            error = ("Form was not accepted", "The form could not be accepted", QgsMessageBar.WARNING)
+            return False, error
+
+        layer = self.form.QGISLayer
+        values, savedvalues = self.getvalues()
+
+        updatefeautrefields(self.feature)
+        layer.startEditing()
+        if self.editingmode:
+            layer.updateFeature(self.feature)
+        else:
+            layer.addFeature(self.feature)
+            savevalues(layer, savedvalues)
+
+        saved = layer.commitChanges()
+
+        if not saved:
+            errors = layer.commitErrors()
+            error = ("Feature could not be saved", errors[0], QgsMessageBar.WARNING, 0, errors)
+            return False, error
+        else:
+            self.featuresaved(self.feature, values)
+            return True, ()
+
+    def delete(self):
+        """
+        Delete the feature that is bound to this form from the forms layer
+        Override this method to add your own delete logic
+        """
+        layer = self.form.QGISLayer
+        try:
+            userdeleted = self.deletefeature()
+        except featureform.DeleteFeatureException as ex:
+            self.failedsave.emit([ex.message])
+            errors = layer.commitErrors()
+            error = ("Feature could not be deleted", errors[0], QgsMessageBar.WARNING, 0, errors)
+            return False, error
+
+        if not userdeleted:
+            # If the user didn't add there own feature delete logic
+            # we will just do it for them.
+            layer = self.form.QGISLayer
+            featureid = self.feature.id()
+            layer.startEditing()
+            layer.deleteFeature(featureid)
+            saved = layer.commitChanges()
+            if not saved:
+                errors = layer.commitErrors()
+                error = ("Feature could not be saved", errors[0], QgsMessageBar.WARNING, 0, errors)
+                return False, error
+
+        return True, ()
 
 

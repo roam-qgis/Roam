@@ -156,9 +156,7 @@ class MainWindow(ui_mainwindow.Ui_MainWindow, QMainWindow):
         self.widgetpage.layout().addWidget(self.dataentrywidget)
 
         self.dataentrywidget.rejected.connect(self.formrejected)
-        self.dataentrywidget.featuresaved.connect(self.featureSaved)
-        self.dataentrywidget.featuredeleted.connect(self.featuredeleted)
-        self.dataentrywidget.failedsave.connect(self.failSave)
+        RoamEvents.featuresaved.connect(self.featureSaved)
         RoamEvents.helprequest.connect(self.showhelp)
 
         def createSpacer(width=0, height=0):
@@ -244,6 +242,7 @@ class MainWindow(ui_mainwindow.Ui_MainWindow, QMainWindow):
         RoamEvents.onShowMessage.connect(self.showUIMessage)
         RoamEvents.selectionchanged.connect(self.highlightselection)
         RoamEvents.selectionchanged.connect(self.showInfoResults)
+        RoamEvents.show_widget.connect(self.dataentrywidget.add_widget)
 
         GPS.gpsposition.connect(self.updatecanvasfromgps)
         GPS.firstfix.connect(self.gpsfirstfix)
@@ -580,28 +579,22 @@ class MainWindow(ui_mainwindow.Ui_MainWindow, QMainWindow):
         self.cleartempobjects()
         self.infodock.refreshcurrent()
 
-    def featuredeleted(self, layer, featureid):
-        self.dataentryfinished()
-        self.reloadselection(layer, deleted=[featureid])
+    def featuresdeleted(self, layerid, featureids):
+        layer = QgsMapLayerRegistry.instance().mapLayer(layerid)
+        self.reloadselection(layer, deleted=featureids)
         self.canvas.refresh()
 
-    def featureSaved(self):
-        self.dataentryfinished()
+    def featureSaved(self, *args):
+        #self.reloadselection(layer, deleted=[featureid])
         self.canvas.refresh()
-
-    def failSave(self, messages):
-        self.bar.pushError("Error when saving changes.", messages)
 
     def cleartempobjects(self):
         self.currentfeatureband.reset()
         self.clearToolRubberBand()
 
     def formrejected(self, message, level):
-        self.dataentryfinished()
         if message:
             RoamEvents.raisemessage("Form Message", message, level, duration=2)
-
-        self.cleartempobjects()
 
     def openForm(self, form, feature, editmode):
         """
@@ -770,6 +763,9 @@ class MainWindow(ui_mainwindow.Ui_MainWindow, QMainWindow):
 
         # Enable the raster layers button only if the project contains a raster layer.
         layers = QgsMapLayerRegistry.instance().mapLayers().values()
+        for layer in layers:
+            layer.committedFeaturesRemoved.connect(self.featuresdeleted)
+
         hasrasters = any(layer.type() == QgsMapLayer.RasterLayer for layer in layers)
         self.actionRaster.setEnabled(hasrasters)
         self.defaultextent = self.canvas.extent()

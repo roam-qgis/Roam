@@ -27,6 +27,7 @@ class FeatureFormWidget(Ui_Form, QWidget):
     # Raise the cancel event, takes a reason and a level
     cancel = pyqtSignal(str, int)
     featuresaved = pyqtSignal()
+    featuredeleted = pyqtSignal()
 
     def __init__(self, parent=None):
         super(FeatureFormWidget, self).__init__(parent)
@@ -64,6 +65,7 @@ class FeatureFormWidget(Ui_Form, QWidget):
         self.featureform = None
         self.values = {}
         self.config = {}
+        self.feature = None
 
     def set_featureform(self, featureform):
         """
@@ -72,22 +74,44 @@ class FeatureFormWidget(Ui_Form, QWidget):
         self.featureform = featureform
         self.featureform.formvalidation.connect(self._update_validation)
         self.featureform.helprequest.connect(functools.partial(RoamEvents.helprequest.emit, self))
-        self.featureform.showlargewidget.connect(RoamEvents.showlargewidget.emit)
+        self.featureform.showlargewidget.connect(RoamEvents.show_widget.emit)
         self.featureform.enablesave.connect(self.actionSave.setEnabled)
         self.featureform.rejected.connect(self.cancel.emit)
 
         self.scrollAreaWidgetContents.layout().addWidget(self.featureform)
 
     def delete_feature(self):
-        raise NotImplementedError
+        try:
+            msg = self.featureform.deletemessage
+        except AttributeError:
+            msg = 'Do you really want to delete this feature?'
+
+        box = DeleteFeatureDialog(msg, QApplication.activeWindow())
+
+        if not box.exec_():
+            return
+
+        print self.featureform
+        deleted, error = self.featureform.delete()
+        if not deleted:
+            RoamEvents.raisemessage(*error)
+
+        self.featuredeleted.emit()
 
     def save_feature(self):
-        raise NotImplementedError
+        saved, error = self.featureform.save()
+        if not saved:
+            RoamEvents.raisemessage(*error)
+
+        self.featuresaved.emit()
+        RoamEvents.featuresaved.emit()
 
     def set_config(self, config):
         self.config = config
         editmode = config['editmode']
         allowsave = config.get('allowsave', True)
+        self.feature = config.get('feature', None)
+        self.featureform.feature = self.feature
         self.featureform.editingmode = editmode
         self.actionDelete.setVisible(editmode)
         self.actionSave.setEnabled(allowsave)
@@ -115,12 +139,12 @@ class FeatureFormWidgetEditor(LargeEditorWidget):
         formwidget = FeatureFormWidget()
         featureform = form.create_featureform(None, defaults={}, canvas=canvas)
         formwidget.set_featureform(featureform)
-        self.featureform = featureform
         return formwidget
 
     def initWidget(self, widget):
         widget.actionCancel.triggered.connect(self.cancelform)
         widget.featuresaved.connect(self.emitfished)
+        widget.featuredeleted.connect(self.emitfished)
 
     def cancelform(self):
         self.emitcancel()
@@ -132,7 +156,7 @@ class FeatureFormWidgetEditor(LargeEditorWidget):
         self.widget.before_load()
 
     def value(self):
-        values, savedvalues = self.featureform.getvalues()
+        values, savedvalues = self.widget.featureform.getvalues()
         return values
 
     def setvalue(self, value):
@@ -142,13 +166,7 @@ class FeatureFormWidgetEditor(LargeEditorWidget):
 class DataEntryWidget(dataentry_widget, dataentry_base):
     """
     """
-    accepted = pyqtSignal()
     rejected = pyqtSignal(str, int)
-    finished = pyqtSignal()
-    featuresaved = pyqtSignal()
-    featuredeleted = pyqtSignal(object, object)
-    failedsave = pyqtSignal(list)
-    openimage = pyqtSignal(object)
     lastwidgetremoved = pyqtSignal()
 
     def __init__(self, canvas, parent=None):
@@ -160,115 +178,11 @@ class DataEntryWidget(dataentry_widget, dataentry_base):
         self.project = None
         self.canvas = canvas
         self.widgetstack = []
-        RoamEvents.showlargewidget.connect(self.setlargewidget)
-
-
-    def deletefeature(self):
-        # TODO ALl this needs to live in the feature form.
-        try:
-            msg = self.featureform.deletemessage
-        except AttributeError:
-            msg = 'Do you really want to delete this feature?'
-        box = DeleteFeatureDialog(msg, QApplication.activeWindow())
-
-        if not box.exec_():
-            return
-
-        featureid = self.feature.id()
-        try:
-            userdeleted = self.featureform.deletefeature()
-
-            if not userdeleted:
-                # If the user didn't add there own feature delete logic
-                # we will just do it for them.
-                layer = self.featureform.form.QGISLayer
-                layer.startEditing()
-                layer.deleteFeature(featureid)
-                saved = layer.commitChanges()
-                if not saved:
-                    raise featureform.DeleteFeatureException(layer.commitErrors())
-
-        except featureform.DeleteFeatureException as ex:
-            self.failedsave.emit([ex.message])
-            map(error, ex.message)
-            return
-
-        self.featureform.featuredeleted(self.feature)
-        self.featuredeleted.emit(self.featureform.form.QGISLayer, featureid)
-
-    def accept(self):
-        # TODO ALl this needs to live in the feature form.
-        fields = [w['field'] for w in self.featureform.formconfig['widgets']]
-
-        def updatefeautrefields(feature):
-            for key, value in values.iteritems():
-                try:
-                    if key in fields:
-                        feature[key] = field_or_null(value)
-                    else:
-                        feature[key] = value
-                except KeyError:
-                    continue
-            return feature
-
-        def field_or_null(field):
-            if field == '' or field is None or isinstance(field, QPyNullVariant):
-                return QPyNullVariant(str)
-            return field
-
-        if not self.featureform.allpassing:
-            RoamEvents.raisemessage("Missing fields", "Some fields are still required.",
-                                     QgsMessageBar.WARNING, duration=2)
-            return
-
-        if not self.featureform:
-            return
-
-        if not self.featureform.accept():
-            return
-
-        layer = self.featureform.form.QGISLayer
-        before = QgsFeature(self.feature)
-        before.setFields(self.fields, initAttributes=False)
-
-        values, savedvalues = self.featureform.getvalues()
-
-        after = QgsFeature(self.feature)
-        after.setFields(self.fields, initAttributes=False)
-        after = updatefeautrefields(after)
-
-        layer.startEditing()
-        if after.id() > 0:
-            if self.project.historyenabled(layer):
-                # Mark the old one as history
-                before['status'] = 'H'
-                after['status'] = 'C'
-                after['dateedited'] = QDateTime.currentDateTime()
-                after['editedby'] = getpass.getuser()
-                layer.addFeature(after)
-                layer.updateFeature(before)
-            else:
-                layer.updateFeature(after)
-        else:
-            layer.addFeature(after)
-            featureform.savevalues(layer, savedvalues)
-
-        saved = layer.commitChanges()
-
-        if not saved:
-            self.failedsave.emit(layer.commitErrors())
-            map(error, layer.commitErrors())
-        else:
-            self.featureform.featuresaved(after, values)
-            self.featuresaved.emit()
-
-        self.accepted.emit()
-        self.featureform = None
 
     def formrejected(self, message=None, level=featureform.RejectedException.WARNING):
         self.rejected.emit(message, level)
 
-    def setlargewidget(self, widgettype, lastvalue, callback, config, initconfig=None):
+    def add_widget(self, widgettype, lastvalue, callback, config, initconfig=None):
         def cleanup():
             # Pop the widget off the current widget stack and kill it.
             wrapper, position = self.widgetstack.pop()
@@ -276,7 +190,7 @@ class DataEntryWidget(dataentry_widget, dataentry_base):
 
         widget = widgettype.createwidget(config=initconfig)
         largewidgetwrapper = widgettype.for_widget(widget, None, None, None, None, map=self.canvas)
-        largewidgetwrapper.largewidgetrequest.connect(self.setlargewidget)
+        largewidgetwrapper.largewidgetrequest.connect(RoamEvents.show_widget.emit)
         largewidgetwrapper.finished.connect(callback)
         largewidgetwrapper.finished.connect(cleanup)
         largewidgetwrapper.cancel.connect(cleanup)
@@ -307,15 +221,18 @@ class DataEntryWidget(dataentry_widget, dataentry_base):
             if not dontemit:
                 self.lastwidgetremoved.emit()
 
-    def save_feature(self, values):
-        print values
 
     def openform(self, form, feature, project, editmode, clear=True):
         """
         Opens a form for the given feature.
         """
+        def _sink(_):
+            pass
 
-        self.clear(dontemit=True)
+        if clear:
+            # Clear all the other open widgets that might be open.
+            self.clear(dontemit=True)
+
         # One capture geometry, even for sub forms?
         # HACK Remove me and do something smarter
         roam.qgisfunctions.capturegeometry = feature.geometry()
@@ -349,4 +266,4 @@ class DataEntryWidget(dataentry_widget, dataentry_base):
                       layers=QgsMapLayerRegistry.instance().mapLayers(),
                       feature=feature)
 
-        self.setlargewidget(FeatureFormWidgetEditor, values, self.save_feature, config, initconfig=initconfig)
+        self.add_widget(FeatureFormWidgetEditor, values, _sink, config, initconfig=initconfig)
