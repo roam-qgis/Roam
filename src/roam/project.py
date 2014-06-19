@@ -290,11 +290,7 @@ class Form(object):
         name = "{root}.{project}.{formfolder}".format(root=rootname,
                                                       project=projectname,
                                                       formfolder=self.name)
-        try:
-            self._module = importlib.import_module(name)
-        except ImportError as err:
-            createinifile(self.folder)
-            self._loadmodule()
+        self._module = importlib.import_module(name)
 
     @property
     def module(self):

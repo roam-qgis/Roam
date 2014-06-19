@@ -9,6 +9,7 @@ from PyQt4.QtGui import *
 from qgis.core import QgsMapLayerRegistry, QgsFeatureRequest, QgsFeature, QgsExpression, QGis, QgsGeometry
 from qgis.gui import QgsMessageBar
 
+from roam.editorwidgets.core import LargeEditorWidget
 from roam.utils import log, error
 from roam.api import featureform, RoamEvents
 from roam.ui.uifiles import dataentry_widget, dataentry_base
@@ -18,6 +19,124 @@ from roam.structs import CaseInsensitiveDict
 
 import roam.qgisfunctions
 import roam.defaults as defaults
+import roam.editorwidgets.core
+
+from roam.ui.ui_featureformwidget import Ui_Form
+
+class FeatureFormWidget(Ui_Form, QWidget):
+    # Raise the cancel event, takes a reason and a level
+    cancel = pyqtSignal(str, int)
+    featuresaved = pyqtSignal()
+
+    def __init__(self, parent=None):
+        super(FeatureFormWidget, self).__init__(parent)
+        self.setupUi(self)
+
+        toolbar = QToolBar()
+        size = QSize(48, 48)
+        toolbar.setIconSize(size)
+        style = Qt.ToolButtonTextUnderIcon
+        toolbar.setToolButtonStyle(style)
+        self.actionDelete = toolbar.addAction("Delete")
+        self.actionDelete.triggered.connect(self.delete_feature)
+
+        label = 'Required fields marked in <b style="background-color:rgba(255, 221, 48,150)">yellow</b>'
+        self.missingfieldsLabel = QLabel(label)
+        self.missingfieldsLabel.hide()
+        self.missingfieldaction = toolbar.addWidget(self.missingfieldsLabel)
+
+        spacer = QWidget()
+        spacer2 = QWidget()
+        spacer2.setMinimumWidth(20)
+        spacer.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
+        spacer2.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
+        toolbar.addWidget(spacer)
+        self.actionCancel = toolbar.addAction("Cancel")
+        toolbar.addWidget(spacer2)
+        self.actionSave = toolbar.addAction("Save")
+        self.actionSave.triggered.connect(self.save_feature)
+
+        self.layout().insertWidget(0, toolbar)
+
+        self.flickwidget = FlickCharm()
+        self.flickwidget.activateOn(self.scrollArea)
+
+        self.featureform = None
+        self.values = {}
+        self.config = {}
+
+    def set_featureform(self, featureform):
+        """
+        Note: There can only be one feature form.  If you need to show another one make a new FeatureFormWidget
+        """
+        self.featureform = featureform
+        self.featureform.formvalidation.connect(self._update_validation)
+        #self.featureform.helprequest.connect(self.helprequest.emit)
+        #self.featureform.showlargewidget.connect(self.setlargewidget)
+        self.featureform.enablesave.connect(self.actionSave.setEnabled)
+        self.featureform.rejected.connect(self.cancel.emit)
+
+        self.scrollAreaWidgetContents.layout().addWidget(self.featureform)
+
+    def delete_feature(self):
+        raise NotImplementedError
+
+    def save_feature(self):
+        raise NotImplementedError
+
+    def set_config(self, config):
+        self.config = config
+        editmode = config['editmode']
+        allowsave = config.get('allowsave', True)
+        self.featureform.editingmode = editmode
+        self.actionDelete.setVisible(editmode)
+        self.actionSave.setEnabled(allowsave)
+
+    def _update_validation(self, passed):
+        # Show the error if there is missing fields
+        self.missingfieldaction.setVisible(not passed)
+
+    def bind_values(self, values):
+        self.values = values
+        self.featureform.bindvalues(values)
+        self.featureform.loaded()
+
+    def before_load(self):
+        self.featureform.load(self.config['feature'], self.config['layers'], self.values)
+
+class FeatureFormWidgetEditor(LargeEditorWidget):
+    def __init__(self, *args, **kwargs):
+        super(FeatureFormWidgetEditor, self).__init__(*args, **kwargs)
+
+    def createWidget(self, parent=None):
+        config = self.initconfig
+        form = config['form']
+        canvas = config.get('canvas', None)
+        formwidget = FeatureFormWidget()
+        featureform = form.create_featureform(None, defaults={}, canvas=canvas)
+        formwidget.set_featureform(featureform)
+        self.featureform = featureform
+        return formwidget
+
+    def initWidget(self, widget):
+        widget.actionCancel.triggered.connect(self.cancelform)
+        widget.featuresaved.connect(self.emitfished)
+
+    def cancelform(self):
+        self.emitcancel()
+
+    def updatefromconfig(self):
+        self.widget.set_config(self.config)
+
+    def before_load(self):
+        self.widget.before_load()
+
+    def value(self):
+        values, savedvalues = self.featureform.getvalues()
+        return values
+
+    def setvalue(self, value):
+        self.widget.bind_values(value)
 
 
 class DataEntryWidget(dataentry_widget, dataentry_base):
@@ -31,6 +150,7 @@ class DataEntryWidget(dataentry_widget, dataentry_base):
     failedsave = pyqtSignal(list)
     helprequest = pyqtSignal(str)
     openimage = pyqtSignal(object)
+    lastwidgetremoved = pyqtSignal()
 
     def __init__(self, canvas, parent=None):
         super(DataEntryWidget, self).__init__(parent)
@@ -40,37 +160,11 @@ class DataEntryWidget(dataentry_widget, dataentry_base):
         self.fields = None
         self.project = None
         self.canvas = canvas
+        self.widgetstack = []
 
-        self.flickwidget = FlickCharm()
-        self.flickwidget.activateOn(self.scrollArea)
-
-        toolbar = QToolBar()
-        size = QSize(48, 48)
-        toolbar.setIconSize(size)
-        style = Qt.ToolButtonTextUnderIcon
-        toolbar.setToolButtonStyle(style)
-        self.actionSave.triggered.connect(self.accept)
-        self.actionCancel.triggered.connect(functools.partial(self.formrejected, None))
-        self.actionDelete.triggered.connect(self.deletefeature)
-
-        label = 'Required fields marked in <b style="background-color:rgba(255, 221, 48,150)">yellow</b>'
-        self.missingfieldsLabel = QLabel(label)
-        self.missingfieldsLabel.hide()
-        toolbar.addAction(self.actionDelete)
-        self.missingfieldaction = toolbar.addWidget(self.missingfieldsLabel)
-        spacer = QWidget()
-        spacer2 = QWidget()
-        spacer2.setMinimumWidth(20)
-        spacer.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
-        spacer2.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
-        toolbar.addWidget(spacer)
-        toolbar.addAction(self.actionCancel)
-        toolbar.addWidget(spacer2)
-        toolbar.addAction(self.actionSave)
-
-        self.data_entry_page.layout().insertWidget(0, toolbar)
 
     def deletefeature(self):
+        # TODO ALl this needs to live in the feature form.
         try:
             msg = self.featureform.deletemessage
         except AttributeError:
@@ -103,6 +197,7 @@ class DataEntryWidget(dataentry_widget, dataentry_base):
         self.featuredeleted.emit(self.featureform.form.QGISLayer, featureid)
 
     def accept(self):
+        # TODO ALl this needs to live in the feature form.
         fields = [w['field'] for w in self.featureform.formconfig['widgets']]
 
         def updatefeautrefields(feature):
@@ -171,105 +266,86 @@ class DataEntryWidget(dataentry_widget, dataentry_base):
         self.featureform = None
 
     def formrejected(self, message=None, level=featureform.RejectedException.WARNING):
-        self.clear()
         self.rejected.emit(message, level)
 
-    def formvalidation(self, passed):
-        self.missingfieldaction.setVisible(not passed)
-
-    def setlargewidget(self, widgettype, lastvalue, callback, config):
+    def setlargewidget(self, widgettype, lastvalue, callback, config, initconfig=None):
         def cleanup():
-            self.stackedWidget.setCurrentIndex(0)
-            self.clearcurrentwidget(self.fullscreenwidget)
-            del self.largewidgetwrapper
+            # Pop the widget off the current widget stack and kill it.
+            wrapper, position = self.widgetstack.pop()
+            print "Clean up"
+            self.clearwidget(position)
 
-        widget = widgettype.createwidget()
-        self.largewidgetwrapper = widgettype.for_widget(widget, None, None, None, None, map=self.canvas)
-        self.largewidgetwrapper.finished.connect(callback)
-        self.largewidgetwrapper.finished.connect(cleanup)
-        self.largewidgetwrapper.cancel.connect(cleanup)
+        widget = widgettype.createwidget(config=initconfig)
+        largewidgetwrapper = widgettype.for_widget(widget, None, None, None, None, map=self.canvas)
+        largewidgetwrapper.largewidgetrequest.connect(self.setlargewidget)
+        largewidgetwrapper.finished.connect(callback)
+        largewidgetwrapper.finished.connect(cleanup)
+        largewidgetwrapper.cancel.connect(cleanup)
 
-        self.clearcurrentwidget(self.fullscreenwidget)
-        self.fullscreenwidget.layout().insertWidget(0, widget)
-        self.stackedWidget.setCurrentIndex(1)
+        largewidgetwrapper.initWidget(widget)
+        largewidgetwrapper.config = config
+        largewidgetwrapper.setvalue(lastvalue)
 
-        self.largewidgetwrapper.initWidget(widget)
-        self.largewidgetwrapper.config = config
-        self.largewidgetwrapper.setvalue(lastvalue)
-
-    def setwidget(self, widget):
-        self.clearcurrentwidget(self.scrollAreaWidgetContents)
-        self.scrollAreaWidgetContents.layout().insertWidget(0, widget)
-        self.stackedWidget.setCurrentIndex(0)
+        try:
+            largewidgetwrapper.before_load()
+            position = self.stackedWidget.addWidget(widget)
+            self.stackedWidget.setCurrentIndex(position)
+            self.widgetstack.append((largewidgetwrapper, position))
+        except roam.editorwidgets.core.RejectedException as rejected:
+            self.formrejected(rejected.message, rejected.level)
 
     def clear(self):
-        self.featureform = None
-        self.clearcurrentwidget(self.fullscreenwidget)
-        self.clearcurrentwidget(self.scrollAreaWidgetContents)
+        for i in xrange(self.stackedWidget.count()):
+            self.clearwidget(i)
 
-    def clearcurrentwidget(self, parent):
-        item = parent.layout().itemAt(0)
-        if item and item.widget():
-            widget = item.widget()
-            widget.setParent(None)
+    def clearwidget(self, position=0):
+        widget = self.stackedWidget.widget(position)
+        self.stackedWidget.removeWidget(widget)
+        if widget:
             widget.deleteLater()
+
+        if self.stackedWidget.count() == 0:
+            self.lastwidgetremoved.emit()
+
+    def save_feature(self, values):
+        print values
 
     def openform(self, form, feature, project, editmode):
         """
         Opens a form for the given feature.
         """
 
+        # One capture geometry, even for sub forms?
+        # HACK Remove me and do something smarter
         roam.qgisfunctions.capturegeometry = feature.geometry()
 
-        defaultvalues = {}
-        layer = form.QGISLayer
-        if not editmode:
-            defaultwidgets = form.widgetswithdefaults()
-            defaultvalues = defaults.default_values(defaultwidgets, feature, layer)
-            defaultvalues.update(featureform.loadsavedvalues(layer))
-
-        self.actionDelete.setVisible(editmode)
-
-        for field, value in defaultvalues.iteritems():
-            feature[field] = value
-
-        self.formvalidation(passed=True)
-        self.feature = feature
         # Hold a reference to the fields because QGIS will let the
         # go out of scope and we get crashes. Yay!
-        self.fields = self.feature.fields()
-        self.featureform = form.create_featureform(feature, defaultvalues, canvas=self.canvas)
-        self.featureform.editingmode = editmode
-        self.featureform.rejected.connect(self.formrejected)
-        self.featureform.enablesave.connect(self.actionSave.setEnabled)
-
-        # Call the pre loading events for the form
-        layers = QgsMapLayerRegistry.instance().mapLayers()
-
-        self.project = project
-        fields = [field.name().lower() for field in self.fields]
+        layer = form.QGISLayer
+        self.fields = feature.fields()
         attributes = feature.attributes()
 
+        fields = [field.name().lower() for field in self.fields]
+        # Something is strange with default values and spatilite. Just delete them for now.
         if layer.dataProvider().name() == 'spatialite':
             pkindexes = layer.dataProvider().pkAttributeIndexes()
             for index in pkindexes:
                 del fields[index]
                 del attributes[index]
-
         values = CaseInsensitiveDict(zip(fields, attributes))
 
-        try:
-            self.featureform.load(feature, layers, values)
-        except featureform.RejectedException as rejected:
-            self.formrejected(rejected.message, rejected.level)
-            return
+        defaultvalues = {}
+        if not editmode:
+            defaultwidgets = form.widgetswithdefaults()
+            defaultvalues = defaults.default_values(defaultwidgets, feature, layer)
+            defaultvalues.update(featureform.loadsavedvalues(layer))
 
-        self.featureform.formvalidation.connect(self.formvalidation)
-        self.featureform.helprequest.connect(self.helprequest.emit)
-        self.featureform.bindvalues(values)
-        self.featureform.showlargewidget.connect(self.setlargewidget)
+        values.update(defaultvalues)
 
-        self.actionSave.setVisible(True)
-        self.setwidget(self.featureform)
+        initconfig = dict(form=form,
+                          canvas=self.canvas)
+        config = dict(editmode=editmode,
+                      layers=QgsMapLayerRegistry.instance().mapLayers(),
+                      feature=feature)
 
-        self.featureform.loaded()
+        self.setlargewidget(FeatureFormWidgetEditor, values, self.save_feature, config, initconfig=initconfig)

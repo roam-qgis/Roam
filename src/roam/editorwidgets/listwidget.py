@@ -59,6 +59,7 @@ class ListWidget(EditorWidget):
 
     def _buildfromlist(self, widget, listconfig):
         items = listconfig['items']
+        print items
         for item in items:
             parts = item.split(';')
             data = parts[0]
@@ -160,7 +161,7 @@ class ListWidget(EditorWidget):
         widget.setIconSize(QSize(24,24))
 
     def showpopup(self):
-        if self.widget.count() == 0:
+        if self.listmodel.rowCount() == 0:
             return
 
         self.largewidgetrequest.emit(BigListWidget, self.widget.currentIndex(),
@@ -173,6 +174,7 @@ class ListWidget(EditorWidget):
         self.listmodel.clear()
         if 'list' in self.config:
             listconfig = self.config['list']
+            print listconfig
             self._buildfromlist(self.widget, listconfig)
         elif 'layer' in self.config:
             layerconfig = self.config['layer']

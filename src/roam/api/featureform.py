@@ -162,14 +162,7 @@ def installflickcharm(widget):
         widget.charm.activateOn(child)
     return widget
 
-
-class RejectedException(Exception):
-    WARNING = 1
-    ERROR = 2
-
-    def __init__(self, message, level=WARNING):
-        super(RejectedException, self).__init__(message)
-        self.level = level
+RejectedException = roam.editorwidgets.core.RejectedException
 
 
 class DeleteFeatureException(Exception):
@@ -213,7 +206,8 @@ class FeatureFormBase(QWidget):
         passed = self.allpassing
         self.formvalidation.emit(passed)
 
-    def validateall(self, widgetwrappers):
+    def validateall(self):
+        widgetwrappers = self.boundwidgets.itervalues()
         for wrapper in widgetwrappers:
             wrapper.validate()
 
@@ -296,7 +290,7 @@ class FeatureFormBase(QWidget):
             except KeyError:
                 utils.info("Can't find control for field {}. Ignoring".format(field))
 
-        self.validateall(self.boundwidgets.itervalues())
+        self.validateall()
 
     def getvalues(self):
         def shouldsave(field):
@@ -451,8 +445,9 @@ class FeatureForm(FeatureFormBase):
         widgettypes = [QLineEdit, QPlainTextEdit, QDateTimeEdit, QSpinBox, QDoubleSpinBox]
         map(featureform._installeventfilters, widgettypes)
 
+        print "SETUP UI"
         featureform.setupui()
-
+        print "SETUP UI END"
         featureform.uisetup()
 
         return featureform

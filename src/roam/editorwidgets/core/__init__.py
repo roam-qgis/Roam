@@ -67,6 +67,7 @@ class EditorWidget(QObject):
                                 QLabel[ok=true]
                                 { border-radius: 5px; background-color: rgba(200, 255, 197, 150); }"""
         self.validationupdate.connect(self.updatecontrolstate)
+        self.initconfig = kwargs.get('initconfig', {})
 
     @classmethod
     def for_widget(cls, widget, layer, label, field, parent, *args, **kwargs):
@@ -77,11 +78,17 @@ class EditorWidget(QObject):
         return editor
 
     @classmethod
-    def createwidget(cls, parent=None):
+    def createwidget(cls, parent=None, config=None):
         """
         Creates the widget that wrapper supports.
         """
-        return cls().createWidget(parent)
+        print config
+        if not config:
+            config = {}
+        try:
+            return cls(initconfig=config).createWidget(parent)
+        except TypeError:
+            return cls().createWidget(parent)
 
     @property
     def readonly(self):
@@ -153,6 +160,7 @@ class EditorWidget(QObject):
     @config.setter
     def config(self, value):
         self._config = value
+        print type(self), value
         self.updatefromconfig()
 
     def updatefromconfig(self):
@@ -188,6 +196,13 @@ class EditorWidget(QObject):
         """
         self.valuechanged.emit(self.value())
 
+class RejectedException(Exception):
+    WARNING = 1
+    ERROR = 2
+
+    def __init__(self, message, level=WARNING):
+        super(RejectedException, self).__init__(message)
+        self.level = level
 
 class LargeEditorWidget(EditorWidget):
     """
@@ -197,8 +212,13 @@ class LargeEditorWidget(EditorWidget):
     The only thing this class has extra is a finished signal and emits that once input is complete.
     """
     finished = pyqtSignal(object)
-    cancel = pyqtSignal()
+    cancel = pyqtSignal(str, int)
 
     def emitfished(self):
         self.finished.emit(self.value())
 
+    def emitcancel(self, reason=None, level=1):
+        self.cancel.emit(reason, level)
+
+    def before_load(self):
+        pass
