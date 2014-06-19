@@ -37,7 +37,7 @@ class FeatureFormWidget(Ui_Form, QWidget):
         toolbar.setIconSize(size)
         style = Qt.ToolButtonTextUnderIcon
         toolbar.setToolButtonStyle(style)
-        self.actionDelete = toolbar.addAction("Delete")
+        self.actionDelete = toolbar.addAction(QIcon(":/icons/delete"), "Delete")
         self.actionDelete.triggered.connect(self.delete_feature)
 
         label = 'Required fields marked in <b style="background-color:rgba(255, 221, 48,150)">yellow</b>'
@@ -51,9 +51,9 @@ class FeatureFormWidget(Ui_Form, QWidget):
         spacer.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
         spacer2.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
         toolbar.addWidget(spacer)
-        self.actionCancel = toolbar.addAction("Cancel")
+        self.actionCancel = toolbar.addAction(QIcon(":/icons/cancel"), "Cancel")
         toolbar.addWidget(spacer2)
-        self.actionSave = toolbar.addAction("Save")
+        self.actionSave = toolbar.addAction(QIcon(":/icons/save"), "Save")
         self.actionSave.triggered.connect(self.save_feature)
 
         self.layout().insertWidget(0, toolbar)
@@ -71,8 +71,8 @@ class FeatureFormWidget(Ui_Form, QWidget):
         """
         self.featureform = featureform
         self.featureform.formvalidation.connect(self._update_validation)
-        #self.featureform.helprequest.connect(self.helprequest.emit)
-        #self.featureform.showlargewidget.connect(self.setlargewidget)
+        self.featureform.helprequest.connect(functools.partial(RoamEvents.helprequest.emit, self))
+        self.featureform.showlargewidget.connect(RoamEvents.showlargewidget.emit)
         self.featureform.enablesave.connect(self.actionSave.setEnabled)
         self.featureform.rejected.connect(self.cancel.emit)
 
@@ -148,7 +148,6 @@ class DataEntryWidget(dataentry_widget, dataentry_base):
     featuresaved = pyqtSignal()
     featuredeleted = pyqtSignal(object, object)
     failedsave = pyqtSignal(list)
-    helprequest = pyqtSignal(str)
     openimage = pyqtSignal(object)
     lastwidgetremoved = pyqtSignal()
 
@@ -161,6 +160,7 @@ class DataEntryWidget(dataentry_widget, dataentry_base):
         self.project = None
         self.canvas = canvas
         self.widgetstack = []
+        RoamEvents.showlargewidget.connect(self.setlargewidget)
 
 
     def deletefeature(self):
@@ -272,7 +272,6 @@ class DataEntryWidget(dataentry_widget, dataentry_base):
         def cleanup():
             # Pop the widget off the current widget stack and kill it.
             wrapper, position = self.widgetstack.pop()
-            print "Clean up"
             self.clearwidget(position)
 
         widget = widgettype.createwidget(config=initconfig)
@@ -294,27 +293,29 @@ class DataEntryWidget(dataentry_widget, dataentry_base):
         except roam.editorwidgets.core.RejectedException as rejected:
             self.formrejected(rejected.message, rejected.level)
 
-    def clear(self):
+    def clear(self, dontemit=False):
         for i in xrange(self.stackedWidget.count()):
-            self.clearwidget(i)
+            self.clearwidget(i, dontemit)
 
-    def clearwidget(self, position=0):
+    def clearwidget(self, position=0, dontemit=False):
         widget = self.stackedWidget.widget(position)
         self.stackedWidget.removeWidget(widget)
         if widget:
             widget.deleteLater()
 
         if self.stackedWidget.count() == 0:
-            self.lastwidgetremoved.emit()
+            if not dontemit:
+                self.lastwidgetremoved.emit()
 
     def save_feature(self, values):
         print values
 
-    def openform(self, form, feature, project, editmode):
+    def openform(self, form, feature, project, editmode, clear=True):
         """
         Opens a form for the given feature.
         """
 
+        self.clear(dontemit=True)
         # One capture geometry, even for sub forms?
         # HACK Remove me and do something smarter
         roam.qgisfunctions.capturegeometry = feature.geometry()

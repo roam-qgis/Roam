@@ -24,7 +24,7 @@ class BigListWidget(LargeEditorWidget):
 
     def initWidget(self, widget):
         widget.itemselected.connect(self.selectitems)
-        widget.closewidget.connect(self.cancel)
+        widget.closewidget.connect(self.emitcancel)
         widget.savewidget.connect(self.emitfished)
 
     def selectitems(self):

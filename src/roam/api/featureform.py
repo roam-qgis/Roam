@@ -273,7 +273,7 @@ class FeatureFormBase(QWidget):
                 widgetwrapper.setrequired()
                 widgetwrapper.validationupdate.connect(self.updaterequired)
 
-            widgetwrapper.largewidgetrequest.connect(self.showlargewidget.emit)
+            widgetwrapper.largewidgetrequest.connect(RoamEvents.showlargewidget.emit)
 
             self._bindsavebutton(field)
             self.boundwidgets[field] = widgetwrapper

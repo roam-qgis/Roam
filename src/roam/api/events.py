@@ -4,6 +4,7 @@ RoamEvents is an event sink for common signals used though out Roam.
 These can be raised and handled anywhere in the application.
 """
 from PyQt4.QtCore import pyqtSignal, QObject, QUrl
+from PyQt4.QtGui import QWidget
 
 from qgis.core import QgsFeature, QgsPoint
 
@@ -27,6 +28,8 @@ class _Events(QObject):
     selectioncleared = pyqtSignal()
     selectionchanged = pyqtSignal(dict)
 
+    helprequest = pyqtSignal(QWidget, str)
+
     onShowMessage = pyqtSignal(str, str, int, int, str)
 
     def raisemessage(self, title, message, level=0, duration=0, extra=''):
@@ -39,5 +42,7 @@ class _Events(QObject):
         :param extra: Any extra information to show the user on click.
         """
         self.onShowMessage.emit(title, message, level, duration, extra)
+
+    showlargewidget = pyqtSignal(object, object, object, dict)
 
 RoamEvents = _Events()

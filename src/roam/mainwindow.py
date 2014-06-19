@@ -159,7 +159,7 @@ class MainWindow(ui_mainwindow.Ui_MainWindow, QMainWindow):
         self.dataentrywidget.featuresaved.connect(self.featureSaved)
         self.dataentrywidget.featuredeleted.connect(self.featuredeleted)
         self.dataentrywidget.failedsave.connect(self.failSave)
-        self.dataentrywidget.helprequest.connect(self.showhelp)
+        RoamEvents.helprequest.connect(self.showhelp)
 
         def createSpacer(width=0, height=0):
             widget = QWidget()
@@ -569,8 +569,8 @@ class MainWindow(ui_mainwindow.Ui_MainWindow, QMainWindow):
             # No clearBand method found, but that's cool.
             pass
 
-    def showhelp(self, url):
-        help = HelpPage(self.stackedWidget)
+    def showhelp(self, parent, url):
+        help = HelpPage(parent)
         help.setHelpPage(url)
         help.show()
 

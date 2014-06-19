@@ -122,7 +122,7 @@ class DrawingPadWidget(LargeEditorWidget):
 
     def initWidget(self, widget):
         widget.actionSave.triggered.connect(self.emitfished)
-        widget.actionCancel.triggered.connect(self.cancel.emit)
+        widget.actionCancel.triggered.connect(self.emitcancel)
         widget.canvas = self.canvas
 
     def value(self):
@@ -185,7 +185,7 @@ class ImageWidget(EditorWidget):
 
     def _selectDrawing(self, *args):
         image = self.widget.orignalimage
-        self.showlargewidget.emit(DrawingPadWidget, image, self.phototaken, {})
+        self.largewidgetrequest.emit(DrawingPadWidget, image, self.phototaken, {})
 
     def _selectCamera(self):
         self.largewidgetrequest.emit(CameraWidget, None, self.phototaken, {})

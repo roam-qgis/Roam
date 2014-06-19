@@ -17,7 +17,7 @@ class BigDateWidget(LargeEditorWidget):
 
     def initWidget(self, widget):
         widget.ok.connect(self.emitfished)
-        widget.cancel.connect(self.cancel.emit)
+        widget.cancel.connect(self.emitcancel)
 
     def updatefromconfig(self):
         super(BigDateWidget, self).updatefromconfig()
