@@ -107,6 +107,7 @@ class FeatureFormWidget(Ui_Form, QWidget):
         RoamEvents.featuresaved.emit()
 
     def set_config(self, config):
+        print "CONFIG", config
         self.config = config
         editmode = config['editmode']
         allowsave = config.get('allowsave', True)
@@ -197,7 +198,7 @@ class DataEntryWidget(dataentry_widget, dataentry_base):
 
     def add_widget(self, widgettype, lastvalue, callback, config, initconfig=None):
 
-        widget = widgettype.createwidget(parent=self.stackedWidget, config=initconfig)
+        widget = widgettype.createwidget(config=initconfig)
         largewidgetwrapper = widgettype.for_widget(widget, None, None, None, None, map=self.canvas)
         print id(largewidgetwrapper), largewidgetwrapper
         largewidgetwrapper.largewidgetrequest.connect(RoamEvents.show_widget.emit)
@@ -240,7 +241,7 @@ class DataEntryWidget(dataentry_widget, dataentry_base):
         """
         Opens the form for the given feature.
         """
-        print feature
+        print "EDIT MODE", editmode
         def _sink(_):
             pass
 
