@@ -394,8 +394,9 @@ class Project(object):
             cmd = config['cmd']
             cmd = os.path.join(self.folder, cmd)
             if config['type'] == 'replication' or config['type'] == 'batch':
-                yield replication.BatchFileSync(name, cmd)
-    
+                config['cmd'] = cmd
+                yield replication.BatchFileSync(name, **config)
+
     def getPanels(self):
         for module in glob.iglob(os.path.join(self.folder, "_panels", '*.py')):
             modulename = os.path.splitext(os.path.basename(module))[0]
