@@ -767,7 +767,8 @@ class MainWindow(ui_mainwindow.Ui_MainWindow, QMainWindow):
         # Enable the raster layers button only if the project contains a raster layer.
         layers = QgsMapLayerRegistry.instance().mapLayers().values()
         for layer in layers:
-            layer.committedFeaturesRemoved.connect(self.featuresdeleted)
+            if layer.type() == QgsMapLayer.VectorLayer:
+                layer.committedFeaturesRemoved.connect(self.featuresdeleted)
 
         hasrasters = any(layer.type() == QgsMapLayer.RasterLayer for layer in layers)
         self.actionRaster.setEnabled(hasrasters)
