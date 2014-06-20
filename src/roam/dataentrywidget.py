@@ -221,13 +221,16 @@ class DataEntryWidget(dataentry_widget, dataentry_base):
             if not dontemit:
                 self.lastwidgetremoved.emit()
 
-
-    def openform(self, form, feature, project, editmode, clear=True):
+    def load_feature_form(self, feature, form, editmode, clear=True, callback=None):
         """
-        Opens a form for the given feature.
+        Opens the form for the given feature.
         """
+        print feature
         def _sink(_):
             pass
+
+        if not callback:
+            callback = _sink
 
         if clear:
             # Clear all the other open widgets that might be open.
@@ -256,6 +259,7 @@ class DataEntryWidget(dataentry_widget, dataentry_base):
         if not editmode:
             defaultwidgets = form.widgetswithdefaults()
             defaultvalues = defaults.default_values(defaultwidgets, feature, layer)
+            print defaultvalues
             defaultvalues.update(featureform.loadsavedvalues(layer))
 
         values.update(defaultvalues)
@@ -266,4 +270,4 @@ class DataEntryWidget(dataentry_widget, dataentry_base):
                       layers=QgsMapLayerRegistry.instance().mapLayers(),
                       feature=feature)
 
-        self.add_widget(FeatureFormWidgetEditor, values, _sink, config, initconfig=initconfig)
+        self.add_widget(FeatureFormWidgetEditor, values, callback, config, initconfig=initconfig)

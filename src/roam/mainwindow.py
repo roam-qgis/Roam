@@ -596,13 +596,13 @@ class MainWindow(ui_mainwindow.Ui_MainWindow, QMainWindow):
         if message:
             RoamEvents.raisemessage("Form Message", message, level, duration=2)
 
-    def openForm(self, form, feature, editmode):
+    def openForm(self, form, feature, editmode, *args):
         """
         Open the form that is assigned to the layer
         """
         self.currentfeatureband.setToGeometry(feature.geometry(), form.QGISLayer)
         self.showdataentry()
-        self.dataentrywidget.openform(feature=feature, form=form, project=self.project, editmode=editmode)
+        self.dataentrywidget.load_feature_form(feature, form, editmode, *args)
 
     def editfeaturegeometry(self, form, feature, newgeometry):
         layer = form.QGISLayer

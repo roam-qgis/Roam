@@ -168,6 +168,12 @@ class Form(object):
         form.init_form()
         return form
 
+    @classmethod
+    def from_folder(cls, name, folder):
+        config = readfolderconfig(folder, "form")
+        print config
+        return Form.from_config(name, config, folder)
+
     @property
     def label(self):
         return self.settings.setdefault('label', self.name)

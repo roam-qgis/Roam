@@ -124,7 +124,7 @@ class InfoDock(infodock_widget, QWidget):
 
     def openform(self):
         cursor = self.selection
-        RoamEvents.openfeatureform.emit(cursor.form, cursor.feature, True)
+        RoamEvents.load_feature_form(cursor.form, cursor.feature, True)
 
     def editgeom(self):
         cursor = self.selection

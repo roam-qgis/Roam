@@ -27,6 +27,7 @@ from PyQt4.QtGui import (QWidget,
                          QDoubleSpinBox)
 
 from qgis.core import QgsFields, QgsFeature, QgsGPSConnectionRegistry
+from qgis.gui import QgsMessageBar
 
 from roam.editorwidgets.core import EditorWidgetException
 from roam import utils
@@ -432,7 +433,7 @@ class FeatureForm(FeatureFormBase):
         else:
             raise NotImplemented('Other form types not supported yet')
 
-        featureform.setContentsMargins(3, 0, 3, 0)
+        featureform.setContentsMargins(3, 0, 3, 9)
         formstyle = style
         formstyle += featureform.styleSheet()
         featureform.setStyleSheet(formstyle)
