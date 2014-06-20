@@ -182,28 +182,40 @@ class DataEntryWidget(dataentry_widget, dataentry_base):
     def formrejected(self, message=None, level=featureform.RejectedException.WARNING):
         self.rejected.emit(message, level)
 
-    def add_widget(self, widgettype, lastvalue, callback, config, initconfig=None):
-        def cleanup():
-            # Pop the widget off the current widget stack and kill it.
-            wrapper, position = self.widgetstack.pop()
-            self.clearwidget(position)
+    def cleanup(self, wrapper):
+        # Pop the widget off the current widget stack and kill it.
+        print id(wrapper)
+        index = self.widgetstack.index(wrapper)
+        del self.widgetstack[index]
+        index = self.stackedWidget.indexOf(wrapper.widget)
+        if index == -1:
+            return
+        print id(wrapper.widget)
+        self.clearwidget(index)
+        wrapper.deleteLater()
+        wrapper.setParent(None)
 
-        widget = widgettype.createwidget(config=initconfig)
+    def add_widget(self, widgettype, lastvalue, callback, config, initconfig=None):
+
+        widget = widgettype.createwidget(parent=self.stackedWidget, config=initconfig)
         largewidgetwrapper = widgettype.for_widget(widget, None, None, None, None, map=self.canvas)
+        print id(largewidgetwrapper), largewidgetwrapper
         largewidgetwrapper.largewidgetrequest.connect(RoamEvents.show_widget.emit)
         largewidgetwrapper.finished.connect(callback)
-        largewidgetwrapper.finished.connect(cleanup)
-        largewidgetwrapper.cancel.connect(cleanup)
+        largewidgetwrapper.finished.connect(functools.partial(self.cleanup, largewidgetwrapper))
+        largewidgetwrapper.cancel.connect(functools.partial(self.cleanup, largewidgetwrapper))
 
         largewidgetwrapper.initWidget(widget)
         largewidgetwrapper.config = config
+        if isinstance(lastvalue, QPixmap):
+            lastvalue = QPixmap(lastvalue)
         largewidgetwrapper.setvalue(lastvalue)
 
         try:
             largewidgetwrapper.before_load()
             position = self.stackedWidget.addWidget(widget)
             self.stackedWidget.setCurrentIndex(position)
-            self.widgetstack.append((largewidgetwrapper, position))
+            self.widgetstack.append(largewidgetwrapper)
         except roam.editorwidgets.core.RejectedException as rejected:
             self.formrejected(rejected.message, rejected.level)
 
@@ -214,8 +226,11 @@ class DataEntryWidget(dataentry_widget, dataentry_base):
     def clearwidget(self, position=0, dontemit=False):
         widget = self.stackedWidget.widget(position)
         self.stackedWidget.removeWidget(widget)
+        print "clearwidget"
         if widget:
+            print "DELETE", id(widget)
             widget.deleteLater()
+            widget.setParent(None)
 
         if self.stackedWidget.count() == 0:
             if not dontemit:

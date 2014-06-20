@@ -118,7 +118,8 @@ class DrawingPadWidget(LargeEditorWidget):
         self.canvas = kwargs.get('map', None)
 
     def createWidget(self, parent=None):
-        return drawingpad.DrawingPad(parent=parent)
+        pad1 = drawingpad.DrawingPad(parent=parent)
+        return pad1
 
     def initWidget(self, widget):
         widget.actionSave.triggered.connect(self.emitfished)

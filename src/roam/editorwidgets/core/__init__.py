@@ -82,7 +82,6 @@ class EditorWidget(QObject):
         """
         Creates the widget that wrapper supports.
         """
-        print config
         if not config:
             config = {}
         try:
@@ -212,7 +211,7 @@ class LargeEditorWidget(EditorWidget):
     The only thing this class has extra is a finished signal and emits that once input is complete.
     """
     finished = pyqtSignal(object)
-    cancel = pyqtSignal(str, int)
+    cancel = pyqtSignal(object, int)
 
     def emitfished(self):
         self.finished.emit(self.value())
