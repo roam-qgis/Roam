@@ -151,7 +151,7 @@ def writefolderconfig(settings, folder, configname):
 
 
 class Form(object):
-    def __init__(self, name, config, rootfolder):
+    def __init__(self, name, config, rootfolder, project=None):
         self._name = name
         self.settings = config
         self.folder = rootfolder
@@ -160,10 +160,11 @@ class Form(object):
         self._qgislayer = None
         self._formclass = None
         self._action = None
+        self.project = project
 
     @classmethod
-    def from_config(cls, name, config, folder):
-        form = cls(name, config, folder)
+    def from_config(cls, name, config, folder, project=None):
+        form = cls(name, config, folder, project)
         form._loadmodule()
         form.init_form()
         return form
@@ -427,9 +428,27 @@ class Project(object):
             return True, None
 
     def formsforlayer(self, layername):
+        """
+        Return all the forms that are assigned to that the given layer name.
+        :param layername:
+        :return:
+        """
         for form in self.forms:
             if form.layername == layername:
                 yield form
+
+    def form_by_name(self, name):
+        """
+        Return the form with the given name.  There can only be one.
+        :param name: The name of the form to return.
+        :return:
+        """
+        print self.forms
+        print [form.name for form in self.forms]
+        print [form.QGISLayer.name() for form in self.forms]
+        for form in self.forms:
+            if form.name == name:
+                return form
 
     @property
     def forms(self):
@@ -447,7 +466,7 @@ class Project(object):
             forms = self.settings.setdefault("forms", [])
             for formname, config in mapformconfig(forms):
                 folder = os.path.join(self.folder, formname)
-                form = Form.from_config(formname, config, folder)
+                form = Form.from_config(formname, config, folder, project=self)
                 self._forms.append(form)
 
         return self._forms

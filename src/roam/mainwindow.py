@@ -334,6 +334,9 @@ class MainWindow(ui_mainwindow.Ui_MainWindow, QMainWindow):
         forms = self.project.forms
         formpicker = PickActionDialog(msg="Select data entry form")
         for form in forms:
+            layer = form.QGISLayer
+            if layer.geometryType() == QGis.NoGeometry:
+                continue
             action = form.createuiaction()
             valid, failreasons = form.valid
             if not valid:
