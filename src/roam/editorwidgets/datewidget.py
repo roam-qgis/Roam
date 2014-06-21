@@ -1,8 +1,9 @@
 from functools import partial
 
 from PyQt4.QtGui import QPushButton, QDateTimeEdit, QIcon, QDateEdit, QWidget
-from PyQt4.QtCore import QDateTime, Qt, QSize, QDate
+from PyQt4.QtCore import QDateTime, Qt, QSize, QDate, QEvent
 
+from roam.api import RoamEvents
 from roam.editorwidgets.core import EditorWidget, registerwidgets, LargeEditorWidget
 from roam.editorwidgets.uifiles import ui_datewidget
 from roam.datatimerpickerwidget import DateTimePickerWidget
@@ -63,6 +64,14 @@ class DateWidget(EditorWidget):
             self.datawidget.dateChanged.connect(self.validate)
         else:
             self.datewidget.dateTimeChanged.connect(self.validate)
+        self.datewidget.installEventFilter(self)
+
+    def eventFilter(self, object, event):
+        # Hack I really don't like this but there doesn't seem to be a better way at the
+        # moment
+        if event.type() == QEvent.FocusIn:
+            RoamEvents.openkeyboard.emit()
+        return False
 
     @property
     def datewidget(self):

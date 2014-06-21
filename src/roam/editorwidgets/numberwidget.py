@@ -1,6 +1,8 @@
 import sys
+from PyQt4.QtCore import QEvent
 from PyQt4.QtGui import QDoubleSpinBox, QSpinBox
 
+from roam.api import RoamEvents
 from roam.editorwidgets.core import EditorWidget, registerwidgets
 
 
@@ -14,6 +16,14 @@ class NumberWidget(EditorWidget):
 
     def initWidget(self, widget):
         widget.valueChanged.connect(self.validate)
+        widget.installEventFilter(self)
+
+    def eventFilter(self, object, event):
+        # Hack I really don't like this but there doesn't seem to be a better way at the
+        # moment
+        if event.type() == QEvent.FocusIn:
+            RoamEvents.openkeyboard.emit()
+        return False
 
     def validate(self, *args):
         self.raisevalidationupdate(passed=True)

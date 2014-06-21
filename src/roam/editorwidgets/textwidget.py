@@ -1,4 +1,6 @@
+from roam.api import RoamEvents
 from PyQt4.QtGui import QLineEdit, QPlainTextEdit
+from PyQt4.QtCore import QEvent
 
 from roam.editorwidgets.core import EditorWidget, registerwidgets
 
@@ -14,6 +16,14 @@ class TextWidget(EditorWidget):
 
     def initWidget(self, widget):
         widget.textChanged.connect(self.validate)
+        widget.installEventFilter(self)
+
+    def eventFilter(self, object, event):
+        # Hack I really don't like this but there doesn't seem to be a better way at the
+        # moment
+        if event.type() == QEvent.FocusIn:
+            RoamEvents.openkeyboard.emit()
+        return False
 
     def validate(self, *args):
         if not self.value():

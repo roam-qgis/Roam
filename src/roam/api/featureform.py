@@ -191,17 +191,6 @@ class FeatureFormBase(QWidget):
         self.bindingvalues = {}
         self.editingmode = False
 
-    def _installeventfilters(self, widgettype):
-        for widget in self.findChildren(widgettype):
-            widget.installEventFilter(self)
-
-    def eventFilter(self, object, event):
-        # Hack I really don't like this but there doesn't seem to be a better way at the
-        # moment
-        if event.type() == QEvent.FocusIn:
-            RoamEvents.openkeyboard.emit()
-        return False
-
     def updaterequired(self, field, passed):
         self.requiredfields[field.name()] = passed
         passed = self.allpassing
@@ -441,12 +430,7 @@ class FeatureForm(FeatureFormBase):
         featureform.createhelplinks()
         featureform.setProperty('featureform', featureform)
 
-        widgettypes = [QLineEdit, QPlainTextEdit, QDateTimeEdit, QSpinBox, QDoubleSpinBox]
-        map(featureform._installeventfilters, widgettypes)
-
-        print "SETUP UI"
         featureform.setupui()
-        print "SETUP UI END"
         featureform.uisetup()
 
         return featureform
