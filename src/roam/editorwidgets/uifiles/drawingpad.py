@@ -93,10 +93,7 @@ class ScribbleArea(QWidget):
         if image.size() == newSize:
             return
 
-        # this resizes the canvas without resampling the image
         newImage = self.image.scaled(newSize, Qt.KeepAspectRatio, Qt.SmoothTransformation)
-        #newImage = QtGui.QImage(newSize, QtGui.QImage.Format_RGB32)
-        #newImage.fill(QtGui.qRgb(255, 255, 255))
         self.image = newImage
         self.update()
 
