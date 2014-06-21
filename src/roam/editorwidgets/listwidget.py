@@ -159,6 +159,7 @@ class ListWidget(EditorWidget):
         widget.setModel(self.listmodel)
         widget.showPopup = self.showpopup
         widget.setIconSize(QSize(24,24))
+        widget.setStyleSheet("QComboBox::drop-down {border-width: 0px;} QComboBox::down-arrow {image: url(noimg); border-width: 0px;}")
 
     def showpopup(self):
         if self.listmodel.rowCount() == 0:
