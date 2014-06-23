@@ -99,7 +99,7 @@ QLabel[warning=true]
       </sizepolicy>
      </property>
      <property name="currentIndex">
-      <number>6</number>
+      <number>1</number>
      </property>
      <widget class="QWidget" name="project_info_page">
       <layout class="QGridLayout" name="gridLayout_11">
@@ -321,7 +321,7 @@ p, li { white-space: pre-wrap; }
           <enum>QTabWidget::Rounded</enum>
          </property>
          <property name="currentIndex">
-          <number>0</number>
+          <number>1</number>
          </property>
          <property name="iconSize">
           <size>
@@ -755,6 +755,19 @@ p, li { white-space: pre-wrap; }
              </layout>
             </widget>
            </item>
+           <item row="0" column="1">
+            <spacer name="horizontalSpacer_6">
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>40</width>
+               <height>20</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
           </layout>
          </widget>
          <widget class="QWidget" name="tab_2">
@@ -769,7 +782,7 @@ p, li { white-space: pre-wrap; }
             <number>0</number>
            </property>
            <item row="1" column="0">
-            <widget class="QFrame" name="frame_2">
+            <widget class="QFrame" name="frame_4">
              <property name="frameShape">
               <enum>QFrame::NoFrame</enum>
              </property>
@@ -780,6 +793,37 @@ p, li { white-space: pre-wrap; }
               <property name="margin">
                <number>0</number>
               </property>
+              <item row="0" column="0">
+               <widget class="QScrollArea" name="scrollArea">
+                <property name="styleSheet">
+                 <string notr="true"/>
+                </property>
+                <property name="frameShape">
+                 <enum>QFrame::NoFrame</enum>
+                </property>
+                <property name="widgetResizable">
+                 <bool>true</bool>
+                </property>
+                <widget class="QWidget" name="frame_2">
+                 <property name="geometry">
+                  <rect>
+                   <x>0</x>
+                   <y>0</y>
+                   <width>775</width>
+                   <height>490</height>
+                  </rect>
+                 </property>
+                 <property name="autoFillBackground">
+                  <bool>false</bool>
+                 </property>
+                 <layout class="QGridLayout" name="gridLayout_12">
+                  <property name="margin">
+                   <number>0</number>
+                  </property>
+                 </layout>
+                </widget>
+               </widget>
+              </item>
              </layout>
             </widget>
            </item>
@@ -1336,6 +1380,7 @@ p, li { white-space: pre-wrap; }
   <include location="resources.qrc"/>
   <include location="../../roam/resources.qrc"/>
   <include location="resources.qrc"/>
+  <include location="../../roam/resources.qrc"/>
   <include location="../../roam/resources.qrc"/>
   <include location="../../roam/resources.qrc"/>
   <include location="../../roam/resources.qrc"/>
