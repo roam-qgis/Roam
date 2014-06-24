@@ -3,9 +3,18 @@ import sys
 import os
 import getpass
 
-if not os.path.exists('log'):
-   os.makedirs('log')
-LOG_FILENAME = os.path.join('log', "{}_configmanager.log".format(getpass.getuser()))
+try:
+   logpath = os.path.join(os.environ['ROAM_APPPATH'], 'log')
+except KeyError:
+   #running from source
+   logpath = os.path.join(
+                os.path.dirname(
+                   os.path.dirname(
+                      os.path.dirname(
+                         os.path.realpath(__file__)))), 'log')
+if not os.path.exists(logpath):
+   os.makedirs(logpath)
+LOG_FILENAME = os.path.join(logpath, "{}_configmanager.log".format(getpass.getuser()))
 
 log_format = '%(levelname)s - %(asctime)s - %(module)s-%(funcName)s:%(lineno)d - %(message)s'
 console_format = '%(levelname)s %(module)s-%(funcName)s:%(lineno)d - %(message)s'
