@@ -153,6 +153,12 @@ class qtbuild(build):
         buildqtfiles()
         build.run(self)
 
+origIsSystemDLL = py2exe.build_exe.isSystemDLL
+def isSystemDLL(pathname):
+    if os.path.basename(pathname).lower() in ("msvcp100.dll", "msvcr100.dll"):
+        return 0
+    return origIsSystemDLL(pathname)
+py2exe.build_exe.isSystemDLL = isSystemDLL
 
 setup(
     name='roam',
