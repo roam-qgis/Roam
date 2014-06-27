@@ -622,6 +622,7 @@ class MainWindow(ui_mainwindow.Ui_MainWindow, QMainWindow):
         Add a new new feature to the given layer
         """
         layer = form.QGISLayer
+
         if layer.geometryType() in [QGis.WKBMultiLineString, QGis.WKBMultiPoint, QGis.WKBMultiPolygon]:
             geometry.convertToMultiType()
 
@@ -632,20 +633,8 @@ class MainWindow(ui_mainwindow.Ui_MainWindow, QMainWindow):
         except IndexError:
             pass
 
-        layer = form.QGISLayer
-        fields = layer.pendingFields()
-
-        feature = QgsFeature(fields)
+        feature = form.new_feature(set_defaults=True)
         feature.setGeometry(geometry)
-
-        for index in xrange(fields.count()):
-            pkindexes = layer.dataProvider().pkAttributeIndexes()
-            if index in pkindexes and layer.dataProvider().name() == 'spatialite':
-                continue
-
-            value = layer.dataProvider().defaultValue(index)
-            feature[index] = value
-
         self.openForm(form, feature, editmode=False)
 
     def exit(self):

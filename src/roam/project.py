@@ -12,7 +12,7 @@ from collections import OrderedDict
 
 from PyQt4.QtGui import QAction, QIcon
 
-from qgis.core import QgsMapLayerRegistry, QGis, QgsTolerance, QgsVectorLayer, QgsMapLayer
+from qgis.core import QgsMapLayerRegistry, QGis, QgsTolerance, QgsVectorLayer, QgsMapLayer, QgsFeature
 
 from roam.utils import log, debug
 from roam.syncing import replication
@@ -309,6 +309,25 @@ class Form(object):
     @classmethod
     def saveconfig(cls, config, folder):
         writefolderconfig(config, folder, configname='form')
+
+    def new_feature(self, set_defaults=True):
+        """
+        Returns a new feature that is created for the layer this form is bound too
+        :return: A new QgsFeature
+        """
+
+        layer = self.QGISLayer
+        fields = layer.pendingFields()
+        feature = QgsFeature(fields)
+        if set_defaults:
+            for index in xrange(fields.count()):
+                pkindexes = layer.dataProvider().pkAttributeIndexes()
+                if index in pkindexes and layer.dataProvider().name() == 'spatialite':
+                    continue
+
+                value = layer.dataProvider().defaultValue(index)
+                feature[index] = value
+        return feature
 
 
 class Project(object):
