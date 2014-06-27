@@ -91,23 +91,23 @@ class FeatureFormWidget(Ui_Form, QWidget):
         if not box.exec_():
             return
 
-        print self.featureform
-        deleted, error = self.featureform.delete()
-        if not deleted:
-            RoamEvents.raisemessage(*error)
+        try:
+            self.featureform.delete()
+        except featureform.DeleteFeatureException as ex:
+            RoamEvents.raisemessage(*ex.error)
 
         self.featuredeleted.emit()
 
     def save_feature(self):
-        saved, error = self.featureform.save()
-        if not saved:
-            RoamEvents.raisemessage(*error)
+        try:
+            self.featureform.save()
+        except featureform.FeatureSaveException as ex:
+            RoamEvents.raisemessage(*ex.error)
 
         self.featuresaved.emit()
         RoamEvents.featuresaved.emit()
 
     def set_config(self, config):
-        print "CONFIG", config
         self.config = config
         editmode = config['editmode']
         allowsave = config.get('allowsave', True)
