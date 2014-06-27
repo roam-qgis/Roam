@@ -627,6 +627,7 @@ class MainWindow(ui_mainwindow.Ui_MainWindow, QMainWindow):
             geometry.convertToMultiType()
 
         try:
+            # TODO: This is a gross hack. We need to move this out into a edit tool with better control.
             form, feature = self.editfeaturestack.pop()
             self.editfeaturegeometry(form, feature, newgeometry=geometry)
             return
