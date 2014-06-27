@@ -72,7 +72,7 @@ class ProjectWidget(Ui_Form, QWidget):
         self.formlayers.setSourceModel(self.formlayersmodel)
 
         self.selectlayermodel = CaptureLayersModel(watchregistry=False)
-        self.selectlayerfilter = LayerTypeFilter()
+        self.selectlayerfilter = LayerTypeFilter(geomtypes=[])
         self.selectlayerfilter.setSourceModel(self.selectlayermodel)
         self.selectlayermodel.dataChanged.connect(self.selectlayerschanged)
 

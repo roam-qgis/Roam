@@ -19,6 +19,7 @@ class ScribbleArea(QWidget):
         self.scribbling = False
         imageSize = QtCore.QSize(500, 500)
         self.image = QtGui.QImage(imageSize, QtGui.QImage.Format_RGB16)
+        self.userimage = None
         self.painter = QtGui.QPainter()
         self.lastPoint = QtCore.QPoint()
         self.pen = QtGui.QPen()
@@ -79,7 +80,7 @@ class ScribbleArea(QWidget):
         self.update()
 
     def resizeEvent(self, event):
-        self.resizeImage(self.image, event.size())
+        #self.resizeImage(self.image, event.size())
         super(ScribbleArea, self).resizeEvent(event)
 
     def drawLineTo(self, endPoint):
@@ -89,13 +90,18 @@ class ScribbleArea(QWidget):
         self.modified = True
         self.update()
 
+    def showEvent(self, event):
+        newImage = QtGui.QImage(self.size(), QtGui.QImage.Format_RGB32)
+        newImage.fill(QtGui.qRgb(255, 255, 255))
+        self.image = newImage
+        if self.userimage:
+            self.addMap(self.userimage)
+
     def resizeImage(self, image, newSize):
         if image.size() == newSize:
             return
 
-        # this resizes the canvas without resampling the image
-        newImage = QtGui.QImage(newSize, QtGui.QImage.Format_RGB32)
-        newImage.fill(QtGui.qRgb(255, 255, 255))
+        newImage = self.image.scaled(newSize, Qt.KeepAspectRatio, Qt.SmoothTransformation)
         self.image = newImage
         self.update()
 
@@ -105,9 +111,9 @@ class ScribbleArea(QWidget):
 
     @pixmap.setter
     def pixmap(self, value):
-        if value:
-            value = value.scaledToHeight(self.height(), Qt.SmoothTransformation)
-            self.addMap(value)
+        self.userimage = value
+        #if value:
+        #    self.addMap(value)
 
     def isModified(self):
         return self.modified

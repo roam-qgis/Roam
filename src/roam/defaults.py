@@ -60,11 +60,14 @@ def layer_value(feature, layer, defaultconfig):
     field = defaultconfig['field']
 
     searchlayer = QgsMapLayerRegistry.instance().mapLayersByName(layername)[0]
-    rect = feature.geometry().boundingBox()
-    rect.scale(10)
-    rect = canvas.mapRenderer().mapToLayerCoordinates(layer, rect)
-    rq = QgsFeatureRequest().setFilterRect(rect)
-    features = searchlayer.getFeatures(rq)
+    if feature.geometry():
+        rect = feature.geometry().boundingBox()
+        rect.scale(10)
+        rect = canvas.mapRenderer().mapToLayerCoordinates(layer, rect)
+        rq = QgsFeatureRequest().setFilterRect(rect)
+        features = searchlayer.getFeatures(rq)
+    else:
+        features = searchlayer.getFeatures()
 
     exp = QgsExpression(expression)
     exp.prepare(searchlayer.pendingFields())

@@ -36,5 +36,3 @@ class CheckboxWidget(EditorWidget):
             return self.config['checkedvalue']
         else:
             return self.config['uncheckedvalue']
-
-registerwidgets(CheckboxWidget)

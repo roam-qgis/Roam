@@ -1,4 +1,4 @@
-from PyQt4.QtGui import QComboBox, QStandardItem, QStandardItemModel, QIcon
+from PyQt4.QtGui import QComboBox, QStandardItem, QStandardItemModel, QIcon, QListView
 from PyQt4.QtCore import QSize, Qt
 from qgis.core import QgsMessageLog, QgsMapLayerRegistry, QgsExpression, QgsFeatureRequest
 import qgis.core
@@ -17,18 +17,25 @@ def nullconvert(value):
 class BigListWidget(LargeEditorWidget):
     def __init__(self, *args, **kwargs):
         super(BigListWidget, self).__init__(*args, **kwargs)
+        self.multi = False
 
     def createWidget(self, parent):
         return BigList(parent)
 
     def initWidget(self, widget):
-        widget.itemselected.connect(self.emitfished)
-        widget.closewidget.connect(self.cancel)
+        widget.itemselected.connect(self.selectitems)
+        widget.closewidget.connect(self.emitcancel)
+        widget.savewidget.connect(self.emitfished)
+
+    def selectitems(self):
+        if not self.multi:
+            self.emitfished()
 
     def updatefromconfig(self):
         super(BigListWidget, self).updatefromconfig()
         model = self.config['model']
         label = self.config['label']
+        self.multi = self.config.get('multi', False)
         self.widget.setlabel(label)
         self.widget.setmodel(model)
         self.endupdatefromconfig()
@@ -52,6 +59,7 @@ class ListWidget(EditorWidget):
 
     def _buildfromlist(self, widget, listconfig):
         items = listconfig['items']
+        print items
         for item in items:
             parts = item.split(';')
             data = parts[0]
@@ -151,13 +159,15 @@ class ListWidget(EditorWidget):
         widget.setModel(self.listmodel)
         widget.showPopup = self.showpopup
         widget.setIconSize(QSize(24,24))
+        widget.setStyleSheet("QComboBox::drop-down {border-width: 0px;} QComboBox::down-arrow {image: url(noimg); border-width: 0px;}")
 
     def showpopup(self):
-        if self.widget.count() == 0:
+        if self.listmodel.rowCount() == 0:
             return
 
         self.largewidgetrequest.emit(BigListWidget, self.widget.currentIndex(),
-                                     self._biglistitem, dict(model=self.listmodel, label=self.labeltext))
+                                     self._biglistitem, dict(model=self.listmodel,
+                                                             label=self.labeltext))
 
     def updatefromconfig(self):
         super(ListWidget, self).updatefromconfig()
@@ -165,6 +175,7 @@ class ListWidget(EditorWidget):
         self.listmodel.clear()
         if 'list' in self.config:
             listconfig = self.config['list']
+            print listconfig
             self._buildfromlist(self.widget, listconfig)
         elif 'layer' in self.config:
             layerconfig = self.config['layer']
@@ -209,4 +220,67 @@ class ListWidget(EditorWidget):
 
         return value
 
-registerwidgets(ListWidget)
+
+class MultiList(ListWidget):
+    widgettype = 'MultiList'
+    def __init__(self, *args):
+        super(MultiList, self).__init__(*args)
+        self.multi = True
+
+    def updatefromconfig(self):
+        super(MultiList, self).updatefromconfig()
+
+        for row in xrange(self.listmodel.rowCount()):
+            item = self.listmodel.item(row)
+            item.setEditable(False)
+            item.setCheckable(True)
+            item.setCheckState(Qt.Unchecked)
+
+    def showpopup(self):
+        if self.widget.count() == 0:
+            return
+
+        self.largewidgetrequest.emit(BigListWidget, self.widget.currentIndex(),
+                                     self._biglistitem, dict(model=self.listmodel,
+                                                             label=self.labeltext,
+                                                             multi=True))
+    def initWidget(self, widget):
+        widget.setEditable(True)
+        widget.setModel(self.listmodel)
+        widget.showPopup = self.showpopup
+        widget.setIconSize(QSize(24,24))
+
+    def _biglistitem(self, index):
+        value = self.value()
+        self.widget.lineEdit().setText(value)
+        #self.widget.setEdit(self.value())
+
+    def setvalue(self, value):
+        value = nullconvert(value)
+        if not value:
+            self.widget.lineEdit().setText(value)
+            return
+
+        values = value.split(';')
+
+        for splitvalue in values:
+            try:
+                matched = self.listmodel.match(self.listmodel.index(0,0),
+                                               Qt.UserRole,
+                                               splitvalue)[0]
+            except IndexError:
+                continue
+
+            item = self.listmodel.itemFromIndex(matched)
+            item.setCheckState(Qt.Checked)
+        self.widget.lineEdit().setText(value)
+
+    def value(self):
+        items = []
+        for row in xrange(self.listmodel.rowCount()):
+            item = self.listmodel.item(row)
+            if item.checkState() == Qt.Checked:
+                value = item.data(Qt.UserRole)
+                items.append(value)
+
+        return ';'.join(items)

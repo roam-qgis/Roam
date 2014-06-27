@@ -126,13 +126,12 @@ class MainWindow(ui_mainwindow.Ui_MainWindow, QMainWindow):
         self.settingswidget.settingsupdated.connect(self.settingsupdated)
 
         self.dataentrywidget = DataEntryWidget(self.canvas, self.bar)
+        self.dataentrywidget.lastwidgetremoved.connect(self.dataentryfinished)
         self.widgetpage.layout().addWidget(self.dataentrywidget)
 
         self.dataentrywidget.rejected.connect(self.formrejected)
-        self.dataentrywidget.featuresaved.connect(self.featureSaved)
-        self.dataentrywidget.featuredeleted.connect(self.featuredeleted)
-        self.dataentrywidget.failedsave.connect(self.failSave)
-        self.dataentrywidget.helprequest.connect(self.showhelp)
+        RoamEvents.featuresaved.connect(self.featureSaved)
+        RoamEvents.helprequest.connect(self.showhelp)
 
         def createSpacer(width=0, height=0):
             widget = QWidget()
@@ -195,7 +194,7 @@ class MainWindow(ui_mainwindow.Ui_MainWindow, QMainWindow):
         RoamEvents.editgeometry_complete.connect(self.on_geometryedit)
         RoamEvents.onShowMessage.connect(self.showUIMessage)
         RoamEvents.selectionchanged.connect(self.showInfoResults)
-        RoamEvents.featureformloaded.connect(self.featureformloaded)
+        RoamEvents.show_widget.connect(self.dataentrywidget.add_widget)
 
         GPS.gpsposition.connect(self.update_gps_label)
         GPS.gpsdisconnected.connect(self.gps_disconnected)
@@ -313,8 +312,8 @@ class MainWindow(ui_mainwindow.Ui_MainWindow, QMainWindow):
 
 
 
-    def showhelp(self, url):
-        help = HelpPage(self.stackedWidget)
+    def showhelp(self, parent, url):
+        help = HelpPage(parent)
         help.setHelpPage(url)
         help.show()
 
@@ -324,36 +323,60 @@ class MainWindow(ui_mainwindow.Ui_MainWindow, QMainWindow):
         self.cleartempobjects()
         self.infodock.refreshcurrent()
 
-    def featuredeleted(self, layer, featureid):
-        self.dataentryfinished()
-        self.reloadselection(layer, deleted=[featureid])
+    def featuresdeleted(self, layerid, featureids):
+        layer = QgsMapLayerRegistry.instance().mapLayer(layerid)
+        self.reloadselection(layer, deleted=featureids)
         self.canvas.refresh()
 
-    def featureSaved(self):
-        self.dataentryfinished()
+    def featureSaved(self, *args):
+        #self.reloadselection(layer, deleted=[featureid])
         self.canvas.refresh()
-
-    def failSave(self, messages):
-        self.bar.pushError("Error when saving changes.", messages)
 
     def cleartempobjects(self):
         self.canvas_page.clear_temp_objects()
 
     def formrejected(self, message, level):
-        self.dataentryfinished()
         if message:
             RoamEvents.raisemessage("Form Message", message, level, duration=2)
 
-        self.cleartempobjects()
-
-    def featureformloaded(self, form, feature, project, editmode):
-        self.showdataentry()
-
-    def openForm(self, form, feature, editmode):
+    def openForm(self, form, feature, editmode, *args):
         """
         Open the form that is assigned to the layer
         """
-        self.dataentrywidget.openform(feature=feature, form=form, project=self.project, editmode=editmode)
+        self.currentfeatureband.setToGeometry(feature.geometry(), form.QGISLayer)
+        self.showdataentry()
+        self.dataentrywidget.load_feature_form(feature, form, editmode, *args)
+
+    def editfeaturegeometry(self, form, feature, newgeometry):
+        layer = form.QGISLayer
+        layer.startEditing()
+        feature.setGeometry(newgeometry)
+        layer.updateFeature(feature)
+        saved = layer.commitChanges()
+        map(roam.utils.error, layer.commitErrors())
+        self.canvas.refresh()
+        RoamEvents.editgeometry_complete.emit(form, feature)
+
+    def addNewFeature(self, form, geometry):
+        """
+        Add a new new feature to the given layer
+        """
+        layer = form.QGISLayer
+
+        if layer.geometryType() in [QGis.WKBMultiLineString, QGis.WKBMultiPoint, QGis.WKBMultiPolygon]:
+            geometry.convertToMultiType()
+
+        try:
+            # TODO: This is a gross hack. We need to move this out into a edit tool with better control.
+            form, feature = self.editfeaturestack.pop()
+            self.editfeaturegeometry(form, feature, newgeometry=geometry)
+            return
+        except IndexError:
+            pass
+
+        feature = form.new_feature(set_defaults=True)
+        feature.setGeometry(geometry)
+        self.openForm(form, feature, editmode=False)
 
     def exit(self):
         """
@@ -433,6 +456,23 @@ class MainWindow(ui_mainwindow.Ui_MainWindow, QMainWindow):
         projectpath = QgsProject.instance().fileName()
         self.project = Project.from_folder(os.path.dirname(projectpath))
         self.projectlabel.setText("Project: {}".format(self.project.name))
+        try:
+            firstform = self.project.forms[0]
+            self.loadform(self.project.forms[0])
+            self.dataentryselection.setVisible(True)
+        except IndexError:
+            self.dataentryselection.setVisible(False)
+
+        # Enable the raster layers button only if the project contains a raster layer.
+        layers = QgsMapLayerRegistry.instance().mapLayers().values()
+        for layer in layers:
+            if layer.type() == QgsMapLayer.VectorLayer:
+                layer.committedFeaturesRemoved.connect(self.featuresdeleted)
+
+        hasrasters = any(layer.type() == QgsMapLayer.RasterLayer for layer in layers)
+        self.actionRaster.setEnabled(hasrasters)
+        self.defaultextent = self.canvas.extent()
+        roam.utils.info("Extent: {}".format(self.defaultextent.toString()))
 
         # Show panels
         for panel in self.project.getPanels():

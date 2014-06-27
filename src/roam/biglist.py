@@ -8,11 +8,13 @@ from roam.ui.ui_list import Ui_BigList
 class BigList(Ui_BigList, QWidget):
     itemselected = pyqtSignal(QModelIndex)
     closewidget = pyqtSignal()
+    savewidget = pyqtSignal()
 
     def __init__(self, parent=None):
         super(BigList, self).__init__(parent)
         self.setupUi(self)
         self.listView.clicked.connect(self.selected)
+        self.saveButton.pressed.connect(self.savewidget.emit)
         self.closebutton.pressed.connect(self.closewidget.emit)
         self._index = None
 

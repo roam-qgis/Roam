@@ -12,7 +12,7 @@ from collections import OrderedDict
 
 from PyQt4.QtGui import QAction, QIcon
 
-from qgis.core import QgsMapLayerRegistry, QGis, QgsTolerance, QgsVectorLayer, QgsMapLayer
+from qgis.core import QgsMapLayerRegistry, QGis, QgsTolerance, QgsVectorLayer, QgsMapLayer, QgsFeature
 
 from roam.utils import log, debug
 from roam.syncing import replication
@@ -151,7 +151,7 @@ def writefolderconfig(settings, folder, configname):
 
 
 class Form(object):
-    def __init__(self, name, config, rootfolder):
+    def __init__(self, name, config, rootfolder, project=None):
         self._name = name
         self.settings = config
         self.folder = rootfolder
@@ -160,13 +160,20 @@ class Form(object):
         self._qgislayer = None
         self._formclass = None
         self._action = None
+        self.project = project
 
     @classmethod
-    def from_config(cls, name, config, folder):
-        form = cls(name, config, folder)
+    def from_config(cls, name, config, folder, project=None):
+        form = cls(name, config, folder, project)
         form._loadmodule()
         form.init_form()
         return form
+
+    @classmethod
+    def from_folder(cls, name, folder):
+        config = readfolderconfig(folder, "form")
+        print config
+        return Form.from_config(name, config, folder)
 
     @property
     def label(self):
@@ -290,11 +297,7 @@ class Form(object):
         name = "{root}.{project}.{formfolder}".format(root=rootname,
                                                       project=projectname,
                                                       formfolder=self.name)
-        try:
-            self._module = importlib.import_module(name)
-        except ImportError as err:
-            createinifile(self.folder)
-            self._loadmodule()
+        self._module = importlib.import_module(name)
 
     @property
     def module(self):
@@ -306,6 +309,25 @@ class Form(object):
     @classmethod
     def saveconfig(cls, config, folder):
         writefolderconfig(config, folder, configname='form')
+
+    def new_feature(self, set_defaults=True):
+        """
+        Returns a new feature that is created for the layer this form is bound too
+        :return: A new QgsFeature
+        """
+
+        layer = self.QGISLayer
+        fields = layer.pendingFields()
+        feature = QgsFeature(fields)
+        if set_defaults:
+            for index in xrange(fields.count()):
+                pkindexes = layer.dataProvider().pkAttributeIndexes()
+                if index in pkindexes and layer.dataProvider().name() == 'spatialite':
+                    continue
+
+                value = layer.dataProvider().defaultValue(index)
+                feature[index] = value
+        return feature
 
 
 class Project(object):
@@ -391,8 +413,9 @@ class Project(object):
             cmd = config['cmd']
             cmd = os.path.join(self.folder, cmd)
             if config['type'] == 'replication' or config['type'] == 'batch':
-                yield replication.BatchFileSync(name, cmd)
-    
+                config['cmd'] = cmd
+                yield replication.BatchFileSync(name, **config)
+
     def getPanels(self):
         for module in glob.iglob(os.path.join(self.folder, "_panels", '*.py')):
             modulename = os.path.splitext(os.path.basename(module))[0]
@@ -425,9 +448,27 @@ class Project(object):
             return True, None
 
     def formsforlayer(self, layername):
+        """
+        Return all the forms that are assigned to that the given layer name.
+        :param layername:
+        :return:
+        """
         for form in self.forms:
             if form.layername == layername:
                 yield form
+
+    def form_by_name(self, name):
+        """
+        Return the form with the given name.  There can only be one.
+        :param name: The name of the form to return.
+        :return:
+        """
+        print self.forms
+        print [form.name for form in self.forms]
+        print [form.QGISLayer.name() for form in self.forms]
+        for form in self.forms:
+            if form.name == name:
+                return form
 
     @property
     def forms(self):
@@ -445,7 +486,7 @@ class Project(object):
             forms = self.settings.setdefault("forms", [])
             for formname, config in mapformconfig(forms):
                 folder = os.path.join(self.folder, formname)
-                form = Form.from_config(formname, config, folder)
+                form = Form.from_config(formname, config, folder, project=self)
                 self._forms.append(form)
 
         return self._forms

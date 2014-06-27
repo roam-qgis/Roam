@@ -4,6 +4,7 @@ RoamEvents is an event sink for common signals used though out Roam.
 These can be raised and handled anywhere in the application.
 """
 from PyQt4.QtCore import pyqtSignal, QObject, QUrl
+from PyQt4.QtGui import QWidget
 
 from qgis.core import QgsFeature, QgsPoint
 
@@ -15,8 +16,17 @@ class _Events(QObject):
     openurl = pyqtSignal(QUrl)
 
     # Emit when requesting to open a feature form.
-    openfeatureform = pyqtSignal(object, QgsFeature, bool)
-    featureformloaded = pyqtSignal(object, QgsFeature, object, bool)
+    openfeatureform = pyqtSignal(object, QgsFeature, bool, bool, object)
+
+    def load_feature_form(self, form, feature, editmode, clearcurrent=True, callback=None):
+        """
+        Load a form into the data entry tab.
+        :param form: The Form to load. See roam.project.Form
+        :param feature: Feature to load
+        :param editmode: Open in edit mode
+        :param clearcurrent: Clear the current stack of open widgets.
+        """
+        self.openfeatureform.emit(form, feature, editmode, clearcurrent, callback)
 
     editgeometry = pyqtSignal(object, QgsFeature)
 
@@ -28,7 +38,11 @@ class _Events(QObject):
     selectioncleared = pyqtSignal()
     selectionchanged = pyqtSignal(dict)
 
+    helprequest = pyqtSignal(QWidget, str)
+
     onShowMessage = pyqtSignal(str, str, int, int, str)
+
+    featuresaved = pyqtSignal()
 
     def raisemessage(self, title, message, level=0, duration=0, extra=''):
         """
@@ -40,10 +54,5 @@ class _Events(QObject):
         :param extra: Any extra information to show the user on click.
         """
         self.onShowMessage.emit(title, message, level, duration, extra)
-
-    def open_feature_form(self, form, feature, editmode=False):
-        self.openfeatureform.emit(form, feature, editmode)
-
-
 
 RoamEvents = _Events()
