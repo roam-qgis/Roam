@@ -185,13 +185,11 @@ class DataEntryWidget(dataentry_widget, dataentry_base):
 
     def cleanup(self, wrapper):
         # Pop the widget off the current widget stack and kill it.
-        print id(wrapper)
         index = self.widgetstack.index(wrapper)
         del self.widgetstack[index]
         index = self.stackedWidget.indexOf(wrapper.widget)
         if index == -1:
             return
-        print id(wrapper.widget)
         self.clearwidget(index)
         wrapper.deleteLater()
         wrapper.setParent(None)
@@ -200,7 +198,6 @@ class DataEntryWidget(dataentry_widget, dataentry_base):
 
         widget = widgettype.createwidget(config=initconfig)
         largewidgetwrapper = widgettype.for_widget(widget, None, None, None, None, map=self.canvas)
-        print id(largewidgetwrapper), largewidgetwrapper
         largewidgetwrapper.largewidgetrequest.connect(RoamEvents.show_widget.emit)
         largewidgetwrapper.finished.connect(callback)
         largewidgetwrapper.finished.connect(functools.partial(self.cleanup, largewidgetwrapper))
@@ -227,9 +224,7 @@ class DataEntryWidget(dataentry_widget, dataentry_base):
     def clearwidget(self, position=0, dontemit=False):
         widget = self.stackedWidget.widget(position)
         self.stackedWidget.removeWidget(widget)
-        print "clearwidget"
         if widget:
-            print "DELETE", id(widget)
             widget.deleteLater()
             widget.setParent(None)
 
@@ -241,7 +236,6 @@ class DataEntryWidget(dataentry_widget, dataentry_base):
         """
         Opens the form for the given feature.
         """
-        print "EDIT MODE", editmode
         def _sink(_):
             pass
 
@@ -275,7 +269,6 @@ class DataEntryWidget(dataentry_widget, dataentry_base):
         if not editmode:
             defaultwidgets = form.widgetswithdefaults()
             defaultvalues = defaults.default_values(defaultwidgets, feature, layer)
-            print defaultvalues
             defaultvalues.update(featureform.loadsavedvalues(layer))
 
         values.update(defaultvalues)
