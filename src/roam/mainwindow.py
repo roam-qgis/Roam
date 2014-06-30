@@ -381,7 +381,7 @@ class MainWindow(ui_mainwindow.Ui_MainWindow, QMainWindow):
         """
         Exit the application.
         """
-        QApplication.exit(0)
+        self.close()
 
     def showInfoResults(self, results):
         forms = {}
