@@ -343,7 +343,6 @@ class MainWindow(ui_mainwindow.Ui_MainWindow, QMainWindow):
         """
         Open the form that is assigned to the layer
         """
-        self.currentfeatureband.setToGeometry(feature.geometry(), form.QGISLayer)
         self.showdataentry()
         self.dataentrywidget.load_feature_form(feature, form, editmode, *args)
 
@@ -456,23 +455,6 @@ class MainWindow(ui_mainwindow.Ui_MainWindow, QMainWindow):
         projectpath = QgsProject.instance().fileName()
         self.project = Project.from_folder(os.path.dirname(projectpath))
         self.projectlabel.setText("Project: {}".format(self.project.name))
-        try:
-            firstform = self.project.forms[0]
-            self.loadform(self.project.forms[0])
-            self.dataentryselection.setVisible(True)
-        except IndexError:
-            self.dataentryselection.setVisible(False)
-
-        # Enable the raster layers button only if the project contains a raster layer.
-        layers = QgsMapLayerRegistry.instance().mapLayers().values()
-        for layer in layers:
-            if layer.type() == QgsMapLayer.VectorLayer:
-                layer.committedFeaturesRemoved.connect(self.featuresdeleted)
-
-        hasrasters = any(layer.type() == QgsMapLayer.RasterLayer for layer in layers)
-        self.actionRaster.setEnabled(hasrasters)
-        self.defaultextent = self.canvas.extent()
-        roam.utils.info("Extent: {}".format(self.defaultextent.toString()))
 
         # Show panels
         for panel in self.project.getPanels():

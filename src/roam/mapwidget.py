@@ -86,7 +86,7 @@ class MapWidget(Ui_CanvasWidget, QMainWindow):
         RoamEvents.editgeometry.connect(self.queue_feature_for_edit)
         RoamEvents.selectioncleared.connect(self.clear_selection)
         RoamEvents.selectionchanged.connect(self.highlight_selection)
-        RoamEvents.featureformloaded.connect(self.feature_form_loaded)
+        RoamEvents.openfeatureform.connect(self.feature_form_loaded)
 
         self.connectButtons()
 
@@ -111,7 +111,7 @@ class MapWidget(Ui_CanvasWidget, QMainWindow):
             self.canvas.repaint()
             self.firstshow = False
 
-    def feature_form_loaded(self, form, feature, project, editmode):
+    def feature_form_loaded(self, form, feature, *args):
         self.currentfeatureband.setToGeometry(feature.geometry(), form.QGISLayer)
 
     def highlight_selection(self, results):
@@ -353,7 +353,7 @@ class MapWidget(Ui_CanvasWidget, QMainWindow):
             value = layer.dataProvider().defaultValue(index)
             feature[index] = value
 
-        RoamEvents.open_feature_form(form, feature, editmode=False)
+        RoamEvents.load_feature_form(form, feature, editmode=False)
 
     def editfeaturegeometry(self, form, feature, newgeometry):
         # TODO Extract into function.

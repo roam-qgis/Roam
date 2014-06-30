@@ -55,4 +55,7 @@ class _Events(QObject):
         """
         self.onShowMessage.emit(title, message, level, duration, extra)
 
+    show_widget = pyqtSignal(object, object, object, dict)
+
+
 RoamEvents = _Events()

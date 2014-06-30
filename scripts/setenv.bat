@@ -14,7 +14,7 @@ for %%x in (%cmdcmdline%) do if /i "%%~x"=="/c" set DOUBLECLICKED=1
 
 REM Change OSGeo4W_ROOT to point to your install of QGIS.
 
-SET OSGEO4W_ROOT=C:\QGIS2.2
+SET OSGEO4W_ROOT=C:\OSGeo4W
 SET QGISNAME=qgis
 SET QGIS=%OSGEO4W_ROOT%\apps\%QGISNAME%
 set QGIS_PREFIX_PATH=%QGIS%
