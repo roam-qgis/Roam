@@ -40,6 +40,7 @@ class MapWidget(Ui_CanvasWidget, QMainWindow):
         self.gpslogging = None
         self.selectionbands = defaultdict(partial(QgsRubberBand, self.canvas))
 
+        self.canvas.setInteractive(False)
         self.canvas.setCanvasColor(Qt.white)
         self.canvas.enableAntiAliasing(True)
         self.canvas.setWheelAction(QgsMapCanvas.WheelZoomToMouseCursor)
