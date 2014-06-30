@@ -40,13 +40,14 @@ svgs = os.path.join(osgeopath, "apps", qgisname, "svg")
 qgispluginpath = os.path.join(osgeopath, "apps", qgisname, "plugins", "*provider.dll")
 gdalsharepath = os.path.join(osgeopath, 'share', 'gdal')
 
+sdkpath = os.path.join(curpath, "sdk")
 appsrcopyFilesath = os.path.join(curpath, "src", 'roam')
 srceditorwidgets = os.path.join(curpath, "src", 'roam', 'editorwidgets')
 projectinstallerpath = os.path.join(curpath, "src", 'project_installer')
 configmangerpath = os.path.join(curpath, "src", 'configmanager')
 
 
-def getfiles(folder, outpath):
+def getfiles(folder, outpath, includebase=True):
     """
     Walks a given folder and converts all paths to outpath root.
     """
@@ -61,7 +62,10 @@ def getfiles(folder, outpath):
     for path, dirs, files in os.walk(folder):
         if not files: continue
 
-        newpath = r'{}\{}'.format(outpath, os.path.basename(path))
+        if includebase:
+            newpath = r'{}\{}'.format(outpath, os.path.basename(path))
+        else:
+            newpath = r'{}'.format(outpath)
 
         newpath, collection = filecollection(files)
         yield newpath, collection
@@ -101,6 +105,14 @@ def get_data_files():
         datafiles.append((path, collection))
 
     for path, collection in getfiles(gdalsharepath, r'libs'):
+        datafiles.append((path, collection))
+
+    # We copy the ogr2ogr10 and ogrinfo10 from the sdk folder because
+    # MS SQL support in GDAL 1.11 is busted.  Do this until OSGeo4W gets a new
+    # GDAL build.
+    # GDAL ticket http://trac.osgeo.org/gdal/ticket/5474
+    # Fixed in 1.11.1
+    for path, collection in getfiles(sdkpath, r'libs', includebase=False):
         datafiles.append((path, collection))
 
     return datafiles
