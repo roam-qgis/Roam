@@ -232,12 +232,19 @@ class InfoDock(infodock_widget, QWidget):
             header = "Related Record"
 
         info_template = Template("""
-        <h4>${HEADER}</h4>
-        <table class="table table-condensed">
-            <col style="width: 35%;"/>
-            <col style="width: 65%;"/>
+        <div class="panel panel-default">
+          <div class="panel-heading large">
+            <h2 class="panel-title" style="font-size:24px">${HEADER}</h2>
+          </div>
+          <div class="panel-body" style="padding:0px">
+            <table class="table table-condensed">
+                <col style="width: 35%;"/>
+                <col style="width: 65%;"/>
             ${ROWS}
-        </table>""")
+            </table>
+            </div>
+        </div>
+        """)
 
         query = project.info_query(infoblock, layer.name())
         print query
