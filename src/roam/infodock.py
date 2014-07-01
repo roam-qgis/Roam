@@ -200,14 +200,12 @@ class InfoDock(infodock_widget, QWidget):
             utils.warning(ex)
             return
 
-        fields = [field.name() for field in feature.fields()]
-        attributes = feature.attributes()
 
         form = cursor.form
         layer = cursor.layer
 
-        rowshtml = generate_rows(fields, attributes)
-        info2 = self.generate_info2(self.project, layer, feature.id())
+        info1 = self.generate_info("info1", self.project, layer, feature.id(), feature)
+        info2 = self.generate_info("info2", self.project, layer, feature.id(), feature)
 
         if form:
             name = "{}".format(layer.name(), form.label)
@@ -215,7 +213,7 @@ class InfoDock(infodock_widget, QWidget):
             name = layer.name()
 
         info = dict(TITLE=name,
-                    ROWS=rowshtml,
+                    INFO1=info1,
                     INFO2=info2)
 
         html = updateTemplate(info, template)
@@ -227,22 +225,32 @@ class InfoDock(infodock_widget, QWidget):
         self.featureupdated.emit(layer, feature, cursor.features)
 
 
-    def generate_info2(self, project, layer, mapkey):
+    def generate_info(self, infoblock, project, layer, mapkey, feature):
+        if infoblock == "info1":
+            header = "Record"
+        else:
+            header = "Related Record"
+
         info_template = Template("""
-        <h4>Related Record</h4>
+        <h4>${HEADER}</h4>
         <table class="table table-condensed">
             <col style="width: 35%;"/>
             <col style="width: 65%;"/>
             ${ROWS}
         </table>""")
-        query = project.info_query("info2", layer.name())
-        if not query:
-            return None
 
+        query = project.info_query(infoblock, layer.name())
+        print query
+        if not query and infoblock == "info1":
+            query = {}
+            query['type'] = 'feature'
+        elif not query:
+            return None
 
         results = []
         if query['type'] == 'sql':
             sql = query['query']
+            print sql
             connection = query['connection']
             if connection == "from_layer":
                 try:
@@ -252,6 +260,10 @@ class InfoDock(infodock_widget, QWidget):
                     return "<b> Error: {}<b>".format(ex.message)
             else:
                 return None
+        elif query['type'] == 'feature':
+            fields = [field.name() for field in feature.fields()]
+            attributes = feature.attributes()
+            results.append(dict(zip(fields, attributes)))
         else:
             return None
 
@@ -261,7 +273,9 @@ class InfoDock(infodock_widget, QWidget):
                 fields = result.keys()
                 attributes = result.values()
                 rows = generate_rows(fields, attributes)
-                blocks.append(updateTemplate(dict(ROWS=rows), info_template))
+                print rows
+                blocks.append(updateTemplate(dict(ROWS=rows,
+                                                  HEADER=header), info_template))
             return '<br>'.join(blocks)
         except database.DatabaseException as ex:
             return "<b> Error: {}<b>".format(ex.msg)

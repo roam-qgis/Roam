@@ -1,6 +1,7 @@
 from PyQt4.QtSql import (QSqlDatabase, QSqlQuery, QSqlQueryModel)
 from PyQt4.QtCore import Qt
 from qgis.core import QgsDataSourceURI
+from roam.structs import OrderedDict
 import roam.utils
 
 class DatabaseException(Exception):
@@ -48,7 +49,7 @@ class Database(object):
         """
             Create a normal Python dict out of a QSqlRecord
         """
-        values = {}
+        values = OrderedDict()
         for index in range(record.count()):
             name = record.fieldName(index)
             values[name] = record.value(index)
