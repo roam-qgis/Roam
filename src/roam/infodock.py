@@ -19,6 +19,7 @@ from roam.flickwidget import FlickCharm
 from roam.htmlviewer import updateTemplate
 from roam.ui.uifiles import (infodock_widget)
 from roam.api import RoamEvents
+from roam.dataaccess import database
 
 import templates
 
@@ -91,6 +92,7 @@ class InfoDock(infodock_widget, QWidget):
         self.editButton.pressed.connect(self.openform)
         self.editGeomButton.pressed.connect(self.editgeom)
         self.parent().installEventFilter(self)
+        self.project = None
 
         RoamEvents.selectioncleared.connect(self.clearResults)
         RoamEvents.editgeometry_complete.connect(self.refreshcurrent)
@@ -148,13 +150,14 @@ class InfoDock(infodock_widget, QWidget):
         cursor = item.data(Qt.UserRole)
         self.update(cursor)
 
-    def setResults(self, results, forms):
+    def setResults(self, results, forms, project):
         lastrow = self.layerList.currentRow()
         if lastrow == -1:
             lastrow = 0
 
         self.clearResults()
         self.forms = forms
+        self.project = project
 
         for layer, features in results.iteritems():
             if features:
@@ -198,25 +201,22 @@ class InfoDock(infodock_widget, QWidget):
             return
 
         fields = [field.name() for field in feature.fields()]
-        data = OrderedDict()
-
-        items = []
-        for field, value in zip(fields, feature.attributes()):
-            data[field] = value
-            item = u"<tr><th>{0}</th> <td>${{{0}}}</td></tr>".format(field)
-            items.append(item)
-        rowtemple = Template(''.join(items))
-        rowshtml = updateTemplate(data, rowtemple)
+        attributes = feature.attributes()
 
         form = cursor.form
         layer = cursor.layer
+
+        rowshtml = generate_rows(fields, attributes)
+        info2 = self.generate_info2(self.project, layer, feature.id())
+
         if form:
             name = "{}".format(layer.name(), form.label)
         else:
             name = layer.name()
 
         info = dict(TITLE=name,
-                    ROWS=rowshtml)
+                    ROWS=rowshtml,
+                    INFO2=info2)
 
         html = updateTemplate(info, template)
 
@@ -226,9 +226,60 @@ class InfoDock(infodock_widget, QWidget):
         self.editGeomButton.setVisible(not form is None)
         self.featureupdated.emit(layer, feature, cursor.features)
 
+
+    def generate_info2(self, project, layer, mapkey):
+        info_template = Template("""
+        <h4>Related Record</h4>
+        <table class="table table-condensed">
+            <col style="width: 35%;"/>
+            <col style="width: 65%;"/>
+            ${ROWS}
+        </table>""")
+        query = project.info_query("info2", layer.name())
+        if not query:
+            return None
+
+
+        results = []
+        if query['type'] == 'sql':
+            sql = query['query']
+            connection = query['connection']
+            if connection == "from_layer":
+                try:
+                    db = database.Database.fromLayer(layer)
+                    results = db.query(sql, mapkey=mapkey)
+                except database.DatabaseException as ex:
+                    return "<b> Error: {}<b>".format(ex.message)
+            else:
+                return None
+        else:
+            return None
+
+        blocks = []
+        try:
+            for result in results:
+                fields = result.keys()
+                attributes = result.values()
+                rows = generate_rows(fields, attributes)
+                blocks.append(updateTemplate(dict(ROWS=rows), info_template))
+            return '<br>'.join(blocks)
+        except database.DatabaseException as ex:
+            return "<b> Error: {}<b>".format(ex.msg)
+
     def clearResults(self):
         self.layerList.clear()
         self.attributesView.setHtml('')
         self.editButton.setVisible(False)
         self.navwidget.hide()
+
+def generate_rows(fields, attributes):
+    data = OrderedDict()
+    items = []
+    for field, value in zip(fields, attributes):
+        data[field] = value
+        item = u"<tr><th>{0}</th> <td>${{{0}}}</td></tr>".format(field)
+        items.append(item)
+    rowtemple = Template(''.join(items))
+    rowshtml = updateTemplate(data, rowtemple)
+    return rowshtml
 

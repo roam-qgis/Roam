@@ -391,7 +391,7 @@ class MainWindow(ui_mainwindow.Ui_MainWindow, QMainWindow):
                 forms[layername] = list(self.project.formsforlayer(layername))
 
         self.currentselection = results
-        self.infodock.setResults(results, forms)
+        self.infodock.setResults(results, forms, self.project)
         self.infodock.show()
 
 

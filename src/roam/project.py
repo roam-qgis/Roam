@@ -495,6 +495,15 @@ class Project(object):
     def selectlayers(self):
         return self.settings.get('selectlayers', [])
 
+    def info_query(self, infoname, layername):
+        try:
+            layersconfig = self.settings['selectlayerconfig']
+            layerconfig = layersconfig[layername]
+            infoblock = layerconfig[infoname]
+            return infoblock
+        except KeyError:
+            return None
+
 
     def selectlayersmapping(self):
         """
