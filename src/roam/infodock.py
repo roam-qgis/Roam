@@ -233,7 +233,7 @@ class InfoDock(infodock_widget, QWidget):
 
         info_template = Template("""
         <div class="panel panel-default">
-          <div class="panel-heading large">
+          <div class="panel-heading text-left">
             <h2 class="panel-title" style="font-size:24px">${HEADER}</h2>
           </div>
           <div class="panel-body" style="padding:0px">
