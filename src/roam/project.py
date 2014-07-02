@@ -329,6 +329,11 @@ class Form(object):
                 feature[index] = value
         return feature
 
+    @property
+    def has_geometry(self):
+        geomtype = self.QGISLayer.geometryType()
+        return geomtype in supportedgeometry
+
 
 class Project(object):
     def __init__(self, rootfolder, settings):
@@ -503,7 +508,6 @@ class Project(object):
             return infoblock
         except KeyError:
             return None
-
 
     def selectlayersmapping(self):
         """

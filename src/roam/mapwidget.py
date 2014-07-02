@@ -220,15 +220,16 @@ class MapWidget(Ui_CanvasWidget, QMainWindow):
 
         def actions():
             for form in self.project.forms:
-                action = form.createuiaction()
-                valid, failreasons = form.valid
-                if not valid:
-                    roam.utils.warning("Form {} failed to load".format(form.label))
-                    roam.utils.warning("Reasons {}".format(failreasons))
-                    action.triggered.connect(partial(showformerror, form))
-                else:
-                    action.triggered.connect(partial(self.load_form, form))
-                yield action
+                if form.has_geometry:
+                    action = form.createuiaction()
+                    valid, failreasons = form.valid
+                    if not valid:
+                        roam.utils.warning("Form {} failed to load".format(form.label))
+                        roam.utils.warning("Reasons {}".format(failreasons))
+                        action.triggered.connect(partial(showformerror, form))
+                    else:
+                        action.triggered.connect(partial(self.load_form, form))
+                    yield action
 
         formpicker = PickActionDialog(msg="Select data entry form")
         formpicker.addactions(actions())
