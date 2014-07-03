@@ -414,11 +414,17 @@ class Project(object):
     
     def syncprovders(self):
         providers = self.settings.get("providers", {})
+        variables = {}
         for name, config in providers.iteritems():
+            if name == "variables":
+                variables.update(config)
+                continue
+
             cmd = config['cmd']
             cmd = os.path.join(self.folder, cmd)
             if config['type'] == 'replication' or config['type'] == 'batch':
                 config['cmd'] = cmd
+                config.setdefault('variables', variables)
                 yield replication.BatchFileSync(name, **config)
 
     def getPanels(self):
