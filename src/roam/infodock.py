@@ -270,7 +270,7 @@ class InfoDock(infodock_widget, QWidget):
         elif query['type'] == 'feature':
             fields = [field.name() for field in feature.fields()]
             attributes = feature.attributes()
-            results.append(dict(zip(fields, attributes)))
+            results.append(OrderedDict(zip(fields, attributes)))
         else:
             return None
 
