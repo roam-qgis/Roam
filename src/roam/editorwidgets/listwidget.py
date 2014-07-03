@@ -236,7 +236,7 @@ class MultiList(ListWidget):
             item.setCheckable(True)
             item.setCheckState(Qt.Unchecked)
 
-    def showpopup(self):
+    def showpopup(self, *args):
         if self.widget.count() == 0:
             return
 
@@ -247,8 +247,9 @@ class MultiList(ListWidget):
     def initWidget(self, widget):
         widget.setEditable(True)
         widget.setModel(self.listmodel)
-        widget.showPopup = self.showpopup
+        widget.focusInEvent = self.showpopup
         widget.setIconSize(QSize(24,24))
+        widget.setStyleSheet("QComboBox::drop-down {border-width: 0px;} QComboBox::down-arrow {image: url(noimg); border-width: 0px;}")
 
     def _biglistitem(self, index):
         value = self.value()
