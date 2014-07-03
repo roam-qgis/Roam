@@ -425,6 +425,7 @@ class Project(object):
             if config['type'] == 'replication' or config['type'] == 'batch':
                 config['cmd'] = cmd
                 config.setdefault('variables', variables)
+                config.update(variables)
                 yield replication.BatchFileSync(name, **config)
 
     def getPanels(self):
