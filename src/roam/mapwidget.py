@@ -6,7 +6,7 @@ from PyQt4.QtGui import QActionGroup, QFrame, QWidget, QSizePolicy, \
                         QAction, QPixmap, QCursor, QIcon, QColor, QMainWindow
 
 from qgis.gui import QgsMapCanvas, QgsMapToolZoom, QgsRubberBand
-from qgis.core import QgsPalLabeling, QgsMapLayerRegistry, QgsMapLayer, QgsFeature, QGis, QgsRectangle
+from qgis.core import QgsPalLabeling, QgsMapLayerRegistry, QgsMapLayer, QgsFeature, QGis, QgsRectangle, QgsProject
 
 from roam.gps_action import GPSAction, GPSMarker
 from roam.projectparser import ProjectParser
@@ -98,11 +98,11 @@ class MapWidget(Ui_CanvasWidget, QMainWindow):
         self.canvas.mapRenderer().readXML(canvasnode)
         self.canvaslayers = parser.canvaslayers()
         self.canvas.setLayerSet(self.canvaslayers)
-        #red = QgsProject.instance().readNumEntry( "Gui", "/CanvasColorRedPart", 255 )[0];
-        #green = QgsProject.instance().readNumEntry( "Gui", "/CanvasColorGreenPart", 255 )[0];
-        #blue = QgsProject.instance().readNumEntry( "Gui", "/CanvasColorBluePart", 255 )[0];
-        #color = QColor(red, green, blue);
-        #self.canvas.setCanvasColor(color)
+        red = QgsProject.instance().readNumEntry( "Gui", "/CanvasColorRedPart", 255 )[0]
+        green = QgsProject.instance().readNumEntry( "Gui", "/CanvasColorGreenPart", 255 )[0]
+        blue = QgsProject.instance().readNumEntry( "Gui", "/CanvasColorBluePart", 255 )[0]
+        color = QColor(red, green, blue)
+        self.canvas.setCanvasColor(color)
         self.canvas.updateScale()
         self.canvas.freeze(False)
         return self.canvas.mapRenderer().destinationCrs()
