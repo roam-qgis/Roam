@@ -165,6 +165,7 @@ class InfoDock(infodock_widget, QWidget):
 
         self.layerList.setCurrentRow(lastrow)
         self.layerList.setMinimumWidth(self.layerList.sizeHintForColumn(0) + 20)
+        self.layerList.setMinimumHeight(self.layerList.sizeHintForRow(0) + 20)
         self.navwidget.show()
 
     def show(self):
