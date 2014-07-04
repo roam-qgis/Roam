@@ -104,10 +104,11 @@ class MapWidget(Ui_CanvasWidget, QMainWindow):
         #color = QColor(red, green, blue);
         #self.canvas.setCanvasColor(color)
         self.canvas.updateScale()
+        self.canvas.freeze(False)
         return self.canvas.mapRenderer().destinationCrs()
 
     def showEvent(self, *args, **kwargs):
-        if self.firstshow:
+        if QGis.QGIS_VERSION_INT == 20200 and self.firstshow:
             self.canvas.refresh()
             self.canvas.repaint()
             self.firstshow = False
