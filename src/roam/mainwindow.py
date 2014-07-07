@@ -514,7 +514,7 @@ class MainWindow(ui_mainwindow.Ui_MainWindow, QMainWindow):
         self.actionRaster.triggered.connect(self.toggleRasterLayers)
 
         self.infoTool.infoResults.connect(RoamEvents.selectionchanged.emit)
-
+        self.actionProject.triggered.connect(self.unloadpages)
         self.actionHome.triggered.connect(self.homeview)
         self.actionQuit.triggered.connect(self.exit)
 
@@ -763,6 +763,15 @@ class MainWindow(ui_mainwindow.Ui_MainWindow, QMainWindow):
             self.menuGroup.addAction(action)
             print page, config
 
+    def unloadpages(self):
+	centralPages=[self.actionMap, self.actionLegend]
+	for a in self.projectbuttons:
+	    if a not in centralPages:
+	        self.menutoolbar.removeAction(a)
+		self.projectbuttons.remove(a)
+	self.setprojectbuttonstate(False)
+
+
     @roam.utils.timeit
     def _readProject(self, doc):
         """
@@ -824,6 +833,10 @@ class MainWindow(ui_mainwindow.Ui_MainWindow, QMainWindow):
         except IndexError:
             roam.utils.info("No gps_log found for GPS logging")
             self.tracking.clear_logging()
+	
+	# Load Plugin pages selected by project config
+	projectplugins = self.project.getPlugins()
+        self.loadpages(projectplugins)
 
         self.setprojectbuttonstate(True)
         RoamEvents.projectloaded.emit(self.project)
@@ -891,7 +904,8 @@ class MainWindow(ui_mainwindow.Ui_MainWindow, QMainWindow):
             # Remove all the old buttons
         for action in self.layerbuttons:
             self.editgroup.removeAction(action)
-
+        
+	self.unloadpages()
         self.panels = []
         self.project = None
         self.dataentrywidget.clear()
