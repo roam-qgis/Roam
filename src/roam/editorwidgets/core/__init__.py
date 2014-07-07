@@ -19,6 +19,7 @@ def registerallwidgets():
     from roam.editorwidgets.datewidget import DateWidget
     from roam.editorwidgets.numberwidget import NumberWidget, DoubleNumberWidget
     from roam.editorwidgets.textwidget import TextWidget, TextBlockWidget
+    from roam.editorwidgets.tablewidget import TableWidget
     registerwidgets(ImageWidget, ListWidget, MultiList, CheckboxWidget, DateWidget,
                     NumberWidget, DoubleNumberWidget, TextWidget, TextBlockWidget)
 
