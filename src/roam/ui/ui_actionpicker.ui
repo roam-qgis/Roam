@@ -20,22 +20,7 @@
    <string>Dialog</string>
   </property>
   <property name="styleSheet">
-   <string notr="true">* {
-	color: #4f4f4f;
-	font: 14pt &quot;Segoe UI&quot; ;
-    background-color: rgb(255, 255, 255);
-}
-
-        QPushButton, QToolButton { 
-            border: 1px solid #e1e1e1;
-            padding: 6px;
-            color: #4f4f4f;
-         }	
-
-QLabel#headerlabel {
-	color: rgb(255, 134, 125);
-	font: 75 17pt &quot;Segoe UI&quot;;
-}</string>
+   <string notr="true"/>
   </property>
   <property name="modal">
    <bool>false</bool>

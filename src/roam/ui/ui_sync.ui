@@ -29,7 +29,7 @@
       <string>Sync All</string>
      </property>
      <property name="icon">
-      <iconset resource="resources.qrc">
+      <iconset>
        <normaloff>:/icons/sync</normaloff>:/icons/sync</iconset>
      </property>
      <property name="iconSize">
@@ -69,7 +69,7 @@
           <string>...</string>
          </property>
          <property name="icon">
-          <iconset resource="resources.qrc">
+          <iconset>
            <normaloff>:/icons/remove</normaloff>:/icons/remove</iconset>
          </property>
          <property name="iconSize">

@@ -59,6 +59,7 @@ import roam.api.featureform
 import roam.config
 import roam.defaults
 import roam.api.utils
+import roam.roam_style
 
 
 class BadLayerHandler(QgsProjectBadLayerHandler):
@@ -88,6 +89,7 @@ class MainWindow(ui_mainwindow.Ui_MainWindow, QMainWindow):
     def __init__(self):
         super(MainWindow, self).__init__()
         self.setupUi(self)
+        self.menutoolbar.setStyleSheet(roam.roam_style.menubarstyle)
         self.project = None
         self.tracking = GPSLogging(GPS)
 

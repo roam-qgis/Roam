@@ -14,17 +14,7 @@
    <string>Form</string>
   </property>
   <property name="styleSheet">
-   <string notr="true">* {
-	font: 20px &quot;Calibri&quot; ;
-    font: bold;
-	background-color: rgb(255, 255, 255);
-}
-
-QLabel#headerlabel {
-	
-	color: rgb(97, 97, 97);
-	font: 75 17pt &quot;Segoe UI&quot;;
-}</string>
+   <string notr="true"/>
   </property>
   <layout class="QGridLayout" name="gridLayout">
    <property name="leftMargin">
@@ -43,7 +33,7 @@ QLabel#headerlabel {
     <number>3</number>
    </property>
    <item row="0" column="0">
-    <widget class="QFrame" name="frame">
+    <widget class="QFrame" name="helpframe">
      <property name="frameShape">
       <enum>QFrame::StyledPanel</enum>
      </property>

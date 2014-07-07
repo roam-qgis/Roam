@@ -29,25 +29,7 @@
    <bool>false</bool>
   </property>
   <property name="styleSheet">
-   <string notr="true">*:hover {background-color: #dddddd;}
-
-* {
-	font: 20px &quot;Calibri&quot; ;
-	font: bold;
-}
-
-QLabel {
-	color: #4f4f4f;
-}
-
-QLabel#descriptionlabel {
-   	font: 14px &quot;Calibri&quot; ;
-}
-
-QLabel#versionlabel {
-	font: 12px &quot;Calibri&quot; ;
-	font: italic;
-}</string>
+   <string notr="true"/>
   </property>
   <layout class="QGridLayout" name="gridLayout">
    <item row="0" column="0" rowspan="2">
@@ -85,16 +67,24 @@ QLabel#versionlabel {
        <property name="font">
         <font>
          <family>Calibri</family>
-         <pointsize>-1</pointsize>
          <weight>75</weight>
          <italic>false</italic>
          <bold>true</bold>
         </font>
        </property>
+       <property name="styleSheet">
+        <string notr="true"/>
+       </property>
        <property name="text">
         <string>Name</string>
        </property>
        <property name="wordWrap">
+        <bool>true</bool>
+       </property>
+       <property name="projectlabel" stdset="0">
+        <bool>true</bool>
+       </property>
+       <property name="headerlabel" stdset="0">
         <bool>true</bool>
        </property>
       </widget>
@@ -104,16 +94,21 @@ QLabel#versionlabel {
        <property name="font">
         <font>
          <family>Calibri</family>
-         <pointsize>-1</pointsize>
          <weight>50</weight>
          <italic>false</italic>
          <bold>false</bold>
         </font>
        </property>
+       <property name="styleSheet">
+        <string notr="true"/>
+       </property>
        <property name="text">
         <string>Description</string>
        </property>
        <property name="wordWrap">
+        <bool>true</bool>
+       </property>
+       <property name="projectlabel" stdset="0">
         <bool>true</bool>
        </property>
       </widget>
@@ -151,8 +146,14 @@ QLabel#versionlabel {
    </item>
    <item row="1" column="4">
     <widget class="QLabel" name="versionlabel">
+     <property name="styleSheet">
+      <string notr="true"/>
+     </property>
      <property name="text">
       <string>Version</string>
+     </property>
+     <property name="projectlabel" stdset="0">
+      <bool>true</bool>
      </property>
     </widget>
    </item>

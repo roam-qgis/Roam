@@ -17,47 +17,7 @@
    <bool>false</bool>
   </property>
   <property name="styleSheet">
-   <string notr="true">QCheckBox::indicator {
-     width: 40px;
-     height: 40px;
- }
-
-* {
-	font: 20px &quot;Calibri&quot; ;
-}
-
-QLabel {
-	color: #4f4f4f;
-}
-
-QWidget#Form { background-color: rgb(255, 255, 255); }
-
-QPushButton { 
-	border: 1px solid #e1e1e1;
-     padding: 6px;
-	color: #4f4f4f;
- }
-
-QPushButton:hover { 
-	border: 1px solid #e1e1e1;
-     padding: 6px;
-	background-color: rgb(211, 228, 255);
- }
-
-QCheckBox {
-	color: #4f4f4f;
-}
-
-QComboBox {
-	border: 1px solid #d3d3d3;
-}
-
-QComboBox::drop-down {
-width: 30px;
-}
-
-
-</string>
+   <string notr="true"/>
   </property>
   <layout class="QGridLayout" name="gridLayout">
    <property name="margin">
@@ -75,19 +35,7 @@ width: 30px;
       </sizepolicy>
      </property>
      <property name="styleSheet">
-      <string notr="true">QListWidget {
-background-color: rgb(149,150,145, 220);
-}
-
-QListWidget::item {
-	color: white;
-    border-bottom: 1px solid black;
-	padding: 4px;
-}
-
-QListWidget::item::selected {
-	background-color: rgb(85,85,85);
-}
+      <string notr="true">
 
 
 </string>
@@ -98,7 +46,10 @@ QListWidget::item::selected {
     </widget>
    </item>
    <item row="0" column="1" rowspan="2">
-    <widget class="QFrame" name="frame">
+    <widget class="QFrame" name="infoframe">
+     <property name="autoFillBackground">
+      <bool>true</bool>
+     </property>
      <property name="frameShape">
       <enum>QFrame::NoFrame</enum>
      </property>

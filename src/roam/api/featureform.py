@@ -37,43 +37,9 @@ from roam.api import RoamEvents, GPS
 
 import roam.editorwidgets.core
 import roam.defaults as defaults
-
-style = """
-            QCheckBox::indicator {
-                 width: 40px;
-                 height: 40px;
-            }
-
-            * {
-                font: 20px "Segoe UI" ;
-            }
-
-            QLabel {
-                color: #4f4f4f;
-            }
-
-            QDialog { background-color: rgb(255, 255, 255); }
-            QScrollArea { background-color: rgb(255, 255, 255); }
-
-            QPushButton {
-                border: 1px solid #e1e1e1;
-                padding: 6px;
-                color: #4f4f4f;
-             }
-
-            QPushButton:hover {
-                border: 1px solid #e1e1e1;
-                padding: 6px;
-                background-color: rgb(211, 228, 255);
-             }
-
-            QCheckBox {
-                color: blue;
-            }
-"""
+import roam.roam_style
 
 values_file = os.path.join(tempfile.gettempdir(), "Roam")
-
 
 def loadsavedvalues(layer):
     attr = {}
@@ -446,8 +412,10 @@ class FeatureForm(FeatureFormBase):
         else:
             raise NotImplemented('Other form types not supported yet')
 
+        featureform.setObjectName("featureform")
+
         featureform.setContentsMargins(3, 0, 3, 9)
-        formstyle = style
+        formstyle = roam.roam_style.featureform
         formstyle += featureform.styleSheet()
         featureform.setStyleSheet(formstyle)
 

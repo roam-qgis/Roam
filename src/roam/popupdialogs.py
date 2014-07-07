@@ -49,7 +49,8 @@ class PickActionDialog(Ui_ActionPickerDialog, Dialogbase):
             self.label.setText(msg)
 
     def addAction(self, action):
-        button = QToolButton()
+        button = QToolButton(self)
+        button.setProperty("action", True)
         button.setIconSize(QSize(64,64))
         button.setToolButtonStyle(Qt.ToolButtonTextUnderIcon)
         button.setDefaultAction(action)

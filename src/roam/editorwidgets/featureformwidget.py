@@ -64,7 +64,7 @@ class FeatureFormWidget(Ui_Form, QWidget):
         self.featureform.enablesave.connect(self.actionSave.setEnabled)
         self.featureform.rejected.connect(self.cancel.emit)
 
-        self.scrollAreaWidgetContents.layout().addWidget(self.featureform)
+        self.featureformarea.layout().addWidget(self.featureform)
 
     def delete_feature(self):
         try:
