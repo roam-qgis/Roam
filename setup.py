@@ -3,13 +3,16 @@ from distutils.core import setup
 from distutils.command.build import build
 from fabricate import run
 
-try:
-    import py2exe
-except ImportError:
-    print "Can't import py2exe. Do you have it installed."
-
-import glob
 import os
+
+if os.name is not 'posix':
+    try:
+        import py2exe
+    except ImportError:
+        print "Can't import py2exe. Do you have it installed."
+    
+import glob
+
 import sys
 import shutil
 import sys
@@ -165,34 +168,53 @@ class qtbuild(build):
         buildqtfiles()
         build.run(self)
 
-origIsSystemDLL = py2exe.build_exe.isSystemDLL
-def isSystemDLL(pathname):
-    if os.path.basename(pathname).lower() in ("msvcp100.dll", "msvcr100.dll"):
-        return 0
-    return origIsSystemDLL(pathname)
-py2exe.build_exe.isSystemDLL = isSystemDLL
 
-setup(
-    name='roam',
-    version=roam.__version__,
-    packages=find_packages('./src'),
-    package_dir={'': 'src', 'tests': 'tests'},
-    url='',
-    license='GPL',
-    author='Digital Mapping Solutions',
-    author_email='nathan.woodrow@mapsolutions.com.au',
-    description='',
-    windows=[roam_target, projectupdater_target, configmanager_target],
-    data_files=get_data_files(),
-    zipfile='libs\\',
-    cmdclass= {'build': qtbuild},
-    options={'py2exe': {
-        'dll_excludes': [ 'msvcr80.dll', 'msvcp80.dll',
-                        'msvcr80d.dll', 'msvcp80d.dll',
-                        'powrprof.dll', 'mswsock.dll',
-                        'w9xpopen.exe', 'MSVCP90.dll'],
-        'excludes': ['PyQt4.uic.port_v3'],
-        'includes': ['PyQt4.QtNetwork', 'sip', 'PyQt4.QtSql', 'sqlite3'],
-        'skip_archive': True,
-      }},
-)
+
+if os.name is 'posix':
+    setup(
+    	name='roam',
+    	version=roam.__version__,
+    	packages=find_packages('./src'),
+    	package_dir={'': 'src', 'tests': 'tests'},
+    	url='',
+    	license='GPL',
+    	author='Digital Mapping Solutions',
+    	author_email='nathan.woodrow@mapsolutions.com.au',
+    	description='',
+    	data_files=get_data_files(),
+    	cmdclass= {'build': qtbuild},
+    )
+
+else:
+    origIsSystemDLL = py2exe.build_exe.isSystemDLL
+    def isSystemDLL(pathname):
+	if os.path.basename(pathname).lower() in ("msvcp100.dll", "msvcr100.dll"):
+	    return 0
+	return origIsSystemDLL(pathname)
+    py2exe.build_exe.isSystemDLL = isSystemDLL
+
+    setup(
+    	name='roam',
+    	version=roam.__version__,
+    	packages=find_packages('./src'),
+    	package_dir={'': 'src', 'tests': 'tests'},
+    	url='',
+    	license='GPL',
+    	author='Digital Mapping Solutions',
+    	author_email='nathan.woodrow@mapsolutions.com.au',
+    	description='',
+    	windows=[roam_target, projectupdater_target, configmanager_target],
+    	data_files=get_data_files(),
+    	zipfile='libs\\',
+    	cmdclass= {'build': qtbuild},
+    	options={'py2exe': {
+                 'dll_excludes': [ 'msvcr80.dll', 'msvcp80.dll',
+                                'msvcr80d.dll', 'msvcp80d.dll',
+                                'powrprof.dll', 'mswsock.dll',
+                                'w9xpopen.exe', 'MSVCP90.dll'],
+                 'excludes': ['PyQt4.uic.port_v3'],
+                 'includes': ['PyQt4.QtNetwork', 'sip', 'PyQt4.QtSql', 'sqlite3'],
+                 'skip_archive': True,
+          }},
+    )
+
