@@ -16,7 +16,7 @@ class SyncProvider(QObject):
 
     @property
     def name(self):
-        return "Sync {}".format(self._name)
+        return self._name
 
     def startSync(self):
         pass
