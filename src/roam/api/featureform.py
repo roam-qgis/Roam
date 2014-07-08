@@ -414,6 +414,7 @@ class FeatureForm(FeatureFormBase):
 
         featureform.setObjectName("featureform")
 
+        featureform.setWindowTitle(form.label)
         featureform.setContentsMargins(3, 0, 3, 9)
         formstyle = roam.roam_style.featureform
         formstyle += featureform.styleSheet()

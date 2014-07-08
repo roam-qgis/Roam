@@ -32,6 +32,13 @@ class FeatureFormWidget(Ui_Form, QWidget):
         self.missingfieldsLabel.hide()
         self.missingfieldaction = toolbar.addWidget(self.missingfieldsLabel)
 
+        titlespacer = QWidget()
+        titlespacer.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
+        toolbar.addWidget(titlespacer)
+        self.titlellabel = QLabel(label)
+        self.titlellabel.setProperty("headerlabel", True)
+        self.titlelabelaction = toolbar.addWidget(self.titlellabel)
+
         spacer = QWidget()
         spacer2 = QWidget()
         spacer2.setMinimumWidth(20)
@@ -58,6 +65,7 @@ class FeatureFormWidget(Ui_Form, QWidget):
         Note: There can only be one feature form.  If you need to show another one make a new FeatureFormWidget
         """
         self.featureform = featureform
+        self.titlellabel.setText(self.featureform.windowTitle())
         self.featureform.formvalidation.connect(self._update_validation)
         self.featureform.helprequest.connect(functools.partial(RoamEvents.helprequest.emit, self))
         self.featureform.showlargewidget.connect(RoamEvents.show_widget.emit)
