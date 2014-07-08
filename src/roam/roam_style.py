@@ -93,23 +93,19 @@ QPushButton {
     color: #4f4f4f;
 }
 
+QPushButton:checked  {
+	background-color: rgb(203, 203, 203);
+}
+
+QPushButton:hover {
+    background-color: rgb(211, 228, 255);
+ }
+
 QToolButton[action="true"] {
     border: 1px solid #e1e1e1;
     padding: 6px;
     color: #4f4f4f;
 }
-
-QPushButton:checked  {
-	border: 1px solid #e1e1e1;
-    padding: 6px;
-	background-color: rgb(203, 203, 203);
-}
-
-QPushButton:hover {
-    border: 1px solid #e1e1e1;
-    padding: 6px;
-    background-color: rgb(211, 228, 255);
- }
 
 QWidget#featureformarea {
     background-color: white;
@@ -135,6 +131,14 @@ QPushButton#deleteButton {
 QLabel#headerlabel {
 	color: rgb(255, 134, 125);
 	font: 75 17pt "Segoe UI";
+}
+
+QTreeWidget#synctree {
+	font: 20pt "Segoe UI";
+}
+
+QTreeWidget#synctree::item {
+    padding-top: 4px;
 }
 """
 

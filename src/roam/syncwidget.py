@@ -28,10 +28,10 @@ class SyncWidget(Ui_Form, QWidget):
             projectitem.setIcon(0, QIcon(project.splash))
             for provider in providers:
                 provideritem = QTreeWidgetItem(projectitem)
-                provideritem.setText(0, provider.name)
                 button = QPushButton()
                 button.pressed.connect(partial(self.run, button, provider))
                 button.setText(provider.name)
+                button.setProperty('syncbutton', True)
                 self.synctree.setItemWidget(provideritem,0, button)
 
         self.synctree.expandAll()
