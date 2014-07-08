@@ -35,10 +35,7 @@
       </sizepolicy>
      </property>
      <property name="styleSheet">
-      <string notr="true">
-
-
-</string>
+      <string notr="true"/>
      </property>
      <property name="frameShape">
       <enum>QFrame::NoFrame</enum>
@@ -150,8 +147,8 @@
            </property>
            <property name="iconSize">
             <size>
-             <width>32</width>
-             <height>32</height>
+             <width>48</width>
+             <height>48</height>
             </size>
            </property>
            <property name="toolButtonStyle">
@@ -189,8 +186,8 @@
            </property>
            <property name="iconSize">
             <size>
-             <width>32</width>
-             <height>32</height>
+             <width>48</width>
+             <height>48</height>
             </size>
            </property>
            <property name="toolButtonStyle">

@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>471</width>
-    <height>125</height>
+    <width>468</width>
+    <height>112</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -32,6 +32,9 @@
    <string notr="true"/>
   </property>
   <layout class="QGridLayout" name="gridLayout">
+   <property name="margin">
+    <number>0</number>
+   </property>
    <item row="0" column="0" rowspan="2">
     <widget class="QLabel" name="imagelabel">
      <property name="sizePolicy">
@@ -152,6 +155,9 @@
      <property name="text">
       <string>Version</string>
      </property>
+     <property name="margin">
+      <number>6</number>
+     </property>
      <property name="projectlabel" stdset="0">
       <bool>true</bool>
      </property>
@@ -169,6 +175,16 @@
       </size>
      </property>
     </spacer>
+   </item>
+   <item row="2" column="0" colspan="5">
+    <widget class="Line" name="line">
+     <property name="styleSheet">
+      <string notr="true">color: rgb(147, 147, 147);</string>
+     </property>
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+    </widget>
    </item>
   </layout>
  </widget>
