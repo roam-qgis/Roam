@@ -514,7 +514,6 @@ class MainWindow(ui_mainwindow.Ui_MainWindow, QMainWindow):
         self.actionRaster.triggered.connect(self.toggleRasterLayers)
 
         self.infoTool.infoResults.connect(RoamEvents.selectionchanged.emit)
-        self.actionProject.triggered.connect(self.unloadpages)
         self.actionHome.triggered.connect(self.homeview)
         self.actionQuit.triggered.connect(self.exit)
 
@@ -732,6 +731,7 @@ class MainWindow(ui_mainwindow.Ui_MainWindow, QMainWindow):
         self.stackedWidget.setCurrentIndex(1)
 
     def loadpages(self, pages):
+	self.unloadpages()
         for page, config in pages.iteritems():
             action = QAction(self.menutoolbar)
             action.setCheckable(True)
