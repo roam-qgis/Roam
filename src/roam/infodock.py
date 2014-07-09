@@ -298,8 +298,8 @@ def generate_rows(fields, attributes):
     data = OrderedDict()
     items = []
     for field, value in zip(fields, attributes):
-        data[field] = value
-        item = u"<tr><th>{0}</th> <td>${{{0}}}</td></tr>".format(field)
+        data[field.replace(" ", "_")] = value
+        item = u"<tr><th>{0}</th> <td>${{{1}}}</td></tr>".format(field, field.replace(" ", "_"))
         items.append(item)
     rowtemple = Template(''.join(items))
     rowshtml = updateTemplate(data, rowtemple)
