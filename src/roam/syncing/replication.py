@@ -1,6 +1,6 @@
 import os
 
-from PyQt4.QtCore import pyqtSignal, QProcess, QObject
+from PyQt4.QtCore import pyqtSignal, QProcess, QObject, QProcessEnvironment
 
 
 class SyncProvider(QObject):
@@ -16,7 +16,7 @@ class SyncProvider(QObject):
 
     @property
     def name(self):
-        return "Sync {}".format(self._name)
+        return self._name
 
     def startSync(self):
         pass
@@ -26,10 +26,15 @@ class SyncProvider(QObject):
     
 
 class BatchFileSync(SyncProvider):
-    def __init__(self, name, cmd):
+    def __init__(self, name, **kwargs):
         super(BatchFileSync, self).__init__(name)
-        self.cmd = cmd
+        self.cmd = kwargs['cmd']
         self.process = QProcess()
+        variables = kwargs.get("variables", {})
+        env = QProcessEnvironment.systemEnvironment()
+        for varname, value in variables.iteritems():
+            env.insert(varname, value)
+        self.process.setProcessEnvironment(env)
         self.process.setWorkingDirectory(os.path.dirname(os.path.realpath(self.cmd)))
         self.process.finished.connect(self.complete)
         self.process.started.connect(self.syncStarted)

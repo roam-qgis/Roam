@@ -18,65 +18,7 @@
     <number>0</number>
    </property>
    <item row="0" column="0">
-    <widget class="QStackedWidget" name="stackedWidget">
-     <widget class="QWidget" name="data_entry_page">
-      <layout class="QVBoxLayout" name="verticalLayout_3">
-       <property name="margin">
-        <number>0</number>
-       </property>
-       <item>
-        <widget class="QScrollArea" name="scrollArea">
-         <property name="styleSheet">
-          <string notr="true">QScrollBar {
-	width: 30px; 
-}
-
-* {
-	background-color: rgb(255, 255, 255);
-}</string>
-         </property>
-         <property name="frameShape">
-          <enum>QFrame::NoFrame</enum>
-         </property>
-         <property name="verticalScrollBarPolicy">
-          <enum>Qt::ScrollBarAlwaysOn</enum>
-         </property>
-         <property name="horizontalScrollBarPolicy">
-          <enum>Qt::ScrollBarAlwaysOn</enum>
-         </property>
-         <property name="widgetResizable">
-          <bool>true</bool>
-         </property>
-         <widget class="QWidget" name="scrollAreaWidgetContents">
-          <property name="geometry">
-           <rect>
-            <x>0</x>
-            <y>0</y>
-            <width>711</width>
-            <height>645</height>
-           </rect>
-          </property>
-          <property name="styleSheet">
-           <string notr="true"/>
-          </property>
-          <layout class="QVBoxLayout" name="verticalLayout_2">
-           <property name="margin">
-            <number>0</number>
-           </property>
-          </layout>
-         </widget>
-        </widget>
-       </item>
-      </layout>
-     </widget>
-     <widget class="QWidget" name="fullscreenwidget">
-      <layout class="QVBoxLayout" name="verticalLayout">
-       <property name="margin">
-        <number>0</number>
-       </property>
-      </layout>
-     </widget>
-    </widget>
+    <widget class="QStackedWidget" name="stackedWidget"/>
    </item>
   </layout>
   <action name="actionSave">

@@ -23,7 +23,7 @@
    <bool>false</bool>
   </property>
   <property name="styleSheet">
-   <string notr="true">background-color: rgb(255, 255, 255);</string>
+   <string notr="true"/>
   </property>
   <layout class="QGridLayout" name="gridLayout">
    <property name="margin">
@@ -35,7 +35,7 @@
    <item row="1" column="0">
     <widget class="QListWidget" name="moduleList">
      <property name="styleSheet">
-      <string notr="true">QListWidget:item:hover {background-color: #dddddd;}</string>
+      <string notr="true"/>
      </property>
      <property name="frameShape">
       <enum>QFrame::NoFrame</enum>

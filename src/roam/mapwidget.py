@@ -6,7 +6,7 @@ from PyQt4.QtGui import QActionGroup, QFrame, QWidget, QSizePolicy, \
                         QAction, QPixmap, QCursor, QIcon, QColor, QMainWindow
 
 from qgis.gui import QgsMapCanvas, QgsMapToolZoom, QgsRubberBand
-from qgis.core import QgsPalLabeling, QgsMapLayerRegistry, QgsMapLayer, QgsFeature, QGis, QgsRectangle
+from qgis.core import QgsPalLabeling, QgsMapLayerRegistry, QgsMapLayer, QgsFeature, QGis, QgsRectangle, QgsProject
 
 from roam.gps_action import GPSAction, GPSMarker
 from roam.projectparser import ProjectParser
@@ -40,6 +40,7 @@ class MapWidget(Ui_CanvasWidget, QMainWindow):
         self.gpslogging = None
         self.selectionbands = defaultdict(partial(QgsRubberBand, self.canvas))
 
+        self.canvas.setInteractive(False)
         self.canvas.setCanvasColor(Qt.white)
         self.canvas.enableAntiAliasing(True)
         self.canvas.setWheelAction(QgsMapCanvas.WheelZoomToMouseCursor)
@@ -86,7 +87,7 @@ class MapWidget(Ui_CanvasWidget, QMainWindow):
         RoamEvents.editgeometry.connect(self.queue_feature_for_edit)
         RoamEvents.selectioncleared.connect(self.clear_selection)
         RoamEvents.selectionchanged.connect(self.highlight_selection)
-        RoamEvents.featureformloaded.connect(self.feature_form_loaded)
+        RoamEvents.openfeatureform.connect(self.feature_form_loaded)
 
         self.connectButtons()
 
@@ -97,21 +98,22 @@ class MapWidget(Ui_CanvasWidget, QMainWindow):
         self.canvas.mapRenderer().readXML(canvasnode)
         self.canvaslayers = parser.canvaslayers()
         self.canvas.setLayerSet(self.canvaslayers)
-        #red = QgsProject.instance().readNumEntry( "Gui", "/CanvasColorRedPart", 255 )[0];
-        #green = QgsProject.instance().readNumEntry( "Gui", "/CanvasColorGreenPart", 255 )[0];
-        #blue = QgsProject.instance().readNumEntry( "Gui", "/CanvasColorBluePart", 255 )[0];
-        #color = QColor(red, green, blue);
-        #self.canvas.setCanvasColor(color)
+        red = QgsProject.instance().readNumEntry( "Gui", "/CanvasColorRedPart", 255 )[0]
+        green = QgsProject.instance().readNumEntry( "Gui", "/CanvasColorGreenPart", 255 )[0]
+        blue = QgsProject.instance().readNumEntry( "Gui", "/CanvasColorBluePart", 255 )[0]
+        color = QColor(red, green, blue)
+        self.canvas.setCanvasColor(color)
         self.canvas.updateScale()
+        self.canvas.freeze(False)
         return self.canvas.mapRenderer().destinationCrs()
 
     def showEvent(self, *args, **kwargs):
-        if self.firstshow:
+        if QGis.QGIS_VERSION_INT == 20200 and self.firstshow:
             self.canvas.refresh()
             self.canvas.repaint()
             self.firstshow = False
 
-    def feature_form_loaded(self, form, feature, project, editmode):
+    def feature_form_loaded(self, form, feature, *args):
         self.currentfeatureband.setToGeometry(feature.geometry(), form.QGISLayer)
 
     def highlight_selection(self, results):
@@ -219,15 +221,16 @@ class MapWidget(Ui_CanvasWidget, QMainWindow):
 
         def actions():
             for form in self.project.forms:
-                action = form.createuiaction()
-                valid, failreasons = form.valid
-                if not valid:
-                    roam.utils.warning("Form {} failed to load".format(form.label))
-                    roam.utils.warning("Reasons {}".format(failreasons))
-                    action.triggered.connect(partial(showformerror, form))
-                else:
-                    action.triggered.connect(partial(self.load_form, form))
-                yield action
+                if form.has_geometry:
+                    action = form.createuiaction()
+                    valid, failreasons = form.valid
+                    if not valid:
+                        roam.utils.warning("Form {} failed to load".format(form.label))
+                        roam.utils.warning("Reasons {}".format(failreasons))
+                        action.triggered.connect(partial(showformerror, form))
+                    else:
+                        action.triggered.connect(partial(self.load_form, form))
+                    yield action
 
         formpicker = PickActionDialog(msg="Select data entry form")
         formpicker.addactions(actions())
@@ -353,7 +356,7 @@ class MapWidget(Ui_CanvasWidget, QMainWindow):
             value = layer.dataProvider().defaultValue(index)
             feature[index] = value
 
-        RoamEvents.open_feature_form(form, feature, editmode=False)
+        RoamEvents.load_feature_form(form, feature, editmode=False)
 
     def editfeaturegeometry(self, form, feature, newgeometry):
         # TODO Extract into function.

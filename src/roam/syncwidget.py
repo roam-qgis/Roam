@@ -1,9 +1,12 @@
 from functools import partial
 
-from PyQt4.QtGui import QIcon, QTreeWidgetItem, QPushButton, QWidget
+from PyQt4.QtGui import QIcon, QTreeWidgetItem, QPushButton, QWidget, QAction
 
 from ui.ui_sync import Ui_Form
+from popupdialogs import ActionPickerWidget
 from roam.flickwidget import FlickCharm
+
+
 
 class SyncWidget(Ui_Form, QWidget):
     syncqueue = []
@@ -13,28 +16,25 @@ class SyncWidget(Ui_Form, QWidget):
         self.syncrunning = False
         self.syncallButton.hide()
         self.flickcharm = FlickCharm()
-        self.flickcharm.activateOn(self.synctree)
+        self.flickcharm.activateOn(self.scrollArea)
         self.flickcharm.activateOn(self.syncstatus)
 
     def loadprojects(self, projects):
-        root = self.synctree.invisibleRootItem()
+        #root = self.synctree.invisibleRootItem()
         for project in projects:
             providers = list(project.syncprovders())
             if not providers:
                 continue
 
-            projectitem = QTreeWidgetItem(root)
-            projectitem.setText(0, project.name)
-            projectitem.setIcon(0, QIcon(project.splash))
+            actionwidget = ActionPickerWidget()
+            actionwidget.setTile(project.name)
             for provider in providers:
-                provideritem = QTreeWidgetItem(projectitem)
-                provideritem.setText(0, provider.name)
-                button = QPushButton()
-                button.pressed.connect(partial(self.run, button, provider))
-                button.setText(provider.name)
-                self.synctree.setItemWidget(provideritem,0, button)
-
-        self.synctree.expandAll()
+                action = QAction(None)
+                action.setText(provider.name)
+                action.setIcon(QIcon(":/icons/sync"))
+                action.triggered.connect(partial(self.run, action, provider))
+                actionwidget.addAction(action)
+            self.syncwidgets.layout().addWidget(actionwidget)
 
     def updatestatus(self, message):
         self.syncstatus.append(message)
@@ -69,24 +69,24 @@ class SyncWidget(Ui_Form, QWidget):
         except TypeError:
             pass
 
-    def syncfinished(self, button, provider):
+    def syncfinished(self, action, provider):
         self.disconnect(provider)
-        button.setText(provider.name)
-        button.setEnabled(True)
+        action.setText(provider.name)
+        action.setEnabled(True)
         self.syncrunning = False
 
-    def syncstarted(self, button, provider):
+    def syncstarted(self, action, provider):
         self.updatestatus('<b style="font-size:large">Sync started for {}</h3>'.format(provider.name))
-        button.setText('Running')
-        button.setEnabled(False)
+        action.setText('Running')
+        action.setEnabled(False)
         self.syncrunning = True
 
-    def run(self, button, provider):
-        provider.syncStarted.connect(partial(self.syncstarted, button, provider))
-        provider.syncFinished.connect(partial(self.syncfinished, button, provider))
+    def run(self, action, provider):
+        provider.syncStarted.connect(partial(self.syncstarted, action, provider))
+        provider.syncFinished.connect(partial(self.syncfinished, action, provider))
 
         SyncWidget.syncqueue.append(provider)
         if self.syncrunning:
-            button.setText("Pending")
+            action.setText("Pending")
         else:
             self.runnext()

@@ -2,6 +2,7 @@ from PyQt4.QtGui import QWidget
 from PyQt4.QtCore import QObject, pyqtSignal
 from collections import OrderedDict
 
+
 widgets = OrderedDict()
 
 class EditorWidgetException(Exception):
@@ -12,20 +13,20 @@ def registerwidgets(*widgetclasses):
         widgets[widgetclass.widgettype] = widgetclass
 
 def registerallwidgets():
-    import roam.editorwidgets.imagewidget
-    import roam.editorwidgets.listwidget
-    import roam.editorwidgets.checkboxwidget
-    import roam.editorwidgets.datewidget
-    import roam.editorwidgets.numberwidget
-    import roam.editorwidgets.textwidget
+    from roam.editorwidgets.imagewidget import ImageWidget
+    from roam.editorwidgets.listwidget import ListWidget, MultiList
+    from roam.editorwidgets.checkboxwidget import CheckboxWidget
+    from roam.editorwidgets.datewidget import DateWidget
+    from roam.editorwidgets.numberwidget import NumberWidget, DoubleNumberWidget
+    from roam.editorwidgets.textwidget import TextWidget, TextBlockWidget
+    from roam.editorwidgets.tablewidget import TableWidget
+    registerwidgets(ImageWidget, ListWidget, MultiList, CheckboxWidget, DateWidget,
+                    NumberWidget, DoubleNumberWidget, TextWidget, TextBlockWidget)
 
 def supportedwidgets():
     return widgets.keys()
 
 def widgetwrapper(widgettype, widget, config, layer, label, field, parent=None):
-    if not widgets:
-        registerallwidgets()
-
     try:
         editorwidget = widgets[widgettype]
     except KeyError:
@@ -38,9 +39,6 @@ def widgetwrapper(widgettype, widget, config, layer, label, field, parent=None):
 
 
 def createwidget(widgettype, parent=None):
-    if not widgets:
-        registerallwidgets()
-
     try:
         wrapper = widgets[widgettype]
     except KeyError:
@@ -70,6 +68,7 @@ class EditorWidget(QObject):
                                 QLabel[ok=true]
                                 { border-radius: 5px; background-color: rgba(200, 255, 197, 150); }"""
         self.validationupdate.connect(self.updatecontrolstate)
+        self.initconfig = kwargs.get('initconfig', {})
 
     @classmethod
     def for_widget(cls, widget, layer, label, field, parent, *args, **kwargs):
@@ -80,11 +79,16 @@ class EditorWidget(QObject):
         return editor
 
     @classmethod
-    def createwidget(cls, parent=None):
+    def createwidget(cls, parent=None, config=None):
         """
         Creates the widget that wrapper supports.
         """
-        return cls().createWidget(parent)
+        if not config:
+            config = {}
+        try:
+            return cls(initconfig=config).createWidget(parent)
+        except TypeError:
+            return cls().createWidget(parent)
 
     @property
     def readonly(self):
@@ -156,6 +160,7 @@ class EditorWidget(QObject):
     @config.setter
     def config(self, value):
         self._config = value
+        print type(self), value
         self.updatefromconfig()
 
     def updatefromconfig(self):
@@ -191,6 +196,13 @@ class EditorWidget(QObject):
         """
         self.valuechanged.emit(self.value())
 
+class RejectedException(Exception):
+    WARNING = 1
+    ERROR = 2
+
+    def __init__(self, message, level=WARNING):
+        super(RejectedException, self).__init__(message)
+        self.level = level
 
 class LargeEditorWidget(EditorWidget):
     """
@@ -200,8 +212,13 @@ class LargeEditorWidget(EditorWidget):
     The only thing this class has extra is a finished signal and emits that once input is complete.
     """
     finished = pyqtSignal(object)
-    cancel = pyqtSignal()
+    cancel = pyqtSignal(object, int)
 
     def emitfished(self):
         self.finished.emit(self.value())
 
+    def emitcancel(self, reason=None, level=1):
+        self.cancel.emit(reason, level)
+
+    def before_load(self):
+        pass

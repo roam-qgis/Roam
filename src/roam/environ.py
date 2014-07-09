@@ -24,6 +24,8 @@ class RoamApp(object):
             pass
 
         self.app = QgsApplication(self.sysargv, True)
+        import roam.roam_style
+        self.app.setStyleSheet(roam.roam_style.appstyle)
         QgsApplication.setPrefixPath(self.prefixpath, True)
         QgsApplication.initQgis()
 

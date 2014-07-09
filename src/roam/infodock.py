@@ -19,6 +19,7 @@ from roam.flickwidget import FlickCharm
 from roam.htmlviewer import updateTemplate
 from roam.ui.uifiles import (infodock_widget)
 from roam.api import RoamEvents
+from roam.dataaccess import database
 
 import templates
 
@@ -91,6 +92,7 @@ class InfoDock(infodock_widget, QWidget):
         self.editButton.pressed.connect(self.openform)
         self.editGeomButton.pressed.connect(self.editgeom)
         self.parent().installEventFilter(self)
+        self.project = None
 
         RoamEvents.selectioncleared.connect(self.clearResults)
         RoamEvents.editgeometry_complete.connect(self.refreshcurrent)
@@ -124,7 +126,7 @@ class InfoDock(infodock_widget, QWidget):
 
     def openform(self):
         cursor = self.selection
-        RoamEvents.openfeatureform.emit(cursor.form, cursor.feature, True)
+        RoamEvents.load_feature_form(cursor.form, cursor.feature, True)
 
     def editgeom(self):
         cursor = self.selection
@@ -148,13 +150,14 @@ class InfoDock(infodock_widget, QWidget):
         cursor = item.data(Qt.UserRole)
         self.update(cursor)
 
-    def setResults(self, results, forms):
+    def setResults(self, results, forms, project):
         lastrow = self.layerList.currentRow()
         if lastrow == -1:
             lastrow = 0
 
         self.clearResults()
         self.forms = forms
+        self.project = project
 
         for layer, features in results.iteritems():
             if features:
@@ -162,6 +165,7 @@ class InfoDock(infodock_widget, QWidget):
 
         self.layerList.setCurrentRow(lastrow)
         self.layerList.setMinimumWidth(self.layerList.sizeHintForColumn(0) + 20)
+        self.layerList.setMinimumHeight(self.layerList.sizeHintForRow(0) + 20)
         self.navwidget.show()
 
     def show(self):
@@ -197,26 +201,21 @@ class InfoDock(infodock_widget, QWidget):
             utils.warning(ex)
             return
 
-        fields = [field.name() for field in feature.fields()]
-        data = OrderedDict()
-
-        items = []
-        for field, value in zip(fields, feature.attributes()):
-            data[field] = value
-            item = u"<tr><th>{0}</th> <td>${{{0}}}</td></tr>".format(field)
-            items.append(item)
-        rowtemple = Template(''.join(items))
-        rowshtml = updateTemplate(data, rowtemple)
 
         form = cursor.form
         layer = cursor.layer
+
+        info1 = self.generate_info("info1", self.project, layer, feature.id(), feature)
+        info2 = self.generate_info("info2", self.project, layer, feature.id(), feature)
+
         if form:
             name = "{}".format(layer.name(), form.label)
         else:
             name = layer.name()
 
         info = dict(TITLE=name,
-                    ROWS=rowshtml)
+                    INFO1=info1,
+                    INFO2=info2)
 
         html = updateTemplate(info, template)
 
@@ -226,9 +225,83 @@ class InfoDock(infodock_widget, QWidget):
         self.editGeomButton.setVisible(not form is None)
         self.featureupdated.emit(layer, feature, cursor.features)
 
+
+    def generate_info(self, infoblock, project, layer, mapkey, feature):
+        if infoblock == "info1":
+            header = "Record"
+        else:
+            header = "Related Record"
+
+        info_template = Template("""
+        <div class="panel panel-default">
+          <div class="panel-heading text-left">
+            <h2 class="panel-title" style="font-size:24px">${HEADER}</h2>
+          </div>
+          <div class="panel-body" style="padding:0px">
+            <table class="table table-condensed">
+                <col style="width: 35%;"/>
+                <col style="width: 65%;"/>
+            ${ROWS}
+            </table>
+            </div>
+        </div>
+        """)
+
+        query = project.info_query(infoblock, layer.name())
+        print query
+        if not query and infoblock == "info1":
+            query = {}
+            query['type'] = 'feature'
+        elif not query:
+            return None
+
+        results = []
+        if query['type'] == 'sql':
+            sql = query['query']
+            print sql
+            connection = query['connection']
+            if connection == "from_layer":
+                try:
+                    db = database.Database.fromLayer(layer)
+                    results = db.query(sql, mapkey=mapkey)
+                except database.DatabaseException as ex:
+                    return "<b> Error: {}<b>".format(ex.message)
+            else:
+                return None
+        elif query['type'] == 'feature':
+            fields = [field.name() for field in feature.fields()]
+            attributes = feature.attributes()
+            results.append(OrderedDict(zip(fields, attributes)))
+        else:
+            return None
+
+        blocks = []
+        try:
+            for result in results:
+                fields = result.keys()
+                attributes = result.values()
+                rows = generate_rows(fields, attributes)
+                print rows
+                blocks.append(updateTemplate(dict(ROWS=rows,
+                                                  HEADER=header), info_template))
+            return '<br>'.join(blocks)
+        except database.DatabaseException as ex:
+            return "<b> Error: {}<b>".format(ex.msg)
+
     def clearResults(self):
         self.layerList.clear()
         self.attributesView.setHtml('')
         self.editButton.setVisible(False)
         self.navwidget.hide()
+
+def generate_rows(fields, attributes):
+    data = OrderedDict()
+    items = []
+    for field, value in zip(fields, attributes):
+        data[field] = value
+        item = u"<tr><th>{0}</th> <td>${{{0}}}</td></tr>".format(field)
+        items.append(item)
+    rowtemple = Template(''.join(items))
+    rowshtml = updateTemplate(data, rowtemple)
+    return rowshtml
 

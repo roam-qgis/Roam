@@ -52,6 +52,8 @@ class RubberBand(QgsRubberBand):
 
             if qgspoint and qgspointbefore:
                 distance = self.distancearea.measureLine( qgspoint, qgspointbefore)
+                if int(distance) == 0:
+                    continue
                 text = QgsDistanceArea.textUnit(distance, 3, self.unit, False)
                 linegeom = QgsGeometry.fromPolyline([qgspoint, qgspointbefore])
                 midpoint = linegeom.centroid().asPoint()

@@ -18,6 +18,10 @@
 	font: 75 14pt &quot;Calibri&quot;;
 }
 
+QLabel[header=&quot;true&quot;] {
+	font: 75 20pt &quot;Calibri&quot;;
+}
+
 QListView::item {
 	padding: 8px;
     border-bottom: 1px solid rgba(208, 208, 208, 50);
@@ -45,22 +49,104 @@ QListView::item:selected {
      <property name="frameShadow">
       <enum>QFrame::Plain</enum>
      </property>
-     <layout class="QGridLayout" name="gridLayout_2">
+     <layout class="QVBoxLayout" name="verticalLayout">
+      <property name="spacing">
+       <number>0</number>
+      </property>
       <property name="margin">
-       <number>3</number>
+       <number>0</number>
       </property>
-      <property name="horizontalSpacing">
-       <number>6</number>
-      </property>
-      <item row="0" column="0">
-       <widget class="QLabel" name="fieldnameLabel">
-        <property name="text">
-         <string>{field Name}</string>
+      <item>
+       <layout class="QHBoxLayout" name="horizontalLayout">
+        <item>
+         <widget class="QLabel" name="fieldnameLabel">
+          <property name="text">
+           <string>{field Name}</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
+          </property>
+          <property name="header" stdset="0">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QToolButton" name="closebutton">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="text">
+           <string>Cancel</string>
+          </property>
+          <property name="icon">
+           <iconset resource="../resources.qrc">
+            <normaloff>:/widgets/cancel</normaloff>:/widgets/cancel</iconset>
+          </property>
+          <property name="iconSize">
+           <size>
+            <width>48</width>
+            <height>48</height>
+           </size>
+          </property>
+          <property name="toolButtonStyle">
+           <enum>Qt::ToolButtonTextUnderIcon</enum>
+          </property>
+          <property name="autoRaise">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QToolButton" name="saveButton">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="text">
+           <string>Save</string>
+          </property>
+          <property name="icon">
+           <iconset resource="../resources.qrc">
+            <normaloff>:/icons/save</normaloff>:/icons/save</iconset>
+          </property>
+          <property name="iconSize">
+           <size>
+            <width>48</width>
+            <height>48</height>
+           </size>
+          </property>
+          <property name="toolButtonStyle">
+           <enum>Qt::ToolButtonTextUnderIcon</enum>
+          </property>
+          <property name="autoRaise">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <widget class="Line" name="line">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
         </property>
        </widget>
       </item>
-      <item row="2" column="0" colspan="2">
+      <item>
        <widget class="QListView" name="listView">
+        <property name="styleSheet">
+         <string notr="true">QListView::indicator
+{
+width: 32px;
+height:32px;
+}</string>
+        </property>
         <property name="frameShape">
          <enum>QFrame::NoFrame</enum>
         </property>
@@ -72,42 +158,6 @@ QListView::item:selected {
           <width>32</width>
           <height>32</height>
          </size>
-        </property>
-       </widget>
-      </item>
-      <item row="1" column="0" colspan="2">
-       <widget class="Line" name="line">
-        <property name="orientation">
-         <enum>Qt::Horizontal</enum>
-        </property>
-       </widget>
-      </item>
-      <item row="0" column="1">
-       <widget class="QToolButton" name="closebutton">
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
-        <property name="text">
-         <string>Cancel</string>
-        </property>
-        <property name="icon">
-         <iconset resource="../resources.qrc">
-          <normaloff>:/widgets/cancel</normaloff>:/widgets/cancel</iconset>
-        </property>
-        <property name="iconSize">
-         <size>
-          <width>48</width>
-          <height>48</height>
-         </size>
-        </property>
-        <property name="toolButtonStyle">
-         <enum>Qt::ToolButtonTextUnderIcon</enum>
-        </property>
-        <property name="autoRaise">
-         <bool>true</bool>
         </property>
        </widget>
       </item>

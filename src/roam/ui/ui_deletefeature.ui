@@ -20,28 +20,7 @@
    <string>Dialog</string>
   </property>
   <property name="styleSheet">
-   <string notr="true">* {
-	color: #4f4f4f;
-	font: 14pt &quot;Segoe UI&quot; ;
-    background-color: rgb(255, 255, 255);
-}
-
-        QPushButton { 
-            border: 1px solid #e1e1e1;
-            padding: 6px;
-            color: #4f4f4f;
-         }	
-
-QPushButton#deleteButton {
-	background-color: rgb(255, 134, 125);
-   color: white;
-	font: 75 17pt &quot;Segoe UI&quot;;
-}
-
-QLabel#headerlabel {
-	color: rgb(255, 134, 125);
-	font: 75 17pt &quot;Segoe UI&quot;;
-}</string>
+   <string notr="true"/>
   </property>
   <property name="modal">
    <bool>false</bool>
@@ -108,7 +87,7 @@ QLabel#headerlabel {
            <font>
             <family>Segoe UI</family>
             <pointsize>17</pointsize>
-            <weight>9</weight>
+            <weight>50</weight>
             <italic>false</italic>
             <bold>false</bold>
            </font>

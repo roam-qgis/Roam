@@ -22,9 +22,12 @@ from PyQt4.QtGui import (QWidget,
                          QDateTimeEdit,
                          QBoxLayout,
                          QSpacerItem,
-                         QFormLayout)
+                         QFormLayout,
+                         QSpinBox,
+                         QDoubleSpinBox)
 
 from qgis.core import QgsFields, QgsFeature, QgsGPSConnectionRegistry
+from qgis.gui import QgsMessageBar
 
 from roam.editorwidgets.core import EditorWidgetException
 from roam import utils
@@ -34,51 +37,9 @@ from roam.api import RoamEvents, GPS
 
 import roam.editorwidgets.core
 import roam.defaults as defaults
-
-style = """
-            QCheckBox::indicator {
-                 width: 40px;
-                 height: 40px;
-             }
-
-            * {
-                font: 20px "Segoe UI" ;
-            }
-
-            QLabel {
-                color: #4f4f4f;
-            }
-
-            QDialog { background-color: rgb(255, 255, 255); }
-            QScrollArea { background-color: rgb(255, 255, 255); }
-
-            QPushButton {
-                border: 1px solid #e1e1e1;
-                 padding: 6px;
-                color: #4f4f4f;
-             }
-
-            QPushButton:hover {
-                border: 1px solid #e1e1e1;
-                 padding: 6px;
-                background-color: rgb(211, 228, 255);
-             }
-
-            QCheckBox {
-                color: #4f4f4f;
-            }
-
-            QComboBox {
-                border: 1px solid #d3d3d3;
-            }
-
-            QComboBox::drop-down {
-            width: 30px;
-            }
-"""
+import roam.roam_style
 
 values_file = os.path.join(tempfile.gettempdir(), "Roam")
-
 
 def loadsavedvalues(layer):
     attr = {}
@@ -160,17 +121,42 @@ def installflickcharm(widget):
         widget.charm.activateOn(child)
     return widget
 
+RejectedException = roam.editorwidgets.core.RejectedException
 
-class RejectedException(Exception):
-    WARNING = 1
-    ERROR = 2
 
-    def __init__(self, message, level=WARNING):
-        super(RejectedException, self).__init__(message)
+
+class FeatureSaveException(Exception):
+    def __init__(self, title, message, level, timeout=0, moreinfo=None):
+        super(FeatureSaveException, self).__init__(self, message)
+        self.title = title
         self.level = level
+        self.timout = timeout
+        self.moreinfo = moreinfo
+
+    @classmethod
+    def missing_values(cls):
+        return cls("Missing fields", "Some fields are still required.", QgsMessageBar.WARNING, 2)
+
+    @classmethod
+    def not_accepted(cls):
+        return cls("Form was not accepted", "The form could not be accepted", QgsMessageBar.WARNING)
+
+    @classmethod
+    def not_saved(cls, errors):
+        return cls("Error in saving feature",
+                   "There seems to be a error trying to save the feature",
+                   QgsMessageBar.CRITICAL,
+                   moreinfo='\n'.join(errors))
+
+    @property
+    def error(self):
+        """
+        Returns a tuple of the error
+        """
+        return (self.title, self.message, self.level, self.timout, self.moreinfo)
 
 
-class DeleteFeatureException(Exception):
+class DeleteFeatureException(FeatureSaveException):
     pass
 
 
@@ -195,23 +181,13 @@ class FeatureFormBase(QWidget):
         self.bindingvalues = {}
         self.editingmode = False
 
-    def _installeventfilters(self, widgettype):
-        for widget in self.findChildren(widgettype):
-            widget.installEventFilter(self)
-
-    def eventFilter(self, object, event):
-        # Hack I really don't like this but there doesn't seem to be a better way at the
-        # moment
-        if event.type() == QEvent.FocusIn:
-            RoamEvents.openkeyboard.emit()
-        return False
-
     def updaterequired(self, field, passed):
         self.requiredfields[field.name()] = passed
         passed = self.allpassing
         self.formvalidation.emit(passed)
 
-    def validateall(self, widgetwrappers):
+    def validateall(self):
+        widgetwrappers = self.boundwidgets.itervalues()
         for wrapper in widgetwrappers:
             wrapper.validate()
 
@@ -277,7 +253,7 @@ class FeatureFormBase(QWidget):
                 widgetwrapper.setrequired()
                 widgetwrapper.validationupdate.connect(self.updaterequired)
 
-            widgetwrapper.largewidgetrequest.connect(self.showlargewidget.emit)
+            widgetwrapper.largewidgetrequest.connect(RoamEvents.show_widget.emit)
 
             self._bindsavebutton(field)
             self.boundwidgets[field] = widgetwrapper
@@ -294,7 +270,7 @@ class FeatureFormBase(QWidget):
             except KeyError:
                 utils.info("Can't find control for field {}. Ignoring".format(field))
 
-        self.validateall(self.boundwidgets.itervalues())
+        self.validateall()
 
     def getvalues(self):
         def shouldsave(field):
@@ -376,8 +352,6 @@ class FeatureFormBase(QWidget):
 
         return defaults.widget_default(widgetconfig, self.feature, self.form.QGISLayer)
 
-
-
 class FeatureForm(FeatureFormBase):
     """
     You may override this in forms __init__.py module in order to add custom logic in the following
@@ -438,19 +412,17 @@ class FeatureForm(FeatureFormBase):
         else:
             raise NotImplemented('Other form types not supported yet')
 
-        featureform.setContentsMargins(3, 0, 3, 0)
-        formstyle = style
+        featureform.setObjectName("featureform")
+
+        featureform.setContentsMargins(3, 0, 3, 9)
+        formstyle = roam.roam_style.featureform
         formstyle += featureform.styleSheet()
         featureform.setStyleSheet(formstyle)
 
         featureform.createhelplinks()
         featureform.setProperty('featureform', featureform)
 
-        widgettypes = [QLineEdit, QPlainTextEdit, QDateTimeEdit]
-        map(featureform._installeventfilters, widgettypes)
-
         featureform.setupui()
-
         featureform.uisetup()
 
         return featureform
@@ -542,4 +514,71 @@ class FeatureForm(FeatureFormBase):
     def allpassing(self):
         return all(valid for valid in self.requiredfields.values())
 
+    def save(self):
+        """
+        Save the values from the form into the set feature
+
+        Override this method to handle saving things your own way if needed.
+        """
+        if not self.allpassing:
+            raise FeatureSaveException.missing_values()
+
+        def updatefeautrefields(feature):
+            def field_or_null(field):
+                if field == '' or field is None or isinstance(field, QPyNullVariant):
+                    return QPyNullVariant(str)
+                return field
+
+            for key, value in values.iteritems():
+                try:
+                    fields = [w['field'] for w in self.formconfig['widgets']]
+                    if key in fields:
+                        feature[key] = field_or_null(value)
+                    else:
+                        feature[key] = value
+                except KeyError:
+                    continue
+            return feature
+
+        if not self.accept():
+            raise FeatureSaveException.not_accepted()
+
+        layer = self.form.QGISLayer
+        values, savedvalues = self.getvalues()
+
+        updatefeautrefields(self.feature)
+        layer.startEditing()
+        if self.editingmode:
+            layer.updateFeature(self.feature)
+        else:
+            layer.addFeature(self.feature)
+            savevalues(layer, savedvalues)
+
+        saved = layer.commitChanges()
+
+        if not saved:
+            errors = layer.commitErrors()
+            raise FeatureSaveException.not_saved(errors)
+
+        self.featuresaved(self.feature, values)
+
+    def delete(self):
+        """
+        Delete the feature that is bound to this form from the forms layer
+        Override this method to add your own delete logic
+        """
+        layer = self.form.QGISLayer
+        userdeleted = self.deletefeature()
+
+        if not userdeleted:
+            # If the user didn't add there own feature delete logic
+            # we will just do it for them.
+            layer = self.form.QGISLayer
+            featureid = self.feature.id()
+            layer.startEditing()
+            layer.deleteFeature(featureid)
+            saved = layer.commitChanges()
+            if not saved:
+                errors = layer.commitErrors()
+                raise DeleteFeatureException.not_saved(errors)
 

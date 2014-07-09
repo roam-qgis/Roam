@@ -23,7 +23,9 @@ import roam
 import roam.mainwindow
 import roam.utils
 import roam.api.featureform
+import roam.editorwidgets.core
 
+roam.editorwidgets.core.registerallwidgets()
 
 # Fake this module to maintain API.
 sys.modules['roam.featureform'] = roam.api.featureform

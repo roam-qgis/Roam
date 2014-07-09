@@ -20,35 +20,7 @@
    <string>Form</string>
   </property>
   <property name="styleSheet">
-   <string notr="true">* {
-	font: 75 14pt &quot;Calibri&quot;;
-}
-
-QWidget#datatimerpicker { background-color: rgb(255, 255, 255); }
-
-QPushButton { 
-	border: 1px solid #e1e1e1;
-     padding: 6px;
-	color: #4f4f4f;
- }
-
-QPushButton:hover { 
-	border: 1px solid #e1e1e1;
-     padding: 6px;
-	background-color: rgb(211, 228, 255);
- }
-
-QPushButton:checked  { 
-	border: 1px solid #e1e1e1;
-     padding: 6px;
-	background-color: rgb(203, 203, 203);
- }
-
-QCheckBox {
-	color: #4f4f4f;
-}
-
-</string>
+   <string notr="true"/>
   </property>
   <layout class="QGridLayout" name="gridLayout_2">
    <item row="0" column="0" colspan="2">
@@ -139,7 +111,7 @@ QCheckBox {
       <font>
        <family>Calibri</family>
        <pointsize>14</pointsize>
-       <weight>9</weight>
+       <weight>50</weight>
        <italic>false</italic>
        <bold>false</bold>
       </font>
@@ -155,7 +127,7 @@ QCheckBox {
       <font>
        <family>Calibri</family>
        <pointsize>14</pointsize>
-       <weight>9</weight>
+       <weight>50</weight>
        <italic>false</italic>
        <bold>false</bold>
       </font>
@@ -177,7 +149,7 @@ QCheckBox {
       <font>
        <family>Calibri</family>
        <pointsize>14</pointsize>
-       <weight>9</weight>
+       <weight>50</weight>
        <italic>false</italic>
        <bold>false</bold>
       </font>
@@ -199,7 +171,7 @@ QCheckBox {
          <font>
           <family>Calibri</family>
           <pointsize>14</pointsize>
-          <weight>9</weight>
+          <weight>50</weight>
           <italic>false</italic>
           <bold>false</bold>
          </font>
@@ -284,7 +256,7 @@ QCheckBox {
          <font>
           <family>Calibri</family>
           <pointsize>14</pointsize>
-          <weight>9</weight>
+          <weight>50</weight>
           <italic>false</italic>
           <bold>false</bold>
          </font>

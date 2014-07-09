@@ -27,68 +27,7 @@
    <double>1.000000000000000</double>
   </property>
   <property name="styleSheet">
-   <string notr="true">        QStackedWidget QScrollArea {
-             background-color: rgb(255, 255, 255);
-        }		
-
-		QToolButton { 
-            padding: 4px;
-            color: #4f4f4f;
-         }
-
-		QToolButton:hover { 
-            padding: 4px;
-            background-color: rgb(211, 228, 255);
-         }
-        
-        QToolBar, QStatusBar {
-			font: 75 14pt &quot;Calibri&quot;;
-			background: white;
-			border: none;
-        }
-
-		QStatusBar::item {
-					border: none;
-		}
-        
-        QCheckBox::indicator {
-             width: 40px;
-             height: 40px;
-         }
-        
-        QLabel {
-            color: #4f4f4f;
-        }
-        
-        QPushButton { 
-            border: 1px solid #e1e1e1;
-             padding: 6px;
-            color: #4f4f4f;
-         }
-        
-        QPushButton:hover { 
-            border: 1px solid #e1e1e1;
-             padding: 6px;
-            background-color: rgb(211, 228, 255);
-         }
-        
-        QCheckBox {
-            color: #4f4f4f;
-        }
-        
-        QComboBox::drop-down {
-            width: 30px;
-        }
-        
-        QComboBox {
-            border: 1px solid #d3d3d3;
-        }
-
-		 QComboBox::down-arrow {
-    		 image: url(:icons/down);
- 		}
-
-	</string>
+   <string notr="true"/>
   </property>
   <property name="iconSize">
    <size>
@@ -107,14 +46,14 @@
     <item row="0" column="0">
      <widget class="QStackedWidget" name="stackedWidget">
       <property name="styleSheet">
-       <string notr="true">background-color: rgb(255, 255, 255);</string>
+       <string notr="true"/>
       </property>
       <property name="currentIndex">
-       <number>0</number>
+       <number>4</number>
       </property>
       <widget class="MapWidget" name="canvas_page">
        <property name="styleSheet">
-        <string notr="true">background-color: rgb(255, 255, 255);</string>
+        <string notr="true"/>
        </property>
        <layout class="QVBoxLayout" name="verticalLayout_3">
         <property name="spacing">
@@ -137,7 +76,7 @@
       </widget>
       <widget class="SettingsWidget" name="settingswidget">
        <property name="styleSheet">
-        <string notr="true">background-color: rgb(255, 255, 255);</string>
+        <string notr="true"/>
        </property>
        <layout class="QGridLayout" name="gridLayout_4">
         <property name="margin">
@@ -215,9 +154,7 @@
       </widget>
       <widget class="QWidget" name="widgetpage">
        <property name="styleSheet">
-        <string notr="true">QWidget#widgetpage {
-	background-color: rgb(255, 255, 255);
-}</string>
+        <string notr="true"/>
        </property>
        <layout class="QGridLayout" name="gridLayout_5">
         <property name="leftMargin">
@@ -268,24 +205,7 @@
     <string>sidetoolbar</string>
    </property>
    <property name="styleSheet">
-    <string notr="true">QToolBar {
-	background-color: rgb(85,85,85);
-    padding: 0px;
-}
-
-QToolButton {
-	color: rgb(221,221,219);
-}
-
-QToolButton:hover { 
-	color: rgb(0,0,0);
-}
-
-QToolButton:checked { 
-	color: rgb(91,147,194);
-	padding-right: 0px;
-	background-color: rgb(240, 240, 240);
-}</string>
+    <string notr="true"/>
    </property>
    <property name="movable">
     <bool>false</bool>
