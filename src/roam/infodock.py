@@ -247,28 +247,32 @@ class InfoDock(infodock_widget, QWidget):
         </div>
         """)
 
-        query = project.info_query(infoblock, layer.name())
-        print query
-        if not query and infoblock == "info1":
-            query = {}
-            query['type'] = 'feature'
-        elif not query:
+        infoblockdef = project.info_query(infoblock, layer.name())
+        if not infoblockdef and infoblock == "info1":
+            infoblockdef = {}
+            infoblockdef['type'] = 'feature'
+        elif not infoblockdef:
             return None
 
         results = []
-        if query['type'] == 'sql':
-            sql = query['query']
+        if infoblockdef['type'] == 'sql':
+            sql = infoblockdef['query']
             print sql
-            connection = query['connection']
+            connection = infoblockdef['connection']
             if connection == "from_layer":
                 try:
                     db = database.Database.fromLayer(layer)
+                    try:
+                        keycolumn = infoblockdef['mapkey']
+                        mapkey = feature[keycolumn]
+                    except KeyError:
+                        mapkey = mapkey
                     results = db.query(sql, mapkey=mapkey)
                 except database.DatabaseException as ex:
                     return "<b> Error: {}<b>".format(ex.message)
             else:
                 return None
-        elif query['type'] == 'feature':
+        elif infoblockdef['type'] == 'feature':
             fields = [field.name() for field in feature.fields()]
             attributes = feature.attributes()
             results.append(OrderedDict(zip(fields, attributes)))
