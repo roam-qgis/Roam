@@ -65,6 +65,8 @@ def layer_value(feature, layer, defaultconfig):
         if layer.geometryType() == QGis.Point:
             point = feature.geometry().asPoint()
             rect = QgsRectangle(point.x(), point.y(), point.x() + 10, point.y() + 10)
+        else:
+            rect.scale(20)
 
         rect = canvas.mapRenderer().mapToLayerCoordinates(layer, rect)
         rq = QgsFeatureRequest().setFilterRect(rect)\
