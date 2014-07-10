@@ -219,6 +219,7 @@ class FeatureFormBase(QWidget):
             widget = self.findcontrol(field)
             if widget is None:
                 widget = roam.editorwidgets.core.createwidget(widgettype)
+                config['hidden'] = True
                 utils.warning("No widget named {} found so we have made one.".format(field))
 
             label = self.findcontrol("{}_label".format(field))
