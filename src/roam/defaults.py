@@ -1,5 +1,5 @@
 import os
-from qgis.core import QgsExpression, QgsMapLayerRegistry, QgsFeatureRequest
+from qgis.core import QgsExpression, QgsMapLayerRegistry, QgsFeatureRequest, QGis, QgsPoint, QgsRectangle
 
 import roam.utils
 
@@ -62,9 +62,13 @@ def layer_value(feature, layer, defaultconfig):
     searchlayer = QgsMapLayerRegistry.instance().mapLayersByName(layername)[0]
     if feature.geometry():
         rect = feature.geometry().boundingBox()
-        rect.scale(10)
+        if layer.geometryType() == QGis.Point:
+            point = feature.geometry().asPoint()
+            rect = QgsRectangle(point.x(), point.y(), point.x() + 10, point.y() + 10)
+
         rect = canvas.mapRenderer().mapToLayerCoordinates(layer, rect)
-        rq = QgsFeatureRequest().setFilterRect(rect)
+        rq = QgsFeatureRequest().setFilterRect(rect)\
+                                .setFlags(QgsFeatureRequest.ExactIntersect)
         features = searchlayer.getFeatures(rq)
     else:
         features = searchlayer.getFeatures()
