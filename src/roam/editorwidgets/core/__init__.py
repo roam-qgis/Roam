@@ -160,7 +160,6 @@ class EditorWidget(QObject):
     @config.setter
     def config(self, value):
         self._config = value
-        print type(self), value
         self.updatefromconfig()
 
     def updatefromconfig(self):

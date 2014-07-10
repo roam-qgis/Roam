@@ -257,7 +257,6 @@ class InfoDock(infodock_widget, QWidget):
         results = []
         if infoblockdef['type'] == 'sql':
             sql = infoblockdef['query']
-            print sql
             connection = infoblockdef['connection']
             if connection == "from_layer":
                 try:
@@ -285,7 +284,6 @@ class InfoDock(infodock_widget, QWidget):
                 fields = result.keys()
                 attributes = result.values()
                 rows = generate_rows(fields, attributes)
-                print rows
                 blocks.append(updateTemplate(dict(ROWS=rows,
                                                   HEADER=header), info_template))
             return '<br>'.join(blocks)

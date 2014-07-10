@@ -58,7 +58,6 @@ class Database(object):
         for index in range(record.count()):
             name = record.fieldName(index)
             values[name] = record.value(index)
-        roam.utils.log(values)
         return values
 
     def query(self, sql, **mappings):

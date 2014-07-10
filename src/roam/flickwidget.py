@@ -110,7 +110,6 @@ class FlickCharm(QObject):
                 QApplication.postEvent(object, event2)
             elif eventType == QEvent.MouseMove:
                 moved_pos = QCursor.pos() - data.pressPos
-                print moved_pos.manhattanLength()
                 if moved_pos.manhattanLength() < 200:
                     consumed = False
                 else:
