@@ -70,6 +70,7 @@ class FeatureFormWidget(Ui_Form, QWidget):
         self.featureform.helprequest.connect(functools.partial(RoamEvents.helprequest.emit, self))
         self.featureform.showlargewidget.connect(RoamEvents.show_widget.emit)
         self.featureform.enablesave.connect(self.actionSave.setEnabled)
+        self.featureform.enablesave.connect(self.actionSave.setVisible)
         self.featureform.rejected.connect(self.cancel.emit)
 
         self.featureformarea.layout().addWidget(self.featureform)
