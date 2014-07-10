@@ -1,4 +1,5 @@
 import os
+import copy
 import glob
 import utils
 import yaml
@@ -18,10 +19,13 @@ from roam.utils import log, debug
 from roam.syncing import replication
 from roam.api import FeatureForm
 from roam.structs import OrderedDictYAMLLoader
+from roam.dataaccess.database import Database
+from roam.structs import CaseInsensitiveDict
 
 import roam.utils
 import roam
 import roam.maptools
+import roam.defaults as defaults
 
 supportedgeometry = [QGis.Point, QGis.Polygon, QGis.Line]
 
@@ -38,6 +42,19 @@ class ErrorInMapTool(Exception):
         Raised when there is an error in configuring the map tool  
     """
     pass
+
+
+def values_from_feature(feature, layer):
+    attributes = feature.attributes()
+    fields = [field.name().lower() for field in feature.fields()]
+    if layer.dataProvider().name() == 'spatialite':
+        pkindexes = layer.dataProvider().pkAttributeIndexes()
+        for index in pkindexes:
+            del fields[index]
+            del attributes[index]
+    values = CaseInsensitiveDict(zip(fields, attributes))
+    return values
+
 
 
 def layersfromlist(layerlist):
@@ -272,7 +289,7 @@ class Form(object):
     def formclass(self):
         return self._formclass or FeatureForm
 
-    def create_featureform(self, feature, defaults, *args, **kwargs):
+    def create_featureform(self, feature, defaults={}, *args, **kwargs):
         """
         Creates and returns the feature form for this Roam form
         """
@@ -327,12 +344,38 @@ class Form(object):
 
                 value = layer.dataProvider().defaultValue(index)
                 feature[index] = value
+            # Update the feature with the defaults from the widget config
+            defaults = self.default_values(feature)
+            for key, value in defaults.iteritems():
+                feature[key] = value
+
         return feature
+
+    def values_from_feature(self, feature):
+        return values_from_feature(feature, self.QGISLayer)
+
+    def default_values(self, feature):
+        """
+        Return the default values for the form using the given feature.
+        :param feature: The feature that can be used for default values
+        :return: A dict of default values for the form
+        """
+        defaultwidgets = self.widgetswithdefaults()
+        defaultvalues = defaults.default_values(defaultwidgets, feature, self.QGISLayer)
+        return defaultvalues
 
     @property
     def has_geometry(self):
         geomtype = self.QGISLayer.geometryType()
         return geomtype in supportedgeometry
+
+    def get_query(self, name):
+        query = self.settings['query'][name]['sql']
+        mappings = self.settings['query'][name]['mappings']
+        values = copy.deepcopy(mappings)
+        for key_name, key_column in mappings.iteritems():
+            values[key_name] = self.values[key_column]
+        return query, values
 
 
 class Project(object):
@@ -401,6 +444,10 @@ class Project(object):
         :return: True if this project is valid.
         """
         return not list(self.validate())
+
+    def basedatadb(self):
+        path = os.path.join(self.folder, "_data", "basedata.sqlite")
+        return Database.connect(type="QSQLITE", database=path)
 
     @property
     def splash(self):

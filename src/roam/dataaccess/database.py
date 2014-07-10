@@ -26,14 +26,19 @@ class Database(object):
 
     @classmethod
     def connect(cls, **connection):
-        db = QSqlDatabase("QODBC")
-        constring = "driver={driver};server={host};database={database};uid={user};pwd={password}"
-        connection["driver"] = "{SQL Server}"
-        constring = constring.format(**connection)
-        db.setHostName(connection['host'])
-        db.setDatabaseName(constring)
-        db.setUserName(connection['user'])
-        db.setPassword(connection['password'])
+        dbtype = connection.get('type', "QODBC")
+        db = QSqlDatabase.addDatabase(dbtype)
+        if dbtype == "QSQLITE":
+            db.setDatabaseName(connection['database'])
+        else:
+            constring = "driver={driver};server={host};database={database};uid={user};pwd={password}"
+            connection["driver"] = "{SQL Server}"
+            constring = constring.format(**connection)
+            db.setHostName(connection['host'])
+            db.setDatabaseName(constring)
+            db.setUserName(connection['user'])
+            db.setPassword(connection['password'])
+
         if not db.open():
             raise DatabaseException(db.lastError().text())
         return Database(db)
