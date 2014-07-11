@@ -9,9 +9,9 @@ import os
 import sys
 
 try:
-    apis = ["QDate", "QDateTime", "QString", "QTextStream", "QTime", "QUrl", "QVariant"]
-    for api in apis:
-        sip.setapi(api, 2)
+    types = ["QDate", "QDateTime", "QString", "QTextStream", "QTime", "QUrl", "QVariant"]
+    for qtype in types:
+        sip.setapi(qtype, 2)
 except ValueError:
     # API has already been set so we can't set it again.
     pass

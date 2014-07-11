@@ -1,6 +1,10 @@
 import sys
 import os
 import subprocess
+from contextlib import contextmanager
+from qgis.core import QgsMapLayerRegistry, contextmanagers, QgsFeatureRequest, QgsGeometry
+from qgis.gui import QgsMessageBar
+from roam.structs import CaseInsensitiveDict
 
 def open_keyboard():
 
@@ -19,3 +23,97 @@ def open_keyboard():
     else:
         cmd = 'onboard'
         subprocess.Popen(cmd)
+
+
+def layer_by_name(name):
+    """
+    Return a layer from QGIS using its name.
+    :param name: The name of the layer
+    :return: A single layer with the given layer name
+    """
+    return layers_by_name(name)[0]
+
+def layers_by_name(name):
+    """
+    Return any layers from QGIS using a name.
+    :param name: The name of the layer
+    :return: A list of layers with the given layer name
+    """
+    return QgsMapLayerRegistry.instance().mapLayersByName(name)
+
+def feature_by_key(layer, key):
+    """
+    Return the feature for the given key
+    :param layer: The layer to search
+    :param key: The mapkey to lookup.  This is the feature.id() in QGIS.
+    :return: The feature found using the mapkey.  Will throw StopInteration if not found
+    """
+    rq = QgsFeatureRequest(key)
+    return layer.getFeatures(rq).next()
+
+
+class FeatureSaveException(Exception):
+    def __init__(self, title, message, level, timeout=0, moreinfo=None):
+        super(FeatureSaveException, self).__init__(self, message)
+        self.title = title
+        self.level = level
+        self.timout = timeout
+        self.moreinfo = moreinfo
+
+    @classmethod
+    def missing_values(cls):
+        return cls("Missing fields", "Some fields are still required.", QgsMessageBar.WARNING, 2)
+
+    @classmethod
+    def not_accepted(cls):
+        return cls("Form was not accepted", "The form could not be accepted", QgsMessageBar.WARNING)
+
+    @classmethod
+    def not_saved(cls, errors):
+        return cls("Error in saving feature",
+                   "There seems to be a error trying to save the feature",
+                   QgsMessageBar.CRITICAL,
+                   moreinfo='\n'.join(errors))
+
+    @property
+    def error(self):
+        """
+        Returns a tuple of the error
+        """
+        return (self.title, self.message, self.level, self.timout, self.moreinfo)
+
+@contextmanager
+def editing(layer):
+    layer.startEditing()
+    yield layer
+    saved = layer.commitChanges()
+    if not saved:
+        layer.rollBack()
+        errors = layer.commitErrors()
+        raise FeatureSaveException.not_saved(errors)
+
+def values_from_feature(feature):
+    attributes = feature.attributes()
+    fields = [field.name().lower() for field in feature.fields()]
+    values = CaseInsensitiveDict(zip(fields, attributes))
+    return values
+
+def copy_feature_values(from_feature, to_feature, include_geom=False):
+    """
+    Copy the values from one feature to another. Missing keys are ignored
+    :param from_feature: Feature to copy from
+    :param to_feature: Feature to copy to
+    :param include_geom: default False, if True will copy the feature geometry
+    :return: A reference to the to_feature
+    """
+    values = values_from_feature(from_feature)
+    for field, value in values.iteritems():
+        try:
+            to_feature[field] = value
+        except KeyError:
+            continue
+    if include_geom:
+        geom = QgsGeometry(from_feature.geometry())
+        to_feature.setGeometry(geom)
+    return to_feature
+

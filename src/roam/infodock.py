@@ -20,6 +20,7 @@ from roam.htmlviewer import updateTemplate
 from roam.ui.uifiles import (infodock_widget)
 from roam.api import RoamEvents
 from roam.dataaccess import database
+from roam.api.utils import layer_by_name
 
 import templates
 
@@ -221,8 +222,12 @@ class InfoDock(infodock_widget, QWidget):
 
         self.countlabel.setText(str(cursor))
         self.attributesView.setHtml(html, templates.baseurl)
-        self.editButton.setVisible(not form is None)
-        self.editGeomButton.setVisible(not form is None)
+        tools = self.project.layer_tools(layer)
+        hasform = not form is None
+        editattributes = 'edit_attributes' in tools and hasform
+        editgeom = 'edit_geom' in tools and hasform
+        self.editButton.setVisible(editattributes)
+        self.editGeomButton.setVisible(editgeom)
         self.featureupdated.emit(layer, feature, cursor.features)
 
 
@@ -258,19 +263,25 @@ class InfoDock(infodock_widget, QWidget):
         if infoblockdef['type'] == 'sql':
             sql = infoblockdef['query']
             connection = infoblockdef['connection']
-            if connection == "from_layer":
-                try:
-                    db = database.Database.fromLayer(layer)
-                    try:
-                        keycolumn = infoblockdef['mapkey']
-                        mapkey = feature[keycolumn]
-                    except KeyError:
-                        mapkey = mapkey
-                    results = db.query(sql, mapkey=mapkey)
-                except database.DatabaseException as ex:
-                    return "<b> Error: {}<b>".format(ex.message)
+            if isinstance(connection, dict):
+                layer = layer_by_name(connection['layer'])
+            elif connection == "from_layer":
+                layer = layer
             else:
                 return None
+
+            try:
+                db = database.Database.fromLayer(layer)
+                try:
+                    keycolumn = infoblockdef['mapping']['mapkey']
+                    mapkey = feature[keycolumn]
+                except KeyError:
+                    mapkey = mapkey
+                print sql, mapkey
+                results = db.query(sql, mapkey=mapkey)
+            except database.DatabaseException as ex:
+                return "<b> Error: {}<b>".format(ex.message)
+
         elif infoblockdef['type'] == 'feature':
             fields = [field.name() for field in feature.fields()]
             attributes = feature.attributes()

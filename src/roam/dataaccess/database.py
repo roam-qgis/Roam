@@ -12,6 +12,7 @@ class DatabaseException(Exception):
 class Database(object):
     def __init__(self, sqldatabase):
         self.db = sqldatabase
+        self.form = None
 
     @classmethod
     def fromLayer(cls, layer):
@@ -42,6 +43,16 @@ class Database(object):
         if not db.open():
             raise DatabaseException(db.lastError().text())
         return Database(db)
+
+    def named_query(self, name, values):
+        """
+        Return a query based on the name given.  The query must be defined in the form
+        settings under the query: block
+        :param name:
+        :return: A generator with the query results.
+        """
+        sql, values = self.form.get_query(name, values)
+        return self.query(sql, **values)
 
     def _query(self, querystring, **mappings):
         query = QSqlQuery(self.db)

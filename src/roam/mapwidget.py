@@ -221,16 +221,18 @@ class MapWidget(Ui_CanvasWidget, QMainWindow):
 
         def actions():
             for form in self.project.forms:
-                if form.has_geometry:
-                    action = form.createuiaction()
-                    valid, failreasons = form.valid
-                    if not valid:
-                        roam.utils.warning("Form {} failed to load".format(form.label))
-                        roam.utils.warning("Reasons {}".format(failreasons))
-                        action.triggered.connect(partial(showformerror, form))
-                    else:
-                        action.triggered.connect(partial(self.load_form, form))
-                    yield action
+                if not self.form_valid_for_capture(form):
+                    continue
+
+                action = form.createuiaction()
+                valid, failreasons = form.valid
+                if not valid:
+                    roam.utils.warning("Form {} failed to load".format(form.label))
+                    roam.utils.warning("Reasons {}".format(failreasons))
+                    action.triggered.connect(partial(showformerror, form))
+                else:
+                    action.triggered.connect(partial(self.load_form, form))
+                yield action
 
         formpicker = PickActionDialog(msg="Select data entry form")
         formpicker.addactions(actions())
@@ -239,11 +241,11 @@ class MapWidget(Ui_CanvasWidget, QMainWindow):
     def project_loaded(self, project):
         self.project = project
         self.actionPan.trigger()
-        try:
-            firstform = project.forms[0]
+        firstform = self.first_capture_form()
+        if firstform:
             self.load_form(firstform)
             self.dataentryselection.setVisible(True)
-        except IndexError:
+        else:
             self.dataentryselection.setVisible(False)
 
         # Enable the raster layers button only if the project contains a raster layer.
@@ -297,6 +299,14 @@ class MapWidget(Ui_CanvasWidget, QMainWindow):
         """
         self.canvas.setExtent(self.defaultextent)
         self.canvas.refresh()
+
+    def form_valid_for_capture(self, form):
+        return form.has_geometry and self.project.layer_can_capture(form.QGISLayer)
+
+    def first_capture_form(self):
+        for form in self.project.forms:
+            if self.form_valid_for_capture(form):
+                return form
 
     def load_form(self, form):
         self.clearCapatureTools()

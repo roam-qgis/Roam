@@ -369,13 +369,13 @@ class Form(object):
         geomtype = self.QGISLayer.geometryType()
         return geomtype in supportedgeometry
 
-    def get_query(self, name):
+    def get_query(self, name, values):
         query = self.settings['query'][name]['sql']
         mappings = self.settings['query'][name]['mappings']
-        values = copy.deepcopy(mappings)
+        newvalues = copy.deepcopy(mappings)
         for key_name, key_column in mappings.iteritems():
-            values[key_name] = self.values[key_column]
-        return query, values
+            newvalues[key_name] = values[key_column]
+        return query, newvalues
 
 
 class Project(object):
@@ -528,6 +528,13 @@ class Project(object):
         for form in self.forms:
             if form.name == name:
                 return form
+
+    def layer_can_capture(self, layer):
+        return 'capture' in self.layer_tools(layer)
+
+    def layer_tools(self, layer):
+        selectconfig = self.settings.setdefault('selectlayerconfig', {}).setdefault(layer.name(), {})
+        return selectconfig.get('tools', ['capture', 'edit_attributes', 'edit_geom'])
 
     @property
     def forms(self):

@@ -34,6 +34,7 @@ from roam import utils
 from roam.flickwidget import FlickCharm
 from roam.structs import CaseInsensitiveDict
 from roam.api import RoamEvents, GPS
+from roam.api import utils as qgisutils
 
 import roam.editorwidgets.core
 import roam.defaults as defaults
@@ -124,37 +125,7 @@ def installflickcharm(widget):
 RejectedException = roam.editorwidgets.core.RejectedException
 
 
-
-class FeatureSaveException(Exception):
-    def __init__(self, title, message, level, timeout=0, moreinfo=None):
-        super(FeatureSaveException, self).__init__(self, message)
-        self.title = title
-        self.level = level
-        self.timout = timeout
-        self.moreinfo = moreinfo
-
-    @classmethod
-    def missing_values(cls):
-        return cls("Missing fields", "Some fields are still required.", QgsMessageBar.WARNING, 2)
-
-    @classmethod
-    def not_accepted(cls):
-        return cls("Form was not accepted", "The form could not be accepted", QgsMessageBar.WARNING)
-
-    @classmethod
-    def not_saved(cls, errors):
-        return cls("Error in saving feature",
-                   "There seems to be a error trying to save the feature",
-                   QgsMessageBar.CRITICAL,
-                   moreinfo='\n'.join(errors))
-
-    @property
-    def error(self):
-        """
-        Returns a tuple of the error
-        """
-        return (self.title, self.message, self.level, self.timout, self.moreinfo)
-
+FeatureSaveException = qgisutils.FeatureSaveException
 
 class DeleteFeatureException(FeatureSaveException):
     pass
