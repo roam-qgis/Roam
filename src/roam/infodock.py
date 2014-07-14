@@ -20,7 +20,7 @@ from roam.htmlviewer import updateTemplate
 from roam.ui.uifiles import (infodock_widget)
 from roam.api import RoamEvents
 from roam.dataaccess import database
-from roam.api.utils import layer_by_name
+from roam.api.utils import layer_by_name, values_from_feature
 
 import templates
 
@@ -184,7 +184,12 @@ class InfoDock(infodock_widget, QWidget):
             return
 
         for form in forms:
-            itemtext = "{} \n ({})".format(layername, form.label)
+            selectname = self.project.selectlayer_name(form.layername)
+            print selectname
+            if selectname == layername:
+                itemtext = "{} \n ({})".format(layername, form.label)
+            else:
+                itemtext = selectname
             icon = QIcon(form.icon)
             item = QListWidgetItem(icon, itemtext, self.layerList)
             item.setData(Qt.UserRole, FeatureCursor(layer, features, form))
@@ -206,8 +211,8 @@ class InfoDock(infodock_widget, QWidget):
         form = cursor.form
         layer = cursor.layer
 
-        info1 = self.generate_info("info1", self.project, layer, feature.id(), feature)
-        info2 = self.generate_info("info2", self.project, layer, feature.id(), feature)
+        info1, results = self.generate_info("info1", self.project, layer, feature.id(), feature)
+        info2, _= self.generate_info("info2", self.project, layer, feature.id(), feature, lastresults=results[0])
 
         if form:
             name = "{}".format(layer.name(), form.label)
@@ -231,7 +236,7 @@ class InfoDock(infodock_widget, QWidget):
         self.featureupdated.emit(layer, feature, cursor.features)
 
 
-    def generate_info(self, infoblock, project, layer, mapkey, feature):
+    def generate_info(self, infoblock, project, layer, mapkey, feature, lastresults=None):
         if infoblock == "info1":
             header = "Record"
         else:
@@ -253,53 +258,85 @@ class InfoDock(infodock_widget, QWidget):
         """)
 
         infoblockdef = project.info_query(infoblock, layer.name())
-        if not infoblockdef and infoblock == "info1":
-            infoblockdef = {}
-            infoblockdef['type'] = 'feature'
-        elif not infoblockdef:
-            return None
+        isinfo1 = infoblock == "info1"
+        if not infoblockdef:
+            if isinfo1:
+                infoblockdef = {}
+                infoblockdef['type'] = 'feature'
+            else:
+                return None, []
 
         results = []
+        error = None
         if infoblockdef['type'] == 'sql':
-            sql = infoblockdef['query']
+            try:
+                queryresults = self.results_from_query(infoblockdef, layer, feature, mapkey, lastresults=lastresults)
+                if isinfo1 and not queryresults:
+                    # If there is no results from the query and we are a info 1 block we grab from the feature.
+                    results.append(self.results_from_feature(feature))
+                else:
+                    results = queryresults
+            except database.DatabaseException as ex:
+                if not isinfo1:
+                    error = "<b> Error: {} <b>".format(ex.msg)
+                else:
+                    results.append(self.results_from_feature(feature))
+
+        elif infoblockdef['type'] == 'feature':
+            results.append(self.results_from_feature(feature))
+        else:
+            return None, []
+
+        blocks = []
+        for result in results:
+            fields = result.keys()
+            attributes = result.values()
+            rows = generate_rows(fields, attributes)
+            blocks.append(updateTemplate(dict(ROWS=rows,
+                                              HEADER=header), info_template))
+        if error:
+            return error, []
+
+        return '<br>'.join(blocks), results
+
+    def results_from_feature(self, feature):
+        return values_from_feature(feature)
+
+    def results_from_query(self, infoblockdef, layer, feature, mapkey, lastresults=None):
+        def get_key():
+            try:
+                keycolumn = infoblockdef['mapping']['mapkey']
+                if keycolumn == 'from_info1':
+                    if 'mapkey' in lastresults:
+                        mapkey = lastresults['mapkey']
+                    else:
+                        return []
+                else:
+                    mapkey = feature[keycolumn]
+            except KeyError:
+                mapkey = mapkey
+            return mapkey
+
+        def get_layer():
             connection = infoblockdef['connection']
             if isinstance(connection, dict):
                 layer = layer_by_name(connection['layer'])
             elif connection == "from_layer":
                 layer = layer
             else:
-                return None
+                raise NotImplementedError("{} is not a supported connection type".format(connection))
+            return layer
 
-            try:
-                db = database.Database.fromLayer(layer)
-                try:
-                    keycolumn = infoblockdef['mapping']['mapkey']
-                    mapkey = feature[keycolumn]
-                except KeyError:
-                    mapkey = mapkey
-                print sql, mapkey
-                results = db.query(sql, mapkey=mapkey)
-            except database.DatabaseException as ex:
-                return "<b> Error: {}<b>".format(ex.message)
+        if not lastresults:
+            lastresults = {}
 
-        elif infoblockdef['type'] == 'feature':
-            fields = [field.name() for field in feature.fields()]
-            attributes = feature.attributes()
-            results.append(OrderedDict(zip(fields, attributes)))
-        else:
-            return None
+        sql = infoblockdef['query']
+        layer = get_layer()
 
-        blocks = []
-        try:
-            for result in results:
-                fields = result.keys()
-                attributes = result.values()
-                rows = generate_rows(fields, attributes)
-                blocks.append(updateTemplate(dict(ROWS=rows,
-                                                  HEADER=header), info_template))
-            return '<br>'.join(blocks)
-        except database.DatabaseException as ex:
-            return "<b> Error: {}<b>".format(ex.msg)
+        db = database.Database.fromLayer(layer)
+        mapkey = get_key()
+        results = db.query(sql, mapkey=mapkey)
+        return list(results)
 
     def clearResults(self):
         self.layerList.clear()
@@ -311,6 +348,8 @@ def generate_rows(fields, attributes):
     data = OrderedDict()
     items = []
     for field, value in zip(fields, attributes):
+        if field == 'mapkey':
+            continue
         data[field.replace(" ", "_")] = value
         item = u"<tr><th>{0}</th> <td>${{{1}}}</td></tr>".format(field, field.replace(" ", "_"))
         items.append(item)

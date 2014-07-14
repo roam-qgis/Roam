@@ -29,7 +29,7 @@ class InfoTool(TouchMapTool):
         self.dragging = False
         self.selectionlayers = []
 
-    def getFeatures(self, rect):
+    def getFeatures(self, rect, firstonly=False):
         self.band.reset()
         for layer in self.selectionlayers.itervalues():
             if (not layer.type() == QgsMapLayer.VectorLayer
@@ -37,27 +37,27 @@ class InfoTool(TouchMapTool):
                 continue
 
             rect = self.toLayerCoordinates(layer, rect)
-
             rq = QgsFeatureRequest().setFilterRect(rect)\
                                     .setFlags(QgsFeatureRequest.ExactIntersect)\
                                     .setSubsetOfAttributes([])
             features = []
-            for feature in layer.getFeatures(rq):
-                if feature.isValid():
-                    features.append(feature)
+            if firstonly:
+                try:
+                    feature = layer.getFeatures(rq).next()
+                    if feature.isValid():
+                        features.append(feature)
+                except StopIteration:
+                    continue
+            else:
+                for feature in layer.getFeatures(rq):
+                    if feature.isValid():
+                        features.append(feature)
 
             yield layer, features
 
     def toSearchRect(self, point):
-        searchRadius =  self.canvas.extent().width() * ( self.radius / 100.0 )
-
         point = self.toMapCoordinates(point)
-
-        rect = QgsRectangle()
-        rect.setXMinimum(point.x() - searchRadius)
-        rect.setXMaximum(point.x() + searchRadius)
-        rect.setYMinimum(point.y() - searchRadius)
-        rect.setYMaximum(point.y() + searchRadius)
+        rect = QgsRectangle(point.x(), point.y(), point.x() + 10, point.y() + 10)
         return rect
 
     def canvasPressEvent(self, event):
@@ -95,7 +95,9 @@ class InfoTool(TouchMapTool):
                 return
 
             rect = geometry.boundingBox()
+            firstonly = False
         else:
+            firstonly = True
             rect = self.toSearchRect(event.pos())
 
         self.dragging = False

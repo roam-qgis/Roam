@@ -453,6 +453,7 @@ class FeatureForm(FeatureFormBase):
     def featuredeleted(self, feature):
         pass
 
+
     def loaded(self):
         pass
 

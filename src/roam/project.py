@@ -570,6 +570,14 @@ class Project(object):
         except KeyError:
             return None
 
+    def selectlayer_name(self, layername):
+        try:
+            layersconfig = self.settings['selectlayerconfig']
+            layerconfig = layersconfig[layername]
+            return layerconfig['label']
+        except KeyError:
+            return layername
+
     def selectlayersmapping(self):
         """
         Return the mapping between the select layers listed in settings

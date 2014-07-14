@@ -78,7 +78,6 @@ class Database(object):
                 yield self._recordToDict(query.record())
 
         if query.lastError().isValid():
-            print query.lastError().text()
             raise DatabaseException(query.lastError().text())
 
     def querymodel(self, sql, **mappings):
