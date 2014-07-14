@@ -12,12 +12,7 @@ from PyQt4.QtGui import (QLabel, QDialog, QGridLayout, QLayout)
 try:
    logpath = os.path.join(os.environ['ROAM_APPPATH'], 'log')
 except KeyError:
-   #running from source
-   logpath = os.path.join(
-                os.path.dirname(
-                   os.path.dirname(
-                      os.path.dirname(
-                         os.path.realpath(__file__)))), 'log')
+   logpath = 'log' 
 
 if not os.path.exists(logpath):
    os.makedirs(logpath)

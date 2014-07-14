@@ -2,4 +2,5 @@
 
 DIR="$( cd "$( dirname "$0")" && pwd )" 
 export QGIS_PREFIX_PATH=/usr/
-python $DIR/src/roam/
+export ROAM_APPPATH=$DIR
+python $DIR/src/roam/ $DIR/src/projects
