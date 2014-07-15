@@ -150,7 +150,15 @@ class FeatureFormBase(QWidget):
         self.feature = feature
         self.defaults = defaults
         self.bindingvalues = {}
-        self.editingmode = False
+        self.editingmode = kwargs.get("editmode", False)
+
+    @property
+    def is_capturing(self):
+        return self.editingmode == False
+
+    @is_capturing.setter
+    def is_capturing(self, value):
+        self.editingmode = not value
 
     def updaterequired(self, field, passed):
         self.requiredfields[field.name()] = passed

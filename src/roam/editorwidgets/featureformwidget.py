@@ -133,7 +133,8 @@ class FeatureFormWidgetEditor(LargeEditorWidget):
         form = config['form']
         canvas = config.get('canvas', None)
         formwidget = FeatureFormWidget()
-        featureform = form.create_featureform(None, defaults={}, canvas=canvas)
+        editmode = config['editmode']
+        featureform = form.create_featureform(None, defaults={}, canvas=canvas, editmode=editmode)
         formwidget.set_featureform(featureform)
         return formwidget
 
