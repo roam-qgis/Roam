@@ -42,6 +42,8 @@ import roam.roam_style
 
 values_file = os.path.join(tempfile.gettempdir(), "Roam")
 
+nullcheck = qgisutils.nullcheck
+
 def loadsavedvalues(layer):
     attr = {}
     id = str(layer.id())
@@ -65,13 +67,6 @@ def savevalues(layer, values):
 
     with open(savedvaluesfile, 'w') as f:
         json.dump(values, f)
-
-
-def nullcheck(value):
-    if isinstance(value, QPyNullVariant):
-        return None
-    else:
-        return value
 
 
 def buildfromui(uifile, base):

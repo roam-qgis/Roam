@@ -4,10 +4,13 @@ import subprocess
 from contextlib import contextmanager
 from qgis.core import QgsMapLayerRegistry, contextmanagers, QgsFeatureRequest, QgsGeometry
 from qgis.gui import QgsMessageBar
+from PyQt4.QtCore import QPyNullVariant
 from roam.structs import CaseInsensitiveDict
 
 def open_keyboard():
-
+    """
+    Open the system keyboard
+    """
     if sys.platform == 'win32':
         try:
             programfiles = os.environ['ProgramW6432']
@@ -117,3 +120,27 @@ def copy_feature_values(from_feature, to_feature, include_geom=False):
         to_feature.setGeometry(geom)
     return to_feature
 
+
+def nullcheck(value):
+    """
+    SIP 2.0 has this gross QPyNullVariant type that we have to convert to None for better handling in our
+    calling code.  Most QGIS None values return as QPyNullVariant.
+    :param value:
+    :return:
+    """
+    if isinstance(value, QPyNullVariant):
+        return None
+    else:
+        return value
+
+def format_values(fieldnames, valuestore, with_char='\n'):
+    """
+    Format the given fields with with_char for each.
+    :param fieldnames: A list of fields to format.
+    :param valuestore: A dict like store of values
+    """
+    value = []
+    for field in fieldnames:
+        if nullcheck(valuestore[field]):
+            value.append(valuestore[field])
+    return with_char.join(value)
