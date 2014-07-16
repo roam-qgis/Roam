@@ -2,7 +2,7 @@ import sys
 import os
 import subprocess
 from contextlib import contextmanager
-from qgis.core import QgsMapLayerRegistry, contextmanagers, QgsFeatureRequest, QgsGeometry
+from qgis.core import QgsMapLayerRegistry, QgsFeatureRequest, QgsGeometry
 from qgis.gui import QgsMessageBar
 from PyQt4.QtCore import QPyNullVariant
 from roam.structs import CaseInsensitiveDict
