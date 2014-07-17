@@ -6,6 +6,7 @@ import roam.utils
 
 class DatabaseException(Exception):
     def __init__(self, msg):
+        super(DatabaseException, self).__init__(msg)
         self.msg = msg
         roam.utils.error(msg)
 
