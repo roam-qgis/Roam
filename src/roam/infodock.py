@@ -237,10 +237,6 @@ class InfoDock(infodock_widget, QWidget):
 
 
     def generate_info(self, infoblock, project, layer, mapkey, feature, lastresults=None):
-        if infoblock == "info1":
-            header = "Record"
-        else:
-            header = "Related Record"
 
         info_template = Template("""
         <div class="panel panel-default">
@@ -259,6 +255,11 @@ class InfoDock(infodock_widget, QWidget):
 
         infoblockdef = project.info_query(infoblock, layer.name())
         isinfo1 = infoblock == "info1"
+        if isinfo1:
+            header = infoblockdef.get('caption', "Record")
+        else:
+            header = infoblockdef.get('caption', "Related Record")
+
         if not infoblockdef:
             if isinfo1:
                 infoblockdef = {}
@@ -288,12 +289,16 @@ class InfoDock(infodock_widget, QWidget):
             return None, []
 
         blocks = []
-        for result in results:
+        for count, result in enumerate(results, start=1):
+            if not isinfo1:
+                newheader = "{} {} of {}".format(header,count, len(results))
+            else:
+                newheader = header
             fields = result.keys()
             attributes = result.values()
             rows = generate_rows(fields, attributes)
             blocks.append(updateTemplate(dict(ROWS=rows,
-                                              HEADER=header), info_template))
+                                              HEADER=newheader), info_template))
         if error:
             return error, []
 
