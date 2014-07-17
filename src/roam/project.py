@@ -568,7 +568,7 @@ class Project(object):
             infoblock = layerconfig[infoname]
             return infoblock
         except KeyError:
-            return None
+            return {}
 
     def selectlayer_name(self, layername):
         try:
