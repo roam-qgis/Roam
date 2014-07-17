@@ -80,7 +80,10 @@ class ClickableMessage(QgsMessageBarItem):
         html = self.extrainfo
         data = []
         if self.level() == QgsMessageBar.CRITICAL:
-            data = {"ERROR": "<br>".join(self.extrainfo)}
+            if isinstance(self.extrainfo, basestring):
+                data = {"ERROR": "{}".(self.extrainfo)}
+            else:
+                data = {"ERROR": "<br>".join(self.extrainfo)}
             html = htmlpath
             data = data
 
