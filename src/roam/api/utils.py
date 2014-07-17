@@ -62,6 +62,7 @@ class FeatureSaveException(Exception):
         self.level = level
         self.timout = timeout
         self.moreinfo = moreinfo
+        self.message = message + ':' + moreinfo
 
     @classmethod
     def missing_values(cls):
