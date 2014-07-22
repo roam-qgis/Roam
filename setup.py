@@ -203,7 +203,7 @@ else:
     	author='Digital Mapping Solutions',
     	author_email='nathan.woodrow@mapsolutions.com.au',
     	description='',
-    	windows=[roam_target, projectupdater_target, configmanager_target],
+    	windows=[roam_target, configmanager_target],
     	data_files=get_data_files(),
     	zipfile='libs\\',
     	cmdclass= {'build': qtbuild},
