@@ -316,24 +316,22 @@ class InfoDock(infodock_widget, QWidget):
                 keycolumn = infoblockdef['mapping']['mapkey']
                 if keycolumn == 'from_info1':
                     if 'mapkey' in lastresults:
-                        mapkey = lastresults['mapkey']
+                        return lastresults['mapkey']
                     else:
                         return []
                 else:
-                    mapkey = feature[keycolumn]
+                    return feature[keycolumn]
             except KeyError:
-                mapkey = mapkey
-            return mapkey
+                return mapkey
 
         def get_layer():
             connection = infoblockdef['connection']
             if isinstance(connection, dict):
-                layer = layer_by_name(connection['layer'])
+                return layer_by_name(connection['layer'])
             elif connection == "from_layer":
-                layer = layer
+                return layer
             else:
                 raise NotImplementedError("{} is not a supported connection type".format(connection))
-            return layer
 
         if not lastresults:
             lastresults = {}
