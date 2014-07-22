@@ -30,8 +30,7 @@ logger.info("QGIS Version: {}".format(str(QGis.QGIS_VERSION)))
 QApplication.setWindowIcon(QIcon(':/branding/logo'))
 QApplication.setApplicationName("IntraMaps Roam Config Manager")
 
-projectpaths = roam.environ.projectpaths(sys.argv, roamapp, roam.config.settings)
-#projects = list(roam.project.getProjects(projectpaths))
+projectpaths = roam.environ.projectpaths(roamapp.projectsroot, roam.config.settings)
 
 def excepthook(errorhandler, exctype, value, traceback):
     logger.error("Uncaught exception", exc_info=(exctype, value, traceback))

@@ -44,7 +44,8 @@ def excepthook(errorhandler, exctype, value, traceback):
 
 sys.excepthook = functools.partial(excepthook, window.raiseerror)
 
-projectpaths = roam.environ.projectpaths(sys.argv, roamapp, roam.config.settings)
+print roamapp.projectsroot
+projectpaths = roam.environ.projectpaths(roamapp.projectsroot, roam.config.settings)
 roam.utils.log("Loading projects from")
 roam.utils.log(projectpaths)
 projects = roam.project.getProjects(projectpaths)

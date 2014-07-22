@@ -1,10 +1,9 @@
 import os
 import sys
-
-
+import argparse
 
 class RoamApp(object):
-    def __init__(self, sysargv, apppath, prefixpath, settingspath, libspath, i18npath):
+    def __init__(self, sysargv, apppath, prefixpath, settingspath, libspath, i18npath, projectsroot):
         self.sysargv = sysargv
         self.apppath = apppath
         self.prefixpath = prefixpath
@@ -13,6 +12,7 @@ class RoamApp(object):
         self.i18npath = i18npath
         self.app = None
         self.translationFile = None
+        self.projectsroot = projectsroot
 
     def init(self):
         from qgis.core import QgsApplication
@@ -83,6 +83,15 @@ def setup(argv):
     if not os.path.exists(settingspath):
         settingspath = os.path.join(apppath, "settings.config")
 
+    projectpath = os.path.join(apppath, "projects")
+
+    parser = argparse.ArgumentParser(description="IntraMaps Roam")
+    parser.add_argument('--config', metavar='c', type=str, default=settingspath, help='Path to Roam.config')
+    parser.add_argument('--projectsroot', metavar='p', type=str, default=projectpath, help='Root location of projects. Will soverride'
+                                                                                            'default projects folder location')
+
+    args = parser.parse_args()
+
     if RUNNING_FROM_FILE:
         print "Running from file"
         i18npath = os.path.join(apppath, "i18n")
@@ -96,17 +105,13 @@ def setup(argv):
         os.environ["GDAL_DRIVER_PATH"] = os.path.join(apppath, 'libs')
         os.environ["GDAL_DATA"] = os.path.join(apppath, 'libs', 'gdal')
 
-    return RoamApp(argv, apppath, prefixpath, settingspath, libspath, i18npath).init()
+    return RoamApp(argv, apppath, prefixpath, args.config, libspath, i18npath, args.projectsroot).init()
 
 
-def projectpaths(argv, roamapp, settings={}):
+def projectpaths(baseprojectpath, settings={}):
     # Add the default paths
     paths = []
-    try:
-        paths.append(argv[1])
-    except IndexError:
-        paths.append(os.path.join(roamapp.apppath, "projects"))
-
+    paths.append(baseprojectpath)
     paths.extend(settings.get('projectpaths', []))
     for path in paths:
         rootfolder = os.path.abspath(os.path.join(path, '..'))
