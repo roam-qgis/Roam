@@ -307,14 +307,9 @@ class Form(object):
         return [widget for widget in self.widgets if widget['field'] == fieldname][0]
 
     def _loadmodule(self):
-        rootfolder = os.path.abspath(os.path.join(self.folder, '..', '..'))
         projectfolder = os.path.abspath(os.path.join(self.folder, '..'))
-        rootname = os.path.basename(rootfolder)
-        projectname = os.path.basename(projectfolder)
-        name = "{root}.{project}.{formfolder}".format(root=rootname,
-                                                      project=projectname,
-                                                      formfolder=self.name)
-        self._module = importlib.import_module(name)
+        module = imp.find_module(self.name, [projectfolder])
+        self._module = imp.load_module(self.name, *module)
 
     @property
     def module(self):
@@ -492,17 +487,17 @@ class Project(object):
             Returns True if the user is able to load the project, else False
         """
         try:
+            rootfolder = os.path.abspath(os.path.join(self.folder, '..'))
             name = os.path.basename(self.folder)
-            module = importlib.import_module("{}".format(name))
+            module = imp.find_module(name, [rootfolder])
+            module = imp.load_module(name, *module)
+            return module.onProjectLoad()
         except ImportError as err:
             log(err)
             print err
             return True, None
-            
-        try:
-            return module.onProjectLoad()
         except AttributeError as err:
-            log("Not onProjectLoad attribute found")
+            log("No onProjectLoad attribute found")
             print "No onProjectLoad attribute found"
             return True, None
 
