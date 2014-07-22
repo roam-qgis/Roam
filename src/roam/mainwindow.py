@@ -761,7 +761,6 @@ class MainWindow(ui_mainwindow.Ui_MainWindow, QMainWindow):
             action.setProperty('page', pageindex)
 
             self.menuGroup.addAction(action)
-            print page, config
 
     @roam.utils.timeit
     def _readProject(self, doc):
@@ -783,9 +782,9 @@ class MainWindow(ui_mainwindow.Ui_MainWindow, QMainWindow):
         self.canvas.updateScale()
         self.projectOpened()
         self.canvas.freeze(False)
-        self.canvas.refresh()
         GPS.crs = self.canvas.mapRenderer().destinationCrs()
         self.showmap()
+        self.canvas.refresh()
 
     @roam.utils.timeit
     def projectOpened(self):
@@ -827,6 +826,8 @@ class MainWindow(ui_mainwindow.Ui_MainWindow, QMainWindow):
 
         self.setprojectbuttonstate(True)
         RoamEvents.projectloaded.emit(self.project)
+        self.canvas.refresh()
+        self.canvas.repaint()
 
     #noinspection PyArgumentList
     @roam.utils.timeit
