@@ -21,12 +21,13 @@ def image_handler(key, value, **kwargs):
                     </a>'''
 
     imagetype = kwargs.get('imagetype', 'base64' )
-    images[key] = (value, imagetype)
+    keyid = "image_{key}_{count}".format(key=key, count=len(images) + 1)
+    images[keyid] = (value, imagetype)
     if imagetype == 'base64':
         src = 'data:image/png;base64,${}'.format(value.toBase64())
     else:
         src = value
-    return imageblock.format(key, src)
+    return imageblock.format(keyid, src)
 
 
 def default_handler(key, value):
@@ -57,6 +58,9 @@ def date_handler(key, value):
 def none_handler(key, value):
     return ''
 
+
+def clear_image_cache():
+    images = {}
 
 def updateTemplate(data, template):
     data = dict(data)

@@ -16,11 +16,12 @@ from qgis.core import (QgsExpression, QgsFeature,
 
 from roam import utils
 from roam.flickwidget import FlickCharm
-from roam.htmlviewer import updateTemplate
+from roam.htmlviewer import updateTemplate, clear_image_cache
 from roam.ui.uifiles import (infodock_widget)
 from roam.api import RoamEvents
 from roam.dataaccess import database
 from roam.api.utils import layer_by_name, values_from_feature
+
 
 import templates
 
@@ -210,6 +211,8 @@ class InfoDock(infodock_widget, QWidget):
 
         form = cursor.form
         layer = cursor.layer
+
+        clear_image_cache()
 
         info1, results = self.generate_info("info1", self.project, layer, feature.id(), feature)
         info2, _= self.generate_info("info2", self.project, layer, feature.id(), feature, lastresults=results[0])
