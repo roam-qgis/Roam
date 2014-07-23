@@ -109,9 +109,6 @@ def getProjects(paths):
     """
     for projectpath in paths:
         try:
-            if not initfound(projectpath):
-                createinifile(projectpath)
-
             folders = (sorted([os.path.join(projectpath, item)
                                for item in os.walk(projectpath).next()[1]]))
 

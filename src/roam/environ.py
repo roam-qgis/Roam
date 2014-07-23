@@ -77,6 +77,7 @@ def setup(argv):
         else:
             prefixpath = os.environ['QGIS_PREFIX_PATH']
         libspath = prefixpath
+        projectroot = os.path.join(apppath, "..")
     else:
         # Set the PATH and GDAL_DRIVER_PATH for gdal to find the plugins.
         # Not sure why we have to set these here but GDAL doesn't like it if we
@@ -89,20 +90,22 @@ def setup(argv):
         os.environ['PATH'] += ";{}".format(apppath)
         os.environ["GDAL_DRIVER_PATH"] = os.path.join(apppath, 'libs')
         os.environ["GDAL_DATA"] = os.path.join(apppath, 'libs', 'gdal')
+        projectroot = apppath
 
+    projectroot = os.path.join(projectroot, "projects")
 
     settingspath = os.path.join(apppath, "roam.config")
     if not os.path.exists(settingspath):
         settingspath = os.path.join(apppath, "settings.config")
 
-    projectpath = os.path.join(apppath, "projects")
-
     parser = argparse.ArgumentParser(description="IntraMaps Roam")
     parser.add_argument('--config', metavar='c', type=str, default=settingspath, help='Path to Roam.config')
-    parser.add_argument('--projectsroot', metavar='p', type=str, default=projectpath, help='Root location of projects. Will soverride'
-                                                                                            'default projects folder location')
-
+    parser.add_argument('projectsroot', nargs='?', default=projectroot, help="Root location of projects. Will override"
+                                                                             "default projects folder path")
     args = parser.parse_args()
+
+    if not os.path.exists(args.projectsroot):
+        os.makedirs(args.projectsroot)
 
     return RoamApp(argv, apppath, prefixpath, args.config, libspath, i18npath, args.projectsroot).init()
 

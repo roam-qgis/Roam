@@ -89,7 +89,6 @@ def get_data_files():
                 (r'libs\roam\templates', [r'src\roam\templates\info.html',
                                           r'src\roam\templates\error.html']),
                 (r'libs\roam\templates\bootstrap', glob.glob(r'src\roam\templates\bootstrap\*')),
-                (r'projects', [r'src\projects\__init__.py']),
                 # We have to copy the imageformat drivers to the root folder.
                 (r'imageformats', glob.glob(qtimageforms)),
                 (r'libs\qgis\plugins', glob.glob(qgispluginpath)),
