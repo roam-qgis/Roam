@@ -68,17 +68,29 @@ def setup(argv):
     """
     frozen = getattr(sys, "frozen", False)
     RUNNING_FROM_FILE = not frozen
-    try:
-        # Added so we can test the packaged version of Roam using the unit tests.
-        apppath = os.environ['ROAM_APPPATH']
-        print apppath
-        RUNNING_FROM_FILE = False
-    except KeyError:
-        apppath = os.path.dirname(os.path.realpath(argv[0]))
+    apppath = os.path.dirname(os.path.realpath(argv[0]))
+    if RUNNING_FROM_FILE:
+        print "Running from file"
+        i18npath = os.path.join(apppath, "i18n")
+        if os.name == 'posix':
+            prefixpath = os.environ.get('QGIS_PREFIX_PATH', '/usr/')
+        else:
+            prefixpath = os.environ['QGIS_PREFIX_PATH']
+        libspath = prefixpath
+    else:
+        # Set the PATH and GDAL_DRIVER_PATH for gdal to find the plugins.
+        # Not sure why we have to set these here but GDAL doesn't like it if we
+        # don't
+        prefixpath = os.path.join(apppath, "libs", "qgis")
+        libspath = os.path.join(apppath, "libs", "roam")
+        i18npath = os.path.join(libspath, "i18n")
 
-    prefixpath = os.path.join(apppath, "libs", "qgis")
-    libspath = os.path.join(apppath, "libs", "roam")
-    i18npath = os.path.join(libspath, "i18n")
+        os.environ['PATH'] += ";{}".format(os.path.join(apppath, 'libs'))
+        os.environ['PATH'] += ";{}".format(apppath)
+        os.environ["GDAL_DRIVER_PATH"] = os.path.join(apppath, 'libs')
+        os.environ["GDAL_DATA"] = os.path.join(apppath, 'libs', 'gdal')
+
+
     settingspath = os.path.join(apppath, "roam.config")
     if not os.path.exists(settingspath):
         settingspath = os.path.join(apppath, "settings.config")
@@ -91,19 +103,6 @@ def setup(argv):
                                                                                             'default projects folder location')
 
     args = parser.parse_args()
-
-    if RUNNING_FROM_FILE:
-        print "Running from file"
-        i18npath = os.path.join(apppath, "i18n")
-        prefixpath = os.environ['QGIS_PREFIX_PATH']
-    else:
-        # Set the PATH and GDAL_DRIVER_PATH for gdal to find the plugins.
-        # Not sure why we have to set these here but GDAL doesn't like it if we
-        # don't
-        os.environ['PATH'] += ";{}".format(os.path.join(apppath, 'libs'))
-        os.environ['PATH'] += ";{}".format(apppath)
-        os.environ["GDAL_DRIVER_PATH"] = os.path.join(apppath, 'libs')
-        os.environ["GDAL_DATA"] = os.path.join(apppath, 'libs', 'gdal')
 
     return RoamApp(argv, apppath, prefixpath, args.config, libspath, i18npath, args.projectsroot).init()
 
