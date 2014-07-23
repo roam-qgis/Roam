@@ -22,14 +22,20 @@ class Database(object):
             "host": uri.host(),
             "database": uri.database(),
             "user": uri.username(),
-            "password": uri.password()}
+            "password": uri.password(),
+            "connectionname": layer.id()
+        }
         database = Database.connect(**connectioninfo)
         return database
 
     @classmethod
     def connect(cls, **connection):
         dbtype = connection.get('type', "QODBC")
-        db = QSqlDatabase.addDatabase(dbtype)
+        connectionname = connection.get("connectionname", hash(tuple(connection.items())))
+        db = QSqlDatabase.database(connectionname)
+        if not db.isValid():
+            db = QSqlDatabase.addDatabase(dbtype, connectionname)
+
         if dbtype == "QSQLITE":
             db.setDatabaseName(connection['database'])
         else:
