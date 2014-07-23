@@ -731,7 +731,7 @@ class MainWindow(ui_mainwindow.Ui_MainWindow, QMainWindow):
         self.stackedWidget.setCurrentIndex(1)
 
     def loadpages(self, pages):
-	self.unloadpages()
+        self.unloadpages()
         for page, config in pages.iteritems():
             action = QAction(self.menutoolbar)
             action.setCheckable(True)
@@ -764,12 +764,12 @@ class MainWindow(ui_mainwindow.Ui_MainWindow, QMainWindow):
             print page, config
 
     def unloadpages(self):
-	centralPages=[self.actionMap, self.actionLegend]
-	for a in self.projectbuttons:
-	    if a not in centralPages:
-	        self.menutoolbar.removeAction(a)
-		self.projectbuttons.remove(a)
-	self.setprojectbuttonstate(False)
+        centralPages=[self.actionMap, self.actionLegend]
+        for a in self.projectbuttons:
+            if a not in centralPages:
+                self.menutoolbar.removeAction(a)
+                self.projectbuttons.remove(a)
+        self.setprojectbuttonstate(False)
 
 
     @roam.utils.timeit
@@ -833,9 +833,9 @@ class MainWindow(ui_mainwindow.Ui_MainWindow, QMainWindow):
         except IndexError:
             roam.utils.info("No gps_log found for GPS logging")
             self.tracking.clear_logging()
-	
-	# Load Plugin pages selected by project config
-	projectplugins = self.project.getPlugins()
+
+        # Load Plugin pages selected by project config
+               projectplugins = self.project.getPlugins()
         self.loadpages(projectplugins)
 
         self.setprojectbuttonstate(True)
@@ -905,7 +905,7 @@ class MainWindow(ui_mainwindow.Ui_MainWindow, QMainWindow):
         for action in self.layerbuttons:
             self.editgroup.removeAction(action)
         
-	self.unloadpages()
+        self.unloadpages()
         self.panels = []
         self.project = None
         self.dataentrywidget.clear()
