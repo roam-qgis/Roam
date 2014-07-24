@@ -733,7 +733,7 @@ class MainWindow(ui_mainwindow.Ui_MainWindow, QMainWindow):
     def loadpages(self, pages):
         self.unloadpages()
         for page, config in pages.iteritems():
-            action = QAction(self.menutoolbar)
+                   action = QAction(self.menutoolbar)
             action.setCheckable(True)
             text = config['title'].ljust(13)
             action.setIconText(text)
@@ -835,7 +835,7 @@ class MainWindow(ui_mainwindow.Ui_MainWindow, QMainWindow):
             self.tracking.clear_logging()
 
         # Load Plugin pages selected by project config
-               projectplugins = self.project.getPlugins()
+        projectplugins = self.project.getPlugins()
         self.loadpages(projectplugins)
 
         self.setprojectbuttonstate(True)
