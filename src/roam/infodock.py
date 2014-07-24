@@ -108,7 +108,7 @@ class InfoDock(infodock_widget, QWidget):
             self._expand()
 
     def _expand(self):
-        self.resize(self.parent().width(), self.parent().height())
+        self.resize(self.parent().width() - 10, self.parent().height())
         self.move(10, 0)
         self.expaned = True
 
