@@ -1,6 +1,11 @@
 import os
 import sys
+import time
 import argparse
+import contextlib
+import functools
+
+from qgis.core import contextmanagers
 
 class RoamApp(object):
     def __init__(self, sysargv, apppath, prefixpath, settingspath, libspath, i18npath, projectsroot):
@@ -13,10 +18,11 @@ class RoamApp(object):
         self.app = None
         self.translationFile = None
         self.projectsroot = projectsroot
+        self._oldhook = sys.excepthook
 
-    def init(self):
+    def init(self, logo, title):
         from qgis.core import QgsApplication
-        from PyQt4.QtGui import QApplication, QFont
+        from PyQt4.QtGui import QApplication, QFont, QIcon
         from PyQt4.QtCore import QLocale, QTranslator
         try:
             import PyQt4.QtSql
@@ -37,12 +43,26 @@ class RoamApp(object):
 
         QApplication.setStyle("Plastique")
         QApplication.setFont(QFont('Segoe UI'))
+        QApplication.setWindowIcon(QIcon(':/branding/logo'))
+        QApplication.setApplicationName("IntraMaps Roam Config Manager")
+
+        import roam.editorwidgets.core
+        roam.editorwidgets.core.registerallwidgets()
         return self
+
+    def set_error_handler(self, errorhandler, logger):
+        sys.excepthook = functools.partial(self.excepthook, errorhandler)
+        self.logger = logger
+
+    def excepthook(self, errorhandler, exctype, value, traceback):
+        self.logger.error("Uncaught exception", exc_info=(exctype, value, traceback))
+        errorhandler(exctype, value, traceback)
 
     def exec_(self):
         self.app.exec_()
 
     def exit(self):
+        sys.excepthook = self._oldhook
         from qgis.core import QgsApplication
         QgsApplication.exitQgis()
         QgsApplication.quit()
@@ -53,14 +73,23 @@ class RoamApp(object):
     def dump_configinfo(self):
         from qgis.core import QgsApplication, QgsProviderRegistry
         from PyQt4.QtGui import QImageReader, QImageWriter
-        yield QgsProviderRegistry.instance().pluginList()
-        yield QImageReader.supportedImageFormats()
-        yield QImageWriter.supportedImageFormats()
-        yield QgsApplication.libraryPaths()
-        yield "Translation file: {}".format(self.translationFile)
+        import roam
+        from qgis.core import QGis
+
+        config = []
+        config.append("====Providers===")
+        config.append(QgsProviderRegistry.instance().pluginList())
+        config.append("====Library paths===")
+        config.append('\n'.join(QgsApplication.libraryPaths()))
+        config.append("====Translation File===")
+        config.append(self.translationFile)
+        config.append("Roam Version: {}".format(roam.__version__))
+        config.append("QGIS Version: {}".format(str(QGis.QGIS_VERSION)))
+        return '\n'.join(config)
 
 
-def setup(argv):
+@contextlib.contextmanager
+def setup(argv, logo='', title=''):
     """
     Setup the environment for Roam.
 
@@ -107,7 +136,19 @@ def setup(argv):
     if not os.path.exists(args.projectsroot):
         os.makedirs(args.projectsroot)
 
-    return RoamApp(argv, apppath, prefixpath, args.config, libspath, i18npath, args.projectsroot).init()
+    start = time.time()
+    import roam.utils
+    import roam.config
+    roam.utils.info("Loading Roam")
+    app = RoamApp(argv, apppath, prefixpath, args.config, libspath, i18npath, args.projectsroot).init(logo, title)
+    roam.config.load(app.settingspath)
+
+    roam.utils.info(app.dump_configinfo())
+    yield app
+    roam.utils.info("Roam Loaded in {}".format(str(time.time() - start)))
+    app.exec_()
+    roam.config.save()
+    app.exit()
 
 
 def projectpaths(baseprojectpath, settings={}):
@@ -120,4 +161,6 @@ def projectpaths(baseprojectpath, settings={}):
         sys.path.append(rootfolder)
 
     sys.path.extend(paths)
+    import roam.utils
+    roam.utils.log("Project locations:{}".format(paths))
     return paths

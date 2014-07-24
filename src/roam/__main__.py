@@ -7,56 +7,30 @@ The MainWindow object handles everything from there on in.
 import os
 import sys
 
-import time
-import functools
-
 srcpath = os.path.dirname(os.path.realpath(sys.argv[0]))
 sys.path.append(srcpath)
 
 import roam.environ
-import roam.config
 
-roamapp = roam.environ.setup(sys.argv)
-roam.config.load(roamapp.settingspath)
+with roam.environ.setup(sys.argv) as roamapp:
+    import roam.config
+    import roam
+    import roam.mainwindow
+    import roam.utils
+    import roam.api.featureform
 
-import roam
-import roam.mainwindow
-import roam.utils
-import roam.api.featureform
-import roam.editorwidgets.core
+    # Fake this module to maintain API.
+    sys.modules['roam.featureform'] = roam.api.featureform
 
-roam.editorwidgets.core.registerallwidgets()
+    window = roam.mainwindow.MainWindow()
 
-# Fake this module to maintain API.
-sys.modules['roam.featureform'] = roam.api.featureform
+    roamapp.setActiveWindow(window)
+    roamapp.set_error_handler(window.raiseerror, roam.utils)
 
-roam.utils.info(list(roamapp.dump_configinfo()))
+    projectpaths = roam.environ.projectpaths(roamapp.projectsroot, roam.config.settings)
+    projects = roam.project.getProjects(projectpaths)
+    window.loadprojects(projects)
+    window.actionProject.toggle()
+    window.viewprojects()
+    window.show()
 
-start = time.time()
-roam.utils.info("Loading Roam")
-
-window = roam.mainwindow.MainWindow()
-roamapp.setActiveWindow(window)
-
-_oldhook = sys.excepthook
-
-def excepthook(errorhandler, exctype, value, traceback):
-    errorhandler(exctype, value, traceback)
-    roam.utils.error("Uncaught exception", exc_info=(exctype, value, traceback))
-
-sys.excepthook = functools.partial(excepthook, window.raiseerror)
-
-projectpaths = roam.environ.projectpaths(roamapp.projectsroot, roam.config.settings)
-roam.utils.log("Loading projects from")
-roam.utils.log(projectpaths)
-projects = roam.project.getProjects(projectpaths)
-window.loadprojects(projects)
-window.actionProject.toggle()
-window.viewprojects()
-window.show()
-
-roam.utils.info("Roam Loaded in {}".format(str(time.time() - start)))
-
-roamapp.exec_()
-sys.excepthook = _oldhook
-roamapp.exit()

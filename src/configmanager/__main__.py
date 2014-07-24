@@ -6,42 +6,17 @@ srcpath = os.path.dirname(os.path.realpath(sys.argv[0]))
 sys.path.append(srcpath)
 
 import roam.environ
-import roam.config
 
-roamapp = roam.environ.setup(sys.argv)
-roam.config.load(roamapp.settingspath)
+with roam.environ.setup(sys.argv, logo=':/branding/logo', title="IntraMaps Roam Config Manager") as roamapp:
+    import roam
+    import roam.config
+    import configmanager.logger
+    from configmanager.ui.configmanagerdialog import ConfigManagerDialog
 
-import roam
-import roam.project
-import roam.resources_rc
-import configmanager.logger as logger
+    dialog = ConfigManagerDialog()
+    roamapp.set_error_handler(dialog.raiseerror, configmanager.logger)
 
-import roam.editorwidgets.core
-roam.editorwidgets.core.registerallwidgets()
+    projectpaths = roam.environ.projectpaths(roamapp.projectsroot, roam.config.settings)
+    dialog.addprojectfolders(projectpaths)
+    dialog.showMaximized()
 
-from PyQt4.QtGui import QApplication, QFont, QIcon
-from qgis.core import QGis
-from configmanager.ui.configmanagerdialog import ConfigManagerDialog
-
-logger.info("Loading Roam Config Manager")
-logger.info("Roam Version: {}".format(roam.__version__))
-logger.info("QGIS Version: {}".format(str(QGis.QGIS_VERSION)))
-
-QApplication.setWindowIcon(QIcon(':/branding/logo'))
-QApplication.setApplicationName("IntraMaps Roam Config Manager")
-
-projectpaths = roam.environ.projectpaths(roamapp.projectsroot, roam.config.settings)
-
-def excepthook(errorhandler, exctype, value, traceback):
-    logger.error("Uncaught exception", exc_info=(exctype, value, traceback))
-    errorhandler(exctype, value, traceback)
-
-dialog = ConfigManagerDialog()
-sys.excepthook = functools.partial(excepthook, dialog.raiseerror)
-dialog.addprojectfolders(projectpaths)
-#dialog.loadprojects(projects)
-dialog.showMaximized()
-
-roamapp.exec_()
-roam.config.save()
-roamapp.exit()
