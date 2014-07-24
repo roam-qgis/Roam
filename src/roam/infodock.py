@@ -95,14 +95,31 @@ class InfoDock(infodock_widget, QWidget):
         self.editGeomButton.pressed.connect(self.editgeom)
         self.parent().installEventFilter(self)
         self.project = None
+        self.startwidth = self.width()
+        self.expaned = False
 
         RoamEvents.selectioncleared.connect(self.clearResults)
         RoamEvents.editgeometry_complete.connect(self.refreshcurrent)
 
+    def mouseDoubleClickEvent(self, QMouseEvent):
+        if self.expaned:
+            self._collapse()
+        else:
+            self._expand()
+
+    def _expand(self):
+        self.resize(self.parent().width(), self.parent().height())
+        self.move(10, 0)
+        self.expaned = True
+
+    def _collapse(self):
+        self.resize(self.startwidth, self.parent().height())
+        self.move(self.parent().width() - self.startwidth, 0)
+        self.expaned = False
+
     def eventFilter(self, object, event):
         if event.type() == QEvent.Resize:
-            self.resize(self.width(), self.parent().height())
-            self.move(self.parent().width() - self.width(), 0)
+            self._collapse()
 
         return super(InfoDock, self).eventFilter(object, event)
 
