@@ -835,7 +835,7 @@ class MainWindow(ui_mainwindow.Ui_MainWindow, QMainWindow):
             self.tracking.clear_logging()
 
         # Load Plugin pages selected by project config
-               projectplugins = self.project.getPlugins()
+        projectplugins = self.project.getPlugins()
         self.loadpages(projectplugins)
 
         self.setprojectbuttonstate(True)
