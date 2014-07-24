@@ -55,10 +55,8 @@ from roam.api import plugins
 pluginspaths = [os.path.join(roamapp.libspath, 'plugins'),\
                 os.path.join(roamapp.apppath, "plugins")]
 
-print pluginspaths
 plugins.load_plugins_from(pluginspaths)
 
-window.loadpages(plugins.registeredpages)
 window.show()
 
 roam.utils.info("Roam Loaded in {}".format(str(time.time() - start)))
