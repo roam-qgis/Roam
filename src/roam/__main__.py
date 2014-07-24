@@ -38,13 +38,14 @@ roam.utils.info("Loading Roam")
 window = roam.mainwindow.MainWindow()
 roamapp.setActiveWindow(window)
 
+_oldhook = sys.excepthook
+
 def excepthook(errorhandler, exctype, value, traceback):
     errorhandler(exctype, value, traceback)
     roam.utils.error("Uncaught exception", exc_info=(exctype, value, traceback))
 
 sys.excepthook = functools.partial(excepthook, window.raiseerror)
 
-print roamapp.projectsroot
 projectpaths = roam.environ.projectpaths(roamapp.projectsroot, roam.config.settings)
 roam.utils.log("Loading projects from")
 roam.utils.log(projectpaths)
@@ -57,4 +58,5 @@ window.show()
 roam.utils.info("Roam Loaded in {}".format(str(time.time() - start)))
 
 roamapp.exec_()
+sys.excepthook = _oldhook
 roamapp.exit()
