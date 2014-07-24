@@ -12,7 +12,7 @@ sys.path.append(srcpath)
 
 import roam.environ
 
-with roam.environ.setup(sys.argv) as roamapp:
+with roam.environ.setup() as roamapp:
     import roam.config
     import roam
     import roam.mainwindow

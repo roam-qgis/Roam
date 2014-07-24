@@ -1,12 +1,10 @@
+import os
 import pytest
-import roam.environ
 import sys
+import roam.environ
 
-from PyQt4.QtCore import QCoreApplication
-from PyQt4.QtGui import QApplication
-import PyQt4.QtGui
-
-roamapp = roam.environ.setup(sys.argv)
+print sys.argv
+roamapp = roam.environ._setup(os.getcwd())
 
 def tear_down():
     roamapp.exit()

@@ -7,7 +7,7 @@ sys.path.append(srcpath)
 
 import roam.environ
 
-with roam.environ.setup(sys.argv, logo=':/branding/logo', title="IntraMaps Roam Config Manager") as roamapp:
+with roam.environ.setup(logo=':/branding/logo', title="IntraMaps Roam Config Manager") as roamapp:
     import roam
     import roam.config
     import configmanager.logger

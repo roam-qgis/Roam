@@ -5,7 +5,6 @@ import argparse
 import contextlib
 import functools
 
-from qgis.core import contextmanagers
 
 class RoamApp(object):
     def __init__(self, sysargv, apppath, prefixpath, settingspath, libspath, i18npath, projectsroot):
@@ -87,19 +86,16 @@ class RoamApp(object):
         config.append("QGIS Version: {}".format(str(QGis.QGIS_VERSION)))
         return '\n'.join(config)
 
-
-@contextlib.contextmanager
-def setup(argv, logo='', title=''):
-    """
-    Setup the environment for Roam.
-
-    Returns the QGIS prefix path and settings path.
-    """
+def _setup(apppath=None, logo='', title=''):
     frozen = getattr(sys, "frozen", False)
     RUNNING_FROM_FILE = not frozen
-    apppath = os.path.dirname(os.path.realpath(argv[0]))
+    if not apppath:
+        apppath = os.path.dirname(os.path.realpath(sys.argv[0]))
+
     if RUNNING_FROM_FILE:
         print "Running from file"
+        print os.getcwd()
+        print apppath
         i18npath = os.path.join(apppath, "i18n")
         if os.name == 'posix':
             prefixpath = os.environ.get('QGIS_PREFIX_PATH', '/usr/')
@@ -131,21 +127,32 @@ def setup(argv, logo='', title=''):
     parser.add_argument('--config', metavar='c', type=str, default=settingspath, help='Path to Roam.config')
     parser.add_argument('projectsroot', nargs='?', default=projectroot, help="Root location of projects. Will override"
                                                                              "default projects folder path")
-    args = parser.parse_args()
+    args, unknown = parser.parse_known_args()
 
     if not os.path.exists(args.projectsroot):
         os.makedirs(args.projectsroot)
 
-    start = time.time()
+    app = RoamApp(sys.argv, apppath, prefixpath, args.config, libspath, i18npath, args.projectsroot).init(logo, title)
+    import roam.config
+    roam.config.load(app.settingspath)
+    return app
+
+
+@contextlib.contextmanager
+def setup(apppath=None, logo='', title=''):
+    """
+    Setup the environment for Roam.
+
+    Returns the QGIS prefix path and settings path.
+    """
     import roam.utils
     import roam.config
     roam.utils.info("Loading Roam")
-    app = RoamApp(argv, apppath, prefixpath, args.config, libspath, i18npath, args.projectsroot).init(logo, title)
-    roam.config.load(app.settingspath)
-
+    start = time.time()
+    app = _setup(apppath, logo, title)
+    roam.utils.info("Roam Loaded in {}".format(str(time.time() - start)))
     roam.utils.info(app.dump_configinfo())
     yield app
-    roam.utils.info("Roam Loaded in {}".format(str(time.time() - start)))
     app.exec_()
     roam.config.save()
     app.exit()
