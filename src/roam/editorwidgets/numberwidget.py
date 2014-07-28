@@ -1,10 +1,30 @@
 import sys
 from PyQt4.QtCore import QEvent
-from PyQt4.QtGui import QDoubleSpinBox, QSpinBox
+from PyQt4.QtGui import QDoubleSpinBox, QSpinBox, QWidget
+import functools
 
 from roam.api import RoamEvents
 from roam.editorwidgets.core import EditorWidget, registerwidgets
+from roam.editorwidgets.uifiles.ui_singlestepper import Ui_stepper
 
+class Stepper(Ui_stepper, QWidget):
+    def __init__(self, parent=None, Type=QSpinBox):
+        super(Stepper, self).__init__(parent)
+        self.setupUi(self)
+        self.spinBox = Type()
+        self.spinBox.setButtonSymbols(2)
+        self.layout().insertWidget(0, self.spinBox)
+        self.stepUp.pressed.connect(self.spinBox.stepUp)
+        self.stepDown.pressed.connect(self.spinBox.stepDown)
+        self.setRange = self.spinBox.setRange
+        self.setPrefix = self.spinBox.setPrefix
+        self.setSuffix = self.spinBox.setSuffix
+        self.valueChanged = self.spinBox.valueChanged
+        self.value = self.spinBox.value
+        self.setValue = self.spinBox.setValue
+
+    def installEventFilter(self, object):
+        self.spinBox.installEventFilter(object)
 
 class NumberWidget(EditorWidget):
     widgettype = 'Number'
@@ -12,7 +32,7 @@ class NumberWidget(EditorWidget):
         super(NumberWidget, self).__init__(*args, **kwargs)
 
     def createWidget(self, parent):
-        return QSpinBox(parent)
+        return Stepper(parent, Type=QSpinBox)
 
     def initWidget(self, widget):
         widget.valueChanged.connect(self.validate)
@@ -71,7 +91,7 @@ class DoubleNumberWidget(NumberWidget):
         super(DoubleNumberWidget, self).__init__(*args, **kwargs)
 
     def createWidget(self, parent):
-        return QDoubleSpinBox(parent)
+        return Stepper(parent, Type=QDoubleSpinBox)
 
     def initWidget(self, widget):
         super(DoubleNumberWidget, self).initWidget(widget)

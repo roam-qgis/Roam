@@ -168,5 +168,20 @@ featureform = """
 * {
     font: 20px "Segoe UI" ;
 }
+
+QPushButton {
+    border: 1px solid rgb(137, 175, 255);
+	background-color: rgb(203, 203, 203, 50);
+    padding: 6px;
+    color: #4f4f4f;
+}
+
+QPushButton:checked  {
+	background-color: rgb(203, 203, 203);
+}
+
+QPushButton:hover {
+    background-color: rgb(211, 228, 255);
+}
 """
 

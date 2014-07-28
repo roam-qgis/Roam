@@ -87,7 +87,8 @@ class EditorWidget(QObject):
             config = {}
         try:
             return cls(initconfig=config).createWidget(parent)
-        except TypeError:
+        except TypeError as ex:
+            print ex
             return cls().createWidget(parent)
 
     @property
