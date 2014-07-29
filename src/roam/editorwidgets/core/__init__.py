@@ -20,8 +20,9 @@ def registerallwidgets():
     from roam.editorwidgets.numberwidget import NumberWidget, DoubleNumberWidget
     from roam.editorwidgets.textwidget import TextWidget, TextBlockWidget
     from roam.editorwidgets.tablewidget import TableWidget
+    from roam.editorwidgets.optionwidget import OptionWidget
     registerwidgets(ImageWidget, ListWidget, MultiList, CheckboxWidget, DateWidget,
-                    NumberWidget, DoubleNumberWidget, TextWidget, TextBlockWidget)
+                    NumberWidget, DoubleNumberWidget, TextWidget, TextBlockWidget, OptionWidget)
 
 def supportedwidgets():
     return widgets.keys()
