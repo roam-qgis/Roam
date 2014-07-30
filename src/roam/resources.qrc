@@ -11,6 +11,8 @@
     <file alias="blue">resources/widgets/blue.svg</file>
   </qresource>
   <qresource prefix="icons">
+      <file alias="tick_icon">resources/images/tick.svg</file>
+      <file alias="cross_icon">resources/images/cross.svg</file>
     <file alias="cancel">resources/images/cancel.svg</file>
     <file alias="delete">resources/images/delete.svg</file>
     <file alias="edit">resources/images/edit.svg</file>

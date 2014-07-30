@@ -1,3 +1,4 @@
+from PyQt4.QtCore import QSize
 from PyQt4.QtGui import QIcon, QPushButton, QWidget, QHBoxLayout, QButtonGroup
 
 from roam.editorwidgets.core import EditorWidget
@@ -15,6 +16,7 @@ class OptionWidget(EditorWidget):
     def createWidget(self, parent):
         widget = QWidget(parent)
         widget.setLayout(QHBoxLayout())
+        widget.layout().setContentsMargins(0,0,0,0)
         return widget
 
     def _buildfromlist(self, listconfig):
@@ -29,15 +31,20 @@ class OptionWidget(EditorWidget):
 
             try:
                 path = parts[2]
-                icon = QIcon(path)
+                if path.endswith("_icon"):
+                    icon = QIcon(":/icons/{}".format(path))
+                else:
+                    icon = QIcon(path)
             except:
                 icon = QIcon()
+
 
             button = QPushButton()
             button.setCheckable(True)
             button.setText(desc)
             button.setProperty("value", data)
-            button.setIcon(QIcon(":/icons/{}".format(icon)))
+            button.setIcon(icon)
+            button.setIconSize(QSize(24,24))
             self.widget.layout().addWidget(button)
             self.group.addButton(button)
 
