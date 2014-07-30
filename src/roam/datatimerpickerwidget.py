@@ -39,10 +39,8 @@ class DateTimePickerWidget(datepicker_widget, QWidget):
     def setmode(self, mode):
         if mode == "Date":
             self.timesection.hide()
-            self.setasnowbutton.setText("Set as current date")
         elif mode == "Time":
             self.datepicker.hide()
-            self.setasnowbutton.setText("Set as current time")
 
     def isDirty(self, *args):
         date = self.getSelectedDate()
@@ -57,7 +55,7 @@ class DateTimePickerWidget(datepicker_widget, QWidget):
         else:   
             value = datetime.toString("ddd d MMM yyyy 'at' h:m ap")
             
-        self.label.setText(value)
+        self.label.setText("Set as: {}".format(value))
 
     def setDateTime(self, datetime):
         """

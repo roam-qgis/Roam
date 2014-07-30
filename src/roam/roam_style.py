@@ -196,5 +196,6 @@ QToolButton:checked  {
     border: 3px solid rgb(137, 175, 255);
     background-color: rgb(211, 228, 255);
 }
+
 """
 
