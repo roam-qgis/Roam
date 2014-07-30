@@ -62,11 +62,10 @@ class FeatureSaveException(Exception):
         self.level = level
         self.timout = timeout
         self.moreinfo = moreinfo
-        self.message = message + ':' + moreinfo
-
-    @classmethod
-    def missing_values(cls):
-        return cls("Missing fields", "Some fields are still required.", QgsMessageBar.WARNING, 2)
+        if self.moreinfo:
+            self.message = message + ':' + str(moreinfo)
+        else:
+            self.message = message
 
     @classmethod
     def not_accepted(cls):
@@ -85,6 +84,12 @@ class FeatureSaveException(Exception):
         Returns a tuple of the error
         """
         return (self.title, self.message, self.level, self.timout, self.moreinfo)
+
+class MissingValuesException(FeatureSaveException):
+    @classmethod
+    def missing_values(cls):
+        return cls("Missing fields", "Some fields are still required.", QgsMessageBar.WARNING, 2)
+
 
 @contextmanager
 def editing(layer):

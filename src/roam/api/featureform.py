@@ -121,6 +121,7 @@ RejectedException = roam.editorwidgets.core.RejectedException
 
 
 FeatureSaveException = qgisutils.FeatureSaveException
+MissingValuesException = qgisutils.MissingValuesException
 
 class DeleteFeatureException(FeatureSaveException):
     pass
@@ -490,6 +491,10 @@ class FeatureForm(FeatureFormBase):
     def allpassing(self):
         return all(valid for valid in self.requiredfields.values())
 
+    @property
+    def missingfields(self):
+        return [field for field, valid in self.requiredfields.iteritems() if valid == False]
+
     def save(self):
         """
         Save the values from the form into the set feature
@@ -497,7 +502,7 @@ class FeatureForm(FeatureFormBase):
         Override this method to handle saving things your own way if needed.
         """
         if not self.allpassing:
-            raise FeatureSaveException.missing_values()
+            raise MissingValuesException.missing_values()
 
         def updatefeautrefields(feature):
             def field_or_null(field):

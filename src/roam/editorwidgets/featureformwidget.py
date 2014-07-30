@@ -96,6 +96,9 @@ class FeatureFormWidget(Ui_Form, QWidget):
     def save_feature(self):
         try:
             self.featureform.save()
+        except featureform.MissingValuesException as ex:
+            RoamEvents.raisemessage(*ex.error)
+            return
         except featureform.FeatureSaveException as ex:
             RoamEvents.raisemessage(*ex.error)
 
