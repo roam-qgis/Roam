@@ -17,13 +17,8 @@ except ValueError:
 
 
 def get_git_changeset():
-    """Returns a numeric identifier of the latest git changeset.
-
-    The result is the UTC timestamp of the changeset in YYYYMMDDHHMMSS format.
-    This value isn't guaranteed to be unique, but collisions are very unlikely,
-    so it's sufficient for generating the development version numbers.
+    """Returns the SHA of the current HEAD
     """
-    import datetime
     import os
     import subprocess
 
@@ -41,7 +36,7 @@ def part_string(part, i):
         * Any tuple into flat concatenated string:
             ('a', 2) -> 'a2'
         * The string 'dev' in to a dvelopment version number:
-            dev'-> dev20130412121314
+            dev'-> dev-{SHA}
 
     Also takes into account whether a prepended dot is required,
     based on the position of the part in the overall string.
