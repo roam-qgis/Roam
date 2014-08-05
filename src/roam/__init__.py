@@ -1,12 +1,11 @@
-__ver_major__ = 2
-__ver_minor__ = 2
-__ver_patch__ = 0
-__ver_tuple__ = (__ver_major__,__ver_minor__,__ver_patch__)
-__version__ = "%d.%d.%d" % __ver_tuple__
+NUM_VERSION = (2, 2, 0, "dev")
 
 import sip
 import os
 import sys
+
+curpath = os.path.dirname(__file__)
+sys.path.append(curpath)
 
 try:
     types = ["QDate", "QDateTime", "QString", "QTextStream", "QTime", "QUrl", "QVariant"]
@@ -17,6 +16,56 @@ except ValueError:
     pass
 
 
-curpath = os.path.dirname(__file__)
+def get_git_changeset():
+    """Returns a numeric identifier of the latest git changeset.
 
-sys.path.append(curpath)
+    The result is the UTC timestamp of the changeset in YYYYMMDDHHMMSS format.
+    This value isn't guaranteed to be unique, but collisions are very unlikely,
+    so it's sufficient for generating the development version numbers.
+    """
+    import datetime
+    import os
+    import subprocess
+
+    full_path = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    sha = subprocess.check_output(['git', 'rev-parse', '--short','HEAD'], cwd=full_path)
+    return sha.split('\n')[0]
+
+
+def part_string(part, i):
+    """Convert a version number part into a string for concatentation.
+
+    Makes the following transformations:
+        * Any number into a string:
+            1 -> '1'
+        * Any tuple into flat concatenated string:
+            ('a', 2) -> 'a2'
+        * The string 'dev' in to a dvelopment version number:
+            dev'-> dev20130412121314
+
+    Also takes into account whether a prepended dot is required,
+    based on the position of the part in the overall string.
+    """
+    if part == 'dev':
+        sha = get_git_changeset()
+        if sha:
+            s = 'dev-{}'.format(sha)
+        else:
+            s = 'dev'
+        if i > 0:
+            s = '.' + s
+    elif isinstance(part, tuple):
+        s = ''.join(str(p) for p in part)
+    else:
+        s = str(part)
+        if i > 0:
+            s = '.' + s
+    return s
+
+frozen = getattr(sys, "frozen", False)
+if frozen:
+    with open(os.path.join(curpath, "version.txt"), 'r') as f:
+        __version__ = f.read()
+else:
+    __version__ = "".join(part_string(nv, i) for i, nv in enumerate(NUM_VERSION))
+

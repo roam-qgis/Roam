@@ -117,6 +117,14 @@ def get_data_files():
     for path, collection in getfiles(sdkpath, r'libs', includebase=False):
         datafiles.append((path, collection))
 
+    versiontext = os.path.join(appsrcopyFilesath, "version.txt")
+
+    with open(versiontext, 'w') as f:
+        f.write(roam.__version__)
+
+    datafiles.append((r'libs\roam', [versiontext]))
+
+
     return datafiles
 
 icon = r'src\roam\resources\branding\icon.ico'

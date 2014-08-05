@@ -79,7 +79,8 @@ def layersfromlist(layerlist):
 
 def checkversion(roamversion, projectversion):
     def versiontuple(v):
-        version = tuple(map(int, (v.split("."))))
+        v = v.split('.')[:3]
+        version = tuple(map(int, (v)))
         if len(version) == 2:
             version = (version[0], version[1], 0)
         return version
