@@ -114,7 +114,7 @@ def getProjects(paths):
                                for item in os.walk(projectpath).next()[1]]))
 
             for folder in folders:
-                if os.path.basename(folder).startswith("_"):
+                if os.path.basename(folder).startswith("_") or os.path.basename(folder) == 'log':
                     # Ignore hidden folders.
                     continue
 

@@ -10,9 +10,9 @@ from PyQt4 import uic
 from PyQt4.QtGui import (QLabel, QDialog, QGridLayout, QLayout)
 
 try:
-   logpath = os.path.join(os.environ['ROAM_APPPATH'], 'log')
+   logpath = os.path.join(os.environ['ROAM_APPPATH'], '_log')
 except KeyError:
-   logpath = 'log' 
+   logpath = '_log' 
 
 if not os.path.exists(logpath):
    os.makedirs(logpath)
