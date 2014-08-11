@@ -4,10 +4,10 @@ import os
 import getpass
 
 try:
-   logpath = os.path.join(os.environ['ROAM_APPPATH'], 'log')
+   logpath = os.path.join(os.environ['ROAM_APPPATH'], '_log')
 except KeyError:
    #running from source
-   logpath = 'log'
+   logpath = '_log'
 if not os.path.exists(logpath):
    os.makedirs(logpath)
 LOG_FILENAME = os.path.join(logpath, "{}_configmanager.log".format(getpass.getuser()))
