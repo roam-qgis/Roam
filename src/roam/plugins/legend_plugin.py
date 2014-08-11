@@ -10,7 +10,7 @@ from roam.api import plugins
 ICON_SIZE = QSize(32, 32)
 
 
-@plugins.page(name='Legend', title='Legned', icon=QIcon(r':/icons/legend'), projectpage=True)
+@plugins.page(name='Legend', title='Legend', icon=QIcon(r':/icons/legend'), projectpage=True)
 class LegendWidget(legend_widget, QWidget):
     def __init__(self, api, parent=None):
         super(LegendWidget, self).__init__(parent)
