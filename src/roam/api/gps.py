@@ -2,7 +2,7 @@ from PyQt4.QtCore import QObject, pyqtSignal
 
 from qgis.core import (QgsGPSDetector, QgsGPSConnectionRegistry, QgsPoint, \
                         QgsCoordinateTransform, QgsCoordinateReferenceSystem, \
-                        QgsGPSInformation)
+                        QgsGPSInformation, QgsCsException)
 from roam.utils import log
 
 NMEA_FIX_BAD = 1
