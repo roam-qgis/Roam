@@ -8,6 +8,8 @@ def load(path):
     with open(path, 'r') as f:
         global settings
         settings = yaml.load(f)
+        if settings is None:
+            settings = {}
         global loaded_path
         loaded_path = path
 
