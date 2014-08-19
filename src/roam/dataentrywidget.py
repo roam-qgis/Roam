@@ -69,8 +69,11 @@ class DataEntryWidget(dataentry_widget, dataentry_base):
             position = self.stackedWidget.addWidget(widget)
             self.stackedWidget.setCurrentIndex(position)
             self.widgetstack.append(largewidgetwrapper)
+            largewidgetwrapper.after_load()
         except roam.editorwidgets.core.RejectedException as rejected:
             self.formrejected(rejected.message, rejected.level)
+            if self.stackedWidget.count() == 0:
+                self.lastwidgetremoved.emit()
 
     def clear(self, dontemit=False):
         for i in xrange(self.stackedWidget.count()):

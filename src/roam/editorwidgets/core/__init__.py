@@ -222,4 +222,13 @@ class LargeEditorWidget(EditorWidget):
         self.cancel.emit(reason, level)
 
     def before_load(self):
+        """
+        Called before the widget is loaded into the UI
+        """
+        pass
+
+    def after_load(self):
+        """
+        Called after the widget has been loaded into the UI
+        """
         pass

@@ -122,6 +122,8 @@ class FeatureFormWidget(Ui_Form, QWidget):
     def bind_values(self, values):
         self.values = values
         self.featureform.bindvalues(values)
+
+    def after_load(self):
         self.featureform.loaded()
 
     def before_load(self):
@@ -161,3 +163,6 @@ class FeatureFormWidgetEditor(LargeEditorWidget):
 
     def setvalue(self, value):
         self.widget.bind_values(value)
+
+    def after_load(self):
+        self.widget.after_load()
