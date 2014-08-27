@@ -20,17 +20,12 @@ class InfoTool(TouchMapTool):
         super(InfoTool, self).__init__(canvas)
         self.radius = snapradius
 
-        self.band = QgsRubberBand(self.canvas)
-        self.band.setColor(QColor.fromRgb(224,162,16))
-        self.band.setWidth(3)
-
         self.selectband = None
         self.selectrect = QRect()
         self.dragging = False
         self.selectionlayers = []
 
     def getFeatures(self, rect, firstonly=False):
-        self.band.reset()
         for layer in self.selectionlayers.itervalues():
             if (not layer.type() == QgsMapLayer.VectorLayer
                 or layer.geometryType() == QGis.NoGeometry):

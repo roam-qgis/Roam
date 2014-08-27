@@ -135,6 +135,7 @@ class MapWidget(Ui_CanvasWidget, QMainWindow):
 
     def clear_selection(self):
         # Clear the main selection rubber band
+        self.canvas.scene().update()
         self.currentfeatureband.reset()
         # Clear the rest
         for band in self.selectionbands.itervalues():
