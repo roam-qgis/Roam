@@ -102,7 +102,13 @@ class ListWidget(EditorWidget):
             item.setData(None, Qt.UserRole)
             self.listmodel.appendRow(item)
 
-        if not filterexp and valuefieldindex == keyfieldindex:
+        attributes = {keyfieldindex, valuefieldindex}
+        iconfieldindex =  layer.fieldNameIndex('icon')
+        print iconfieldindex
+        if iconfieldindex > -1:
+            attributes.add(iconfieldindex)
+
+        if not filterexp and valuefieldindex == keyfieldindex and iconfieldindex == -1:
             values = layer.uniqueValues(keyfieldindex)
             for value in values:
                 value = nullconvert(value)
@@ -111,12 +117,7 @@ class ListWidget(EditorWidget):
                 self.listmodel.appendRow(item)
             return
 
-        attributes = {keyfieldindex, valuefieldindex}
         flags = QgsFeatureRequest.NoGeometry
-
-        iconfieldindex =  layer.fieldNameIndex('icon')
-        if iconfieldindex > -1:
-            attributes.add(iconfieldindex)
 
         expression = None
         if filterexp:
