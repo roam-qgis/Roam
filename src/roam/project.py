@@ -364,10 +364,13 @@ class Form(object):
 
     def get_query(self, name, values):
         query = self.settings['query'][name]['sql']
-        mappings = self.settings['query'][name]['mappings']
-        newvalues = copy.deepcopy(mappings)
-        for key_name, key_column in mappings.iteritems():
-            newvalues[key_name] = values[key_column]
+        try:
+            mappings = self.settings['query'][name]['mappings']
+            newvalues = copy.deepcopy(mappings)
+            for key_name, key_column in mappings.iteritems():
+                newvalues[key_name] = values[key_column]
+        except KeyError:
+            newvalues = {}
         return query, newvalues
 
 

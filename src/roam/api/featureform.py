@@ -234,11 +234,18 @@ class FeatureFormBase(QWidget):
             self._bindsavebutton(field)
             self.boundwidgets[field] = widgetwrapper
 
-    def bindvalues(self, values):
+    def bindvalues(self, values, update=False):
         """
         Bind the values to the form.
         """
-        self.bindingvalues = values
+        if not update:
+            self.bindingvalues = CaseInsensitiveDict(values)
+        else:
+            for key, value in values.iteritems():
+                self.bindingvalues[key] = value
+
+        print self.bindingvalues
+
         for field, value in values.iteritems():
             value = nullcheck(value)
             try:
@@ -247,6 +254,11 @@ class FeatureFormBase(QWidget):
                 utils.info("Can't find control for field {}. Ignoring".format(field))
 
         self.validateall()
+
+    def bind_feature(self, feature):
+        self.feature = feature
+        values = self.form.values_from_feature(feature)
+        self.bindvalues(values)
 
     def getvalues(self):
         def shouldsave(field):
