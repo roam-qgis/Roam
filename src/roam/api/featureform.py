@@ -244,8 +244,6 @@ class FeatureFormBase(QWidget):
             for key, value in values.iteritems():
                 self.bindingvalues[key] = value
 
-        print self.bindingvalues
-
         for field, value in values.iteritems():
             value = nullcheck(value)
             try:
