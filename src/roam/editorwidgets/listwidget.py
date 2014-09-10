@@ -1,9 +1,10 @@
 from PyQt4.QtGui import QComboBox, QStandardItem, QStandardItemModel, QIcon, QListView
-from PyQt4.QtCore import QSize, Qt
+from PyQt4.QtCore import QSize, Qt, QEvent
 from qgis.core import QgsMessageLog, QgsMapLayerRegistry, QgsExpression, QgsFeatureRequest
 import qgis.core
 
 import roam.utils
+from roam.api import RoamEvents
 from roam.editorwidgets.core import EditorWidget, registerwidgets, LargeEditorWidget
 from roam.biglist import BigList
 
@@ -19,6 +20,11 @@ class BigListWidget(LargeEditorWidget):
         super(BigListWidget, self).__init__(*args, **kwargs)
         self.multi = False
 
+    def eventFilter(self, object, event):
+        if event.type() == QEvent.FocusIn:
+            RoamEvents.openkeyboard.emit()
+        return False
+
     def createWidget(self, parent):
         return BigList(parent)
 
@@ -26,6 +32,7 @@ class BigListWidget(LargeEditorWidget):
         widget.itemselected.connect(self.selectitems)
         widget.closewidget.connect(self.emitcancel)
         widget.savewidget.connect(self.emitfished)
+        widget.search.installEventFilter(self)
 
     def selectitems(self):
         if not self.multi:

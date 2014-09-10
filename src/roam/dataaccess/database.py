@@ -51,7 +51,7 @@ class Database(object):
             raise DatabaseException(db.lastError().text())
         return Database(db)
 
-    def named_query(self, name, values):
+    def named_query(self, name, values=None):
         """
         Return a query based on the name given.  The query must be defined in the form
         settings under the query: block

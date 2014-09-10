@@ -139,6 +139,13 @@ QListView::item:selected {
        </widget>
       </item>
       <item>
+       <widget class="QgsFilterLineEdit" name="search">
+        <property name="placeholderText">
+         <string>Search</string>
+        </property>
+       </widget>
+      </item>
+      <item>
        <widget class="QListView" name="listView">
         <property name="styleSheet">
          <string notr="true">QListView::indicator
@@ -166,6 +173,13 @@ height:32px;
    </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>QgsFilterLineEdit</class>
+   <extends>QLineEdit</extends>
+   <header>qgis.gui</header>
+  </customwidget>
+ </customwidgets>
  <resources>
   <include location="../resources.qrc"/>
  </resources>

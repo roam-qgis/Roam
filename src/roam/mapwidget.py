@@ -132,7 +132,7 @@ class MapWidget(Ui_CanvasWidget, QMainWindow):
         self.clear_selection()
         self.highlight_selection({layer: features})
         self.currentfeatureband.setToGeometry(feature.geometry(), layer)
-        self.canvas.refresh()
+        # self.canvas.refresh()
 
     def clear_selection(self):
         # Clear the main selection rubber band

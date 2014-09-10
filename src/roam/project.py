@@ -363,6 +363,8 @@ class Form(object):
         return geomtype in supportedgeometry
 
     def get_query(self, name, values):
+        if values is None:
+            values = {}
         query = self.settings['query'][name]['sql']
         try:
             mappings = self.settings['query'][name]['mappings']
