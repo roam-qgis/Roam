@@ -59,7 +59,6 @@ class ListWidget(EditorWidget):
 
     def _buildfromlist(self, widget, listconfig):
         items = listconfig['items']
-        print items
         for item in items:
             parts = item.split(';')
             data = parts[0]
@@ -104,7 +103,6 @@ class ListWidget(EditorWidget):
 
         attributes = {keyfieldindex, valuefieldindex}
         iconfieldindex =  layer.fieldNameIndex('icon')
-        print iconfieldindex
         if iconfieldindex > -1:
             attributes.add(iconfieldindex)
 
@@ -154,9 +152,9 @@ class ListWidget(EditorWidget):
 
     def initWidget(self, widget):
         if widget.isEditable():
-            widget.editTextChanged.connect(self.validate)
+            widget.editTextChanged.connect(self.emitvaluechanged)
 
-        widget.currentIndexChanged.connect(self.validate)
+        widget.currentIndexChanged.connect(self.emitvaluechanged)
         widget.setModel(self.listmodel)
         widget.showPopup = self.showpopup
         widget.setIconSize(QSize(24,24))
@@ -176,7 +174,6 @@ class ListWidget(EditorWidget):
         self.listmodel.clear()
         if 'list' in self.config:
             listconfig = self.config['list']
-            print listconfig
             self._buildfromlist(self.widget, listconfig)
         elif 'layer' in self.config:
             layerconfig = self.config['layer']
@@ -189,13 +186,10 @@ class ListWidget(EditorWidget):
         return self.config.get('allownull', False)
 
     def validate(self, *args):
-        if (not self.allownulls and (not self.widget.currentText() or
-            self.widget.currentText() == "(no selection)")):
-            self.raisevalidationupdate(False)
+        if (not self.widget.currentText() == '' and not self.widget.currentText() == "(no selection)"):
+            return True
         else:
-            self.raisevalidationupdate(True)
-
-        self.emitvaluechanged()
+            return False
 
     def _biglistitem(self, index):
         self.widget.setCurrentIndex(index.row())
@@ -247,6 +241,7 @@ class MultiList(ListWidget):
                                                              multi=True))
     def initWidget(self, widget):
         widget.setEditable(True)
+        self.widget.lineEdit().textChanged.connect(self.emitvaluechanged)
         widget.setModel(self.listmodel)
         widget.focusInEvent = self.showpopup
         widget.setIconSize(QSize(24,24))
@@ -260,7 +255,7 @@ class MultiList(ListWidget):
     def setvalue(self, value):
         value = nullconvert(value)
         if not value:
-            self.widget.lineEdit().setText(value)
+            self.widget.lineEdit().setText(None)
             return
 
         values = value.split(';')
@@ -275,6 +270,7 @@ class MultiList(ListWidget):
 
             item = self.listmodel.itemFromIndex(matched)
             item.setCheckState(Qt.Checked)
+
         self.widget.lineEdit().setText(value)
 
     def value(self):

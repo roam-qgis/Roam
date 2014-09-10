@@ -61,6 +61,21 @@ class Database(object):
         sql, values = self.form.get_query(name, values)
         return self.query(sql, **values)
 
+    def exec_query(self, name, values):
+        """
+        Executes a query with no return data
+        :param name:
+        :param values:
+        :return:
+        """
+        sql, values = self.form.get_query(name, values)
+        query = self._query(sql, **values)
+        if query.exec_():
+            return True
+
+        if query.lastError().isValid():
+            raise DatabaseException(query.lastError().text())
+
     def _query(self, querystring, **mappings):
         query = QSqlQuery(self.db)
         query.prepare(querystring)

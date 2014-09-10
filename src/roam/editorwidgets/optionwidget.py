@@ -61,10 +61,9 @@ class OptionWidget(EditorWidget):
     def validate(self, *args):
         button = self.group.checkedButton()
         if button:
-            self.raisevalidationupdate(True)
-        else:
-            self.raisevalidationupdate(False)
-        self.emitvaluechanged()
+            return True
+
+        return False
 
     def setvalue(self, value):
         for button in self.group.buttons():

@@ -24,7 +24,7 @@ class CheckboxWidget(EditorWidget):
         widget.toggled.connect(self.validate)
 
     def validate(self, *args):
-        self.raisevalidationupdate(self.widget.isChecked())
+        return self.widget.isChecked()
 
     def setvalue(self, value):
         checkedvalue = self.config['checkedvalue']

@@ -157,8 +157,8 @@ class ImageWidget(EditorWidget):
 
     def initWidget(self, widget):
         widget.openRequest.connect(self.showlargeimage)
-        widget.imageloaded.connect(self.validate)
-        widget.imageremoved.connect(self.validate)
+        widget.imageloaded.connect(self.emitvaluechanged)
+        widget.imageremoved.connect(self.emitvaluechanged)
         widget.imageloadrequest.connect(self.showpicker)
         widget.annotateimage.connect(self._selectDrawing)
 
@@ -198,8 +198,7 @@ class ImageWidget(EditorWidget):
         self.defaultlocation = self.config.get('defaultlocation', '')
 
     def validate(self, *args):
-        self.raisevalidationupdate(not self.widget.isDefault)
-        self.emitvaluechanged()
+        return not self.widget.isDefault
 
     def showlargeimage(self, pixmap):
         RoamEvents.openimage.emit(pixmap)

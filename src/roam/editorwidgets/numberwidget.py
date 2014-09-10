@@ -35,7 +35,7 @@ class NumberWidget(EditorWidget):
         return Stepper(parent, Type=QSpinBox)
 
     def initWidget(self, widget):
-        widget.valueChanged.connect(self.validate)
+        widget.valueChanged.connect(self.emitvaluechanged)
         widget.installEventFilter(self)
 
     def eventFilter(self, object, event):
@@ -46,7 +46,7 @@ class NumberWidget(EditorWidget):
         return False
 
     def validate(self, *args):
-        self.raisevalidationupdate(passed=True)
+        return True
 
     def updatefromconfig(self):
         config = self.config

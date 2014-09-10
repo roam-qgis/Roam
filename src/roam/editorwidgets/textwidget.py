@@ -15,7 +15,7 @@ class TextWidget(EditorWidget):
         return QLineEdit(parent)
 
     def initWidget(self, widget):
-        widget.textChanged.connect(self.validate)
+        widget.textChanged.connect(self.emitvaluechanged)
         widget.installEventFilter(self)
 
     def eventFilter(self, object, event):
@@ -27,11 +27,9 @@ class TextWidget(EditorWidget):
 
     def validate(self, *args):
         if not self.value():
-            self.raisevalidationupdate(False)
+            return False
         else:
-            self.raisevalidationupdate(True)
-
-        self.emitvaluechanged()
+            return True
 
     def setvalue(self, value):
         # Not the best way but should cover most use cases

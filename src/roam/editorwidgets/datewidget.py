@@ -61,9 +61,9 @@ class DateWidget(EditorWidget):
             pickbutton.pressed.connect(self.showpickdialog)
 
         if type(self.datewidget) is QDateEdit:
-            self.datawidget.dateChanged.connect(self.validate)
+            self.datawidget.dateChanged.connect(self.emitvaluechanged)
         else:
-            self.datewidget.dateTimeChanged.connect(self.validate)
+            self.datewidget.dateTimeChanged.connect(self.emitvaluechanged)
         self.datewidget.installEventFilter(self)
 
     def eventFilter(self, object, event):
@@ -82,11 +82,9 @@ class DateWidget(EditorWidget):
 
     def validate(self, *args):
         if self.value() is None:
-            self.raisevalidationupdate(False)
+            return False
         else:
-            self.raisevalidationupdate(True)
-
-        self.emitvaluechanged()
+            return True
 
     def showpickdialog(self):
         """

@@ -156,8 +156,7 @@ class FeatureFormBase(QWidget):
     def is_capturing(self, value):
         self.editingmode = not value
 
-    def updaterequired(self, field, passed):
-        self.requiredfields[field.name()] = passed
+    def updaterequired(self, value):
         passed = self.allpassing
         self.formvalidation.emit(passed)
 
@@ -223,12 +222,9 @@ class FeatureFormBase(QWidget):
 
             widgetwrapper.hidden = config.get('hidden', False)
 
-            if config.get('required', False) and not widgetwrapper.hidden:
-                # All widgets state off as false unless told otherwise
-                self.requiredfields[field] = False
-                widgetwrapper.setrequired()
-                widgetwrapper.validationupdate.connect(self.updaterequired)
+            widgetwrapper.required = config.get('required', False)
 
+            widgetwrapper.valuechanged.connect(self.updaterequired)
             widgetwrapper.largewidgetrequest.connect(RoamEvents.show_widget.emit)
 
             self._bindsavebutton(field)
@@ -242,7 +238,10 @@ class FeatureFormBase(QWidget):
             self.bindingvalues = CaseInsensitiveDict(values)
         else:
             for key, value in values.iteritems():
-                self.bindingvalues[key] = value
+                try:
+                    self.bindingvalues[key] = value
+                except KeyError:
+                    continue
 
         for field, value in values.iteritems():
             value = nullcheck(value)
@@ -499,7 +498,14 @@ class FeatureForm(FeatureFormBase):
 
     @property
     def allpassing(self):
-        return all(valid for valid in self.requiredfields.values())
+        """
+        Checks all widgets to see if they are in a pass state or not
+        """
+        for wrapper in self.boundwidgets.itervalues():
+            # print wrapper.labeltext, wrapper.passing
+            if not wrapper.passing:
+                return False
+        return True
 
     @property
     def missingfields(self):

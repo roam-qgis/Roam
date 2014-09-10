@@ -62,13 +62,13 @@ class EditorWidget(QObject):
         self.layer = layer
         self.field = field
         self.label = label
-        self.required = False
+        self._required = False
         self._readonly = True
         self.validationstyle = """QLabel[required=true]
                                 {border-radius: 5px; background-color: rgba(255, 221, 48,150);}
                                 QLabel[ok=true]
                                 { border-radius: 5px; background-color: rgba(200, 255, 197, 150); }"""
-        self.validationupdate.connect(self.updatecontrolstate)
+        self.valuechanged.connect(self.updatecontrolstate)
         self.initconfig = kwargs.get('initconfig', {})
 
     @classmethod
@@ -93,6 +93,22 @@ class EditorWidget(QObject):
             return cls().createWidget(parent)
 
     @property
+    def passing(self):
+        """
+        Returns True of the widget is in a passing validation state.
+
+        Widgets that are hidden can still pass validation
+        :return:
+        """
+        if not self.required:
+            return True
+
+        if self.required and not self.hidden:
+            return self.validate()
+        else:
+            return True
+
+    @property
     def readonly(self):
         return self._readonly
 
@@ -111,20 +127,33 @@ class EditorWidget(QObject):
         self.widget.setVisible(not value)
         self.buddywidget.setVisible(not value)
 
-    def raisevalidationupdate(self, passed):
-        if self.required:
-            self.validationupdate.emit(self.field, passed)
+    def updatecontrolstate(self, value):
+        if self.required and self.passing:
+            self.buddywidget.setProperty('ok', True)
+        else:
+            self.buddywidget.setProperty('ok', False)
 
-    def updatecontrolstate(self, field, passed):
-        if self.required:
-            self.buddywidget.setProperty('ok', passed)
-            self.buddywidget.style().unpolish(self.buddywidget)
-            self.buddywidget.style().polish(self.buddywidget)
+        self.buddywidget.style().unpolish(self.buddywidget)
+        self.buddywidget.style().polish(self.buddywidget)
 
     def setrequired(self):
-        self.buddywidget.setStyleSheet(self.validationstyle)
-        self.buddywidget.setProperty('required', True)
         self.required = True
+
+    @property
+    def required(self):
+        return self._required
+
+    @required.setter
+    def required(self, state):
+        if state:
+            self.buddywidget.setStyleSheet(self.validationstyle)
+        else:
+            self.buddywidget.setStyleSheet("")
+
+        self.buddywidget.setProperty('required', state)
+        self.buddywidget.style().unpolish(self.buddywidget)
+        self.buddywidget.style().polish(self.buddywidget)
+        self._required = state
 
     @property
     def buddywidget(self):
@@ -147,7 +176,7 @@ class EditorWidget(QObject):
         pass
 
     def validate(self, *args):
-        pass
+        return True
 
     def setconfig(self, config):
         """

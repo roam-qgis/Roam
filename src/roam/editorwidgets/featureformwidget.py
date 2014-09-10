@@ -91,6 +91,7 @@ class FeatureFormWidget(Ui_Form, QWidget):
         except featureform.DeleteFeatureException as ex:
             RoamEvents.raisemessage(*ex.error)
 
+        self.featureform.featuredeleted(self.feature)
         self.featuredeleted.emit()
 
     def save_feature(self):
