@@ -3,6 +3,8 @@ import sys
 import os
 import getpass
 
+from logging import handlers
+
 try:
    logpath = os.path.join(os.environ['ROAM_APPPATH'], 'log')
 except KeyError:
@@ -17,7 +19,7 @@ console_format = '%(levelname)s %(module)s-%(funcName)s:%(lineno)d - %(message)s
 formater = logging.Formatter(log_format)
 console_formater = logging.Formatter(console_format)
 
-filehandler = logging.FileHandler(LOG_FILENAME, mode='at')
+filehandler = handlers.RotatingFileHandler(LOG_FILENAME, mode='at', maxBytes=1000000, backupCount=5)
 filehandler.setLevel(logging.DEBUG)
 filehandler.setFormatter(formater)
 

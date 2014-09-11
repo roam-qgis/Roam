@@ -6,6 +6,8 @@ import inspect
 import sys
 import getpass
 
+from logging import handlers
+
 from PyQt4 import uic
 from PyQt4.QtGui import (QLabel, QDialog, QGridLayout, QLayout)
 
@@ -22,7 +24,7 @@ console_format = '%(levelname)s %(module)s-%(funcName)s:%(lineno)d - %(message)s
 formater = logging.Formatter(log_format)
 console_formater = logging.Formatter(console_format)
 
-filehandler = logging.FileHandler(LOG_FILENAME, mode='at')
+filehandler = handlers.RotatingFileHandler(LOG_FILENAME, mode='at', maxBytes=1000000, backupCount=5)
 filehandler.setLevel(logging.DEBUG)
 filehandler.setFormatter(formater)
 
@@ -70,21 +72,6 @@ def timeit(method):
         info(message)
         return result
     return wrapper
-
-
-def openImageViewer(pixmap, parent):
-        dlg = QDialog()
-        dlg.setWindowTitle("Image Viewer")
-        dlg.setLayout(QGridLayout())
-        dlg.layout().setContentsMargins(0,0,0,0)
-        dlg.layout().setSizeConstraint(QLayout.SetNoConstraint)
-        dlg.resize(600,600)
-        label = QLabel()
-        label.mouseReleaseEvent = lambda x: dlg.accept()
-        label.setPixmap(pixmap)
-        label.setScaledContents(True)
-        dlg.layout().addWidget(label)
-        dlg.exec_()
 
 
 def _pluralstring(text='', num=0):
