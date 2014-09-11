@@ -1,4 +1,4 @@
-from PyQt4.QtCore import QModelIndex, pyqtSignal, QSize
+from PyQt4.QtCore import QModelIndex, pyqtSignal, QSize, Qt
 from PyQt4.QtGui import QWidget, QDialog, QSortFilterProxyModel
 
 from roam.flickwidget import FlickCharm
@@ -19,6 +19,7 @@ class BigList(Ui_BigList, QWidget):
         self._index = None
         self.search.textEdited.connect(self.set_filter)
         self.filtermodel = QSortFilterProxyModel()
+        self.filtermodel.setFilterCaseSensitivity(Qt.CaseInsensitive)
         self.listView.setModel(self.filtermodel)
 
         self.charm = FlickCharm()
