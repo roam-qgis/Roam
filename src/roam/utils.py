@@ -25,7 +25,7 @@ formater = logging.Formatter(log_format)
 console_formater = logging.Formatter(console_format)
 
 filehandler = handlers.RotatingFileHandler(LOG_FILENAME, mode='at', maxBytes=1000000, backupCount=5)
-filehandler.setLevel(logging.DEBUG)
+filehandler.setLevel(logging.INFO)
 filehandler.setFormatter(formater)
 
 stream = logging.StreamHandler(stream=sys.stdout)

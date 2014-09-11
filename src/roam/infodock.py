@@ -222,7 +222,7 @@ class InfoDock(infodock_widget, QWidget):
         try:
             feature = cursor.feature
         except NoFeature as ex:
-            utils.warning(ex)
+            utils.exception(ex)
             return
 
 

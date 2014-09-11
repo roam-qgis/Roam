@@ -180,7 +180,7 @@ class FeatureFormBase(QWidget):
             widgettype = config['widget']
             field = config['field']
             if not field:
-                utils.warning("Skipping widget. No field defined")
+                utils.info("Skipping widget. No field defined")
                 continue
 
             field = field.lower()
@@ -194,11 +194,11 @@ class FeatureFormBase(QWidget):
             if widget is None:
                 widget = roam.editorwidgets.core.createwidget(widgettype)
                 config['hidden'] = True
-                utils.warning("No widget named {} found so we have made one.".format(field))
+                utils.info("No widget named {} found so we have made one.".format(field))
 
             label = self.findcontrol("{}_label".format(field))
             if label is None:
-                utils.warning("Not label found for {}".format(field))
+                utils.debug("No label found for {}".format(field))
 
             widgetconfig = config.get('config', {})
             qgsfield = fields[field]
@@ -210,7 +210,7 @@ class FeatureFormBase(QWidget):
                                                                       label=label,
                                                                       config=widgetconfig)
             except EditorWidgetException as ex:
-                utils.warning(ex.message)
+                utils.exception(ex)
                 continue
 
             readonlyrules = config.get('read-only-rules', [])
@@ -248,7 +248,7 @@ class FeatureFormBase(QWidget):
             try:
                 self.boundwidgets[field].setvalue(value)
             except KeyError:
-                utils.info("Can't find control for field {}. Ignoring".format(field))
+                utils.debug("Can't find control for field {}. Ignoring".format(field))
 
         self.validateall()
 
