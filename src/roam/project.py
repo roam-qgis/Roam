@@ -215,8 +215,15 @@ class Form(object):
 
     @property
     def icon(self):
-        iconpath = os.path.join(self.folder, 'icon.png')
-        return iconpath
+        icon = os.path.join(self.folder, 'icon.svg')
+        if os.path.exists(icon):
+            return icon
+
+        icon = os.path.join(self.folder, 'icon.png')
+        if os.path.exists(icon):
+            return icon
+
+        return ''
 
     @property
     def QGISLayer(self):
@@ -449,14 +456,16 @@ class Project(object):
 
     @property
     def splash(self):
-        if not self._splash:
-            try:
-                self._splash = glob.glob(os.path.join(self.folder, 'splash.png'))[0]
-            except IndexError:
-                self._splash = ''
-            
-        return self._splash
-    
+        self._splash = os.path.join(self.folder, 'splash.svg')
+        if os.path.exists(self._splash):
+            return self._splash
+
+        self._splash = os.path.join(self.folder, 'splash.png')
+        if os.path.exists(self._splash):
+            return self._splash
+
+        return ''
+
     def syncprovders(self):
         providers = self.settings.get("providers", {})
         variables = {}
