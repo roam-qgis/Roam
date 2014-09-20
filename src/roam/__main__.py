@@ -18,6 +18,7 @@ with roam.environ.setup() as roamapp:
     import roam.mainwindow
     import roam.utils
     import roam.api.featureform
+    import roam.api.plugins
 
     # Fake this module to maintain API.
     sys.modules['roam.featureform'] = roam.api.featureform
@@ -32,5 +33,8 @@ with roam.environ.setup() as roamapp:
     window.loadprojects(projects)
     window.actionProject.toggle()
     window.viewprojects()
+    pluginpath = os.path.join(roamapp.apppath, "plugins")
+    roam.api.plugins.load_plugins_from([pluginpath])
+    window.loadpages(roam.api.plugins.registeredpages)
     window.show()
 

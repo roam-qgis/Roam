@@ -38,6 +38,8 @@ class _Events(QObject):
     selectioncleared = pyqtSignal()
     selectionchanged = pyqtSignal(dict)
 
+    projectloaded = pyqtSignal(object)
+
     helprequest = pyqtSignal(QWidget, str)
 
     onShowMessage = pyqtSignal(str, str, int, int, str)
