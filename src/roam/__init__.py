@@ -42,7 +42,11 @@ def part_string(part, i):
     based on the position of the part in the overall string.
     """
     if part == 'dev':
-        sha = get_git_changeset()
+        try:
+            sha = get_git_changeset()
+        except:
+            sha = None
+
         if sha:
             s = 'dev-{}'.format(sha)
         else:
