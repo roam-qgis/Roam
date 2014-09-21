@@ -213,6 +213,12 @@ class MainWindow(ui_mainwindow.Ui_MainWindow, QMainWindow):
             action.setVisible(visible)
 
     def loadpages(self, pages):
+        def safe_connect(method, to):
+            try:
+                method.connect(to)
+            except AttributeError:
+                pass
+
         for PageClass in pages:
             action = QAction(self.menutoolbar)
             text = PageClass.title.ljust(13)
@@ -228,6 +234,9 @@ class MainWindow(ui_mainwindow.Ui_MainWindow, QMainWindow):
 
             iface = RoamInterface(RoamEvents, GPS)
             pagewidget = PageClass(iface, self)
+
+            safe_connect(RoamEvents.selectionchanged, pagewidget.selection_changed)
+            safe_connect(RoamEvents.projectloaded, pagewidget.project_loaded)
 
             pageindex = self.stackedWidget.insertWidget(-1, pagewidget)
             action.setProperty('page', pageindex)
@@ -519,6 +528,11 @@ class MainWindow(ui_mainwindow.Ui_MainWindow, QMainWindow):
         self.projectbuttons.append(self.actionMap)
         self.projectbuttons.append(self.actionLegend)
         for action in self.pluginactions:
+            # Remove the page widget, because we make it on each load
+            widget = self.stackedWidget.widget(action.property("page"))
+            self.stackedWidget.removeWidget(widget)
+            widget.deleteLater()
+
             self.menutoolbar.removeAction(action)
         self.pluginactions = []
 

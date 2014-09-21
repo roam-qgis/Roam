@@ -9,6 +9,20 @@ class Page(object):
     icon = ""
     projectpage = True
 
+    def selection_changed(self, selection):
+        """
+        Auto connected selection changed event.
+        :param selection:
+        :return:
+        """
+        pass
+
+    def project_loaded(self, project):
+        """
+        Auto connected projet loaded event
+        """
+        pass
+
 
 def find_plugins(pluginfolders=None):
     """
