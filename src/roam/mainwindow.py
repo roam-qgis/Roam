@@ -46,7 +46,7 @@ from roam.syncwidget import SyncWidget
 from roam.helpviewdialog import HelpPage
 from roam.imageviewerwidget import ImageViewer
 from roam.gpswidget import GPSWidget
-from roam.api import RoamEvents, GPS, RoamInterface
+from roam.api import RoamEvents, GPS, RoamInterface, plugins
 from roam.ui import ui_mainwindow
 from PyQt4.QtGui import QMainWindow
 from roam.gpslogging import GPSLogging
@@ -115,8 +115,7 @@ class MainWindow(ui_mainwindow.Ui_MainWindow, QMainWindow):
         self.menuGroup.triggered.connect(self.updatePage)
 
         self.projectbuttons = []
-        self.projectbuttons.append(self.actionMap)
-        self.projectbuttons.append(self.actionLegend)
+        self.pluginactions = []
 
         self.actionQuit.triggered.connect(self.exit)
         self.actionLegend.triggered.connect(self.updatelegend)
@@ -209,32 +208,30 @@ class MainWindow(ui_mainwindow.Ui_MainWindow, QMainWindow):
 
         self.currentselection = {}
 
-
     def set_projectbuttons(self, visible):
         for action in self.projectbuttons:
             action.setVisible(visible)
 
     def loadpages(self, pages):
-        for page, config in pages.iteritems():
+        for PageClass in pages:
             action = QAction(self.menutoolbar)
-            text = config['title'].ljust(13)
+            text = PageClass.title.ljust(13)
             action.setIconText(text)
-            action.setIcon(QIcon(config['icon']))
+            action.setIcon(QIcon(PageClass.icon))
             action.setCheckable(True)
-            if config['projectpage']:
+            if PageClass.projectpage:
                 action.setVisible(False)
                 self.projectbuttons.append(action)
                 self.menutoolbar.insertAction(self.spaceraction, action)
             else:
                 self.menutoolbar.insertAction(self.actionProject, action)
 
-            PageClass = config['widget']
-
             iface = RoamInterface(RoamEvents, GPS)
             pagewidget = PageClass(iface, self)
 
             pageindex = self.stackedWidget.insertWidget(-1, pagewidget)
             action.setProperty('page', pageindex)
+            self.pluginactions.append(action)
             self.menuGroup.addAction(action)
 
     def showUIMessage(self, label, message, level=QgsMessageBar.INFO, time=0, extra=''):
@@ -498,6 +495,9 @@ class MainWindow(ui_mainwindow.Ui_MainWindow, QMainWindow):
             self.mainwindow.addDockWidget(Qt.BottomDockWidgetArea, panel)
             self.panels.append(panel)
 
+        self.clear_plugins()
+        self.add_plugins(self.project.enabled_plugins)
+
         layers = self.project.legendlayersmapping().values()
         self.legendpage.updateitems(layers)
 
@@ -513,6 +513,29 @@ class MainWindow(ui_mainwindow.Ui_MainWindow, QMainWindow):
         self.showmap()
         self.set_projectbuttons(True)
         RoamEvents.projectloaded.emit(self.project)
+
+    def clear_plugins(self):
+        self.projectbuttons = []
+        self.projectbuttons.append(self.actionMap)
+        self.projectbuttons.append(self.actionLegend)
+        for action in self.pluginactions:
+            self.menutoolbar.removeAction(action)
+        self.pluginactions = []
+
+    def add_plugins(self, pluginnames):
+        for name in pluginnames:
+            # Get the plugin
+            try:
+                plugin_mod = plugins.loaded_plugins[name]
+            except KeyError:
+                continue
+
+            if not hasattr(plugin_mod, 'pages'):
+                roam.utils.warning("No pages() function found in {}".format(name))
+                continue
+
+            pages = plugin_mod.pages()
+            self.loadpages(pages)
 
     @roam.utils.timeit
     def loadProject(self, project):

@@ -443,6 +443,10 @@ class Project(object):
             yield error
 
     @property
+    def enabled_plugins(self):
+        return self.settings.get('plugins', [])
+
+    @property
     def valid(self):
         """
         Check if this project is valid or not.  Call validate for more detail on errors

@@ -35,6 +35,5 @@ with roam.environ.setup() as roamapp:
     window.viewprojects()
     pluginpath = os.path.join(roamapp.apppath, "plugins")
     roam.api.plugins.load_plugins_from([pluginpath])
-    window.loadpages(roam.api.plugins.registeredpages)
     window.show()
 
