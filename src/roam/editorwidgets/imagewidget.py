@@ -22,6 +22,7 @@ from roam.popupdialogs import PickActionDialog
 from roam import utils
 from roam.api import RoamEvents
 
+import roam.config
 import roam.resources_rc
 
 class _CameraWidget(QWidget):
@@ -84,6 +85,8 @@ class _CameraWidget(QWidget):
             self.start(dev=0)
             return
 
+
+        roam.config.settings['camera'] = self.currentdevice
         self.timer.start()
 
     def stop(self):
@@ -101,7 +104,8 @@ class CameraWidget(LargeEditorWidget):
     def initWidget(self, widget):
         widget.imagecaptured.connect(self.emitvaluechanged)
         widget.done.connect(self.emitfished)
-        widget.start()
+        camera = roam.config.settings.get('camera', 1)
+        widget.start(dev=camera)
 
     def value(self):
         return self.widget.pixmap
