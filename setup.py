@@ -128,6 +128,7 @@ def get_data_files():
     return datafiles
 
 icon = r'src\roam\resources\branding\icon.ico'
+configicon = r'src\roam\resources\branding\config.ico'
 
 roam_target = dict(
                 script=r'src\roam\__main__.py',
@@ -147,7 +148,7 @@ projectupdater_target = dict(
 configmanager_target = dict(
                 script=r'src\configmanager\__main__.py',
                 dest_base='Roam Config Manager',
-                icon_resources=[(1, icon)])
+                icon_resources=[(1, configicon)])
 
 
 def buildqtfiles():

@@ -42,8 +42,8 @@ class RoamApp(object):
 
         QApplication.setStyle("Plastique")
         QApplication.setFont(QFont('Segoe UI'))
-        QApplication.setWindowIcon(QIcon(':/branding/logo'))
-        QApplication.setApplicationName("IntraMaps Roam Config Manager")
+        QApplication.setWindowIcon(QIcon(logo))
+        QApplication.setApplicationName(title)
 
         import roam.editorwidgets.core
         roam.editorwidgets.core.registerallwidgets()
