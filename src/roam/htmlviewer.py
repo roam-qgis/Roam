@@ -35,20 +35,38 @@ def default_handler(key, value):
 
 
 def string_handler(key, value):
+    def parse_links():
+        strings = value.split(',')
+        pairs = [tuple(parts.split('|')) for parts in strings]
+        handlers = []
+        for pair in pairs:
+            url = pair[0]
+            if not any(url.startswith(proto) for proto in ['http:', 'file:']):
+                continue
+            try:
+                name = pair[1]
+            except IndexError:
+                name = url
+            handlers.append('<a href="{}">{}</a>'.format(url, name))
+        if handlers:
+            return ','.join(handlers)
+
+    def try_image():
+        _, extension = os.path.splitext(value)
+        if extension[1:] in supportedformats:
+            return image_handler(key, value, imagetype='file')
+
+        base64 = QByteArray.fromBase64(value)
+        image = QPixmap()
+        loaded = image.loadFromData(base64)
+        if loaded:
+            return image_handler(key, base64, imagetype='base64')
+
     global supportedformats
     if not supportedformats:
         supportedformats = [f.data() for f in QImageReader.supportedImageFormats()]
 
-    base64 = QByteArray.fromBase64(value)
-    image = QPixmap()
-    loaded = image.loadFromData(base64)
-    if loaded:
-        return image_handler(key, base64, imagetype='base64')
-    _, extension = os.path.splitext(value)
-    if extension[1:] in supportedformats:
-        return image_handler(key, value, imagetype='file')
-
-    return value
+    return parse_links() or try_image() or value
 
 
 def date_handler(key, value):
