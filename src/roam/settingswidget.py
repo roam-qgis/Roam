@@ -103,6 +103,7 @@ class SettingsWidget(Ui_settingsWidget, QWidget):
         self.gpsPortCombo.blockSignals(True)
         if gpsindex == -1:
             self.gpsPortCombo.addItem(gpsport)
+            self.gpsPortCombo.setCurrentIndex(self.gpsPortCombo.count() - 1)
         else:
             self.gpsPortCombo.setCurrentIndex(gpsindex)
         self.gpsPortCombo.blockSignals(False)
