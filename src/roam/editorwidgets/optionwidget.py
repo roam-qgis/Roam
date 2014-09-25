@@ -15,8 +15,6 @@ class OptionWidget(EditorWidget):
 
     def createWidget(self, parent):
         widget = QWidget(parent)
-        widget.setLayout(QHBoxLayout())
-        widget.layout().setContentsMargins(0,0,0,0)
         return widget
 
     def _buildfromlist(self, listconfig):
@@ -49,7 +47,9 @@ class OptionWidget(EditorWidget):
             self.group.addButton(button)
 
     def initWidget(self, widget):
-        pass
+        if not widget.layout():
+            widget.setLayout(QHBoxLayout())
+            widget.layout().setContentsMargins(0,0,0,0)
 
     def updatefromconfig(self):
         super(OptionWidget, self).updatefromconfig()
