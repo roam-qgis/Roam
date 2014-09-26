@@ -184,7 +184,11 @@ class InfoDock(infodock_widget, QWidget):
 
         self.layerList.setCurrentRow(lastrow)
         self.layerList.setMinimumWidth(self.layerList.sizeHintForColumn(0) + 20)
-        self.layerList.setMinimumHeight(self.layerList.sizeHintForRow(0) + 20)
+        size = 0
+        for n in range(self.layerList.count()):
+            print n
+            size += self.layerList.sizeHintForRow(n)
+        self.layerList.setMinimumHeight(size)
         self.navwidget.show()
 
     def show(self):
@@ -203,7 +207,6 @@ class InfoDock(infodock_widget, QWidget):
 
         for form in forms:
             selectname = self.project.selectlayer_name(form.layername)
-            print selectname
             if selectname == layername:
                 itemtext = "{} \n ({})".format(layername, form.label)
             else:
