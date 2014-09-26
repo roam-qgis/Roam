@@ -32,9 +32,9 @@ class InfoTool(TouchMapTool):
                 continue
 
             rect = self.toLayerCoordinates(layer, rect)
-            rq = QgsFeatureRequest().setFilterRect(rect)\
-                                    .setFlags(QgsFeatureRequest.ExactIntersect)\
-                                    .setSubsetOfAttributes([])
+            rq = QgsFeatureRequest().setFilterRect(rect) \
+                .setFlags(QgsFeatureRequest.ExactIntersect)\
+                .setSubsetOfAttributes([])
             features = []
             if firstonly:
                 try:
@@ -52,7 +52,7 @@ class InfoTool(TouchMapTool):
 
     def toSearchRect(self, point):
         point = self.toMapCoordinates(point)
-        rect = QgsRectangle(point.x(), point.y(), point.x() + 10, point.y() + 10)
+        rect = QgsRectangle(point.x() - 5, point.y() - 5, point.x() + 5, point.y() + 5)
         return rect
 
     def canvasPressEvent(self, event):
