@@ -30,11 +30,11 @@ def image_handler(key, value, **kwargs):
     return imageblock.format(keyid, src)
 
 
-def default_handler(key, value):
+def default_handler(key, value, **kwargs):
     return value
 
 
-def string_handler(key, value):
+def string_handler(key, value, **kwargs):
     def parse_links():
         strings = value.split(',')
         pairs = [tuple(parts.split('|')) for parts in strings]
@@ -51,9 +51,11 @@ def string_handler(key, value):
         if handlers:
             return ','.join(handlers)
 
-    def try_image():
+    def try_image(value):
         _, extension = os.path.splitext(value)
-        if extension[1:] in supportedformats:
+        if extension[1:].lower() in supportedformats:
+            if not os.path.exists(value):
+                value = os.path.join(kwargs.get('imagepath', ''), value)
             return image_handler(key, value, imagetype='file')
 
         base64 = QByteArray.fromBase64(value)
@@ -66,25 +68,25 @@ def string_handler(key, value):
     if not supportedformats:
         supportedformats = [f.data() for f in QImageReader.supportedImageFormats()]
 
-    return parse_links() or try_image() or value
+    return parse_links() or try_image(value) or value
 
 
-def date_handler(key, value):
+def date_handler(key, value, **kwargs):
     return value.toString()
 
 
-def none_handler(key, value):
+def none_handler(key, value, **kwargs):
     return ''
 
 
 def clear_image_cache():
     images = {}
 
-def updateTemplate(data, template):
+def updateTemplate(data, template, **kwargs):
     data = dict(data)
     for key, value in data.iteritems():
         handler = blocks.get(type(value), default_handler)
-        block = handler(key, value)
+        block = handler(key, value, **kwargs)
         data[key] = block
     return template.safe_substitute(**data)
 

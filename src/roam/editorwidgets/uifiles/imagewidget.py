@@ -62,7 +62,7 @@ class QMapImageWidget(ui_imagewidget.Ui_imagewidget, QWidget):
             return None
         return self._orignalimage
 
-    def loadImage(self, data, scaled=True):
+    def loadImage(self, data, scaled=True, fromfile=True):
         """
             Load the image into the widget using a bytearray
 
@@ -73,7 +73,9 @@ class QMapImageWidget(ui_imagewidget.Ui_imagewidget, QWidget):
             self.removeImage()
             return
 
-        if isinstance(data, QPixmap):
+        if fromfile:
+            pix = QPixmap(data)
+        elif isinstance(data, QPixmap):
             pix = data
         else:
             pix = QPixmap()

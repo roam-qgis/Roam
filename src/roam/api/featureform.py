@@ -246,6 +246,11 @@ class FeatureFormBase(QWidget):
         for field, value in values.iteritems():
             value = nullcheck(value)
             try:
+                wrapper = self.boundwidgets[field]
+                if hasattr(wrapper, 'savetofile') and wrapper.savetofile:
+                    if value and not os.path.exists(value):
+                        value = os.path.join(self.form.project.image_folder, value)
+
                 self.boundwidgets[field].setvalue(value)
             except KeyError:
                 utils.debug("Can't find control for field {}. Ignoring".format(field))
@@ -268,6 +273,18 @@ class FeatureFormBase(QWidget):
         values = CaseInsensitiveDict(self.bindingvalues)
         for field, wrapper in self.boundwidgets.iteritems():
             value = wrapper.value()
+            if hasattr(wrapper, 'savetofile') and wrapper.savetofile and wrapper.modified:
+                if wrapper.filename and self.editingmode:
+                    name = os.path.basename(wrapper.filename)
+                    name, extension = os.path.splitext(name)
+
+                    if not name.endswith("_edited"):
+                        value = name + "_edited{}".format(extension)
+                    else:
+                        value = os.path.basename(wrapper.filename)
+                else:
+                    value = wrapper.get_filename()
+
             if shouldsave(field):
                 savedvalues[field] = value
             values[field] = value
@@ -537,11 +554,25 @@ class FeatureForm(FeatureFormBase):
                     continue
             return feature
 
+        def save_images(values):
+            for field, wrapper in self.boundwidgets.iteritems():
+                # HACK. Fix me. This is pretty messy
+                if hasattr(wrapper, 'savetofile') and wrapper.savetofile and wrapper.modified:
+                    filename = values[field]
+                    folder = self.form.project.image_folder
+                    saved = wrapper.save(folder, filename)
+                    if not saved:
+                        raise FeatureSaveException("Image Error",
+                                                   "Could not save image for control {}".format(wrapper.label),
+                                                   QgsMessageBar.CRITICAL)
+
+
         if not self.accept():
             raise FeatureSaveException.not_accepted()
 
         layer = self.form.QGISLayer
         values, savedvalues = self.getvalues()
+        save_images(values)
 
         updatefeautrefields(self.feature)
         layer.startEditing()

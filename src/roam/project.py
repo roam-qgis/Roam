@@ -400,6 +400,10 @@ class Project(object):
         return project
 
     @property
+    def image_folder(self):
+        return os.path.join(self.folder, "_images")
+
+    @property
     def settings(self):
         return self._settings
 

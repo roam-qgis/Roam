@@ -11,6 +11,7 @@ class ImageWidgetConfig(Ui_Form, ConfigWidget):
         super(ImageWidgetConfig, self).__init__(parent)
         self.setupUi(self)
         self.defaultLocationText.textChanged.connect(self.widgetchanged)
+        self.savetofileCheck.stateChanged.connect(self.widgetchanged)
         self.locatioButton.pressed.connect(self.openfilepicker)
 
     def openfilepicker(self):
@@ -20,8 +21,11 @@ class ImageWidgetConfig(Ui_Form, ConfigWidget):
 
     def getconfig(self):
         location = self.defaultLocationText.text()
-        return {"defaultlocation": location}
+        savetofile = self.savetofileCheck.isChecked()
+        return {"defaultlocation": location,
+                'savetofile': savetofile }
 
     def setconfig(self, config):
         self.defaultLocationText.setText(config.get('defaultlocation', ''))
+        self.savetofileCheck.setChecked(config.get('savetofile', False))
 

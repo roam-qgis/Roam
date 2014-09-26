@@ -318,7 +318,7 @@ class InfoDock(infodock_widget, QWidget):
                 newheader = header
             fields = result.keys()
             attributes = result.values()
-            rows = generate_rows(fields, attributes)
+            rows = generate_rows(fields, attributes, imagepath=self.project.image_folder)
             blocks.append(updateTemplate(dict(ROWS=rows,
                                               HEADER=newheader), info_template))
         if error:
@@ -369,7 +369,7 @@ class InfoDock(infodock_widget, QWidget):
         self.editButton.setVisible(False)
         self.navwidget.hide()
 
-def generate_rows(fields, attributes):
+def generate_rows(fields, attributes, **kwargs):
     data = OrderedDict()
     items = []
     for field, value in zip(fields, attributes):
@@ -379,6 +379,6 @@ def generate_rows(fields, attributes):
         item = u"<tr><th>{0}</th> <td>${{{1}}}</td></tr>".format(field, field.replace(" ", "_"))
         items.append(item)
     rowtemple = Template(''.join(items))
-    rowshtml = updateTemplate(data, rowtemple)
+    rowshtml = updateTemplate(data, rowtemple, **kwargs)
     return rowshtml
 

@@ -9,8 +9,8 @@ except ImportError:
     hascamera = False
 
 from PyQt4.QtGui import QDialog, QGridLayout, QLabel, QLayout, QPixmap, QFileDialog, QAction, QToolButton, QIcon, QToolBar
-from PyQt4.QtGui import QWidget
-from PyQt4.QtCore import QByteArray, pyqtSignal, QVariant, QTimer, Qt, QSize
+from PyQt4.QtGui import QWidget, QImage
+from PyQt4.QtCore import QByteArray, pyqtSignal, QVariant, QTimer, Qt, QSize, QDateTime
 
 from PIL.ImageQt import ImageQt
 
@@ -24,6 +24,19 @@ from roam.api import RoamEvents
 
 import roam.config
 import roam.resources_rc
+
+
+def save_image(image, path, name):
+    if isinstance(image, QByteArray):
+        _image = QImage()
+        _image.loadFromData(image)
+        image = _image
+
+    if not os.path.exists(path):
+        os.mkdir(path)
+
+    saved = image.save(os.path.join(path, name), "JPG")
+    return saved, name
 
 class _CameraWidget(QWidget):
     imagecaptured = pyqtSignal(QPixmap)
@@ -144,6 +157,9 @@ class ImageWidget(EditorWidget):
         super(ImageWidget, self).__init__(*args)
         self.tobase64 = False
         self.defaultlocation = ''
+        self.savetofile= False
+        self.modified = False
+        self.filename = None
 
         self.selectAction = QAction(QIcon(r":\widgets\folder"), "From folder", None)
         self.cameraAction = QAction(QIcon(":\widgets\camera"), "Camera", None)
@@ -153,8 +169,6 @@ class ImageWidget(EditorWidget):
         self.cameraAction.triggered.connect(self._selectCamera)
         self.drawingAction.triggered.connect(self._selectDrawing)
 
-        if self.field and self.field.type() == QVariant.String:
-            self.tobase64 = True
 
     def createWidget(self, parent):
         return QMapImageWidget(parent)
@@ -187,6 +201,7 @@ class ImageWidget(EditorWidget):
             return
 
         self.widget.loadImage(image)
+        self.modified = True
 
     def _selectDrawing(self, *args):
         image = self.widget.orignalimage
@@ -197,9 +212,13 @@ class ImageWidget(EditorWidget):
 
     def phototaken(self, value):
         self.setvalue(value)
+        self.modified = True
 
     def updatefromconfig(self):
         self.defaultlocation = self.config.get('defaultlocation', '')
+        self.savetofile = self.config.get('savetofile', False)
+        if not self.savetofile and self.field and self.field.type() == QVariant.String:
+            self.tobase64 = True
 
     def validate(self, *args):
         return not self.widget.isDefault
@@ -207,11 +226,26 @@ class ImageWidget(EditorWidget):
     def showlargeimage(self, pixmap):
         RoamEvents.openimage.emit(pixmap)
 
+    def get_filename(self):
+        name = QDateTime.currentDateTime().toString("yyyy-MM-dd-hh-mm-ss.JPG")
+        return name
+
+    def save(self, folder, filename):
+        saved, name = save_image(self.widget.getImage(), folder, filename)
+        return saved
+
     def setvalue(self, value):
-        if self.tobase64 and value and not isinstance(value, QPixmap):
+        if self.savetofile and isinstance(value, basestring):
+            self.filename = value
+
+        if isinstance(value, QPixmap):
+            self.widget.loadImage(value, fromfile=self.savetofile)
+            return
+
+        if self.tobase64 and value:
             value = QByteArray.fromBase64(value)
 
-        self.widget.loadImage(value)
+        self.widget.loadImage(value, fromfile=self.savetofile)
 
     def value(self):
         image = self.widget.getImage()
