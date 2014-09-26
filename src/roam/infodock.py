@@ -186,7 +186,6 @@ class InfoDock(infodock_widget, QWidget):
         self.layerList.setMinimumWidth(self.layerList.sizeHintForColumn(0) + 20)
         size = 0
         for n in range(self.layerList.count()):
-            print n
             size += self.layerList.sizeHintForRow(n)
         self.layerList.setMinimumHeight(size)
         self.navwidget.show()
