@@ -13,14 +13,15 @@ from roam.maptools import maptoolutils
 from roam.utils import log
 
 
-class InfoTool(TouchMapTool):
+class InfoTool(QgsMapTool):
     infoResults = pyqtSignal(dict)
 
     def __init__(self, canvas, snapradius = 2):
         super(InfoTool, self).__init__(canvas)
+        self.canvas = canvas
         self.radius = snapradius
 
-        self.selectband = None
+        self.selectband = QgsRubberBand(self.canvas, QGis.Polygon )
         self.selectrect = QRect()
         self.dragging = False
         self.selectionlayers = []
@@ -56,9 +57,6 @@ class InfoTool(TouchMapTool):
         return rect
 
     def canvasPressEvent(self, event):
-        if self.pinching:
-            return
-
         self.dragging = False
         self.selectrect.setRect(0, 0, 0, 0)
 
@@ -67,9 +65,6 @@ class InfoTool(TouchMapTool):
         self.selectband.setWidth(5)
 
     def canvasMoveEvent(self, event):
-        if self.pinching:
-            return
-
         if not event.buttons() == Qt.LeftButton:
             return
 
@@ -81,9 +76,6 @@ class InfoTool(TouchMapTool):
         maptoolutils.setRubberBand(self.canvas, self.selectrect, self.selectband)
 
     def canvasReleaseEvent(self, event):
-        if self.pinching:
-            return
-
         if self.dragging:
             geometry = self.selectband.asGeometry()
             if not geometry:
