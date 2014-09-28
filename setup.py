@@ -168,7 +168,10 @@ def buildqtfiles():
                     run('pyrcc4', '-o', newfile, filepath)
                 elif ext == '.ts':
                     newfile = file + '.qm'
-                    run('lrelease', filepath, '-qm', newfile)
+                    if os.name is 'nt':
+                        run('lrelease', filepath, '-qm', newfile)
+                    else:
+                        run('lrelease-qt4', filepath, '-qm', newfile)
 
 
 class qtbuild(build):
