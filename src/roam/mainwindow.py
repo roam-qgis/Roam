@@ -308,6 +308,10 @@ class MainWindow(ui_mainwindow.Ui_MainWindow, QMainWindow):
         layer = form.QGISLayer
         self.reloadselection(layer, updated=[feature])
 
+    def handle_removed_features(self, layer, layerid, deleted_feature_ids):
+        self.canvas.refresh()
+        self.reloadselection(layer, deleted=deleted_feature_ids)
+
     def reloadselection(self, layer, deleted=[], updated=[]):
         """
         Reload the selection after features have been updated or deleted.
@@ -316,7 +320,15 @@ class MainWindow(ui_mainwindow.Ui_MainWindow, QMainWindow):
         :param updated:
         :return:
         """
-        selectedfeatures = self.currentselection[layer]
+        selectedfeatures = []
+        for selection_layer, features in self.currentselection.iteritems():
+            if layer.name() == selection_layer.name():
+                selectedfeatures = features
+                layer = selection_layer
+                break
+
+        if not selectedfeatures:
+            return
 
         # Update any features that have changed.
         for updatedfeature in updated:
@@ -517,6 +529,11 @@ class MainWindow(ui_mainwindow.Ui_MainWindow, QMainWindow):
         except IndexError:
             roam.utils.info("No gps_log found for GPS logging")
             self.tracking.clear_logging()
+
+        for layer in roam.api.utils.layers():
+            if not layer.type() == QgsMapLayer.VectorLayer:
+                continue
+            layer.committedFeaturesRemoved.connect(partial(self.handle_removed_features, layer))
 
         self.canvas_page.project_loaded(self.project)
         self.showmap()

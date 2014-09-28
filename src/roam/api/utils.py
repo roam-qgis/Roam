@@ -27,6 +27,8 @@ def open_keyboard():
         cmd = 'onboard'
         subprocess.Popen(cmd)
 
+def layers():
+    return QgsMapLayerRegistry.instance().mapLayers().values()
 
 def layer_by_name(name):
     """
