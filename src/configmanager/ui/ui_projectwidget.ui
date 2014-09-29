@@ -99,7 +99,7 @@ QLabel[warning=true]
       </sizepolicy>
      </property>
      <property name="currentIndex">
-      <number>1</number>
+      <number>5</number>
      </property>
      <widget class="QWidget" name="project_info_page">
       <layout class="QGridLayout" name="gridLayout_11">
@@ -222,7 +222,7 @@ QLabel[warning=true]
        <item row="4" column="0">
         <widget class="QLabel" name="selectLayersLabel">
          <property name="text">
-          <string>Enable any layers that should be enabled for selection.  Point selection layers can also be used for data capture.</string>
+          <string>Enable any layers that should be enabled for selection. Selection layers can be used for data entry</string>
          </property>
         </widget>
        </item>
@@ -809,12 +809,12 @@ p, li { white-space: pre-wrap; }
                   <rect>
                    <x>0</x>
                    <y>0</y>
-                   <width>775</width>
-                   <height>490</height>
+                   <width>100</width>
+                   <height>30</height>
                   </rect>
                  </property>
                  <property name="autoFillBackground">
-                  <bool>false</bool>
+                  <bool>true</bool>
                  </property>
                  <layout class="QGridLayout" name="gridLayout_12">
                   <property name="margin">
@@ -1156,7 +1156,7 @@ p, li { white-space: pre-wrap; }
        <item row="1" column="1">
         <widget class="QLabel" name="selectLayersLabel_2">
          <property name="text">
-          <string>Enable any layers that should be enabled for selection.  Point selection layers can also be used for data capture.</string>
+          <string>Enable any layers that should be enabled for selection.  Selection layers can also be used for data capture.</string>
          </property>
         </widget>
        </item>
@@ -1380,6 +1380,7 @@ p, li { white-space: pre-wrap; }
   <include location="resources.qrc"/>
   <include location="../../roam/resources.qrc"/>
   <include location="resources.qrc"/>
+  <include location="../../roam/resources.qrc"/>
   <include location="../../roam/resources.qrc"/>
   <include location="../../roam/resources.qrc"/>
   <include location="../../roam/resources.qrc"/>
