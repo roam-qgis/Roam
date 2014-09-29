@@ -51,9 +51,9 @@ class DateTimePickerWidget(datepicker_widget, QWidget):
         if self.mode == "Date":
             value = datetime.toString("ddd d MMM yyyy")
         elif self.mode == "Time":
-            value = datetime.toString("h:m ap") 
+            value = datetime.toString("hh:mm ap")
         else:   
-            value = datetime.toString("ddd d MMM yyyy 'at' h:m ap")
+            value = datetime.toString("ddd d MMM yyyy 'at' hh:mm ap")
             
         self.label.setText("Set as: {}".format(value))
 
