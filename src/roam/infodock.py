@@ -214,6 +214,7 @@ class InfoDock(infodock_widget, QWidget):
         for n in range(self.layerList.count()):
             size += self.layerList.sizeHintForRow(n)
         self.layerList.setMinimumHeight(size)
+        self.layerList.setMaximumHeight(size)
         self.navwidget.show()
 
     def show(self):
