@@ -43,6 +43,8 @@ class BigListWidget(LargeEditorWidget):
         model = self.config['model']
         label = self.config['label']
         self.multi = self.config.get('multi', False)
+        if not self.multi:
+            self.widget.saveButton.hide()
         self.widget.setlabel(label)
         self.widget.setmodel(model)
         self.endupdatefromconfig()
