@@ -137,10 +137,11 @@ class FeatureFormWidgetEditor(LargeEditorWidget):
     def createWidget(self, parent=None):
         config = self.initconfig
         form = config['form']
+        defaults = config.get('defaults', {})
         canvas = config.get('canvas', None)
         formwidget = FeatureFormWidget()
         editmode = config['editmode']
-        featureform = form.create_featureform(None, defaults={}, canvas=canvas, editmode=editmode)
+        featureform = form.create_featureform(None, defaults=defaults, canvas=canvas, editmode=editmode)
         formwidget.set_featureform(featureform)
         return formwidget
 

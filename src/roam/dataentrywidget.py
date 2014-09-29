@@ -133,7 +133,8 @@ class DataEntryWidget(dataentry_widget, dataentry_base):
 
         initconfig = dict(form=form,
                           canvas=self.canvas,
-                          editmode=editmode)
+                          editmode=editmode,
+                          defaults=defaultvalues)
 
         config = dict(editmode=editmode,
                       layers=QgsMapLayerRegistry.instance().mapLayers(),
