@@ -47,7 +47,7 @@ def qgsfunction(args, group, **kwargs):
         if args == 0 and not name[0] == '$':
             name = '${0}'.format(name)
         func.__name__ = name
-        f = QgsExpressionFunction(name, args, group, '')
+        f = QgsExpressionFunction(name, args, group, help)
         f.func = func
         register = kwargs.get('register', True)
         if register:
