@@ -290,6 +290,7 @@ class ProjectWidget(Ui_Form, QWidget):
 
         widget['widget'] = widgettype
         widget['required'] = self.requiredCheck.isChecked()
+        widget['rememberlastvalue'] = self.savevalueCheck.isChecked()
         widget['config'] = configwidget.getconfig()
         widget['name'] = self.nameText.text()
         widget['read-only-rules'] = [self.readonlyCombo.itemData(self.readonlyCombo.currentIndex())]
@@ -451,6 +452,7 @@ class ProjectWidget(Ui_Form, QWidget):
         #widget settings
         self.fieldList.currentIndexChanged.connect(self._save_widgetfield)
         self.requiredCheck.toggled.connect(self._save_selectedwidget)
+        self.savevalueCheck.toggled.connect(self._save_selectedwidget)
         self.defaultvalueText.textChanged.connect(self._save_default)
         self.widgetCombo.currentIndexChanged.connect(self._save_selectedwidget)
         self.widgetCombo.currentIndexChanged.connect(self.swapwidgetconfig)
@@ -467,6 +469,7 @@ class ProjectWidget(Ui_Form, QWidget):
             #widget settings
             self.fieldList.currentIndexChanged.disconnect(self._save_widgetfield)
             self.requiredCheck.toggled.disconnect(self._save_selectedwidget)
+            self.savevalueCheck.toggled.disconnect(self._save_selectedwidget)
             self.defaultvalueText.textChanged.disconnect(self._save_default)
             self.widgetCombo.currentIndexChanged.disconnect(self._save_selectedwidget)
             self.widgetCombo.currentIndexChanged.disconnect(self.swapwidgetconfig)
@@ -571,6 +574,7 @@ class ProjectWidget(Ui_Form, QWidget):
         widgettype = widget['widget']
         field = widget['field']
         required = widget.setdefault('required', False)
+        savevalue = widget.setdefault('rememberlastvalue', False)
         name = widget.setdefault('name', field)
         default = widget.setdefault('default', '')
         readonly = widget.setdefault('read-only-rules', [])
@@ -605,6 +609,10 @@ class ProjectWidget(Ui_Form, QWidget):
         self.requiredCheck.blockSignals(True)
         self.requiredCheck.setChecked(required)
         self.requiredCheck.blockSignals(False)
+
+        self.savevalueCheck.blockSignals(True)
+        self.savevalueCheck.setChecked(savevalue)
+        self.savevalueCheck.blockSignals(False)
 
         self.hiddenCheck.blockSignals(True)
         self.hiddenCheck.setChecked(hidden)
