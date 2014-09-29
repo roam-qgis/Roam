@@ -172,7 +172,7 @@ class ProjectWidget(Ui_Form, QWidget):
 
         try:
             openqgis(projectfile, qgislocation)
-        except WindowsError:
+        except OSError:
             self.bar.pushMessage("Looks like I couldn't find QGIS",
                                "Check qgislocation in roam.config", QgsMessageBar.WARNING)
 
