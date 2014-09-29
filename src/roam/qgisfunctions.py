@@ -97,7 +97,12 @@ def max_value(values, feature, parent):
     max_value('Trees', 'pk')
     """
     layer = values[0]
-    layer = utils.layer_by_name(layer)
+    try:
+        layer = utils.layer_by_name(layer)
+    except IndexError:
+        parent.setEvalErrorString("Can't find layer {}".format(layer))
+        return
+
     field = values[1]
     index = layer.fieldNameIndex(field)
     if index == -1:
