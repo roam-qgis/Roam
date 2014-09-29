@@ -98,10 +98,12 @@ class InfoDock(infodock_widget, QWidget):
         self.startwidth = self.width()
         self.expaned = False
 
+        self.expandButton.pressed.connect(self.change_expanded_state)
+
         RoamEvents.selectioncleared.connect(self.clearResults)
         RoamEvents.editgeometry_complete.connect(self.refreshcurrent)
 
-    def mouseDoubleClickEvent(self, QMouseEvent):
+    def change_expanded_state(self):
         if self.expaned:
             self._collapse()
         else:
