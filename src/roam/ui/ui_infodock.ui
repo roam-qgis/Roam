@@ -78,75 +78,6 @@
         </property>
        </widget>
       </item>
-      <item row="2" column="0">
-       <layout class="QHBoxLayout" name="horizontalLayout">
-        <item>
-         <widget class="QToolButton" name="expandButton">
-          <property name="text">
-           <string/>
-          </property>
-          <property name="icon">
-           <iconset resource="../resources.qrc">
-            <normaloff>:/icons/expand</normaloff>:/icons/expand</iconset>
-          </property>
-          <property name="iconSize">
-           <size>
-            <width>48</width>
-            <height>48</height>
-           </size>
-          </property>
-          <property name="toolButtonStyle">
-           <enum>Qt::ToolButtonTextUnderIcon</enum>
-          </property>
-          <property name="autoRaise">
-           <bool>true</bool>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <spacer name="horizontalSpacer">
-          <property name="orientation">
-           <enum>Qt::Horizontal</enum>
-          </property>
-          <property name="sizeHint" stdset="0">
-           <size>
-            <width>233</width>
-            <height>35</height>
-           </size>
-          </property>
-         </spacer>
-        </item>
-        <item>
-         <widget class="QToolButton" name="toolButton">
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-          <property name="text">
-           <string/>
-          </property>
-          <property name="icon">
-           <iconset resource="../resources.qrc">
-            <normaloff>:/icons/cancel</normaloff>:/icons/cancel</iconset>
-          </property>
-          <property name="iconSize">
-           <size>
-            <width>48</width>
-            <height>48</height>
-           </size>
-          </property>
-          <property name="toolButtonStyle">
-           <enum>Qt::ToolButtonTextUnderIcon</enum>
-          </property>
-          <property name="autoRaise">
-           <bool>true</bool>
-          </property>
-         </widget>
-        </item>
-       </layout>
-      </item>
       <item row="0" column="0">
        <widget class="QWidget" name="navwidget" native="true">
         <property name="sizePolicy">
@@ -290,6 +221,86 @@
         </layout>
        </widget>
       </item>
+      <item row="2" column="0">
+       <widget class="QWidget" name="bottomWidget" native="true">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <layout class="QHBoxLayout" name="horizontalLayout">
+         <property name="margin">
+          <number>0</number>
+         </property>
+         <item>
+          <widget class="QToolButton" name="expandButton">
+           <property name="text">
+            <string/>
+           </property>
+           <property name="icon">
+            <iconset resource="../resources.qrc">
+             <normaloff>:/icons/expand</normaloff>:/icons/expand</iconset>
+           </property>
+           <property name="iconSize">
+            <size>
+             <width>48</width>
+             <height>48</height>
+            </size>
+           </property>
+           <property name="toolButtonStyle">
+            <enum>Qt::ToolButtonTextUnderIcon</enum>
+           </property>
+           <property name="autoRaise">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <spacer name="horizontalSpacer">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>233</width>
+             <height>35</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item>
+          <widget class="QToolButton" name="closeButton">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="text">
+            <string/>
+           </property>
+           <property name="icon">
+            <iconset resource="../resources.qrc">
+             <normaloff>:/icons/cancel</normaloff>:/icons/cancel</iconset>
+           </property>
+           <property name="iconSize">
+            <size>
+             <width>48</width>
+             <height>48</height>
+            </size>
+           </property>
+           <property name="toolButtonStyle">
+            <enum>Qt::ToolButtonTextUnderIcon</enum>
+           </property>
+           <property name="autoRaise">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+      </item>
      </layout>
     </widget>
    </item>
@@ -323,22 +334,6 @@
  </resources>
  <connections>
   <connection>
-   <sender>toolButton</sender>
-   <signal>pressed()</signal>
-   <receiver>Form</receiver>
-   <slot>close()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>623</x>
-     <y>644</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>615</x>
-     <y>212</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
    <sender>nextButton</sender>
    <signal>pressed()</signal>
    <receiver>Form</receiver>
@@ -367,6 +362,22 @@
     <hint type="destinationlabel">
      <x>488</x>
      <y>-45</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>closeButton</sender>
+   <signal>pressed()</signal>
+   <receiver>Form</receiver>
+   <slot>close()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>592</x>
+     <y>663</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>647</x>
+     <y>500</y>
     </hint>
    </hints>
   </connection>

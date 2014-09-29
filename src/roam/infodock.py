@@ -3,15 +3,15 @@ import os
 from string import Template
 from collections import OrderedDict
 
-from PyQt4.QtGui import ( QWidget, QIcon, QListWidgetItem)
+from PyQt4.QtGui import ( QWidget, QIcon, QListWidgetItem, QMouseEvent, QApplication)
 
 from PyQt4.QtCore import (Qt, QUrl,
-                          QEvent, pyqtSignal,
+                          QEvent, pyqtSignal
                           )
 
 from PyQt4.QtWebKit import QWebPage
 
-from qgis.core import (QgsExpression, QgsFeature, 
+from qgis.core import (QgsExpression, QgsFeature,
                        QgsMapLayer, QgsFeatureRequest)
 
 from roam import utils
@@ -99,15 +99,39 @@ class InfoDock(infodock_widget, QWidget):
         self.expaned = False
 
         self.expandButton.pressed.connect(self.change_expanded_state)
+        self.navwidget.mousePressEvent = self._sink
+        self.bottomWidget.mousePressEvent = self._sink
+        self.navwidget.mouseReleaseEvent = self._sink
+        self.bottomWidget.mouseReleaseEvent = self._sink
+        self.navwidget.mouseMoveEvent = self._sink
+        self.bottomWidget.mouseMoveEvent = self._sink
 
         RoamEvents.selectioncleared.connect(self.clearResults)
         RoamEvents.editgeometry_complete.connect(self.refreshcurrent)
+
+    def _sink(self, event):
+        return
 
     def change_expanded_state(self):
         if self.expaned:
             self._collapse()
         else:
             self._expand()
+
+    def mousePressEvent(self, event):
+        pos = self.mapToParent(event.pos())
+        newevent = QMouseEvent(event.type(), pos, event.button(), event.buttons(), event.modifiers())
+        self.parent().mousePressEvent(newevent)
+
+    def mouseReleaseEvent(self, event):
+        pos = self.mapToParent(event.pos())
+        newevent = QMouseEvent(event.type(), pos, event.button(), event.buttons(), event.modifiers())
+        self.parent().mouseReleaseEvent(newevent)
+
+    def mouseMoveEvent(self, event):
+        pos = self.mapToParent(event.pos())
+        newevent = QMouseEvent(event.type(), pos, event.button(), event.buttons(), event.modifiers())
+        self.parent().mouseMoveEvent(newevent)
 
     def _expand(self):
         self.resize(self.parent().width() - 10, self.parent().height())
