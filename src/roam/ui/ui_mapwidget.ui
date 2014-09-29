@@ -70,7 +70,7 @@
      <normaloff>:/icons/photo</normaloff>:/icons/photo</iconset>
    </property>
    <property name="text">
-    <string>Aerial Photo</string>
+    <string>Imagery</string>
    </property>
   </action>
   <action name="actionPan">
