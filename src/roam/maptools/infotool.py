@@ -1,6 +1,6 @@
 from collections import OrderedDict
 
-from PyQt4.QtCore import pyqtSignal, QRect, Qt
+from PyQt4.QtCore import pyqtSignal, QRect, Qt, QRectF
 from PyQt4.QtGui import QCursor, QPixmap, QColor
 from qgis.core import (QgsRectangle, QgsTolerance,
                        QgsFeatureRequest, QgsFeature,
@@ -52,8 +52,18 @@ class InfoTool(QgsMapTool):
             yield layer, features
 
     def toSearchRect(self, point):
-        point = self.toMapCoordinates(point)
-        rect = QgsRectangle(point.x() - 5, point.y() - 5, point.x() + 5, point.y() + 5)
+        size = 10
+        rect = QRectF()
+        rect.setLeft(point.x() - size)
+        rect.setRight(point.x() + size)
+        rect.setTop(point.y() - size)
+        rect.setBottom(point.y() + size)
+
+        transform = self.canvas.getCoordinateTransform()
+        ll = transform.toMapCoordinates(rect.left(), rect.bottom())
+        ur = transform.toMapCoordinates(rect.right(), rect.top())
+
+        rect = QgsRectangle(ur, ll)
         return rect
 
     def canvasPressEvent(self, event):
