@@ -1,5 +1,5 @@
 from qgis.core import QgsExpression, QGis, QgsGeometry
-from roam.api import GPS
+from roam.api import GPS, utils
 
 capturegeometry = None
 
@@ -87,3 +87,19 @@ def gps(values, feature, parent):
         return GPS.gpsinfo(values[0])
     else:
         return None
+
+@qgsfunction(2, "Roam")
+def max_value(values, feature, parent):
+    """
+    Return the max value from a layer for the given column
+
+    Usage:
+    max_value('Trees', 'pk')
+    """
+    layer = values[0]
+    layer = utils.layer_by_name(layer)
+    field = values[1]
+    index = layer.fieldNameIndex(field)
+    if index == -1:
+        return None
+    return layer.maximumValue(index)

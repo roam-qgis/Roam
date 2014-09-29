@@ -47,6 +47,7 @@ class RoamApp(object):
 
         import roam.editorwidgets.core
         roam.editorwidgets.core.registerallwidgets()
+        import roam.qgisfunctions
         return self
 
     def set_error_handler(self, errorhandler, logger):
