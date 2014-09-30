@@ -34,16 +34,10 @@ class OptionWidget(EditorWidget):
                 path = parts[2]
                 if path.startswith("#"):
                     # Colour the button with the hex value
-                    style = """QPushButton {{
-                            border: 1px solid rgb(137, 175, 255);
-                        background-color: {colour};
-                        padding: 6px;
-                        color: #4f4f4f;
-                        }}
-
+                    style = """
                         QPushButton:checked  {{
                             border: 3px solid rgb(137, 175, 255);
-                        background-color: rgb(211, 228, 255);
+                        background-color: {colour};
                         }}""".format(colour=path)
                     button.setStyleSheet(style)
                 elif path.endswith("_icon"):
