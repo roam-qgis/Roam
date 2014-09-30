@@ -51,7 +51,7 @@ class InfoTool(QgsMapTool):
             yield layer, features
 
     def toSearchRect(self, point):
-        size = 10
+        size = 20
         rect = QRectF()
         rect.setLeft(point.x() - size)
         rect.setRight(point.x() + size)
