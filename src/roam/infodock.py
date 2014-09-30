@@ -196,10 +196,6 @@ class InfoDock(infodock_widget, QWidget):
         self.update(cursor)
 
     def setResults(self, results, forms, project):
-        lastrow = self.layerList.currentRow()
-        if lastrow == -1:
-            lastrow = 0
-
         self.clearResults()
         self.forms = forms
         self.project = project
@@ -208,7 +204,6 @@ class InfoDock(infodock_widget, QWidget):
             if features:
                 self._addResult(layer, features)
 
-        self.layerList.setCurrentRow(lastrow)
         self.layerList.setMinimumWidth(self.layerList.sizeHintForColumn(0) + 20)
         size = 0
         for n in range(self.layerList.count()):
@@ -216,6 +211,7 @@ class InfoDock(infodock_widget, QWidget):
         self.layerList.setMinimumHeight(size)
         self.layerList.setMaximumHeight(size)
         self.navwidget.show()
+        self.layerIndexChanged(0)
 
     def show(self):
         if self.layerList.count() > 0:

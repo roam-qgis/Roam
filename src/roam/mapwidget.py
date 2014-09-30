@@ -127,12 +127,13 @@ class MapWidget(Ui_CanvasWidget, QMainWindow):
             band.reset(layer.geometryType())
             for feature in features:
                 band.addGeometry(feature.geometry(), layer)
+        self.canvas.update()
 
     def highlight_active_selection(self, layer, feature, features):
         self.clear_selection()
         self.highlight_selection({layer: features})
         self.currentfeatureband.setToGeometry(feature.geometry(), layer)
-        # self.canvas.refresh()
+        self.canvas.update()
 
     def clear_selection(self):
         # Clear the main selection rubber band
@@ -142,6 +143,7 @@ class MapWidget(Ui_CanvasWidget, QMainWindow):
         for band in self.selectionbands.itervalues():
             band.reset()
 
+        self.canvas.update()
         self.editfeaturestack = []
 
     def queue_feature_for_edit(self, form, feature):
@@ -289,9 +291,6 @@ class MapWidget(Ui_CanvasWidget, QMainWindow):
         self.infoTool.setCursor(cursor(':/icons/info'))
 
         self.actionRaster.triggered.connect(self.toggleRasterLayers)
-
-        self.infoTool.infoResults.connect(RoamEvents.selectionchanged.emit)
-
         self.actionHome.triggered.connect(self.homeview)
 
     def homeview(self):

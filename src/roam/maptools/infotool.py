@@ -10,12 +10,11 @@ from qgis.gui import QgsMapTool, QgsRubberBand
 from roam.maptools.maptool import MapTool
 from roam.maptools.touchtool import TouchMapTool
 from roam.maptools import maptoolutils
+from roam.api.events import RoamEvents
 from roam.utils import log
 
 
 class InfoTool(QgsMapTool):
-    infoResults = pyqtSignal(dict)
-
     def __init__(self, canvas, snapradius = 2):
         super(InfoTool, self).__init__(canvas)
         self.canvas = canvas
@@ -101,4 +100,5 @@ class InfoTool(QgsMapTool):
         self.selectband.reset()
 
         results = OrderedDict((l,f) for l, f in self.getFeatures(rect))
-        self.infoResults.emit(results)
+        RoamEvents.selectioncleared.emit()
+        RoamEvents.selectionchanged.emit(results)
