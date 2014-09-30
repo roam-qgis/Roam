@@ -1,6 +1,6 @@
 from functools import partial
 
-from PyQt4.QtGui import QIcon, QTreeWidgetItem, QPushButton, QWidget, QAction
+from PyQt4.QtGui import QIcon, QTreeWidgetItem, QPushButton, QWidget, QAction, QSpacerItem, QSizePolicy
 
 from ui.ui_sync import Ui_Form
 from popupdialogs import ActionPickerWidget
@@ -35,6 +35,9 @@ class SyncWidget(Ui_Form, QWidget):
                 action.triggered.connect(partial(self.run, action, provider))
                 actionwidget.addAction(action)
             self.syncwidgets.layout().addWidget(actionwidget)
+        spacerItem = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Expanding)
+        self.syncwidgets.layout().addItem(spacerItem)
+
 
     def updatestatus(self, message):
         self.syncstatus.append(message)
