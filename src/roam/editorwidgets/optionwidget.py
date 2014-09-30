@@ -27,17 +27,32 @@ class OptionWidget(EditorWidget):
             except IndexError:
                 desc = data
 
+            button = QPushButton()
+
+            icon = QIcon()
             try:
                 path = parts[2]
-                if path.endswith("_icon"):
+                if path.startswith("#"):
+                    # Colour the button with the hex value
+                    style = """QPushButton {{
+                            border: 1px solid rgb(137, 175, 255);
+                        background-color: {colour};
+                        padding: 6px;
+                        color: #4f4f4f;
+                        }}
+
+                        QPushButton:checked  {{
+                            border: 3px solid rgb(137, 175, 255);
+                        background-color: rgb(211, 228, 255);
+                        }}""".format(colour=path)
+                    button.setStyleSheet(style)
+                elif path.endswith("_icon"):
                     icon = QIcon(":/icons/{}".format(path))
                 else:
                     icon = QIcon(path)
             except:
                 icon = QIcon()
 
-
-            button = QPushButton()
             button.setCheckable(True)
             button.setText(desc)
             button.setProperty("value", data)
