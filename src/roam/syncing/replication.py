@@ -33,7 +33,7 @@ class BatchFileSync(SyncProvider):
         variables = kwargs.get("variables", {})
         env = QProcessEnvironment.systemEnvironment()
         for varname, value in variables.iteritems():
-            env.insert(varname, value)
+            env.insert(varname, str(value))
         self.process.setProcessEnvironment(env)
         self.process.setWorkingDirectory(os.path.dirname(os.path.realpath(self.cmd)))
         self.process.finished.connect(self.complete)
