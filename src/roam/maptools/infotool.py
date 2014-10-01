@@ -33,8 +33,7 @@ class InfoTool(QgsMapTool):
 
             rect = self.toLayerCoordinates(layer, rect)
             rq = QgsFeatureRequest().setFilterRect(rect) \
-                .setFlags(QgsFeatureRequest.ExactIntersect)\
-                .setSubsetOfAttributes([])
+                .setFlags(QgsFeatureRequest.ExactIntersect)
             features = []
             if firstonly:
                 try:
