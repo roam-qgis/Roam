@@ -26,26 +26,23 @@ class InfoTool(QgsMapTool):
         self.selectionlayers = []
 
     def getFeatures(self, rect, firstonly=False):
+        # The MS SQL driver seems to crash with a empty rectangle.
+        # Need to check QGIS to patch issue
+        if rect.isEmpty():
+            return
+
         for layer in self.selectionlayers.itervalues():
-            if (not layer.type() == QgsMapLayer.VectorLayer
-                or layer.geometryType() == QGis.NoGeometry):
+            if (not layer.type() == QgsMapLayer.VectorLayer or
+                    layer.geometryType() == QGis.NoGeometry):
                 continue
 
             rect = self.toLayerCoordinates(layer, rect)
             rq = QgsFeatureRequest().setFilterRect(rect) \
                 .setFlags(QgsFeatureRequest.ExactIntersect)
             features = []
-            if firstonly:
-                try:
-                    feature = layer.getFeatures(rq).next()
-                    if feature.isValid():
-                        features.append(feature)
-                except StopIteration:
-                    continue
-            else:
-                for feature in layer.getFeatures(rq):
-                    if feature.isValid():
-                        features.append(feature)
+            for feature in layer.getFeatures(rq):
+                if feature.isValid():
+                    features.append(feature)
 
             yield layer, features
 
@@ -99,5 +96,6 @@ class InfoTool(QgsMapTool):
         self.selectband.reset()
 
         results = OrderedDict((l,f) for l, f in self.getFeatures(rect))
+
         RoamEvents.selectioncleared.emit()
         RoamEvents.selectionchanged.emit(results)
