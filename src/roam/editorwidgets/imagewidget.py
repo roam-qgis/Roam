@@ -26,6 +26,10 @@ import roam.config
 import roam.resources_rc
 
 
+class CameraError(Exception):
+    pass
+
+
 def save_image(image, path, name):
     if isinstance(image, QByteArray):
         _image = QImage()
@@ -94,7 +98,7 @@ class _CameraWidget(QWidget):
         except vidcap.error:
             if dev == 0:
                 utils.error("Could not start camera")
-                return
+                raise CameraError("Could not start camera")
             self.start(dev=0)
             return
 
@@ -117,8 +121,14 @@ class CameraWidget(LargeEditorWidget):
     def initWidget(self, widget):
         widget.imagecaptured.connect(self.emitvaluechanged)
         widget.done.connect(self.emitfished)
+
+    def after_load(self):
         camera = roam.config.settings.get('camera', 1)
-        widget.start(dev=camera)
+        try:
+            self.widget.start(dev=camera)
+        except CameraError as ex:
+            self.emitcancel(reason=ex.message)
+            return
 
     def value(self):
         return self.widget.pixmap
