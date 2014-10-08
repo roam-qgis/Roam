@@ -25,10 +25,8 @@ from roam.api.utils import layer_by_name, values_from_feature
 
 import templates
 
-htmlpath = os.path.join(os.path.dirname(__file__), "templates/info.html")
-
-with open(htmlpath) as f:
-    template = Template(f.read())
+infotemplate = templates.get_template("info")
+infoblocktemplate = templates.get_template("infoblock")
 
 
 class NoFeature(Exception):
@@ -87,7 +85,7 @@ class InfoDock(infodock_widget, QWidget):
         self.charm = FlickCharm()
         self.charm.activateOn(self.attributesView)
         self.layerList.currentRowChanged.connect(self.layerIndexChanged)
-        self.attributesView.linkClicked.connect(RoamEvents.openurl.emit)
+        self.attributesView.linkClicked.connect(self.handle_link)
         self.attributesView.page().setLinkDelegationPolicy(QWebPage.DelegateAllLinks)
         self.grabGesture(Qt.SwipeGesture)
         self.setAttribute(Qt.WA_AcceptTouchEvents)
@@ -108,6 +106,14 @@ class InfoDock(infodock_widget, QWidget):
 
         RoamEvents.selectioncleared.connect(self.clearResults)
         RoamEvents.editgeometry_complete.connect(self.refreshcurrent)
+
+    def handle_link(self, url):
+        if url.toString().endswith("/back"):
+            self.pageback()
+        elif url.toString().endswith("/next"):
+            self.pagenext()
+        else:
+            RoamEvents.openurl.emit(url)
 
     def _sink(self, event):
         return
@@ -260,7 +266,7 @@ class InfoDock(infodock_widget, QWidget):
 
         clear_image_cache()
 
-        info1, results = self.generate_info("info1", self.project, layer, feature.id(), feature)
+        info1, results = self.generate_info("info1", self.project, layer, feature.id(), feature, countlabel=str(cursor))
         info2, _= self.generate_info("info2", self.project, layer, feature.id(), feature, lastresults=results[0])
 
         if form:
@@ -272,9 +278,8 @@ class InfoDock(infodock_widget, QWidget):
                     INFO1=info1,
                     INFO2=info2)
 
-        html = updateTemplate(info, template)
+        html = updateTemplate(info, infotemplate)
 
-        self.countlabel.setText(str(cursor))
         self.attributesView.setHtml(html, templates.baseurl)
         tools = self.project.layer_tools(layer)
         hasform = not form is None
@@ -284,24 +289,7 @@ class InfoDock(infodock_widget, QWidget):
         self.editGeomButton.setVisible(editgeom)
         self.featureupdated.emit(layer, feature, cursor.features)
 
-
-    def generate_info(self, infoblock, project, layer, mapkey, feature, lastresults=None):
-
-        info_template = Template("""
-        <div class="panel panel-default">
-          <div class="panel-heading text-left">
-            <h2 class="panel-title" style="font-size:24px">${HEADER}</h2>
-          </div>
-          <div class="panel-body" style="padding:0px">
-            <table class="table table-condensed">
-                <col style="width: 35%;"/>
-                <col style="width: 65%;"/>
-            ${ROWS}
-            </table>
-            </div>
-        </div>
-        """)
-
+    def generate_info(self, infoblock, project, layer, mapkey, feature, countlabel=None, lastresults=None):
         infoblockdef = project.info_query(infoblock, layer.name())
         isinfo1 = infoblock == "info1"
         if isinfo1:
@@ -339,15 +327,14 @@ class InfoDock(infodock_widget, QWidget):
 
         blocks = []
         for count, result in enumerate(results, start=1):
-            if not isinfo1:
-                newheader = "{} {} of {}".format(header,count, len(results))
-            else:
-                newheader = header
             fields = result.keys()
             attributes = result.values()
+            if countlabel is None:
+                countlabel = "{} of {}".format(count, len(results))
             rows = generate_rows(fields, attributes, imagepath=self.project.image_folder)
             blocks.append(updateTemplate(dict(ROWS=rows,
-                                              HEADER=newheader), info_template))
+                                              HEADER=header,
+                                              count=countlabel), infoblocktemplate))
         if error:
             return error, []
 
