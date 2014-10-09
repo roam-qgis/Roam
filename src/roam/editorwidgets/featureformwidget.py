@@ -11,7 +11,7 @@ from roam.ui.ui_featureformwidget import Ui_Form
 
 class FeatureFormWidget(Ui_Form, QWidget):
     # Raise the cancel event, takes a reason and a level
-    cancel = pyqtSignal(str, int)
+    canceled = pyqtSignal(str, int)
     featuresaved = pyqtSignal()
     featuredeleted = pyqtSignal()
 
@@ -71,7 +71,7 @@ class FeatureFormWidget(Ui_Form, QWidget):
         self.featureform.showlargewidget.connect(RoamEvents.show_widget.emit)
         self.featureform.enablesave.connect(self.actionSave.setEnabled)
         self.featureform.enablesave.connect(self.actionSave.setVisible)
-        self.featureform.rejected.connect(self.cancel.emit)
+        self.featureform.rejected.connect(self.canceled.emit)
 
         self.featureformarea.layout().addWidget(self.featureform)
 
@@ -147,11 +147,12 @@ class FeatureFormWidgetEditor(LargeEditorWidget):
 
     def initWidget(self, widget):
         widget.actionCancel.triggered.connect(self.cancelform)
+        widget.canceled.connect(self.cancelform)
         widget.featuresaved.connect(self.emitfished)
         widget.featuredeleted.connect(self.emitfished)
 
-    def cancelform(self):
-        self.emitcancel()
+    def cancelform(self, *args):
+        self.emitcancel(*args)
 
     def updatefromconfig(self):
         self.widget.set_config(self.config)

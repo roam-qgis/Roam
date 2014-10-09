@@ -2,6 +2,7 @@ import functools
 import os.path
 import os
 import getpass
+import inspect
 
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
@@ -38,8 +39,14 @@ class DataEntryWidget(dataentry_widget, dataentry_base):
     def formrejected(self, message=None, level=featureform.RejectedException.WARNING):
         self.rejected.emit(message, level)
 
-    def cleanup(self, wrapper):
+    def cleanup(self, wrapper, *args):
         # Pop the widget off the current widget stack and kill it.
+        if len(args) == 2:
+            message = args[0]
+            if message:
+                level = args[1]
+                RoamEvents.raisemessage("Message", message, level=level)
+
         index = self.widgetstack.index(wrapper)
         del self.widgetstack[index]
         index = self.stackedWidget.indexOf(wrapper.widget)
@@ -50,9 +57,14 @@ class DataEntryWidget(dataentry_widget, dataentry_base):
         wrapper.setParent(None)
 
     def add_widget(self, widgettype, lastvalue, callback, config, initconfig=None):
+        if inspect.isclass(widgettype):
+            widget = widgettype.createwidget(config=initconfig)
+            largewidgetwrapper = widgettype.for_widget(widget, None, None, None, None, map=self.canvas)
+        else:
+            # If the user passes in a instance we can just use that and trust they have set it up right.
+            largewidgetwrapper = widgettype
+            widget = largewidgetwrapper.widget
 
-        widget = widgettype.createwidget(config=initconfig)
-        largewidgetwrapper = widgettype.for_widget(widget, None, None, None, None, map=self.canvas)
         largewidgetwrapper.largewidgetrequest.connect(RoamEvents.show_widget.emit)
         largewidgetwrapper.finished.connect(callback)
         largewidgetwrapper.finished.connect(functools.partial(self.cleanup, largewidgetwrapper))

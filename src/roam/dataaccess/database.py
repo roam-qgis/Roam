@@ -55,7 +55,8 @@ class Database(object):
         """
         Return a query based on the name given.  The query must be defined in the form
         settings under the query: block
-        :param name:
+        :param name: the name of the query to run
+        :param values: A dict of keys and values to use in the query
         :return: A generator with the query results.
         """
         sql, values = self.form.get_query(name, values)

@@ -133,7 +133,7 @@ class FeatureFormBase(QWidget):
     helprequest = pyqtSignal(str)
     showwidget = pyqtSignal(QWidget)
     loadform = pyqtSignal()
-    rejected = pyqtSignal(str)
+    rejected = pyqtSignal(str, int)
     enablesave = pyqtSignal(bool)
     showlargewidget = pyqtSignal(object, object, object, dict)
 
@@ -147,6 +147,9 @@ class FeatureFormBase(QWidget):
         self.defaults = defaults
         self.bindingvalues = {}
         self.editingmode = kwargs.get("editmode", False)
+
+    def open_large_widget(self, widgettype, lastvalue, callback, config=None):
+        self.showlargewidget.emit(widgettype, lastvalue, callback, config)
 
     @property
     def is_capturing(self):
@@ -351,7 +354,11 @@ class FeatureFormBase(QWidget):
         if not 'default' in widgetconfig:
             raise KeyError('Default value not defined for this field {}'.format(name))
 
-        return defaults.widget_default(widgetconfig, self.feature, self.form.QGISLayer)
+        return defaults.owidget_default(widgetconfig, self.feature, self.form.QGISLayer)
+
+    def close_form(self, reason=None, level=1):
+        self.rejected.emit(reason, level)
+
 
 class FeatureForm(FeatureFormBase):
     """
