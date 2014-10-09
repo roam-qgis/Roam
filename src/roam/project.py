@@ -376,12 +376,13 @@ class Form(object):
             values = {}
         query = self.settings['query'][name]['sql']
         try:
+            # Why am I doing this here?  We don't even need it
             mappings = self.settings['query'][name]['mappings']
             newvalues = copy.deepcopy(mappings)
             for key_name, key_column in mappings.iteritems():
                 newvalues[key_name] = values[key_column]
         except KeyError:
-            newvalues = {}
+            newvalues = copy.deepcopy(values)
         return query, newvalues
 
 
