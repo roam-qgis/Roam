@@ -18,6 +18,7 @@ def nullconvert(value):
 class BigListWidget(LargeEditorWidget):
     def __init__(self, *args, **kwargs):
         super(BigListWidget, self).__init__(*args, **kwargs)
+        self.setObjectName("biglist")
         self.multi = False
 
     def eventFilter(self, object, event):

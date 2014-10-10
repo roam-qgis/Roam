@@ -83,6 +83,7 @@ QListWidget#layerList::item {
 	padding: 4px;
 }
 
+
 QListWidget#layerList::item::selected {
     background-color: #5b93c2;
 }
@@ -196,6 +197,5 @@ QToolButton:checked  {
     border: 3px solid rgb(137, 175, 255);
     background-color: rgb(211, 228, 255);
 }
-
 """
 

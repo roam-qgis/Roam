@@ -168,9 +168,15 @@ QListView::item:selected {
         <property name="styleSheet">
          <string notr="true">QListView::indicator
 {
-width: 32px;
-height:32px;
-}</string>
+width: 60px;
+height:60px;
+}
+
+QListView::item
+{
+	padding: 20px;
+};
+</string>
         </property>
         <property name="frameShape">
          <enum>QFrame::NoFrame</enum>
