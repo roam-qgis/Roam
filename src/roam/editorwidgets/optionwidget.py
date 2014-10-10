@@ -62,6 +62,13 @@ class OptionWidget(EditorWidget):
 
     def updatefromconfig(self):
         super(OptionWidget, self).updatefromconfig()
+
+        for button in self.group.buttons():
+            self.group.removeButton(button)
+            self.widget.layout().removeWidget(button)
+            button.deleteLater()
+            button.setParent(None)
+
         listconfig = self.config['list']
         self._buildfromlist(listconfig)
 
