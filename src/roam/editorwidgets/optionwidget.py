@@ -85,6 +85,7 @@ class OptionWidget(EditorWidget):
         for button in self.group.buttons():
             if button.property("value") == str(value):
                 button.setChecked(True)
+                self.emitvaluechanged()
                 return
 
     def value(self):
