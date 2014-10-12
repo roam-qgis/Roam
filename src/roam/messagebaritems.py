@@ -41,6 +41,8 @@ class MessageBar(QgsMessageBar):
 
     def showEvent(self, event):
         self.resize(QSize(self.parent().geometry().size().width(), 50))
+        self.move(0, self.parent().geometry().size().height() - self.height())
+        self.raise_()
 
     def pushMessage(self, title, text=None, level=QgsMessageBar.INFO, duration=0, extrainfo=None):
         item = ClickableMessage(title, text, level, duration, extrainfo)
