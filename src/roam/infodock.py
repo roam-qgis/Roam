@@ -27,6 +27,7 @@ import templates
 
 infotemplate = templates.get_template("info")
 infoblocktemplate = templates.get_template("infoblock")
+countblocktemplate = templates.get_template("countblock")
 
 
 class NoFeature(Exception):
@@ -292,10 +293,6 @@ class InfoDock(infodock_widget, QWidget):
     def generate_info(self, infoblock, project, layer, mapkey, feature, countlabel=None, lastresults=None):
         infoblockdef = project.info_query(infoblock, layer.name())
         isinfo1 = infoblock == "info1"
-        if isinfo1:
-            header = infoblockdef.get('caption', "Record")
-        else:
-            header = infoblockdef.get('caption', "Related Record")
 
         if not infoblockdef:
             if isinfo1:
@@ -303,6 +300,11 @@ class InfoDock(infodock_widget, QWidget):
                 infoblockdef['type'] = 'feature'
             else:
                 return None, []
+
+        if isinfo1:
+            caption = infoblockdef.get('caption', "Record")
+        else:
+            caption = infoblockdef.get('caption', "Related Record")
 
         results = []
         error = None
@@ -327,14 +329,18 @@ class InfoDock(infodock_widget, QWidget):
 
         blocks = []
         for count, result in enumerate(results, start=1):
+            if isinfo1 and count == 1:
+                countblock = countblocktemplate.substitute(count=countlabel)
+            else:
+                countblock = ''
+
             fields = result.keys()
             attributes = result.values()
-            if countlabel is None:
-                countlabel = "{} of {}".format(count, len(results))
             rows = generate_rows(fields, attributes, imagepath=self.project.image_folder)
             blocks.append(updateTemplate(dict(ROWS=rows,
-                                              HEADER=header,
-                                              count=countlabel), infoblocktemplate))
+                                              HEADER=caption,
+                                              CONTROLS=countblock),
+                                         infoblocktemplate))
         if error:
             return error, []
 
