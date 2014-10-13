@@ -288,7 +288,7 @@ class MapWidget(Ui_CanvasWidget, QMainWindow):
 
         self.zoomInTool.setCursor(cursor(':/icons/in'))
         self.zoomOutTool.setCursor(cursor(':/icons/out'))
-        self.infoTool.setCursor(cursor(':/icons/info'))
+        self.infoTool.setCursor(cursor(':/icons/select'))
 
         self.actionRaster.triggered.connect(self.toggleRasterLayers)
         self.actionHome.triggered.connect(self.homeview)

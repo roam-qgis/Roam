@@ -245,9 +245,6 @@ class MainWindow(ui_mainwindow.Ui_MainWindow, QMainWindow):
 
     def showUIMessage(self, label, message, level=QgsMessageBar.INFO, time=0, extra=''):
         self.bar.pushMessage(label, message, level, duration=time, extrainfo=extra)
-        roam.utils.info(label)
-        roam.utils.info(message)
-        roam.utils.info(extra)
 
     def updatelegend(self):
         self.legendpage.updatecanvas(self.canvas)

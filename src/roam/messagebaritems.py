@@ -1,19 +1,20 @@
 import os
 import traceback
 
-from PyQt4.QtGui import (QApplication, 
-                         QPushButton, 
-			 QIcon, 
-			 QWidget, 
-			 QDialog, 
-			 QToolButton, 
-			 QFont)
+from PyQt4.QtGui import (QApplication,
+                         QPushButton,
+                         QIcon,
+                         QWidget,
+                         QDialog,
+                         QToolButton,
+                         QFont)
 from PyQt4.QtCore import QEvent, QObject, Qt, QSize
 
 from qgis.gui import QgsMessageBarItem, QgsMessageBar
 
 import roam.htmlviewer
 import roam.utils
+import roam.resources_rc
 
 style = """QPushButton {
         border: 1px solid #e1e1e1;
@@ -33,25 +34,66 @@ htmlpath = os.path.join(os.path.dirname(__file__), "templates/error.html")
 class MessageBar(QgsMessageBar):
     def __init__(self, parent=None):
         super(MessageBar, self).__init__(parent)
+        self.items = []
 
         closebutton = self.findChild(QToolButton)
-        closebutton.setText(QApplication.translate('MessageBarItems','Dismiss', None, QApplication.UnicodeUTF8))
-        closebutton.setToolButtonStyle(Qt.ToolButtonTextOnly)
-        closebutton.setStyleSheet(style)
+        closebutton.setToolButtonStyle(Qt.ToolButtonIconOnly)
+        closebutton.setIcon(QIcon(":/icons/cancel"))
+        closebutton.clicked.disconnect()
+        closebutton.clicked.connect(self.popWidget)
+
+        self.parent().installEventFilter(self)
 
     def showEvent(self, event):
         self.resize(QSize(self.parent().geometry().size().width(), 50))
         self.move(0, self.parent().geometry().size().height() - self.height())
         self.raise_()
 
+    def eventFilter(self, object, event):
+        if event.type() == QEvent.Resize:
+            self.showEvent(None)
+
+        return super(MessageBar, self).eventFilter(object, event)
+
     def pushMessage(self, title, text=None, level=QgsMessageBar.INFO, duration=0, extrainfo=None):
         item = ClickableMessage(title, text, level, duration, extrainfo)
+        if level == QgsMessageBar.INFO:
+            item.setIcon(QIcon(":/icons/info"))
+        elif level == QgsMessageBar.WARNING:
+            item.setIcon(QIcon(":/icons/warning"))
+        elif level == QgsMessageBar.CRITICAL:
+            item.setIcon(QIcon(":/icons/error"))
+
+        # Icon doesn't take unless you call set title again. :S
+        item.setTitle(title)
         self.pushItem(item)
+        self.setStyleSheet(item.getStyleSheet())
+
+    def popWidget(self):
+        super(MessageBar, self).popWidget()
+
+        # HACK Gross hack because QgsMessageBar doesn't expose the current item
+        # and does it's own stylesheet thing.  Yuck!
+        items = self.findChildren(ClickableMessage)
+        try:
+            item = items[-1]
+        except IndexError:
+            self.hide()
+            return
+
+        if not item:
+            self.hide()
+            return
+
+        print item.level()
+        print item.getStyleSheet()
+        self.setStyleSheet(item.getStyleSheet())
 
     def pushError(self, text, extrainfo):
-        item = ClickableMessage(QApplication.translate('MessageBarItems','Oops', None, QApplication.UnicodeUTF8), text, QgsMessageBar.CRITICAL, extrainfo=extrainfo)
-        item.setIcon(QIcon(":/icons/sad"))
-        self.pushItem(item)
+        self.pushMessage(QApplication.translate('MessageBarItems', 'Oops', None,
+                                                QApplication.UnicodeUTF8),
+                         text, QgsMessageBar.CRITICAL, extrainfo=extrainfo)
+
 
 class ClickableMessage(QgsMessageBarItem):
     def __init__(self, title=None, text=None, level=QgsMessageBar.INFO, duration=0, extrainfo=None, parent=None):
@@ -93,6 +135,14 @@ class ClickableMessage(QgsMessageBarItem):
                                        html=html,
                                        data=data,
                                        parent=self.parent())
+
+    def getStyleSheet(self):
+        if self.level() == QgsMessageBar.CRITICAL:
+            return """QgsMessageBar { border: 5px solid #9b3d3d; }"""
+        elif self.level() == QgsMessageBar.WARNING:
+            return """QgsMessageBar { border: 5px solid #e0aa00; }"""
+        elif self.level() == QgsMessageBar.INFO:
+            return """QgsMessageBar { border: 5px solid #b9cfe4; }"""
 
 
 class MissingLayerItem(ClickableMessage):

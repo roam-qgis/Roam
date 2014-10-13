@@ -17,7 +17,7 @@ supportedformats = []
 def image_handler(key, value, **kwargs):
     imageblock = '''
                     <a href="{}" class="thumbnail">
-                      <img width="200" height="200" src="{}"\>
+                      <img width="100%" height="100%" src="{}"\>
                     </a>'''
 
     imagetype = kwargs.get('imagetype', 'base64' )

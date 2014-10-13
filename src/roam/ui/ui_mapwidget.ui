@@ -115,7 +115,7 @@
    </property>
    <property name="icon">
     <iconset resource="../resources.qrc">
-     <normaloff>:/icons/info</normaloff>:/icons/info</iconset>
+     <normaloff>:/icons/select</normaloff>:/icons/select</iconset>
    </property>
    <property name="text">
     <string>Select</string>
