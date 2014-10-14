@@ -6,6 +6,7 @@ from roam.editorwidgets.core import EditorWidget
 
 class OptionWidget(EditorWidget):
     widgettype = 'Option Row'
+
     def __init__(self, *args):
         super(OptionWidget, self).__init__(*args)
         self._bindvalue = None
@@ -51,14 +52,14 @@ class OptionWidget(EditorWidget):
             button.setText(desc)
             button.setProperty("value", data)
             button.setIcon(icon)
-            button.setIconSize(QSize(24,24))
+            button.setIconSize(QSize(24, 24))
             self.widget.layout().addWidget(button)
             self.group.addButton(button)
 
     def initWidget(self, widget):
         if not widget.layout():
             widget.setLayout(QHBoxLayout())
-            widget.layout().setContentsMargins(0,0,0,0)
+            widget.layout().setContentsMargins(0, 0, 0, 0)
 
     def updatefromconfig(self):
         super(OptionWidget, self).updatefromconfig()
@@ -81,9 +82,14 @@ class OptionWidget(EditorWidget):
 
         return False
 
+    @property
+    def nullvalues(self):
+        return ['NULL']
+
     def setvalue(self, value):
         for button in self.group.buttons():
-            if button.property("value") == str(value):
+            buttonvalue = button.property("value")
+            if (value is None and buttonvalue in self.nullvalues) or buttonvalue == str(value):
                 button.setChecked(True)
                 self.emitvaluechanged()
                 return
@@ -92,6 +98,9 @@ class OptionWidget(EditorWidget):
         button = self.group.checkedButton()
         if not button:
             return None
-        return button.property("value")
+        value = button.property("value")
+        if value in self.nullvalues:
+            return None
+        return value
 
 
