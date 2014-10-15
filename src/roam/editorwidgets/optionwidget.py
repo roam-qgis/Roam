@@ -87,6 +87,9 @@ class OptionWidget(EditorWidget):
         return ['NULL']
 
     def setvalue(self, value):
+        if value in self.nullvalues:
+            value = None
+
         for button in self.group.buttons():
             buttonvalue = button.property("value")
             if (value is None and buttonvalue in self.nullvalues) or buttonvalue == str(value):
@@ -98,9 +101,11 @@ class OptionWidget(EditorWidget):
         button = self.group.checkedButton()
         if not button:
             return None
+
         value = button.property("value")
+
         if value in self.nullvalues:
-            return None
+            value = None
         return value
 
 
