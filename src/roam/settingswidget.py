@@ -87,7 +87,6 @@ class SettingsWidget(Ui_settingsWidget, QWidget):
     def _addports(self, ports):
         self.gpsPortCombo.blockSignals(True)
         for port, name in ports:
-            print port, name
             self.gpsPortCombo.addItem(name, port)
         self.gpsPortCombo.blockSignals(False)
         self.populated = True
@@ -98,7 +97,6 @@ class SettingsWidget(Ui_settingsWidget, QWidget):
             return
 
         gpsport = self.settings.get("gpsport", 'scan')
-        print gpsport
         gpsindex = self.gpsPortCombo.findData(gpsport)
         self.gpsPortCombo.blockSignals(True)
         if gpsindex == -1:

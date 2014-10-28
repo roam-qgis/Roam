@@ -8,15 +8,19 @@ class GPSLogging(QObject):
 
     def __init__(self, gps):
         super(GPSLogging, self).__init__()
+        self.layer = None
+        self.layerprovider = None
+        self.fields = None
         self.gps = gps
         self.logging = False
         self.featurecache = []
+        self._tracking = False
+        self.gps.gpsposition.connect(self.postionupdated)
 
     def enable_logging_on(self, layer):
         self.layer = layer
         self.layerprovider = self.layer.dataProvider()
         self.fields = self.layerprovider.fields()
-        self.logging = True
 
     def clear_logging(self):
         self.logging = False
@@ -30,18 +34,16 @@ class GPSLogging(QObject):
 
     @logging.setter
     def logging(self, value):
+
+        # If no layer for logging is set then we can't track.
+        if not self.layer and self.layerprovider:
+            value = False
+
         self._tracking = value
-        if value:
-            self.gps.gpsposition.connect(self.postionupdated)
-        else:
-            try:
-                self.gps.gpsposition.disconnect(self.postionupdated)
-            except TypeError:
-                pass
         self.trackingchanged.emit(value)
 
     def postionupdated(self, position, info):
-        if not self.logging:
+        if not self.logging or not self.layer or not self.layerprovider:
             return
 
         feature = QgsFeature()

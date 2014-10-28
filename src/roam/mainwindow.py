@@ -519,11 +519,10 @@ class MainWindow(ui_mainwindow.Ui_MainWindow, QMainWindow):
         layers = self.project.legendlayersmapping().values()
         self.legendpage.updateitems(layers)
 
-        try:
-            gps_loglayer = QgsMapLayerRegistry.instance().mapLayersByName('gps_log')[0]
-            if roam.config.settings.get('gpslogging', True):
-                self.tracking.enable_logging_on(gps_loglayer)
-        except IndexError:
+        gps_loglayer = self.project.gpslog_layer()
+        if gps_loglayer:
+            self.tracking.enable_logging_on(gps_loglayer)
+        else:
             roam.utils.info("No gps_log found for GPS logging")
             self.tracking.clear_logging()
 

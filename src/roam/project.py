@@ -25,6 +25,7 @@ from roam.structs import CaseInsensitiveDict
 import roam.utils
 import roam
 import roam.maptools
+import roam.api.utils
 import roam.defaults as defaults
 
 supportedgeometry = [QGis.Point, QGis.Polygon, QGis.Line]
@@ -605,6 +606,15 @@ class Project(object):
         all layers in the project
         """
         return layersfromlist(self.selectlayers)
+
+    def gpslog_layer(self):
+        """
+        Return the GPS log layer set for this project
+        """
+        try:
+            return roam.api.utils.layer_by_name("gps_log")
+        except IndexError:
+            return None
 
     @property
     def legendlayers(self):

@@ -172,7 +172,6 @@ class MapWidget(Ui_CanvasWidget, QMainWindow):
         self.currentfeatureband.reset()
         clear_tool_band()
 
-
     def settings_updated(self, settings):
         self.actionGPS.updateGPSPort()
         gpslogging = settings.get('gpslogging', True)
