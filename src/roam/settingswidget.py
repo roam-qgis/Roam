@@ -97,6 +97,9 @@ class SettingsWidget(Ui_settingsWidget, QWidget):
             return
 
         gpsport = self.settings.get("gpsport", 'scan')
+        if not gpsport.startswith(r"\\\.\\"):
+            gpsport = "\\\.\\" + gpsport
+
         gpsindex = self.gpsPortCombo.findData(gpsport)
         self.gpsPortCombo.blockSignals(True)
         if gpsindex == -1:
