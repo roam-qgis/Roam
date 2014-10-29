@@ -68,7 +68,7 @@ class SettingsWidget(Ui_settingsWidget, QWidget):
         self.notifysettingsupdate()
 
     def gpsPortCombo_currentIndexChanged(self, index):
-        port = self.gpsPortCombo.itemData(index)
+        port = self.gpsPortCombo.itemText(index)
         self.settings["gpsport"] = port
         self.notifysettingsupdate()
 
@@ -87,7 +87,7 @@ class SettingsWidget(Ui_settingsWidget, QWidget):
     def _addports(self, ports):
         self.gpsPortCombo.blockSignals(True)
         for port, name in ports:
-            self.gpsPortCombo.addItem(name, port)
+            self.gpsPortCombo.addItem(name[:-1], port)
         self.gpsPortCombo.blockSignals(False)
         self.populated = True
         self._setgpsport()
@@ -97,10 +97,9 @@ class SettingsWidget(Ui_settingsWidget, QWidget):
             return
 
         gpsport = self.settings.get("gpsport", 'scan')
-        if not gpsport.startswith(r"\\\.\\"):
-            gpsport = "\\\.\\" + gpsport
+        gpsport.replace(r"\\\.\\", "")
+        gpsindex = self.gpsPortCombo.findText(gpsport)
 
-        gpsindex = self.gpsPortCombo.findData(gpsport)
         self.gpsPortCombo.blockSignals(True)
         if gpsindex == -1:
             self.gpsPortCombo.addItem(gpsport)
