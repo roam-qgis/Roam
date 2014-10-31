@@ -58,7 +58,8 @@ def string_handler(key, value, **kwargs):
                 value = os.path.join(kwargs.get('imagepath', ''), value)
             return image_handler(key, value, imagetype='file')
 
-        base64 = QByteArray.fromBase64(value)
+        newvalue = value.encode("utf-8")
+        base64 = QByteArray.fromBase64(newvalue)
         image = QPixmap()
         loaded = image.loadFromData(base64)
         if loaded:
