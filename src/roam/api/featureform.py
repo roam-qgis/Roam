@@ -354,7 +354,7 @@ class FeatureFormBase(QWidget):
         if not 'default' in widgetconfig:
             raise KeyError('Default value not defined for this field {}'.format(name))
 
-        return defaults.owidget_default(widgetconfig, self.feature, self.form.QGISLayer)
+        return defaults.widget_default(widgetconfig, self.feature, self.form.QGISLayer)
 
     def close_form(self, reason=None, level=1):
         self.rejected.emit(reason, level)
