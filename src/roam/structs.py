@@ -40,6 +40,8 @@ class OrderedDictYAMLLoader(yaml.Loader):
         return mapping
 
 
+# NOTE: Taken from https://github.com/kennethreitz/requests
+# LICENCE: Apache2
 class CaseInsensitiveDict(MutableMapping):
     """
     A case-insensitive ``dict``-like object.
