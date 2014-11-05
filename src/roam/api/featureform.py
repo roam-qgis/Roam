@@ -39,6 +39,7 @@ from roam.api import utils as qgisutils
 import roam.editorwidgets.core
 import roam.defaults as defaults
 import roam.roam_style
+import roam.utils
 
 values_file = os.path.join(tempfile.gettempdir(), "Roam")
 
@@ -145,7 +146,7 @@ class FeatureFormBase(QWidget):
         self.requiredfields = CaseInsensitiveDict()
         self.feature = feature
         self.defaults = defaults
-        self.bindingvalues = {}
+        self.bindingvalues = CaseInsensitiveDict()
         self.editingmode = kwargs.get("editmode", False)
 
     def open_large_widget(self, widgettype, lastvalue, callback, config=None):
@@ -584,8 +585,10 @@ class FeatureForm(FeatureFormBase):
         updatefeautrefields(self.feature)
         layer.startEditing()
         if self.editingmode:
+            roam.utils.info("Updating feature {}".format(self.feature.id()))
             layer.updateFeature(self.feature)
         else:
+            roam.utils.info("Adding feature {}".format(self.feature.id()))
             layer.addFeature(self.feature)
             savevalues(layer, savedvalues)
 

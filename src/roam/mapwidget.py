@@ -314,7 +314,12 @@ class MapWidget(Ui_CanvasWidget, QMainWindow):
         self.dataentryselection.setText(form.icontext)
         self.create_capture_buttons(form)
 
+    def feature_added(self, featureid):
+        roam.utils.info("QGIS Added feature {}".format(featureid))
+
     def create_capture_buttons(self, form):
+        layer = form.QGISLayer
+        layer.featureAdded.connect(self.feature_added)
         tool = form.getMaptool()(self.canvas)
         for action in tool.actions:
             # Create the action here.
