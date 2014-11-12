@@ -207,7 +207,7 @@ if os.name is 'nt':
                               'powrprof.dll', 'mswsock.dll',
                               'w9xpopen.exe', 'MSVCP90.dll'],
             'excludes': ['PyQt4.uic.port_v3'],
-            'includes': ['PyQt4.QtNetwork', 'sip', 'PyQt4.QtSql', 'sqlite3'],
+            'includes': ['PyQt4.QtNetwork', 'sip', 'PyQt4.QtSql', 'sqlite3', "Queue", 'PyQt4.Qsci'],
             'skip_archive': True,
             }},
         windows=[roam_target, configmanager_target],
