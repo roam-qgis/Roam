@@ -1,11 +1,11 @@
 from functools import partial
 from collections import defaultdict
 
-from PyQt4.QtCore import Qt, pyqtSignal, QSize
+from PyQt4.QtCore import Qt, pyqtSignal, QSize, QPropertyAnimation, QObject, pyqtProperty, QEasingCurve
 from PyQt4.QtGui import QActionGroup, QFrame, QWidget, QSizePolicy, \
-                        QAction, QPixmap, QCursor, QIcon, QColor, QMainWindow
+                        QAction, QPixmap, QCursor, QIcon, QColor, QMainWindow, QPen
 
-from qgis.gui import QgsMapCanvas, QgsMapToolZoom, QgsRubberBand
+from qgis.gui import QgsMapCanvas, QgsMapToolZoom, QgsRubberBand, QgsMapCanvasItem
 from qgis.core import QgsPalLabeling, QgsMapLayerRegistry, QgsMapLayer, QgsFeature, QGis, QgsRectangle, QgsProject
 
 from roam.gps_action import GPSAction, GPSMarker
@@ -24,7 +24,61 @@ except ImportError:
     from qgis.gui import QgsMapToolPan
     PanTool = QgsMapToolPan
 
+
+class CurrentSelection(QgsRubberBand):
+    """
+    Position marker for the current location in the viewer.
+    """
+    class AniObject(QObject):
+        def __init__(self, band):
+            super(CurrentSelection.AniObject, self).__init__()
+            self.color = QColor()
+
+        @pyqtProperty(int)
+        def alpha(self):
+            return self.color.alpha()
+
+        @alpha.setter
+        def alpha(self, value):
+            self.color.setAlpha(value)
+
+    def __init__(self, canvas):
+        super(CurrentSelection, self).__init__(canvas)
+        self.outline = QgsRubberBand(canvas)
+        self.outline.setBrushStyle(Qt.NoBrush)
+        self.outline.setWidth(5)
+        self.outline.setIconSize(30)
+        self.aniobject = CurrentSelection.AniObject(self)
+        self.anim = QPropertyAnimation(self.aniobject, "alpha")
+        self.anim.setDuration(500)
+        self.anim.setStartValue(50)
+        self.anim.setEndValue(100)
+        self.anim.valueChanged.connect(self.value_changed)
+
+    def setOutlineColour(self, color):
+        self.outline.setColor(color)
+
+    def setToGeometry(self, geom, layer):
+        super(CurrentSelection, self).setToGeometry(geom, layer)
+        self.outline.setToGeometry(geom, layer)
+        self.anim.stop()
+        self.anim.start()
+
+    def reset(self, geomtype=QGis.Line):
+        super(CurrentSelection, self).reset(geomtype)
+        self.outline.reset(geomtype)
+        self.anim.stop()
+
+    def value_changed(self, value):
+        self.setColor(self.aniobject.color)
+        self.update()
+
+    def setColor(self, color):
+        self.aniobject.color = color
+        super(CurrentSelection, self).setColor(color)
+
 from ui.ui_mapwidget import Ui_CanvasWidget
+
 
 class MapWidget(Ui_CanvasWidget, QMainWindow):
     def __init__(self, parent=None):
@@ -75,10 +129,11 @@ class MapWidget(Ui_CanvasWidget, QMainWindow):
         self.marker = GPSMarker(self.canvas)
         self.marker.hide()
 
-        self.currentfeatureband = QgsRubberBand(self.canvas)
-        self.currentfeatureband.setIconSize(20)
+        self.currentfeatureband = CurrentSelection(self.canvas)
+        self.currentfeatureband.setIconSize(30)
         self.currentfeatureband.setWidth(10)
-        self.currentfeatureband.setColor(QColor(186, 93, 212, 100))
+        self.currentfeatureband.setColor(QColor(186, 93, 212, 50))
+        self.currentfeatureband.setOutlineColour(QColor(186, 93, 212))
 
         self.gpsband = QgsRubberBand(self.canvas)
         self.gpsband.setColor(QColor(0, 0, 212, 76))
@@ -120,11 +175,12 @@ class MapWidget(Ui_CanvasWidget, QMainWindow):
         self.clear_selection()
         for layer, features in results.iteritems():
             band = self.selectionbands[layer]
-            band.setColor(QColor(255, 0, 0, 200))
+            band.setColor(QColor(255, 0, 0, 100))
             band.setIconSize(25)
             band.setWidth(5)
             band.setBrushStyle(Qt.NoBrush)
             band.reset(layer.geometryType())
+            band.setZValue(self.currentfeatureband.zValue() - 1)
             for feature in features:
                 band.addGeometry(feature.geometry(), layer)
         self.canvas.update()
