@@ -78,7 +78,7 @@ class MapWidget(Ui_CanvasWidget, QMainWindow):
         self.currentfeatureband = QgsRubberBand(self.canvas)
         self.currentfeatureband.setIconSize(20)
         self.currentfeatureband.setWidth(10)
-        self.currentfeatureband.setColor(QColor(186, 93, 212, 76))
+        self.currentfeatureband.setColor(QColor(186, 93, 212, 100))
 
         self.gpsband = QgsRubberBand(self.canvas)
         self.gpsband.setColor(QColor(0, 0, 212, 76))
@@ -121,8 +121,8 @@ class MapWidget(Ui_CanvasWidget, QMainWindow):
         for layer, features in results.iteritems():
             band = self.selectionbands[layer]
             band.setColor(QColor(255, 0, 0, 200))
-            band.setIconSize(20)
-            band.setWidth(2)
+            band.setIconSize(25)
+            band.setWidth(5)
             band.setBrushStyle(Qt.NoBrush)
             band.reset(layer.geometryType())
             for feature in features:
