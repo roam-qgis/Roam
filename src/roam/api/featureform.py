@@ -587,7 +587,10 @@ class FeatureForm(FeatureFormBase):
             qgisutils.update_feature(layer, self.feature)
         else:
             roam.utils.info("Adding feature {}".format(self.feature.id()))
-            layer.addFeature(self.feature)
+            saved = layer.dataProvider().addFeatures([self.feature])
+            if not saved:
+                raise FeatureSaveException.not_saved(layer.dataProvider().error().message())
+
             savevalues(layer, savedvalues)
 
         self.featuresaved(self.feature, values)
