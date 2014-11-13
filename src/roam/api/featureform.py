@@ -45,6 +45,7 @@ values_file = os.path.join(tempfile.gettempdir(), "Roam")
 
 nullcheck = qgisutils.nullcheck
 
+
 def loadsavedvalues(layer):
     attr = {}
     id = str(layer.id())
@@ -574,29 +575,20 @@ class FeatureForm(FeatureFormBase):
                                                    "Could not save image for control {}".format(wrapper.label),
                                                    QgsMessageBar.CRITICAL)
 
-
         if not self.accept():
             raise FeatureSaveException.not_accepted()
 
         layer = self.form.QGISLayer
         values, savedvalues = self.getvalues()
         save_images(values)
-
         updatefeautrefields(self.feature)
-        layer.startEditing()
         if self.editingmode:
             roam.utils.info("Updating feature {}".format(self.feature.id()))
-            layer.updateFeature(self.feature)
+            qgisutils.update_feature(layer, self.feature)
         else:
             roam.utils.info("Adding feature {}".format(self.feature.id()))
             layer.addFeature(self.feature)
             savevalues(layer, savedvalues)
-
-        saved = layer.commitChanges()
-
-        if not saved:
-            errors = layer.commitErrors()
-            raise FeatureSaveException.not_saved(errors)
 
         self.featuresaved(self.feature, values)
 

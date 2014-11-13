@@ -7,6 +7,23 @@ from qgis.gui import QgsMessageBar
 from PyQt4.QtCore import QPyNullVariant
 from roam.structs import CaseInsensitiveDict
 
+
+def update_feature(layer, *features):
+    """
+    Change feature using the data provider skipping the edit buffer for speed.
+    :param layer: The layer to get the provider from.
+    :param features: A list of features to update.
+    :return: True on success or rasies Expection on fail
+    """
+    featuremap = {}
+    for feature in features:
+        attrs = {index: value for index, value in enumerate(feature.attributes())}
+        featuremap[feature.id()] = attrs
+    passes = layer.dataProvider().changeAttributeValues(featuremap)
+    if not passes:
+        raise FeatureSaveException.not_saved(layer.dataProvider().error().message())
+
+
 def open_keyboard():
     """
     Open the system keyboard
