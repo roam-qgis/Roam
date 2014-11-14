@@ -2,9 +2,9 @@ import os
 from types import NoneType
 from string import Template
 
-from PyQt4.QtCore import QUrl, QByteArray, QDate, QDateTime, QTime
+from PyQt4.QtCore import QUrl, QByteArray, QDate, QDateTime, QTime, QBuffer, QIODevice
 from PyQt4.QtGui import (QDialog, QWidget, QGridLayout, QPixmap,
-                         QImageReader, QDesktopServices)
+                         QImageReader, QDesktopServices, QImage)
 from PyQt4.QtWebKit import QWebView, QWebPage
 
 from roam import utils
@@ -24,7 +24,7 @@ def image_handler(key, value, **kwargs):
     keyid = "image_{key}_{count}".format(key=key, count=len(images) + 1)
     images[keyid] = (value, imagetype)
     if imagetype == 'base64':
-        src = 'data:image/png;base64,${}'.format(value.toBase64())
+        src = 'data:image/png;base64,{}'.format(value.toBase64())
     else:
         src = value
     return imageblock.format(keyid, src)

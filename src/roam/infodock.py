@@ -3,16 +3,15 @@ import os
 from string import Template
 from collections import OrderedDict
 
-from PyQt4.QtGui import ( QWidget, QIcon, QListWidgetItem, QMouseEvent, QApplication)
+from PyQt4.QtGui import ( QWidget, QIcon, QListWidgetItem, QMouseEvent, QApplication, QPainter, QImage)
 
 from PyQt4.QtCore import (Qt, QUrl,
-                          QEvent, pyqtSignal
-                          )
+                          QEvent, pyqtSignal, QSize, QIODevice, QBuffer, QByteArray)
 
 from PyQt4.QtWebKit import QWebPage
 
 from qgis.core import (QgsExpression, QgsFeature,
-                       QgsMapLayer, QgsFeatureRequest)
+                       QgsMapLayer, QgsFeatureRequest, QgsRenderContext, QgsSymbolV2)
 
 from roam import utils
 from roam.flickwidget import FlickCharm
@@ -339,12 +338,41 @@ class InfoDock(infodock_widget, QWidget):
             rows = generate_rows(fields, attributes, imagepath=self.project.image_folder)
             blocks.append(updateTemplate(dict(ROWS=rows,
                                               HEADER=caption,
+                                              IMAGE=self.feature_symbol(layer, feature),
                                               CONTROLS=countblock),
                                          infoblocktemplate))
         if error:
             return error, []
 
         return '<br>'.join(blocks), results
+
+    def feature_symbol(self, layer, feature):
+        renderer = layer.rendererV2()
+        context = QgsRenderContext()
+        try:
+            renderer.startRender(context, layer.pendingFields())
+            symbol = renderer.symbolsForFeature(feature)[0]
+            symbol = symbol.clone()
+            if symbol.type() == QgsSymbolV2.Marker:
+                symbol.setSize(16)
+            renderer.stopRender(context)
+        except IndexError:
+            return None
+
+        size = QSize(32, 32)
+        image = QImage(size, QImage.Format_ARGB32_Premultiplied)
+        image.fill(Qt.transparent)
+        painter = QPainter(image)
+        symbol.drawPreviewIcon(painter, size)
+        painter.end()
+
+        by = QByteArray()
+        buf = QBuffer(by)
+        buf.open(QIODevice.WriteOnly)
+        image.save(buf, "PNG")
+        image.save(r"C:\Temp\test.png", "PNG")
+        buf.close()
+        return by
 
     def results_from_feature(self, feature):
         return values_from_feature(feature)
