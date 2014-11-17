@@ -175,7 +175,7 @@ class MapWidget(Ui_CanvasWidget, QMainWindow):
         self.clear_selection()
         for layer, features in results.iteritems():
             band = self.selectionbands[layer]
-            band.setColor(QColor(255, 0, 0, 100))
+            band.setColor(QColor(255, 0, 0))
             band.setIconSize(25)
             band.setWidth(5)
             band.setBrushStyle(Qt.NoBrush)
