@@ -6,5 +6,5 @@ before_install:
   - sudo apt-get update -qq
   - sudo add-apt-repository ppa:ubuntugis/ppa -y
   - sudo apt-get install qgis libqt4-dev python-qt4 python-qt4-dev
-install: "pip install -r requirements.txt"
+install: "pip install -r travis_requirements.txt"
 script: nosetests
