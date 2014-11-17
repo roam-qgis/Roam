@@ -38,6 +38,7 @@ except KeyError:
 
 osgeobin = os.path.join(osgeopath, 'bin')
 qtimageforms = os.path.join(osgeopath,r'apps\qt4\plugins\imageformats\*')
+qtsqldrivers = os.path.join(osgeopath,r'apps\qt4\plugins\sqldrivers\*')
 qgisresources = os.path.join(osgeopath, "apps", qgisname, "resources")
 svgs = os.path.join(osgeopath, "apps", qgisname, "svg")
 qgispluginpath = os.path.join(osgeopath, "apps", qgisname, "plugins", "*provider.dll")
@@ -92,6 +93,7 @@ def get_data_files():
                 (r'libs\qgis\resources', [os.path.join(qgisresources, 'qgis.db'),
                                      os.path.join(qgisresources, 'srs.db')]),
                 (r'libs', extrafiles),
+                (r'libs', glob.glob(qtsqldrivers)),
                 (r'libs\roam\i18n', glob.glob(i18nfiles)),
                 (r'libs\roam\editorwidgets', glob.glob(os.path.join(srceditorwidgets, "*.pil"))),
                 (r'libs\roam\editorwidgets', glob.glob(os.path.join(srceditorwidgets, "*.pyd"))),
