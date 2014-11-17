@@ -232,7 +232,7 @@ class MainWindow(ui_mainwindow.Ui_MainWindow, QMainWindow):
             else:
                 self.menutoolbar.insertAction(self.actionProject, action)
 
-            iface = RoamInterface(RoamEvents, GPS)
+            iface = RoamInterface(RoamEvents, GPS, self)
             pagewidget = PageClass(iface, self)
 
             safe_connect(RoamEvents.selectionchanged, pagewidget.selection_changed)

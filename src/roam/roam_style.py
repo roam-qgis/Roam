@@ -83,6 +83,10 @@ QListWidget#layerList::item {
 	padding: 4px;
 }
 
+QListWidget[large="true"]::item {
+    font: 20px "Segoe UI";
+	padding: 8px;
+}
 
 QListWidget#layerList::item::selected {
     background-color: #5b93c2;
