@@ -5,6 +5,6 @@ cache: apt
 before_install:
   - sudo apt-get update -qq
   - sudo add-apt-repository ppa:ubuntugis/ppa -y
-  - apt-get install qgis libqt4-dev python-qt4 python-qt4-dev
+  - sudo apt-get install qgis libqt4-dev python-qt4 python-qt4-dev
 install: "pip install -r requirements.txt"
 script: nosetests
