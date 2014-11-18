@@ -87,7 +87,7 @@ class RoamApp(object):
         config.append("QGIS Version: {}".format(str(QGis.QGIS_VERSION)))
         return '\n'.join(config)
 
-def _setup(apppath=None, logo='', title=''):
+def _setup(apppath=None, logo='', title='', **kwargs):
     frozen = getattr(sys, "frozen", False)
     RUNNING_FROM_FILE = not frozen
     if not apppath:
@@ -120,9 +120,12 @@ def _setup(apppath=None, logo='', title=''):
 
     projectroot = os.path.join(projectroot, "projects")
 
-    settingspath = os.path.join(apppath, "roam.config")
-    if not os.path.exists(settingspath):
-        settingspath = os.path.join(apppath, "settings.config")
+    try:
+        settingspath = kwargs['config']
+    except KeyError:
+        settingspath = os.path.join(apppath, "roam.config")
+        if not os.path.exists(settingspath):
+            settingspath = os.path.join(apppath, "settings.config")
 
     parser = argparse.ArgumentParser(description="IntraMaps Roam")
     parser.add_argument('--config', metavar='c', type=str, default=settingspath, help='Path to Roam.config')
