@@ -9,7 +9,7 @@ REM ----------------------------------------------------------------------------
 IF NOT EXIST "%VS90COMNTOOLS%" GOTO NOVS
 
 pushd %~dp0
-CALL scripts\setenv.bat
+CALL setenv.bat
 CALL %OSGEO4W_ROOT%\bin\o4w_env.bat
 
 curl https://bitbucket.org/pypa/setuptools/raw/bootstrap/ez_setup.py -k | python
