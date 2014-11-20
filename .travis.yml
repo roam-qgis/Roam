@@ -16,6 +16,8 @@ before_script:
     - ls ${QGIS_PREFIX_PATH}/share/qgis/python/plugins/
     - export LD_LIBRARY_PATH=${QGIS_PREFIX_PATH}/lib
 install: "pip install -r travis_requirements.txt"
-script: py.test -v
-email:
-    - madmanwoo@gmail.com
+script:
+    - xvfb-run --server-args="-screen 0, 1024x768x24" py.test -v
+notifications:
+    email:
+        - madmanwoo@gmail.com
