@@ -7,7 +7,7 @@ cache: apt
 before_install:
     - sudo add-apt-repository ppa:ubuntugis/ppa -y
     - sudo apt-get update
-    - sudo apt-get install qgis libqt4-dev python-qt4 python-qt4-dev python-qgis python-sip
+    - sudo apt-get install qgis libqt4-dev python-qt4 python-qt4-dev python-qgis python-sip pyqt4-dev-tools
 before_script:
     - echo "Build starting on " `date`
     - export QGIS_PREFIX_PATH=/usr
