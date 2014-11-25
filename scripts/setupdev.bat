@@ -14,7 +14,7 @@ CALL %OSGEO4W_ROOT%\bin\o4w_env.bat
 
 curl https://bitbucket.org/pypa/setuptools/raw/bootstrap/ez_setup.py -k | python
 %OSGEO4W_ROOT%\apps\Python27\Scripts\easy_install.exe pip
-pip install -r requirements.txt
+pip install -r ../requirements.txt
 curl "http://waix.dl.sourceforge.net/project/py2exe/py2exe/0.6.9/py2exe-0.6.9.zip" > py2exe.zip
 unzip -o py2exe.zip
 pushd py2exe-0.6.9
