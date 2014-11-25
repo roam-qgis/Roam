@@ -16,6 +16,7 @@ import roam.config
 if os.name == 'nt':
     try:
         from power import PowerState
+
         powerenabled = True
     except ImportError as ex:
         utils.warning("Can't load Power management support {}".format(ex))
@@ -27,7 +28,8 @@ class GPSAction(QAction):
 
     def __init__(self, icon, canvas, parent):
         super(GPSAction, self).__init__(QIcon(icon),
-                                        QApplication.translate("GPSAction", "Enable GPS", None, QApplication.UnicodeUTF8),
+                                        QApplication.translate("GPSAction", "Enable GPS", None,
+                                                               QApplication.UnicodeUTF8),
                                         parent)
         self.canvas = canvas
         self.triggered.connect(self.connectGPS)
@@ -46,7 +48,7 @@ class GPSAction(QAction):
 
     def connectGPS(self):
         if not GPS.isConnected:
-            #Enable GPS
+            # Enable GPS
             self.setIcon(QIcon(":/icons/gps"))
             self.setIconText(self.tr("Connecting.."))
             self.setEnabled(False)
@@ -54,7 +56,7 @@ class GPSAction(QAction):
             GPS.connectGPS(portname)
         else:
             GPS.disconnectGPS()
-            
+
     def disconnected(self):
         self.setIcon(QIcon(":/icons/gps"))
         self.setIconText("Enable GPS")
@@ -82,37 +84,37 @@ class GPSAction(QAction):
 
 
 class GPSMarker(QgsMapCanvasItem):
-        def __init__(self, canvas):
-            super(GPSMarker, self).__init__(canvas)
-            self.canvas = canvas
-            self.size = 24
-            self.pointbrush = QBrush(QColor(129,173,210))
-            self.pointpen = QPen(QColor(129,173,210))
-            self.map_pos = QgsPoint(0.0, 0.0)
+    def __init__(self, canvas):
+        super(GPSMarker, self).__init__(canvas)
+        self.canvas = canvas
+        self.size = 24
+        self.pointbrush = QBrush(QColor(129, 173, 210))
+        self.pointpen = QPen(QColor(129, 173, 210))
+        self.map_pos = QgsPoint(0.0, 0.0)
 
-        def setSize(self, size):
-            self.size = size
+    def setSize(self, size):
+        self.size = size
 
-        def paint(self, painter, xxx, xxx2):
-            self.setPos(self.toCanvasCoordinates(self.map_pos))
+    def paint(self, painter, xxx, xxx2):
+        self.setPos(self.toCanvasCoordinates(self.map_pos))
 
-            halfSize = self.size / 2.0
-            rect = QRectF(0 - halfSize, 0 - halfSize, self.size, self.size)
-            painter.setRenderHint(QPainter.Antialiasing)
-            painter.setBrush(self.pointbrush)
-            painter.setPen(self.pointpen)
-            painter.drawEllipse(rect)
+        halfSize = self.size / 2.0
+        rect = QRectF(0 - halfSize, 0 - halfSize, self.size, self.size)
+        painter.setRenderHint(QPainter.Antialiasing)
+        painter.setBrush(self.pointbrush)
+        painter.setPen(self.pointpen)
+        painter.drawEllipse(rect)
 
-        def boundingRect(self):
-            halfSize = self.size / 2.0
-            return QRectF(-halfSize, -halfSize, 2.0 * halfSize, 2.0 * halfSize)
+    def boundingRect(self):
+        halfSize = self.size / 2.0
+        return QRectF(-halfSize, -halfSize, 2.0 * halfSize, 2.0 * halfSize)
 
-        def setCenter(self, map_pos):
-            self.map_pos = map_pos
-            self.setPos(self.toCanvasCoordinates(self.map_pos))
+    def setCenter(self, map_pos):
+        self.map_pos = map_pos
+        self.setPos(self.toCanvasCoordinates(self.map_pos))
 
-        def updatePosition(self):
-            self.setCenter(self.map_pos)
+    def updatePosition(self):
+        self.setCenter(self.map_pos)
 
 
         
