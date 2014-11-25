@@ -2,7 +2,7 @@ import sqlite3
 import time
 import os
 import struct
-from PyQt4.QtCore import Qt, QObject, pyqtSignal, QThread
+from PyQt4.QtCore import Qt, QObject, pyqtSignal, QThread, QEvent
 from PyQt4.QtGui import QWidget, QGridLayout, QLabel, QListWidgetItem, QStyledItemDelegate, QFontMetricsF, QTextOption
 from PyQt4.uic import loadUiType
 
@@ -130,6 +130,7 @@ class SearchPlugin(widget, base, Page):
         self.flickcharm = FlickCharm()
         self.flickcharm.activateOn(self.resultsView)
         self.searchbox.textChanged.connect(self.search)
+        self.searchbox.installEventFilter(self)
         self.resultsView.itemClicked.connect(self.jump_to)
         self.rebuildLabel.linkActivated.connect(self.rebuild_index)
         # self.resultsView.setItemDelegate(SearchItem())
@@ -141,6 +142,11 @@ class SearchPlugin(widget, base, Page):
         self.resultsView.clear()
         self.searchbox.setEnabled(True)
         print "Index built in: {} seconds".format(timing)
+
+    def eventFilter(self, object, event):
+        if event.type() == QEvent.FocusIn:
+            RoamEvents.openkeyboard.emit()
+        return False
 
     @property
     def db(self):
