@@ -38,7 +38,7 @@
    <property name="margin">
     <number>0</number>
    </property>
-   <item row="0" column="0" rowspan="2">
+   <item row="1" column="0" rowspan="4">
     <widget class="QLabel" name="imagelabel">
      <property name="sizePolicy">
       <sizepolicy hsizetype="MinimumExpanding" vsizetype="Expanding">
@@ -66,7 +66,7 @@
      </property>
     </widget>
    </item>
-   <item row="0" column="1" rowspan="2">
+   <item row="1" column="1" rowspan="4">
     <layout class="QVBoxLayout" name="verticalLayout">
      <item>
       <widget class="QLabel" name="namelabel">
@@ -134,7 +134,7 @@
      </item>
     </layout>
    </item>
-   <item row="0" column="3" rowspan="2">
+   <item row="1" column="3" rowspan="3">
     <spacer name="horizontalSpacer">
      <property name="orientation">
       <enum>Qt::Horizontal</enum>
@@ -150,7 +150,7 @@
      </property>
     </spacer>
    </item>
-   <item row="1" column="4">
+   <item row="3" column="4">
     <widget class="QLabel" name="versionlabel">
      <property name="styleSheet">
       <string notr="true"/>
@@ -166,7 +166,7 @@
      </property>
     </widget>
    </item>
-   <item row="0" column="4">
+   <item row="1" column="4">
     <spacer name="verticalSpacer_2">
      <property name="orientation">
       <enum>Qt::Vertical</enum>
@@ -179,13 +179,20 @@
      </property>
     </spacer>
    </item>
-   <item row="2" column="0" colspan="5">
+   <item row="5" column="0" colspan="5">
     <widget class="Line" name="line">
      <property name="styleSheet">
       <string notr="true">color: rgb(147, 147, 147);</string>
      </property>
      <property name="orientation">
       <enum>Qt::Horizontal</enum>
+     </property>
+    </widget>
+   </item>
+   <item row="4" column="4">
+    <widget class="QPushButton" name="updateButton">
+     <property name="text">
+      <string>Update</string>
      </property>
     </widget>
    </item>
