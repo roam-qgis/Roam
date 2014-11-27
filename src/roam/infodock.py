@@ -364,7 +364,7 @@ class InfoDock(infodock_widget, QWidget):
                 return mapkey
 
         def get_layer():
-            connection = infoblockdef['connection']
+            connection = infoblockdef.get('connection', "from_layer")
             if isinstance(connection, dict):
                 return layer_by_name(connection['layer'])
             elif connection == "from_layer":

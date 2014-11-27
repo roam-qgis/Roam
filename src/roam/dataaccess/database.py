@@ -17,14 +17,25 @@ class Database(object):
 
     @classmethod
     def fromLayer(cls, layer):
-        uri = QgsDataSourceURI(layer.dataProvider().dataSourceUri())
-        connectioninfo = {
-            "host": uri.host(),
-            "database": uri.database(),
-            "user": uri.username(),
-            "password": uri.password(),
-            "connectionname": layer.id()
-        }
+        source = layer.source()
+        if ".sqlite" in source:
+            try:
+                index = source.index("|")
+                source = source[:index]
+            except ValueError:
+                pass
+            print source
+            connectioninfo = {"type": "QSQLITE",
+                              "database": source}
+        else:
+            uri = QgsDataSourceURI(layer.dataProvider().dataSourceUri())
+            connectioninfo = {
+                "host": uri.host(),
+                "database": uri.database(),
+                "user": uri.username(),
+                "password": uri.password()
+            }
+        connectioninfo["connectionname"] = layer.id()
         database = Database.connect(**connectioninfo)
         return database
 
