@@ -1,6 +1,6 @@
 appstyle = """
 * {
-    font: 16px "Segoe UI" ;
+    font: 14pt "Segoe UI" ;
 }
 
 QToolButton {
@@ -73,7 +73,7 @@ QListWidget:item:hover {
 }
 
 QListWidget#layerList {
-    font: 20px "Segoe UI";
+    font: 12pt "Segoe UI";
     background-color: rgb(149,150,145, 220);
 }
 
@@ -84,7 +84,7 @@ QListWidget#layerList::item {
 }
 
 QListWidget[large="true"]::item {
-    font: 20px "Segoe UI";
+    font: 12pt "Segoe UI";
 	padding: 8px;
 }
 
@@ -124,7 +124,7 @@ QWidget#helpframe {
 
 QDialog {
 	color: #4f4f4f;
-	font: 20px "Segoe UI" ;
+	font: 12pt "Segoe UI" ;
     background-color: rgb(255, 255, 255);
 }
 
@@ -172,7 +172,7 @@ QToolButton:checked {
 
 featureform = """
 * {
-    font: 20px "Segoe UI" ;
+    font: 14pt "Segoe UI" ;
 }
 
 QPushButton {
