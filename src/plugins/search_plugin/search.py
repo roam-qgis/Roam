@@ -72,7 +72,7 @@ class IndexBuilder(QObject):
                     data = {}
                     for field in config['columns']:
                         value = str(feature[field])
-                        data[field] = value
+                        data[field] = "{}: {}".format(field, value)
                     fid = feature.id()
                     yield count, layer.name(), fid, data
                     count += 1
@@ -114,8 +114,12 @@ class SearchPlugin(widget, base, Page):
         self.searchbox.installEventFilter(self)
         self.resultsView.itemClicked.connect(self.jump_to)
         self.rebuildLabel.linkActivated.connect(self.rebuild_index)
+        self.fuzzyCheck.stateChanged.connect(self.fuzzy_changed)
         self.indexbuilder = None
         self.indexthread = None
+
+    def fuzzy_changed(self, state):
+        self.search(self.searchbox.text())
 
     def index_built(self, dbpath, timing):
         self.dbpath = dbpath
@@ -163,14 +167,20 @@ class SearchPlugin(widget, base, Page):
         c = db.cursor()
         self.resultsView.clear()
         self.resultsView.setEnabled(False)
+        if not text:
+            return
 
+        if self.fuzzyCheck.isChecked():
+            search = "* ".join(text.split()) + "*"
+        else:
+            search = text
         query = c.execute("""SELECT layer, featureid, snippet(search, '[',']') as snippet
                             FROM search
                             JOIN featureinfo on search.docid = featureinfo.id
-                            WHERE search match '{}*' LIMIT 100""".format(text)).fetchall()
+                            WHERE search match '{}' LIMIT 100""".format(search)).fetchall()
         for layer, featureid, snippet in query:
             item = QListWidgetItem()
-            text = "{}: {}".format(layer, snippet.replace('\n', ' '))
+            text = "{}\n {}".format(layer, snippet.replace('\n', ' '))
             item.setText(text)
             item.setData(Qt.UserRole, (layer, featureid, snippet))
             self.resultsView.addItem(item)
