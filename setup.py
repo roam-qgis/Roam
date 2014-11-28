@@ -10,7 +10,7 @@ if os.name is 'nt':
         import py2exe
     except ImportError:
         print "Can't import py2exe. Do you have it installed."
-    
+
 import glob
 
 import sys
@@ -35,10 +35,9 @@ try:
 except KeyError:
     qgisname = 'qgis'
 
-
 osgeobin = os.path.join(osgeopath, 'bin')
-qtimageforms = os.path.join(osgeopath,r'apps\qt4\plugins\imageformats\*')
-qtsqldrivers = os.path.join(osgeopath,r'apps\qt4\plugins\sqldrivers\*')
+qtimageforms = os.path.join(osgeopath, r'apps\qt4\plugins\imageformats\*')
+qtsqldrivers = os.path.join(osgeopath, r'apps\qt4\plugins\sqldrivers\*')
 qgisresources = os.path.join(osgeopath, "apps", qgisname, "resources")
 svgs = os.path.join(osgeopath, "apps", qgisname, "svg")
 qgispluginpath = os.path.join(osgeopath, "apps", qgisname, "plugins", "*provider.dll")
@@ -55,6 +54,7 @@ def getfiles(folder, outpath, includebase=True):
     """
     Walks a given folder and converts all paths to outpath root.
     """
+
     def filecollection(files):
         collection = []
         for f in files:
@@ -78,6 +78,7 @@ def getfiles(folder, outpath, includebase=True):
             for path, collection in getfiles(os.path.join(path, dir), newpath):
                 yield (path, collection)
 
+
 def get_data_files():
     utils = ['ogr2ogr.exe', 'ogrinfo.exe', 'gdalinfo.exe', 'NCSEcw.dll',
              os.path.join('gdalplugins', 'gdal_ECW_JP2ECW.dll')]
@@ -87,17 +88,17 @@ def get_data_files():
     i18nfiles = os.path.join(appsrcopyFilesath, 'i18n\*.qm')
 
     datafiles = [(".", [r'src\roam.config']),
-                # We have to copy the imageformat drivers to the root folder.
-                (r'imageformats', glob.glob(qtimageforms)),
-                (r'libs\qgis\plugins', glob.glob(qgispluginpath)),
-                (r'libs\qgis\resources', [os.path.join(qgisresources, 'qgis.db'),
-                                     os.path.join(qgisresources, 'srs.db')]),
-                (r'libs', extrafiles),
-                (r'libs', glob.glob(qtsqldrivers)),
-                (r'libs\roam\i18n', glob.glob(i18nfiles)),
-                (r'libs\roam\editorwidgets', glob.glob(os.path.join(srceditorwidgets, "*.pil"))),
-                (r'libs\roam\editorwidgets', glob.glob(os.path.join(srceditorwidgets, "*.pyd"))),
-                (r'libs\roam\editorwidgets', glob.glob(os.path.join(srceditorwidgets, "*.png")))]
+                 # We have to copy the imageformat drivers to the root folder.
+                 (r'imageformats', glob.glob(qtimageforms)),
+                 (r'libs\qgis\plugins', glob.glob(qgispluginpath)),
+                 (r'libs\qgis\resources', [os.path.join(qgisresources, 'qgis.db'),
+                                           os.path.join(qgisresources, 'srs.db')]),
+                 (r'libs', extrafiles),
+                 (r'libs', glob.glob(qtsqldrivers)),
+                 (r'libs\roam\i18n', glob.glob(i18nfiles)),
+                 (r'libs\roam\editorwidgets', glob.glob(os.path.join(srceditorwidgets, "*.pil"))),
+                 (r'libs\roam\editorwidgets', glob.glob(os.path.join(srceditorwidgets, "*.pyd"))),
+                 (r'libs\roam\editorwidgets', glob.glob(os.path.join(srceditorwidgets, "*.png")))]
 
     for files in getfiles(r"src\roam\templates", r"libs\roam"):
         datafiles.append(files)
@@ -106,6 +107,10 @@ def get_data_files():
         datafiles.append((path, collection))
 
     for path, collection in getfiles(r'src\configmanager\templates', r'libs\configmanager\templates'):
+        datafiles.append((path, collection))
+
+    for path, collection in getfiles(r'src\plugins', r'plugins'):
+        print path, collection
         datafiles.append((path, collection))
 
     for path, collection in getfiles(gdalsharepath, r'libs'):
@@ -126,31 +131,31 @@ def get_data_files():
 
     datafiles.append((r'libs\roam', [versiontext]))
 
-
     return datafiles
+
 
 icon = r'src\roam\resources\branding\icon.ico'
 configicon = r'src\roam\resources\branding\config.ico'
 
 roam_target = dict(
-                script=r'src\roam\__main__.py',
-                dest_base='Roam',
-                icon_resources=[(1, icon)])
+    script=r'src\roam\__main__.py',
+    dest_base='Roam',
+    icon_resources=[(1, icon)])
 
 tests_target = dict(
-                script=r'tests\__main__.py',
-                dest_base='Roam_tests',
-                icon_resources=[(1, icon)])
+    script=r'tests\__main__.py',
+    dest_base='Roam_tests',
+    icon_resources=[(1, icon)])
 
 projectupdater_target = dict(
-                script=r'src\project_installer\__main__.py',
-                dest_base='Roam Project Updater',
-                icon_resources=[(1, icon)])
+    script=r'src\project_installer\__main__.py',
+    dest_base='Roam Project Updater',
+    icon_resources=[(1, icon)])
 
 configmanager_target = dict(
-                script=r'src\configmanager\__main__.py',
-                dest_base='Roam Config Manager',
-                icon_resources=[(1, configicon)])
+    script=r'src\configmanager\__main__.py',
+    dest_base='Roam Config Manager',
+    icon_resources=[(1, configicon)])
 
 
 def buildqtfiles():
@@ -181,40 +186,43 @@ class qtbuild(build):
         buildqtfiles()
         build.run(self)
 
+
 package_details = dict(
-                    name='roam',
-                    version=roam.__version__,
-                    packages=find_packages('./src'),
-                    package_dir={'': 'src', 'tests': 'tests'},
-                    url='',
-                    license='GPL',
-                    author='Digital Mapping Solutions',
-                    author_email='nathan.woodrow@mapsolutions.com.au',
-                    description='',
-                    data_files=get_data_files(),
-                    cmdclass= {'build': qtbuild},
-                    )
+    name='roam',
+    version=roam.__version__,
+    packages=find_packages('./src'),
+    package_dir={'': 'src', 'tests': 'tests'},
+    url='',
+    license='GPL',
+    author='Digital Mapping Solutions',
+    author_email='nathan.woodrow@mapsolutions.com.au',
+    description='',
+    data_files=get_data_files(),
+    cmdclass={'build': qtbuild},
+)
 
 if os.name is 'nt':
     origIsSystemDLL = py2exe.build_exe.isSystemDLL
+
     def isSystemDLL(pathname):
-	if os.path.basename(pathname).lower() in ("msvcp100.dll", "msvcr100.dll"):
-	    return 0
-	return origIsSystemDLL(pathname)
+        if os.path.basename(pathname).lower() in ("msvcp100.dll", "msvcr100.dll"):
+            return 0
+        return origIsSystemDLL(pathname)
+
     py2exe.build_exe.isSystemDLL = isSystemDLL
     package_details.update(
         options={'py2exe': {
-            'dll_excludes': [ 'msvcr80.dll', 'msvcp80.dll',
-                              'msvcr80d.dll', 'msvcp80d.dll',
-                              'powrprof.dll', 'mswsock.dll',
-                              'w9xpopen.exe', 'MSVCP90.dll'],
+            'dll_excludes': ['msvcr80.dll', 'msvcp80.dll',
+                             'msvcr80d.dll', 'msvcp80d.dll',
+                             'powrprof.dll', 'mswsock.dll',
+                             'w9xpopen.exe', 'MSVCP90.dll'],
             'excludes': ['PyQt4.uic.port_v3'],
             'includes': ['PyQt4.QtNetwork', 'sip', 'PyQt4.QtSql', 'sqlite3', "Queue", 'PyQt4.Qsci'],
             'skip_archive': True,
-            }},
+        }},
         windows=[roam_target, configmanager_target],
         zipfile="libs\\"
-        )
+    )
 
 setup(**package_details)
 
