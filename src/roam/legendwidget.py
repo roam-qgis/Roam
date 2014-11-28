@@ -30,7 +30,7 @@ class LegendWidget(Ui_legendsWidget, QWidget):
                     yield layer, items[0][1]
                 else:
                     for text, icon in items:
-                        if not text:
+                        if not text or text.startswith("~"):
                             continue
                         yield text, icon
 
