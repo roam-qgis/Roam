@@ -682,5 +682,7 @@ class Project(object):
         return False
 
     def __eq__(self, other):
+        if not other:
+            return False
         return self.basefolder == other.basefolder
 
