@@ -5,6 +5,8 @@ from roam.flickwidget import FlickCharm
 from roam.ui.ui_projectwidget import Ui_Form
 from roam.ui.ui_listmodules import Ui_ListModules
 
+import roam.api
+
 import roam.utils
 
 
@@ -12,6 +14,8 @@ class ProjectWidget(Ui_Form, QWidget):
     def __init__(self, parent):
         super(ProjectWidget, self).__init__(parent)
         self.setupUi(self)
+        self.closeProjectButton.hide()
+        self.closeProjectButton.pressed.connect(roam.api.RoamEvents.closeProject.emit)
     
     @property
     def name(self):
@@ -47,18 +51,24 @@ class ProjectWidget(Ui_Form, QWidget):
         pix = QPixmap(value)
         self.imagelabel.setPixmap(pix)
 
+    def show_close(self, showclose):
+        self.closeProjectButton.setVisible(showclose)
+
 
 class ProjectsWidget(Ui_ListModules, QWidget):
     requestOpenProject = pyqtSignal(object)
+
     def __init__(self, parent = None):
         super(ProjectsWidget, self).__init__(parent)
         self.setupUi(self)
         self.flickcharm = FlickCharm()
         self.flickcharm.activateOn(self.moduleList)
         self.moduleList.itemClicked.connect(self.openProject)
+        self.projectitems = {}
 
     def loadProjectList(self, projects):
         self.moduleList.clear()
+        self.projectitems.clear()
         for project in projects:
             if not project.valid:
                 roam.utils.warning("Project {} is invalid because {}".format(project.name, project.error))
@@ -76,12 +86,19 @@ class ProjectsWidget(Ui_ListModules, QWidget):
 
             self.moduleList.addItem(item)
             self.moduleList.setItemWidget(item, projectwidget)
-                              
+            self.projectitems[project] = projectwidget
+
     def openProject(self, item):
 #        self.setDisabled(True)
         project = item.data(QListWidgetItem.UserType)
         self.selectedProject = project
         self.requestOpenProject.emit(project)
-        
-        
+        self.set_open_project(project)
 
+    def set_open_project(self, currentproject):
+        for project, widget in self.projectitems.iteritems():
+            if currentproject:
+                showclose = currentproject == project
+            else:
+                showclose = False
+            widget.show_close(showclose)

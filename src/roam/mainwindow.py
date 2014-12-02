@@ -200,6 +200,7 @@ class MainWindow(ui_mainwindow.Ui_MainWindow, QMainWindow):
         RoamEvents.onShowMessage.connect(self.showUIMessage)
         RoamEvents.selectionchanged.connect(self.showInfoResults)
         RoamEvents.show_widget.connect(self.dataentrywidget.add_widget)
+        RoamEvents.closeProject.connect(self.close_project)
 
         GPS.gpsposition.connect(self.update_gps_label)
         GPS.gpsdisconnected.connect(self.gps_disconnected)
@@ -618,8 +619,12 @@ class MainWindow(ui_mainwindow.Ui_MainWindow, QMainWindow):
             # Remove all the old buttons
 
         self.panels = []
+        oldproject = self.project
         self.project = None
+        self.set_projectbuttons(False)
         self.hidedataentry()
         self.infodock.close()
         RoamEvents.selectioncleared.emit()
+        RoamEvents.projectClosed.emit(oldproject)
+        self.projectwidget.set_open_project(None)
 
