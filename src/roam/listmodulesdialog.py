@@ -1,4 +1,5 @@
-from PyQt4.QtCore import pyqtSignal, QSize
+from PyQt4.QtNetwork import QNetworkRequest, QNetworkAccessManager
+from PyQt4.QtCore import pyqtSignal, QSize, QUrl
 from PyQt4.QtGui import QListWidgetItem, QPixmap, QWidget
 
 from roam.flickwidget import FlickCharm
@@ -10,6 +11,7 @@ import os
 import re
 import roam.utils
 import urllib2
+from collections import defaultdict
 
 
 class ProjectWidget(Ui_Form, QWidget):
@@ -58,20 +60,17 @@ class ProjectWidget(Ui_Form, QWidget):
     def request_update(self):
         self.update_project.emit(self.project)
 
-
-def update_project(project):
-    content = urllib2.urlopen("http://localhost:8000").read()
-    folder = os.path.basename(project.folder)
-    reg = 'href="(?P<file>{}-(?P<version>\d+(\.\d+)+).zip)"'.format(folder)
-    versions = {}
+def parse_serverprojects(content):
+    reg = 'href="(?P<file>(?P<name>\w+)-(?P<version>\d+(\.\d+)+).zip)"'
+    versions = defaultdict(dict)
     for match in re.finditer(reg, content, re.I):
         version = match.group("version")
         path = match.group("file")
-        versions[version] = path
+        versions[match.group("name")][version] = path
+    return versions
 
-    maxversion = max(versions)
-    path = versions[maxversion]
-    content = urllib2.urlopen("http://localhost:8000/{}".format(path)).read()
+def update_project(project, filename):
+    content = urllib2.urlopen("http://localhost:8000/{}".format(filename)).read()
     rootfolder = os.path.join(project.folder, "..")
     tempfolder = os.path.join(rootfolder, "_updates")
     if not os.path.exists(tempfolder):
@@ -84,6 +83,11 @@ def update_project(project):
     with zipfile.ZipFile(zippath, "r") as z:
         z.extractall(rootfolder)
 
+def max_project_version(projectname, projects):
+    maxversion = max(projects[projectname])
+    path = projects[projectname][maxversion]
+    return path
+
 class ProjectsWidget(Ui_ListModules, QWidget):
     requestOpenProject = pyqtSignal(object)
 
@@ -93,6 +97,7 @@ class ProjectsWidget(Ui_ListModules, QWidget):
         self.flickcharm = FlickCharm()
         self.flickcharm.activateOn(self.moduleList)
         self.moduleList.itemClicked.connect(self.openProject)
+        self.net = QNetworkAccessManager()
 
     def loadProjectList(self, projects):
         self.moduleList.clear()
@@ -114,7 +119,22 @@ class ProjectsWidget(Ui_ListModules, QWidget):
 
             self.moduleList.addItem(item)
             self.moduleList.setItemWidget(item, projectwidget)
-                              
+
+        self.check_for_new_projects()
+
+    def check_for_new_projects(self):
+        req = QNetworkRequest(QUrl("http://localhost:8000"))
+        reply = self.net.get(req)
+        import functools
+        reply.finished.connect(functools.partial(self.list_versions, reply))
+
+    def list_versions(self, reply):
+        content = reply.readAll().data()
+        versions = parse_serverprojects(content)
+        print versions
+        path = max_project_version("rockingham", versions)
+        print path
+
     def openProject(self, item):
 #        self.setDisabled(True)
         project = item.data(QListWidgetItem.UserType)
