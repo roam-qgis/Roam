@@ -1,6 +1,7 @@
 from PyQt4.QtCore import pyqtSignal, QSize
 from PyQt4.QtGui import QListWidgetItem, QPixmap, QWidget
 
+from functools import partial
 from roam.flickwidget import FlickCharm
 from roam.ui.ui_projectwidget import Ui_Form
 from roam.ui.ui_listmodules import Ui_ListModules
@@ -11,11 +12,12 @@ import roam.utils
 
 
 class ProjectWidget(Ui_Form, QWidget):
-    def __init__(self, parent):
+    def __init__(self, project, parent):
         super(ProjectWidget, self).__init__(parent)
         self.setupUi(self)
+        self.project = project
         self.closeProjectButton.hide()
-        self.closeProjectButton.pressed.connect(roam.api.RoamEvents.closeProject.emit)
+        self.closeProjectButton.pressed.connect(roam.api.RoamEvents.close_project)
     
     @property
     def name(self):
@@ -78,7 +80,7 @@ class ProjectsWidget(Ui_ListModules, QWidget):
             item.setData(QListWidgetItem.UserType, project)
             item.setSizeHint(QSize(150, 150))
             
-            projectwidget = ProjectWidget(self.moduleList)
+            projectwidget = ProjectWidget(project, self.moduleList)
             projectwidget.image = QPixmap(project.splash)
             projectwidget.name = project.name
             projectwidget.description = project.description

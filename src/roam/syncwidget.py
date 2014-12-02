@@ -1,6 +1,7 @@
 from functools import partial
 
 from PyQt4.QtGui import QIcon, QTreeWidgetItem, QPushButton, QWidget, QAction, QSpacerItem, QSizePolicy
+from roam.api.events import RoamEvents
 
 from ui.ui_sync import Ui_Form
 from popupdialogs import ActionPickerWidget
@@ -38,7 +39,6 @@ class SyncWidget(Ui_Form, QWidget):
         spacerItem = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Expanding)
         self.syncwidgets.layout().addItem(spacerItem)
 
-
     def updatestatus(self, message):
         self.syncstatus.append(message)
         self.syncstatus.ensureCursorVisible()
@@ -58,6 +58,8 @@ class SyncWidget(Ui_Form, QWidget):
             provider.syncComplete.connect(self.runnext)
             provider.syncMessage.connect(self.updatestatus)
             provider.syncError.connect(self.updatewitherror)
+            if provider.closeproject:
+                RoamEvents.closeProject.emit(provider.project)
             provider.start()
         except IndexError:
             # If we get here we have run out of providers to run

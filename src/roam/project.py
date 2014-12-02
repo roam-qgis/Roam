@@ -416,6 +416,10 @@ class Project(object):
         self._settings = value
 
     @property
+    def basefolder(self):
+        return os.path.basename(self.folder)
+
+    @property
     def name(self):
         default = os.path.basename(self.folder)
         return self.settings.setdefault("title", default)
@@ -492,7 +496,7 @@ class Project(object):
                 config['cmd'] = cmd
                 config.setdefault('variables', variables)
                 config.update(variables)
-                yield replication.BatchFileSync(name, **config)
+                yield replication.BatchFileSync(name, self, **config)
 
     def getPanels(self):
         for module in glob.iglob(os.path.join(self.folder, "_panels", '*.py')):
@@ -676,4 +680,7 @@ class Project(object):
             if layer in layers:
                 return True
         return False
+
+    def __eq__(self, other):
+        return self.basefolder == other.basefolder
 

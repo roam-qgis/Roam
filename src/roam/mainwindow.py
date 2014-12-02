@@ -605,10 +605,13 @@ class MainWindow(ui_mainwindow.Ui_MainWindow, QMainWindow):
         fileinfo = QFileInfo(project.projectfile)
         QgsProject.instance().read(fileinfo)
 
-    def close_project(self):
+    def close_project(self, project=None):
         """
         Close the current open project
         """
+        if not project is None and not project == self.project:
+            return
+
         self.tracking.clear_logging()
         self.dataentrywidget.clear()
         self.canvas_page.cleanup()
