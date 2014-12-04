@@ -84,8 +84,11 @@ def parse_serverprojects(content):
     for match in re.finditer(reg, content, re.I):
         version = match.group("version")
         path = match.group("file")
-        data = dict(path=path)
-        versions[match.group("name")][version] = data
+        name = match.group("name")
+        data = dict(path=path,
+                    version=version,
+                    name=name)
+        versions[name][version] = data
     return dict(versions)
 
 
@@ -110,8 +113,7 @@ def update_project(project, version):
 def get_project_info(projectname, projects):
     maxversion = max(projects[projectname])
     projectdata = projects[projectname][maxversion]
-    path = projectdata['path']
-    return path, maxversion, projects[projectname]
+    return projectdata
 
 
 def can_update(projectname, currentversion, projects):
@@ -122,7 +124,14 @@ def can_update(projectname, currentversion, projects):
         return False
     except ValueError:
         return False
-    
+
+
+def updateable_projects(projects, serverprojects):
+    for project in projects:
+        canupdate = can_update(project.basefolder, project.version, serverprojects)
+        if canupdate:
+            info = get_project_info(project.basefolder, serverprojects)
+            yield project, info
 
 
 class ProjectsWidget(Ui_ListModules, QWidget):
@@ -168,11 +177,11 @@ class ProjectsWidget(Ui_ListModules, QWidget):
     def list_versions(self, reply):
         content = reply.readAll().data()
         serverversions = parse_serverprojects(content)
-        for project, widget in self.projectitems.iteritems():
-            canupdate = can_update(project.basefolder, project.version, serverversions)
-            if canupdate:
-                path, version, projectdata = get_project_info(project.basefolder, serverversions)
-                widget.serverversion = version
+        projects = self.projectitems.keys()
+        updateable = updateable_projects(projects, serverversions)
+        for project, info in updateable:
+            widget = self.projectitems[project]
+            widget.serverversion = info['version']
 
     def openProject(self, item):
         # self.setDisabled(True)
