@@ -92,9 +92,9 @@ def parse_serverprojects(content):
     return dict(versions)
 
 
-def update_project(project, version):
+def update_project(project, version, serverurl):
     filename = "{}-{}.zip".format(project.basefolder, version)
-    content = urllib2.urlopen("http://localhost:8000/{}".format(filename)).read()
+    content = urllib2.urlopen("{}/{}".format(serverurl, filename)).read()
     rootfolder = os.path.join(project.folder, "..")
     tempfolder = os.path.join(rootfolder, "_updates")
     if not os.path.exists(tempfolder):
@@ -137,9 +137,10 @@ def updateable_projects(projects, serverprojects):
 class ProjectsWidget(Ui_ListModules, QWidget):
     requestOpenProject = pyqtSignal(object)
 
-    def __init__(self, parent=None):
+    def __init__(self, projectserver="http://localhost:8000", parent=None):
         super(ProjectsWidget, self).__init__(parent)
         self.setupUi(self)
+        self.serverurl = projectserver
         self.flickcharm = FlickCharm()
         self.flickcharm.activateOn(self.moduleList)
         self.moduleList.itemClicked.connect(self.openProject)
@@ -159,7 +160,7 @@ class ProjectsWidget(Ui_ListModules, QWidget):
             item.setSizeHint(QSize(150, 150))
 
             projectwidget = ProjectWidget(self.moduleList, project)
-            projectwidget.update_project.connect(update_project)
+            projectwidget.update_project.connect(self.update_project)
             self.projectitems[project] = projectwidget
 
             self.moduleList.addItem(item)
@@ -168,7 +169,7 @@ class ProjectsWidget(Ui_ListModules, QWidget):
         self.check_for_new_projects()
 
     def check_for_new_projects(self):
-        req = QNetworkRequest(QUrl("http://localhost:8000"))
+        req = QNetworkRequest(QUrl(self.serverurl))
         reply = self.net.get(req)
         import functools
 
@@ -197,3 +198,6 @@ class ProjectsWidget(Ui_ListModules, QWidget):
             else:
                 showclose = False
             widget.show_close(showclose)
+
+    def update_project(self, project, version):
+        update_project(project, version, self.serverurl)
