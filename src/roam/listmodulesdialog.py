@@ -25,17 +25,23 @@ class ProjectWidget(Ui_Form, QWidget):
         self.setupUi(self)
         self._serverversion = None
         self.project = project
+        self.project.projectUpdated.connect(self.project_updated)
         self.updateButton.clicked.connect(self.request_update)
         self.closeProjectButton.hide()
         self.closeProjectButton.pressed.connect(roam.api.RoamEvents.close_project)
+        self.refresh()
 
-    @property
-    def name(self):
-        return self.namelabel.text()
+    def refresh(self):
+        self.namelabel.setText(self.project.name)
+        self.descriptionlabel.setText(self.project.description)
+        pix = QPixmap(self.project.splash)
+        self.imagelabel.setPixmap(pix)
+        self.update_version_status()
 
-    @name.setter
-    def name(self, value):
-        self.namelabel.setText(value)
+    def project_updated(self, project):
+        self.serverversion = None
+        self.refresh()
+        print "Project updated"
 
     @property
     def serverversion(self):
@@ -44,39 +50,15 @@ class ProjectWidget(Ui_Form, QWidget):
     @serverversion.setter
     def serverversion(self, value):
         self._serverversion = value
-        self.update_version_label()
+        self.update_version_status()
 
-    def update_version_label(self):
-        if self.version == self.serverversion or self.serverversion is None:
-            self.versionlabel.setText("Version: {}".format(self.version))
+    def update_version_status(self):
+        if self.serverversion is None:
+            self.versionlabel.setText("Version: {}".format(self.project.version))
+            self.updateButton.hide()
         else:
-            self.versionlabel.setText("Version: {} -> {}".format(self.version, self.serverversion))
-
-    @property
-    def description(self):
-        return self.descriptionlabel.text()
-
-    @description.setter
-    def description(self, value):
-        self.descriptionlabel.setText(value)
-
-    @property
-    def version(self):
-        return self._version
-
-    @version.setter
-    def version(self, value):
-        self._version = value
-        self.update_version_label()
-
-    @property
-    def image(self):
-        return self.imagelabel.pixmap()
-
-    @image.setter
-    def image(self, value):
-        pix = QPixmap(value)
-        self.imagelabel.setPixmap(pix)
+            self.versionlabel.setText("Version: {} -> {}".format(self.project.version, self.serverversion))
+            self.updateButton.show()
 
     def show_close(self, showclose):
         self.closeProjectButton.setVisible(showclose)
@@ -108,8 +90,6 @@ def parse_serverprojects(content):
 
 
 def update_project(project, version):
-    print "Updating project {}".format(project.name)
-
     filename = "{}-{}.zip".format(project.basefolder, version)
     content = urllib2.urlopen("http://localhost:8000/{}".format(filename)).read()
     rootfolder = os.path.join(project.folder, "..")
@@ -124,7 +104,7 @@ def update_project(project, version):
     with zipfile.ZipFile(zippath, "r") as z:
         z.extractall(rootfolder)
 
-    print "Project updated"
+    project.projectUpdated.emit(project)
 
 
 def get_project_info(projectname, projects):
@@ -169,10 +149,6 @@ class ProjectsWidget(Ui_ListModules, QWidget):
             item.setSizeHint(QSize(150, 150))
 
             projectwidget = ProjectWidget(self.moduleList, project)
-            projectwidget.image = QPixmap(project.splash)
-            projectwidget.name = project.name
-            projectwidget.description = project.description
-            projectwidget.version = project.version
             projectwidget.update_project.connect(update_project)
             self.projectitems[project] = projectwidget
 

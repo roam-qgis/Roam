@@ -11,6 +11,7 @@ import sys
 from datetime import datetime
 from collections import OrderedDict
 
+from PyQt4.QtCore import pyqtSignal, QObject
 from PyQt4.QtGui import QAction, QIcon
 
 from qgis.core import QgsMapLayerRegistry, QGis, QgsTolerance, QgsVectorLayer, QgsMapLayer, QgsFeature
@@ -387,21 +388,28 @@ class Form(object):
         return query, newvalues
 
 
-class Project(object):
+class Project(QObject):
+    projectUpdated = pyqtSignal(object)
+
     def __init__(self, rootfolder, settings):
+        super(Project, self).__init__()
         self.folder = rootfolder
         self._project = None
         self._splash = None
         self.settings = settings
         self._forms = []
         self.error = ''
-        self.basepath = os.path.join(rootfolder,"..")
+        self.basepath = os.path.join(rootfolder, "..")
+        self.projectUpdated.connect(self.project_updated)
 
     @classmethod
     def from_folder(cls, rootfolder):
         project = cls(rootfolder, {})
         project.settings = readfolderconfig(rootfolder, configname='project')
         return project
+
+    def reload(self):
+        self.settings = readfolderconfig(self.folder, configname='project')
 
     @property
     def image_folder(self):
@@ -671,7 +679,6 @@ class Project(object):
         formsstorage = self.settings.get("forms", [])
         return hasattr(formsstorage, 'iteritems')
 
-
     def hascapturelayers(self):
         layers = QgsMapLayerRegistry.instance().mapLayers().values()
         layers = (layer for layer in layers if layer.type() == QgsMapLayer.VectorLayer)
@@ -686,3 +693,5 @@ class Project(object):
             return False
         return self.basefolder == other.basefolder
 
+    def project_updated(self, project):
+        self.reload()
