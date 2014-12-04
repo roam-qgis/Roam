@@ -18,7 +18,7 @@ from collections import defaultdict
 
 
 class ProjectWidget(Ui_Form, QWidget):
-    update_project = pyqtSignal(object)
+    update_project = pyqtSignal(object, object)
 
     def __init__(self, parent, project):
         super(ProjectWidget, self).__init__(parent)
@@ -82,7 +82,7 @@ class ProjectWidget(Ui_Form, QWidget):
         self.closeProjectButton.setVisible(showclose)
 
     def request_update(self):
-        self.update_project.emit(self.project)
+        self.update_project.emit(self.project, self.serverversion)
 
 
 def checkversion(toversion, fromversion):
@@ -104,22 +104,27 @@ def parse_serverprojects(content):
         path = match.group("file")
         data = dict(path=path)
         versions[match.group("name")][version] = data
-    return versions
+    return dict(versions)
 
 
-def update_project(project, filename):
+def update_project(project, version):
+    print "Updating project {}".format(project.name)
+
+    filename = "{}-{}.zip".format(project.basefolder, version)
     content = urllib2.urlopen("http://localhost:8000/{}".format(filename)).read()
     rootfolder = os.path.join(project.folder, "..")
     tempfolder = os.path.join(rootfolder, "_updates")
     if not os.path.exists(tempfolder):
         os.mkdir(tempfolder)
 
-    zippath = os.path.join(tempfolder, path)
+    zippath = os.path.join(tempfolder, filename)
     with open(zippath, "wb") as f:
         f.write(content)
 
     with zipfile.ZipFile(zippath, "r") as z:
         z.extractall(rootfolder)
+
+    print "Project updated"
 
 
 def get_project_info(projectname, projects):
@@ -186,11 +191,8 @@ class ProjectsWidget(Ui_ListModules, QWidget):
     def list_versions(self, reply):
         content = reply.readAll().data()
         serverversions = parse_serverprojects(content)
-        print serverversions
         for project, widget in self.projectitems.iteritems():
             canupdate = can_update(project.basefolder, project.version, serverversions)
-            print serverversions
-            print canupdate
             if canupdate:
                 path, version, projectdata = get_project_info(project.basefolder, serverversions)
                 widget.serverversion = version
