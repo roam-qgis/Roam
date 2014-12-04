@@ -122,6 +122,7 @@ def can_update(projectname, currentversion, projects):
         return False
     except ValueError:
         return False
+    
 
 
 class ProjectsWidget(Ui_ListModules, QWidget):

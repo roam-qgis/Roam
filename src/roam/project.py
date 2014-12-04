@@ -438,8 +438,12 @@ class Project(QObject):
         
     @property
     def version(self):
-        return str(self.settings.setdefault("version", roam.__version__))
-    
+        return str(self.settings.setdefault("version", '1.0.0'))
+
+    @property
+    def roamversion(self):
+        return str(self.settings.setdefault("roam_version", roam.__version__))
+
     @property
     def projectfile(self):
         return glob.glob(os.path.join(self.folder, '*.qgs'))[0]
@@ -458,7 +462,7 @@ class Project(QObject):
             error = "No settings set for project"
             yield error
 
-        if not checkversion(roam.__version__, self.version):
+        if not checkversion(roam.__version__, self.roamversion):
             error = "Version mismatch"
             yield error
 
