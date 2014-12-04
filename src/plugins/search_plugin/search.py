@@ -72,7 +72,7 @@ class IndexBuilder(QObject):
                     data = {}
                     for field in config['columns']:
                         value = str(feature[field])
-                        data[field] = value
+                        data[field] = "{}: {}".format(field, value)
                     fid = feature.id()
                     yield count, layer.name(), fid, data
                     count += 1
@@ -98,25 +98,6 @@ class IndexBuilder(QObject):
         self.finished.emit()
 
 
-class SearchItem(QStyledItemDelegate):
-    def paint(self, painter, options, index):
-        painter.save()
-        self.initStyleOption(options, index)
-        rect = options.rect
-        if not index.data(32):
-            text = "No Results"
-            painter.drawText(rect, Qt.AlignLeft, text)
-        else:
-            layer, featureid, data, snippet = index.data(32)
-            doc = QTextDocument()
-            layer = "<i>{}</i>".format(layer)
-            # painter.drawText(rect, Qt.AlignLeft, )
-            # textrect = metrics.boundingRect(snippet)
-            # textrect.moveTo(textrect.topRight())
-            # painter.drawText(textrect, Qt.AlignLeft, snippet)
-        painter.restore()
-
-
 class SearchPlugin(widget, base, Page):
     title = "Search"
     icon = resolve("search.svg")
@@ -133,9 +114,12 @@ class SearchPlugin(widget, base, Page):
         self.searchbox.installEventFilter(self)
         self.resultsView.itemClicked.connect(self.jump_to)
         self.rebuildLabel.linkActivated.connect(self.rebuild_index)
-        # self.resultsView.setItemDelegate(SearchItem())
+        self.fuzzyCheck.stateChanged.connect(self.fuzzy_changed)
         self.indexbuilder = None
         self.indexthread = None
+
+    def fuzzy_changed(self, state):
+        self.search(self.searchbox.text())
 
     def index_built(self, dbpath, timing):
         self.dbpath = dbpath
@@ -183,17 +167,20 @@ class SearchPlugin(widget, base, Page):
         c = db.cursor()
         self.resultsView.clear()
         self.resultsView.setEnabled(False)
+        if not text:
+            return
 
-        # for row in c.execute("""SELECT * FROM
-        #                         (select *, rank(matchinfo(search)) as r from search WHERE search MATCH '{}*')
-        #                         ORDER BY r DESC LIMIT 100""".format(text)).fetchall():
+        if self.fuzzyCheck.isChecked():
+            search = "* ".join(text.split()) + "*"
+        else:
+            search = text
         query = c.execute("""SELECT layer, featureid, snippet(search, '[',']') as snippet
                             FROM search
                             JOIN featureinfo on search.docid = featureinfo.id
-                            WHERE search match '{}*' LIMIT 100""".format(text)).fetchall()
+                            WHERE search match '{}' LIMIT 100""".format(search)).fetchall()
         for layer, featureid, snippet in query:
             item = QListWidgetItem()
-            text = "{}: {}".format(layer, snippet.replace('\n', ' '))
+            text = "{}\n {}".format(layer, snippet.replace('\n', ' '))
             item.setText(text)
             item.setData(Qt.UserRole, (layer, featureid, snippet))
             self.resultsView.addItem(item)

@@ -10,9 +10,11 @@ class SyncProvider(QObject):
     syncError = pyqtSignal(str)
     syncFinished = pyqtSignal()
 
-    def __init__(self, name):
+    def __init__(self, name, project):
         super(SyncProvider, self).__init__(None)
         self._name = name
+        self.closeproject = False
+        self.project = project
 
     @property
     def name(self):
@@ -26,9 +28,10 @@ class SyncProvider(QObject):
     
 
 class BatchFileSync(SyncProvider):
-    def __init__(self, name, **kwargs):
-        super(BatchFileSync, self).__init__(name)
+    def __init__(self, name, project, **kwargs):
+        super(BatchFileSync, self).__init__(name, project)
         self.cmd = kwargs['cmd']
+        self.closeproject = kwargs.get("close_project", False)
         self.process = QProcess()
         variables = kwargs.get("variables", {})
         env = QProcessEnvironment.systemEnvironment()

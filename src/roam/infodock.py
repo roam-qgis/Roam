@@ -380,8 +380,10 @@ class InfoDock(infodock_widget, QWidget):
 
         db = database.Database.fromLayer(layer)
         mapkey = get_key()
-        results = db.query(sql, mapkey=mapkey)
-        return list(results)
+        attributes = values_from_feature(feature)
+        results = db.query(sql, mapkey=mapkey, **attributes)
+        results = list(results)
+        return results
 
     def clearResults(self):
         self.layerList.clear()

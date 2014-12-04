@@ -61,7 +61,7 @@
      <normaloff>:/icons/home</normaloff>:/icons/home</iconset>
    </property>
    <property name="text">
-    <string>Home View</string>
+    <string>Home</string>
    </property>
   </action>
   <action name="actionRaster">

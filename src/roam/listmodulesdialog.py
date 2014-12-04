@@ -2,6 +2,7 @@ from PyQt4.QtNetwork import QNetworkRequest, QNetworkAccessManager
 from PyQt4.QtCore import pyqtSignal, QSize, QUrl
 from PyQt4.QtGui import QListWidgetItem, QPixmap, QWidget
 
+from functools import partial
 from roam.flickwidget import FlickCharm
 from roam.ui.ui_projectwidget import Ui_Form
 from roam.ui.ui_listmodules import Ui_ListModules
@@ -9,6 +10,8 @@ from roam.ui.ui_listmodules import Ui_ListModules
 import zipfile
 import os
 import re
+import roam.api
+
 import roam.utils
 import urllib2
 from collections import defaultdict
@@ -20,45 +23,78 @@ class ProjectWidget(Ui_Form, QWidget):
     def __init__(self, parent, project):
         super(ProjectWidget, self).__init__(parent)
         self.setupUi(self)
+        self._serverversion = None
         self.project = project
         self.updateButton.clicked.connect(self.request_update)
-    
+        self.closeProjectButton.hide()
+        self.closeProjectButton.pressed.connect(roam.api.RoamEvents.close_project)
+
     @property
     def name(self):
         return self.namelabel.text()
-    
+
     @name.setter
     def name(self, value):
         self.namelabel.setText(value)
-        
+
+    @property
+    def serverversion(self):
+        return self._serverversion
+
+    @serverversion.setter
+    def serverversion(self, value):
+        self._serverversion = value
+        self.update_version_label()
+
+    def update_version_label(self):
+        if self.version == self.serverversion or self.serverversion is None:
+            self.versionlabel.setText("Version: {}".format(self.version))
+        else:
+            self.versionlabel.setText("Version: {} -> {}".format(self.version, self.serverversion))
+
     @property
     def description(self):
         return self.descriptionlabel.text()
-    
+
     @description.setter
     def description(self, value):
         self.descriptionlabel.setText(value)
-        
+
     @property
     def version(self):
         return self._version
-    
+
     @version.setter
     def version(self, value):
         self._version = value
-        self.versionlabel.setText("Version: {}".format(value))
-        
+        self.update_version_label()
+
     @property
     def image(self):
         return self.imagelabel.pixmap()
-    
+
     @image.setter
     def image(self, value):
         pix = QPixmap(value)
         self.imagelabel.setPixmap(pix)
 
+    def show_close(self, showclose):
+        self.closeProjectButton.setVisible(showclose)
+
     def request_update(self):
         self.update_project.emit(self.project)
+
+
+def checkversion(toversion, fromversion):
+    def versiontuple(v):
+        v = v.split('.')[:3]
+        version = tuple(map(int, (v)))
+        if len(version) == 2:
+            version = (version[0], version[1], 0)
+        return version
+
+    return versiontuple(toversion) > versiontuple(fromversion)
+
 
 def parse_serverprojects(content):
     reg = 'href="(?P<file>(?P<name>\w+)-(?P<version>\d+(\.\d+)+).zip)"'
@@ -66,8 +102,10 @@ def parse_serverprojects(content):
     for match in re.finditer(reg, content, re.I):
         version = match.group("version")
         path = match.group("file")
-        versions[match.group("name")][version] = path
+        data = dict(path=path)
+        versions[match.group("name")][version] = data
     return versions
+
 
 def update_project(project, filename):
     content = urllib2.urlopen("http://localhost:8000/{}".format(filename)).read()
@@ -83,24 +121,39 @@ def update_project(project, filename):
     with zipfile.ZipFile(zippath, "r") as z:
         z.extractall(rootfolder)
 
-def max_project_version(projectname, projects):
+
+def get_project_info(projectname, projects):
     maxversion = max(projects[projectname])
-    path = projects[projectname][maxversion]
-    return path
+    projectdata = projects[projectname][maxversion]
+    path = projectdata['path']
+    return path, maxversion, projects[projectname]
+
+
+def can_update(projectname, currentversion, projects):
+    try:
+        maxversion = max(projects[projectname])
+        return checkversion(maxversion, currentversion)
+    except KeyError:
+        return False
+    except ValueError:
+        return False
+
 
 class ProjectsWidget(Ui_ListModules, QWidget):
     requestOpenProject = pyqtSignal(object)
 
-    def __init__(self, parent = None):
+    def __init__(self, parent=None):
         super(ProjectsWidget, self).__init__(parent)
         self.setupUi(self)
         self.flickcharm = FlickCharm()
         self.flickcharm.activateOn(self.moduleList)
         self.moduleList.itemClicked.connect(self.openProject)
         self.net = QNetworkAccessManager()
+        self.projectitems = {}
 
     def loadProjectList(self, projects):
         self.moduleList.clear()
+        self.projectitems.clear()
         for project in projects:
             if not project.valid:
                 roam.utils.warning("Project {} is invalid because {}".format(project.name, project.error))
@@ -109,13 +162,14 @@ class ProjectsWidget(Ui_ListModules, QWidget):
             item = QListWidgetItem(self.moduleList, QListWidgetItem.UserType)
             item.setData(QListWidgetItem.UserType, project)
             item.setSizeHint(QSize(150, 150))
-            
+
             projectwidget = ProjectWidget(self.moduleList, project)
             projectwidget.image = QPixmap(project.splash)
             projectwidget.name = project.name
             projectwidget.description = project.description
             projectwidget.version = project.version
             projectwidget.update_project.connect(update_project)
+            self.projectitems[project] = projectwidget
 
             self.moduleList.addItem(item)
             self.moduleList.setItemWidget(item, projectwidget)
@@ -126,20 +180,32 @@ class ProjectsWidget(Ui_ListModules, QWidget):
         req = QNetworkRequest(QUrl("http://localhost:8000"))
         reply = self.net.get(req)
         import functools
+
         reply.finished.connect(functools.partial(self.list_versions, reply))
 
     def list_versions(self, reply):
         content = reply.readAll().data()
-        versions = parse_serverprojects(content)
-        print versions
-        path = max_project_version("rockingham", versions)
-        print path
+        serverversions = parse_serverprojects(content)
+        print serverversions
+        for project, widget in self.projectitems.iteritems():
+            canupdate = can_update(project.basefolder, project.version, serverversions)
+            print serverversions
+            print canupdate
+            if canupdate:
+                path, version, projectdata = get_project_info(project.basefolder, serverversions)
+                widget.serverversion = version
 
     def openProject(self, item):
-#        self.setDisabled(True)
+        # self.setDisabled(True)
         project = item.data(QListWidgetItem.UserType)
         self.selectedProject = project
         self.requestOpenProject.emit(project)
-        
-        
+        self.set_open_project(project)
 
+    def set_open_project(self, currentproject):
+        for project, widget in self.projectitems.iteritems():
+            if currentproject:
+                showclose = currentproject == project
+            else:
+                showclose = False
+            widget.show_close(showclose)

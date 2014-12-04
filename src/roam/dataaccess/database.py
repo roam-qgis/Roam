@@ -24,7 +24,6 @@ class Database(object):
                 source = source[:index]
             except ValueError:
                 pass
-            print source
             connectioninfo = {"type": "QSQLITE",
                               "database": source}
         else:
@@ -92,7 +91,9 @@ class Database(object):
         query = QSqlQuery(self.db)
         query.prepare(querystring)
         for key, value in mappings.iteritems():
-            query.bindValue(":{}".format(key), value)
+            bindvalue = ":{}".format(key)
+            if bindvalue in querystring:
+                query.bindValue(bindvalue, value)
         return query
 
     def _recordToDict(self, record):

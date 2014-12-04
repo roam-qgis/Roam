@@ -39,12 +39,17 @@ class _Events(QObject):
     selectionchanged = pyqtSignal(dict)
 
     projectloaded = pyqtSignal(object)
+    closeProject = pyqtSignal(object)
+    projectClosed = pyqtSignal(object)
 
     helprequest = pyqtSignal(QWidget, str)
 
     onShowMessage = pyqtSignal(str, str, int, int, str)
 
     featuresaved = pyqtSignal()
+
+    def close_project(self, project=None):
+        self.closeProject.emit(project)
 
     def raisemessage(self, title, message, level=0, duration=0, extra=''):
         """

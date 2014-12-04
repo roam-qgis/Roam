@@ -278,17 +278,25 @@ class FeatureFormBase(QWidget):
         values = CaseInsensitiveDict(self.bindingvalues)
         for field, wrapper in self.boundwidgets.iteritems():
             value = wrapper.value()
-            if hasattr(wrapper, 'savetofile') and wrapper.savetofile and wrapper.modified:
+            # TODO this should put pulled out and unit tested
+            if hasattr(wrapper, 'savetofile') and wrapper.savetofile:
                 if wrapper.filename and self.editingmode:
                     name = os.path.basename(wrapper.filename)
                     name, extension = os.path.splitext(name)
 
-                    if not name.endswith("_edited"):
-                        value = name + "_edited{}".format(extension)
+                    if wrapper.modified:
+                        if not name.endswith("_edited"):
+                            newend = "_edited{}".format(extension)
+                            value = name + newend
+                        else:
+                            value = os.path.basename(wrapper.filename)
                     else:
                         value = os.path.basename(wrapper.filename)
                 else:
-                    value = wrapper.get_filename()
+                    if wrapper.modified:
+                        value = wrapper.get_filename()
+                    else:
+                        value = ''
 
             if shouldsave(field):
                 savedvalues[field] = value
