@@ -94,7 +94,7 @@ def get_data_files():
                  (r'libs\qgis\resources', [os.path.join(qgisresources, 'qgis.db'),
                                            os.path.join(qgisresources, 'srs.db')]),
                  (r'libs', extrafiles),
-                 (r'libs', glob.glob(qtsqldrivers)),
+                 (r'sqldrivers', glob.glob(qtsqldrivers)),
                  (r'libs\roam\i18n', glob.glob(i18nfiles)),
                  (r'libs\roam\editorwidgets', glob.glob(os.path.join(srceditorwidgets, "*.pil"))),
                  (r'libs\roam\editorwidgets', glob.glob(os.path.join(srceditorwidgets, "*.pyd"))),
