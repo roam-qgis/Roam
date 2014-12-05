@@ -93,6 +93,7 @@ class MainWindow(ui_mainwindow.Ui_MainWindow, QMainWindow):
         self.menutoolbar.setStyleSheet(roam.roam_style.menubarstyle)
         self.projectupdater = ProjectUpdater()
         self.projectupdater.foundProjects.connect(self.projectwidget.show_updateable)
+        self.projectupdater.projectUpdateStatus.connect(self.projectwidget.update_project_status)
         self.projectwidget.projectUpdate.connect(self.projectupdater.update_project)
         self.project = None
         self.tracking = GPSLogging(GPS)

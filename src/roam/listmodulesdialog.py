@@ -22,7 +22,6 @@ class ProjectWidget(Ui_Form, QWidget):
         self.setupUi(self)
         self._serverversion = None
         self.project = project
-        self.project.projectUpdated.connect(self.project_updated)
         self.updateButton.clicked.connect(self.request_update)
         self.closeProjectButton.hide()
         self.closeProjectButton.pressed.connect(roam.api.RoamEvents.close_project)
@@ -35,10 +34,15 @@ class ProjectWidget(Ui_Form, QWidget):
         self.imagelabel.setPixmap(pix)
         self.update_version_status()
 
-    def project_updated(self, project):
-        self.serverversion = None
-        self.refresh()
-        print "Project updated"
+    def update_status(self, status):
+        if status == "complete":
+            self.serverversion = None
+            self.setEnabled(True)
+            self.refresh()
+        else:
+            self.setEnabled(False)
+            self.namelabel.setText("({}..) {}".format(status, self.project.name))
+            self.updateButton.setText(status)
 
     @property
     def serverversion(self):
@@ -90,7 +94,7 @@ class ProjectsWidget(Ui_ListModules, QWidget):
             item.setSizeHint(QSize(150, 150))
 
             projectwidget = ProjectWidget(self.moduleList, project)
-            projectwidget.update_project.connect(self.update_project)
+            projectwidget.update_project.connect(self.projectUpdate.emit)
             self.projectitems[project] = projectwidget
 
             self.moduleList.addItem(item)
@@ -116,5 +120,5 @@ class ProjectsWidget(Ui_ListModules, QWidget):
                 showclose = False
             widget.show_close(showclose)
 
-    def update_project(self, project, version):
-        self.projectUpdate.emit(project, version)
+    def update_project_status(self, project, status):
+        self.projectitems[project].update_status(status)

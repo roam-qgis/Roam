@@ -88,6 +88,7 @@ class ProjectUpdater(QObject):
     Emits foundProjects when a new projects are found
     """
     foundProjects = pyqtSignal(object)
+    projectUpdateStatus = pyqtSignal(object, str)
 
     def __init__(self, server=None):
         super(ProjectUpdater, self).__init__()
@@ -119,7 +120,9 @@ class ProjectUpdater(QObject):
             self.foundProjects.emit(updateable)
 
     def update_project(self, project, version):
+        self.projectUpdateStatus.emit(project, "Updating")
         update_project(project, version, self.server)
+        self.projectUpdateStatus.emit(project, "complete")
 
 
 
