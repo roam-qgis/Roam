@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>848</width>
-    <height>786</height>
+    <width>853</width>
+    <height>793</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -282,6 +282,20 @@ p, li { white-space: pre-wrap; }
         </property>
        </widget>
       </item>
+      <item row="5" column="0" colspan="2">
+       <layout class="QHBoxLayout" name="horizontalLayout_4">
+        <item>
+         <widget class="QLabel" name="label_7">
+          <property name="text">
+           <string>Update Server</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLineEdit" name="updateServerEdit"/>
+        </item>
+       </layout>
+      </item>
      </layout>
     </widget>
    </item>
@@ -314,6 +328,7 @@ p, li { white-space: pre-wrap; }
   </layout>
  </widget>
  <resources>
+  <include location="../resources.qrc"/>
   <include location="../resources.qrc"/>
   <include location="../resources.qrc"/>
   <include location="../resources.qrc"/>

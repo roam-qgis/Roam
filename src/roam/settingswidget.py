@@ -35,6 +35,7 @@ class SettingsWidget(Ui_settingsWidget, QWidget):
         self.gpsloggingCheck.toggled.connect(self.gpsloggingCheck_toggled)
         self.gpscentermapCheck.toggled.connect(self.gpscentermapCheck_toggled)
         self.keyboardCheck.toggled.connect(self.keyboardCheck_toggled)
+        self.updateServerEdit.editingFinished.connect(self.updateServerEdit_edited)
         self.portfinder = PortFinder()
         self.portfinder.portsfound.connect(self._addports)
 
@@ -70,6 +71,11 @@ class SettingsWidget(Ui_settingsWidget, QWidget):
     def gpsPortCombo_currentIndexChanged(self, index):
         port = self.gpsPortCombo.itemText(index)
         self.settings["gpsport"] = port
+        self.notifysettingsupdate()
+
+    def updateServerEdit_edited(self):
+        server = self.updateServerEdit.text()
+        self.settings["updateserver"] = server
         self.notifysettingsupdate()
 
     def refreshPortsButton_pressed(self):
@@ -114,12 +120,14 @@ class SettingsWidget(Ui_settingsWidget, QWidget):
         gpscenter = self.settings.get('gpscenter', True)
         gpslogging = self.settings.get('gpslogging', True)
         keyboard = self.settings.get('keyboard', True)
+        updateserver = self.settings.get('updateserver', None)
 
         self.fullScreenCheck.setChecked(fullscreen)
         self.gpslocationCheck.setChecked(gpszoom)
         self.gpscentermapCheck.setChecked(gpscenter)
         self.keyboardCheck.setChecked(keyboard)
         self.gpsloggingCheck.setChecked(gpslogging)
+        self.updateServerEdit.setText(updateserver)
 
         self._setgpsport()
 

@@ -295,6 +295,7 @@ class MainWindow(ui_mainwindow.Ui_MainWindow, QMainWindow):
         viewer.openimage(pixmap)
 
     def settingsupdated(self, settings):
+        self.projectwidget.update_server(settings.get('updateserver', ''))
         self.show()
         self.canvas_page.settings_updated(settings)
 
@@ -467,6 +468,7 @@ class MainWindow(ui_mainwindow.Ui_MainWindow, QMainWindow):
         projects = list(projects)
         self.projectwidget.loadProjectList(projects)
         self.syncwidget.loadprojects(projects)
+        self.projectwidget.update_server(roam.config.settings.get('updateserver', None))
 
     def updatePage(self, action):
         """
