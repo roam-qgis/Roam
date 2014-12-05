@@ -182,7 +182,6 @@ class ProjectsWidget(Ui_ListModules, QWidget):
 
     def list_versions(self, reply):
         content = reply.readAll().data()
-        print content
         serverversions = parse_serverprojects(content)
         projects = self.projectitems.keys()
         updateable = updateable_projects(projects, serverversions)
