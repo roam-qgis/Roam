@@ -46,6 +46,7 @@ from roam.syncwidget import SyncWidget
 from roam.helpviewdialog import HelpPage
 from roam.imageviewerwidget import ImageViewer
 from roam.gpswidget import GPSWidget
+from roam.updater import ProjectUpdater
 from roam.api import RoamEvents, GPS, RoamInterface, plugins
 from roam.ui import ui_mainwindow
 from PyQt4.QtGui import QMainWindow
@@ -90,6 +91,9 @@ class MainWindow(ui_mainwindow.Ui_MainWindow, QMainWindow):
         super(MainWindow, self).__init__()
         self.setupUi(self)
         self.menutoolbar.setStyleSheet(roam.roam_style.menubarstyle)
+        self.projectupdater = ProjectUpdater()
+        self.projectupdater.foundProjects.connect(self.projectwidget.show_updateable)
+        self.projectwidget.projectUpdate.connect(self.projectupdater.update_project)
         self.project = None
         self.tracking = GPSLogging(GPS)
 
@@ -468,7 +472,8 @@ class MainWindow(ui_mainwindow.Ui_MainWindow, QMainWindow):
         projects = list(projects)
         self.projectwidget.loadProjectList(projects)
         self.syncwidget.loadprojects(projects)
-        self.projectwidget.update_server(roam.config.settings.get('updateserver', None))
+        updateserver = roam.config.settings.get('updateserver', None)
+        self.projectupdater.update_server(updateserver, projects)
 
     def updatePage(self, action):
         """

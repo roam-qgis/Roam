@@ -7,84 +7,11 @@ from roam.flickwidget import FlickCharm
 from roam.ui.ui_projectwidget import Ui_Form
 from roam.ui.ui_listmodules import Ui_ListModules
 
-import zipfile
 import os
-import re
 import roam.api
 
 import roam.utils
-import urlparse
-import urllib2
-from collections import defaultdict
-
-
-def checkversion(toversion, fromversion):
-    def versiontuple(v):
-        v = v.split('.')[:3]
-        version = tuple(map(int, (v)))
-        if len(version) == 2:
-            version = (version[0], version[1], 0)
-        return version
-
-    return versiontuple(toversion) > versiontuple(fromversion)
-
-
-def parse_serverprojects(content):
-    reg = 'href="(?P<file>(?P<name>\w+)-(?P<version>\d+(\.\d+)+).zip)"'
-    versions = defaultdict(dict)
-    for match in re.finditer(reg, content, re.I):
-        version = match.group("version")
-        path = match.group("file")
-        name = match.group("name")
-        data = dict(path=path,
-                    version=version,
-                    name=name)
-        versions[name][version] = data
-    return dict(versions)
-
-
-def update_project(project, version, serverurl):
-    filename = "{}-{}.zip".format(project.basefolder, version)
-    url = urlparse.urlparse(serverurl, "projects", filename)
-    print url
-    content = urllib2.urlopen(url).read()
-    rootfolder = os.path.join(project.folder, "..")
-    tempfolder = os.path.join(rootfolder, "_updates")
-    if not os.path.exists(tempfolder):
-        os.mkdir(tempfolder)
-
-    zippath = os.path.join(tempfolder, filename)
-    with open(zippath, "wb") as f:
-        f.write(content)
-
-    with zipfile.ZipFile(zippath, "r") as z:
-        z.extractall(rootfolder)
-
-    project.projectUpdated.emit(project)
-
-
-def get_project_info(projectname, projects):
-    maxversion = max(projects[projectname])
-    projectdata = projects[projectname][maxversion]
-    return projectdata
-
-
-def can_update(projectname, currentversion, projects):
-    try:
-        maxversion = max(projects[projectname])
-        return checkversion(maxversion, currentversion)
-    except KeyError:
-        return False
-    except ValueError:
-        return False
-
-
-def updateable_projects(projects, serverprojects):
-    for project in projects:
-        canupdate = can_update(project.basefolder, project.version, serverprojects)
-        if canupdate:
-            info = get_project_info(project.basefolder, serverprojects)
-            yield project, info
+import roam.updater
 
 
 class ProjectWidget(Ui_Form, QWidget):
@@ -139,6 +66,7 @@ class ProjectWidget(Ui_Form, QWidget):
 
 class ProjectsWidget(Ui_ListModules, QWidget):
     requestOpenProject = pyqtSignal(object)
+    projectUpdate = pyqtSignal(object, object)
 
     def __init__(self, parent=None):
         super(ProjectsWidget, self).__init__(parent)
@@ -147,7 +75,6 @@ class ProjectsWidget(Ui_ListModules, QWidget):
         self.flickcharm = FlickCharm()
         self.flickcharm.activateOn(self.moduleList)
         self.moduleList.itemClicked.connect(self.openProject)
-        self.net = QNetworkAccessManager()
         self.projectitems = {}
 
     def loadProjectList(self, projects):
@@ -169,23 +96,8 @@ class ProjectsWidget(Ui_ListModules, QWidget):
             self.moduleList.addItem(item)
             self.moduleList.setItemWidget(item, projectwidget)
 
-    def check_for_new_projects(self, server):
-        url = urlparse.urljoin(server, "projects/")
-        req = QNetworkRequest(QUrl(url))
-        reply = self.net.get(req)
-        import functools
-
-        reply.finished.connect(functools.partial(self.list_versions, reply))
-
-    def update_server(self, newserverurl):
-        self.check_for_new_projects(newserverurl)
-
-    def list_versions(self, reply):
-        content = reply.readAll().data()
-        serverversions = parse_serverprojects(content)
-        projects = self.projectitems.keys()
-        updateable = updateable_projects(projects, serverversions)
-        for project, info in updateable:
+    def show_updateable(self, projects):
+        for project, info in projects:
             widget = self.projectitems[project]
             widget.serverversion = info['version']
 
@@ -205,4 +117,4 @@ class ProjectsWidget(Ui_ListModules, QWidget):
             widget.show_close(showclose)
 
     def update_project(self, project, version):
-        update_project(project, version, self.serverurl)
+        self.projectUpdate.emit(project, version)
