@@ -4,10 +4,11 @@ import re
 import zipfile
 import urlparse
 import urllib2
+import Queue
 
 from collections import defaultdict
 from PyQt4.QtNetwork import QNetworkRequest, QNetworkAccessManager
-from PyQt4.QtCore import QObject, pyqtSignal, QUrl
+from PyQt4.QtCore import QObject, pyqtSignal, QUrl, QThread
 
 
 def checkversion(toversion, fromversion):
@@ -80,6 +81,23 @@ def updateable_projects(projects, serverprojects):
             info = get_project_info(project.basefolder, serverprojects)
             yield project, info
 
+forupdate = Queue.Queue()
+
+
+class UpdateWorker(QObject):
+    projectUpdateStatus = pyqtSignal(object, str)
+
+    def __init__(self):
+        super(UpdateWorker, self).__init__()
+        self.server = None
+
+    def run(self):
+        while True:
+            project, version, server = forupdate.get()
+            self.projectUpdateStatus.emit(project, "Updating")
+            update_project(project, version, server)
+            self.projectUpdateStatus.emit(project, "complete")
+
 
 class ProjectUpdater(QObject):
     """
@@ -94,6 +112,15 @@ class ProjectUpdater(QObject):
         super(ProjectUpdater, self).__init__()
         self.server = server
         self.net = QNetworkAccessManager()
+        self.worker()
+
+    def worker(self):
+        self.updatethread = QThread()
+        self.worker = UpdateWorker()
+        self.worker.moveToThread(self.updatethread)
+
+        self.worker.projectUpdateStatus.connect(self.projectUpdateStatus)
+        self.updatethread.started.connect(self.worker.run)
 
     @property
     def projecturl(self):
@@ -120,9 +147,7 @@ class ProjectUpdater(QObject):
             self.foundProjects.emit(updateable)
 
     def update_project(self, project, version):
-        self.projectUpdateStatus.emit(project, "Updating")
-        update_project(project, version, self.server)
-        self.projectUpdateStatus.emit(project, "complete")
-
-
+        self.projectUpdateStatus.emit(project, "Pending")
+        forupdate.put((project, version, self.server))
+        self.updatethread.start()
 
