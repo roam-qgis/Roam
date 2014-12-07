@@ -116,6 +116,8 @@ class MapWidget(Ui_CanvasWidget, QMainWindow):
         self.actionGPS = GPSAction(":/icons/gps", self.canvas, self)
         self.projecttoolbar.addAction(self.actionGPS)
 
+        self.projecttoolbar.setContextMenuPolicy(Qt.CustomContextMenu)
+
         gpsspacewidget= QWidget()
         gpsspacewidget.setMinimumWidth(30)
         gpsspacewidget.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)

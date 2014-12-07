@@ -18,7 +18,7 @@ IF "%1"=="watch" (
 )
 
 :build
-python setup.py clean && python setup.py build
+make build
 popd
 
 if defined DOUBLECLICKED pause
