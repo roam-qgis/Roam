@@ -1,4 +1,5 @@
 all: clean build test
+
 test:
 	py.test tests
 
@@ -8,3 +9,5 @@ build: clean
 clean:
 	python setup.py clean
 
+package: clean build
+	python setup.py py2exe
