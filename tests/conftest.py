@@ -4,7 +4,8 @@ import sys
 import roam.environ
 
 print sys.argv
-roamapp = roam.environ._setup(os.getcwd(), config="tests/roam.config")
+config = {}
+roamapp = roam.environ._setup(os.getcwd(), config=config)
 
 def tear_down():
     roamapp.exit()
