@@ -71,8 +71,13 @@ class IndexBuilder(QObject):
                 for feature in layer.getFeatures():
                     data = {}
                     for field in config['columns']:
-                        value = str(feature[field])
+                        try:
+                            value = str(feature[field])
+                        except KeyError:
+                            continue
                         data[field] = "{}: {}".format(field, value)
+                    if not data:
+                        continue
                     fid = feature.id()
                     yield count, layer.name(), fid, data
                     count += 1
@@ -96,6 +101,16 @@ class IndexBuilder(QObject):
     def quit(self):
         self.conn.close()
         self.finished.emit()
+
+
+def valid_search_settings(settings):
+    try:
+        settings = settings['search']
+        for layerconfig in settings.itervalues():
+            columns = layerconfig['columns']
+        return True, settings
+    except KeyError:
+        return False, {}
 
 
 class SearchPlugin(widget, base, Page):
@@ -150,8 +165,16 @@ class SearchPlugin(widget, base, Page):
         self.resultsView.setEnabled(False)
         self.resultsView.addItem("Just let me build the search index first....")
 
+        validformat, settings = valid_search_settings(project.settings)
+        if not validformat:
+            RoamEvents.raisemessage("Searching", "Invalid search config.", level=1)
+            self.searchbox.hide()
+            self.resultsView.clear()
+            self.resultsView.addItem("Invalid search config found")
+            return
+
         self.indexthread = QThread()
-        self.indexbuilder = IndexBuilder(project.folder, project.settings.get("search", {}))
+        self.indexbuilder = IndexBuilder(project.folder, settings)
         self.indexbuilder.moveToThread(self.indexthread)
 
         self.indexbuilder.indexBuilt.connect(self.index_built)
@@ -159,7 +182,6 @@ class SearchPlugin(widget, base, Page):
         self.indexthread.started.connect(self.indexbuilder.build_index)
         self.indexthread.finished.connect(self.indexbuilder.quit)
 
-        print "building index"
         self.indexthread.start()
 
     def search(self, text):
