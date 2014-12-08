@@ -111,9 +111,13 @@ class FeatureFormWidget(Ui_Form, QWidget):
         editmode = config['editmode']
         allowsave = config.get('allowsave', True)
         self.feature = config.get('feature', None)
+        tools = config.get('tools', [])
+        candelete = True
+        if tools:
+            candelete = "delete" in tools
         self.featureform.feature = self.feature
         self.featureform.editingmode = editmode
-        self.actionDelete.setVisible(editmode)
+        self.actionDelete.setVisible(editmode and candelete)
         self.actionSave.setEnabled(allowsave)
 
     def _update_validation(self, passed):

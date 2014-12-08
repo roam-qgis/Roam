@@ -152,4 +152,7 @@ class DataEntryWidget(dataentry_widget, dataentry_base):
                       layers=QgsMapLayerRegistry.instance().mapLayers(),
                       feature=feature)
 
+        if self.project:
+            layertools = self.project.layer_tools(layer)
+            config['tools'] = layertools
         self.add_widget(FeatureFormWidgetEditor, values, callback, config, initconfig=initconfig)

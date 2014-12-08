@@ -557,7 +557,7 @@ class Project(object):
 
     def layer_tools(self, layer):
         selectconfig = self.settings.setdefault('selectlayerconfig', {}).setdefault(layer.name(), {})
-        return selectconfig.get('tools', ['capture', 'edit_attributes', 'edit_geom'])
+        return selectconfig.get('tools', ['delete', 'capture', 'edit_attributes', 'edit_geom'])
 
     @property
     def forms(self):
