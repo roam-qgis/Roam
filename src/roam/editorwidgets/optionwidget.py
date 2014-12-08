@@ -7,18 +7,17 @@ from roam.editorwidgets.core import EditorWidget
 class OptionWidget(EditorWidget):
     widgettype = 'Option Row'
 
-    def __init__(self, *args):
-        super(OptionWidget, self).__init__(*args)
+    def __init__(self, *args, **kwargs):
+        super(OptionWidget, self).__init__(*args, **kwargs)
         self._bindvalue = None
         self.group = QButtonGroup()
-        self.group.setExclusive(True)
         self.group.buttonClicked.connect(self.emitvaluechanged)
 
-    def createWidget(self, parent):
+    def createWidget(self, parent=None):
         widget = QWidget(parent)
         return widget
 
-    def _buildfromlist(self, listconfig):
+    def _buildfromlist(self, listconfig, multiselect):
         items = listconfig['items']
         for item in items:
             parts = item.split(';')
@@ -29,6 +28,8 @@ class OptionWidget(EditorWidget):
                 desc = data
 
             button = QPushButton()
+            button.setCheckable(multiselect)
+            self.group.setExclusive(not multiselect)
 
             icon = QIcon()
             try:
@@ -71,7 +72,8 @@ class OptionWidget(EditorWidget):
             button.setParent(None)
 
         listconfig = self.config['list']
-        self._buildfromlist(listconfig)
+        multiselect = self.config.get('multi', False)
+        self._buildfromlist(listconfig, multiselect)
 
         super(OptionWidget, self).endupdatefromconfig()
 
@@ -83,29 +85,61 @@ class OptionWidget(EditorWidget):
         return False
 
     @property
+    def buttons(self):
+        return self.group.buttons()
+
+    @property
     def nullvalues(self):
         return ['NULL']
 
+    @property
+    def multioption(self):
+        return self.config.get('multi', False)
+
     def setvalue(self, value):
+        def set_button(setvalue):
+            for button in self.group.buttons():
+                buttonvalue = button.property("value")
+                if (setvalue is None and buttonvalue in self.nullvalues) or buttonvalue == str(setvalue):
+                    button.setChecked(True)
+                    self.emitvaluechanged()
+                    return
+
         if value in self.nullvalues:
             value = None
 
-        for button in self.group.buttons():
-            buttonvalue = button.property("value")
-            if (value is None and buttonvalue in self.nullvalues) or buttonvalue == str(value):
-                button.setChecked(True)
-                self.emitvaluechanged()
-                return
+        if self.multioption and value:
+            values = value.split(';')
+        else:
+            values = [value]
+
+        for value in values:
+            set_button(value)
 
     def value(self):
-        button = self.group.checkedButton()
-        if not button:
-            return None
+        def _returnvalue():
+            if self.multioption:
+                _values = []
+                checked = [button for button in self.group.buttons() if button.isChecked()]
+                for button in checked:
+                    value = button.property("value")
+                    _values.append(value)
+                if not _values:
+                    return None
+                return ";".join(_values)
+            else:
+                checked = self.group.checkedButton()
+                if not checked:
+                    return None
 
-        value = button.property("value")
+                value = checked.property("value")
+                return value
 
-        if value in self.nullvalues:
-            value = None
-        return value
+        returnvalue = _returnvalue()
+
+        if returnvalue in self.nullvalues:
+            returnvalue = None
+
+        return returnvalue
 
 

@@ -31,7 +31,7 @@
      </widget>
      <widget class="QWidget" name="page_3">
       <layout class="QGridLayout" name="gridLayout_4">
-       <item row="1" column="0">
+       <item row="2" column="0">
         <widget class="QPlainTextEdit" name="listText">
          <property name="centerOnScroll">
           <bool>false</bool>
@@ -58,6 +58,13 @@ p, li { white-space: pre-wrap; }
          </property>
          <property name="wordWrap">
           <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="0">
+        <widget class="QCheckBox" name="multiCheck">
+         <property name="text">
+          <string>Multiselect</string>
          </property>
         </widget>
        </item>
