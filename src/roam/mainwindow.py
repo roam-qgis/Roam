@@ -74,7 +74,7 @@ class BadLayerHandler(QgsProjectBadLayerHandler):
             callback - Any bad layers are passed to the callback so it
             can do what it wills with them
         """
-        super(BadLayerHandler, self).__init__()
+        super(BadLayerHandler, self).__init()
         self.callback = callback
 
     def handleBadLayers(self, domNodes, domDocument):
@@ -300,7 +300,8 @@ class MainWindow(ui_mainwindow.Ui_MainWindow, QMainWindow):
         viewer.openimage(pixmap)
 
     def settingsupdated(self, settings):
-        self.projectwidget.update_server(settings.get('updateserver', ''))
+        server = settings.get('updateserver', '')
+        self.projectupdater.update_server(server, self.projects)
         self.show()
         self.canvas_page.settings_updated(settings)
 
@@ -471,6 +472,7 @@ class MainWindow(ui_mainwindow.Ui_MainWindow, QMainWindow):
         list
         """
         projects = list(projects)
+        self.projects = projects
         self.projectwidget.loadProjectList(projects)
         self.syncwidget.loadprojects(projects)
         updateserver = roam.config.settings.get('updateserver', None)
