@@ -30,3 +30,13 @@ def test_can_extract_projectinfo_from_html():
     assert data['path'] == 'test-1.1.0.zip'
     assert data['name'] == 'test'
     assert data['version'] == '1.1.0'
+
+def test_get_project_info_returns_max_version_info():
+    name = "test"
+    v1 = dict(version="1.1.0")
+    v2 = dict(version="2.0.0")
+    projects = {name:{}}
+    projects[name]['1.1.0'] = v1
+    projects[name]['2.0.0'] = v2
+    got = updater.get_project_info(name, projects)
+    assert got['version'] == "2.0.0"
