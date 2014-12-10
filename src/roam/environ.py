@@ -138,7 +138,10 @@ def _setup(apppath=None, logo='', title='', **kwargs):
 
     app = RoamApp(sys.argv, apppath, prefixpath, args.config, libspath, i18npath, args.projectsroot).init(logo, title)
     import roam.config
-    roam.config.load(app.settingspath)
+    if isinstance(app.settingspath, dict):
+        roam.config.settings = app.settingspath
+    else:
+        roam.config.load(app.settingspath)
     return app
 
 

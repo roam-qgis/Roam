@@ -545,6 +545,7 @@ class MainWindow(ui_mainwindow.Ui_MainWindow, QMainWindow):
         self.canvas_page.project_loaded(self.project)
         self.showmap()
         self.set_projectbuttons(True)
+        self.dataentrywidget.project = self.project
         RoamEvents.projectloaded.emit(self.project)
 
     def clear_plugins(self):

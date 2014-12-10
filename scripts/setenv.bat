@@ -25,3 +25,7 @@ CALL %OSGEO4W_ROOT%\bin\o4w_env.bat
 set PATH=%OSGEO4W_ROOT%\bin;%QGIS%\bin;%~dp0\..\src\;C:\Program Files (x86)\Git\bin;%PATH%
 SET PYTHONHOME=%OSGEO4W_ROOT%\apps\Python27
 set PYTHONPATH=%~dp0\..\src;%QGIS%\python;%PYTHONPATH%
+
+ECHO OSGeo path is: %OSGEO4W_ROOT%
+ECHO Getting QGIS libs from: %QGIS%
+ECHO Python loaded from: %PYTHONHOME%

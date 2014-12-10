@@ -18,7 +18,7 @@ before_script:
     - make build
 install:
     - pip install PIL --allow-external PIL --allow-unverified PIL
-    - pip install -r travis_requirements.txt
+    - pip install -r requirements-travis.txt
 script:
     - xvfb-run --server-args="-screen 0, 1024x768x24" py.test -v
 notifications:

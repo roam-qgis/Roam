@@ -3,6 +3,6 @@ pushd %~dp0
 
 call scripts/setenv.bat
 
-py.test tests %*
+make test
 
 if defined DOUBLECLICKED pause
