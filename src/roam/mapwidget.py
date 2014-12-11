@@ -261,6 +261,7 @@ class MapWidget(Ui_CanvasWidget, QMainWindow):
 
         self.marker.show()
         self.marker.setCenter(position)
+        self.marker.quality = gpsinfo.quality
 
     def gps_first_fix(self, postion, gpsinfo):
         zoomtolocation = roam.config.settings.get('gpszoomonfix', True)
