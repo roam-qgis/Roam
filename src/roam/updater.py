@@ -5,7 +5,10 @@ import zipfile
 import urlparse
 import urllib2
 import Queue
+import logging
 import subprocess
+
+import roam.utils
 
 from collections import defaultdict
 from PyQt4.QtNetwork import QNetworkRequest, QNetworkAccessManager
@@ -39,8 +42,10 @@ def parse_serverprojects(content):
 
 def update_project(project, version, serverurl):
     if not serverurl:
+        roam.utils.warning("No server url set for update")
         raise ValueError("No server url given")
 
+    roam.utils.info("Downloading project zip")
     filename = "{}-{}.zip".format(project.basefolder, version)
     url = urlparse.urljoin(serverurl, "projects/{}".format(filename))
     content = urllib2.urlopen(url).read()
@@ -49,10 +54,10 @@ def update_project(project, version, serverurl):
     if not os.path.exists(tempfolder):
         os.mkdir(tempfolder)
 
-    zippath = os.path.join(tempfolder, filename)
     os.chdir(project.folder)
     yield "Running pre update scripts.."
     run_install_script(project.settings, "before_update")
+    zippath = os.path.join(tempfolder, filename)
     with open(zippath, "wb") as f:
         f.write(content)
 
@@ -71,12 +76,13 @@ def run_install_script(settings, section):
     try:
         commands = settings['install'][section]
         for command in commands:
+            roam.utils.info("Running command: {}".format(command))
             args = command.split()
             if args[0].lower() == 'cd':
                 os.chdir(args[1])
             else:
                 output = subprocess.check_output(args, shell=True)
-                print output
+                roam.utils.info(output)
     except KeyError:
         pass
 
