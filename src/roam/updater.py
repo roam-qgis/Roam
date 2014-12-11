@@ -5,6 +5,7 @@ import zipfile
 import urlparse
 import urllib2
 import Queue
+import subprocess
 
 from collections import defaultdict
 from PyQt4.QtNetwork import QNetworkRequest, QNetworkAccessManager
@@ -49,14 +50,32 @@ def update_project(project, version, serverurl):
         os.mkdir(tempfolder)
 
     zippath = os.path.join(tempfolder, filename)
+    yield "Running pre update scripts.."
+    root = project.folder
+    run_install_script(root, project.settings, "before_update")
     with open(zippath, "wb") as f:
         f.write(content)
 
+    yield "Running update scripts.."
+    run_install_script(root, project.settings, "after_update")
+
+    yield "Installing"
     with zipfile.ZipFile(zippath, "r") as z:
         z.extractall(rootfolder)
 
     project.projectUpdated.emit(project)
 
+
+def run_install_script(rootfolder, settings, section):
+    try:
+        os.chdir(rootfolder)
+        commands = settings['install'][section]
+        for command in commands:
+            args = command.split()
+            output = subprocess.check_output(args, shell=True)
+            print output
+    except KeyError:
+        pass
 
 def get_project_info(projectname, projects):
     maxversion = max(projects[projectname])
@@ -95,7 +114,8 @@ class UpdateWorker(QObject):
         while True:
             project, version, server = forupdate.get()
             self.projectUpdateStatus.emit(project, "Updating")
-            update_project(project, version, server)
+            for status in update_project(project, version, server):
+                self.projectUpdateStatus.emit(project, status)
             self.projectUpdateStatus.emit(project, "complete")
 
 
