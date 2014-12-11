@@ -50,14 +50,15 @@ def update_project(project, version, serverurl):
         os.mkdir(tempfolder)
 
     zippath = os.path.join(tempfolder, filename)
+    os.chdir(project.folder)
     yield "Running pre update scripts.."
-    root = project.folder
-    run_install_script(root, project.settings, "before_update")
+    run_install_script(project.settings, "before_update")
     with open(zippath, "wb") as f:
         f.write(content)
 
+    os.chdir(project.folder)
     yield "Running update scripts.."
-    run_install_script(root, project.settings, "after_update")
+    run_install_script(project.settings, "after_update")
 
     yield "Installing"
     with zipfile.ZipFile(zippath, "r") as z:
@@ -66,14 +67,16 @@ def update_project(project, version, serverurl):
     project.projectUpdated.emit(project)
 
 
-def run_install_script(rootfolder, settings, section):
+def run_install_script(settings, section):
     try:
-        os.chdir(rootfolder)
         commands = settings['install'][section]
         for command in commands:
             args = command.split()
-            output = subprocess.check_output(args, shell=True)
-            print output
+            if args[0].lower() == 'cd':
+                os.chdir(args[1])
+            else:
+                output = subprocess.check_output(args, shell=True)
+                print output
     except KeyError:
         pass
 
