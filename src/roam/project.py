@@ -230,10 +230,11 @@ class Form(object):
     def QGISLayer(self):
         def getlayer(name):
             try:
-                return QgsMapLayerRegistry.instance().mapLayersByName(name)[0]
+                return roam.api.utils.layer_by_name(name)
             except IndexError as e:
                 utils.log(e)
                 return None
+
         if self._qgislayer is None:
             layer = self.settings.get('layer', None)
             self._qgislayer = getlayer(layer)
