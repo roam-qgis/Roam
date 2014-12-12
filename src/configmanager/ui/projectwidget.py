@@ -16,6 +16,7 @@ from configmanager.ui.ui_projectwidget import Ui_Form
 from configmanager.models import widgeticon, WidgetItem, WidgetsModel, QgsLayerModel, QgsFieldModel, LayerTypeFilter, CaptureLayerFilter, CaptureLayersModel
 
 from roam.api import FeatureForm
+from roam import bundle
 
 import configmanager.editorwidgets
 import roam.editorwidgets
@@ -101,6 +102,7 @@ class ProjectWidget(Ui_Form, QWidget):
 
         self.openProjectFolderButton.pressed.connect(self.openprojectfolder)
         self.openinQGISButton.pressed.connect(self.openinqgis)
+        self.depolyProjectButton.pressed.connect(self.deploy_project)
 
         self.filewatcher = QFileSystemWatcher()
         self.filewatcher.fileChanged.connect(self.qgisprojectupdated)
@@ -120,6 +122,9 @@ class ProjectWidget(Ui_Form, QWidget):
 
         self.setpage(4)
         self.form = None
+
+    def deploy_project(self):
+        bundle.bundle_project(self.project, "project_serv")
 
     def setaboutinfo(self):
         self.versionLabel.setText(roam.__version__)
