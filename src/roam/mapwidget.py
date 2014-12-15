@@ -212,6 +212,7 @@ class MapWidget(Ui_CanvasWidget, QMainWindow):
             for action in self.projecttoolbar.actions():
                 if action.property('dataentry') and action.isdefault:
                     action.trigger()
+                    self.canvas.mapTool().setEditMode(True)
                     break
 
         self.editfeaturestack.append((form, feature))
@@ -447,6 +448,7 @@ class MapWidget(Ui_CanvasWidget, QMainWindow):
         self.canvas.refresh()
         self.currentfeatureband.setToGeometry(feature.geometry(), layer)
         RoamEvents.editgeometry_complete.emit(form, feature)
+        self.canvas.mapTool().setEditMode(False)
 
     def clearCapatureTools(self):
         captureselected = False

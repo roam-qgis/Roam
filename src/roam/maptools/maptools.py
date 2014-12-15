@@ -105,6 +105,12 @@ class CaptureAction(BaseAction):
         self.isdefault = True
         self.ismaptool = True
 
+    def setEditMode(self, enabled):
+        if enabled:
+            self.setText(self.tr("Edit"))
+        else:
+            self.setText(self.tr("Capture"))
+
 
 class GPSCaptureAction(BaseAction):
     def __init__(self, tool, parent=None):
@@ -128,6 +134,7 @@ class PolylineTool(QgsMapTool):
 
     def __init__(self, canvas):
         super(PolylineTool, self).__init__(canvas)
+        self.editmode = False
         self.points = []
         self.canvas = canvas
         self.band = RubberBand(self.canvas, QGis.Line, width=5, iconsize=20)
@@ -238,6 +245,10 @@ class PolylineTool(QgsMapTool):
         except IndexError:
             return self.canvas.getCoordinateTransform().toMapCoordinates(point)
 
+    def setEditMode(self, enabled):
+        self.editmode = enabled
+        self.captureaction.setEditMode(enabled)
+
 
 class PolygonTool(PolylineTool):
     mouseClicked = pyqtSignal(QgsPoint)
@@ -333,3 +344,6 @@ class PointTool(TouchMapTool):
 
     def isEditTool(self):
         return False
+
+    def setEditMode(self, enabled):
+        self.captureaction.setEditMode(enabled)
