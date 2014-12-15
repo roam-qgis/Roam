@@ -347,7 +347,9 @@ class InfoDock(infodock_widget, QWidget):
         return '<br>'.join(blocks), results
 
     def results_from_feature(self, feature):
-        return values_from_feature(feature)
+        attributes = feature.attributes()
+        fields = [field.name().lower() for field in feature.fields()]
+        return OrderedDict(zip(fields, attributes))
 
     def results_from_query(self, infoblockdef, layer, feature, mapkey, lastresults=None):
         def get_key():
