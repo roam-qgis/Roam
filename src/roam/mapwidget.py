@@ -1,12 +1,12 @@
 from functools import partial
 from collections import defaultdict
 
-from PyQt4.QtCore import Qt, pyqtSignal, QSize, QPropertyAnimation, QObject, pyqtProperty, QEasingCurve
+from PyQt4.QtCore import Qt, pyqtSignal, QSize, QPropertyAnimation, QObject, pyqtProperty, QEasingCurve, QThread
 from PyQt4.QtGui import QActionGroup, QFrame, QWidget, QSizePolicy, \
                         QAction, QPixmap, QCursor, QIcon, QColor, QMainWindow, QPen
 
 from qgis.gui import QgsMapCanvas, QgsMapToolZoom, QgsRubberBand, QgsMapCanvasItem
-from qgis.core import QgsPalLabeling, QgsMapLayerRegistry, QgsMapLayer, QgsFeature, QGis, QgsRectangle, QgsProject
+from qgis.core import QgsPalLabeling, QgsMapLayerRegistry, QgsMapLayer, QgsFeature, QGis, QgsRectangle, QgsProject, QgsApplication
 
 from roam.gps_action import GPSAction, GPSMarker
 from roam.projectparser import ProjectParser
@@ -100,6 +100,9 @@ class MapWidget(Ui_CanvasWidget, QMainWindow):
         self.canvas.setWheelAction(QgsMapCanvas.WheelZoomToMouseCursor)
 
         if hasattr(self.canvas, 'setParallelRenderingEnabled'):
+            threadcount = QThread.idealThreadCount()
+            threadcount = 2 if threadcount > 2 else 1
+            QgsApplication.setMaxThreads(threadcount)
             self.canvas.setParallelRenderingEnabled(True)
 
         pal = QgsPalLabeling()
