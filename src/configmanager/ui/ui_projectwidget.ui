@@ -99,7 +99,7 @@ QLabel[warning=true]
       </sizepolicy>
      </property>
      <property name="currentIndex">
-      <number>0</number>
+      <number>3</number>
      </property>
      <widget class="QWidget" name="project_info_page">
       <layout class="QGridLayout" name="gridLayout_11">
@@ -828,8 +828,8 @@ p, li { white-space: pre-wrap; }
                   <rect>
                    <x>0</x>
                    <y>0</y>
-                   <width>777</width>
-                   <height>491</height>
+                   <width>1424</width>
+                   <height>695</height>
                   </rect>
                  </property>
                  <property name="autoFillBackground">
@@ -1282,35 +1282,6 @@ p, li { white-space: pre-wrap; }
       </spacer>
      </item>
      <item>
-      <widget class="QToolButton" name="depolyProjectButton">
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-         <horstretch>0</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
-       </property>
-       <property name="text">
-        <string>Deploy</string>
-       </property>
-       <property name="icon">
-        <iconset resource="../../roam/resources.qrc">
-         <normaloff>:/icons/sync</normaloff>:/icons/sync</iconset>
-       </property>
-       <property name="iconSize">
-        <size>
-         <width>24</width>
-         <height>24</height>
-        </size>
-       </property>
-       <property name="toolButtonStyle">
-        <enum>Qt::ToolButtonTextUnderIcon</enum>
-       </property>
-       <property name="autoRaise">
-        <bool>true</bool>
-       </property>
-      </widget>
-     </item>
-     <item>
       <widget class="QFrame" name="projectbuttonframe">
        <property name="frameShape">
         <enum>QFrame::NoFrame</enum>
@@ -1322,6 +1293,35 @@ p, li { white-space: pre-wrap; }
         <property name="margin">
          <number>0</number>
         </property>
+        <item>
+         <widget class="QToolButton" name="depolyProjectButton">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="text">
+           <string>Deploy</string>
+          </property>
+          <property name="icon">
+           <iconset resource="../../roam/resources.qrc">
+            <normaloff>:/icons/sync</normaloff>:/icons/sync</iconset>
+          </property>
+          <property name="iconSize">
+           <size>
+            <width>24</width>
+            <height>24</height>
+           </size>
+          </property>
+          <property name="toolButtonStyle">
+           <enum>Qt::ToolButtonTextUnderIcon</enum>
+          </property>
+          <property name="autoRaise">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
         <item>
          <widget class="QToolButton" name="openProjectFolderButton">
           <property name="sizePolicy">
@@ -1428,6 +1428,7 @@ p, li { white-space: pre-wrap; }
   <include location="resources.qrc"/>
   <include location="../../roam/resources.qrc"/>
   <include location="resources.qrc"/>
+  <include location="../../roam/resources.qrc"/>
   <include location="../../roam/resources.qrc"/>
   <include location="../../roam/resources.qrc"/>
   <include location="../../roam/resources.qrc"/>

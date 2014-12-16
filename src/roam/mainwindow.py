@@ -74,7 +74,7 @@ class BadLayerHandler(QgsProjectBadLayerHandler):
             callback - Any bad layers are passed to the callback so it
             can do what it wills with them
         """
-        super(BadLayerHandler, self).__init()
+        super(BadLayerHandler, self).__init__()
         self.callback = callback
 
     def handleBadLayers(self, domNodes, domDocument):
