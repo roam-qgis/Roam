@@ -22,7 +22,7 @@ class BigListWidget(LargeEditorWidget):
         self.multi = False
 
     def eventFilter(self, object, event):
-        if event.type() == QEvent.FocusIn:
+        if event.type() in [QEvent.FocusIn, QEvent.MouseButtonPress]:
             RoamEvents.openkeyboard.emit()
         return False
 

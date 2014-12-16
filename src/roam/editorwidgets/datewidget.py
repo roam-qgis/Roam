@@ -69,7 +69,7 @@ class DateWidget(EditorWidget):
     def eventFilter(self, object, event):
         # Hack I really don't like this but there doesn't seem to be a better way at the
         # moment
-        if event.type() == QEvent.FocusIn:
+        if event.type() in [QEvent.FocusIn, QEvent.MouseButtonPress]:
             RoamEvents.openkeyboard.emit()
         return False
 
