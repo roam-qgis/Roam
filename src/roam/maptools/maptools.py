@@ -191,16 +191,19 @@ class PolylineTool(QgsMapTool):
             self.band.movePoint(point)
         
     def canvasReleaseEvent(self, event):
-        if event.button() == Qt.RightButton:
-            self.endcapture()
+        if self.editmode:
+            pass
         else:
-            point = self.snappoint(event.pos())
-            qgspoint = QgsPoint(point)
-            self.points.append(qgspoint)
-            self.band.addPoint(point)
-            self.pointband.addPoint(point)
-            self.capturing = True
-            self.endcaptureaction.setEnabled(True)
+            if event.button() == Qt.RightButton:
+                self.endcapture()
+            else:
+                point = self.snappoint(event.pos())
+                qgspoint = QgsPoint(point)
+                self.points.append(qgspoint)
+                self.band.addPoint(point)
+                self.pointband.addPoint(point)
+                self.capturing = True
+                self.endcaptureaction.setEnabled(True)
 
     def endcapture(self):
         self.capturing = False
@@ -245,7 +248,14 @@ class PolylineTool(QgsMapTool):
         except IndexError:
             return self.canvas.getCoordinateTransform().toMapCoordinates(point)
 
-    def setEditMode(self, enabled):
+    def setEditMode(self, enabled, geom):
+        if enabled:
+            self.band.setColor(Qt.green)
+            self.pointband.setColor(Qt.green)
+            self.pointband.reset()
+            for node in geom.asPolyline():
+                self.pointband.addPoint(node)
+            self.band.setToGeometry(geom, None)
         self.editmode = enabled
         self.captureaction.setEditMode(enabled)
 
