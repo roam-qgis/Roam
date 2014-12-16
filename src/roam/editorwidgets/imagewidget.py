@@ -4,12 +4,14 @@ import sys
 try:
     import vidcap
     from roam.editorwidgets import VideoCapture as vc
+
     hascamera = True
 except ImportError:
     hascamera = False
 
-from PyQt4.QtGui import QDialog, QGridLayout, QLabel, QLayout, QPixmap, QFileDialog, QAction, QToolButton, QIcon, QToolBar
-from PyQt4.QtGui import QWidget, QImage
+from PyQt4.QtGui import QDialog, QGridLayout, QLabel, QLayout, QPixmap, QFileDialog, QAction, QToolButton, QIcon, \
+    QToolBar
+from PyQt4.QtGui import QWidget, QImage, QSizePolicy
 from PyQt4.QtCore import QByteArray, pyqtSignal, QVariant, QTimer, Qt, QSize, QDateTime
 
 from PIL.ImageQt import ImageQt
@@ -42,6 +44,7 @@ def save_image(image, path, name):
     saved = image.save(os.path.join(path, name), "JPG")
     return saved, name
 
+
 class _CameraWidget(QWidget):
     imagecaptured = pyqtSignal(QPixmap)
     done = pyqtSignal()
@@ -52,10 +55,15 @@ class _CameraWidget(QWidget):
         self.cameralabel.setScaledContents(True)
         self.setLayout(QGridLayout())
         self.toolbar = QToolBar()
-        self.swapaction = self.toolbar.addAction("Swap Camera")
+        spacer = QWidget()
+        # spacer.setMinimumWidth(30)
+        spacer.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
+        self.toolbar.setIconSize(QSize(48, 48))
+        self.toolbar.addWidget(spacer)
+        self.swapaction = self.toolbar.addAction(QIcon(":/widgets/cameraswap"), "Swap Camera")
         self.swapaction.triggered.connect(self.swapcamera)
         self.cameralabel.mouseReleaseEvent = self.takeimage
-        self.layout().setContentsMargins(0,0,0,0)
+        self.layout().setContentsMargins(0, 0, 0, 0)
         self.layout().addWidget(self.toolbar)
         self.layout().addWidget(self.cameralabel)
         self.timer = QTimer()
@@ -102,7 +110,6 @@ class _CameraWidget(QWidget):
             self.start(dev=0)
             return
 
-
         roam.config.settings['camera'] = self.currentdevice
         self.timer.start()
 
@@ -110,6 +117,7 @@ class _CameraWidget(QWidget):
         self.timer.stop()
         del self.cam
         self.cam = None
+
 
 class CameraWidget(LargeEditorWidget):
     def __init__(self, *args, **kwargs):
@@ -136,7 +144,6 @@ class CameraWidget(LargeEditorWidget):
     def __del__(self):
         if self.widget:
             self.widget.stop()
-
 
 
 class DrawingPadWidget(LargeEditorWidget):
@@ -167,7 +174,7 @@ class ImageWidget(EditorWidget):
         super(ImageWidget, self).__init__(*args)
         self.tobase64 = False
         self.defaultlocation = ''
-        self.savetofile= False
+        self.savetofile = False
         self.modified = False
         self.filename = None
 
