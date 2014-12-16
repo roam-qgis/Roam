@@ -27,7 +27,7 @@ class FeatureFormWidget(Ui_Form, QWidget):
         self.actionDelete = toolbar.addAction(QIcon(":/icons/delete"), "Delete")
         self.actionDelete.triggered.connect(self.delete_feature)
 
-        label = 'Required fields marked in <b style="background-color:rgba(255, 221, 48,150)">yellow</b>'
+        label = '<b style="color:red">*</b> Required fields'
         self.missingfieldsLabel = QLabel(label)
         self.missingfieldsLabel.hide()
         self.missingfieldaction = toolbar.addWidget(self.missingfieldsLabel)
@@ -136,7 +136,7 @@ class FeatureFormWidget(Ui_Form, QWidget):
 
 class FeatureFormWidgetEditor(LargeEditorWidget):
     def __init__(self, *args, **kwargs):
-        super(FeatureFormWidgetEditor, self).__init__(*args, **kwargs)
+        LargeEditorWidget.__init__(self, *args, **kwargs)
 
     def createWidget(self, parent=None):
         config = self.initconfig

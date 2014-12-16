@@ -56,7 +56,7 @@ class EditorWidget(QObject):
     largewidgetrequest = pyqtSignal(object, object, object, dict)
 
     def __init__(self, widget=None, layer=None, label=None, field=None, parent=None, *args, **kwargs):
-        super(EditorWidget, self).__init__(parent)
+        QObject.__init__(self, parent)
         self._config = {}
         self.widget = widget
         self.layer = layer
@@ -64,12 +64,9 @@ class EditorWidget(QObject):
         self.label = label
         self._required = False
         self._readonly = True
-        self.validationstyle = """QLabel[required=true]
-                                {border-radius: 5px; background-color: rgba(255, 221, 48,150);}
-                                QLabel[ok=true]
-                                { border-radius: 5px; background-color: rgba(200, 255, 197, 150); }"""
-        self.valuechanged.connect(self.updatecontrolstate)
         self.initconfig = kwargs.get('initconfig', {})
+        self.starttext = ''
+        self.valuechanged.connect(self.updatecontrolstate)
 
     @classmethod
     def for_widget(cls, widget, layer, label, field, parent, *args, **kwargs):
@@ -128,13 +125,13 @@ class EditorWidget(QObject):
         self.buddywidget.setVisible(not value)
 
     def updatecontrolstate(self, value):
-        if self.required and self.passing:
-            self.buddywidget.setProperty('ok', True)
-        else:
-            self.buddywidget.setProperty('ok', False)
+        if self.label is None or not self.required:
+            return
 
-        self.buddywidget.style().unpolish(self.buddywidget)
-        self.buddywidget.style().polish(self.buddywidget)
+        if self.passing:
+            self.label.setText("<b style='color:grey'>*</b> {}".format(self.starttext))
+        else:
+            self.label.setText("<b style='color:red'>*</b> {}".format(self.starttext))
 
     def setrequired(self):
         self.required = True
@@ -145,14 +142,12 @@ class EditorWidget(QObject):
 
     @required.setter
     def required(self, state):
-        if state:
-            self.buddywidget.setStyleSheet(self.validationstyle)
-        else:
-            self.buddywidget.setStyleSheet("")
+        if not self.starttext and state:
+            self.starttext = self.labeltext
 
-        self.buddywidget.setProperty('required', state)
-        self.buddywidget.style().unpolish(self.buddywidget)
-        self.buddywidget.style().polish(self.buddywidget)
+        if state and self.label:
+            self.label.setText("<b style='color:red'>*</b> {}".format(self.starttext))
+
         self._required = state
 
     @property
@@ -243,6 +238,9 @@ class LargeEditorWidget(EditorWidget):
     """
     finished = pyqtSignal(object)
     cancel = pyqtSignal(object, int)
+
+    def __init__(self, *args, **kwargs):
+        EditorWidget.__init__(self, *args, **kwargs)
 
     def emitfished(self):
         self.finished.emit(self.value())
