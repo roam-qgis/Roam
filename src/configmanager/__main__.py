@@ -13,7 +13,7 @@ with roam.environ.setup(logo=':/branding/config', title="IntraMaps Roam Config M
     import configmanager.logger
     from configmanager.ui.configmanagerdialog import ConfigManagerDialog
 
-    dialog = ConfigManagerDialog()
+    dialog = ConfigManagerDialog(roamapp)
     roamapp.set_error_handler(dialog.raiseerror, configmanager.logger)
 
     projectpaths = roam.environ.projectpaths(roamapp.projectsroot, roam.config.settings)

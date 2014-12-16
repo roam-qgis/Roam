@@ -58,6 +58,7 @@ class ProjectWidget(Ui_Form, QWidget):
         self.project = None
         self.mapisloaded = False
         self.bar = None
+        self.roamapp = None
 
         self.canvas.setCanvasColor(Qt.white)
         self.canvas.enableAntiAliasing(True)
@@ -124,7 +125,16 @@ class ProjectWidget(Ui_Form, QWidget):
         self.form = None
 
     def deploy_project(self):
-        bundle.bundle_project(self.project, "project_serv")
+        if self.roamapp.sourcerun:
+            base = os.path.join(self.roamapp.apppath, "..")
+        else:
+            base = self.roamapp.apppath
+
+        path = os.path.join(base, "projects_serv", "projects")
+        if not os.path.exists(path):
+            os.makedirs(path)
+
+        bundle.bundle_project(self.project, path)
 
     def setaboutinfo(self):
         self.versionLabel.setText(roam.__version__)

@@ -18,6 +18,7 @@ class RoamApp(object):
         self.translationFile = None
         self.projectsroot = projectsroot
         self._oldhook = sys.excepthook
+        self.sourcerun = False
 
     def init(self, logo, title):
         from qgis.core import QgsApplication
@@ -137,6 +138,7 @@ def _setup(apppath=None, logo='', title='', **kwargs):
         os.makedirs(args.projectsroot)
 
     app = RoamApp(sys.argv, apppath, prefixpath, args.config, libspath, i18npath, args.projectsroot).init(logo, title)
+    app.sourcerun = RUNNING_FROM_FILE
     import roam.config
     if isinstance(app.settingspath, dict):
         roam.config.settings = app.settingspath

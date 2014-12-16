@@ -290,10 +290,13 @@ class ProjectsNode(Treenode):
 
 
 class ConfigManagerDialog(ui_configmanager.Ui_ProjectInstallerDialog, QDialog):
-    def __init__(self, parent=None):
+    def __init__(self, roamapp, parent=None):
         super(ConfigManagerDialog, self).__init__(parent)
         self.setupUi(self)
         self.bar = roam.messagebaritems.MessageBar(self)
+
+        # Nope!
+        self.projectwidget.roamapp = roamapp
         self.projectwidget.bar = self.bar
 
         self.treemodel = QStandardItemModel()
