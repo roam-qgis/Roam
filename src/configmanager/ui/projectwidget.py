@@ -131,6 +131,7 @@ class ProjectWidget(Ui_Form, QWidget):
             base = self.roamapp.apppath
 
         path = os.path.join(base, "projects_serv", "projects")
+
         if not os.path.exists(path):
             os.makedirs(path)
 
