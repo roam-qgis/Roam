@@ -273,13 +273,19 @@ class PolylineTool(QgsMapTool):
         if self.editmode:
             self.band.setColor(self.editcolour)
             self.pointband.setColor(self.editcolour)
-            for node in geom.asPolyline():
+            geomtype = geom.type()
+            if geomtype == QGis.Polygon:
+                nodes = geom.asPolygon()[0]
+            else:
+                nodes = geom.asPolyline()
+            for node in nodes:
                 self.pointband.addPoint(node)
             self.band.setToGeometry(geom, None)
         else:
             self.band.setColor(self.startcolour)
             self.pointband.setColor(self.startcolour)
 
+        self.endcaptureaction.setEnabled(self.editmode)
         self.captureaction.setEditMode(enabled)
 
 
