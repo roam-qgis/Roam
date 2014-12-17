@@ -120,6 +120,11 @@ class ProjectWidget(Ui_Form, QWidget):
 
         self.setpage(4)
         self.form = None
+        self.formslayerlabel.linkActivated.connect(self.link)
+
+    def link(self, url):
+        if "qgis" in url:
+            self.openinqgis()
 
     def setaboutinfo(self):
         self.versionLabel.setText(roam.__version__)
