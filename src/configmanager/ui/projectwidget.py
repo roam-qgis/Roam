@@ -97,7 +97,7 @@ class ProjectWidget(Ui_Form, QWidget):
         self.addWidgetButton.pressed.connect(self.newwidget)
         self.removeWidgetButton.pressed.connect(self.removewidget)
 
-        self.roamVersionLabel.setText("You are running IntraMaps Roam version {}".format(roam.__version__))
+        # self.roamVersionLabel.setText("You are running IntraMaps Roam version {}".format(roam.__version__))
 
         self.openProjectFolderButton.pressed.connect(self.openprojectfolder)
         self.openinQGISButton.pressed.connect(self.openinqgis)
@@ -374,6 +374,7 @@ class ProjectWidget(Ui_Form, QWidget):
     def loadqgisproject(self, project, projectfile):
         QDir.setCurrent(os.path.dirname(project.projectfile))
         fileinfo = QFileInfo(project.projectfile)
+        self.projectLocationLabel.setText("Project File: {}".format(os.path.basename(project.projectfile)))
         QgsProject.instance().read(fileinfo)
 
     def _closeqgisproject(self):
