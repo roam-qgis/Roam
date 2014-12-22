@@ -93,7 +93,7 @@ class FlickCharm(QObject):
                 if event.buttons() == Qt.LeftButton:
                     consumed = True
                     data.state = FlickData.Pressed
-                    data.pressPos = copy.copy(event.pos())
+                    data.pressPos = event.pos()
                     data.offset = scrollOffset(data.widget)
 
         elif data.state == FlickData.Pressed:
@@ -123,35 +123,35 @@ class FlickCharm(QObject):
             if eventType == QEvent.MouseMove:
                 consumed = True
                 pos = event.pos()
-                # print "Event", pos
-                # print "Press", data.pressPos
+                print "Event", pos
+                print "Press", data.pressPos
                 delta = pos - data.pressPos
-                # print delta
+                print delta
                 setScrollOffset(data.widget, delta, data.pressPos)
             elif eventType == QEvent.MouseButtonRelease:
                 consumed = True
-                data.state = FlickData.AutoScroll
-
-        elif data.state == FlickData.AutoScroll:
-            if eventType == QEvent.MouseButtonPress:
-                consumed = True
-                data.state = FlickData.Stop
-                data.speed = QPoint(0, 0)
-            elif eventType == QEvent.MouseButtonRelease:
-                consumed = True
                 data.state = FlickData.Steady
-                data.speed = QPoint(0, 0)
 
-        elif data.state == FlickData.Stop:
-            if eventType == QEvent.MouseButtonRelease:
-                consumed = True
-                data.state = FlickData.Steady
-            elif eventType == QEvent.MouseMove:
-                consumed = True
-                data.state = FlickData.ManualScroll
-                data.dragPos = QCursor.pos()
-                if not self.d.ticker.isActive():
-                    self.d.ticker.start(400, self)
+        # elif data.state == FlickData.AutoScroll:
+        #     if eventType == QEvent.MouseButtonPress:
+        #         consumed = True
+        #         data.state = FlickData.Stop
+        #         data.speed = QPoint(0, 0)
+        #     elif eventType == QEvent.MouseButtonRelease:
+        #         consumed = True
+        #         data.state = FlickData.Steady
+        #         data.speed = QPoint(0, 0)
+
+        # elif data.state == FlickData.Stop:
+        #     if eventType == QEvent.MouseButtonRelease:
+        #         consumed = True
+        #         data.state = FlickData.Steady
+        #     elif eventType == QEvent.MouseMove:
+        #         consumed = True
+        #         data.state = FlickData.ManualScroll
+        #         data.dragPos = QCursor.pos()
+        #         if not self.d.ticker.isActive():
+        #             self.d.ticker.start(400, self)
 
         return consumed
 
@@ -167,8 +167,8 @@ class FlickCharm(QObject):
             # elif data.state == FlickData.AutoScroll:
             #     count += 1
             #     data.speed = deaccelerate(data.speed)
-            #     p = scrollOffset(data.widget)
-            #     setScrollOffset(data.widget, p - data.speed)
+            #     # p = scrollOffset(data.widget)
+            #     # setScrollOffset(data.widget, p - data.speed, data.pressPos)
             #     if data.speed == QPoint(0, 0):
             #         data.state = FlickData.Steady
 
@@ -194,21 +194,26 @@ def setScrollOffset(widget, p, press=None):
         frame = widget.page().mainFrame()
         frame.evaluateJavaScript("window.scrollTo(%d,%d);" % (p.x(), p.y()))
     else:
-        if not press:
-            widget.horizontalScrollBar().setValue(p.x())
-            widget.verticalScrollBar().setValue(p.y())
+        # calc the percentage moved
+        maxvalue = widget.verticalScrollBar().maximum()
+        per = float(p.y()) / press.y() * 100
+        per = abs(per)
+        direction = "Down" if p.y() < 0 else "Up"
+        if per == 0.0:
+            return
+        y = (per * maxvalue / 100)
+        dela = y - widget.verticalScrollBar().value()
+        # print direction
+        # print "PER", per
+        # print "Y percent", y
+        # print "DELA", dela
+        # print "Current Y", widget.verticalScrollBar().value()
+        if direction == "Up":
+            y = widget.verticalScrollBar().value() - dela
         else:
-            # calc the percentage moved
-            maxvalue = widget.verticalScrollBar().maximum()
-            per = float(p.y()) / press.y() * 100
-            y = per * maxvalue / 100
-            # if y > maxvalue:
-            #     y = maxvalue
-            dela = y - widget.verticalScrollBar().value()
-            print dela
             y = widget.verticalScrollBar().value() + dela
-            print y
-            widget.verticalScrollBar().setValue(y)
+        widget.verticalScrollBar().setValue(y)
+        # print "New Y", widget.verticalScrollBar().value()
 
 
 def deaccelerate(speed, a=1, maxVal=64):
