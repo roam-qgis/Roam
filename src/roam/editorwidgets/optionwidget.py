@@ -1,5 +1,6 @@
+import math
 from PyQt4.QtCore import QSize
-from PyQt4.QtGui import QIcon, QPushButton, QWidget, QHBoxLayout, QButtonGroup
+from PyQt4.QtGui import QIcon, QPushButton, QWidget, QHBoxLayout, QButtonGroup, QVBoxLayout, QGridLayout
 
 from roam.editorwidgets.core import EditorWidget
 
@@ -18,48 +19,61 @@ class OptionWidget(EditorWidget):
         return widget
 
     def _buildfromlist(self, listconfig, multiselect):
+        def chunks(l, n):
+            """ Yield successive n-sized chunks from l.
+            """
+            for i in xrange(0, len(l), n):
+                yield l[i:i+n]
+
         items = listconfig['items']
-        for item in items:
-            parts = item.split(';')
-            data = parts[0]
-            try:
-                desc = parts[1]
-            except IndexError:
-                desc = data
+        wrap = self.config.get('wrap', 0)
+        if wrap > 0:
+            rows = list(chunks(items, wrap))
+        else:
+            rows = [items]
 
-            button = QPushButton()
-            button.setCheckable(multiselect)
-            self.group.setExclusive(not multiselect)
+        for rowcount, row in enumerate(rows):
+            for column, item in enumerate(row):
+                parts = item.split(';')
+                data = parts[0]
+                try:
+                    desc = parts[1]
+                except IndexError:
+                    desc = data
 
-            icon = QIcon()
-            try:
-                path = parts[2]
-                if path.startswith("#"):
-                    # Colour the button with the hex value
-                    style = """
-                        QPushButton:checked  {{
-                            border: 3px solid rgb(137, 175, 255);
-                        background-color: {colour};
-                        }}""".format(colour=path)
-                    button.setStyleSheet(style)
-                elif path.endswith("_icon"):
-                    icon = QIcon(":/icons/{}".format(path))
-                else:
-                    icon = QIcon(path)
-            except:
+                button = QPushButton()
+                button.setCheckable(multiselect)
+                self.group.setExclusive(not multiselect)
+
                 icon = QIcon()
+                try:
+                    path = parts[2]
+                    if path.startswith("#"):
+                        # Colour the button with the hex value
+                        style = """
+                            QPushButton:checked  {{
+                                border: 3px solid rgb(137, 175, 255);
+                            background-color: {colour};
+                            }}""".format(colour=path)
+                        button.setStyleSheet(style)
+                    elif path.endswith("_icon"):
+                        icon = QIcon(":/icons/{}".format(path))
+                    else:
+                        icon = QIcon(path)
+                except:
+                    icon = QIcon()
 
-            button.setCheckable(True)
-            button.setText(desc)
-            button.setProperty("value", data)
-            button.setIcon(icon)
-            button.setIconSize(QSize(24, 24))
-            self.widget.layout().addWidget(button)
-            self.group.addButton(button)
+                button.setCheckable(True)
+                button.setText(desc)
+                button.setProperty("value", data)
+                button.setIcon(icon)
+                button.setIconSize(QSize(24, 24))
+                self.widget.layout().addWidget(button, rowcount, column)
+                self.group.addButton(button)
 
     def initWidget(self, widget):
         if not widget.layout():
-            widget.setLayout(QHBoxLayout())
+            widget.setLayout(QGridLayout())
             widget.layout().setContentsMargins(0, 0, 0, 0)
 
     def updatefromconfig(self):
