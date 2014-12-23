@@ -59,6 +59,7 @@ class DateWidget(EditorWidget):
             pickbutton.setText("Select")
             pickbutton.setIconSize(QSize(24, 24))
             pickbutton.pressed.connect(self.showpickdialog)
+            self.datewidget.hide()
 
         if type(self.datewidget) is QDateEdit:
             self.datawidget.dateChanged.connect(self.emitvaluechanged)
@@ -104,6 +105,14 @@ class DateWidget(EditorWidget):
         self.largewidgetrequest.emit(BigDateWidget, self.value(),
                                      self.setvalue, config)
 
+    def set_date(self, value):
+        string = value.toString(Qt.SystemLocaleShortDate)
+        pickbutton = self.widget.findChild(QPushButton)
+        if pickbutton:
+            if not string:
+                string = "Select"
+            pickbutton.setText(string)
+
     def setvalue(self, value):
         if value is None:
             value = DateWidget.DEFAULTDATE
@@ -118,6 +127,8 @@ class DateWidget(EditorWidget):
 
         if hasattr(self.datewidget, 'setTime'):
             self.datewidget.setTime(value.time())
+
+        self.set_date(value)
 
     def value(self):
         datetime = self.datewidget.dateTime()
