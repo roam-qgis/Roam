@@ -106,7 +106,7 @@ class DateWidget(EditorWidget):
                                      self.setvalue, config)
 
     def set_date(self, value):
-        string = value.toString(Qt.ISODate)
+        string = value.toString(Qt.SystemLocaleShortDate)
         pickbutton = self.widget.findChild(QPushButton)
         if pickbutton:
             if not string:
