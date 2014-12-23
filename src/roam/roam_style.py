@@ -146,6 +146,32 @@ QTreeWidget#synctree {
 QTreeWidget#synctree::item {
     padding-top: 4px;
 }
+
+QScrollBar:vertical {
+  border: 2px solid grey;
+  background: rgba(80, 80, 80, 20);
+  width: 40px;
+  margin: 22px 0 22px 0;
+}
+QScrollBar::handle:vertical {
+  background: white;
+  min-height: 20px;
+}
+QScrollBar::add-line:vertical {
+  border: 2px solid grey;
+  background: rgba(80, 80, 80, 20);
+  height: 20px;
+  subcontrol-position: bottom;
+  subcontrol-origin: margin;
+}
+
+QScrollBar::sub-line:vertical {
+  border: 2px solid grey;
+  background: rgba(80, 80, 80, 20);
+  height: 20px;
+  subcontrol-position: top;
+  subcontrol-origin: margin;
+}
 """
 
 menubarstyle = """
@@ -180,6 +206,32 @@ QPushButton {
 	background-color: rgb(203, 203, 203, 50);
     padding: 6px;
     color: #4f4f4f;
+}
+
+QScrollBar:vertical {
+  border: 2px solid grey;
+  background: rgba(80, 80, 80, 20);
+  width: 40px;
+  margin: 22px 0 22px 0;
+}
+QScrollBar::handle:vertical {
+  background: white;
+  min-height: 20px;
+}
+QScrollBar::add-line:vertical {
+  border: 2px solid grey;
+  background: rgba(80, 80, 80, 20);
+  height: 20px;
+  subcontrol-position: bottom;
+  subcontrol-origin: margin;
+}
+
+QScrollBar::sub-line:vertical {
+  border: 2px solid grey;
+  background: rgba(80, 80, 80, 20);
+  height: 20px;
+  subcontrol-position: top;
+  subcontrol-origin: margin;
 }
 
 QPushButton:checked  {
