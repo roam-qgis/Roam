@@ -1,3 +1,5 @@
+import pynmea2
+
 from PyQt4.QtCore import QObject, pyqtSignal
 
 from qgis.core import (QgsGPSDetector, QgsGPSConnectionRegistry, QgsPoint, \
@@ -83,9 +85,14 @@ class GPSService(QObject):
     def _gpsfound(self, gpsConnection):
         log("GPS found")
         self.gpsConn = gpsConnection
-        self.gpsConn.stateChanged.connect(self.gpsStateChanged)
+        self.gpsConn.nmeaSentenceReceived.connect(self.parse_data)
+        # self.gpsConn.stateChanged.connect(self.gpsStateChanged)
         self.isConnected = True
         QgsGPSConnectionRegistry.instance().registerConnection(self.gpsConn)
+
+    def parse_data(self, datastring):
+        self.gpsStateChanged()
+
 
     def gpsStateChanged(self, gpsInfo):
         if gpsInfo.fixType == NMEA_FIX_BAD or gpsInfo.status == 0 or gpsInfo.quality == 0:
