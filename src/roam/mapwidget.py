@@ -5,7 +5,7 @@ from PyQt4.QtCore import Qt, pyqtSignal, QSize, QPropertyAnimation, QObject, pyq
 from PyQt4.QtGui import QActionGroup, QFrame, QWidget, QSizePolicy, \
                         QAction, QPixmap, QCursor, QIcon, QColor, QMainWindow, QPen
 
-from qgis.gui import QgsMapCanvas, QgsMapToolZoom, QgsRubberBand, QgsMapCanvasItem
+from qgis.gui import QgsMapCanvas, QgsMapToolZoom, QgsRubberBand, QgsMapCanvasItem, QgsScaleComboBox
 from qgis.core import QgsPalLabeling, QgsMapLayerRegistry, QgsMapLayer, QgsFeature, QGis, QgsRectangle, QgsProject, QgsApplication
 
 from roam.gps_action import GPSAction, GPSMarker
@@ -119,6 +119,7 @@ class MapWidget(Ui_CanvasWidget, QMainWindow):
         self.actionGPS = GPSAction(":/icons/gps", self.canvas, self)
         self.projecttoolbar.addAction(self.actionGPS)
 
+
         self.projecttoolbar.setContextMenuPolicy(Qt.CustomContextMenu)
 
         gpsspacewidget= QWidget()
@@ -150,6 +151,9 @@ class MapWidget(Ui_CanvasWidget, QMainWindow):
         RoamEvents.openfeatureform.connect(self.feature_form_loaded)
 
         self.connectButtons()
+
+    def updatescale(self):
+        self.canvas.zoomScale(1.0 / self.scalewidget.scale())
 
     def init_qgisproject(self, doc):
         parser = ProjectParser(doc)

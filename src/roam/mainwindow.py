@@ -34,7 +34,7 @@ from qgis.core import (QgsProjectBadLayerHandler,
 from qgis.gui import (QgsMessageBar,
                         QgsMapToolZoom,
                         QgsRubberBand,
-                        QgsMapCanvas)
+                        QgsMapCanvas, QgsScaleComboBox)
 
 
 from roam.dataentrywidget import DataEntryWidget
@@ -177,6 +177,13 @@ class MainWindow(ui_mainwindow.Ui_MainWindow, QMainWindow):
         self.statusbar.addWidget(spacer2)
         self.statusbar.addWidget(self.gpslabel)
 
+        self.scalewidget = QgsScaleComboBox()
+
+        self.scalebutton = QToolButton()
+        self.scalebutton.setMaximumHeight(self.statusbar.height())
+        self.scalebutton.setText("Scale")
+        self.statusbar.addPermanentWidget(self.scalebutton)
+
         self.menutoolbar.insertWidget(self.actionQuit, sidespacewidget2)
         self.spaceraction = self.menutoolbar.insertWidget(self.actionProject, sidespacewidget)
 
@@ -191,6 +198,7 @@ class MainWindow(ui_mainwindow.Ui_MainWindow, QMainWindow):
         self.infodock.hide()
         self.hidedataentry()
         self.canvas.extentsChanged.connect(self.updatestatuslabel)
+        self.canvas.scaleChanged.connect(self.updatestatuslabel)
 
         RoamEvents.openimage.connect(self.openimage)
         RoamEvents.openurl.connect(self.viewurl)
@@ -298,9 +306,12 @@ class MainWindow(ui_mainwindow.Ui_MainWindow, QMainWindow):
         self.show()
         self.canvas_page.settings_updated(settings)
 
-    def updatestatuslabel(self):
+    def updatestatuslabel(self, *args):
         extent = self.canvas.extent()
         self.positionlabel.setText("Map Center: {}".format(extent.center().toString()))
+        scale = 1.0 / self.canvas.scale()
+        scale = self.scalewidget.toString(scale)
+        self.scalebutton.setText(scale)
 
     def on_geometryedit(self, form, feature):
         layer = form.QGISLayer
@@ -536,6 +547,7 @@ class MainWindow(ui_mainwindow.Ui_MainWindow, QMainWindow):
         self.showmap()
         self.set_projectbuttons(True)
         self.dataentrywidget.project = self.project
+        self.scalewidget.updateScales()
         RoamEvents.projectloaded.emit(self.project)
 
     def clear_plugins(self):
