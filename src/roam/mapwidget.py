@@ -1,9 +1,12 @@
 from functools import partial
 from collections import defaultdict
 
-from PyQt4.QtCore import Qt, pyqtSignal, QSize, QPropertyAnimation, QObject, pyqtProperty, QEasingCurve, QThread
+from PyQt4.QtCore import Qt, pyqtSignal, QSize, QPropertyAnimation, QObject, pyqtProperty, QEasingCurve, QThread, \
+                         QRectF
 from PyQt4.QtGui import QActionGroup, QFrame, QWidget, QSizePolicy, \
                         QAction, QPixmap, QCursor, QIcon, QColor, QMainWindow, QPen
+
+from PyQt4.QtSvg import QGraphicsSvgItem
 
 from qgis.gui import QgsMapCanvas, QgsMapToolZoom, QgsRubberBand, QgsMapCanvasItem, QgsScaleComboBox
 from qgis.core import QgsPalLabeling, QgsMapLayerRegistry, QgsMapLayer, QgsFeature, QGis, QgsRectangle, QgsProject, QgsApplication
@@ -119,6 +122,11 @@ class MapWidget(Ui_CanvasWidget, QMainWindow):
         self.actionGPS = GPSAction(":/icons/gps", self.canvas, self)
         self.projecttoolbar.addAction(self.actionGPS)
 
+        self.northarrow = QGraphicsSvgItem(":/icons/north")
+        self.northarrow.setPos(10, 10)
+        self.canvas.scene().addItem(self.northarrow)
+
+        #TODO adjust north arrow based on true north
 
         self.projecttoolbar.setContextMenuPolicy(Qt.CustomContextMenu)
 
