@@ -50,6 +50,7 @@ from roam.api import RoamEvents, GPS, RoamInterface, plugins
 from roam.ui import ui_mainwindow
 from PyQt4.QtGui import QMainWindow
 from roam.gpslogging import GPSLogging
+from biglist import BigList
 
 
 import roam.messagebaritems
@@ -181,8 +182,17 @@ class MainWindow(ui_mainwindow.Ui_MainWindow, QMainWindow):
 
         self.scalebutton = QToolButton()
         self.scalebutton.setMaximumHeight(self.statusbar.height())
+        self.scalebutton.pressed.connect(self.selectscale)
         self.scalebutton.setText("Scale")
         self.statusbar.addPermanentWidget(self.scalebutton)
+
+        self.scalelist = BigList(parent=self.canvas, centeronparent=True, showsave=False)
+        self.scalelist.hide()
+        self.scalelist.setlabel("Map Scale")
+        self.scalelist.setmodel(self.scalewidget.model())
+        self.scalelist.closewidget.connect(self.scalelist.close)
+        self.scalelist.itemselected.connect(self.update_scale_from_item)
+        self.scalelist.itemselected.connect(self.scalelist.close)
 
         self.menutoolbar.insertWidget(self.actionQuit, sidespacewidget2)
         self.spaceraction = self.menutoolbar.insertWidget(self.actionProject, sidespacewidget)
@@ -216,6 +226,13 @@ class MainWindow(ui_mainwindow.Ui_MainWindow, QMainWindow):
         self.legendpage.showmap.connect(self.showmap)
 
         self.currentselection = {}
+
+    def update_scale_from_item(self, index):
+        scale, _ = self.scalewidget.toDouble(index.data(Qt.DisplayRole))
+        self.canvas.zoomScale(1.0 / scale)
+
+    def selectscale(self):
+        self.scalelist.show()
 
     def set_projectbuttons(self, visible):
         for action in self.projectbuttons:
@@ -547,7 +564,12 @@ class MainWindow(ui_mainwindow.Ui_MainWindow, QMainWindow):
         self.showmap()
         self.set_projectbuttons(True)
         self.dataentrywidget.project = self.project
-        self.scalewidget.updateScales()
+        projectscales, _ = QgsProject.instance().readBoolEntry("Scales", "/useProjectScales")
+        if projectscales:
+            projectscales, _ = QgsProject.instance().readListEntry("Scales", "/ScalesList")
+            self.scalewidget.updateScales(projectscales)
+        else:
+            self.scalewidget.updateScales()
         RoamEvents.projectloaded.emit(self.project)
 
     def clear_plugins(self):
