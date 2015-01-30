@@ -140,6 +140,7 @@ class ScaleBarItem(QGraphicsItem):
         sizelabel = QLocale.system().toString(realSize)
         sizelabel = "{} {}".format(sizelabel, label)
 
+        barwidth = self._adjust_bar_size(barwidth, mapunits)
         barwidth = barwidth + fontwidth
 
         return barwidth, realSize, sizelabel, (fontwidth, fontheight)
@@ -173,6 +174,15 @@ class ScaleBarItem(QGraphicsItem):
                 return "degrees", currentsize
         else:
             return str(unit), currentsize
+
+    def _adjust_bar_size(self, barsize, unit):
+        if unit == QGis.Feet:
+            if barsize > 5280.0 or barsize == 5280.0:
+                return (barsize * 5290) / 5000
+            elif barsize < 1:
+                return (barsize * 10) / 12
+
+        return barsize
 
 
 class CurrentSelection(QgsRubberBand):
