@@ -84,7 +84,6 @@ class ScaleBarItem(QGraphicsItem):
             painter.drawLine(x2, y2, x3, y3)
             painter.drawLine(x3, y3, x4, y4)
 
-
         # Draw the text
         fontwidth = self.metrics.width("0")
         fontheight = self.metrics.height()
@@ -112,7 +111,10 @@ class ScaleBarItem(QGraphicsItem):
         canvaswidth = self.canvas.width()
         mapunitsperpixel = abs(self.canvas.mapUnitsPerPixel())
         mapunits = self.canvas.mapUnits()
-        mapunitsperpixel *= QGis.fromUnitToUnitFactor(mapunits, QGis.Meters)
+        prefered_units = roam.config.settings.get("prefer_units", "meters")
+        newunits = QGis.fromLiteral(prefered_units, QGis.Meters)
+        mapunitsperpixel *= QGis.fromUnitToUnitFactor(mapunits, newunits)
+        mapunits = newunits
 
         # Convert the real distance into pixels
         barwidth = realSize / mapunitsperpixel
@@ -152,6 +154,23 @@ class ScaleBarItem(QGraphicsItem):
                 return "cm", currentsize * 100
             else:
                 return "m", currentsize
+        elif unit == QGis.Feet:
+            print currentsize
+            if currentsize > 5280.0:
+                return "miles", currentsize / 5000
+            elif currentsize == 5280.0:
+                return "mile", currentsize / 5000
+            elif currentsize < 1:
+                return "inches", currentsize * 10
+            elif currentsize == 1.0:
+                return "foot", currentsize
+            else:
+                return "feet", currentsize
+        elif unit == QGis.Degrees:
+            if currentsize == 1.0:
+                return "degree", currentsize
+            else:
+                return "degrees", currentsize
         else:
             return str(unit), currentsize
 
