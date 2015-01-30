@@ -181,6 +181,7 @@ class MainWindow(ui_mainwindow.Ui_MainWindow, QMainWindow):
         self.scalewidget = QgsScaleComboBox()
 
         self.scalebutton = QToolButton()
+        self.scalebutton.setAutoRaise(True)
         self.scalebutton.setMaximumHeight(self.statusbar.height())
         self.scalebutton.pressed.connect(self.selectscale)
         self.scalebutton.setText("Scale")

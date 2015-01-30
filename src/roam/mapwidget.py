@@ -34,9 +34,15 @@ class ScaleBarItem(QGraphicsItem):
         super(ScaleBarItem, self).__init__(parent)
         self.canvas = canvas
         self.realsize = 100
-        self.pens = [QPen(Qt.white, 8), QPen(Qt.black, 4)]
-        self.whitepen = QPen(Qt.white, 1)
-        self.blackbrush = QBrush(Qt.black)
+        black = QColor(Qt.black)
+        black.setAlpha(150)
+        white = QColor(Qt.white)
+        white.setAlpha(150)
+        blackpen = QPen(black, 4)
+        whitepen = QPen(white, 8)
+        self.pens = [whitepen, blackpen]
+        self.whitepen = QPen(white, 1)
+        self.blackbrush = QBrush(black)
         self.ticksize = 10
         self.fontsize = 15
         self.font = QFont()
