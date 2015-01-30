@@ -75,6 +75,7 @@ class ScaleBarItem(QGraphicsItem):
         x1, y1 = originx, originy
         x2, y2 = originx, originy + self.ticksize
         x3, y3 = originx + width, originy + self.ticksize
+        midx, midy = originx + width /2, originy + self.ticksize / 2
         x4, y4 = originx + width, originy
 
         for pen in self.pens:
@@ -83,6 +84,7 @@ class ScaleBarItem(QGraphicsItem):
             painter.drawLine(x1, y1, x2, y2)
             painter.drawLine(x2, y2, x3, y3)
             painter.drawLine(x3, y3, x4, y4)
+            painter.drawLine(midx, midy, midx, y1)
 
         # Draw the text
         fontwidth = self.metrics.width("0")
