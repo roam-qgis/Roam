@@ -1,15 +1,16 @@
+import math
 from functools import partial
 from collections import defaultdict
 
 from PyQt4.QtCore import Qt, pyqtSignal, QSize, QPropertyAnimation, QObject, pyqtProperty, QEasingCurve, QThread, \
-                         QRectF
+                         QRectF, QLocale, QPointF
 from PyQt4.QtGui import QActionGroup, QFrame, QWidget, QSizePolicy, \
-                        QAction, QPixmap, QCursor, QIcon, QColor, QMainWindow, QPen
+                        QAction, QPixmap, QCursor, QIcon, QColor, QMainWindow, QPen, QGraphicsItem, QPolygon, QFont, QFontMetrics, QBrush, QPainterPath, QPainter
 
 from PyQt4.QtSvg import QGraphicsSvgItem
 
 from qgis.gui import QgsMapCanvas, QgsMapToolZoom, QgsRubberBand, QgsMapCanvasItem, QgsScaleComboBox
-from qgis.core import QgsPalLabeling, QgsMapLayerRegistry, QgsMapLayer, QgsFeature, QGis, QgsRectangle, QgsProject, QgsApplication
+from qgis.core import QgsPalLabeling, QgsMapLayerRegistry, QgsMapLayer, QgsFeature, QGis, QgsRectangle, QgsProject, QgsApplication, QgsComposerScaleBar
 
 from roam.gps_action import GPSAction, GPSMarker
 from roam.projectparser import ProjectParser
@@ -26,6 +27,133 @@ try:
 except ImportError:
     from qgis.gui import QgsMapToolPan
     PanTool = QgsMapToolPan
+
+
+class ScaleBarItem(QGraphicsItem):
+    def __init__(self, canvas, parent=None):
+        super(ScaleBarItem, self).__init__(parent)
+        self.canvas = canvas
+        self.realsize = 100
+        self.pens = [QPen(Qt.white, 8), QPen(Qt.black, 4)]
+        self.whitepen = QPen(Qt.white, 1)
+        self.blackbrush = QBrush(Qt.black)
+        self.ticksize = 10
+        self.fontsize = 15
+        self.font = QFont()
+        self.font.setPointSize(self.fontsize)
+        self.font.setStyleHint(QFont.Times, QFont.PreferAntialias)
+        self.font.setBold(True)
+        self.metrics = QFontMetrics(self.font)
+
+    def boundingRect(self):
+        try:
+            width, realsize, label, fontsize = self._calc_size()
+            halfheight = (self.ticksize + fontsize[1]) / 2
+            halfwidth = (width + fontsize[0]) / 2
+            return QRectF(-halfwidth, -halfheight, halfwidth, halfheight)
+        except ZeroDivisionError:
+            return QRectF()
+
+    def paint(self, painter, styleoptions, widget=None):
+        try:
+            width, realsize, label, fontsize = self._calc_size()
+        except ZeroDivisionError:
+            return
+
+        mapunits = self.canvas.mapUnits()
+
+        # painter.drawRect(self.boundingRect())
+        array = QPolygon()
+        canvasheight = self.canvas.height()
+        canvaswidth = self.canvas.width()
+        margin = 20
+        originy = 0
+        originx = 0
+
+        self.setPos(margin, canvasheight - margin)
+
+        x1, y1 = originx, originy
+        x2, y2 = originx, originy + self.ticksize
+        x3, y3 = originx + width, originy + self.ticksize
+        x4, y4 = originx + width, originy
+
+        for pen in self.pens:
+            painter.setPen(pen)
+            # Drwa the scale bar
+            painter.drawLine(x1, y1, x2, y2)
+            painter.drawLine(x2, y2, x3, y3)
+            painter.drawLine(x3, y3, x4, y4)
+
+
+        # Draw the text
+        fontwidth = self.metrics.width("0")
+        fontheight = self.metrics.height()
+        fontheight /= 2
+        fontwidth /= 2
+        path = QPainterPath()
+        point = QPointF(x1 - fontwidth, y1 - fontheight)
+        path.addText(point, self.font, "0")
+        painter.setPen(self.whitepen)
+        painter.setBrush(self.blackbrush)
+        painter.setRenderHints(QPainter.Antialiasing)
+        painter.setFont(self.font)
+        painter.drawPath(path)
+
+        fontwidth = self.metrics.width(label)
+        fontheight = self.metrics.height()
+        fontheight /= 2
+        fontwidth /= 2
+        point = QPointF(x4 - fontwidth, y4 - fontheight)
+        path.addText(point, self.font, label)
+        painter.drawPath(path)
+
+    def _calc_size(self):
+        realSize = self.realsize
+        canvaswidth = self.canvas.width()
+        mapunitsperpixel = abs(self.canvas.mapUnitsPerPixel())
+        mapunits = self.canvas.mapUnits()
+        mapunitsperpixel *= QGis.fromUnitToUnitFactor(mapunits, QGis.Meters)
+
+        # Convert the real distance into pixels
+        barwidth = realSize / mapunitsperpixel
+
+        if barwidth < 30:
+            barwidth = canvaswidth / 4
+
+        while barwidth > canvaswidth / 3:
+            barwidth /= 3
+
+        realSize = barwidth * mapunitsperpixel
+
+        # Round
+        powerof10 = math.floor(math.log10(realSize))
+        scaler = math.pow(10.0, powerof10)
+        realSize = round(realSize / scaler) * scaler
+        barwidth = realSize / mapunitsperpixel
+        label, realSize = self._label_size(mapunits, realSize)
+        metrics = QFontMetrics(self.font)
+        fontwidth = metrics.width(label)
+        fontheight = metrics.height()
+
+        sizelabel = QLocale.system().toString(realSize)
+        sizelabel = "{} {}".format(sizelabel, label)
+
+        barwidth = barwidth + fontwidth
+
+        return barwidth, realSize, sizelabel, (fontwidth, fontheight)
+
+    def _label_size(self, unit, currentsize):
+        if unit == QGis.Meters:
+            if currentsize > 1000:
+                return "km", currentsize / 1000
+            elif currentsize < 0.01:
+                return "mm", currentsize * 1000
+            elif currentsize < 0.1:
+                return "cm", currentsize * 100
+            else:
+                return "m", currentsize
+        else:
+            return str(unit), currentsize
 
 
 class CurrentSelection(QgsRubberBand):
@@ -125,6 +253,9 @@ class MapWidget(Ui_CanvasWidget, QMainWindow):
         self.northarrow = QGraphicsSvgItem(":/icons/north")
         self.northarrow.setPos(10, 10)
         self.canvas.scene().addItem(self.northarrow)
+
+        self.scalebar = ScaleBarItem(self.canvas)
+        self.canvas.scene().addItem(self.scalebar)
 
         #TODO adjust north arrow based on true north
 
@@ -337,6 +468,7 @@ class MapWidget(Ui_CanvasWidget, QMainWindow):
 
         self.canvas.freeze(False)
         self.canvas.refresh()
+        self.scalebar.update()
 
     def setMapTool(self, tool, *args):
         self.canvas.setMapTool(tool)
