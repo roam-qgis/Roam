@@ -3,14 +3,15 @@ from functools import partial
 from collections import defaultdict
 
 from PyQt4.QtCore import Qt, pyqtSignal, QSize, QPropertyAnimation, QObject, pyqtProperty, QEasingCurve, QThread, \
-                         QRectF, QLocale, QPointF
+                         QRectF, QLocale, QPointF, QPoint
 from PyQt4.QtGui import QActionGroup, QFrame, QWidget, QSizePolicy, \
                         QAction, QPixmap, QCursor, QIcon, QColor, QMainWindow, QPen, QGraphicsItem, QPolygon, QFont, QFontMetrics, QBrush, QPainterPath, QPainter
 
 from PyQt4.QtSvg import QGraphicsSvgItem
 
 from qgis.gui import QgsMapCanvas, QgsMapToolZoom, QgsRubberBand, QgsMapCanvasItem, QgsScaleComboBox
-from qgis.core import QgsPalLabeling, QgsMapLayerRegistry, QgsMapLayer, QgsFeature, QGis, QgsRectangle, QgsProject, QgsApplication, QgsComposerScaleBar
+from qgis.core import QgsPalLabeling, QgsMapLayerRegistry, QgsMapLayer, QgsFeature, QGis, QgsRectangle, QgsProject, QgsApplication, QgsComposerScaleBar, \
+                      QgsCoordinateReferenceSystem, QgsCoordinateTransform, QgsPoint, QgsCsException, QgsDistanceArea
 
 from roam.gps_action import GPSAction, GPSMarker
 from roam.projectparser import ProjectParser
@@ -27,6 +28,53 @@ try:
 except ImportError:
     from qgis.gui import QgsMapToolPan
     PanTool = QgsMapToolPan
+
+
+class NorthArrow(QGraphicsSvgItem):
+    def __init__(self, path, canvas, parent=None):
+        super(NorthArrow, self).__init__(path, parent)
+        self.canvas = canvas
+        self.setTransformOriginPoint(self.boundingRect().width() /2, self.boundingRect().height() /2)
+
+    def paint(self, painter, styleoptions, widget=None):
+        super(NorthArrow, self).paint(painter, styleoptions, widget)
+        angle = self._calc_north()
+        print angle
+        self.setRotation(angle)
+
+    def _calc_north(self):
+        extent = self.canvas.extent()
+        if self.canvas.layerCount() == 0 or extent.isEmpty():
+            print "No layers or extent"
+            return 0
+
+        outcrs = self.canvas.mapSettings().destinationCrs()
+
+        if outcrs.isValid() and not outcrs.geographicFlag():
+            crs = QgsCoordinateReferenceSystem()
+            crs.createFromOgcWmsCrs("EPSG:4326")
+
+            transform = QgsCoordinateTransform(outcrs, crs)
+
+            p1 = QgsPoint(extent.center())
+            p2 = QgsPoint(p1.x(), p1.y() + extent.height() * 0.25)
+
+            try:
+                pp1 = transform.transform(p1)
+                pp2 = transform.transform(p2)
+            except QgsCsException:
+                roam.utils.warning("North arrow. Error transforming.")
+                return 0
+
+            area = QgsDistanceArea()
+            area.setEllipsoid(crs.ellipsoidAcronym())
+            area.setEllipsoidalMode(True)
+            area.setSourceCrs(crs)
+            distance, angle, _ = area.computeDistanceBearing(pp1, pp2)
+            angle = math.degrees(angle)
+            return angle
+        else:
+            return 0
 
 
 class ScaleBarItem(QGraphicsItem):
@@ -287,7 +335,7 @@ class MapWidget(Ui_CanvasWidget, QMainWindow):
         self.actionGPS = GPSAction(":/icons/gps", self.canvas, self)
         self.projecttoolbar.addAction(self.actionGPS)
 
-        self.northarrow = QGraphicsSvgItem(":/icons/north")
+        self.northarrow = NorthArrow(":/icons/north", self.canvas)
         self.northarrow.setPos(10, 10)
         self.canvas.scene().addItem(self.northarrow)
 
