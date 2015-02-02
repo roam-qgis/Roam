@@ -37,10 +37,10 @@ class NorthArrow(QGraphicsSvgItem):
         self.setTransformOriginPoint(self.boundingRect().width() /2, self.boundingRect().height() /2)
 
     def paint(self, painter, styleoptions, widget=None):
-        super(NorthArrow, self).paint(painter, styleoptions, widget)
         angle = self._calc_north()
-        print angle
-        self.setRotation(angle)
+        if angle:
+            self.setRotation(angle)
+        super(NorthArrow, self).paint(painter, styleoptions, widget)
 
     def _calc_north(self):
         extent = self.canvas.extent()
@@ -64,7 +64,7 @@ class NorthArrow(QGraphicsSvgItem):
                 pp2 = transform.transform(p2)
             except QgsCsException:
                 roam.utils.warning("North arrow. Error transforming.")
-                return 0
+                return None
 
             area = QgsDistanceArea()
             area.setEllipsoid(crs.ellipsoidAcronym())
