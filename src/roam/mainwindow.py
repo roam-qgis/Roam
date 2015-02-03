@@ -570,7 +570,9 @@ class MainWindow(ui_mainwindow.Ui_MainWindow, QMainWindow):
             projectscales, _ = QgsProject.instance().readListEntry("Scales", "/ScalesList")
             self.scalewidget.updateScales(projectscales)
         else:
-            self.scalewidget.updateScales()
+            scales = ["1:1000000", "1:500000", "1:250000", "1:100000", "1:50000", "1:25000", "1:10000", "1:5000",
+                      "1:2500", "1:1000", "1:500", "1:250", "1:200", "1:100"]
+            self.scalewidget.updateScales(scales)
         RoamEvents.projectloaded.emit(self.project)
 
     def clear_plugins(self):
