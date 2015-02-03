@@ -119,9 +119,9 @@ class GPSService(QObject):
     def extract_rmc(self, data):
         self.info.latitude = data.latitude
         self.info.longitude = data.longitude
-        self.info.speed = KNOTS_TO_KM * data.spd_over_grnd
+        self.info.speed = KNOTS_TO_KM * safe_float(data.spd_over_grnd)
         self.info.status = data.data_validity
-        self.info.direction = float(data.true_course) if not data.true_course is None else 0
+        self.info.direction = safe_float(data.true_course)
         date = QDate(data.datestamp.year, data.datestamp.month, data.datestamp.day)
         time = QTime(data.timestamp.hour, data.timestamp.minute, data.timestamp.second)
         dt = QDateTime()

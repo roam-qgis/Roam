@@ -61,6 +61,18 @@ def test_extact_rmc_returns_correct_info():
     assert info.direction == 0
     assert info.utcDateTime == QDateTime(2015, 1, 27, 3, 36, 15, 0, Qt.UTC)
 
+def test_extact_rmc_handles_empty_values():
+    gps = GPSService()
+    msg = "$GNRMC,033523.00,V,,,,,,,270115,,,N*67"
+    data = pynmea2.parse(msg)
+    info = gps.extract_rmc(data)
+    assert info.longitude == 0.0
+    assert info.latitude == 0.0
+    assert info.speed == 0.0
+    assert info.status == "V"
+    assert info.direction == 0
+    assert info.utcDateTime == QDateTime(2015, 1, 27, 3, 35, 23, 0, Qt.UTC)
+
 def test_extact_gga_returns_correct_info():
     gps = GPSService()
     msg = "$GNGGA,033534.00,3157.10551,S,11549.43027,E,1,05,1.69,43.4,M,-30.8,M,,*49"
