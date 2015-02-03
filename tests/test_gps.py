@@ -108,3 +108,25 @@ def test_extact_vtg_handles_empty_values():
     data = pynmea2.parse(msg)
     info = gps.extract_vtg(data)
     assert info.speed == 0.0
+
+def test_extact_gsa_returns_correct_info():
+    gps = GPSService()
+    msg = "$GNGSA,A,3,80,79,73,82,,,,,,,,,1.75,1.09,1.37*1A"
+    data = pynmea2.parse(msg)
+    info = gps.extract_gsa(data)
+    assert info.hdop == 1.09
+    assert info.pdop == 1.75
+    assert info.vdop == 1.37
+    assert info.fixMode == "A"
+    assert info.fixType == 3
+
+def test_extact_gsa_handles_empty_values():
+    gps = GPSService()
+    msg = "$GNGSA,A,1,,,,,,,,,,,,,,,*00"
+    data = pynmea2.parse(msg)
+    info = gps.extract_gsa(data)
+    assert info.hdop == 0.0
+    assert info.pdop == 0.0
+    assert info.vdop == 0.0
+    assert info.fixMode == "A"
+    assert info.fixType == 1

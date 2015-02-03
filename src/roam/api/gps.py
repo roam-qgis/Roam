@@ -16,8 +16,14 @@ KNOTS_TO_KM = 1.852
 def safe_float(value):
     try:
         return float(value)
-    except TypeError:
+    except (TypeError, ValueError):
         return 0.0
+
+def safe_int(value):
+    try:
+        return int(value)
+    except (TypeError, ValueError):
+        return 0
 
 
 class GPSService(QObject):
@@ -103,15 +109,25 @@ class GPSService(QObject):
         mappings = {"RMS": self.extract_rmc,
                     "GGA": self.extract_gga,
                     "GSV": self.extract_gsv,
-                    "VTG": self.extract_vtg}
+                    "VTG": self.extract_vtg,
+                    "GSA": self.extract_gsa}
         try:
             mappings[data.sentence_type](data)
+            self.gpsStateChanged(self.info)
         except KeyError:
             log("{} not currently handled".format(data.sentence_type))
             pass
 
     def extract_vtg(self, data):
         self.info.speed = safe_float(data.spd_over_grnd_kmph)
+        return self.info
+
+    def extract_gsa(self, data):
+        self.info.hdop = safe_float(data.hdop)
+        self.info.pdop = safe_float(data.pdop)
+        self.info.vdop = safe_float(data.vdop)
+        self.info.fixMode = data.mode
+        self.info.fixType = safe_int(data.mode_fix_type)
         return self.info
 
     def extract_gsv(self, data):
