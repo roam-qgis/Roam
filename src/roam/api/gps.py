@@ -101,12 +101,21 @@ class GPSService(QObject):
     def parse_data(self, datastring):
         data = pynmea2.parse(datastring)
         mappings = {"RMS": self.extract_rmc,
-                    "GGA": self.extract_gga}
+                    "GGA": self.extract_gga,
+                    "GSV": self.extract_gsv,
+                    "VTG": self.extract_vtg}
         try:
             mappings[data.sentence_type](data)
         except KeyError:
             log("{} not currently handled".format(data.sentence_type))
             pass
+
+    def extract_vtg(self, data):
+        self.info.speed = safe_float(data.spd_over_grnd_kmph)
+        return self.info
+
+    def extract_gsv(self, data):
+        pass
 
     def extract_gga(self, data):
         self.info.latitude = data.latitude

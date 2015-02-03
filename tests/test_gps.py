@@ -95,3 +95,16 @@ def test_extact_gga_handles_empty_values():
     assert info.quality == 0
     assert info.satellitesUsed == 3
 
+def test_extact_vtg_returns_correct_info():
+    gps = GPSService()
+    msg = "$GNVTG,,T,,M,0.148,N,0.274,K,A*31"
+    data = pynmea2.parse(msg)
+    info = gps.extract_vtg(data)
+    assert info.speed == 0.274
+
+def test_extact_vtg_handles_empty_values():
+    gps = GPSService()
+    msg = "$GNVTG,,,,,,,,,N*2E"
+    data = pynmea2.parse(msg)
+    info = gps.extract_vtg(data)
+    assert info.speed == 0.0
