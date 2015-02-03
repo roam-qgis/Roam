@@ -5,7 +5,7 @@ from PyQt4.QtCore import QObject, pyqtSignal, QDate, QDateTime, QTime, Qt
 from qgis.core import (QgsGPSDetector, QgsGPSConnectionRegistry, QgsPoint, \
                         QgsCoordinateTransform, QgsCoordinateReferenceSystem, \
                         QgsGPSInformation, QgsCsException)
-from roam.utils import log
+from roam.utils import log, info
 
 NMEA_FIX_BAD = 1
 NMEA_FIX_2D = 2
@@ -106,7 +106,7 @@ class GPSService(QObject):
 
     def parse_data(self, datastring):
         data = pynmea2.parse(datastring)
-        mappings = {"RMS": self.extract_rmc,
+        mappings = {"RMC": self.extract_rmc,
                     "GGA": self.extract_gga,
                     "GSV": self.extract_gsv,
                     "VTG": self.extract_vtg,
@@ -115,7 +115,7 @@ class GPSService(QObject):
             mappings[data.sentence_type](data)
             self.gpsStateChanged(self.info)
         except KeyError:
-            log("{} not currently handled".format(data.sentence_type))
+            info("{} message not currently handled".format(data.sentence_type))
             pass
 
     def extract_vtg(self, data):

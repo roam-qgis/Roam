@@ -1,3 +1,4 @@
+import os
 import pynmea2
 import pytest
 
@@ -5,7 +6,17 @@ import roam.api.gps as gps
 
 from PyQt4.QtCore import QDateTime, Qt
 from roam.api.gps import GPSService
-from qgis.core import QgsPoint, QgsGPSInformation
+from qgis.core import QgsPoint, QgsGPSInformation, QgsCoordinateReferenceSystem
+
+
+def data(name):
+    """
+    Return the full path from the data folder with the given name
+    :param name: The name of the file to return
+    :return: The full path of the given file from the data folder
+    """
+    f = os.path.join(os.path.dirname(__file__), "data", name)
+    return f
 
 @pytest.fixture
 def gpsservice():
@@ -130,3 +141,19 @@ def test_extact_gsa_handles_empty_values():
     assert info.vdop == 0.0
     assert info.fixMode == "A"
     assert info.fixType == 1
+
+
+def test_glonass_parse_from_file():
+    def update(pos, info):
+        pass
+
+    gps = GPSService()
+    gps.gpsposition.connect(update)
+    wgs84CRS = QgsCoordinateReferenceSystem(4326)
+    gps.crs = wgs84CRS
+    with open(data("glonass_gps_log.nmea"), "r") as f:
+        for line in f:
+            line = line.strip("\n")
+            gps.parse_data(line)
+
+
