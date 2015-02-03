@@ -1,6 +1,6 @@
 import pynmea2
 
-from PyQt4.QtCore import QObject, pyqtSignal
+from PyQt4.QtCore import QObject, pyqtSignal, QDate, QDateTime, QTime, Qt
 
 from qgis.core import (QgsGPSDetector, QgsGPSConnectionRegistry, QgsPoint, \
                         QgsCoordinateTransform, QgsCoordinateReferenceSystem, \
@@ -10,6 +10,14 @@ from roam.utils import log
 NMEA_FIX_BAD = 1
 NMEA_FIX_2D = 2
 NMEA_FIX_3D = 3
+
+KNOTS_TO_KM = 1.852
+
+def safe_float(value):
+    try:
+        return float(value)
+    except TypeError:
+        return 0.0
 
 
 class GPSService(QObject):
@@ -91,7 +99,36 @@ class GPSService(QObject):
         QgsGPSConnectionRegistry.instance().registerConnection(self.gpsConn)
 
     def parse_data(self, datastring):
-        self.gpsStateChanged()
+        data = pynmea2.parse(datastring)
+        mappings = {"RMS": self.extract_rmc,
+                    "GGA": self.extract_gga}
+        try:
+            mappings[data.sentence_type](data)
+        except KeyError:
+            log("{} not currently handled".format(data.sentence_type))
+            pass
+
+    def extract_gga(self, data):
+        self.info.latitude = data.latitude
+        self.info.longitude = data.longitude
+        self.info.elevation = safe_float(data.altitude)
+        self.info.quality = int(data.gps_qual)
+        self.info.satellitesUsed = int(data.num_sats)
+        return self.info
+
+    def extract_rmc(self, data):
+        self.info.latitude = data.latitude
+        self.info.longitude = data.longitude
+        self.info.speed = KNOTS_TO_KM * data.spd_over_grnd
+        self.info.status = data.data_validity
+        self.info.direction = float(data.true_course) if not data.true_course is None else 0
+        date = QDate(data.datestamp.year, data.datestamp.month, data.datestamp.day)
+        time = QTime(data.timestamp.hour, data.timestamp.minute, data.timestamp.second)
+        dt = QDateTime()
+        self.info.utcDateTime.setTimeSpec(Qt.UTC)
+        self.info.utcDateTime.setDate(date)
+        self.info.utcDateTime.setTime(time)
+        return self.info
 
 
     def gpsStateChanged(self, gpsInfo):
