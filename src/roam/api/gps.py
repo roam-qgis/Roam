@@ -1,13 +1,29 @@
-from PyQt4.QtCore import QObject, pyqtSignal
+import pynmea2
+
+from PyQt4.QtCore import QObject, pyqtSignal, QDate, QDateTime, QTime, Qt
 
 from qgis.core import (QgsGPSDetector, QgsGPSConnectionRegistry, QgsPoint, \
                         QgsCoordinateTransform, QgsCoordinateReferenceSystem, \
                         QgsGPSInformation, QgsCsException)
-from roam.utils import log
+from roam.utils import log, info
 
 NMEA_FIX_BAD = 1
 NMEA_FIX_2D = 2
 NMEA_FIX_3D = 3
+
+KNOTS_TO_KM = 1.852
+
+def safe_float(value):
+    try:
+        return float(value)
+    except (TypeError, ValueError):
+        return 0.0
+
+def safe_int(value):
+    try:
+        return int(value)
+    except (TypeError, ValueError):
+        return 0
 
 
 class GPSService(QObject):
@@ -83,9 +99,62 @@ class GPSService(QObject):
     def _gpsfound(self, gpsConnection):
         log("GPS found")
         self.gpsConn = gpsConnection
-        self.gpsConn.stateChanged.connect(self.gpsStateChanged)
+        self.gpsConn.nmeaSentenceReceived.connect(self.parse_data)
+        # self.gpsConn.stateChanged.connect(self.gpsStateChanged)
         self.isConnected = True
         QgsGPSConnectionRegistry.instance().registerConnection(self.gpsConn)
+
+    def parse_data(self, datastring):
+        data = pynmea2.parse(datastring)
+        mappings = {"RMC": self.extract_rmc,
+                    "GGA": self.extract_gga,
+                    "GSV": self.extract_gsv,
+                    "VTG": self.extract_vtg,
+                    "GSA": self.extract_gsa}
+        try:
+            mappings[data.sentence_type](data)
+            self.gpsStateChanged(self.info)
+        except KeyError:
+            info("{} message not currently handled".format(data.sentence_type))
+            pass
+
+    def extract_vtg(self, data):
+        self.info.speed = safe_float(data.spd_over_grnd_kmph)
+        return self.info
+
+    def extract_gsa(self, data):
+        self.info.hdop = safe_float(data.hdop)
+        self.info.pdop = safe_float(data.pdop)
+        self.info.vdop = safe_float(data.vdop)
+        self.info.fixMode = data.mode
+        self.info.fixType = safe_int(data.mode_fix_type)
+        return self.info
+
+    def extract_gsv(self, data):
+        pass
+
+    def extract_gga(self, data):
+        self.info.latitude = data.latitude
+        self.info.longitude = data.longitude
+        self.info.elevation = safe_float(data.altitude)
+        self.info.quality = int(data.gps_qual)
+        self.info.satellitesUsed = int(data.num_sats)
+        return self.info
+
+    def extract_rmc(self, data):
+        self.info.latitude = data.latitude
+        self.info.longitude = data.longitude
+        self.info.speed = KNOTS_TO_KM * safe_float(data.spd_over_grnd)
+        self.info.status = data.data_validity
+        self.info.direction = safe_float(data.true_course)
+        date = QDate(data.datestamp.year, data.datestamp.month, data.datestamp.day)
+        time = QTime(data.timestamp.hour, data.timestamp.minute, data.timestamp.second)
+        dt = QDateTime()
+        self.info.utcDateTime.setTimeSpec(Qt.UTC)
+        self.info.utcDateTime.setDate(date)
+        self.info.utcDateTime.setTime(time)
+        return self.info
+
 
     def gpsStateChanged(self, gpsInfo):
         if gpsInfo.fixType == NMEA_FIX_BAD or gpsInfo.status == 0 or gpsInfo.quality == 0:
