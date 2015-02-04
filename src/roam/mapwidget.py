@@ -148,8 +148,12 @@ class MapWidget(Ui_CanvasWidget, QMainWindow):
         RoamEvents.selectioncleared.connect(self.clear_selection)
         RoamEvents.selectionchanged.connect(self.highlight_selection)
         RoamEvents.openfeatureform.connect(self.feature_form_loaded)
+        RoamEvents.sync_complete.connect(self.refresh_map)
 
         self.connectButtons()
+
+    def refresh_map(self):
+        self.canvas.refresh()
 
     def init_qgisproject(self, doc):
         parser = ProjectParser(doc)
