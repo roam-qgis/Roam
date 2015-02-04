@@ -244,7 +244,7 @@ class ImageWidget(EditorWidget):
         RoamEvents.openimage.emit(pixmap)
 
     def get_filename(self):
-        name = QDateTime.currentDateTime().toString("yyyy-MM-dd-hh-mm-ss.JPG")
+        name = QDateTime.currentDateTime().toString("yyyy-MM-dd-hh-mm-ss-zzz.JPG")
         return name
 
     def save(self, folder, filename):

@@ -297,6 +297,7 @@ class FeatureFormBase(QWidget):
                         value = wrapper.get_filename()
                     else:
                         value = ''
+                print value
 
             if shouldsave(field):
                 savedvalues[field] = value
