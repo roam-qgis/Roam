@@ -6,7 +6,10 @@ from qgis.gui import *
 from roam.maptools.touchtool import TouchMapTool
 from roam.api import GPS
 
+import roam.config
+
 import roam.resources_rc
+
 
 class RubberBand(QgsRubberBand):
     def __init__(self, canvas, geometrytype, width=5, iconsize=20):
@@ -36,6 +39,9 @@ class RubberBand(QgsRubberBand):
 
     def paint(self, p, *args):
         super(RubberBand, self).paint(p)
+
+        if not roam.config.settings.get("draw_distance", True):
+            return
 
         offset = QPointF(5,5)
         nodescount = self.numberOfVertices()
