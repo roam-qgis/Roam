@@ -590,13 +590,21 @@ class FeatureForm(FeatureFormBase):
         values, savedvalues = self.getvalues()
         save_images(values)
         updatefeautrefields(self.feature)
+        layer.startEditing()
         if self.editingmode:
             roam.utils.info("Updating feature {}".format(self.feature.id()))
-            qgisutils.update_feature(layer, self.feature)
+            layer.updateFeature(self.feature)
+            # qgisutils.update_feature(layer, self.feature)
         else:
             roam.utils.info("Adding feature {}".format(self.feature.id()))
             layer.addFeature(self.feature)
             savevalues(layer, savedvalues)
+
+        saved = layer.commitChanges()
+
+        if not saved:
+            errors = layer.commitErrors()
+            raise FeatureSaveException.not_saved(errors)
 
         self.featuresaved(self.feature, values)
 
