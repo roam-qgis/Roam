@@ -308,7 +308,8 @@ class InfoDock(infodock_widget, QWidget):
 
         results = []
         error = None
-        if infoblockdef['type'] == 'sql':
+        infotype = infoblockdef.get('type', 'feature')
+        if infotype == 'sql':
             try:
                 queryresults = self.results_from_query(infoblockdef, layer, feature, mapkey, lastresults=lastresults)
                 if isinfo1 and not queryresults:
@@ -322,8 +323,15 @@ class InfoDock(infodock_widget, QWidget):
                 else:
                     results.append(self.results_from_feature(feature))
 
-        elif infoblockdef['type'] == 'feature':
-            results.append(self.results_from_feature(feature))
+        elif infotype == 'feature':
+            featuredata = self.results_from_feature(feature)
+            excludedfields = infoblockdef.get('hidden', [])
+            for field in excludedfields:
+                try:
+                    del featuredata[field]
+                except KeyError:
+                    pass
+            results.append(featuredata)
         else:
             return None, []
 
