@@ -568,10 +568,12 @@ class MainWindow(ui_mainwindow.Ui_MainWindow, QMainWindow):
         projectscales, _ = QgsProject.instance().readBoolEntry("Scales", "/useProjectScales")
         if projectscales:
             projectscales, _ = QgsProject.instance().readListEntry("Scales", "/ScalesList")
+
             self.scalewidget.updateScales(projectscales)
         else:
             scales = ["1:50000", "1:25000", "1:10000", "1:5000",
                       "1:2500", "1:1000", "1:500", "1:250", "1:200", "1:100"]
+            scales = roam.config.settings.get('scales', scales)
             self.scalewidget.updateScales(scales)
         RoamEvents.projectloaded.emit(self.project)
 
