@@ -96,6 +96,7 @@ class InfoDock(infodock_widget, QWidget):
         self.project = None
         self.startwidth = self.width()
         self.expaned = False
+        self.layerList.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
 
         self.expandButton.pressed.connect(self.change_expanded_state)
         self.navwidget.mousePressEvent = self._sink
