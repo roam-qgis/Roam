@@ -87,7 +87,8 @@ class GPSService(QObject):
 
     def disconnectGPS(self):
         if self.isConnected:
-            self.gpsConn.stateChanged.disconnect(self.gpsStateChanged)
+            self.gpsConn.nmeaSentenceReceived.disconnect(self.parse_data)
+            # self.gpsConn.stateChanged.disconnect(self.gpsStateChanged)
             self.gpsConn.close()
 
         log("GPS disconnect")
