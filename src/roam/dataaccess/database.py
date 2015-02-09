@@ -18,12 +18,16 @@ class Database(object):
     @classmethod
     def fromLayer(cls, layer):
         source = layer.source()
+        uri = QgsDataSourceURI(layer.dataProvider().dataSourceUri())
         if ".sqlite" in source:
             try:
                 index = source.index("|")
                 source = source[:index]
             except ValueError:
                 pass
+            if uri.database():
+                source = uri.database()
+
             connectioninfo = {"type": "QSQLITE",
                               "database": source}
         else:
@@ -117,6 +121,7 @@ class Database(object):
 
     def querymodel(self, sql, **mappings):
         query = self._query(sql, **mappings)
+        print sql, mappings
         if query.exec_():
             model = QSqlQueryModel()
             model.setQuery(query)
