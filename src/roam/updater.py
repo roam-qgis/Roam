@@ -27,7 +27,7 @@ def checkversion(toversion, fromversion):
 
 
 def parse_serverprojects(content):
-    reg = 'href="(?P<file>(?P<name>\w+)-(?P<version>\d+(\.\d+)+).zip)"'
+    reg = '(?P<file>(?P<name>\w+)-(?P<version>\d+(\.\d+)+).zip)'
     versions = defaultdict(dict)
     for match in re.finditer(reg, content, re.I):
         version = match.group("version")
@@ -37,6 +37,7 @@ def parse_serverprojects(content):
                     version=version,
                     name=name)
         versions[name][version] = data
+    print  versions
     return dict(versions)
 
 
