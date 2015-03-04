@@ -53,7 +53,7 @@ class NumberWidget(EditorWidget):
         config = self.config
         prefix = config.get('prefix', '')
         suffix = config.get('suffix', '')
-        step = config.get('step', '1')
+        step = config.get('step', 1)
         max, min = self._getmaxmin(config)
         self._setwidgetvalues(min, max, prefix, suffix, step)
 
