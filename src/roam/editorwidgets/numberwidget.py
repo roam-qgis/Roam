@@ -27,6 +27,10 @@ class Stepper(Ui_stepper, QWidget):
     def installEventFilter(self, object):
         self.spinBox.installEventFilter(object)
 
+    def setDecimals(self, places):
+        self.spinBox.setDecimals(places)
+
+
 class NumberWidget(EditorWidget):
     widgettype = 'Number'
     def __init__(self, *args, **kwargs):
@@ -98,6 +102,13 @@ class DoubleNumberWidget(NumberWidget):
 
     def initWidget(self, widget):
         super(DoubleNumberWidget, self).initWidget(widget)
+
+    def updatefromconfig(self):
+        super(DoubleNumberWidget, self).updatefromconfig()
+        places = self.config.get('places', 2)
+        if places == 0:
+            places = 2
+        self.widget.setDecimals(places)
 
     def _getmaxmin(self, config):
         max = config.get('max', '')

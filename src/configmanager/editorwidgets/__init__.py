@@ -6,7 +6,7 @@ from configmanager.editorwidgets.datewidget import DateWidgetConfig
 from configmanager.editorwidgets.imagewidget import ImageWidgetConfig
 from configmanager.editorwidgets.textwidget import TextBlockWidgetConfig, TextWidgetConfig
 from configmanager.editorwidgets.listwidget import ListWidgetConfig
-from configmanager.editorwidgets.numberwidget import NumberWidgetConfig
+from configmanager.editorwidgets.numberwidget import NumberWidgetConfig, DoubleNumberWidgetConfig
 from configmanager.editorwidgets.optionwidget import OptionWidgetConfig
 
 
@@ -18,5 +18,5 @@ widgetconfigs = {"Checkbox" : CheckboxWidgetConfig,
                  "Text" : TextWidgetConfig,
                  "TextBlock": TextBlockWidgetConfig,
                  "Number": NumberWidgetConfig,
-                 "Number(Double)": NumberWidgetConfig,
+                 "Number(Double)": DoubleNumberWidgetConfig,
                  "Option Row": OptionWidgetConfig}
