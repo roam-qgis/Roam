@@ -306,7 +306,7 @@ class FeatureFormBase(QWidget):
         return values, savedvalues
 
     def findcontrol(self, name):
-        regex = QRegExp("^{}$".format(name))
+        regex = QRegExp("^{}$".format(QRegExp.escape(name)))
         regex.setCaseSensitivity(Qt.CaseInsensitive)
         try:
             widget = self.findChildren(QWidget, regex)[0]
