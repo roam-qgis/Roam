@@ -105,7 +105,7 @@ def buildfromauto(formconfig, base):
 
         outlayout.addRow(label, layoutwidget)
 
-    outlayout.addItem(QSpacerItem(10, 10))
+    outlayout.addItem(QSpacerItem(10, 500))
     installflickcharm(outwidget)
     return outwidget
 
