@@ -304,7 +304,7 @@ class MapWidget(Ui_CanvasWidget, QMainWindow):
                     action.triggered.connect(partial(self.load_form, form))
                 yield action
 
-        formpicker = PickActionDialog(msg="Select data entry form")
+        formpicker = PickActionDialog(msg="Select data entry form", wrap=5)
         formpicker.addactions(actions())
         formpicker.exec_()
 

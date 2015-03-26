@@ -69,12 +69,13 @@ class ActionPickerWidget(Ui_actionpicker, QWidget):
 
 
 class PickActionDialog(Ui_ActionPickerDialog, Dialogbase):
-    def __init__(self, msg=None, parent=None):
+    def __init__(self, msg=None, parent=None, wrap=None):
         super(PickActionDialog, self).__init__(parent)
+        self.wrap = wrap
         if msg:
             self.label.setText(msg)
 
-    def addAction(self, action):
+    def addAction(self, action, row, column):
         button = QToolButton(self)
         button.setProperty("action", True)
         button.setIconSize(QSize(64, 64))
@@ -82,9 +83,23 @@ class PickActionDialog(Ui_ActionPickerDialog, Dialogbase):
         button.setDefaultAction(action)
         action.triggered.connect(self.close)
 
-        self.actionsLayout.addWidget(button)
-
+        self.actionsLayout.addWidget(button, row, column)
 
     def addactions(self, actions):
-        for action in actions:
-            self.addAction(action)
+        actions = list(actions)
+
+        def chunks(l, n):
+            """ Yield successive n-sized chunks from l.
+            """
+            for i in xrange(0, len(l), n):
+                yield l[i:i+n]
+
+        if self.wrap > 0:
+            rows = list(chunks(actions, self.wrap))
+        else:
+            rows = [actions]
+
+        for rowcount, row in enumerate(rows):
+            for column, action in enumerate(row):
+
+                self.addAction(action, rowcount, column)
