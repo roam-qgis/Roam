@@ -5,6 +5,7 @@ from roam.ui.ui_deletefeature import Ui_DeleteFeatureDialog
 from roam.ui.ui_actionpicker import Ui_ActionPickerDialog
 from roam.ui.ui_actionpickerwidget import Ui_actionpicker
 
+
 class Dialogbase(QDialog):
     def __init__(self, parent=None):
         if parent is None:
@@ -37,11 +38,13 @@ class Dialogbase(QDialog):
     def mousePressEvent(self, *args, **kwargs):
         self.close()
 
+
 class DeleteFeatureDialog(Ui_DeleteFeatureDialog, Dialogbase):
     def __init__(self, msg=None, parent=None):
         super(DeleteFeatureDialog, self).__init__(parent)
         if msg:
             self.deletelabel.setText(msg)
+
 
 class ActionPickerWidget(Ui_actionpicker, QWidget):
     def __init__(self, parent=None):
@@ -54,7 +57,7 @@ class ActionPickerWidget(Ui_actionpicker, QWidget):
     def addAction(self, action):
         button = QToolButton(self)
         button.setProperty("action", True)
-        button.setIconSize(QSize(64,64))
+        button.setIconSize(QSize(64, 64))
         button.setToolButtonStyle(Qt.ToolButtonTextUnderIcon)
         button.setDefaultAction(action)
 
@@ -63,6 +66,7 @@ class ActionPickerWidget(Ui_actionpicker, QWidget):
     def addactions(self, actions):
         for action in actions:
             self.addAction(action)
+
 
 class PickActionDialog(Ui_ActionPickerDialog, Dialogbase):
     def __init__(self, msg=None, parent=None):
@@ -73,7 +77,7 @@ class PickActionDialog(Ui_ActionPickerDialog, Dialogbase):
     def addAction(self, action):
         button = QToolButton(self)
         button.setProperty("action", True)
-        button.setIconSize(QSize(64,64))
+        button.setIconSize(QSize(64, 64))
         button.setToolButtonStyle(Qt.ToolButtonTextUnderIcon)
         button.setDefaultAction(action)
         action.triggered.connect(self.close)
