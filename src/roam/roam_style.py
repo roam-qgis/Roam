@@ -154,7 +154,7 @@ QScrollBar:vertical {
   margin: 22px 0 22px 0;
 }
 QScrollBar::handle:vertical {
-  background: white;
+  background: #678fb2;
   min-height: 20px;
 }
 QScrollBar::add-line:vertical {
@@ -215,7 +215,7 @@ QScrollBar:vertical {
   margin: 22px 0 22px 0;
 }
 QScrollBar::handle:vertical {
-  background: white;
+  background: #678fb2;
   min-height: 20px;
 }
 QScrollBar::add-line:vertical {
