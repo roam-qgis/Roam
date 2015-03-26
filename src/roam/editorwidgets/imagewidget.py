@@ -102,6 +102,11 @@ class _CameraWidget(QWidget):
     def start(self, dev=1):
         try:
             self.cam = vc.Device(dev)
+            try:
+                width, height = tuple(roam.config.settings['camera_res'].split(','))
+                self.cam.setResolution(int(width), int(height))
+            except KeyError:
+                pass
             self.currentdevice = dev
         except vidcap.error:
             if dev == 0:
