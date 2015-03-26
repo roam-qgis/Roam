@@ -36,6 +36,7 @@ class FlickCharm(QObject):
     def __init__(self, parent = None):
         QObject.__init__(self, parent)
         self.d = FlickCharmPrivate()
+        self.lastvalue = 0
 
     def activateOn(self, widget):
         if isinstance(widget, QWebView):
@@ -123,11 +124,8 @@ class FlickCharm(QObject):
             if eventType == QEvent.MouseMove:
                 consumed = True
                 pos = event.pos()
-                print "Event", pos
-                print "Press", data.pressPos
                 delta = pos - data.pressPos
-                print delta
-                setScrollOffset(data.widget, delta, data.pressPos)
+                setScrollOffset(data.widget, pos, data.pressPos)
             elif eventType == QEvent.MouseButtonRelease:
                 consumed = True
                 data.state = FlickData.Steady
@@ -189,31 +187,29 @@ def scrollOffset(widget):
     return QPoint(x, y)
 
 
-def setScrollOffset(widget, p, press=None):
+lastvalue = 0
+
+def setScrollOffset(widget, current, press=None):
+    up = current.y() > press.y()
+    up = current.y() > lastvalue
+    global lastvalue
+    lastvalue = current.y()
+
     if isinstance(widget, QWebView):
         frame = widget.page().mainFrame()
-        frame.evaluateJavaScript("window.scrollTo(%d,%d);" % (p.x(), p.y()))
+        y = frame.evaluateJavaScript("window.scrollY;")
+        if up:
+            y -= 15
+        else:
+            y += 15
+        frame.evaluateJavaScript("window.scrollTo(%d,%d);" % (current.x(), y))
     else:
         # calc the percentage moved
-        maxvalue = widget.verticalScrollBar().maximum()
-        per = float(p.y()) / press.y() * 100
-        per = abs(per)
-        direction = "Down" if p.y() < 0 else "Up"
-        if per == 0.0:
-            return
-        y = (per * maxvalue / 100)
-        dela = y - widget.verticalScrollBar().value()
-        # print direction
-        # print "PER", per
-        # print "Y percent", y
-        # print "DELA", dela
-        # print "Current Y", widget.verticalScrollBar().value()
-        if direction == "Up":
-            y = widget.verticalScrollBar().value() - dela
+        if up:
+            y = widget.verticalScrollBar().value() - 15
         else:
-            y = widget.verticalScrollBar().value() + dela
+            y = widget.verticalScrollBar().value() + 15
         widget.verticalScrollBar().setValue(y)
-        # print "New Y", widget.verticalScrollBar().value()
 
 
 def deaccelerate(speed, a=1, maxVal=64):
