@@ -5,6 +5,8 @@ import traceback
 
 from datetime import datetime
 
+from qgis.core import QgsMapLayerRegistry, QgsMapLayer
+
 from PyQt4.QtGui import QDialog, QFont, QColor, QIcon, QMessageBox, QStandardItem, QStandardItemModel, QInputDialog
 from PyQt4.QtCore import QAbstractItemModel, QModelIndex, Qt
 
@@ -82,6 +84,8 @@ class Treenode(QStandardItem):
     FormsNode = QStandardItem.UserType + 5
     ProjectsNode = QStandardItem.UserType + 6
     ProjectsNode_Invalid = QStandardItem.UserType + 7
+    LayerNode = QStandardItem.UserType + 8
+    LayersNode = QStandardItem.UserType + 9
 
     nodetype = TreeNode
 
@@ -110,6 +114,46 @@ class Treenode(QStandardItem):
 
     def additem(self):
         pass
+
+    def create_children(self):
+        count = self.rowCount()
+        for row in range(count):
+            child = self.child(row, 0)
+            child.create_children()
+
+
+class LayersNode(Treenode):
+    nodetype = Treenode.ProjectsNode
+
+    def __init__(self, text="Layers"):
+        super(LayersNode, self).__init__(text, QIcon(":/icons/map"))
+        self._text = text
+
+    def data(self, role):
+        if role == Qt.DisplayRole:
+            return "{} ({})".format(self._text, self.rowCount())
+        return super(LayersNode, self).data(role)
+
+    def create_children(self):
+        self.removeRows(0, self.rowCount())
+        layers = QgsMapLayerRegistry.instance().mapLayers().values()
+
+        for layer in layers:
+            if not layer.type() == QgsMapLayer.VectorLayer:
+                continue
+
+            node = LayerNode(layer)
+            self.appendRow(node)
+
+        super(LayersNode, self).create_children()
+
+
+class LayerNode(Treenode):
+    nodetype = Treenode.LayerNode
+
+    def __init__(self, layer):
+        text = layer.name()
+        super(LayerNode, self).__init__(text, QIcon(":/icons/map"))
 
 
 class RoamNode(Treenode):
@@ -163,13 +207,14 @@ class FormsNode(Treenode):
         self.canadd = True
         self._text = text
         self.addtext = 'Add new form'
-        self.loadforms()
 
-    def loadforms(self):
+    def create_children(self):
         forms = self.project.forms
+        self.removeRows(0, self.rowCount())
         for form in forms:
             item = FormNode(form, self.project)
             self.appendRow(item)
+        super(FormsNode, self).create_children()
 
     def data(self, role):
         if role == Qt.DisplayRole:
@@ -220,7 +265,8 @@ class ProjectNode(Treenode):
         if project.valid:
             self.formsnode = FormsNode("Forms", project=project)
             self.mapnode = MapNode("Map", project=project)
-            self.appendRows([self.mapnode, self.formsnode])
+            self.layersnode = LayersNode("Layers")
+            self.appendRows([self.mapnode, self.layersnode, self.formsnode])
 
         self.removemessage = ("Delete Project?", ("Do you want to delete this project? <br><br> "
                                                   "Deleted projects will be moved to the _archive folder in projects folder<br><br>"

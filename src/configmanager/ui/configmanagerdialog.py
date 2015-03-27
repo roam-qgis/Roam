@@ -144,6 +144,7 @@ class ConfigManagerDialog(ui_configmanager.Ui_ProjectInstallerDialog, QDialog):
         elif node.nodetype == Treenode.FormsNode:
             haslayers = self.projectwidget.checkcapturelayers()
             self.newProjectButton.setEnabled(haslayers)
+        node.create_children()
 
 
         self.projectwidget.projectbuttonframe.setVisible(not project is None)
