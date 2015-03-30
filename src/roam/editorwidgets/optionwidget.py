@@ -1,6 +1,6 @@
 import math
 from PyQt4.QtCore import QSize
-from PyQt4.QtGui import QIcon, QPushButton, QWidget, QHBoxLayout, QButtonGroup, QVBoxLayout, QGridLayout
+from PyQt4.QtGui import QIcon, QPushButton, QWidget, QHBoxLayout, QButtonGroup, QVBoxLayout, QGridLayout, QBoxLayout
 
 from roam.editorwidgets.core import EditorWidget
 
@@ -68,7 +68,10 @@ class OptionWidget(EditorWidget):
                 button.setProperty("value", data)
                 button.setIcon(icon)
                 button.setIconSize(QSize(24, 24))
-                self.widget.layout().addWidget(button, rowcount, column)
+                if isinstance(self.widget.layout(), QBoxLayout):
+                    self.widget.layout().addWidget(button)
+                else:
+                    self.widget.layout().addWidget(button, rowcount, column)
                 self.group.addButton(button)
 
     def initWidget(self, widget):

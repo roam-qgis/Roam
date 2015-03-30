@@ -8,7 +8,7 @@ from roam.editorwidgets.core import EditorWidget, registerwidgets
 class TextWidget(EditorWidget):
     widgettype = 'Text'
 
-    def __init__(self, *args):
+    def __init__(self, *args, **kwargs):
         super(TextWidget, self).__init__(*args)
 
     def createWidget(self, parent):
