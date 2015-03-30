@@ -83,11 +83,8 @@ class EditorWidget(QObject):
         """
         if not config:
             config = {}
-        try:
-            return cls(initconfig=config).createWidget(parent)
-        except TypeError as ex:
-            print ex
-            return cls().createWidget(parent)
+
+        return cls(initconfig=config).createWidget(parent)
 
     @property
     def passing(self):
