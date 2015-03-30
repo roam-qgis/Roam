@@ -78,8 +78,6 @@ class ProjectWidget(Ui_Form, QWidget):
 
         self.layerCombo.setModel(self.formlayers)
         self.widgetCombo.setModel(self.possiblewidgetsmodel)
-        self.selectLayers.setModel(self.selectlayerfilter)
-        self.selectLayers_2.setModel(self.selectlayerfilter)
         self.fieldList.setModel(self.fieldsmodel)
 
         self.widgetlist.setModel(self.widgetmodel)
@@ -121,6 +119,15 @@ class ProjectWidget(Ui_Form, QWidget):
         self.setpage(4)
         self.form = None
         self.formslayerlabel.linkActivated.connect(self.link)
+
+        self.stackedWidget.currentChanged.connect(self.page_changed)
+
+    def page_changed(self):
+        widget = self.stackedWidget.currentWidget()
+        try:
+            widget.set_project(self.project)
+        except AttributeError:
+            print "set project method not found on page widget"
 
     def link(self, url):
         if "qgis" in url:

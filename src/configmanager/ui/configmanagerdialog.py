@@ -126,6 +126,7 @@ class ConfigManagerDialog(ui_configmanager.Ui_ProjectInstallerDialog, QDialog):
         if project and not self.projectwidget.project == project:
             # Only load the project if it's different the current one.
             self.projectwidget.setproject(project)
+            node.create_children()
 
             validateresults = list(project.validate())
             if validateresults:
@@ -134,6 +135,7 @@ class ConfigManagerDialog(ui_configmanager.Ui_ProjectInstallerDialog, QDialog):
                     text += "- {} \n".format(message)
 
                 self.projectwidget.reasons_label.setText(text)
+
 
         if node.nodetype == Treenode.FormNode:
             self.projectwidget.setform(node.form)
@@ -144,7 +146,6 @@ class ConfigManagerDialog(ui_configmanager.Ui_ProjectInstallerDialog, QDialog):
         elif node.nodetype == Treenode.FormsNode:
             haslayers = self.projectwidget.checkcapturelayers()
             self.newProjectButton.setEnabled(haslayers)
-        node.create_children()
 
 
         self.projectwidget.projectbuttonframe.setVisible(not project is None)

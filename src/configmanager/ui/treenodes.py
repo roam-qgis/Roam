@@ -84,8 +84,9 @@ class Treenode(QStandardItem):
     FormsNode = QStandardItem.UserType + 5
     ProjectsNode = QStandardItem.UserType + 6
     ProjectsNode_Invalid = QStandardItem.UserType + 7
-    LayerNode = QStandardItem.UserType + 8
-    LayersNode = QStandardItem.UserType + 9
+    LayerNode = QStandardItem.UserType + 9
+    LayersNode = QStandardItem.UserType + 8
+    InfoNode = QStandardItem.UserType + 10
 
     nodetype = TreeNode
 
@@ -123,10 +124,10 @@ class Treenode(QStandardItem):
 
 
 class LayersNode(Treenode):
-    nodetype = Treenode.ProjectsNode
+    nodetype = Treenode.LayersNode
 
-    def __init__(self, text="Layers"):
-        super(LayersNode, self).__init__(text, QIcon(":/icons/map"))
+    def __init__(self, text="Layers", project=None):
+        super(LayersNode, self).__init__(text, QIcon(":/icons/map"), project)
         self._text = text
 
     def data(self, role):
@@ -142,18 +143,35 @@ class LayersNode(Treenode):
             if not layer.type() == QgsMapLayer.VectorLayer:
                 continue
 
-            node = LayerNode(layer)
+            if not layer.name() in self.project.selectlayers:
+                continue
+
+            node = LayerNode(layer, self.project)
             self.appendRow(node)
 
         super(LayersNode, self).create_children()
 
 
+class InfoNode(Treenode):
+    nodetype = Treenode.InfoNode
+
+    def __init__(self, text):
+        super(InfoNode, self).__init__(text, QIcon(":/icons/map"))
+
+
 class LayerNode(Treenode):
     nodetype = Treenode.LayerNode
 
-    def __init__(self, layer):
+    def __init__(self, layer, project):
         text = layer.name()
-        super(LayerNode, self).__init__(text, QIcon(":/icons/map"))
+        super(LayerNode, self).__init__(text, QIcon(":/icons/map"), project)
+
+    def create_children(self):
+        self.removeRows(0, self.rowCount())
+        info1 = InfoNode("Info 1")
+        info2 = InfoNode("Info 2")
+        self.appendRow(info1)
+        self.appendRow(info2)
 
 
 class RoamNode(Treenode):
@@ -262,12 +280,6 @@ class ProjectNode(Treenode):
     def __init__(self, project):
         super(ProjectNode, self).__init__(project.name, QIcon(":/icons/folder"))
         self.project = project
-        if project.valid:
-            self.formsnode = FormsNode("Forms", project=project)
-            self.mapnode = MapNode("Map", project=project)
-            self.layersnode = LayersNode("Layers")
-            self.appendRows([self.mapnode, self.layersnode, self.formsnode])
-
         self.removemessage = ("Delete Project?", ("Do you want to delete this project? <br><br> "
                                                   "Deleted projects will be moved to the _archive folder in projects folder<br><br>"
                                                   "<i>Projects can be recovered by moving the folder back to the projects folder</i>"))
@@ -275,6 +287,16 @@ class ProjectNode(Treenode):
         self.canadd = True
         self.removetext = 'Remove selected project'
         self.addtext = 'Add new project'
+
+    def create_children(self):
+        self.removeRows(0, self.rowCount())
+        if self.project.valid:
+            self.formsnode = FormsNode("Forms", project=self.project)
+            self.mapnode = MapNode("Map", project=self.project)
+            self.layersnode = LayersNode("Select Layers", project=self.project)
+            self.appendRows([self.mapnode, self.layersnode, self.formsnode])
+
+        super(ProjectNode, self).create_children()
 
     def additem(self):
         return self.parent().additem()

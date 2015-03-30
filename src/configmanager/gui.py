@@ -1,5 +1,7 @@
 from PyQt4.QtGui import QWidget
 from PyQt4.QtCore import pyqtSignal
+
+
 from configmanager.ui.nodewidgets.ui_projectswidget import Ui_projectsnode
 
 
