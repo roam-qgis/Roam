@@ -48,28 +48,28 @@
      </property>
      <layout class="QVBoxLayout" name="verticalLayout">
       <item>
-       <widget class="QCheckBox" name="checkBox">
+       <widget class="QCheckBox" name="editattr_check">
         <property name="text">
          <string>Edit Attributes</string>
         </property>
        </widget>
       </item>
       <item>
-       <widget class="QCheckBox" name="checkBox_2">
+       <widget class="QCheckBox" name="editgeom_check">
         <property name="text">
          <string>Edit Geometry</string>
         </property>
        </widget>
       </item>
       <item>
-       <widget class="QCheckBox" name="checkBox_3">
+       <widget class="QCheckBox" name="capture_check">
         <property name="text">
          <string>Capture</string>
         </property>
        </widget>
       </item>
       <item>
-       <widget class="QCheckBox" name="checkBox_4">
+       <widget class="QCheckBox" name="delete_check">
         <property name="text">
          <string>Delete</string>
         </property>

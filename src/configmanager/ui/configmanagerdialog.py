@@ -116,7 +116,6 @@ class ConfigManagerDialog(ui_configmanager.Ui_ProjectInstallerDialog, QDialog):
         if node is None:
             return
 
-        self.projectwidget.setpage(node.page)
         self.removeProjectButton.setEnabled(node.canremove)
         self.newProjectButton.setEnabled(node.canadd)
         #self.newProjectButton.setText(node.addtext)
@@ -136,7 +135,6 @@ class ConfigManagerDialog(ui_configmanager.Ui_ProjectInstallerDialog, QDialog):
 
                 self.projectwidget.reasons_label.setText(text)
 
-
         if node.nodetype == Treenode.FormNode:
             self.projectwidget.setform(node.form)
         elif node.nodetype == Treenode.RoamNode:
@@ -147,8 +145,8 @@ class ConfigManagerDialog(ui_configmanager.Ui_ProjectInstallerDialog, QDialog):
             haslayers = self.projectwidget.checkcapturelayers()
             self.newProjectButton.setEnabled(haslayers)
 
-
         self.projectwidget.projectbuttonframe.setVisible(not project is None)
+        self.projectwidget.setpage(node.page, node)
 
     def projectupdated(self):
         index = self.projectList.currentIndex()

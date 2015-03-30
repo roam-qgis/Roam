@@ -116,18 +116,29 @@ class ProjectWidget(Ui_Form, QWidget):
         for item, data in readonlyvalues:
             self.readonlyCombo.addItem(item, data)
 
-        self.setpage(4)
+        # self.setpage(4)
+        self.currentnode = None
         self.form = None
         self.formslayerlabel.linkActivated.connect(self.link)
 
-        self.stackedWidget.currentChanged.connect(self.page_changed)
+    def setpage(self, page, node):
+        self.currentnode = node
 
-    def page_changed(self):
+        self.write_config_currentwidget()
+
+        self.stackedWidget.setCurrentIndex(page)
+        if self.project:
+            print self.project.dump_settings()
+
         widget = self.stackedWidget.currentWidget()
-        try:
-            widget.set_project(self.project)
-        except AttributeError:
-            print "set project method not found on page widget"
+        if hasattr(widget, "set_project"):
+            widget.set_project(self.project, self.currentnode)
+
+    def write_config_currentwidget(self):
+        widget = self.stackedWidget.currentWidget()
+        if hasattr(widget, "write_config"):
+            print "Write config"
+            widget.write_config()
 
     def link(self, url):
         if "qgis" in url:
@@ -164,9 +175,6 @@ class ProjectWidget(Ui_Form, QWidget):
             self.form.settings['widgets'] = list(self.widgetmodel.widgets())
             self.setformpreview(self.form)
 
-
-    def setpage(self, page):
-        self.stackedWidget.setCurrentIndex(page)
 
     def reloadproject(self, *args):
         self.setproject(self.project)
@@ -652,6 +660,8 @@ class ProjectWidget(Ui_Form, QWidget):
         """
         Save the project config to disk.
         """
+        self.write_config_currentwidget()
+
         title = self.titleText.text()
         description = self.descriptionText.toPlainText()
         version = str(self.versionText.text())
@@ -660,6 +670,8 @@ class ProjectWidget(Ui_Form, QWidget):
         settings['title'] = title
         settings['description'] = description
         settings['version'] = version
+
+        self.project.dump_settings()
 
         form = self.currentform
         if form:

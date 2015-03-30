@@ -155,21 +155,24 @@ class LayersNode(Treenode):
 class InfoNode(Treenode):
     nodetype = Treenode.InfoNode
 
-    def __init__(self, text):
-        super(InfoNode, self).__init__(text, QIcon(":/icons/map"))
+    def __init__(self, text, key, layer, project):
+        self.key = key
+        self.layer = layer
+        super(InfoNode, self).__init__(text, QIcon(":/icons/map"), project)
 
 
 class LayerNode(Treenode):
     nodetype = Treenode.LayerNode
 
     def __init__(self, layer, project):
+        self.layer = layer
         text = layer.name()
         super(LayerNode, self).__init__(text, QIcon(":/icons/map"), project)
 
     def create_children(self):
         self.removeRows(0, self.rowCount())
-        info1 = InfoNode("Info 1")
-        info2 = InfoNode("Info 2")
+        info1 = InfoNode("Info 1", "info1", self.layer, self.project)
+        info2 = InfoNode("Info 2", "info2", self.layer, self.project)
         self.appendRow(info1)
         self.appendRow(info2)
 
