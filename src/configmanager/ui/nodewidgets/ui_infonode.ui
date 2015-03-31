@@ -26,30 +26,40 @@
    <property name="fieldGrowthPolicy">
     <enum>QFormLayout::ExpandingFieldsGrow</enum>
    </property>
-   <item row="0" column="0">
+   <item row="1" column="0">
     <widget class="QLabel" name="label">
      <property name="text">
       <string>Caption</string>
      </property>
     </widget>
    </item>
-   <item row="0" column="1">
+   <item row="1" column="1">
     <widget class="QLineEdit" name="caption_edit"/>
    </item>
-   <item row="2" column="0">
+   <item row="3" column="0">
     <widget class="QLabel" name="label_2">
      <property name="text">
       <string>Query</string>
      </property>
     </widget>
    </item>
-   <item row="2" column="1">
+   <item row="3" column="1">
     <widget class="QsciScintilla" name="Editor" native="true"/>
    </item>
-   <item row="3" column="0" colspan="2">
+   <item row="4" column="0" colspan="2">
     <widget class="QLabel" name="label_3">
      <property name="text">
       <string>TIP: Use :mapkey to access the selected features id or you can use :{field name} too access any field on the selected object.  e.g :tree_type</string>
+     </property>
+     <property name="wordWrap">
+      <bool>true</bool>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="0" colspan="2">
+    <widget class="QLabel" name="message_label">
+     <property name="text">
+      <string>NOTE: Info queries are ony supported on MS SQL or SQLite based layers</string>
      </property>
      <property name="wordWrap">
       <bool>true</bool>

@@ -3,6 +3,8 @@ __author__ = 'Nathan.Woodrow'
 from PyQt4.QtGui import QWidget
 from PyQt4.Qsci import QsciLexerSQL, QsciScintilla
 
+from qgis.core import QgsDataSourceURI
+
 from configmanager.ui.nodewidgets import ui_layersnode, ui_layernode, ui_infonode
 from configmanager.models import CaptureLayersModel, LayerTypeFilter
 
@@ -27,10 +29,22 @@ class InfoNode(ui_infonode.Ui_Form, WidgetBase):
         self.Editor.setMarginWidth(0, 0)
         self.Editor.setWrapMode(QsciScintilla.WrapWord)
         self.layer = None
+        self.message_label.setVisible(False)
 
     def set_project(self, project, node):
         super(InfoNode, self).set_project(project, node)
         self.layer = node.layer
+        # uri = QgsDataSourceURI(self.layer.dataProvider().dataSourceUri())
+        source = self.layer.source()
+        name = self.layer.dataProvider().name()
+        if ".sqlite" in source or name == "mssql":
+            self.setEnabled(True)
+            self.message_label.setVisible(False)
+        else:
+            self.setEnabled(False)
+            self.message_label.setVisible(True)
+            return
+
         infoblock = self.project.info_query(node.key, node.layer.name())
         caption = infoblock.get("caption", node.text())
         query = infoblock.get("query", "")
