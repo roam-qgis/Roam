@@ -44,7 +44,8 @@ class InfoNode(ui_infonode.Ui_Form, WidgetBase):
         if self.Editor.text():
             infoconfig[self.treenode.key] = {
                 "caption": self.caption_edit.text(),
-                "query": self.Editor.text()
+                "query": self.Editor.text(),
+                "connection": "from_layer"
             }
         else:
             try:
@@ -73,6 +74,7 @@ class LayerWidget(ui_layernode.Ui_Form, WidgetBase):
         self.delete_check.setChecked(delete)
         self.editattr_check.setChecked(edit_attr)
         self.editgeom_check.setChecked(edit_geom)
+        self.datasouce_label.setText(self.layer.publicSource())
 
     def write_config(self):
         config = self.project.settings.setdefault('selectlayerconfig', {})
