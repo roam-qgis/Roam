@@ -116,11 +116,19 @@ class Treenode(QStandardItem):
     def additem(self):
         pass
 
-    def create_children(self):
+    def walk(self):
         count = self.rowCount()
         for row in range(count):
-            child = self.child(row, 0)
+            yield self.child(row, 0), row
+
+    def create_children(self):
+        for child, row in self.walk():
             child.create_children()
+
+    def refresh(self):
+        print "Refreshing child nodes"
+        for child, row in self.walk():
+            child.refresh()
 
 
 class LayersNode(Treenode):
@@ -129,6 +137,7 @@ class LayersNode(Treenode):
     def __init__(self, text="Layers", project=None):
         super(LayersNode, self).__init__(text, QIcon(":/icons/map"), project)
         self._text = text
+        self.nodes = {}
 
     def data(self, role):
         if role == Qt.DisplayRole:
@@ -138,7 +147,6 @@ class LayersNode(Treenode):
     def create_children(self):
         self.removeRows(0, self.rowCount())
         layers = QgsMapLayerRegistry.instance().mapLayers().values()
-
         for layer in layers:
             if not layer.type() == QgsMapLayer.VectorLayer:
                 continue
@@ -151,6 +159,10 @@ class LayersNode(Treenode):
 
         super(LayersNode, self).create_children()
 
+    def refresh(self):
+        # TODO Make this smarter and only do what we really need.
+        self.create_children()
+        super(LayersNode, self).refresh()
 
 class InfoNode(Treenode):
     nodetype = Treenode.InfoNode
@@ -362,3 +374,35 @@ class ProjectsNode(Treenode):
         for project in projects:
             node = ProjectNode(project)
             self.appendRow(node)
+
+
+def find_node(index, nodetype=Treenode.ProjectNode):
+    """
+    Walk up the nodes until we find the right node type.
+    :param node:
+    :param nodetype:
+    :return:
+    """
+    parent = index.parent()
+    if parent is None:
+        return index.data(Qt.UserRole)
+
+    node = parent.data(Qt.UserRole)
+    if node is None:
+        return index.data(Qt.UserRole)
+
+    if not node.nodetype == nodetype:
+        return find_node(parent, nodetype)
+    else:
+        return node
+
+
+def walk_tree(node, nodetype):
+    """
+    Walk the tree looking for a given node type.
+    """
+    for child in node.walk():
+        if not child.nodetype == nodetype:
+            return walk_tree(child, nodetype)
+        else:
+            return child

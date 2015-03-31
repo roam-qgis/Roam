@@ -178,6 +178,7 @@ class ProjectWidget(Ui_Form, QWidget):
 
     def reloadproject(self, *args):
         self.setproject(self.project)
+        self.projectupdated.emit()
 
     def qgisprojectupdated(self, path):
         self.projectupdatedlabel.show()

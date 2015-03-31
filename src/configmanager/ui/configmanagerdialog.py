@@ -39,7 +39,7 @@ class ConfigManagerDialog(ui_configmanager.Ui_ProjectInstallerDialog, QDialog):
         self.newProjectButton.pressed.connect(self.newproject)
         self.removeProjectButton.pressed.connect(self.deletebuttonpressed)
         self.projectwidget.projectupdated.connect(self.projectupdated)
-        self.projectwidget.projectsaved.connect(self.projectupdated)
+        # self.projectwidget.projectsaved.connect(self.projectupdated)
         self.projectwidget.projectloaded.connect(self.updateformsnode)
         self.projectwidget.selectlayersupdated.connect(self.updateformsnode)
 
@@ -49,11 +49,12 @@ class ConfigManagerDialog(ui_configmanager.Ui_ProjectInstallerDialog, QDialog):
         self.setuprootitems()
 
     def updateformsnode(self, *args):
-        haslayers = self.projectwidget.checkcapturelayers()
-        index = self.projectList.currentIndex()
-        node = index.data(Qt.UserRole)
-        if node.nodetype == Treenode.FormsNode:
-            self.newProjectButton.setEnabled(haslayers)
+        pass
+        # haslayers = self.projectwidget.checkcapturelayers()
+        # index = self.projectList.currentIndex()
+        # node = index.data(Qt.UserRole)
+        # if node.nodetype == Treenode.FormsNode:
+        #     self.newProjectButton.setEnabled(haslayers)
 
     def raiseerror(self, *exinfo):
         info = traceback.format_exception(*exinfo)
@@ -149,5 +150,7 @@ class ConfigManagerDialog(ui_configmanager.Ui_ProjectInstallerDialog, QDialog):
         self.projectwidget.setpage(node.page, node)
 
     def projectupdated(self):
+        print "Project Updated"
         index = self.projectList.currentIndex()
-        self.treemodel.dataChanged.emit(index, index)
+        node = find_node(index)
+        node.refresh()

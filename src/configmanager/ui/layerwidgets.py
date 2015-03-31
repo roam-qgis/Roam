@@ -113,7 +113,7 @@ class LayersWidget(ui_layersnode.Ui_Form, WidgetBase):
         self.selectLayers.setModel(self.selectlayerfilter)
 
     def selectlayerschanged(self):
-        pass
+        self.treenode.refresh()
 
     def set_project(self, project, node):
         super(LayersWidget, self).set_project(project, node)
