@@ -71,11 +71,6 @@ class ProjectWidget(Ui_Form, QWidget):
         self.formlayers = CaptureLayerFilter()
         self.formlayers.setSourceModel(self.formlayersmodel)
 
-        self.selectlayermodel = CaptureLayersModel(watchregistry=False)
-        self.selectlayerfilter = LayerTypeFilter(geomtypes=[])
-        self.selectlayerfilter.setSourceModel(self.selectlayermodel)
-        self.selectlayermodel.dataChanged.connect(self.selectlayerschanged)
-
         self.layerCombo.setModel(self.formlayers)
         self.widgetCombo.setModel(self.possiblewidgetsmodel)
         self.fieldList.setModel(self.fieldsmodel)
@@ -85,8 +80,6 @@ class ProjectWidget(Ui_Form, QWidget):
         self.widgetmodel.rowsRemoved.connect(self.setwidgetconfigvisiable)
         self.widgetmodel.rowsInserted.connect(self.setwidgetconfigvisiable)
         self.widgetmodel.modelReset.connect(self.setwidgetconfigvisiable)
-
-        self.titleText.textChanged.connect(self.updatetitle)
 
         QgsProject.instance().readProject.connect(self._readproject)
 
@@ -137,7 +130,6 @@ class ProjectWidget(Ui_Form, QWidget):
     def write_config_currentwidget(self):
         widget = self.stackedWidget.currentWidget()
         if hasattr(widget, "write_config"):
-            print "Write config"
             widget.write_config()
 
     def link(self, url):
@@ -325,11 +317,6 @@ class ProjectWidget(Ui_Form, QWidget):
         widget['default'] = default
         self.widgetmodel.setData(index, widget, Qt.UserRole)
 
-    def _save_selectionlayers(self, index, layer, value):
-        config = self.project.settings
-
-        self.selectlayermodel.dataChanged.emit(index, index)
-
     def _save_formtype(self, index):
         formtype = self.formtypeCombo.currentText()
         form = self.currentform
@@ -364,12 +351,6 @@ class ProjectWidget(Ui_Form, QWidget):
         form.settings['layer'] = layer.name()
         self.updatefields(layer)
 
-    def setsplash(self, splash):
-        pixmap = QPixmap(splash)
-        w = self.splashlabel.width()
-        h = self.splashlabel.height()
-        self.splashlabel.setPixmap(pixmap.scaled(w,h, Qt.KeepAspectRatio))
-
     def setproject(self, project, loadqgis=True):
         """
         Set the widgets active project.
@@ -384,10 +365,7 @@ class ProjectWidget(Ui_Form, QWidget):
             self.startsettings = copy.deepcopy(project.settings)
             self.project = project
             self.projectlabel.setText(project.name)
-            self.versionText.setText(project.version)
-            self.selectlayermodel.config = project.settings
             self.formlayers.setSelectLayers(self.project.selectlayers)
-            self.setsplash(project.splash)
             self.loadqgisproject(project, self.project.projectfile)
             self.filewatcher.addPath(self.project.projectfile)
             self.projectloaded.emit(self.project)
@@ -404,7 +382,6 @@ class ProjectWidget(Ui_Form, QWidget):
 
         self.canvas.freeze(True)
         self.formlayersmodel.removeall()
-        self.selectlayermodel.removeall()
         QgsMapLayerRegistry.instance().removeAllMapLayers()
         self.canvas.freeze(False)
 
@@ -431,12 +408,6 @@ class ProjectWidget(Ui_Form, QWidget):
 
     def _readproject(self, doc):
         self.formlayersmodel.refresh()
-        self.selectlayermodel.refresh()
-        self._updateforproject(self.project)
-
-    def _updateforproject(self, project):
-        self.titleText.setText(project.name)
-        self.descriptionText.setPlainText(project.description)
 
     def swapwidgetconfig(self, index):
         widgetconfig, _, _ = self.currentwidgetconfig
@@ -444,11 +415,6 @@ class ProjectWidget(Ui_Form, QWidget):
         self.defaultvalueText.setText(defaultvalue)
 
         self.updatewidgetconfig({})
-
-    def updatetitle(self, text):
-        self.project.settings['title'] = text
-        self.projectlabel.setText(text)
-        self.projectupdated.emit()
 
     def updatewidgetconfig(self, config):
         widgetconfig, index, widgettype = self.currentwidgetconfig
@@ -663,17 +629,9 @@ class ProjectWidget(Ui_Form, QWidget):
         """
         self.write_config_currentwidget()
 
-        title = self.titleText.text()
-        description = self.descriptionText.toPlainText()
-        version = str(self.versionText.text())
-
-        settings = self.project.settings
-        settings['title'] = title
-        settings['description'] = description
-        settings['version'] = version
-
         self.project.dump_settings()
 
+        # TODO Refactor form settings out into widget
         form = self.currentform
         if form:
             form.settings['widgets'] = list(self.widgetmodel.widgets())

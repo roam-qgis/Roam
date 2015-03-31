@@ -1,11 +1,12 @@
 __author__ = 'Nathan.Woodrow'
 
-from PyQt4.QtGui import QWidget
+from PyQt4.QtCore import Qt
+from PyQt4.QtGui import QWidget, QPixmap
 from PyQt4.Qsci import QsciLexerSQL, QsciScintilla
 
 from qgis.core import QgsDataSourceURI
 
-from configmanager.ui.nodewidgets import ui_layersnode, ui_layernode, ui_infonode
+from configmanager.ui.nodewidgets import ui_layersnode, ui_layernode, ui_infonode, ui_projectinfo
 from configmanager.models import CaptureLayersModel, LayerTypeFilter
 
 
@@ -19,6 +20,40 @@ class WidgetBase(QWidget):
         Write the config back to the project settings.
         """
         pass
+
+
+class ProjectInfoWidget(ui_projectinfo.Ui_Form, WidgetBase):
+    def __init__(self, parent=None):
+        super(ProjectInfoWidget, self).__init__(parent)
+        self.setupUi(self)
+        self.titleText.textChanged.connect(self.updatetitle)
+
+    def updatetitle(self, text):
+        self.project.settings['title'] = text
+        self.titleText.setText(text)
+
+    def setsplash(self, splash):
+        pixmap = QPixmap(splash)
+        w = self.splashlabel.width()
+        h = self.splashlabel.height()
+        self.splashlabel.setPixmap(pixmap.scaled(w, h, Qt.KeepAspectRatio))
+
+    def set_project(self, project, treenode):
+        super(ProjectInfoWidget, self).set_project(project, treenode)
+        self.titleText.setText(project.name)
+        self.descriptionText.setPlainText(project.description)
+        self.setsplash(project.splash)
+        self.versionText.setText(self.project.version)
+
+    def write_config(self):
+        title = self.titleText.text()
+        description = self.descriptionText.toPlainText()
+        version = str(self.versionText.text())
+
+        settings = self.project.settings
+        settings['title'] = title
+        settings['description'] = description
+        settings['version'] = version
 
 
 class InfoNode(ui_infonode.Ui_Form, WidgetBase):
