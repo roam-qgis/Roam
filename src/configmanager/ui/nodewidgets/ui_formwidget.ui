@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>FormWidget</class>
- <widget class="QWidget" name="FormWidget">
+ <class>Form</class>
+ <widget class="QWidget" name="Form">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -14,14 +14,25 @@
    <string>Form</string>
   </property>
   <layout class="QGridLayout" name="gridLayout">
-   <property name="margin">
-    <number>0</number>
-   </property>
    <item row="0" column="0">
     <layout class="QFormLayout" name="formLayout_2">
      <property name="fieldGrowthPolicy">
       <enum>QFormLayout::ExpandingFieldsGrow</enum>
      </property>
+     <item row="0" column="0">
+      <widget class="QLabel" name="label_16">
+       <property name="text">
+        <string>Form folder</string>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="1">
+      <widget class="QLabel" name="formfolderLabel">
+       <property name="text">
+        <string/>
+       </property>
+      </widget>
+     </item>
      <item row="1" column="0">
       <widget class="QLabel" name="label_6">
        <property name="text">
@@ -30,7 +41,27 @@
       </widget>
      </item>
      <item row="1" column="1">
-      <widget class="QLineEdit" name="formLabelText"/>
+      <layout class="QHBoxLayout" name="horizontalLayout_10">
+       <property name="topMargin">
+        <number>0</number>
+       </property>
+       <item>
+        <widget class="QLineEdit" name="formLabelText"/>
+       </item>
+       <item>
+        <spacer name="horizontalSpacer_8">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>40</width>
+           <height>20</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+      </layout>
      </item>
      <item row="2" column="0">
       <widget class="QLabel" name="label_7">
@@ -76,20 +107,6 @@ p, li { white-space: pre-wrap; }
         </widget>
        </item>
       </layout>
-     </item>
-     <item row="0" column="0">
-      <widget class="QLabel" name="label_16">
-       <property name="text">
-        <string>Form folder</string>
-       </property>
-      </widget>
-     </item>
-     <item row="0" column="1">
-      <widget class="QLabel" name="formfolderLabel">
-       <property name="text">
-        <string/>
-       </property>
-      </widget>
      </item>
     </layout>
    </item>
@@ -179,7 +196,7 @@ p, li { white-space: pre-wrap; }
                     <string>Add Attribute</string>
                    </property>
                    <property name="icon">
-                    <iconset resource="../../roam/resources.qrc">
+                    <iconset resource="../../../roam/resources.qrc">
                      <normaloff>:/icons/add</normaloff>:/icons/add</iconset>
                    </property>
                    <property name="toolButtonStyle">
@@ -209,7 +226,7 @@ p, li { white-space: pre-wrap; }
                     <string>Remove Attribute</string>
                    </property>
                    <property name="icon">
-                    <iconset resource="../../roam/resources.qrc">
+                    <iconset resource="../../../roam/resources.qrc">
                      <normaloff>:/icons/remove</normaloff>:/icons/remove</iconset>
                    </property>
                    <property name="toolButtonStyle">
@@ -263,19 +280,14 @@ p, li { white-space: pre-wrap; }
           </item>
           <item row="0" column="1">
            <widget class="QTabWidget" name="tabWidget">
-            <property name="font">
-             <font>
-              <pointsize>8</pointsize>
-             </font>
-            </property>
             <property name="currentIndex">
-             <number>1</number>
+             <number>0</number>
             </property>
             <widget class="QWidget" name="tab_3">
              <attribute name="title">
               <string>Attribute</string>
              </attribute>
-             <layout class="QGridLayout" name="gridLayout_2">
+             <layout class="QGridLayout" name="gridLayout_13">
               <property name="margin">
                <number>0</number>
               </property>
@@ -474,7 +486,7 @@ p, li { white-space: pre-wrap; }
                       <string/>
                      </property>
                      <property name="icon">
-                      <iconset resource="resources.qrc">
+                      <iconset resource="../resources.qrc">
                        <normaloff>:/icons/Expression</normaloff>:/icons/Expression</iconset>
                      </property>
                      <property name="iconSize">
@@ -537,14 +549,14 @@ p, li { white-space: pre-wrap; }
              </attribute>
              <layout class="QFormLayout" name="formLayout">
               <item row="0" column="0">
-               <widget class="QLabel" name="label_2">
+               <widget class="QLabel" name="label_15">
                 <property name="text">
-                 <string>Remeber Last Value</string>
+                 <string>Save last value</string>
                 </property>
                </widget>
               </item>
               <item row="0" column="1">
-               <widget class="QCheckBox" name="saveCheck">
+               <widget class="QCheckBox" name="savevalueCheck">
                 <property name="text">
                  <string/>
                 </property>
@@ -611,8 +623,8 @@ p, li { white-space: pre-wrap; }
               <rect>
                <x>0</x>
                <y>0</y>
-               <width>905</width>
-               <height>604</height>
+               <width>885</width>
+               <height>581</height>
               </rect>
              </property>
              <property name="autoFillBackground">
@@ -655,8 +667,8 @@ p, li { white-space: pre-wrap; }
   </layout>
  </widget>
  <resources>
-  <include location="resources.qrc"/>
-  <include location="../../roam/resources.qrc"/>
+  <include location="../resources.qrc"/>
+  <include location="../../../roam/resources.qrc"/>
  </resources>
  <connections/>
 </ui>

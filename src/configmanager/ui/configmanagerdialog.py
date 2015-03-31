@@ -136,9 +136,7 @@ class ConfigManagerDialog(ui_configmanager.Ui_ProjectInstallerDialog, QDialog):
 
                 self.projectwidget.reasons_label.setText(text)
 
-        if node.nodetype == Treenode.FormNode:
-            self.projectwidget.setform(node.form)
-        elif node.nodetype == Treenode.RoamNode:
+        if node.nodetype == Treenode.RoamNode:
             self.projectwidget.projectlabel.setText("IntraMaps Roam Config Manager")
         elif node.nodetype == Treenode.MapNode:
             self.projectwidget.loadmap()
