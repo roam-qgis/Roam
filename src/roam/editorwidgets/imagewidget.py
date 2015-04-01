@@ -175,7 +175,7 @@ class DrawingPadWidget(LargeEditorWidget):
 class ImageWidget(EditorWidget):
     widgettype = 'Image'
 
-    def __init__(self, *args):
+    def __init__(self, *args, **kwargs):
         super(ImageWidget, self).__init__(*args)
         self.tobase64 = False
         self.defaultlocation = ''

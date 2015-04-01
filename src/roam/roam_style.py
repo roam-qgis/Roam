@@ -201,6 +201,14 @@ featureform = """
     font: 14pt "Segoe UI" ;
 }
 
+QLabel[projectlabel="true"] {
+    background-color: rgba(255, 255, 255, 0);
+}
+
+QLabel[headerlabel="true"] {
+	font: 75 17pt "Segoe UI";
+}
+
 QPushButton {
     border: 1px solid rgb(137, 175, 255);
 	background-color: rgb(203, 203, 203, 50);

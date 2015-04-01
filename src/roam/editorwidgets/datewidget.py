@@ -45,7 +45,7 @@ class DateWidget(EditorWidget):
     widgettype = 'Date'
     DEFAULTDATE = QDateTime(2000, 1, 1, 00, 00, 00, 0)
 
-    def __init__(self, *args):
+    def __init__(self, *args, **kwargs):
         super(DateWidget, self).__init__(*args)
 
     def createWidget(self, parent):

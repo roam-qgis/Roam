@@ -51,7 +51,7 @@ class TextWidget(EditorWidget):
 class TextBlockWidget(TextWidget):
     widgettype = 'TextBlock'
 
-    def __init__(self, *args):
+    def __init__(self, *args, **kwargs):
         super(TextBlockWidget, self).__init__(*args)
 
     def createWidget(self, parent):
