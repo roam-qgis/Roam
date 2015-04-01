@@ -162,7 +162,7 @@ def writefolderconfig(settings, folder, configname):
         settingspath = os.path.join(folder, "{}.config".format(configname))
 
     with open(settingspath, 'w') as f:
-        roam.yaml.safe_dump(data=settings, stream=f, default_flow_style=False)
+        yaml.safe_dump(data=settings, stream=f, default_flow_style=False)
 
 
 

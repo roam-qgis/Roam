@@ -1,4 +1,4 @@
-import roam.yaml as yaml
+import yaml as yaml
 
 settings = {}
 

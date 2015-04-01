@@ -21,7 +21,7 @@ from roam.api import FeatureForm
 import configmanager.editorwidgets
 import roam.editorwidgets
 import roam.projectparser
-import roam.yaml
+import yaml
 import roam
 import roam.project
 import roam.config

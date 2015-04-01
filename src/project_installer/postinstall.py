@@ -9,7 +9,7 @@ import sys
 import shutil
 import logging
 import re
-import roam.yaml
+import yaml
 
 
 def containsinstallscripts(folder):
@@ -194,4 +194,4 @@ if __name__ == "__main__":
     if args.save:
         path = os.path.join(curdir, 'installervalues.txt')
         with open(path, 'w') as f:
-            roam.yaml.dump(data=updatedtokens, stream=f, default_flow_style=False)
+            yaml.dump(data=updatedtokens, stream=f, default_flow_style=False)

@@ -1,5 +1,5 @@
-from roam import yaml
-import roam.yaml.constructor
+import yaml
+import yaml.constructor
 from collections import OrderedDict, MutableMapping
 
 
@@ -24,7 +24,7 @@ class OrderedDictYAMLLoader(yaml.Loader):
         if isinstance(node, yaml.MappingNode):
             self.flatten_mapping(node)
         else:
-            raise roam.yaml.constructor.ConstructorError(None, None,
+            raise yaml.constructor.ConstructorError(None, None,
                 'expected a mapping node, but found %s' % node.id, node.start_mark)
 
         mapping = OrderedDict()
@@ -33,7 +33,7 @@ class OrderedDictYAMLLoader(yaml.Loader):
             try:
                 hash(key)
             except TypeError, exc:
-                raise roam.yaml.constructor.ConstructorError('while constructing a mapping',
+                raise yaml.constructor.ConstructorError('while constructing a mapping',
                     node.start_mark, 'found unacceptable key (%s)' % exc, key_node.start_mark)
             value = self.construct_object(value_node, deep=deep)
             mapping[key] = value

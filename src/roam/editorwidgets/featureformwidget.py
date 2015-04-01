@@ -9,6 +9,7 @@ from roam.flickwidget import FlickCharm
 from roam.api import featureform, RoamEvents
 from roam.ui.ui_featureformwidget import Ui_Form
 
+
 class FeatureFormWidget(Ui_Form, QWidget):
     # Raise the cancel event, takes a reason and a level
     canceled = pyqtSignal(str, int)
@@ -133,6 +134,7 @@ class FeatureFormWidget(Ui_Form, QWidget):
 
     def before_load(self):
         self.featureform.load(self.config['feature'], self.config['layers'], self.values)
+
 
 class FeatureFormWidgetEditor(LargeEditorWidget):
     def __init__(self, *args, **kwargs):

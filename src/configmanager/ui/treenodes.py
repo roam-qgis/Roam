@@ -272,7 +272,7 @@ class FormsNode(Treenode):
                 config = {form.name: form.settings}
                 configlocation = os.path.join(archivefolder, configname)
                 with open(configlocation, 'w') as f:
-                    roam.yaml.dump(data=config, stream=f, default_flow_style=False)
+                    yaml.dump(data=config, stream=f, default_flow_style=False)
 
         except Exception as ex:
             logger.exception("Could not remove folder")
