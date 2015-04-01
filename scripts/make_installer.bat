@@ -5,5 +5,5 @@ pushd %~dp0
 ECHO Creating installer package.
 CALL ..\package.bat
 MKDIR ..\release
-installer\makesfx.bat "..\release\IntraMaps Roam Installer" ..\dist\
-
+CALL installer\makesfx.bat "..\release\IntraMaps Roam Installer" ..\dist\
+CALL installer\makesfx.bat "..\release\IntraMaps Roam Installer - Silent" ..\dist\ -s
