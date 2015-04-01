@@ -240,7 +240,7 @@ p, li { white-space: pre-wrap; }
                 </layout>
                </item>
                <item>
-                <widget class="QTreeView" name="widgetlist">
+                <widget class="QTreeView" name="userwidgets">
                  <property name="frameShape">
                   <enum>QFrame::NoFrame</enum>
                  </property>
@@ -279,7 +279,7 @@ p, li { white-space: pre-wrap; }
            </widget>
           </item>
           <item row="0" column="1">
-           <widget class="QTabWidget" name="tabWidget">
+           <widget class="QTabWidget" name="widgetConfigTabs">
             <property name="currentIndex">
              <number>0</number>
             </property>
@@ -369,7 +369,7 @@ p, li { white-space: pre-wrap; }
                   </widget>
                  </item>
                  <item row="5" column="1">
-                  <widget class="QComboBox" name="widgetCombo">
+                  <widget class="QComboBox" name="useablewidgets">
                    <property name="sizePolicy">
                     <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
                      <horstretch>0</horstretch>

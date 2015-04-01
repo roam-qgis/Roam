@@ -6,6 +6,7 @@ from PyQt4.QtGui import QWidget, QPixmap, QStandardItem, QStandardItemModel, QIc
 from PyQt4.Qsci import QsciLexerSQL, QsciScintilla
 
 from qgis.core import QgsDataSourceURI
+from qgis.gui import QgsExpressionBuilderDialog
 
 from configmanager.ui.nodewidgets import ui_layersnode, ui_layernode, ui_infonode, ui_projectinfo, ui_formwidget
 from configmanager.models import (CaptureLayersModel, LayerTypeFilter, QgsFieldModel, WidgetsModel,
@@ -48,11 +49,11 @@ class FormWidget(ui_formwidget.Ui_Form, WidgetBase):
         self.formlayers.setSourceModel(self.formlayersmodel)
 
         self.layerCombo.setModel(self.formlayers)
-        self.widgetCombo.setModel(self.possiblewidgetsmodel)
+        self.useablewidgets.setModel(self.possiblewidgetsmodel)
         self.fieldList.setModel(self.fieldsmodel)
 
-        self.widgetlist.setModel(self.widgetmodel)
-        self.widgetlist.selectionModel().currentChanged.connect(self.updatecurrentwidget)
+        self.userwidgets.setModel(self.widgetmodel)
+        self.userwidgets.selectionModel().currentChanged.connect(self.load_widget)
         self.widgetmodel.rowsRemoved.connect(self.setwidgetconfigvisiable)
         self.widgetmodel.rowsInserted.connect(self.setwidgetconfigvisiable)
         self.widgetmodel.modelReset.connect(self.setwidgetconfigvisiable)
@@ -75,6 +76,8 @@ class FormWidget(ui_formwidget.Ui_Form, WidgetBase):
         self.formLabelText.textChanged.connect(self.form_name_changed)
         self.layerCombo.currentIndexChanged.connect(self.layer_updated)
 
+        # self.fieldList.currentIndexChanged.connect(self._save_selectedwidget)
+
     def layer_updated(self, index):
         index = self.formlayers.index(index, 0)
         layer = index.data(Qt.UserRole)
@@ -93,9 +96,6 @@ class FormWidget(ui_formwidget.Ui_Form, WidgetBase):
         if foundfield:
             self.nameText.setText(field)
 
-    def updatecurrentwidget(self):
-        pass
-
     def opendefaultexpression(self):
         layer = self.form.QGISLayer
         dlg = QgsExpressionBuilderDialog(layer, "Create default value expression", self)
@@ -106,12 +106,9 @@ class FormWidget(ui_formwidget.Ui_Form, WidgetBase):
 
     def formtabchanged(self, index):
         def setformpreview(form):
-            def removewidget():
-                item = self.frame_2.layout().itemAt(0)
-                if item and item.widget():
-                    item.widget().setParent(None)
-
-            removewidget()
+            item = self.frame_2.layout().itemAt(0)
+            if item and item.widget():
+                item.widget().setParent(None)
 
             featureform = FeatureForm.from_form(form, form.settings, None, {})
 
@@ -132,7 +129,7 @@ class FormWidget(ui_formwidget.Ui_Form, WidgetBase):
         QDesktopServices.openUrl(QUrl.fromLocalFile(self.form.folder))
 
     def loadwidgettypes(self):
-        self.widgetCombo.blockSignals(True)
+        self.useablewidgets.blockSignals(True)
         for widgettype in roam.editorwidgets.core.supportedwidgets():
             try:
                 configclass = configmanager.editorwidgets.widgetconfigs[widgettype]
@@ -144,13 +141,13 @@ class FormWidget(ui_formwidget.Ui_Form, WidgetBase):
             item.setData(configwidget, Qt.UserRole)
             item.setData(widgettype, Qt.UserRole + 1)
             item.setIcon(QIcon(widgeticon(widgettype)))
-            self.widgetCombo.model().appendRow(item)
+            self.useablewidgets.model().appendRow(item)
             self.widgetstack.addWidget(configwidget)
-        self.widgetCombo.blockSignals(False)
+        self.useablewidgets.blockSignals(False)
 
     def setwidgetconfigvisiable(self, *args):
         haswidgets = self.widgetmodel.rowCount() > 0
-        self.widgetframe.setEnabled(haswidgets)
+        self.widgetframe.setVisible(haswidgets)
 
     def newwidget(self):
         """
@@ -160,14 +157,14 @@ class FormWidget(ui_formwidget.Ui_Form, WidgetBase):
         widget['widget'] = 'Text'
         # Grab the first field.
         widget['field'] = self.fieldsmodel.index(0, 0).data(QgsFieldModel.FieldNameRole)
-        currentindex = self.widgetlist.currentIndex()
+        currentindex = self.userwidgets.currentIndex()
         currentitem = self.widgetmodel.itemFromIndex(currentindex)
         if currentitem and currentitem.iscontainor():
             parent = currentindex
         else:
             parent = currentindex.parent()
         index = self.widgetmodel.addwidget(widget, parent)
-        self.widgetlist.setCurrentIndex(index)
+        self.userwidgets.setCurrentIndex(index)
 
     def removewidget(self):
         """
@@ -242,23 +239,25 @@ class FormWidget(ui_formwidget.Ui_Form, WidgetBase):
         # Set the first widget
         index = self.widgetmodel.index(0, 0)
         if index.isValid():
-            self.widgetlist.setCurrentIndex(index)
-            self.updatecurrentwidget(index, None)
+            self.userwidgets.setCurrentIndex(index)
+            self.load_widget(index, None)
 
     def swapwidgetconfig(self, index):
-        widgetconfig, _, _ = self.currentwidgetconfig
+        widgetconfig, _, _ = self.current_config_widget
         defaultvalue = widgetconfig.defaultvalue
         self.defaultvalueText.setText(defaultvalue)
 
         self.updatewidgetconfig({})
 
-    def updatecurrentwidget(self, index, _):
+    def load_widget(self, index, last):
         """
         Update the UI with the config for the current selected widget.
         """
-        if not index.isValid():
-            return
+        if last:
+            print "Save last widget"
+            self._save_widget(last)
 
+        print "Update with new widget"
         widget = index.data(Qt.UserRole)
         widgettype = widget['widget']
         field = widget['field']
@@ -271,7 +270,7 @@ class FormWidget(ui_formwidget.Ui_Form, WidgetBase):
 
         try:
             data = readonly[0]
-        except:
+        except IndexError:
             data = 'never'
 
         index = self.readonlyCombo.findData(data)
@@ -299,32 +298,33 @@ class FormWidget(ui_formwidget.Ui_Form, WidgetBase):
             else:
                 self.fieldList.setEditText(field)
 
-        index = self.widgetCombo.findText(widgettype)
+        index = self.useablewidgets.findText(widgettype)
         if index > -1:
-            self.widgetCombo.setCurrentIndex(index)
+            self.useablewidgets.setCurrentIndex(index)
 
-        self.updatewidgetconfig(config=widget.setdefault('config', {}))
+        config = widget.get('config', {})
+        self.updatewidgetconfig(config)
 
     @property
     def currentuserwidget(self):
         """
         Return the selected user widget.
         """
-        index = self.widgetlist.currentIndex()
+        index = self.userwidgets.currentIndex()
         return index.data(Qt.UserRole), index
 
     @property
-    def currentwidgetconfig(self):
+    def current_config_widget(self):
         """
         Return the selected widget in the widget combo.
         """
-        index = self.widgetCombo.currentIndex()
+        index = self.useablewidgets.currentIndex()
         index = self.possiblewidgetsmodel.index(index, 0)
         return index.data(Qt.UserRole), index, index.data(Qt.UserRole + 1)
 
     def updatewidgetconfig(self, config):
-        widgetconfig, index, widgettype = self.currentwidgetconfig
-        self.setconfigwidget(widgetconfig, config)
+        configwidget, _, _ = self.current_config_widget
+        self.setconfigwidget(configwidget, config)
 
     def setconfigwidget(self, configwidget, config):
         """
@@ -332,42 +332,44 @@ class FormWidget(ui_formwidget.Ui_Form, WidgetBase):
         """
 
         try:
-            configwidget.widgetdirty.disconnect(self._save_selectedwidget)
+            configwidget.widgetdirty.disconnect(self._save_current_widget_config)
         except TypeError:
             pass
 
         self.widgetstack.setCurrentWidget(configwidget)
         configwidget.setconfig(config)
 
-        configwidget.widgetdirty.connect(self._save_selectedwidget)
+        configwidget.widgetdirty.connect(self._save_current_widget_config)
 
-    def _save_selectedwidget(self, index):
-        configwidget, index, widgettype = self.currentwidgetconfig
-        widget, index = self.currentuserwidget
-        if not widget:
-            return
+    def _save_current_widget_config(self, *args):
+        _, index = self.currentuserwidget
+        self._save_widget(index)
 
+    def _save_widget(self, index):
+        widgetdata = self._get_widget_config()
+        self.widgetmodel.setData(index, widgetdata, Qt.UserRole)
+
+    def _get_widget_config(self):
+        def current_field():
+            row = self.fieldList.currentIndex()
+            field = self.fieldsmodel.index(row, 0).data(QgsFieldModel.FieldNameRole)
+            return field
+
+        configwidget, _, widgettype = self.current_config_widget
+        widget = {}
+        widget['field'] = current_field()
+        widget['default'] = self.defaultvalueText.text()
         widget['widget'] = widgettype
         widget['required'] = self.requiredCheck.isChecked()
         widget['rememberlastvalue'] = self.savevalueCheck.isChecked()
-        widget['config'] = configwidget.getconfig()
         widget['name'] = self.nameText.text()
         widget['read-only-rules'] = [self.readonlyCombo.itemData(self.readonlyCombo.currentIndex())]
         widget['hidden'] = self.hiddenCheck.isChecked()
-
-        row = self.fieldList.currentIndex()
-        field = self.fieldsmodel.index(row, 0).data(QgsFieldModel.FieldNameRole)
-        widget['field'] = field
-
-        default = self.defaultvalueText.text()
-        widget['default'] = default
-
-        self.widgetmodel.setData(index, widget, Qt.UserRole)
-
-    def _save_formtype(self, index):
-        form = self.currentform
+        widget['config'] = configwidget.getconfig()
+        return widget
 
     def write_config(self):
+        self._save_current_widget_config()
         index = self.formlayers.index(self.layerCombo.currentIndex(), 0)
         layer = index.data(Qt.UserRole)
         self.form.settings['layer'] = layer.name()
