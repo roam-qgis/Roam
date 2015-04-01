@@ -6,7 +6,7 @@ from qgis.core import QGis, QgsMapLayerRegistry, QgsMessageLog, QgsMapLayer
 
 import os
 
-import roam.yaml
+import yaml
 
 import configmanager.ui.resources_rc
 
@@ -391,14 +391,14 @@ class WidgetsModel(QStandardItemModel):
             widget = index.data(Qt.UserRole)
             widgets.append(widget)
 
-        widgettext = roam.yaml.dump(widgets)
+        widgettext = yaml.dump(widgets)
         bytes = QByteArray(widgettext)
         data.setData(self.mimeTypes()[0], bytes)
         return data
 
     def dropMimeData(self, mimedata, action, row, column, parent):
         data = mimedata.data(self.mimeTypes()[0]).data()
-        widgets = roam.yaml.load(data)
+        widgets = yaml.load(data)
 
         droptarget = self.itemFromIndex(parent)
         if not droptarget:
