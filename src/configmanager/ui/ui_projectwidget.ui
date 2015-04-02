@@ -533,6 +533,35 @@ p, li { white-space: pre-wrap; }
          <number>0</number>
         </property>
         <item>
+         <widget class="QToolButton" name="depolyProjectButton">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="text">
+           <string>Publish Project</string>
+          </property>
+          <property name="icon">
+           <iconset resource="../../roam/resources.qrc">
+            <normaloff>:/icons/sync</normaloff>:/icons/sync</iconset>
+          </property>
+          <property name="iconSize">
+           <size>
+            <width>24</width>
+            <height>24</height>
+           </size>
+          </property>
+          <property name="toolButtonStyle">
+           <enum>Qt::ToolButtonTextUnderIcon</enum>
+          </property>
+          <property name="autoRaise">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item>
          <widget class="QToolButton" name="openProjectFolderButton">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Fixed" vsizetype="Fixed">

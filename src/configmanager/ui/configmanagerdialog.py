@@ -151,7 +151,6 @@ class ConfigManagerDialog(ui_configmanager.Ui_ProjectInstallerDialog, QDialog):
         self.projectwidget.setpage(node.page, node)
 
     def projectupdated(self):
-        print "Project Updated"
         index = self.projectList.currentIndex()
         node = find_node(index)
         node.refresh()

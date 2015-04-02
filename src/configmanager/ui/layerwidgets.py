@@ -447,22 +447,24 @@ class ProjectInfoWidget(ui_projectinfo.Ui_Form, WidgetBase):
         h = self.splashlabel.height()
         self.splashlabel.setPixmap(pixmap.scaled(w, h, Qt.KeepAspectRatio))
 
+    def update_items(self):
+        self.titleText.setText(self.project.name)
+        self.descriptionText.setPlainText(self.project.description)
+        self.setsplash(self.project.splash)
+        self.versionText.setText(str(self.project.version))
+
     def set_project(self, project, treenode):
         super(ProjectInfoWidget, self).set_project(project, treenode)
-        self.titleText.setText(project.name)
-        self.descriptionText.setPlainText(project.description)
-        self.setsplash(project.splash)
-        self.versionText.setText(self.project.version)
+        self.project.projectUpdated.connect(self.update_items)
+        self.update_items()
 
     def write_config(self):
         title = self.titleText.text()
         description = self.descriptionText.toPlainText()
-        version = str(self.versionText.text())
 
         settings = self.project.settings
         settings['title'] = title
         settings['description'] = description
-        settings['version'] = version
 
 
 class InfoNode(ui_infonode.Ui_Form, WidgetBase):

@@ -110,6 +110,7 @@ class ProjectWidget(Ui_Form, QWidget):
         if not os.path.exists(path):
             os.makedirs(path)
 
+        self._saveproject()
         bundle.bundle_project(self.project, path)
 
     def setaboutinfo(self):
@@ -209,10 +210,6 @@ class ProjectWidget(Ui_Form, QWidget):
         Save the project config to disk.
         """
         self.write_config_currentwidget()
-        self.project.dump_settings()
-        self.project.save()
+        # self.project.dump_settings()
+        self.project.save(update_version=True)
         self.projectsaved.emit()
-
-
-
-
