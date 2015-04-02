@@ -335,14 +335,15 @@ class MapWidget(Ui_CanvasWidget, QMainWindow):
         self.actionGPS = GPSAction(":/icons/gps", self.canvas, self)
         self.projecttoolbar.addAction(self.actionGPS)
 
-        self.northarrow = NorthArrow(":/icons/north", self.canvas)
-        self.northarrow.setPos(10, 10)
-        self.canvas.scene().addItem(self.northarrow)
+        if roam.config.settings.get('north_arrow', False):
+            self.northarrow = NorthArrow(":/icons/north", self.canvas)
+            self.northarrow.setPos(10, 10)
+            self.canvas.scene().addItem(self.northarrow)
 
-        self.scalebar = ScaleBarItem(self.canvas)
-        self.canvas.scene().addItem(self.scalebar)
-
-        #TODO adjust north arrow based on true north
+        self.scalebar_enabled = roam.config.settings.get('scale_bar', False)
+        if self.scalebar_enabled:
+            self.scalebar = ScaleBarItem(self.canvas)
+            self.canvas.scene().addItem(self.scalebar)
 
         self.projecttoolbar.setContextMenuPolicy(Qt.CustomContextMenu)
 
@@ -557,7 +558,9 @@ class MapWidget(Ui_CanvasWidget, QMainWindow):
 
         self.canvas.freeze(False)
         self.canvas.refresh()
-        self.scalebar.update()
+
+        if self.scalebar_enabled:
+            self.scalebar.update()
 
     def setMapTool(self, tool, *args):
         self.canvas.setMapTool(tool)
