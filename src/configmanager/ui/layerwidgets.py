@@ -377,7 +377,7 @@ class FormWidget(ui_formwidget.Ui_Form, WidgetBase):
         widget['field'] = current_field()
         widget['default'] = self.defaultvalueText.text()
         widget['widget'] = widgettype
-        widget['required'] = sel.requiredCheck.isChecked()
+        widget['required'] = self.requiredCheck.isChecked()
         widget['rememberlastvalue'] = self.savevalueCheck.isChecked()
         widget['name'] = self.nameText.text()
         widget['read-only-rules'] = [self.readonlyCombo.itemData(self.readonlyCombo.currentIndex())]
