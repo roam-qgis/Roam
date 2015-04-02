@@ -42,7 +42,7 @@
       <item>
        <widget class="QLabel" name="message_label">
         <property name="text">
-         <string>NOTE: Info queries are ony supported on MS SQL or SQLite based layers</string>
+         <string> Info queries are ony currently supported on MS SQL or SQLite based layers</string>
         </property>
         <property name="wordWrap">
          <bool>true</bool>

@@ -377,7 +377,7 @@ class FormWidget(ui_formwidget.Ui_Form, WidgetBase):
         widget['field'] = current_field()
         widget['default'] = self.defaultvalueText.text()
         widget['widget'] = widgettype
-        widget['required'] = self.requiredCheck.isChecked()
+        widget['required'] = sel.requiredCheck.isChecked()
         widget['rememberlastvalue'] = self.savevalueCheck.isChecked()
         widget['name'] = self.nameText.text()
         widget['read-only-rules'] = [self.readonlyCombo.itemData(self.readonlyCombo.currentIndex())]
@@ -437,7 +437,6 @@ class InfoNode(ui_infonode.Ui_Form, WidgetBase):
         self.Editor.setMarginWidth(0, 0)
         self.Editor.setWrapMode(QsciScintilla.WrapWord)
         self.layer = None
-        self.message_label.setVisible(False)
         self.connectionCombo.currentIndexChanged.connect(self.update_panel_status)
         self.fromlayer_radio.toggled.connect(self.update_panel_status)
         self.thislayer_radio.toggled.connect(self.update_panel_status)
@@ -450,15 +449,17 @@ class InfoNode(ui_infonode.Ui_Form, WidgetBase):
         if self.thislayer_radio.isChecked():
             layer = self.treenode.layer
 
+        if not layer:
+            self.queryframe.setEnabled(False)
+            return False
+
         source = layer.source()
         name = layer.dataProvider().name()
         if ".sqlite" in source or name == "mssql":
             self.queryframe.setEnabled(True)
-            self.message_label.setVisible(False)
             return True
         else:
             self.queryframe.setEnabled(False)
-            self.message_label.setVisible(True)
             return False
 
     def set_project(self, project, node):
