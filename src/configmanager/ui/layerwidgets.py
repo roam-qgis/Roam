@@ -76,7 +76,10 @@ class FormWidget(ui_formwidget.Ui_Form, WidgetBase):
         self.formLabelText.textChanged.connect(self.form_name_changed)
         self.layerCombo.currentIndexChanged.connect(self.layer_updated)
 
-        # self.fieldList.currentIndexChanged.connect(self._save_selectedwidget)
+        self.fieldList.currentIndexChanged.connect(self._save_current_widget)
+        self.nameText.textChanged.connect(self._save_current_widget)
+        self.useablewidgets.currentIndexChanged.connect(self._save_current_widget)
+        self.useablewidgets.currentIndexChanged.connect(self.swapwidgetconfig)
 
     def layer_updated(self, index):
         index = self.formlayers.index(index, 0)
@@ -147,7 +150,7 @@ class FormWidget(ui_formwidget.Ui_Form, WidgetBase):
 
     def setwidgetconfigvisiable(self, *args):
         haswidgets = self.widgetmodel.rowCount() > 0
-        self.widgetframe.setVisible(haswidgets)
+        self.widgetConfigTabs.setVisible(haswidgets)
 
     def newwidget(self):
         """
@@ -253,12 +256,22 @@ class FormWidget(ui_formwidget.Ui_Form, WidgetBase):
         """
         Update the UI with the config for the current selected widget.
         """
+        self.fieldList.blockSignals(True)
+        self.nameText.blockSignals(True)
+        self.useablewidgets.blockSignals(True)
+
         if last:
             print "Save last widget"
             self._save_widget(last)
 
         print "Update with new widget"
         widget = index.data(Qt.UserRole)
+        if not widget:
+            self.fieldList.blockSignals(False)
+            self.nameText.blockSignals(False)
+            self.useablewidgets.blockSignals(False)
+            return
+
         widgettype = widget['widget']
         field = widget['field']
         required = widget.setdefault('required', False)
@@ -305,6 +318,10 @@ class FormWidget(ui_formwidget.Ui_Form, WidgetBase):
         config = widget.get('config', {})
         self.updatewidgetconfig(config)
 
+        self.fieldList.blockSignals(False)
+        self.nameText.blockSignals(False)
+        self.useablewidgets.blockSignals(False)
+
     @property
     def currentuserwidget(self):
         """
@@ -332,16 +349,16 @@ class FormWidget(ui_formwidget.Ui_Form, WidgetBase):
         """
 
         try:
-            configwidget.widgetdirty.disconnect(self._save_current_widget_config)
+            configwidget.widgetdirty.disconnect(self._save_current_widget)
         except TypeError:
             pass
 
         self.widgetstack.setCurrentWidget(configwidget)
         configwidget.setconfig(config)
 
-        configwidget.widgetdirty.connect(self._save_current_widget_config)
+        configwidget.widgetdirty.connect(self._save_current_widget)
 
-    def _save_current_widget_config(self, *args):
+    def _save_current_widget(self, *args):
         _, index = self.currentuserwidget
         self._save_widget(index)
 
@@ -369,7 +386,7 @@ class FormWidget(ui_formwidget.Ui_Form, WidgetBase):
         return widget
 
     def write_config(self):
-        self._save_current_widget_config()
+        self._save_current_widget()
         index = self.formlayers.index(self.layerCombo.currentIndex(), 0)
         layer = index.data(Qt.UserRole)
         self.form.settings['layer'] = layer.name()
