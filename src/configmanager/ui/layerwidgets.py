@@ -1,8 +1,8 @@
 __author__ = 'Nathan.Woodrow'
 
 import os
-from PyQt4.QtCore import Qt, QUrl
-from PyQt4.QtGui import QWidget, QPixmap, QStandardItem, QStandardItemModel, QIcon, QDesktopServices
+from PyQt4.QtCore import Qt, QUrl, QVariant
+from PyQt4.QtGui import QWidget, QPixmap, QStandardItem, QStandardItemModel, QIcon, QDesktopServices, QMenu, QToolButton
 from PyQt4.Qsci import QsciLexerSQL, QsciScintilla
 
 from qgis.core import QgsDataSourceURI
@@ -81,10 +81,18 @@ class FormWidget(ui_formwidget.Ui_Form, WidgetBase):
         self.useablewidgets.currentIndexChanged.connect(self._save_current_widget)
         self.useablewidgets.currentIndexChanged.connect(self.swapwidgetconfig)
 
+        menu = QMenu("Field Actions")
+        action = menu.addAction("Auto add all fields")
+        action.triggered.connect(self.auto_add_fields)
+
+        self.addWidgetButton.setMenu(menu)
+        self.addWidgetButton.setPopupMode(QToolButton.MenuButtonPopup)
+
     def layer_updated(self, index):
-        index = self.formlayers.index(index, 0)
-        layer = index.data(Qt.UserRole)
-        self.updatefields(layer)
+        if not self.selected_layer:
+            return
+
+        self.updatefields(self.selected_layer)
 
     def form_name_changed(self, text):
         self.form.settings['label'] = self.formLabelText.text()
@@ -152,14 +160,31 @@ class FormWidget(ui_formwidget.Ui_Form, WidgetBase):
         haswidgets = self.widgetmodel.rowCount() > 0
         self.widgetConfigTabs.setVisible(haswidgets)
 
-    def newwidget(self):
+    def newwidget(self, field=None):
         """
         Create a new widget.  The default is a list.
         """
+        mapping = {QVariant.String: "Text",
+                   QVariant.Int: "Number",
+                   QVariant.Double: "Number(Double)",
+                   QVariant.ByteArray: "Image",
+                   QVariant.Date: "Date",
+                   QVariant.DateTime: "Date"}
         widget = {}
-        widget['widget'] = 'Text'
+        if not field:
+            field = self.fieldsmodel.index(0, 0).data(Qt.UserRole)
+            widget['field'] = field.name()
+        else:
+            widget['field'] = field.name()
+
+        try:
+            widget['widget'] = mapping[field.type()]
+        except KeyError:
+            widget['widget'] = 'Text'
         # Grab the first field.
-        widget['field'] = self.fieldsmodel.index(0, 0).data(QgsFieldModel.FieldNameRole)
+
+        widget['name'] = field.name().replace("_", " ").title()
+
         currentindex = self.userwidgets.currentIndex()
         currentitem = self.widgetmodel.itemFromIndex(currentindex)
         if currentitem and currentitem.iscontainor():
@@ -168,6 +193,10 @@ class FormWidget(ui_formwidget.Ui_Form, WidgetBase):
             parent = currentindex.parent()
         index = self.widgetmodel.addwidget(widget, parent)
         self.userwidgets.setCurrentIndex(index)
+
+    def auto_add_fields(self):
+        for field in self.selected_layer.pendingFields():
+            self.newwidget(field)
 
     def removewidget(self):
         """
@@ -385,11 +414,18 @@ class FormWidget(ui_formwidget.Ui_Form, WidgetBase):
         widget['config'] = configwidget.getconfig()
         return widget
 
-    def write_config(self):
-        self._save_current_widget()
+    @property
+    def selected_layer(self):
         index = self.formlayers.index(self.layerCombo.currentIndex(), 0)
         layer = index.data(Qt.UserRole)
-        self.form.settings['layer'] = layer.name()
+        return layer
+
+    def write_config(self):
+        if not self.selected_layer:
+            return
+
+        self._save_current_widget()
+        self.form.settings['layer'] = self.selected_layer.name()
         self.form.settings['type'] = self.formtypeCombo.currentText()
         self.form.settings['label'] = self.formLabelText.text()
         self.form.settings['widgets'] = list(self.widgetmodel.widgets())
@@ -443,6 +479,7 @@ class InfoNode(ui_infonode.Ui_Form, WidgetBase):
         self.connectionCombo.blockSignals(True)
 
     def update_panel_status(self, *args):
+        layer = None
         if self.fromlayer_radio.isChecked():
             layer = self.connectionCombo.currentLayer()
 
