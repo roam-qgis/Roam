@@ -24,6 +24,7 @@ class CaptureLayerFilter(QSortFilterProxyModel):
     """
     Filter a layer model to only show select layers.
     """
+
     def __init__(self, parent=None):
         super(CaptureLayerFilter, self).__init__(parent)
         self.selectlayers = []
@@ -49,6 +50,7 @@ class LayerTypeFilter(QSortFilterProxyModel):
     """
     Filter a model to hide the given types of layers
     """
+
     def __init__(self, geomtypes=[QGis.NoGeometry], parent=None):
         super(LayerTypeFilter, self).__init__(parent)
         self.geomtypes = geomtypes
@@ -114,7 +116,7 @@ class QgsLayerModel(QAbstractItemModel):
             self.addlayer(layer)
 
     def refresh(self):
-        #import traceback
+        # import traceback
         #traceback.print_stack(limit=5)
         self.removeall()
         for layer in QgsMapLayerRegistry.instance().mapLayers().values():
@@ -123,7 +125,7 @@ class QgsLayerModel(QAbstractItemModel):
     def flags(self, index):
         return Qt.ItemIsUserCheckable | Qt.ItemIsSelectable | Qt.ItemIsEnabled
 
-    def index(self, row, column, parent = QModelIndex()):
+    def index(self, row, column, parent=QModelIndex()):
         def getLayer(index):
             try:
                 layer = self.layers[index]
@@ -198,6 +200,7 @@ class CaptureLayersModel(QgsLayerModel):
         else:
             return super(CaptureLayersModel, self).data(index, role)
 
+
 class QgsFieldModel(QAbstractItemModel):
     FieldNameRole = Qt.UserRole + 1
 
@@ -222,7 +225,7 @@ class QgsFieldModel(QAbstractItemModel):
         """
         Find a field in the model by it's name
         """
-        startindex = self.index(0,0)
+        startindex = self.index(0, 0)
         items = self.match(startindex, QgsFieldModel.FieldNameRole, name)
         try:
             return items[0]
@@ -241,7 +244,7 @@ class QgsFieldModel(QAbstractItemModel):
         self.layermodel = selectionModel.model()
         selectionModel.currentChanged.connect(self.updateLayer)
 
-    def index(self, row, column, parent = QModelIndex()):
+    def index(self, row, column, parent=QModelIndex()):
         field = self.getField(row)
         if not field: QModelIndex()
         return self.createIndex(row, column, field)
@@ -249,10 +252,10 @@ class QgsFieldModel(QAbstractItemModel):
     def parent(self, index):
         return QModelIndex()
 
-    def rowCount(self, parent = QModelIndex()):
+    def rowCount(self, parent=QModelIndex()):
         return len(self.fields)
 
-    def columnCount(self, parent = QModelIndex()):
+    def columnCount(self, parent=QModelIndex()):
         return 1
 
     def getField(self, index):
@@ -277,7 +280,7 @@ class QgsFieldModel(QAbstractItemModel):
 
     def configchanged(self):
         lastindex = self.index(self.rowCount(), self.rowCount())
-        self.dataChanged.emit(self.index(0,0), lastindex)
+        self.dataChanged.emit(self.index(0, 0), lastindex)
 
 
 class WidgetItem(QStandardItem):
@@ -305,7 +308,7 @@ class WidgetItem(QStandardItem):
                 length = len(self.widget.get('config', {}).get('widgets', []))
                 return "{} ({} items)".format(name, length)
 
-            field = (self.widget.get('field', '')  or '').lower()
+            field = (self.widget.get('field', '') or '').lower()
             text = name or field
             return "{} ({})".format(text, self.widget['widget'])
         elif role == Qt.UserRole:
