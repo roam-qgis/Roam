@@ -1,12 +1,17 @@
+import math
 from functools import partial
 from collections import defaultdict
 
-from PyQt4.QtCore import Qt, pyqtSignal, QSize, QPropertyAnimation, QObject, pyqtProperty, QEasingCurve, QThread
+from PyQt4.QtCore import Qt, pyqtSignal, QSize, QPropertyAnimation, QObject, pyqtProperty, QEasingCurve, QThread, \
+                         QRectF, QLocale, QPointF, QPoint
 from PyQt4.QtGui import QActionGroup, QFrame, QWidget, QSizePolicy, \
-                        QAction, QPixmap, QCursor, QIcon, QColor, QMainWindow, QPen
+                        QAction, QPixmap, QCursor, QIcon, QColor, QMainWindow, QPen, QGraphicsItem, QPolygon, QFont, QFontMetrics, QBrush, QPainterPath, QPainter
 
-from qgis.gui import QgsMapCanvas, QgsMapToolZoom, QgsRubberBand, QgsMapCanvasItem
-from qgis.core import QgsPalLabeling, QgsMapLayerRegistry, QgsMapLayer, QgsFeature, QGis, QgsRectangle, QgsProject, QgsApplication
+from PyQt4.QtSvg import QGraphicsSvgItem
+
+from qgis.gui import QgsMapCanvas, QgsMapToolZoom, QgsRubberBand, QgsMapCanvasItem, QgsScaleComboBox
+from qgis.core import QgsPalLabeling, QgsMapLayerRegistry, QgsMapLayer, QgsFeature, QGis, QgsRectangle, QgsProject, QgsApplication, QgsComposerScaleBar, \
+                      QgsCoordinateReferenceSystem, QgsCoordinateTransform, QgsPoint, QgsCsException, QgsDistanceArea
 
 from roam.gps_action import GPSAction, GPSMarker
 from roam.projectparser import ProjectParser
@@ -23,6 +28,217 @@ try:
 except ImportError:
     from qgis.gui import QgsMapToolPan
     PanTool = QgsMapToolPan
+
+
+class NorthArrow(QGraphicsSvgItem):
+    def __init__(self, path, canvas, parent=None):
+        super(NorthArrow, self).__init__(path, parent)
+        self.canvas = canvas
+        self.setTransformOriginPoint(self.boundingRect().width() /2, self.boundingRect().height() /2)
+
+    def paint(self, painter, styleoptions, widget=None):
+        angle = self._calc_north()
+        if angle:
+            self.setRotation(angle)
+        super(NorthArrow, self).paint(painter, styleoptions, widget)
+
+    def _calc_north(self):
+        extent = self.canvas.extent()
+        if self.canvas.layerCount() == 0 or extent.isEmpty():
+            print "No layers or extent"
+            return 0
+
+        outcrs = self.canvas.mapSettings().destinationCrs()
+
+        if outcrs.isValid() and not outcrs.geographicFlag():
+            crs = QgsCoordinateReferenceSystem()
+            crs.createFromOgcWmsCrs("EPSG:4326")
+
+            transform = QgsCoordinateTransform(outcrs, crs)
+
+            p1 = QgsPoint(extent.center())
+            p2 = QgsPoint(p1.x(), p1.y() + extent.height() * 0.25)
+
+            try:
+                pp1 = transform.transform(p1)
+                pp2 = transform.transform(p2)
+            except QgsCsException:
+                roam.utils.warning("North arrow. Error transforming.")
+                return None
+
+            area = QgsDistanceArea()
+            area.setEllipsoid(crs.ellipsoidAcronym())
+            area.setEllipsoidalMode(True)
+            area.setSourceCrs(crs)
+            distance, angle, _ = area.computeDistanceBearing(pp1, pp2)
+            angle = math.degrees(angle)
+            return angle
+        else:
+            return 0
+
+
+class ScaleBarItem(QGraphicsItem):
+    def __init__(self, canvas, parent=None):
+        super(ScaleBarItem, self).__init__(parent)
+        self.canvas = canvas
+        self.realsize = 100
+        black = QColor(Qt.black)
+        black.setAlpha(150)
+        white = QColor(Qt.white)
+        white.setAlpha(150)
+        blackpen = QPen(black, 4)
+        whitepen = QPen(white, 8)
+        self.pens = [whitepen, blackpen]
+        self.whitepen = QPen(white, 1)
+        self.blackbrush = QBrush(black)
+        self.ticksize = 10
+        self.fontsize = 15
+        self.font = QFont()
+        self.font.setPointSize(self.fontsize)
+        self.font.setStyleHint(QFont.Times, QFont.PreferAntialias)
+        self.font.setBold(True)
+        self.metrics = QFontMetrics(self.font)
+
+    def boundingRect(self):
+        try:
+            width, realsize, label, fontsize = self._calc_size()
+            halfheight = (self.ticksize + fontsize[1]) / 2
+            halfwidth = (width + fontsize[0]) / 2
+            return QRectF(-halfwidth, -halfheight, halfwidth, halfheight)
+        except ZeroDivisionError:
+            return QRectF()
+
+    def paint(self, painter, styleoptions, widget=None):
+        try:
+            width, realsize, label, fontsize = self._calc_size()
+        except ZeroDivisionError:
+            return
+
+        mapunits = self.canvas.mapUnits()
+
+        # painter.drawRect(self.boundingRect())
+        array = QPolygon()
+        canvasheight = self.canvas.height()
+        canvaswidth = self.canvas.width()
+        margin = 20
+        originy = 0
+        originx = 0
+
+        self.setPos(margin, canvasheight - margin)
+
+        x1, y1 = originx, originy
+        x2, y2 = originx, originy + self.ticksize
+        x3, y3 = originx + width, originy + self.ticksize
+        midx, midy = originx + width /2, originy + self.ticksize / 2
+        x4, y4 = originx + width, originy
+
+        for pen in self.pens:
+            painter.setPen(pen)
+            # Drwa the scale bar
+            painter.drawLine(x1, y1, x2, y2)
+            painter.drawLine(x2, y2, x3, y3)
+            painter.drawLine(x3, y3, x4, y4)
+            painter.drawLine(midx, midy, midx, y1)
+
+        # Draw the text
+        fontwidth = self.metrics.width("0")
+        fontheight = self.metrics.height()
+        fontheight /= 2
+        fontwidth /= 2
+        path = QPainterPath()
+        point = QPointF(x1 - fontwidth, y1 - fontheight)
+        path.addText(point, self.font, "0")
+        painter.setPen(self.whitepen)
+        painter.setBrush(self.blackbrush)
+        painter.setRenderHints(QPainter.Antialiasing)
+        painter.setFont(self.font)
+        painter.drawPath(path)
+
+        fontwidth = self.metrics.width(label)
+        fontheight = self.metrics.height()
+        fontheight /= 2
+        fontwidth /= 2
+        point = QPointF(x4 - fontwidth, y4 - fontheight)
+        path.addText(point, self.font, label)
+        painter.drawPath(path)
+
+    def _calc_size(self):
+        realSize = self.realsize
+        canvaswidth = self.canvas.width()
+        mapunitsperpixel = abs(self.canvas.mapUnitsPerPixel())
+        mapunits = self.canvas.mapUnits()
+        prefered_units = roam.config.settings.get("prefer_units", "meters")
+        newunits = QGis.fromLiteral(prefered_units, QGis.Meters)
+        mapunitsperpixel *= QGis.fromUnitToUnitFactor(mapunits, newunits)
+        mapunits = newunits
+
+        # Convert the real distance into pixels
+        barwidth = realSize / mapunitsperpixel
+
+        if barwidth < 30:
+            barwidth = canvaswidth / 4
+
+        while barwidth > canvaswidth / 3:
+            barwidth /= 3
+
+        realSize = barwidth * mapunitsperpixel
+
+        # Round
+        powerof10 = math.floor(math.log10(realSize))
+        scaler = math.pow(10.0, powerof10)
+        realSize = round(realSize / scaler) * scaler
+        barwidth = realSize / mapunitsperpixel
+        label, realSize = self._label_size(mapunits, realSize)
+        metrics = QFontMetrics(self.font)
+        fontwidth = metrics.width(label)
+        fontheight = metrics.height()
+
+        sizelabel = QLocale.system().toString(realSize)
+        sizelabel = "{} {}".format(sizelabel, label)
+
+        barwidth = self._adjust_bar_size(barwidth, mapunits)
+        barwidth = barwidth + fontwidth
+
+        return barwidth, realSize, sizelabel, (fontwidth, fontheight)
+
+    def _label_size(self, unit, currentsize):
+        if unit == QGis.Meters:
+            if currentsize > 1000:
+                return "km", currentsize / 1000
+            elif currentsize < 0.01:
+                return "mm", currentsize * 1000
+            elif currentsize < 0.1:
+                return "cm", currentsize * 100
+            else:
+                return "m", currentsize
+        elif unit == QGis.Feet:
+            print currentsize
+            if currentsize > 5280.0:
+                return "miles", currentsize / 5000
+            elif currentsize == 5280.0:
+                return "mile", currentsize / 5000
+            elif currentsize < 1:
+                return "inches", currentsize * 10
+            elif currentsize == 1.0:
+                return "foot", currentsize
+            else:
+                return "feet", currentsize
+        elif unit == QGis.Degrees:
+            if currentsize == 1.0:
+                return "degree", currentsize
+            else:
+                return "degrees", currentsize
+        else:
+            return str(unit), currentsize
+
+    def _adjust_bar_size(self, barsize, unit):
+        if unit == QGis.Feet:
+            if barsize > 5280.0 or barsize == 5280.0:
+                return (barsize * 5290) / 5000
+            elif barsize < 1:
+                return (barsize * 10) / 12
+
+        return barsize
 
 
 class CurrentSelection(QgsRubberBand):
@@ -119,6 +335,15 @@ class MapWidget(Ui_CanvasWidget, QMainWindow):
         self.actionGPS = GPSAction(":/icons/gps", self.canvas, self)
         self.projecttoolbar.addAction(self.actionGPS)
 
+        self.northarrow = NorthArrow(":/icons/north", self.canvas)
+        self.northarrow.setPos(10, 10)
+        self.canvas.scene().addItem(self.northarrow)
+
+        self.scalebar = ScaleBarItem(self.canvas)
+        self.canvas.scene().addItem(self.scalebar)
+
+        #TODO adjust north arrow based on true north
+
         self.projecttoolbar.setContextMenuPolicy(Qt.CustomContextMenu)
 
         gpsspacewidget= QWidget()
@@ -154,6 +379,9 @@ class MapWidget(Ui_CanvasWidget, QMainWindow):
 
     def refresh_map(self):
         self.canvas.refresh()
+
+    def updatescale(self):
+        self.canvas.zoomScale(1.0 / self.scalewidget.scale())
 
     def init_qgisproject(self, doc):
         parser = ProjectParser(doc)
@@ -329,6 +557,7 @@ class MapWidget(Ui_CanvasWidget, QMainWindow):
 
         self.canvas.freeze(False)
         self.canvas.refresh()
+        self.scalebar.update()
 
     def setMapTool(self, tool, *args):
         self.canvas.setMapTool(tool)

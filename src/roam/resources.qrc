@@ -12,6 +12,7 @@
     <file alias="blue">resources/widgets/blue.svg</file>
   </qresource>
   <qresource prefix="icons">
+    <file alias="north">resources/images/north.svg</file>
       <file alias="plus">resources/images/plus.svg</file>
     <file alias="minus">resources/images/minus.svg</file>
     <file alias="tick_icon">resources/images/tick.svg</file>
