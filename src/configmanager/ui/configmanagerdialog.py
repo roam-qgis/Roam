@@ -39,7 +39,7 @@ class ConfigManagerDialog(ui_configmanager.Ui_ProjectInstallerDialog, QDialog):
         self.newProjectButton.pressed.connect(self.newproject)
         self.removeProjectButton.pressed.connect(self.deletebuttonpressed)
         self.projectwidget.projectupdated.connect(self.projectupdated)
-        self.projectwidget.projectsaved.connect(self.projectupdated)
+        # self.projectwidget.projectsaved.connect(self.projectupdated)
         self.projectwidget.projectloaded.connect(self.updateformsnode)
         self.projectwidget.selectlayersupdated.connect(self.updateformsnode)
 
@@ -49,11 +49,12 @@ class ConfigManagerDialog(ui_configmanager.Ui_ProjectInstallerDialog, QDialog):
         self.setuprootitems()
 
     def updateformsnode(self, *args):
-        haslayers = self.projectwidget.checkcapturelayers()
-        index = self.projectList.currentIndex()
-        node = index.data(Qt.UserRole)
-        if node.nodetype == Treenode.FormsNode:
-            self.newProjectButton.setEnabled(haslayers)
+        pass
+        # haslayers = self.projectwidget.checkcapturelayers()
+        # index = self.projectList.currentIndex()
+        # node = index.data(Qt.UserRole)
+        # if node.nodetype == Treenode.FormsNode:
+        #     self.newProjectButton.setEnabled(haslayers)
 
     def raiseerror(self, *exinfo):
         info = traceback.format_exception(*exinfo)
@@ -116,7 +117,6 @@ class ConfigManagerDialog(ui_configmanager.Ui_ProjectInstallerDialog, QDialog):
         if node is None:
             return
 
-        self.projectwidget.setpage(node.page)
         self.removeProjectButton.setEnabled(node.canremove)
         self.newProjectButton.setEnabled(node.canadd)
         #self.newProjectButton.setText(node.addtext)
@@ -126,6 +126,7 @@ class ConfigManagerDialog(ui_configmanager.Ui_ProjectInstallerDialog, QDialog):
         if project and not self.projectwidget.project == project:
             # Only load the project if it's different the current one.
             self.projectwidget.setproject(project)
+            node.create_children()
 
             validateresults = list(project.validate())
             if validateresults:
@@ -135,9 +136,7 @@ class ConfigManagerDialog(ui_configmanager.Ui_ProjectInstallerDialog, QDialog):
 
                 self.projectwidget.reasons_label.setText(text)
 
-        if node.nodetype == Treenode.FormNode:
-            self.projectwidget.setform(node.form)
-        elif node.nodetype == Treenode.RoamNode:
+        if node.nodetype == Treenode.RoamNode:
             self.projectwidget.projectlabel.setText("IntraMaps Roam Config Manager")
         elif node.nodetype == Treenode.MapNode:
             self.projectwidget.loadmap()
@@ -145,9 +144,11 @@ class ConfigManagerDialog(ui_configmanager.Ui_ProjectInstallerDialog, QDialog):
             haslayers = self.projectwidget.checkcapturelayers()
             self.newProjectButton.setEnabled(haslayers)
 
-
         self.projectwidget.projectbuttonframe.setVisible(not project is None)
+        self.projectwidget.setpage(node.page, node)
 
     def projectupdated(self):
+        print "Project Updated"
         index = self.projectList.currentIndex()
-        self.treemodel.dataChanged.emit(index, index)
+        node = find_node(index)
+        node.refresh()

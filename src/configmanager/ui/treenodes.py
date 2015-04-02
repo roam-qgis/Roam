@@ -5,6 +5,8 @@ import traceback
 
 from datetime import datetime
 
+from qgis.core import QgsMapLayerRegistry, QgsMapLayer
+
 from PyQt4.QtGui import QDialog, QFont, QColor, QIcon, QMessageBox, QStandardItem, QStandardItemModel, QInputDialog
 from PyQt4.QtCore import QAbstractItemModel, QModelIndex, Qt
 
@@ -82,6 +84,9 @@ class Treenode(QStandardItem):
     FormsNode = QStandardItem.UserType + 5
     ProjectsNode = QStandardItem.UserType + 6
     ProjectsNode_Invalid = QStandardItem.UserType + 7
+    LayerNode = QStandardItem.UserType + 9
+    LayersNode = QStandardItem.UserType + 8
+    InfoNode = QStandardItem.UserType + 10
 
     nodetype = TreeNode
 
@@ -110,6 +115,78 @@ class Treenode(QStandardItem):
 
     def additem(self):
         pass
+
+    def walk(self):
+        count = self.rowCount()
+        for row in range(count):
+            yield self.child(row, 0), row
+
+    def create_children(self):
+        for child, row in self.walk():
+            child.create_children()
+
+    def refresh(self):
+        print "Refreshing child nodes"
+        for child, row in self.walk():
+            child.refresh()
+
+
+class LayersNode(Treenode):
+    nodetype = Treenode.LayersNode
+
+    def __init__(self, text="Layers", project=None):
+        super(LayersNode, self).__init__(text, QIcon(":/icons/map"), project)
+        self._text = text
+        self.nodes = {}
+
+    def data(self, role):
+        if role == Qt.DisplayRole:
+            return "{} ({})".format(self._text, self.rowCount())
+        return super(LayersNode, self).data(role)
+
+    def create_children(self):
+        self.removeRows(0, self.rowCount())
+        layers = QgsMapLayerRegistry.instance().mapLayers().values()
+        for layer in layers:
+            if not layer.type() == QgsMapLayer.VectorLayer:
+                continue
+
+            if not layer.name() in self.project.selectlayers:
+                continue
+
+            node = LayerNode(layer, self.project)
+            self.appendRow(node)
+
+        super(LayersNode, self).create_children()
+
+    def refresh(self):
+        # TODO Make this smarter and only do what we really need.
+        self.create_children()
+        super(LayersNode, self).refresh()
+
+class InfoNode(Treenode):
+    nodetype = Treenode.InfoNode
+
+    def __init__(self, text, key, layer, project):
+        self.key = key
+        self.layer = layer
+        super(InfoNode, self).__init__(text, QIcon(":/icons/map"), project)
+
+
+class LayerNode(Treenode):
+    nodetype = Treenode.LayerNode
+
+    def __init__(self, layer, project):
+        self.layer = layer
+        text = layer.name()
+        super(LayerNode, self).__init__(text, QIcon(":/icons/map"), project)
+
+    def create_children(self):
+        self.removeRows(0, self.rowCount())
+        info1 = InfoNode("Info 1", "info1", self.layer, self.project)
+        info2 = InfoNode("Info 2", "info2", self.layer, self.project)
+        self.appendRow(info1)
+        self.appendRow(info2)
 
 
 class RoamNode(Treenode):
@@ -163,13 +240,14 @@ class FormsNode(Treenode):
         self.canadd = True
         self._text = text
         self.addtext = 'Add new form'
-        self.loadforms()
 
-    def loadforms(self):
+    def create_children(self):
         forms = self.project.forms
+        self.removeRows(0, self.rowCount())
         for form in forms:
             item = FormNode(form, self.project)
             self.appendRow(item)
+        super(FormsNode, self).create_children()
 
     def data(self, role):
         if role == Qt.DisplayRole:
@@ -217,11 +295,6 @@ class ProjectNode(Treenode):
     def __init__(self, project):
         super(ProjectNode, self).__init__(project.name, QIcon(":/icons/folder"))
         self.project = project
-        if project.valid:
-            self.formsnode = FormsNode("Forms", project=project)
-            self.mapnode = MapNode("Map", project=project)
-            self.appendRows([self.mapnode, self.formsnode])
-
         self.removemessage = ("Delete Project?", ("Do you want to delete this project? <br><br> "
                                                   "Deleted projects will be moved to the _archive folder in projects folder<br><br>"
                                                   "<i>Projects can be recovered by moving the folder back to the projects folder</i>"))
@@ -229,6 +302,16 @@ class ProjectNode(Treenode):
         self.canadd = True
         self.removetext = 'Remove selected project'
         self.addtext = 'Add new project'
+
+    def create_children(self):
+        self.removeRows(0, self.rowCount())
+        if self.project.valid:
+            self.formsnode = FormsNode("Forms", project=self.project)
+            self.mapnode = MapNode("Map", project=self.project)
+            self.layersnode = LayersNode("Select Layers", project=self.project)
+            self.appendRows([self.mapnode, self.layersnode, self.formsnode])
+
+        super(ProjectNode, self).create_children()
 
     def additem(self):
         return self.parent().additem()
@@ -291,3 +374,35 @@ class ProjectsNode(Treenode):
         for project in projects:
             node = ProjectNode(project)
             self.appendRow(node)
+
+
+def find_node(index, nodetype=Treenode.ProjectNode):
+    """
+    Walk up the nodes until we find the right node type.
+    :param node:
+    :param nodetype:
+    :return:
+    """
+    parent = index.parent()
+    if parent is None:
+        return index.data(Qt.UserRole)
+
+    node = parent.data(Qt.UserRole)
+    if node is None:
+        return index.data(Qt.UserRole)
+
+    if not node.nodetype == nodetype:
+        return find_node(parent, nodetype)
+    else:
+        return node
+
+
+def walk_tree(node, nodetype):
+    """
+    Walk the tree looking for a given node type.
+    """
+    for child in node.walk():
+        if not child.nodetype == nodetype:
+            return walk_tree(child, nodetype)
+        else:
+            return child

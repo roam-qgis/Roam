@@ -687,3 +687,6 @@ class Project(object):
             return False
         return self.basefolder == other.basefolder
 
+    def dump_settings(self):
+        import pprint
+        pprint.pprint(self.settings)
