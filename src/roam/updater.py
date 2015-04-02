@@ -16,28 +16,20 @@ from PyQt4.QtCore import QObject, pyqtSignal, QUrl, QThread
 
 
 def checkversion(toversion, fromversion):
-    def versiontuple(v):
-        v = v.split('.')[:3]
-        version = tuple(map(int, (v)))
-        if len(version) == 2:
-            version = (version[0], version[1], 0)
-        return version
-
-    return versiontuple(toversion) > versiontuple(fromversion)
+    return int(toversion) > int(fromversion)
 
 
 def parse_serverprojects(content):
-    reg = '(?P<file>(?P<name>\w+)-(?P<version>\d+(\.\d+)+).zip)'
+    reg = '(?P<file>(?P<name>\w+)-(?P<version>\d+).zip)'
     versions = defaultdict(dict)
     for match in re.finditer(reg, content, re.I):
-        version = match.group("version")
+        version = int(match.group("version"))
         path = match.group("file")
         name = match.group("name")
         data = dict(path=path,
                     version=version,
                     name=name)
         versions[name][version] = data
-    print  versions
     return dict(versions)
 
 
@@ -87,6 +79,7 @@ def run_install_script(settings, section):
     except KeyError:
         pass
 
+
 def get_project_info(projectname, projects):
     maxversion = max(projects[projectname])
     projectdata = projects[projectname][maxversion]
@@ -109,6 +102,7 @@ def updateable_projects(projects, serverprojects):
         if canupdate:
             info = get_project_info(project.basefolder, serverprojects)
             yield project, info
+
 
 forupdate = Queue.Queue()
 
