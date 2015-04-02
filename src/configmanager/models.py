@@ -407,6 +407,9 @@ class WidgetsModel(QStandardItemModel):
         if not droptarget:
             droptarget = self.invisibleRootItem()
 
+        if row == -1:
+            row = droptarget.rowCount()
+
         for widget in widgets:
             item = WidgetItem(widget)
             if getattr(droptarget, "iscontainor", False):
