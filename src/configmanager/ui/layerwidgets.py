@@ -14,7 +14,7 @@ from configmanager.models import (CaptureLayersModel, LayerTypeFilter, QgsFieldM
 
 import roam.editorwidgets
 import configmanager.editorwidgets
-from roam.api import FeatureForm
+from roam.api import FeatureForm, utils
 
 
 class WidgetBase(QWidget):
@@ -438,24 +438,50 @@ class InfoNode(ui_infonode.Ui_Form, WidgetBase):
         self.Editor.setWrapMode(QsciScintilla.WrapWord)
         self.layer = None
         self.message_label.setVisible(False)
+        self.connectionCombo.currentIndexChanged.connect(self.update_panel_status)
+        self.fromlayer_radio.toggled.connect(self.update_panel_status)
+        self.thislayer_radio.toggled.connect(self.update_panel_status)
+        self.connectionCombo.blockSignals(True)
+
+    def update_panel_status(self, *args):
+        if self.fromlayer_radio.isChecked():
+            layer = self.connectionCombo.currentLayer()
+
+        if self.thislayer_radio.isChecked():
+            layer = self.treenode.layer
+
+        source = layer.source()
+        name = layer.dataProvider().name()
+        if ".sqlite" in source or name == "mssql":
+            self.queryframe.setEnabled(True)
+            self.message_label.setVisible(False)
+            return True
+        else:
+            self.queryframe.setEnabled(False)
+            self.message_label.setVisible(True)
+            return False
 
     def set_project(self, project, node):
+        self.connectionCombo.blockSignals(False)
         super(InfoNode, self).set_project(project, node)
-        self.layer = node.layer
+        self.layer = self.treenode.layer
         # uri = QgsDataSourceURI(self.layer.dataProvider().dataSourceUri())
-        source = self.layer.source()
-        name = self.layer.dataProvider().name()
-        if ".sqlite" in source or name == "mssql":
-            self.setEnabled(True)
-            self.message_label.setVisible(False)
-        else:
-            self.setEnabled(False)
-            self.message_label.setVisible(True)
-            return
+        if not self.update_panel_status():
+            pass
 
         infoblock = self.project.info_query(node.key, node.layer.name())
         caption = infoblock.get("caption", node.text())
         query = infoblock.get("query", "")
+        connection = infoblock.get("connection", "from_layer")
+
+        if connection == "from_layer":
+            self.thislayer_radio.setChecked(True)
+        else:
+            layername = connection['layer']
+            layer = utils.layer_by_name(layername)
+            self.fromlayer_radio.setChecked(True)
+            self.connectionCombo.setLayer(layer)
+
         self.caption_edit.setText(caption)
         self.Editor.setText(query)
 
@@ -463,11 +489,17 @@ class InfoNode(ui_infonode.Ui_Form, WidgetBase):
         config = self.project.settings.setdefault('selectlayerconfig', {})
         infoconfig = config.setdefault(self.layer.name(), {})
 
+        if self.fromlayer_radio.isChecked():
+            layer = self.connectionCombo.currentLayer()
+            connection = {"layer": layer.name()}
+        else:
+            connection = "from_layer"
+
         if self.Editor.text():
             infoconfig[self.treenode.key] = {
                 "caption": self.caption_edit.text(),
                 "query": self.Editor.text(),
-                "connection": "from_layer"
+                "connection": connection
             }
         else:
             try:
