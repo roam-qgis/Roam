@@ -105,7 +105,12 @@ class ProjectWidget(Ui_Form, QWidget):
         else:
             base = self.roamapp.apppath
 
-        path = os.path.join(base, "roam_serv", "projects")
+        default = os.path.join(base, "roam_serv")
+        path = roam.config.settings.get("publish", {}).get("path", '')
+        if not path:
+            path = default
+
+        path = os.path.join(path, "projects")
 
         if not os.path.exists(path):
             os.makedirs(path)
