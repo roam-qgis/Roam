@@ -36,6 +36,7 @@ class FlickCharm(QObject):
     def __init__(self, parent = None):
         QObject.__init__(self, parent)
         self.d = FlickCharmPrivate()
+        self.lastvalue = 0
 
     def activateOn(self, widget):
         if isinstance(widget, QWebView):
@@ -93,7 +94,7 @@ class FlickCharm(QObject):
                 if event.buttons() == Qt.LeftButton:
                     consumed = True
                     data.state = FlickData.Pressed
-                    data.pressPos = copy.copy(event.pos())
+                    data.pressPos = event.pos()
                     data.offset = scrollOffset(data.widget)
 
         elif data.state == FlickData.Pressed:
@@ -124,31 +125,31 @@ class FlickCharm(QObject):
                 consumed = True
                 pos = event.pos()
                 delta = pos - data.pressPos
-                setScrollOffset(data.widget, data.offset - delta)
-            elif eventType == QEvent.MouseButtonRelease:
-                consumed = True
-                data.state = FlickData.AutoScroll
-
-        elif data.state == FlickData.AutoScroll:
-            if eventType == QEvent.MouseButtonPress:
-                consumed = True
-                data.state = FlickData.Stop
-                data.speed = QPoint(0, 0)
+                setScrollOffset(data.widget, pos, data.pressPos)
             elif eventType == QEvent.MouseButtonRelease:
                 consumed = True
                 data.state = FlickData.Steady
-                data.speed = QPoint(0, 0)
 
-        elif data.state == FlickData.Stop:
-            if eventType == QEvent.MouseButtonRelease:
-                consumed = True
-                data.state = FlickData.Steady
-            elif eventType == QEvent.MouseMove:
-                consumed = True
-                data.state = FlickData.ManualScroll
-                data.dragPos = QCursor.pos()
-                if not self.d.ticker.isActive():
-                    self.d.ticker.start(20, self)
+        # elif data.state == FlickData.AutoScroll:
+        #     if eventType == QEvent.MouseButtonPress:
+        #         consumed = True
+        #         data.state = FlickData.Stop
+        #         data.speed = QPoint(0, 0)
+        #     elif eventType == QEvent.MouseButtonRelease:
+        #         consumed = True
+        #         data.state = FlickData.Steady
+        #         data.speed = QPoint(0, 0)
+
+        # elif data.state == FlickData.Stop:
+        #     if eventType == QEvent.MouseButtonRelease:
+        #         consumed = True
+        #         data.state = FlickData.Steady
+        #     elif eventType == QEvent.MouseMove:
+        #         consumed = True
+        #         data.state = FlickData.ManualScroll
+        #         data.dragPos = QCursor.pos()
+        #         if not self.d.ticker.isActive():
+        #             self.d.ticker.start(400, self)
 
         return consumed
 
@@ -161,13 +162,13 @@ class FlickCharm(QObject):
                 cursorPos = QCursor.pos()
                 data.speed = cursorPos - data.dragPos
                 data.dragPos = cursorPos
-            elif data.state == FlickData.AutoScroll:
-                count += 1
-                data.speed = deaccelerate(data.speed)
-                p = scrollOffset(data.widget)
-                setScrollOffset(data.widget, p - data.speed)
-                if data.speed == QPoint(0, 0):
-                    data.state = FlickData.Steady
+            # elif data.state == FlickData.AutoScroll:
+            #     count += 1
+            #     data.speed = deaccelerate(data.speed)
+            #     # p = scrollOffset(data.widget)
+            #     # setScrollOffset(data.widget, p - data.speed, data.pressPos)
+            #     if data.speed == QPoint(0, 0):
+            #         data.state = FlickData.Steady
 
         if count == 0:
             self.d.ticker.stop()
@@ -186,13 +187,29 @@ def scrollOffset(widget):
     return QPoint(x, y)
 
 
-def setScrollOffset(widget, p):
+lastvalue = 0
+
+def setScrollOffset(widget, current, press=None):
+    up = current.y() > press.y()
+    up = current.y() > lastvalue
+    global lastvalue
+    lastvalue = current.y()
+
     if isinstance(widget, QWebView):
         frame = widget.page().mainFrame()
-        frame.evaluateJavaScript("window.scrollTo(%d,%d);" % (p.x(), p.y()))
+        y = frame.evaluateJavaScript("window.scrollY;")
+        if up:
+            y -= 15
+        else:
+            y += 15
+        frame.evaluateJavaScript("window.scrollTo(%d,%d);" % (current.x(), y))
     else:
-        widget.horizontalScrollBar().setValue(p.x())
-        widget.verticalScrollBar().setValue(p.y())
+        # calc the percentage moved
+        if up:
+            y = widget.verticalScrollBar().value() - 15
+        else:
+            y = widget.verticalScrollBar().value() + 15
+        widget.verticalScrollBar().setValue(y)
 
 
 def deaccelerate(speed, a=1, maxVal=64):

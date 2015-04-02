@@ -9,6 +9,7 @@ from roam.flickwidget import FlickCharm
 from roam.api import featureform, RoamEvents
 from roam.ui.ui_featureformwidget import Ui_Form
 
+
 class FeatureFormWidget(Ui_Form, QWidget):
     # Raise the cancel event, takes a reason and a level
     canceled = pyqtSignal(str, int)
@@ -27,7 +28,7 @@ class FeatureFormWidget(Ui_Form, QWidget):
         self.actionDelete = toolbar.addAction(QIcon(":/icons/delete"), "Delete")
         self.actionDelete.triggered.connect(self.delete_feature)
 
-        label = 'Required fields marked in <b style="background-color:rgba(255, 221, 48,150)">yellow</b>'
+        label = '<b style="color:red">*</b> Required fields'
         self.missingfieldsLabel = QLabel(label)
         self.missingfieldsLabel.hide()
         self.missingfieldaction = toolbar.addWidget(self.missingfieldsLabel)
@@ -134,9 +135,10 @@ class FeatureFormWidget(Ui_Form, QWidget):
     def before_load(self):
         self.featureform.load(self.config['feature'], self.config['layers'], self.values)
 
+
 class FeatureFormWidgetEditor(LargeEditorWidget):
     def __init__(self, *args, **kwargs):
-        super(FeatureFormWidgetEditor, self).__init__(*args, **kwargs)
+        LargeEditorWidget.__init__(self, *args, **kwargs)
 
     def createWidget(self, parent=None):
         config = self.initconfig

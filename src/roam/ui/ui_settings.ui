@@ -65,75 +65,12 @@
         </property>
        </widget>
       </item>
-     </layout>
-    </widget>
-   </item>
-   <item row="1" column="0">
-    <widget class="QGroupBox" name="groupBox_2">
-     <property name="title">
-      <string>GPS</string>
-     </property>
-     <property name="flat">
-      <bool>true</bool>
-     </property>
-     <layout class="QGridLayout" name="gridLayout_3">
-      <item row="0" column="1">
-       <layout class="QHBoxLayout" name="horizontalLayout_2">
-        <item>
-         <widget class="QLabel" name="label_2">
-          <property name="text">
-           <string>Connect via</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QComboBox" name="gpsPortCombo"/>
-        </item>
-        <item>
-         <widget class="QPushButton" name="refreshPortsButton">
-          <property name="text">
-           <string>Refresh List</string>
-          </property>
-         </widget>
-        </item>
-       </layout>
-      </item>
-      <item row="1" column="1">
-       <widget class="QCheckBox" name="gpslocationCheck">
+      <item row="2" column="0">
+       <widget class="QCheckBox" name="distanceCheck">
         <property name="text">
-         <string>Zoom to my location when GPS enabled</string>
+         <string>Draw line distance</string>
         </property>
         <property name="checked">
-         <bool>true</bool>
-        </property>
-       </widget>
-      </item>
-      <item row="2" column="1">
-       <widget class="QCheckBox" name="gpscentermapCheck">
-        <property name="text">
-         <string>Force map to follow GPS location</string>
-        </property>
-        <property name="checked">
-         <bool>true</bool>
-        </property>
-       </widget>
-      </item>
-      <item row="3" column="1">
-       <widget class="QCheckBox" name="gpsloggingCheck">
-        <property name="text">
-         <string>Enable GPS Logging</string>
-        </property>
-        <property name="checked">
-         <bool>true</bool>
-        </property>
-       </widget>
-      </item>
-      <item row="4" column="1">
-       <widget class="QLabel" name="label_6">
-        <property name="text">
-         <string>GPS logging must be enable at the project level by an admin</string>
-        </property>
-        <property name="wordWrap">
          <bool>true</bool>
         </property>
        </widget>
@@ -141,15 +78,15 @@
      </layout>
     </widget>
    </item>
-   <item row="3" column="0" rowspan="2">
-    <spacer name="verticalSpacer">
+   <item row="3" column="1">
+    <spacer name="horizontalSpacer">
      <property name="orientation">
-      <enum>Qt::Vertical</enum>
+      <enum>Qt::Horizontal</enum>
      </property>
      <property name="sizeHint" stdset="0">
       <size>
-       <width>20</width>
-       <height>40</height>
+       <width>40</width>
+       <height>20</height>
       </size>
      </property>
     </spacer>
@@ -285,31 +222,78 @@ p, li { white-space: pre-wrap; }
      </layout>
     </widget>
    </item>
-   <item row="3" column="1">
-    <spacer name="horizontalSpacer">
-     <property name="orientation">
-      <enum>Qt::Horizontal</enum>
+   <item row="1" column="0" rowspan="2">
+    <widget class="QGroupBox" name="groupBox_2">
+     <property name="title">
+      <string>GPS</string>
      </property>
-     <property name="sizeHint" stdset="0">
-      <size>
-       <width>40</width>
-       <height>20</height>
-      </size>
+     <property name="flat">
+      <bool>true</bool>
      </property>
-    </spacer>
-   </item>
-   <item row="3" column="2">
-    <spacer name="verticalSpacer_2">
-     <property name="orientation">
-      <enum>Qt::Vertical</enum>
-     </property>
-     <property name="sizeHint" stdset="0">
-      <size>
-       <width>20</width>
-       <height>40</height>
-      </size>
-     </property>
-    </spacer>
+     <layout class="QGridLayout" name="gridLayout_3">
+      <item row="0" column="1">
+       <layout class="QHBoxLayout" name="horizontalLayout_2">
+        <item>
+         <widget class="QLabel" name="label_2">
+          <property name="text">
+           <string>Connect via</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QComboBox" name="gpsPortCombo"/>
+        </item>
+        <item>
+         <widget class="QPushButton" name="refreshPortsButton">
+          <property name="text">
+           <string>Refresh List</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item row="1" column="1">
+       <widget class="QCheckBox" name="gpslocationCheck">
+        <property name="text">
+         <string>Zoom to my location when GPS enabled</string>
+        </property>
+        <property name="checked">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="1">
+       <widget class="QCheckBox" name="gpscentermapCheck">
+        <property name="text">
+         <string>Force map to follow GPS location</string>
+        </property>
+        <property name="checked">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="1">
+       <widget class="QCheckBox" name="gpsloggingCheck">
+        <property name="text">
+         <string>Enable GPS Logging</string>
+        </property>
+        <property name="checked">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="4" column="1">
+       <widget class="QLabel" name="label_6">
+        <property name="text">
+         <string>GPS logging must be enable at the project level by an admin</string>
+        </property>
+        <property name="wordWrap">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
    </item>
    <item row="5" column="0">
     <widget class="QGroupBox" name="groupBox_4">

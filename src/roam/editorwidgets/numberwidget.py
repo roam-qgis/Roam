@@ -19,12 +19,17 @@ class Stepper(Ui_stepper, QWidget):
         self.setRange = self.spinBox.setRange
         self.setPrefix = self.spinBox.setPrefix
         self.setSuffix = self.spinBox.setSuffix
+        self.setSingleStep = self.spinBox.setSingleStep
         self.valueChanged = self.spinBox.valueChanged
         self.value = self.spinBox.value
         self.setValue = self.spinBox.setValue
 
     def installEventFilter(self, object):
         self.spinBox.installEventFilter(object)
+
+    def setDecimals(self, places):
+        self.spinBox.setDecimals(places)
+
 
 class NumberWidget(EditorWidget):
     widgettype = 'Number'
@@ -41,7 +46,7 @@ class NumberWidget(EditorWidget):
     def eventFilter(self, object, event):
         # Hack I really don't like this but there doesn't seem to be a better way at the
         # moment
-        if event.type() == QEvent.FocusIn:
+        if event.type() in [QEvent.FocusIn, QEvent.MouseButtonPress]:
             RoamEvents.openkeyboard.emit()
         return False
 
@@ -52,8 +57,9 @@ class NumberWidget(EditorWidget):
         config = self.config
         prefix = config.get('prefix', '')
         suffix = config.get('suffix', '')
+        step = config.get('step', 1)
         max, min = self._getmaxmin(config)
-        self._setwidgetvalues(min, max, prefix, suffix)
+        self._setwidgetvalues(min, max, prefix, suffix, step)
 
     def _getmaxmin(self, config):
         max = config.get('max', '')
@@ -69,10 +75,11 @@ class NumberWidget(EditorWidget):
             min = -sys.maxint - 1
         return max, min
 
-    def _setwidgetvalues(self, min, max, prefix, suffix):
+    def _setwidgetvalues(self, min, max, prefix, suffix, step):
         self.widget.setRange(min, max)
         self.widget.setPrefix(prefix)
         self.widget.setSuffix(suffix)
+        self.widget.setSingleStep(step)
 
     def setvalue(self, value):
         if not value:
@@ -95,6 +102,13 @@ class DoubleNumberWidget(NumberWidget):
 
     def initWidget(self, widget):
         super(DoubleNumberWidget, self).initWidget(widget)
+
+    def updatefromconfig(self):
+        super(DoubleNumberWidget, self).updatefromconfig()
+        places = self.config.get('places', 2)
+        if places == 0:
+            places = 2
+        self.widget.setDecimals(places)
 
     def _getmaxmin(self, config):
         max = config.get('max', '')

@@ -57,6 +57,16 @@
    <item row="5" column="1">
     <widget class="QLineEdit" name="suffixEdit"/>
    </item>
+   <item row="6" column="0">
+    <widget class="QLabel" name="places_label">
+     <property name="text">
+      <string>Places</string>
+     </property>
+    </widget>
+   </item>
+   <item row="6" column="1">
+    <widget class="QSpinBox" name="places_spin"/>
+   </item>
   </layout>
  </widget>
  <resources/>

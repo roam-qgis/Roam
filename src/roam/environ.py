@@ -112,11 +112,6 @@ def _setup(apppath=None, logo='', title='', **kwargs):
         prefixpath = os.path.join(apppath, "libs", "qgis")
         libspath = os.path.join(apppath, "libs", "roam")
         i18npath = os.path.join(libspath, "i18n")
-
-        os.environ['PATH'] += ";{}".format(os.path.join(apppath, 'libs'))
-        os.environ['PATH'] += ";{}".format(apppath)
-        os.environ["GDAL_DRIVER_PATH"] = os.path.join(apppath, 'libs')
-        os.environ["GDAL_DATA"] = os.path.join(apppath, 'libs', 'gdal')
         projectroot = apppath
 
     projectroot = os.path.join(projectroot, "projects")

@@ -1,1 +1,3 @@
 PIL
+pynmea2
+pyaml

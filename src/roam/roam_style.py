@@ -146,6 +146,32 @@ QTreeWidget#synctree {
 QTreeWidget#synctree::item {
     padding-top: 4px;
 }
+
+QScrollBar:vertical {
+  border: 2px solid grey;
+  background: rgba(80, 80, 80, 20);
+  width: 40px;
+  margin: 22px 0 22px 0;
+}
+QScrollBar::handle:vertical {
+  background: #678fb2;
+  min-height: 20px;
+}
+QScrollBar::add-line:vertical {
+  border: 2px solid grey;
+  background: rgba(80, 80, 80, 20);
+  height: 20px;
+  subcontrol-position: bottom;
+  subcontrol-origin: margin;
+}
+
+QScrollBar::sub-line:vertical {
+  border: 2px solid grey;
+  background: rgba(80, 80, 80, 20);
+  height: 20px;
+  subcontrol-position: top;
+  subcontrol-origin: margin;
+}
 """
 
 menubarstyle = """
@@ -175,11 +201,45 @@ featureform = """
     font: 14pt "Segoe UI" ;
 }
 
+QLabel[projectlabel="true"] {
+    background-color: rgba(255, 255, 255, 0);
+}
+
+QLabel[headerlabel="true"] {
+	font: 75 17pt "Segoe UI";
+}
+
 QPushButton {
     border: 1px solid rgb(137, 175, 255);
 	background-color: rgb(203, 203, 203, 50);
     padding: 6px;
     color: #4f4f4f;
+}
+
+QScrollBar:vertical {
+  border: 2px solid grey;
+  background: rgba(80, 80, 80, 20);
+  width: 40px;
+  margin: 22px 0 22px 0;
+}
+QScrollBar::handle:vertical {
+  background: #678fb2;
+  min-height: 20px;
+}
+QScrollBar::add-line:vertical {
+  border: 2px solid grey;
+  background: rgba(80, 80, 80, 20);
+  height: 20px;
+  subcontrol-position: bottom;
+  subcontrol-origin: margin;
+}
+
+QScrollBar::sub-line:vertical {
+  border: 2px solid grey;
+  background: rgba(80, 80, 80, 20);
+  height: 20px;
+  subcontrol-position: top;
+  subcontrol-origin: margin;
 }
 
 QPushButton:checked  {

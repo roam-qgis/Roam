@@ -10,9 +10,10 @@ class BigList(Ui_BigList, QWidget):
     closewidget = pyqtSignal()
     savewidget = pyqtSignal()
 
-    def __init__(self, parent=None):
+    def __init__(self, parent=None, centeronparent=False, showsave=True):
         super(BigList, self).__init__(parent)
         self.setupUi(self)
+        self.centeronparent = centeronparent
         self.listView.clicked.connect(self.selected)
         self.saveButton.pressed.connect(self.savewidget.emit)
         self.closebutton.pressed.connect(self.closewidget.emit)
@@ -24,6 +25,8 @@ class BigList(Ui_BigList, QWidget):
 
         self.charm = FlickCharm()
         self.charm.activateOn(self.listView)
+
+        self.saveButton.setVisible(showsave)
 
     def set_filter(self, text):
         self.filtermodel.setFilterRegExp(text + ".*")
@@ -49,4 +52,12 @@ class BigList(Ui_BigList, QWidget):
             index = self.listView.model().index(index, 0)
         self.listView.setCurrentIndex(index)
 
+    def show(self):
+        super(BigList, self).show()
+
+        if self.centeronparent:
+            width = self.parent().width()
+            height = self.parent().height()
+            self.move(width / 4, 0)
+            self.resize(QSize(width /2, height))
 

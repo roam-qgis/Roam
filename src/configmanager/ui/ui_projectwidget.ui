@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>781</width>
-    <height>733</height>
+    <width>793</width>
+    <height>667</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -99,136 +99,12 @@ QLabel[warning=true]
       </sizepolicy>
      </property>
      <property name="currentIndex">
-      <number>3</number>
+      <number>6</number>
      </property>
-     <widget class="QWidget" name="project_info_page">
-      <layout class="QGridLayout" name="gridLayout_11">
-       <item row="1" column="0" colspan="2">
-        <widget class="QLineEdit" name="titleText"/>
-       </item>
-       <item row="3" column="0" colspan="2">
-        <widget class="QPlainTextEdit" name="descriptionText"/>
-       </item>
-       <item row="5" column="0" colspan="2">
-        <widget class="QListView" name="selectLayers">
-         <property name="editTriggers">
-          <set>QAbstractItemView::NoEditTriggers</set>
-         </property>
-         <property name="selectionMode">
-          <enum>QAbstractItemView::SingleSelection</enum>
-         </property>
-         <property name="selectionBehavior">
-          <enum>QAbstractItemView::SelectRows</enum>
-         </property>
-        </widget>
-       </item>
-       <item row="7" column="0" colspan="2">
-        <layout class="QHBoxLayout" name="horizontalLayout_3">
-         <item>
-          <widget class="QLineEdit" name="versionText">
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
-           <property name="inputMask">
-            <string>0.0.0; </string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QLabel" name="roamVersionLabel">
-           <property name="text">
-            <string>TextLabel</string>
-           </property>
-          </widget>
-         </item>
-        </layout>
-       </item>
-       <item row="9" column="0" colspan="2">
-        <layout class="QHBoxLayout" name="horizontalLayout_6">
-         <item>
-          <widget class="QLabel" name="splashlabel">
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="Expanding" vsizetype="MinimumExpanding">
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
-           <property name="minimumSize">
-            <size>
-             <width>0</width>
-             <height>300</height>
-            </size>
-           </property>
-           <property name="maximumSize">
-            <size>
-             <width>16777215</width>
-             <height>300</height>
-            </size>
-           </property>
-           <property name="text">
-            <string/>
-           </property>
-           <property name="scaledContents">
-            <bool>true</bool>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <spacer name="horizontalSpacer">
-           <property name="orientation">
-            <enum>Qt::Horizontal</enum>
-           </property>
-           <property name="sizeHint" stdset="0">
-            <size>
-             <width>40</width>
-             <height>20</height>
-            </size>
-           </property>
-          </spacer>
-         </item>
-        </layout>
-       </item>
-       <item row="0" column="0">
-        <widget class="QLabel" name="label_2">
-         <property name="text">
-          <string>Project Title</string>
-         </property>
-        </widget>
-       </item>
-       <item row="2" column="0">
-        <widget class="QLabel" name="label_3">
-         <property name="text">
-          <string>Description</string>
-         </property>
-        </widget>
-       </item>
-       <item row="8" column="0">
-        <widget class="QLabel" name="label_14">
-         <property name="text">
-          <string>Splash</string>
-         </property>
-        </widget>
-       </item>
-       <item row="6" column="0">
-        <widget class="QLabel" name="label_9">
-         <property name="text">
-          <string>Project Version</string>
-         </property>
-        </widget>
-       </item>
-       <item row="4" column="0">
-        <widget class="QLabel" name="selectLayersLabel">
-         <property name="text">
-          <string>Enable any layers that should be enabled for selection. Selection layers can be used for data entry</string>
-         </property>
-        </widget>
-       </item>
-      </layout>
+     <widget class="ProjectInfoWidget" name="project_info_page">
+      <layout class="QGridLayout" name="gridLayout_11"/>
      </widget>
-     <widget class="QWidget" name="form_config_page">
+     <widget class="FormWidget" name="form_config_page">
       <property name="sizePolicy">
        <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
         <horstretch>0</horstretch>
@@ -239,636 +115,6 @@ QLabel[warning=true]
        <property name="margin">
         <number>0</number>
        </property>
-       <item row="0" column="0">
-        <layout class="QFormLayout" name="formLayout_2">
-         <property name="fieldGrowthPolicy">
-          <enum>QFormLayout::ExpandingFieldsGrow</enum>
-         </property>
-         <item row="1" column="0">
-          <widget class="QLabel" name="label_6">
-           <property name="text">
-            <string>Label</string>
-           </property>
-          </widget>
-         </item>
-         <item row="1" column="1">
-          <widget class="QLineEdit" name="formLabelText"/>
-         </item>
-         <item row="2" column="0">
-          <widget class="QLabel" name="label_7">
-           <property name="toolTip">
-            <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Capture Layer&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-weight:600;&quot;&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;The layer that will contain the information from the form.&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Note: &lt;/span&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;Only Select layers will show up here.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-           </property>
-           <property name="text">
-            <string>Capture Layer</string>
-           </property>
-          </widget>
-         </item>
-         <item row="2" column="1">
-          <widget class="QComboBox" name="layerCombo">
-           <property name="editable">
-            <bool>false</bool>
-           </property>
-          </widget>
-         </item>
-         <item row="3" column="0">
-          <widget class="QLabel" name="label_5">
-           <property name="text">
-            <string>Type</string>
-           </property>
-          </widget>
-         </item>
-         <item row="3" column="1">
-          <layout class="QHBoxLayout" name="horizontalLayout">
-           <item>
-            <widget class="QComboBox" name="formtypeCombo">
-             <item>
-              <property name="text">
-               <string>auto</string>
-              </property>
-             </item>
-            </widget>
-           </item>
-          </layout>
-         </item>
-         <item row="0" column="0">
-          <widget class="QLabel" name="label_16">
-           <property name="text">
-            <string>Form folder</string>
-           </property>
-          </widget>
-         </item>
-         <item row="0" column="1">
-          <widget class="QLabel" name="formfolderLabel">
-           <property name="text">
-            <string/>
-           </property>
-          </widget>
-         </item>
-        </layout>
-       </item>
-       <item row="1" column="0">
-        <widget class="QTabWidget" name="formtab">
-         <property name="tabShape">
-          <enum>QTabWidget::Rounded</enum>
-         </property>
-         <property name="currentIndex">
-          <number>0</number>
-         </property>
-         <property name="iconSize">
-          <size>
-           <width>24</width>
-           <height>24</height>
-          </size>
-         </property>
-         <widget class="QWidget" name="tab">
-          <attribute name="title">
-           <string>Form</string>
-          </attribute>
-          <layout class="QGridLayout" name="gridLayout_10">
-           <property name="leftMargin">
-            <number>3</number>
-           </property>
-           <property name="topMargin">
-            <number>3</number>
-           </property>
-           <property name="rightMargin">
-            <number>3</number>
-           </property>
-           <property name="bottomMargin">
-            <number>0</number>
-           </property>
-           <property name="horizontalSpacing">
-            <number>12</number>
-           </property>
-           <item row="0" column="0">
-            <widget class="QFrame" name="formframe">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
-             <property name="frameShape">
-              <enum>QFrame::NoFrame</enum>
-             </property>
-             <property name="frameShadow">
-              <enum>QFrame::Raised</enum>
-             </property>
-             <layout class="QGridLayout" name="gridLayout_6">
-              <property name="horizontalSpacing">
-               <number>12</number>
-              </property>
-              <property name="margin">
-               <number>0</number>
-              </property>
-              <item row="0" column="0">
-               <widget class="QFrame" name="frame">
-                <property name="sizePolicy">
-                 <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
-                  <horstretch>0</horstretch>
-                  <verstretch>0</verstretch>
-                 </sizepolicy>
-                </property>
-                <property name="maximumSize">
-                 <size>
-                  <width>300</width>
-                  <height>16777215</height>
-                 </size>
-                </property>
-                <property name="styleSheet">
-                 <string notr="true"/>
-                </property>
-                <layout class="QGridLayout" name="gridLayout_4">
-                 <property name="margin">
-                  <number>0</number>
-                 </property>
-                 <item row="3" column="0" colspan="2">
-                  <layout class="QVBoxLayout" name="verticalLayout_2">
-                   <item>
-                    <layout class="QHBoxLayout" name="horizontalLayout_2">
-                     <item>
-                      <widget class="QToolButton" name="addWidgetButton">
-                       <property name="text">
-                        <string>Add Attribute</string>
-                       </property>
-                       <property name="icon">
-                        <iconset resource="../../roam/resources.qrc">
-                         <normaloff>:/icons/add</normaloff>:/icons/add</iconset>
-                       </property>
-                       <property name="toolButtonStyle">
-                        <enum>Qt::ToolButtonTextUnderIcon</enum>
-                       </property>
-                       <property name="autoRaise">
-                        <bool>true</bool>
-                       </property>
-                      </widget>
-                     </item>
-                     <item>
-                      <spacer name="horizontalSpacer_2">
-                       <property name="orientation">
-                        <enum>Qt::Horizontal</enum>
-                       </property>
-                       <property name="sizeHint" stdset="0">
-                        <size>
-                         <width>40</width>
-                         <height>20</height>
-                        </size>
-                       </property>
-                      </spacer>
-                     </item>
-                     <item>
-                      <widget class="QToolButton" name="removeWidgetButton">
-                       <property name="text">
-                        <string>Remove Attribute</string>
-                       </property>
-                       <property name="icon">
-                        <iconset resource="../../roam/resources.qrc">
-                         <normaloff>:/icons/remove</normaloff>:/icons/remove</iconset>
-                       </property>
-                       <property name="toolButtonStyle">
-                        <enum>Qt::ToolButtonTextUnderIcon</enum>
-                       </property>
-                       <property name="autoRaise">
-                        <bool>true</bool>
-                       </property>
-                      </widget>
-                     </item>
-                    </layout>
-                   </item>
-                   <item>
-                    <widget class="QTreeView" name="widgetlist">
-                     <property name="frameShape">
-                      <enum>QFrame::NoFrame</enum>
-                     </property>
-                     <property name="dragEnabled">
-                      <bool>true</bool>
-                     </property>
-                     <property name="dragDropMode">
-                      <enum>QAbstractItemView::DragDrop</enum>
-                     </property>
-                     <property name="alternatingRowColors">
-                      <bool>true</bool>
-                     </property>
-                     <property name="selectionMode">
-                      <enum>QAbstractItemView::SingleSelection</enum>
-                     </property>
-                     <property name="selectionBehavior">
-                      <enum>QAbstractItemView::SelectItems</enum>
-                     </property>
-                     <property name="iconSize">
-                      <size>
-                       <width>24</width>
-                       <height>24</height>
-                      </size>
-                     </property>
-                     <property name="animated">
-                      <bool>true</bool>
-                     </property>
-                     <attribute name="headerVisible">
-                      <bool>false</bool>
-                     </attribute>
-                    </widget>
-                   </item>
-                  </layout>
-                 </item>
-                </layout>
-               </widget>
-              </item>
-              <item row="0" column="1">
-               <widget class="QTabWidget" name="tabWidget">
-                <property name="currentIndex">
-                 <number>0</number>
-                </property>
-                <widget class="QWidget" name="tab_3">
-                 <attribute name="title">
-                  <string>Attribute</string>
-                 </attribute>
-                 <layout class="QGridLayout" name="gridLayout_13">
-                  <property name="margin">
-                   <number>0</number>
-                  </property>
-                  <item row="0" column="0">
-                   <widget class="QFrame" name="widgetframe">
-                    <property name="sizePolicy">
-                     <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
-                      <horstretch>0</horstretch>
-                      <verstretch>0</verstretch>
-                     </sizepolicy>
-                    </property>
-                    <layout class="QFormLayout" name="formLayout_3">
-                     <property name="fieldGrowthPolicy">
-                      <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
-                     </property>
-                     <property name="leftMargin">
-                      <number>3</number>
-                     </property>
-                     <property name="topMargin">
-                      <number>3</number>
-                     </property>
-                     <property name="rightMargin">
-                      <number>3</number>
-                     </property>
-                     <property name="bottomMargin">
-                      <number>0</number>
-                     </property>
-                     <item row="1" column="0">
-                      <widget class="QLabel" name="label_4">
-                       <property name="text">
-                        <string>Field</string>
-                       </property>
-                      </widget>
-                     </item>
-                     <item row="1" column="1">
-                      <widget class="QComboBox" name="fieldList">
-                       <property name="enabled">
-                        <bool>true</bool>
-                       </property>
-                       <property name="sizePolicy">
-                        <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-                         <horstretch>0</horstretch>
-                         <verstretch>0</verstretch>
-                        </sizepolicy>
-                       </property>
-                       <property name="editable">
-                        <bool>false</bool>
-                       </property>
-                      </widget>
-                     </item>
-                     <item row="2" column="1">
-                      <widget class="QLabel" name="fieldwarninglabel">
-                       <property name="text">
-                        <string>Warning: Field is already used. Roam only supports one field per attribute. This attribute will be ignored when setting values.</string>
-                       </property>
-                       <property name="wordWrap">
-                        <bool>true</bool>
-                       </property>
-                       <property name="warning" stdset="0">
-                        <bool>true</bool>
-                       </property>
-                      </widget>
-                     </item>
-                     <item row="3" column="0">
-                      <widget class="QLabel" name="label_11">
-                       <property name="text">
-                        <string>Name</string>
-                       </property>
-                      </widget>
-                     </item>
-                     <item row="3" column="1">
-                      <widget class="QLineEdit" name="nameText"/>
-                     </item>
-                     <item row="5" column="0">
-                      <widget class="QLabel" name="label_8">
-                       <property name="text">
-                        <string>Control</string>
-                       </property>
-                      </widget>
-                     </item>
-                     <item row="5" column="1">
-                      <widget class="QComboBox" name="widgetCombo">
-                       <property name="sizePolicy">
-                        <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-                         <horstretch>0</horstretch>
-                         <verstretch>0</verstretch>
-                        </sizepolicy>
-                       </property>
-                      </widget>
-                     </item>
-                     <item row="6" column="0">
-                      <widget class="QLabel" name="label_10">
-                       <property name="toolTip">
-                        <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Required&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-weight:600;&quot;&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;This field must be completed before the form can be accpected.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-                       </property>
-                       <property name="whatsThis">
-                        <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Required&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-weight:600;&quot;&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;This field must be completed before the form can be accpected.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-                       </property>
-                       <property name="text">
-                        <string>Required?</string>
-                       </property>
-                      </widget>
-                     </item>
-                     <item row="6" column="1">
-                      <widget class="QCheckBox" name="requiredCheck">
-                       <property name="text">
-                        <string/>
-                       </property>
-                      </widget>
-                     </item>
-                     <item row="7" column="0">
-                      <widget class="QLabel" name="label_12">
-                       <property name="toolTip">
-                        <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Hidden&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-weight:600;&quot;&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Is this field hidden when the form is open in Roam.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-                       </property>
-                       <property name="whatsThis">
-                        <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Hidden&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-weight:600;&quot;&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Is this field hidden when the form is open in Roam.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-                       </property>
-                       <property name="text">
-                        <string>Hidden?</string>
-                       </property>
-                      </widget>
-                     </item>
-                     <item row="7" column="1">
-                      <widget class="QCheckBox" name="hiddenCheck">
-                       <property name="text">
-                        <string/>
-                       </property>
-                      </widget>
-                     </item>
-                     <item row="8" column="0">
-                      <widget class="QLabel" name="label_13">
-                       <property name="whatsThis">
-                        <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Hidden&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-weight:600;&quot;&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Is this field hidden when the form is open in Roam.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-                       </property>
-                       <property name="text">
-                        <string>Read Only</string>
-                       </property>
-                      </widget>
-                     </item>
-                     <item row="8" column="1">
-                      <widget class="QComboBox" name="readonlyCombo">
-                       <property name="sizePolicy">
-                        <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-                         <horstretch>0</horstretch>
-                         <verstretch>0</verstretch>
-                        </sizepolicy>
-                       </property>
-                      </widget>
-                     </item>
-                     <item row="9" column="0">
-                      <widget class="QLabel" name="label">
-                       <property name="text">
-                        <string>Default Value</string>
-                       </property>
-                      </widget>
-                     </item>
-                     <item row="9" column="1">
-                      <layout class="QHBoxLayout" name="horizontalLayout_7">
-                       <item>
-                        <widget class="QLineEdit" name="defaultvalueText"/>
-                       </item>
-                       <item>
-                        <widget class="QPushButton" name="expressionButton">
-                         <property name="text">
-                          <string/>
-                         </property>
-                         <property name="icon">
-                          <iconset resource="resources.qrc">
-                           <normaloff>:/icons/Expression</normaloff>:/icons/Expression</iconset>
-                         </property>
-                         <property name="iconSize">
-                          <size>
-                           <width>24</width>
-                           <height>24</height>
-                          </size>
-                         </property>
-                        </widget>
-                       </item>
-                      </layout>
-                     </item>
-                     <item row="12" column="0" colspan="2">
-                      <widget class="QFrame" name="widgetFrame_2">
-                       <property name="enabled">
-                        <bool>true</bool>
-                       </property>
-                       <property name="sizePolicy">
-                        <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
-                         <horstretch>0</horstretch>
-                         <verstretch>0</verstretch>
-                        </sizepolicy>
-                       </property>
-                       <property name="minimumSize">
-                        <size>
-                         <width>350</width>
-                         <height>0</height>
-                        </size>
-                       </property>
-                       <property name="baseSize">
-                        <size>
-                         <width>200</width>
-                         <height>0</height>
-                        </size>
-                       </property>
-                       <layout class="QVBoxLayout" name="verticalLayout_5">
-                        <property name="margin">
-                         <number>0</number>
-                        </property>
-                        <item>
-                         <widget class="QStackedWidget" name="widgetstack">
-                          <property name="styleSheet">
-                           <string notr="true"/>
-                          </property>
-                          <widget class="QWidget" name="page_4"/>
-                          <widget class="QWidget" name="page_5"/>
-                         </widget>
-                        </item>
-                       </layout>
-                      </widget>
-                     </item>
-                    </layout>
-                   </widget>
-                  </item>
-                 </layout>
-                </widget>
-                <widget class="QWidget" name="tab_4">
-                 <attribute name="title">
-                  <string>Actions</string>
-                 </attribute>
-                 <layout class="QFormLayout" name="formLayout">
-                  <item row="0" column="0">
-                   <widget class="QLabel" name="label_15">
-                    <property name="text">
-                     <string>Save last value</string>
-                    </property>
-                   </widget>
-                  </item>
-                  <item row="0" column="1">
-                   <widget class="QCheckBox" name="savevalueCheck">
-                    <property name="text">
-                     <string/>
-                    </property>
-                   </widget>
-                  </item>
-                 </layout>
-                </widget>
-               </widget>
-              </item>
-             </layout>
-            </widget>
-           </item>
-           <item row="0" column="1">
-            <spacer name="horizontalSpacer_6">
-             <property name="orientation">
-              <enum>Qt::Horizontal</enum>
-             </property>
-             <property name="sizeHint" stdset="0">
-              <size>
-               <width>40</width>
-               <height>20</height>
-              </size>
-             </property>
-            </spacer>
-           </item>
-          </layout>
-         </widget>
-         <widget class="QWidget" name="tab_2">
-          <attribute name="title">
-           <string>Preview</string>
-          </attribute>
-          <layout class="QGridLayout" name="gridLayout_9">
-           <property name="horizontalSpacing">
-            <number>8</number>
-           </property>
-           <property name="margin">
-            <number>0</number>
-           </property>
-           <item row="1" column="0">
-            <widget class="QFrame" name="frame_4">
-             <property name="frameShape">
-              <enum>QFrame::NoFrame</enum>
-             </property>
-             <property name="frameShadow">
-              <enum>QFrame::Raised</enum>
-             </property>
-             <layout class="QGridLayout" name="gridLayout_7">
-              <property name="margin">
-               <number>0</number>
-              </property>
-              <item row="0" column="0">
-               <widget class="QScrollArea" name="scrollArea">
-                <property name="styleSheet">
-                 <string notr="true"/>
-                </property>
-                <property name="frameShape">
-                 <enum>QFrame::NoFrame</enum>
-                </property>
-                <property name="widgetResizable">
-                 <bool>true</bool>
-                </property>
-                <widget class="QWidget" name="frame_2">
-                 <property name="geometry">
-                  <rect>
-                   <x>0</x>
-                   <y>0</y>
-                   <width>1424</width>
-                   <height>695</height>
-                  </rect>
-                 </property>
-                 <property name="autoFillBackground">
-                  <bool>true</bool>
-                 </property>
-                 <layout class="QGridLayout" name="gridLayout_12">
-                  <property name="margin">
-                   <number>0</number>
-                  </property>
-                 </layout>
-                </widget>
-               </widget>
-              </item>
-             </layout>
-            </widget>
-           </item>
-           <item row="0" column="0">
-            <widget class="QLabel" name="label_21">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
-             <property name="text">
-              <string>Default values not loaded in preview mode.</string>
-             </property>
-             <property name="alignment">
-              <set>Qt::AlignCenter</set>
-             </property>
-             <property name="warning" stdset="0">
-              <bool>true</bool>
-             </property>
-            </widget>
-           </item>
-          </layout>
-         </widget>
-        </widget>
-       </item>
       </layout>
      </widget>
      <widget class="QWidget" name="map_page">
@@ -885,6 +131,23 @@ p, li { white-space: pre-wrap; }
        <property name="bottomMargin">
         <number>0</number>
        </property>
+       <item>
+        <layout class="QHBoxLayout" name="horizontalLayout_6">
+         <item>
+          <widget class="QLabel" name="projectLocationLabel">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="text">
+            <string/>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
        <item>
         <widget class="QgsMapCanvas" name="canvas" native="true">
          <property name="styleSheet">
@@ -1121,61 +384,34 @@ p, li { white-space: pre-wrap; }
        <property name="fieldGrowthPolicy">
         <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
        </property>
-       <item row="2" column="1">
-        <widget class="QListView" name="selectLayers_2">
-         <property name="editTriggers">
-          <set>QAbstractItemView::NoEditTriggers</set>
-         </property>
-         <property name="selectionMode">
-          <enum>QAbstractItemView::SingleSelection</enum>
-         </property>
-         <property name="selectionBehavior">
-          <enum>QAbstractItemView::SelectRows</enum>
-         </property>
-        </widget>
-       </item>
-       <item row="3" column="1">
-        <spacer name="verticalSpacer">
-         <property name="orientation">
-          <enum>Qt::Vertical</enum>
-         </property>
-         <property name="sizeType">
-          <enum>QSizePolicy::MinimumExpanding</enum>
-         </property>
-         <property name="sizeHint" stdset="0">
-          <size>
-           <width>20</width>
-           <height>40</height>
-          </size>
-         </property>
-        </spacer>
-       </item>
-       <item row="4" column="0" colspan="2">
+       <item row="0" column="1">
         <widget class="QLabel" name="formslayerlabel">
+         <property name="font">
+          <font>
+           <family>Segoe UI</family>
+           <pointsize>14</pointsize>
+           <weight>9</weight>
+           <italic>false</italic>
+           <bold>false</bold>
+          </font>
+         </property>
          <property name="text">
           <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Segoe UI'; font-size:14pt; font-weight:72; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'MS Shell Dlg 2'; font-size:16pt; font-weight:400;&quot;&gt;Seems like this project doesn't have any select layers yet.  We need some point select layers in order to create data entry forms.&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'MS Shell Dlg 2'; font-size:16pt; font-weight:400;&quot;&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;a href=&quot;open-qgis&quot;&gt;&lt;span style=&quot; font-family:'MS Shell Dlg 2'; font-size:16pt; font-weight:400; text-decoration: underline; color:#0000ff;&quot;&gt;Open QGIS &lt;/span&gt;&lt;/a&gt;&lt;span style=&quot; font-family:'MS Shell Dlg 2'; font-size:16pt; font-weight:400;&quot;&gt;to add layers to your QGIS project, then enable them for selection above.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;Seems like this project doesn't have any select layers yet. We need some point select layers in order to create data entry forms. &lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:12pt;&quot;&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;a href=&quot;qgis&quot;&gt;&lt;span style=&quot; font-size:12pt; text-decoration: underline; color:#0000ff;&quot;&gt;Open QGIS&lt;/span&gt;&lt;/a&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt; to add layers to your QGIS project, then enable them for selection above.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
          </property>
          <property name="alignment">
-          <set>Qt::AlignCenter</set>
+          <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
          </property>
          <property name="wordWrap">
           <bool>true</bool>
          </property>
          <property name="isheader" stdset="0">
           <bool>true</bool>
-         </property>
-        </widget>
-       </item>
-       <item row="1" column="1">
-        <widget class="QLabel" name="selectLayersLabel_2">
-         <property name="text">
-          <string>Enable any layers that should be enabled for selection.  Selection layers can also be used for data capture.</string>
          </property>
         </widget>
        </item>
@@ -1234,6 +470,9 @@ p, li { white-space: pre-wrap; }
        </item>
       </layout>
      </widget>
+     <widget class="LayersWidget" name="layers_page"/>
+     <widget class="LayerWidget" name="layerpage"/>
+     <widget class="InfoNode" name="infopage"/>
     </widget>
    </item>
    <item row="0" column="0">
@@ -1293,35 +532,6 @@ p, li { white-space: pre-wrap; }
         <property name="margin">
          <number>0</number>
         </property>
-        <item>
-         <widget class="QToolButton" name="depolyProjectButton">
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-          <property name="text">
-           <string>Deploy</string>
-          </property>
-          <property name="icon">
-           <iconset resource="../../roam/resources.qrc">
-            <normaloff>:/icons/sync</normaloff>:/icons/sync</iconset>
-          </property>
-          <property name="iconSize">
-           <size>
-            <width>24</width>
-            <height>24</height>
-           </size>
-          </property>
-          <property name="toolButtonStyle">
-           <enum>Qt::ToolButtonTextUnderIcon</enum>
-          </property>
-          <property name="autoRaise">
-           <bool>true</bool>
-          </property>
-         </widget>
-        </item>
         <item>
          <widget class="QToolButton" name="openProjectFolderButton">
           <property name="sizePolicy">
@@ -1423,6 +633,36 @@ p, li { white-space: pre-wrap; }
    <header>configmanager.gui</header>
    <container>1</container>
   </customwidget>
+  <customwidget>
+   <class>LayersWidget</class>
+   <extends>QWidget</extends>
+   <header>configmanager.ui.layerwidgets</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>LayerWidget</class>
+   <extends>QWidget</extends>
+   <header>configmanager.ui.layerwidgets</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>InfoNode</class>
+   <extends>QWidget</extends>
+   <header>configmanager.ui.layerwidgets</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>ProjectInfoWidget</class>
+   <extends>QWidget</extends>
+   <header>configmanager.ui.layerwidgets</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>FormWidget</class>
+   <extends>QWidget</extends>
+   <header>configmanager.ui.layerwidgets</header>
+   <container>1</container>
+  </customwidget>
  </customwidgets>
  <resources>
   <include location="resources.qrc"/>
@@ -1438,6 +678,8 @@ p, li { white-space: pre-wrap; }
   <include location="../../roam/resources.qrc"/>
   <include location="../../roam/resources.qrc"/>
   <include location="../../roam/resources.qrc"/>
+  <include location="../../roam/resources.qrc"/>
+  <include location="C:/Users/Nathan/roam/resources.qrc"/>
  </resources>
  <connections>
   <connection>

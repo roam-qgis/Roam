@@ -34,7 +34,7 @@ from qgis.core import (QgsProjectBadLayerHandler,
 from qgis.gui import (QgsMessageBar,
                         QgsMapToolZoom,
                         QgsRubberBand,
-                        QgsMapCanvas)
+                        QgsMapCanvas, QgsScaleComboBox)
 
 
 from roam.dataentrywidget import DataEntryWidget
@@ -51,6 +51,7 @@ from roam.api import RoamEvents, GPS, RoamInterface, plugins
 from roam.ui import ui_mainwindow
 from PyQt4.QtGui import QMainWindow
 from roam.gpslogging import GPSLogging
+from biglist import BigList
 
 
 import roam.messagebaritems
@@ -182,6 +183,23 @@ class MainWindow(ui_mainwindow.Ui_MainWindow, QMainWindow):
         self.statusbar.addWidget(spacer2)
         self.statusbar.addWidget(self.gpslabel)
 
+        self.scalewidget = QgsScaleComboBox()
+
+        self.scalebutton = QToolButton()
+        self.scalebutton.setAutoRaise(True)
+        self.scalebutton.setMaximumHeight(self.statusbar.height())
+        self.scalebutton.pressed.connect(self.selectscale)
+        self.scalebutton.setText("Scale")
+        self.statusbar.addPermanentWidget(self.scalebutton)
+
+        self.scalelist = BigList(parent=self.canvas, centeronparent=True, showsave=False)
+        self.scalelist.hide()
+        self.scalelist.setlabel("Map Scale")
+        self.scalelist.setmodel(self.scalewidget.model())
+        self.scalelist.closewidget.connect(self.scalelist.close)
+        self.scalelist.itemselected.connect(self.update_scale_from_item)
+        self.scalelist.itemselected.connect(self.scalelist.close)
+
         self.menutoolbar.insertWidget(self.actionQuit, sidespacewidget2)
         self.spaceraction = self.menutoolbar.insertWidget(self.actionProject, sidespacewidget)
 
@@ -196,6 +214,7 @@ class MainWindow(ui_mainwindow.Ui_MainWindow, QMainWindow):
         self.infodock.hide()
         self.hidedataentry()
         self.canvas.extentsChanged.connect(self.updatestatuslabel)
+        self.canvas.scaleChanged.connect(self.updatestatuslabel)
 
         RoamEvents.openimage.connect(self.openimage)
         RoamEvents.openurl.connect(self.viewurl)
@@ -213,6 +232,13 @@ class MainWindow(ui_mainwindow.Ui_MainWindow, QMainWindow):
         self.legendpage.showmap.connect(self.showmap)
 
         self.currentselection = {}
+
+    def update_scale_from_item(self, index):
+        scale, _ = self.scalewidget.toDouble(index.data(Qt.DisplayRole))
+        self.canvas.zoomScale(1.0 / scale)
+
+    def selectscale(self):
+        self.scalelist.show()
 
     def set_projectbuttons(self, visible):
         for action in self.projectbuttons:
@@ -305,9 +331,12 @@ class MainWindow(ui_mainwindow.Ui_MainWindow, QMainWindow):
         self.show()
         self.canvas_page.settings_updated(settings)
 
-    def updatestatuslabel(self):
+    def updatestatuslabel(self, *args):
         extent = self.canvas.extent()
         self.positionlabel.setText("Map Center: {}".format(extent.center().toString()))
+        scale = 1.0 / self.canvas.scale()
+        scale = self.scalewidget.toString(scale)
+        self.scalebutton.setText(scale)
 
     def on_geometryedit(self, form, feature):
         layer = form.QGISLayer
@@ -546,6 +575,16 @@ class MainWindow(ui_mainwindow.Ui_MainWindow, QMainWindow):
         self.showmap()
         self.set_projectbuttons(True)
         self.dataentrywidget.project = self.project
+        projectscales, _ = QgsProject.instance().readBoolEntry("Scales", "/useProjectScales")
+        if projectscales:
+            projectscales, _ = QgsProject.instance().readListEntry("Scales", "/ScalesList")
+
+            self.scalewidget.updateScales(projectscales)
+        else:
+            scales = ["1:50000", "1:25000", "1:10000", "1:5000",
+                      "1:2500", "1:1000", "1:500", "1:250", "1:200", "1:100"]
+            scales = roam.config.settings.get('scales', scales)
+            self.scalewidget.updateScales(scales)
         RoamEvents.projectloaded.emit(self.project)
 
     def clear_plugins(self):

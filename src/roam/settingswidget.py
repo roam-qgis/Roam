@@ -36,6 +36,7 @@ class SettingsWidget(Ui_settingsWidget, QWidget):
         self.gpscentermapCheck.toggled.connect(self.gpscentermapCheck_toggled)
         self.keyboardCheck.toggled.connect(self.keyboardCheck_toggled)
         self.updateServerEdit.editingFinished.connect(self.updateServerEdit_edited)
+        self.distanceCheck.toggled.connect(self.distanceCheck_toggled)
         self.portfinder = PortFinder()
         self.portfinder.portsfound.connect(self._addports)
 
@@ -46,6 +47,10 @@ class SettingsWidget(Ui_settingsWidget, QWidget):
     def notifysettingsupdate(self):
         roam.config.save()
         self.settingsupdated.emit(self.settings)
+
+    def distanceCheck_toggled(self, checked):
+        self.settings['draw_distance'] = checked
+        self.notifysettingsupdate()
 
     def gpslocationCheck_toggled(self, checked):
         self.settings['gpszoomonfix'] = checked
@@ -121,6 +126,7 @@ class SettingsWidget(Ui_settingsWidget, QWidget):
         gpslogging = self.settings.get('gpslogging', True)
         keyboard = self.settings.get('keyboard', True)
         updateserver = self.settings.get('updateserver', None)
+        distance = self.settings.get('draw_distance', True)
 
         self.fullScreenCheck.setChecked(fullscreen)
         self.gpslocationCheck.setChecked(gpszoom)
@@ -128,6 +134,7 @@ class SettingsWidget(Ui_settingsWidget, QWidget):
         self.keyboardCheck.setChecked(keyboard)
         self.gpsloggingCheck.setChecked(gpslogging)
         self.updateServerEdit.setText(updateserver)
+        self.distanceCheck.setChecked(distance)
 
         self._setgpsport()
 

@@ -48,6 +48,8 @@ class _Events(QObject):
 
     featuresaved = pyqtSignal()
 
+    sync_complete = pyqtSignal()
+
     def close_project(self, project=None):
         self.closeProject.emit(project)
 

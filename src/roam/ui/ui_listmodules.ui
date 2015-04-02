@@ -9,8 +9,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>813</width>
-    <height>473</height>
+    <width>599</width>
+    <height>389</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -39,6 +39,15 @@
      </property>
      <property name="frameShape">
       <enum>QFrame::NoFrame</enum>
+     </property>
+     <property name="autoScroll">
+      <bool>false</bool>
+     </property>
+     <property name="autoScrollMargin">
+      <number>50</number>
+     </property>
+     <property name="verticalScrollMode">
+      <enum>QAbstractItemView::ScrollPerPixel</enum>
      </property>
     </widget>
    </item>

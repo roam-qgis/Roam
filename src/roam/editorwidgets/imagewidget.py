@@ -4,12 +4,14 @@ import sys
 try:
     import vidcap
     from roam.editorwidgets import VideoCapture as vc
+
     hascamera = True
 except ImportError:
     hascamera = False
 
-from PyQt4.QtGui import QDialog, QGridLayout, QLabel, QLayout, QPixmap, QFileDialog, QAction, QToolButton, QIcon, QToolBar
-from PyQt4.QtGui import QWidget, QImage
+from PyQt4.QtGui import QDialog, QGridLayout, QLabel, QLayout, QPixmap, QFileDialog, QAction, QToolButton, QIcon, \
+    QToolBar
+from PyQt4.QtGui import QWidget, QImage, QSizePolicy
 from PyQt4.QtCore import QByteArray, pyqtSignal, QVariant, QTimer, Qt, QSize, QDateTime
 
 from PIL.ImageQt import ImageQt
@@ -42,6 +44,7 @@ def save_image(image, path, name):
     saved = image.save(os.path.join(path, name), "JPG")
     return saved, name
 
+
 class _CameraWidget(QWidget):
     imagecaptured = pyqtSignal(QPixmap)
     done = pyqtSignal()
@@ -52,10 +55,15 @@ class _CameraWidget(QWidget):
         self.cameralabel.setScaledContents(True)
         self.setLayout(QGridLayout())
         self.toolbar = QToolBar()
-        self.swapaction = self.toolbar.addAction("Swap Camera")
+        spacer = QWidget()
+        # spacer.setMinimumWidth(30)
+        spacer.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
+        self.toolbar.setIconSize(QSize(48, 48))
+        self.toolbar.addWidget(spacer)
+        self.swapaction = self.toolbar.addAction(QIcon(":/widgets/cameraswap"), "Swap Camera")
         self.swapaction.triggered.connect(self.swapcamera)
         self.cameralabel.mouseReleaseEvent = self.takeimage
-        self.layout().setContentsMargins(0,0,0,0)
+        self.layout().setContentsMargins(0, 0, 0, 0)
         self.layout().addWidget(self.toolbar)
         self.layout().addWidget(self.cameralabel)
         self.timer = QTimer()
@@ -94,6 +102,11 @@ class _CameraWidget(QWidget):
     def start(self, dev=1):
         try:
             self.cam = vc.Device(dev)
+            try:
+                width, height = tuple(roam.config.settings['camera_res'].split(','))
+                self.cam.setResolution(int(width), int(height))
+            except KeyError:
+                pass
             self.currentdevice = dev
         except vidcap.error:
             if dev == 0:
@@ -102,7 +115,6 @@ class _CameraWidget(QWidget):
             self.start(dev=0)
             return
 
-
         roam.config.settings['camera'] = self.currentdevice
         self.timer.start()
 
@@ -110,6 +122,7 @@ class _CameraWidget(QWidget):
         self.timer.stop()
         del self.cam
         self.cam = None
+
 
 class CameraWidget(LargeEditorWidget):
     def __init__(self, *args, **kwargs):
@@ -138,7 +151,6 @@ class CameraWidget(LargeEditorWidget):
             self.widget.stop()
 
 
-
 class DrawingPadWidget(LargeEditorWidget):
     def __init__(self, *args, **kwargs):
         super(DrawingPadWidget, self).__init__(*args, **kwargs)
@@ -163,11 +175,11 @@ class DrawingPadWidget(LargeEditorWidget):
 class ImageWidget(EditorWidget):
     widgettype = 'Image'
 
-    def __init__(self, *args):
+    def __init__(self, *args, **kwargs):
         super(ImageWidget, self).__init__(*args)
         self.tobase64 = False
         self.defaultlocation = ''
-        self.savetofile= False
+        self.savetofile = False
         self.modified = False
         self.filename = None
 
@@ -237,7 +249,7 @@ class ImageWidget(EditorWidget):
         RoamEvents.openimage.emit(pixmap)
 
     def get_filename(self):
-        name = QDateTime.currentDateTime().toString("yyyy-MM-dd-hh-mm-ss.JPG")
+        name = QDateTime.currentDateTime().toString("yyyy-MM-dd-hh-mm-ss-zzz.JPG")
         return name
 
     def save(self, folder, filename):

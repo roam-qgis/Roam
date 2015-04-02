@@ -7,14 +7,6 @@ class CheckboxWidget(EditorWidget):
     widgettype = 'Checkbox'
     def __init__(self, *args, **kwargs):
         super(CheckboxWidget, self).__init__(*args, **kwargs)
-        self.validationstyle += """QCheckBox[required=true]
-                                {border-radius: 5px; background-color: rgba(255, 221, 48,150);}
-                                QCheckBox[ok=true]
-                                {border-radius: 5px; background-color: rgba(200, 255, 197, 150); }
-                                QGroupBox::title[required=true]
-                                {border-radius: 5px; background-color: rgba(255, 221, 48,150);}
-                                QGroupBox::title[ok=true]
-                                { border-radius: 5px; background-color: rgba(200, 255, 197, 150); }"""
 
     def createWidget(self, parent):
         return QCheckBox(parent)

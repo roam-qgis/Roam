@@ -4,6 +4,7 @@
     <file alias="add">resources/widgets/image.svg</file>
     <file alias="reload">resources/widgets/reload.svg</file>
     <file alias="folder">resources/widgets/folder-open.svg</file>
+    <file alias="cameraswap">resources/widgets/cameraswap.svg</file>
     <file alias="camera">resources/widgets/camera.svg</file>
     <file alias="drawing">resources/widgets/drawing.svg</file>
     <file alias="red">resources/widgets/red.svg</file>
@@ -11,7 +12,10 @@
     <file alias="blue">resources/widgets/blue.svg</file>
   </qresource>
   <qresource prefix="icons">
-      <file alias="tick_icon">resources/images/tick.svg</file>
+    <file alias="north">resources/images/north.svg</file>
+      <file alias="plus">resources/images/plus.svg</file>
+    <file alias="minus">resources/images/minus.svg</file>
+    <file alias="tick_icon">resources/images/tick.svg</file>
       <file alias="expand">resources/images/expand.svg</file>
       <file alias="cross_icon">resources/images/cross.svg</file>
     <file alias="cancel">resources/images/cancel.svg</file>

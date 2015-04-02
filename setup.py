@@ -175,10 +175,14 @@ def buildqtfiles():
                     run('pyrcc4', '-o', newfile, filepath)
                 elif ext == '.ts':
                     newfile = file + '.qm'
-                    if os.name is 'nt':
-                        run('lrelease', filepath, '-qm', newfile)
-                    else:
-                        run('lrelease-qt4', filepath, '-qm', newfile)
+                    try:
+                        if os.name is 'nt':
+                            run('lrelease', filepath, '-qm', newfile)
+                        else:
+                            run('lrelease-qt4', filepath, '-qm', newfile)
+                    except:
+                        print "Missing lrelease - skipping"
+                        continue
 
 
 class qtbuild(build):

@@ -163,7 +163,7 @@ def writefolderconfig(settings, folder, configname):
         settingspath = os.path.join(folder, "{}.config".format(configname))
 
     with open(settingspath, 'w') as f:
-        roam.yaml.safe_dump(data=settings, stream=f, default_flow_style=False)
+        yaml.safe_dump(data=settings, stream=f, default_flow_style=False)
 
 
 
@@ -231,10 +231,11 @@ class Form(object):
     def QGISLayer(self):
         def getlayer(name):
             try:
-                return QgsMapLayerRegistry.instance().mapLayersByName(name)[0]
+                return roam.api.utils.layer_by_name(name)
             except IndexError as e:
                 utils.log(e)
                 return None
+
         if self._qgislayer is None:
             layer = self.settings.get('layer', None)
             self._qgislayer = getlayer(layer)
@@ -699,3 +700,7 @@ class Project(QObject):
 
     def project_updated(self, project):
         self.reload()
+
+    def dump_settings(self):
+        import pprint
+        pprint.pprint(self.settings)

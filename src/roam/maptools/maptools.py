@@ -6,7 +6,10 @@ from qgis.gui import *
 from roam.maptools.touchtool import TouchMapTool
 from roam.api import GPS
 
+import roam.config
+
 import roam.resources_rc
+
 
 class RubberBand(QgsRubberBand):
     def __init__(self, canvas, geometrytype, width=5, iconsize=20):
@@ -36,6 +39,9 @@ class RubberBand(QgsRubberBand):
 
     def paint(self, p, *args):
         super(RubberBand, self).paint(p)
+
+        if not roam.config.settings.get("draw_distance", True):
+            return
 
         offset = QPointF(5,5)
         nodescount = self.numberOfVertices()
@@ -105,6 +111,12 @@ class CaptureAction(BaseAction):
         self.isdefault = True
         self.ismaptool = True
 
+    def setEditMode(self, enabled):
+        if enabled:
+            self.setText(self.tr("Edit"))
+        else:
+            self.setText(self.tr("Capture"))
+
 
 class GPSCaptureAction(BaseAction):
     def __init__(self, tool, parent=None):
@@ -128,12 +140,16 @@ class PolylineTool(QgsMapTool):
 
     def __init__(self, canvas):
         super(PolylineTool, self).__init__(canvas)
+        self.editmode = False
+        self.editvertex = None
         self.points = []
         self.canvas = canvas
+        self.startcolour = QColor.fromRgb(0, 0, 255, 100)
+        self.editcolour = QColor.fromRgb(0, 255, 0, 150)
         self.band = RubberBand(self.canvas, QGis.Line, width=5, iconsize=20)
-        self.band.setColor(QColor.fromRgb(0,0,255, 100))
+        self.band.setColor(self.startcolour)
         self.pointband = QgsRubberBand(self.canvas, QGis.Point)
-        self.pointband.setColor(QColor.fromRgb(0,0,255, 100))
+        self.pointband.setColor(self.startcolour)
         self.pointband.setIconSize(20)
         self.snapper = QgsMapCanvasSnapper(self.canvas)
         self.capturing = False
@@ -171,8 +187,16 @@ class PolylineTool(QgsMapTool):
         return [self.captureaction, self.endcaptureaction]
 
     def canvasPressEvent(self, event):
-        # TODO Add node dragging support.
-        pass
+        point = self.canvas.getCoordinateTransform().toMapCoordinates(event.pos())
+        geom = self.band.asGeometry()
+        if not geom:
+            return
+
+        close, at, before, after, dist = geom.closestVertex(point)
+        if dist < 2:
+            self.editvertex = at
+        else:
+            self.editvertex = None
 
     def getPointFromEvent(self, event):
         point = self.canvas.getCoordinateTransform().toMapCoordinates(event.pos())
@@ -182,11 +206,19 @@ class PolylineTool(QgsMapTool):
         if self.capturing:
             point = self.snappoint(event.pos())
             self.band.movePoint(point)
-        
+
+        if self.editmode and self.editvertex is not None:
+            at = self.editvertex
+            point = self.snappoint(event.pos())
+            self.band.movePoint(at, point)
+            self.pointband.movePoint(at, point)
+
     def canvasReleaseEvent(self, event):
         if event.button() == Qt.RightButton:
             self.endcapture()
-        else:
+            return
+
+        if not self.editmode:
             point = self.snappoint(event.pos())
             qgspoint = QgsPoint(point)
             self.points.append(qgspoint)
@@ -194,10 +226,13 @@ class PolylineTool(QgsMapTool):
             self.pointband.addPoint(point)
             self.capturing = True
             self.endcaptureaction.setEnabled(True)
+        else:
+            self.editvertex = None
 
     def endcapture(self):
         self.capturing = False
-        self.band.removeLastPoint()
+        if not self.editmode:
+            self.band.removeLastPoint()
         geometry = self.band.asGeometry()
         if not geometry:
             return
@@ -237,6 +272,27 @@ class PolylineTool(QgsMapTool):
             return point
         except IndexError:
             return self.canvas.getCoordinateTransform().toMapCoordinates(point)
+
+    def setEditMode(self, enabled, geom):
+        self.reset()
+        self.editmode = enabled
+        if self.editmode:
+            self.band.setColor(self.editcolour)
+            self.pointband.setColor(self.editcolour)
+            geomtype = geom.type()
+            if geomtype == QGis.Polygon:
+                nodes = geom.asPolygon()[0]
+            else:
+                nodes = geom.asPolyline()
+            for node in nodes:
+                self.pointband.addPoint(node)
+            self.band.setToGeometry(geom, None)
+        else:
+            self.band.setColor(self.startcolour)
+            self.pointband.setColor(self.startcolour)
+
+        self.endcaptureaction.setEnabled(self.editmode)
+        self.captureaction.setEditMode(enabled)
 
 
 class PolygonTool(PolylineTool):
@@ -306,7 +362,6 @@ class PointTool(TouchMapTool):
         location = GPS.postion
         self.geometryComplete.emit(QgsGeometry.fromPoint(location))
 
-        
     def activate(self):
         """
         Set the tool as the active tool in the canvas. 
@@ -333,3 +388,6 @@ class PointTool(TouchMapTool):
 
     def isEditTool(self):
         return False
+
+    def setEditMode(self, enabled, geom):
+        self.captureaction.setEditMode(enabled)

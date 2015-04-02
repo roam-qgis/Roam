@@ -8,7 +8,7 @@ from roam.editorwidgets.core import EditorWidget, registerwidgets
 class TextWidget(EditorWidget):
     widgettype = 'Text'
 
-    def __init__(self, *args):
+    def __init__(self, *args, **kwargs):
         super(TextWidget, self).__init__(*args)
 
     def createWidget(self, parent):
@@ -21,7 +21,7 @@ class TextWidget(EditorWidget):
     def eventFilter(self, object, event):
         # Hack I really don't like this but there doesn't seem to be a better way at the
         # moment
-        if event.type() == QEvent.FocusIn:
+        if event.type() in [QEvent.FocusIn, QEvent.MouseButtonPress]:
             RoamEvents.openkeyboard.emit()
         return False
 
@@ -51,7 +51,7 @@ class TextWidget(EditorWidget):
 class TextBlockWidget(TextWidget):
     widgettype = 'TextBlock'
 
-    def __init__(self, *args):
+    def __init__(self, *args, **kwargs):
         super(TextBlockWidget, self).__init__(*args)
 
     def createWidget(self, parent):

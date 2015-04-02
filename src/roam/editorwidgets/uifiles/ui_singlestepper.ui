@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>919</width>
-    <height>23</height>
+    <height>34</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -36,7 +36,7 @@
      </property>
      <property name="icon">
       <iconset resource="../../resources.qrc">
-       <normaloff>:/icons/previous</normaloff>:/icons/previous</iconset>
+       <normaloff>:/icons/minus</normaloff>:/icons/minus</iconset>
      </property>
      <property name="iconSize">
       <size>
@@ -59,7 +59,7 @@
      </property>
      <property name="icon">
       <iconset resource="../../resources.qrc">
-       <normaloff>:/icons/next</normaloff>:/icons/next</iconset>
+       <normaloff>:/icons/plus</normaloff>:/icons/plus</iconset>
      </property>
      <property name="iconSize">
       <size>

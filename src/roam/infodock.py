@@ -96,6 +96,7 @@ class InfoDock(infodock_widget, QWidget):
         self.project = None
         self.startwidth = self.width()
         self.expaned = False
+        self.layerList.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
 
         self.expandButton.pressed.connect(self.change_expanded_state)
         self.navwidget.mousePressEvent = self._sink
@@ -308,7 +309,8 @@ class InfoDock(infodock_widget, QWidget):
 
         results = []
         error = None
-        if infoblockdef['type'] == 'sql':
+        infotype = infoblockdef.get('type', 'feature')
+        if infotype == 'sql':
             try:
                 queryresults = self.results_from_query(infoblockdef, layer, feature, mapkey, lastresults=lastresults)
                 if isinfo1 and not queryresults:
@@ -322,8 +324,15 @@ class InfoDock(infodock_widget, QWidget):
                 else:
                     results.append(self.results_from_feature(feature))
 
-        elif infoblockdef['type'] == 'feature':
-            results.append(self.results_from_feature(feature))
+        elif infotype == 'feature':
+            featuredata = self.results_from_feature(feature)
+            excludedfields = infoblockdef.get('hidden', [])
+            for field in excludedfields:
+                try:
+                    del featuredata[field]
+                except KeyError:
+                    pass
+            results.append(featuredata)
         else:
             return None, []
 
@@ -347,7 +356,9 @@ class InfoDock(infodock_widget, QWidget):
         return '<br>'.join(blocks), results
 
     def results_from_feature(self, feature):
-        return values_from_feature(feature)
+        attributes = feature.attributes()
+        fields = [field.name().lower() for field in feature.fields()]
+        return OrderedDict(zip(fields, attributes))
 
     def results_from_query(self, infoblockdef, layer, feature, mapkey, lastresults=None):
         def get_key():

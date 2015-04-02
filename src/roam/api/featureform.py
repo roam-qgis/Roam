@@ -105,7 +105,7 @@ def buildfromauto(formconfig, base):
 
         outlayout.addRow(label, layoutwidget)
 
-    outlayout.addItem(QSpacerItem(10, 10))
+    outlayout.addItem(QSpacerItem(10, 500))
     installflickcharm(outwidget)
     return outwidget
 
@@ -297,6 +297,7 @@ class FeatureFormBase(QWidget):
                         value = wrapper.get_filename()
                     else:
                         value = ''
+                print value
 
             if shouldsave(field):
                 savedvalues[field] = value
@@ -305,7 +306,7 @@ class FeatureFormBase(QWidget):
         return values, savedvalues
 
     def findcontrol(self, name):
-        regex = QRegExp("^{}$".format(name))
+        regex = QRegExp("^{}$".format(QRegExp.escape(name)))
         regex.setCaseSensitivity(Qt.CaseInsensitive)
         try:
             widget = self.findChildren(QWidget, regex)[0]
@@ -590,16 +591,21 @@ class FeatureForm(FeatureFormBase):
         values, savedvalues = self.getvalues()
         save_images(values)
         updatefeautrefields(self.feature)
+        layer.startEditing()
         if self.editingmode:
             roam.utils.info("Updating feature {}".format(self.feature.id()))
-            qgisutils.update_feature(layer, self.feature)
+            layer.updateFeature(self.feature)
+            # qgisutils.update_feature(layer, self.feature)
         else:
             roam.utils.info("Adding feature {}".format(self.feature.id()))
-            saved = layer.dataProvider().addFeatures([self.feature])
-            if not saved:
-                raise FeatureSaveException.not_saved(layer.dataProvider().error().message())
-
+            layer.addFeature(self.feature)
             savevalues(layer, savedvalues)
+
+        saved = layer.commitChanges()
+
+        if not saved:
+            errors = layer.commitErrors()
+            raise FeatureSaveException.not_saved(errors)
 
         self.featuresaved(self.feature, values)
 

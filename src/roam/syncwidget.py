@@ -50,6 +50,7 @@ class SyncWidget(Ui_Form, QWidget):
     def updatecomplete(self):
         self.updatestatus('<b style="color:darkgreen">Sync complete</b>')
         self.updatestatus('')
+        RoamEvents.sync_complete.emit()
 
     def runnext(self):
         try:

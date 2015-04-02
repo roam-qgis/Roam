@@ -87,9 +87,14 @@ class GPSMarker(QgsMapCanvasItem):
     def __init__(self, canvas):
         super(GPSMarker, self).__init__(canvas)
         self.canvas = canvas
+        self._quaility = 0
         self.size = 24
-        self.pointbrush = QBrush(QColor(129, 173, 210))
-        self.pointpen = QPen(QColor(129, 173, 210))
+        self.red = Qt.darkRed
+        self.blue = QColor(129, 173, 210)
+        self.green = Qt.darkGreen
+
+        self.pointbrush = QBrush(self.red)
+        self.pointpen = QPen(self.red)
         self.map_pos = QgsPoint(0.0, 0.0)
 
     def setSize(self, size):
@@ -101,6 +106,18 @@ class GPSMarker(QgsMapCanvasItem):
         halfSize = self.size / 2.0
         rect = QRectF(0 - halfSize, 0 - halfSize, self.size, self.size)
         painter.setRenderHint(QPainter.Antialiasing)
+        if self.quality == 0:
+            color = self.red
+        elif self.quality == 1:
+            color = self.blue
+        elif self.quality >= 2:
+            color = self.green
+        else:
+            color = self.red
+
+        self.pointpen.setColor(color)
+        self.pointbrush.setColor(color)
+
         painter.setBrush(self.pointbrush)
         painter.setPen(self.pointpen)
         painter.drawEllipse(rect)
@@ -109,12 +126,18 @@ class GPSMarker(QgsMapCanvasItem):
         halfSize = self.size / 2.0
         return QRectF(-halfSize, -halfSize, 2.0 * halfSize, 2.0 * halfSize)
 
+    @property
+    def quality(self):
+        return self._quaility
+
+    @quality.setter
+    def quality(self, value):
+        self._quaility = value
+        self.update()
+
     def setCenter(self, map_pos):
         self.map_pos = map_pos
         self.setPos(self.toCanvasCoordinates(self.map_pos))
 
     def updatePosition(self):
         self.setCenter(self.map_pos)
-
-
-        

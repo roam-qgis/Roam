@@ -22,7 +22,7 @@ class BigListWidget(LargeEditorWidget):
         self.multi = False
 
     def eventFilter(self, object, event):
-        if event.type() == QEvent.FocusIn:
+        if event.type() in [QEvent.FocusIn, QEvent.MouseButtonPress]:
             RoamEvents.openkeyboard.emit()
         return False
 
@@ -59,7 +59,7 @@ class BigListWidget(LargeEditorWidget):
 
 class ListWidget(EditorWidget):
     widgettype = 'List'
-    def __init__(self, *args):
+    def __init__(self, *args, **kwargs):
         super(ListWidget, self).__init__(*args)
         self.listmodel = QStandardItemModel()
         self._bindvalue = None
@@ -228,7 +228,7 @@ class ListWidget(EditorWidget):
 
 class MultiList(ListWidget):
     widgettype = 'MultiList'
-    def __init__(self, *args):
+    def __init__(self, *args, **kwargs):
         super(MultiList, self).__init__(*args)
         self.multi = True
 
