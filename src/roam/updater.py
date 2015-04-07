@@ -14,6 +14,8 @@ from collections import defaultdict
 from PyQt4.QtNetwork import QNetworkRequest, QNetworkAccessManager
 from PyQt4.QtCore import QObject, pyqtSignal, QUrl, QThread
 
+import roam.project
+
 
 def checkversion(toversion, fromversion):
     return int(toversion) > int(fromversion)
@@ -33,6 +35,34 @@ def parse_serverprojects(content):
     return dict(versions)
 
 
+def install_project(info, basefolder, serverurl):
+    if not serverurl:
+        roam.utils.warning("No server url set for update")
+        raise ValueError("No server url given")
+
+    roam.utils.info("Downloading project zip")
+    filename = "{}-{}.zip".format(info['name'], info['version'])
+    url = urlparse.urljoin(serverurl, "projects/{}".format(filename))
+    content = urllib2.urlopen(url).read()
+    tempfolder = os.path.join(basefolder, "_updates")
+    if not os.path.exists(tempfolder):
+        os.mkdir(tempfolder)
+
+    zippath = os.path.join(tempfolder, filename)
+    with open(zippath, "wb") as f:
+        f.write(content)
+
+    yield "Installing"
+    with zipfile.ZipFile(zippath, "r") as z:
+        z.extractall(basefolder)
+
+    project = roam.project.Project.from_folder(os.path.join(basefolder, info['name']))
+
+    os.chdir(project.folder)
+    yield "Running update scripts.."
+    run_install_script(project.settings, "after_update")
+
+
 def update_project(project, version, serverurl):
     if not serverurl:
         roam.utils.warning("No server url set for update")
@@ -50,17 +80,18 @@ def update_project(project, version, serverurl):
     os.chdir(project.folder)
     yield "Running pre update scripts.."
     run_install_script(project.settings, "before_update")
+
     zippath = os.path.join(tempfolder, filename)
     with open(zippath, "wb") as f:
         f.write(content)
 
-    os.chdir(project.folder)
-    yield "Running update scripts.."
-    run_install_script(project.settings, "after_update")
-
     yield "Installing"
     with zipfile.ZipFile(zippath, "r") as z:
         z.extractall(rootfolder)
+
+    os.chdir(project.folder)
+    yield "Running update scripts.."
+    run_install_script(project.settings, "after_update")
 
     project.projectUpdated.emit(project)
 
@@ -104,23 +135,42 @@ def updateable_projects(projects, serverprojects):
             yield project, info
 
 
+def new_projects(projects, serverprojects):
+    names = [project.basefolder for project in projects]
+    for projectname, versions in serverprojects.iteritems():
+        if projectname not in names:
+            info = get_project_info(projectname, serverprojects)
+            yield info
+
+
 forupdate = Queue.Queue()
 
 
 class UpdateWorker(QObject):
-    projectUpdateStatus = pyqtSignal(object, str)
+    projectUpdateStatus = pyqtSignal(str, str)
+    projectInstalled = pyqtSignal(str)
 
-    def __init__(self):
+    def __init__(self, basefolder):
         super(UpdateWorker, self).__init__()
         self.server = None
+        self.basefolder = basefolder
 
     def run(self):
         while True:
-            project, version, server = forupdate.get()
-            self.projectUpdateStatus.emit(project, "Updating")
-            for status in update_project(project, version, server):
-                self.projectUpdateStatus.emit(project, status)
-            self.projectUpdateStatus.emit(project, "complete")
+            project, version, server, is_new = forupdate.get()
+            if is_new:
+                name = project['name']
+                self.projectUpdateStatus.emit(name, "Installing")
+                for status in install_project(project, self.basefolder, server):
+                    self.projectUpdateStatus.emit(name, status)
+                self.projectUpdateStatus.emit(name, "Installed")
+                self.projectInstalled.emit(name)
+            else:
+                name = project.name
+                self.projectUpdateStatus.emit(name, "Updating")
+                for status in update_project(project, version, server):
+                    self.projectUpdateStatus.emit(name, status)
+                self.projectUpdateStatus.emit(name, "Complete")
 
 
 class ProjectUpdater(QObject):
@@ -129,21 +179,24 @@ class ProjectUpdater(QObject):
 
     Emits foundProjects when a new projects are found
     """
-    foundProjects = pyqtSignal(object)
-    projectUpdateStatus = pyqtSignal(object, str)
+    foundProjects = pyqtSignal(list, list)
+    projectUpdateStatus = pyqtSignal(str, str)
+    projectInstalled = pyqtSignal(str)
 
-    def __init__(self, server=None):
+    def __init__(self, server=None, projects_base=''):
         super(ProjectUpdater, self).__init__()
         self.server = server
         self.net = QNetworkAccessManager()
-        self.worker()
+        self.projects_base = projects_base
+        self.create_worker()
 
-    def worker(self):
+    def create_worker(self):
         self.updatethread = QThread()
-        self.worker = UpdateWorker()
+        self.worker = UpdateWorker(self.projects_base)
         self.worker.moveToThread(self.updatethread)
 
         self.worker.projectUpdateStatus.connect(self.projectUpdateStatus)
+        self.worker.projectInstalled.connect(self.projectInstalled)
         self.updatethread.started.connect(self.worker.run)
 
     @property
@@ -167,11 +220,18 @@ class ProjectUpdater(QObject):
         content = reply.readAll().data()
         serverversions = parse_serverprojects(content)
         updateable = list(updateable_projects(installedprojects, serverversions))
-        if updateable:
-            self.foundProjects.emit(updateable)
+        new = list(new_projects(installedprojects, serverversions))
+        if updateable or new:
+            self.foundProjects.emit(updateable, new)
 
     def update_project(self, project, version):
-        self.projectUpdateStatus.emit(project, "Pending")
-        forupdate.put((project, version, self.server))
+        self.projectUpdateStatus.emit(project.name, "Pending")
+        forupdate.put((project, version, self.server, False))
+        self.updatethread.start()
+
+    def install_project(self, projectinfo):
+        self.projectUpdateStatus.emit(projectinfo['name'], "Pending")
+        is_new = True
+        forupdate.put((projectinfo, projectinfo['version'], self.server, is_new))
         self.updatethread.start()
 

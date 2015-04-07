@@ -3,11 +3,13 @@ import os
 import copy
 import subprocess
 import shutil
+import functools
 
 from datetime import datetime
 
 from PyQt4.QtCore import Qt, QDir, QFileInfo, pyqtSignal, QModelIndex, QFileSystemWatcher, QUrl
-from PyQt4.QtGui import QWidget, QStandardItemModel, QStandardItem, QIcon, QMessageBox, QPixmap, QDesktopServices
+from PyQt4.QtGui import (QWidget, QStandardItemModel, QStandardItem, QIcon, QMessageBox, QPixmap, QDesktopServices, QMenu,
+                         QToolButton)
 
 from qgis.core import QgsProject, QgsMapLayerRegistry, QgsPalLabeling, QGis
 from qgis.gui import QgsMapCanvas, QgsExpressionBuilderDialog, QgsMessageBar
@@ -60,6 +62,13 @@ class ProjectWidget(Ui_Form, QWidget):
         self.bar = None
         self.roamapp = None
 
+        menu = QMenu()
+        publishdataAction = menu.addAction("Publish Project with data")
+        publishdataAction.setIcon(QIcon(":icons/sync"))
+        self.depolyProjectButton.setMenu(menu)
+        self.depolyProjectButton.setPopupMode(QToolButton.MenuButtonPopup)
+
+
         self.canvas.setCanvasColor(Qt.white)
         self.canvas.enableAntiAliasing(True)
         self.canvas.setWheelAction(QgsMapCanvas.WheelZoomToMouseCursor)
@@ -70,6 +79,7 @@ class ProjectWidget(Ui_Form, QWidget):
         self.openProjectFolderButton.pressed.connect(self.openprojectfolder)
         self.openinQGISButton.pressed.connect(self.openinqgis)
         self.depolyProjectButton.pressed.connect(self.deploy_project)
+        publishdataAction.triggered.connect(functools.partial(self.deploy_project, True))
 
         self.filewatcher = QFileSystemWatcher()
         self.filewatcher.fileChanged.connect(self.qgisprojectupdated)
@@ -99,7 +109,7 @@ class ProjectWidget(Ui_Form, QWidget):
         if hasattr(widget, "write_config"):
             widget.write_config()
 
-    def deploy_project(self):
+    def deploy_project(self, with_data=False):
         if self.roamapp.sourcerun:
             base = os.path.join(self.roamapp.apppath, "..")
         else:
@@ -116,7 +126,10 @@ class ProjectWidget(Ui_Form, QWidget):
             os.makedirs(path)
 
         self._saveproject()
-        options = {"skip": ["_data"]}
+        if not with_data:
+            options = {"skip": ["_data"]}
+        else:
+            options = {}
         bundle.bundle_project(self.project, path, options)
 
     def setaboutinfo(self):

@@ -88,14 +88,18 @@ class MainWindow(ui_mainwindow.Ui_MainWindow, QMainWindow):
     Main application window
     """
 
-    def __init__(self):
+    def __init__(self, roamapp):
         super(MainWindow, self).__init__()
         self.setupUi(self)
+        self.projectwidget.project_base = roamapp.projectsroot
+
         self.menutoolbar.setStyleSheet(roam.roam_style.menubarstyle)
-        self.projectupdater = ProjectUpdater()
-        self.projectupdater.foundProjects.connect(self.projectwidget.show_updateable)
+        self.projectupdater = ProjectUpdater(projects_base=roamapp.projectsroot)
+        self.projectupdater.foundProjects.connect(self.projectwidget.show_new_updateable)
         self.projectupdater.projectUpdateStatus.connect(self.projectwidget.update_project_status)
+        self.projectupdater.projectInstalled.connect(self.projectwidget.project_installed)
         self.projectwidget.projectUpdate.connect(self.projectupdater.update_project)
+        self.projectwidget.projectInstall.connect(self.projectupdater.install_project)
         self.project = None
         self.tracking = GPSLogging(GPS)
 
