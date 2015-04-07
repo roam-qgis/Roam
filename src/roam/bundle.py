@@ -14,7 +14,7 @@ def zipper(dir, projectname, zip_file):
     with zipfile.ZipFile(zip_file, 'w', compression=zipfile.ZIP_DEFLATED) as zip:
         root_len = len(os.path.abspath(dir))
         for root, dirs, files in os.walk(dir):
-            if os.path.basename(root).startswith("_"):
+            if os.path.basename(root).startswith("_data"):
                 continue
 
             archive_root = os.path.abspath(root)[root_len + 1:]
