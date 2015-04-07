@@ -32,7 +32,7 @@ with roam.environ.setup(srcpath) as roamapp:
     # Fake this module to maintain API.
     sys.modules['roam.featureform'] = roam.api.featureform
 
-    window = roam.mainwindow.MainWindow()
+    window = roam.mainwindow.MainWindow(roamapp)
 
     roamapp.setActiveWindow(window)
     roamapp.set_error_handler(window.raiseerror, roam.utils)

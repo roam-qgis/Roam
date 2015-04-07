@@ -46,6 +46,7 @@ from roam.syncwidget import SyncWidget
 from roam.helpviewdialog import HelpPage
 from roam.imageviewerwidget import ImageViewer
 from roam.gpswidget import GPSWidget
+from roam.updater import ProjectUpdater
 from roam.api import RoamEvents, GPS, RoamInterface, plugins
 from roam.ui import ui_mainwindow
 from PyQt4.QtGui import QMainWindow
@@ -87,10 +88,18 @@ class MainWindow(ui_mainwindow.Ui_MainWindow, QMainWindow):
     Main application window
     """
 
-    def __init__(self):
+    def __init__(self, roamapp):
         super(MainWindow, self).__init__()
         self.setupUi(self)
+        self.projectwidget.project_base = roamapp.projectsroot
+
         self.menutoolbar.setStyleSheet(roam.roam_style.menubarstyle)
+        self.projectupdater = ProjectUpdater(projects_base=roamapp.projectsroot)
+        self.projectupdater.foundProjects.connect(self.projectwidget.show_new_updateable)
+        self.projectupdater.projectUpdateStatus.connect(self.projectwidget.update_project_status)
+        self.projectupdater.projectInstalled.connect(self.projectwidget.project_installed)
+        self.projectwidget.projectUpdate.connect(self.projectupdater.update_project)
+        self.projectwidget.projectInstall.connect(self.projectupdater.install_project)
         self.project = None
         self.tracking = GPSLogging(GPS)
 
@@ -321,6 +330,8 @@ class MainWindow(ui_mainwindow.Ui_MainWindow, QMainWindow):
         viewer.openimage(pixmap)
 
     def settingsupdated(self, settings):
+        server = settings.get('updateserver', '')
+        self.projectupdater.update_server(server, self.projects)
         self.show()
         self.canvas_page.settings_updated(settings)
 
@@ -494,8 +505,11 @@ class MainWindow(ui_mainwindow.Ui_MainWindow, QMainWindow):
         list
         """
         projects = list(projects)
+        self.projects = projects
         self.projectwidget.loadProjectList(projects)
         self.syncwidget.loadprojects(projects)
+        updateserver = roam.config.settings.get('updateserver', None)
+        self.projectupdater.update_server(updateserver, projects)
 
     def updatePage(self, action):
         """

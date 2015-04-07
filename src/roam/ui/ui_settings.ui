@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>848</width>
-    <height>786</height>
+    <width>853</width>
+    <height>793</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -91,7 +91,7 @@
      </property>
     </spacer>
    </item>
-   <item row="3" column="2" rowspan="2">
+   <item row="4" column="2" rowspan="2">
     <widget class="QGroupBox" name="groupBox_3">
      <property name="title">
       <string>About</string>
@@ -291,6 +291,37 @@ p, li { white-space: pre-wrap; }
          <bool>true</bool>
         </property>
        </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item row="5" column="0">
+    <widget class="QGroupBox" name="groupBox_4">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="title">
+      <string>Updates</string>
+     </property>
+     <property name="flat">
+      <bool>true</bool>
+     </property>
+     <layout class="QFormLayout" name="formLayout">
+      <item row="0" column="0">
+       <widget class="QLabel" name="label_7">
+        <property name="text">
+         <string>Server</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="0">
+       <layout class="QHBoxLayout" name="horizontalLayout_4"/>
+      </item>
+      <item row="0" column="1">
+       <widget class="QLineEdit" name="updateServerEdit"/>
       </item>
      </layout>
     </widget>

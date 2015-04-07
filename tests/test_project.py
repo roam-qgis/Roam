@@ -1,6 +1,6 @@
 import pytest
 
-from roam.project import checkversion
+from roam.project import checkversion, increment_version
 
 import roam
 
@@ -31,3 +31,10 @@ class TestVersionCheck:
     def test_should_return_valid_same_patch_version(self):
         projectversion = '2.0.0'
         assert checkversion(minversion, projectversion)
+
+    def test_increment_version_should_add_one(self):
+        version = '1'
+        assert increment_version(version) == 2
+        version = 1
+        assert increment_version(version) == 2
+

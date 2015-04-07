@@ -11,6 +11,7 @@ import sys
 from datetime import datetime
 from collections import OrderedDict
 
+from PyQt4.QtCore import pyqtSignal, QObject
 from PyQt4.QtGui import QAction, QIcon
 
 from qgis.core import QgsMapLayerRegistry, QGis, QgsTolerance, QgsVectorLayer, QgsMapLayer, QgsFeature
@@ -30,6 +31,7 @@ import roam.defaults as defaults
 
 supportedgeometry = [QGis.Point, QGis.Polygon, QGis.Line]
 
+
 class NoMapToolConfigured(Exception):
     """ 
         Raised when no map tool has been configured
@@ -45,6 +47,10 @@ class ErrorInMapTool(Exception):
     pass
 
 
+def increment_version(version):
+    return int(version) + 1
+
+
 def values_from_feature(feature, layer):
     attributes = feature.attributes()
     fields = [field.name().lower() for field in feature.fields()]
@@ -55,7 +61,6 @@ def values_from_feature(feature, layer):
             del attributes[index]
     values = CaseInsensitiveDict(zip(fields, attributes))
     return values
-
 
 
 def layersfromlist(layerlist):
@@ -94,6 +99,7 @@ def checkversion(roamversion, projectversion):
     # Only match major for now because API is only broken between major versions.
     majormatch = min[0] == project[0]
     return majormatch
+
 
 def initfound(folder):
     return os.path.exists(os.path.join(folder, "__init__.py"))
@@ -163,7 +169,6 @@ def writefolderconfig(settings, folder, configname):
 
     with open(settingspath, 'w') as f:
         yaml.safe_dump(data=settings, stream=f, default_flow_style=False)
-
 
 
 class Form(object):
@@ -259,7 +264,7 @@ class Form(object):
         capabilities = self.settings.get("capabilities", default)
         utils.log(capabilities)
         return capabilities
-    
+
     @property
     def valid(self):
         """
@@ -388,21 +393,28 @@ class Form(object):
         return query, newvalues
 
 
-class Project(object):
+class Project(QObject):
+    projectUpdated = pyqtSignal(object)
+
     def __init__(self, rootfolder, settings):
+        super(Project, self).__init__()
         self.folder = rootfolder
         self._project = None
         self._splash = None
         self.settings = settings
         self._forms = []
         self.error = ''
-        self.basepath = os.path.join(rootfolder,"..")
+        self.basepath = os.path.join(rootfolder, "..")
+        self.projectUpdated.connect(self.project_updated)
 
     @classmethod
     def from_folder(cls, rootfolder):
         project = cls(rootfolder, {})
         project.settings = readfolderconfig(rootfolder, configname='project')
         return project
+
+    def reload(self):
+        self.settings = readfolderconfig(self.folder, configname='project')
 
     @property
     def image_folder(self):
@@ -424,15 +436,22 @@ class Project(object):
     def name(self):
         default = os.path.basename(self.folder)
         return self.settings.setdefault("title", default)
-        
+
     @property
     def description(self):
         return self.settings.setdefault("description", '')
-        
+
     @property
     def version(self):
+        return int(self.settings.setdefault("project_version", 1))
+
+    def increament_version(self):
+        self.settings['project_version'] = increment_version(self.version)
+
+    @property
+    def roamversion(self):
         return str(self.settings.setdefault("version", roam.__version__))
-    
+
     @property
     def projectfile(self):
         return glob.glob(os.path.join(self.folder, '*.qgs'))[0]
@@ -451,7 +470,7 @@ class Project(object):
             error = "No settings set for project"
             yield error
 
-        if not checkversion(roam.__version__, self.version):
+        if not checkversion(roam.__version__, self.roamversion):
             error = "Version mismatch"
             yield error
 
@@ -509,7 +528,7 @@ class Project(object):
                 log("Panel import error {}".format(err))
             except AttributeError:
                 log("No createPanel defined on module {}".format(module))
-                
+
     def onProjectLoad(self):
         """
             Call the projects onProjectLoad method defined in projects __init__ module.
@@ -650,15 +669,16 @@ class Project(object):
     def removeform(self, name):
         forms = self.settings.setdefault("forms", [])
         if hasattr(forms, 'iteritems'):
-           del self.settings['forms'][name]
+            del self.settings['forms'][name]
         else:
             index = forms.index(name)
             del self.settings['forms'][index]
 
-    def save(self):
+    def save(self, update_version=True):
         """
         Save the project config to disk.
         """
+        self.increament_version()
         writefolderconfig(self.settings, self.folder, configname='project')
         formsstorage = self.settings.setdefault("forms", [])
         if not hasattr(formsstorage, 'iteritems'):
@@ -666,12 +686,12 @@ class Project(object):
                 debug("Saving {}".format(form.name))
                 debug(form.settings)
                 form.save()
+        self.projectUpdated.emit(self)
 
     @property
     def oldformconfigstlye(self):
         formsstorage = self.settings.get("forms", [])
         return hasattr(formsstorage, 'iteritems')
-
 
     def hascapturelayers(self):
         layers = QgsMapLayerRegistry.instance().mapLayers().values()
@@ -687,6 +707,10 @@ class Project(object):
             return False
         return self.basefolder == other.basefolder
 
+    def project_updated(self, project):
+        self.reload()
+
     def dump_settings(self):
         import pprint
+
         pprint.pprint(self.settings)

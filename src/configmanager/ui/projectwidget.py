@@ -3,11 +3,13 @@ import os
 import copy
 import subprocess
 import shutil
+import functools
 
 from datetime import datetime
 
 from PyQt4.QtCore import Qt, QDir, QFileInfo, pyqtSignal, QModelIndex, QFileSystemWatcher, QUrl
-from PyQt4.QtGui import QWidget, QStandardItemModel, QStandardItem, QIcon, QMessageBox, QPixmap, QDesktopServices
+from PyQt4.QtGui import (QWidget, QStandardItemModel, QStandardItem, QIcon, QMessageBox, QPixmap, QDesktopServices, QMenu,
+                         QToolButton)
 
 from qgis.core import QgsProject, QgsMapLayerRegistry, QgsPalLabeling, QGis
 from qgis.gui import QgsMapCanvas, QgsExpressionBuilderDialog, QgsMessageBar
@@ -17,6 +19,7 @@ from configmanager.models import widgeticon, WidgetItem, WidgetsModel, QgsLayerM
     CaptureLayerFilter, CaptureLayersModel
 
 from roam.api import FeatureForm
+from roam import bundle
 
 import configmanager.editorwidgets
 import roam.editorwidgets
@@ -57,6 +60,14 @@ class ProjectWidget(Ui_Form, QWidget):
         self.project = None
         self.mapisloaded = False
         self.bar = None
+        self.roamapp = None
+
+        menu = QMenu()
+        publishdataAction = menu.addAction("Publish Project with data")
+        publishdataAction.setIcon(QIcon(":icons/sync"))
+        self.depolyProjectButton.setMenu(menu)
+        self.depolyProjectButton.setPopupMode(QToolButton.MenuButtonPopup)
+
 
         self.canvas.setCanvasColor(Qt.white)
         self.canvas.enableAntiAliasing(True)
@@ -67,6 +78,8 @@ class ProjectWidget(Ui_Form, QWidget):
 
         self.openProjectFolderButton.pressed.connect(self.openprojectfolder)
         self.openinQGISButton.pressed.connect(self.openinqgis)
+        self.depolyProjectButton.pressed.connect(self.deploy_project)
+        publishdataAction.triggered.connect(functools.partial(self.deploy_project, True))
 
         self.filewatcher = QFileSystemWatcher()
         self.filewatcher.fileChanged.connect(self.qgisprojectupdated)
@@ -95,6 +108,29 @@ class ProjectWidget(Ui_Form, QWidget):
         widget = self.stackedWidget.currentWidget()
         if hasattr(widget, "write_config"):
             widget.write_config()
+
+    def deploy_project(self, with_data=False):
+        if self.roamapp.sourcerun:
+            base = os.path.join(self.roamapp.apppath, "..")
+        else:
+            base = self.roamapp.apppath
+
+        default = os.path.join(base, "roam_serv")
+        path = roam.config.settings.get("publish", {}).get("path", '')
+        if not path:
+            path = default
+
+        path = os.path.join(path, "projects")
+
+        if not os.path.exists(path):
+            os.makedirs(path)
+
+        self._saveproject()
+        if not with_data:
+            options = {"skip": ["_data"]}
+        else:
+            options = {}
+        bundle.bundle_project(self.project, path, options)
 
     def setaboutinfo(self):
         self.versionLabel.setText(roam.__version__)
@@ -193,10 +229,6 @@ class ProjectWidget(Ui_Form, QWidget):
         Save the project config to disk.
         """
         self.write_config_currentwidget()
-        self.project.dump_settings()
-        self.project.save()
+        # self.project.dump_settings()
+        self.project.save(update_version=True)
         self.projectsaved.emit()
-
-
-
-

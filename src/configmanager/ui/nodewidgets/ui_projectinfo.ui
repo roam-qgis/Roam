@@ -39,7 +39,7 @@
      <item row="0" column="1">
       <widget class="QLabel" name="label_9">
        <property name="text">
-        <string>Version</string>
+        <string>Project Version</string>
        </property>
       </widget>
      </item>
@@ -84,7 +84,10 @@
         </sizepolicy>
        </property>
        <property name="inputMask">
-        <string>0.0.0; </string>
+        <string/>
+       </property>
+       <property name="readOnly">
+        <bool>true</bool>
        </property>
       </widget>
      </item>

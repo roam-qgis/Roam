@@ -21,10 +21,13 @@ from configmanager.ui.treenodes import *
 
 
 class ConfigManagerDialog(ui_configmanager.Ui_ProjectInstallerDialog, QDialog):
-    def __init__(self, parent=None):
+    def __init__(self, roamapp, parent=None):
         super(ConfigManagerDialog, self).__init__(parent)
         self.setupUi(self)
         self.bar = roam.messagebaritems.MessageBar(self)
+
+        # Nope!
+        self.projectwidget.roamapp = roamapp
         self.projectwidget.bar = self.bar
 
         self.treemodel = QStandardItemModel()
@@ -148,7 +151,6 @@ class ConfigManagerDialog(ui_configmanager.Ui_ProjectInstallerDialog, QDialog):
         self.projectwidget.setpage(node.page, node)
 
     def projectupdated(self):
-        print "Project Updated"
         index = self.projectList.currentIndex()
         node = find_node(index)
         node.refresh()
