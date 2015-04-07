@@ -1,8 +1,10 @@
 __author__ = 'Nathan.Woodrow'
 
 import os
+import shutil
 from PyQt4.QtCore import Qt, QUrl, QVariant
-from PyQt4.QtGui import QWidget, QPixmap, QStandardItem, QStandardItemModel, QIcon, QDesktopServices, QMenu, QToolButton
+from PyQt4.QtGui import (QWidget, QPixmap, QStandardItem, QStandardItemModel, QIcon, QDesktopServices, QMenu, QToolButton,
+                         QFileDialog)
 from PyQt4.Qsci import QsciLexerSQL, QsciScintilla
 
 from qgis.core import QgsDataSourceURI
@@ -436,6 +438,15 @@ class ProjectInfoWidget(ui_projectinfo.Ui_Form, WidgetBase):
         super(ProjectInfoWidget, self).__init__(parent)
         self.setupUi(self)
         self.titleText.textChanged.connect(self.updatetitle)
+        self.splashlabel.mouseReleaseEvent = self.change_splash
+
+    def change_splash(self, event):
+        splash = QFileDialog.getOpenFileName(self, "Select splash image", filter="Images (*.png *.svg)")
+        if not splash:
+            return
+        ext = os.path.splitext(splash)[1]
+        shutil.copy(splash, os.path.join(self.project.folder, "splash" + ext))
+        self.setsplash(self.project.splash)
 
     def updatetitle(self, text):
         self.project.settings['title'] = text
