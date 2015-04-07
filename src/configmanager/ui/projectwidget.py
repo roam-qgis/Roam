@@ -116,7 +116,8 @@ class ProjectWidget(Ui_Form, QWidget):
             os.makedirs(path)
 
         self._saveproject()
-        bundle.bundle_project(self.project, path)
+        options = {"skip": ["_data"]}
+        bundle.bundle_project(self.project, path, options)
 
     def setaboutinfo(self):
         self.versionLabel.setText(roam.__version__)
