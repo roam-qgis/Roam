@@ -544,11 +544,13 @@ class InfoNode(ui_infonode.Ui_Form, WidgetBase):
         else:
             connection = "from_layer"
 
+
         if self.Editor.text():
             infoconfig[self.treenode.key] = {
                 "caption": self.caption_edit.text(),
                 "query": self.Editor.text(),
-                "connection": connection
+                "connection": connection,
+                "type": "sql"
             }
         else:
             try:

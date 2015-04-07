@@ -92,6 +92,7 @@ class Database(object):
             raise DatabaseException(query.lastError().text())
 
     def _query(self, querystring, **mappings):
+        querystring = querystring.replace(r"\r\n", " ")
         query = QSqlQuery(self.db)
         query.prepare(querystring)
         for key, value in mappings.iteritems():
@@ -111,6 +112,7 @@ class Database(object):
         return values
 
     def query(self, sql, **mappings):
+        sql = sql.replace(r"\r\n", " ")
         query = self._query(sql, **mappings)
         if query.exec_():
             while query.next():
@@ -120,6 +122,7 @@ class Database(object):
             raise DatabaseException(query.lastError().text())
 
     def querymodel(self, sql, **mappings):
+        sql = sql.replace(r"\r\n", " ")
         query = self._query(sql, **mappings)
         print sql, mappings
         if query.exec_():
