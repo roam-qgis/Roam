@@ -126,11 +126,9 @@ class ProjectWidget(Ui_Form, QWidget):
             os.makedirs(path)
 
         self._saveproject()
-        if not with_data:
-            options = {"skip": ["_data"]}
-        else:
-            options = {}
-        bundle.bundle_project(self.project, path, options)
+        options = {}
+
+        bundle.bundle_project(self.project, path, options, as_install=with_data)
 
     def setaboutinfo(self):
         self.versionLabel.setText(roam.__version__)

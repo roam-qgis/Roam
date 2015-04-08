@@ -48,7 +48,7 @@ def install_project(info, basefolder, serverurl):
         raise ValueError("No server url given")
 
     roam.utils.info("Downloading project zip")
-    filename = "{}.zip".format(info['name'])
+    filename = "{}-Install.zip".format(info['name'])
     url = urlparse.urljoin(serverurl, "projects/{}".format(filename))
     content = urllib2.urlopen(url).read()
     tempfolder = os.path.join(basefolder, "_updates")
@@ -69,8 +69,12 @@ def install_project(info, basefolder, serverurl):
     yield "Running update scripts.."
     run_install_script(project.settings, "after_update")
 
+    # Update the project after install because it might be out of date.
+    for status in update_project(project, serverurl):
+        yield status
 
-def update_project(project, version, serverurl):
+
+def update_project(project, serverurl):
     if not serverurl:
         roam.utils.warning("No server url set for update")
         raise ValueError("No server url given")
@@ -175,7 +179,7 @@ class UpdateWorker(QObject):
             else:
                 name = project.name
                 self.projectUpdateStatus.emit(name, "Updating")
-                for status in update_project(project, version, server):
+                for status in update_project(project, server):
                     self.projectUpdateStatus.emit(name, status)
                 self.projectUpdateStatus.emit(name, "Complete")
 

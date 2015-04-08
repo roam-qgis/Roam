@@ -3,13 +3,26 @@ import os
 import zipfile
 
 
-def bundle_project(project, outpath, options):
+def bundle_project(project, outpath, options, as_install=False):
+    _startoptions = options
     root = project.folder
     basefolder = project.basefolder
-    filename = "{}.zip".format(basefolder)
+    if as_install:
+        filename = "{}-Install.zip".format(basefolder)
+    else:
+        dataoptions = {"skip": ["_data"]}
+        options = _startoptions.copy()
+        options.update(dataoptions)
+        filename = "{}.zip".format(basefolder)
+
+    print filename
     filename = os.path.join(outpath, filename)
     zipper(root, basefolder, filename, options)
     update_project_details(project, outpath)
+
+    # We also create the update package at the same time as the install package
+    if as_install:
+        bundle_project(project, outpath, _startoptions, as_install=False)
 
 
 def zipper(dir, projectname, zip_file, options):
