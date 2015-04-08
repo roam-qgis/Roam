@@ -29,7 +29,7 @@ def zipper(dir, projectname, zip_file, options):
 
 
 def update_project_details(project, outpath):
-    configpath = os.path.join(outpath, "roam.config")
+    configpath = os.path.join(outpath, "roam.txt")
     if not os.path.exists(configpath):
         open(configpath, "a").close()
 
@@ -39,10 +39,13 @@ def update_project_details(project, outpath):
             config = {}
         projectsnode = config.setdefault("projects", {})
         projectsnode[project.basefolder] = {"version": project.version,
-                                            "name": project.name,
+                                            "name": project.basefolder,
+                                            "title": project.name,
                                             "description": project.description}
 
         config['projects'] = projectsnode
+        f.seek(0)
         yaml.dump(data=config, stream=f, default_flow_style=False)
+        f.truncate()
 
 

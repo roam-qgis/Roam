@@ -1,3 +1,4 @@
+import yaml
 import functools
 import os
 import re
@@ -21,17 +22,22 @@ def checkversion(toversion, fromversion):
     return int(toversion) > int(fromversion)
 
 
-def parse_serverprojects(content):
-    reg = '(?P<file>(?P<name>\w+(-\w+)*)-(?P<version>\d+).zip)'
+def parse_serverprojects(configdata):
+    if isinstance(configdata, basestring):
+        configdata = yaml.load(configdata)
+
     versions = defaultdict(dict)
-    for match in re.finditer(reg, content, re.I):
-        version = int(match.group("version"))
-        path = match.group("file")
-        name = match.group("name")
+    for project, data in configdata['projects'].iteritems():
+        version = int(data["version"])
+        path = project + ".zip"
+        title = data['title']
+        name = project
+        desc = data["description"]
         data = dict(path=path,
                     version=version,
-                    name=name)
-        versions[name][version] = data
+                    name=name,
+                    title=title)
+        versions[project][version] = data
     return dict(versions)
 
 
@@ -41,7 +47,7 @@ def install_project(info, basefolder, serverurl):
         raise ValueError("No server url given")
 
     roam.utils.info("Downloading project zip")
-    filename = "{}-{}.zip".format(info['name'], info['version'])
+    filename = "{}.zip".format(info['name'])
     url = urlparse.urljoin(serverurl, "projects/{}".format(filename))
     content = urllib2.urlopen(url).read()
     tempfolder = os.path.join(basefolder, "_updates")
@@ -69,7 +75,7 @@ def update_project(project, version, serverurl):
         raise ValueError("No server url given")
 
     roam.utils.info("Downloading project zip")
-    filename = "{}-{}.zip".format(project.basefolder, version)
+    filename = "{}.zip".format(project.basefolder)
     url = urlparse.urljoin(serverurl, "projects/{}".format(filename))
     content = urllib2.urlopen(url).read()
     rootfolder = os.path.join(project.folder, "..")
@@ -200,8 +206,8 @@ class ProjectUpdater(QObject):
         self.updatethread.started.connect(self.worker.run)
 
     @property
-    def projecturl(self):
-        url = urlparse.urljoin(self.server, "projects/")
+    def configurl(self):
+        url = urlparse.urljoin(self.server, "projects/roam.txt")
         return url
 
     def check_updates(self, server, installedprojects):
@@ -209,7 +215,7 @@ class ProjectUpdater(QObject):
             return
 
         self.server = server
-        req = QNetworkRequest(QUrl(self.projecturl))
+        req = QNetworkRequest(QUrl(self.configurl))
         reply = self.net.get(req)
         reply.finished.connect(functools.partial(self.list_versions, reply, installedprojects))
 
@@ -218,6 +224,7 @@ class ProjectUpdater(QObject):
 
     def list_versions(self, reply, installedprojects):
         content = reply.readAll().data()
+        print content
         serverversions = parse_serverprojects(content)
         updateable = list(updateable_projects(installedprojects, serverversions))
         new = list(new_projects(installedprojects, serverversions))
