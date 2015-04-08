@@ -36,7 +36,8 @@ def parse_serverprojects(configdata):
         data = dict(path=path,
                     version=version,
                     name=name,
-                    title=title)
+                    title=title,
+                    description=desc)
         versions[project][version] = data
     return dict(versions)
 

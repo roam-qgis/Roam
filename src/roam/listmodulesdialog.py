@@ -34,8 +34,8 @@ class ProjectWidget(Ui_Form, QWidget):
 
     def refresh(self):
         if self.is_new:
-            name = self.project['name']
-            desc = 'New Project - Not installed'
+            name = self.project['title']
+            desc = self.project['description']
             splash = ":icons/download"
         else:
             name = self.project.name
@@ -56,7 +56,7 @@ class ProjectWidget(Ui_Form, QWidget):
         else:
             self.setEnabled(False)
             if self.is_new:
-                name = self.project['name']
+                name = self.project['title']
             else:
                 name = self.project.name
 
