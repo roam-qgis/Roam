@@ -1,3 +1,4 @@
+import yaml
 import os
 import zipfile
 
@@ -5,9 +6,10 @@ import zipfile
 def bundle_project(project, outpath, options):
     root = project.folder
     basefolder = project.basefolder
-    filename = "{}-{}.zip".format(basefolder, project.version)
+    filename = "{}.zip".format(basefolder)
     filename = os.path.join(outpath, filename)
     zipper(root, basefolder, filename, options)
+    update_project_details(project, outpath)
 
 
 def zipper(dir, projectname, zip_file, options):
@@ -24,3 +26,23 @@ def zipper(dir, projectname, zip_file, options):
                 archive_name = os.path.join(projectname, archive_root, f)
                 zip.write(fullpath, archive_name, zipfile.ZIP_DEFLATED)
     return zip_file
+
+
+def update_project_details(project, outpath):
+    configpath = os.path.join(outpath, "roam.config")
+    if not os.path.exists(configpath):
+        open(configpath, "a").close()
+
+    with open(configpath, 'r+') as f:
+        config = yaml.load(f)
+        if not config:
+            config = {}
+        projectsnode = config.setdefault("projects", {})
+        projectsnode[project.basefolder] = {"version": project.version,
+                                            "name": project.name,
+                                            "description": project.description}
+
+        config['projects'] = projectsnode
+        yaml.dump(data=config, stream=f, default_flow_style=False)
+
+
