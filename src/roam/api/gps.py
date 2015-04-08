@@ -138,8 +138,8 @@ class GPSService(QObject):
         self.info.latitude = data.latitude
         self.info.longitude = data.longitude
         self.info.elevation = safe_float(data.altitude)
-        self.info.quality = int(data.gps_qual)
-        self.info.satellitesUsed = int(data.num_sats)
+        self.info.quality = safe_int(data.gps_qual)
+        self.info.satellitesUsed = safe_int(data.num_sats)
         return self.info
 
     def extract_rmc(self, data):
@@ -148,12 +148,13 @@ class GPSService(QObject):
         self.info.speed = KNOTS_TO_KM * safe_float(data.spd_over_grnd)
         self.info.status = data.data_validity
         self.info.direction = safe_float(data.true_course)
-        date = QDate(data.datestamp.year, data.datestamp.month, data.datestamp.day)
-        time = QTime(data.timestamp.hour, data.timestamp.minute, data.timestamp.second)
-        dt = QDateTime()
-        self.info.utcDateTime.setTimeSpec(Qt.UTC)
-        self.info.utcDateTime.setDate(date)
-        self.info.utcDateTime.setTime(time)
+        if data.datestamp and data.timestamp:
+            date = QDate(data.datestamp.year, data.datestamp.month, data.datestamp.day)
+            time = QTime(data.timestamp.hour, data.timestamp.minute, data.timestamp.second)
+            dt = QDateTime()
+            self.info.utcDateTime.setTimeSpec(Qt.UTC)
+            self.info.utcDateTime.setDate(date)
+            self.info.utcDateTime.setTime(time)
         return self.info
 
 
