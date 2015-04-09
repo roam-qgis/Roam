@@ -1,12 +1,36 @@
 from PyQt4.QtGui import QWidget
 from ui.ui_gps import Ui_gpsWidget
 
+import roam.config
+
+
 class GPSWidget(Ui_gpsWidget, QWidget):
     def __init__(self, parent=None):
         super(GPSWidget, self).__init__(parent)
         self.setupUi(self)
         self.gps = None
         self.logginginfolabel.setVisible(False)
+        self.gpstiming_edit.valueChanged.connect(self.update_tracking_timing)
+        self.set_gps_settings()
+
+    def set_gps_settings(self):
+        gpsettings = roam.config.settings.get("gps", {})
+        try:
+            config = gpsettings['tracking']
+            if "time" in config:
+                value = config['time']
+                self.gpstracking_timing_radio.setChecked(True)
+                self.gpstiming_edit.setValue(value)
+        except KeyError:
+            self.gpstracking_timing_radio.setChecked(True)
+            self.gpstiming_edit.setValue(1)
+
+    def update_tracking_timing(self, value):
+        if self.gpstracking_timing_radio.isChecked():
+            gpssettings = {}
+            gpssettings['tracking'] = {"time": value}
+            roam.config.settings['gps'] = gpssettings
+            roam.config.save()
 
     def setgps(self, gps):
         self.gps = gps

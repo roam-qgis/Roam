@@ -135,7 +135,6 @@ class GPSTrackingAction(BaseAction):
             self.setText(self.tr("Track"))
 
 
-
 class GPSCaptureAction(BaseAction):
     def __init__(self, tool, parent=None):
         super(GPSCaptureAction, self).__init__(QIcon(":/icons/gpsadd"),
@@ -193,12 +192,15 @@ class PolylineTool(QgsMapTool):
                                        "       +.+      "]))
 
         self.captureaction = CaptureAction(self, "line")
-        self.trackingactions = GPSTrackingAction(self)
+        self.trackingaction = GPSTrackingAction(self)
         self.endcaptureaction = EndCaptureAction(self)
 
-        self.trackingactions.toggled.connect(self.set_tracking)
+        self.trackingaction.setEnabled(False)
 
-        self.captureaction.toggled.connect(self.endcaptureaction.setEnabled)
+        self.trackingaction.toggled.connect(self.set_tracking)
+
+        self.captureaction.toggled.connect(self.update_end_capture_state)
+        self.trackingaction.toggled.connect(self.update_end_capture_state)
         self.endcaptureaction.setEnabled(False)
 
         self.endcaptureaction.triggered.connect(self.endcapture)
@@ -208,15 +210,34 @@ class PolylineTool(QgsMapTool):
         self.gpscapture.triggered.connect(self.add_vertex)
 
         self.timer = QTimer()
-        self.timer.setInterval(1000)
 
-    def set_tracking(self, istracking):
-        if istracking:
-            self.band.removeLastPoint()
-            self.timer.timeout.connect(self.add_vertex)
-            self.timer.start()
+        GPS.gpsfixed.connect(self.update_tracking_button)
+        GPS.gpsdisconnected.connect(self.update_tracking_button_disconnect)
+
+    def update_end_capture_state(self, *args):
+        self.endcaptureaction.setEnabled(self.capturing)
+
+    def update_tracking_button_disconnect(self):
+        self.trackingaction.setEnabled(False)
+        self.captureaction.toggle()
+
+    def update_tracking_button(self, gps_fixed, info):
+        self.trackingaction.setEnabled(gps_fixed)
+
+    def set_tracking(self, enable_tracking):
+        if enable_tracking:
+            gpsettings = roam.config.settings.get("gps", {})
+            config = gpsettings.get('tracking', {"time", 1})
+            if "time" in config:
+                self.band.removeLastPoint()
+                self.timer.timeout.connect(self.add_vertex)
+                value = config['time']
+                value *= 1000
+                self.timer.start(value)
+                self.capturing = True
         else:
-            self.pointband.removeLastPoint()
+            point = self.pointband.getPoint(0, self.pointband.numberOfVertices() - 1)
+            self.band.addPoint(point)
             try:
                 self.timer.stop()
                 self.timer.timeout.disconnect(self.add_vertex)
@@ -229,7 +250,7 @@ class PolylineTool(QgsMapTool):
 
     @property
     def actions(self):
-        return [self.captureaction, self.trackingactions, self.endcaptureaction, self.gpscapture]
+        return [self.captureaction, self.trackingaction, self.endcaptureaction, self.gpscapture]
 
     def add_vertex(self):
         location = GPS.postion
