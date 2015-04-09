@@ -204,7 +204,7 @@ QLabel[active=false] {
    <item row="5" column="0">
     <widget class="QLabel" name="activeLabel_2">
      <property name="text">
-      <string>GPS Tracing</string>
+      <string>GPS Feature Tracking</string>
      </property>
      <property name="large" stdset="0">
       <bool>true</bool>
