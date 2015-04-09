@@ -563,6 +563,9 @@ class MapWidget(Ui_CanvasWidget, QMainWindow):
             self.scalebar.update()
 
     def setMapTool(self, tool, *args):
+        if tool == self.canvas.mapTool():
+            return
+
         self.canvas.setMapTool(tool)
 
     def connectButtons(self):
@@ -623,6 +626,7 @@ class MapWidget(Ui_CanvasWidget, QMainWindow):
         for action in tool.actions:
             # Create the action here.
             if action.ismaptool:
+                print action
                 action.toggled.connect(partial(self.setMapTool, tool))
 
             # Set the action as a data entry button so we can remove it later.

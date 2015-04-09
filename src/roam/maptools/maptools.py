@@ -31,11 +31,11 @@ class RubberBand(QgsRubberBand):
         self.unit = self.canvas.mapRenderer().destinationCrs().mapUnits()
 
     def createdistancearea(self):
-        self.distancearea.setSourceCrs( self.canvas.mapRenderer().destinationCrs().srsid())
+        self.distancearea.setSourceCrs(self.canvas.mapRenderer().destinationCrs().srsid())
         ellispoid = QgsProject.instance().readEntry("Measure", "/Ellipsoid", GEO_NONE)
         self.distancearea.setEllipsoid(ellispoid[0])
-        #mode = self.canvas.mapRenderer().hasCrsTransformEnabled()
-        #self.distancearea.setEllipsoidalMode(ellispoidemode)
+        # mode = self.canvas.mapRenderer().hasCrsTransformEnabled()
+        # self.distancearea.setEllipsoidalMode(ellispoidemode)
 
     def paint(self, p, *args):
         super(RubberBand, self).paint(p)
@@ -43,7 +43,7 @@ class RubberBand(QgsRubberBand):
         if not roam.config.settings.get("draw_distance", True):
             return
 
-        offset = QPointF(5,5)
+        offset = QPointF(5, 5)
         nodescount = self.numberOfVertices()
         for index in xrange(nodescount, -1, -1):
             if index == 0:
@@ -57,7 +57,7 @@ class RubberBand(QgsRubberBand):
                 return
 
             if qgspoint and qgspointbefore:
-                distance = self.distancearea.measureLine( qgspoint, qgspointbefore)
+                distance = self.distancearea.measureLine(qgspoint, qgspointbefore)
                 if int(distance) == 0:
                     continue
                 text = QgsDistanceArea.textUnit(distance, 3, self.unit, False)
@@ -92,7 +92,7 @@ class BaseAction(QAction):
 class EndCaptureAction(BaseAction):
     def __init__(self, tool, parent=None):
         super(EndCaptureAction, self).__init__(QIcon(":/icons/stop-capture"),
-                                                "End Capture",
+                                               "End Capture",
                                                tool,
                                                parent)
         self.setObjectName("EnaCaptureAction")
@@ -102,9 +102,9 @@ class EndCaptureAction(BaseAction):
 class CaptureAction(BaseAction):
     def __init__(self, tool, geomtype, parent=None):
         super(CaptureAction, self).__init__(QIcon(":/icons/capture-{}".format(geomtype)),
-                                               "Capture",
-                                               tool,
-                                               parent)
+                                            "Capture",
+                                            tool,
+                                            parent)
         self.setObjectName("CaptureAction")
         self.setText(self.tr("Capture"))
         self.setCheckable(True)
@@ -118,12 +118,30 @@ class CaptureAction(BaseAction):
             self.setText(self.tr("Capture"))
 
 
+class GPSTrackingAction(BaseAction):
+    def __init__(self, tool, parent=None):
+        super(GPSTrackingAction, self).__init__(QIcon(":/icons/record"),
+                                                "Track",
+                                                tool,
+                                                parent)
+        self.toggled.connect(self.set_text)
+        self.setObjectName("GPSTrackingAction")
+        self.setCheckable(True)
+
+    def set_text(self, tracking):
+        if tracking:
+            self.setText(self.tr("Tracking"))
+        else:
+            self.setText(self.tr("Track"))
+
+
+
 class GPSCaptureAction(BaseAction):
     def __init__(self, tool, parent=None):
         super(GPSCaptureAction, self).__init__(QIcon(":/icons/gpsadd"),
-                                                "GPS Capture",
-                                                tool,
-                                                parent)
+                                               "GPS Capture",
+                                               tool,
+                                               parent)
         self.setObjectName("GPSCaptureAction")
         self.setText(self.tr("GPS Capture"))
         self.setEnabled(False)
@@ -154,37 +172,68 @@ class PolylineTool(QgsMapTool):
         self.snapper = QgsMapCanvasSnapper(self.canvas)
         self.capturing = False
         self.cursor = QCursor(QPixmap(["16 16 3 1",
-            "      c None",
-            ".     c #FF0000",
-            "+     c #FFFFFF",
-            "                ",
-            "       +.+      ",
-            "      ++.++     ",
-            "     +.....+    ",
-            "    +.     .+   ",
-            "   +.   .   .+  ",
-            "  +.    .    .+ ",
-            " ++.    .    .++",
-            " ... ...+... ...",
-            " ++.    .    .++",
-            "  +.    .    .+ ",
-            "   +.   .   .+  ",
-            "   ++.     .+   ",
-            "    ++.....+    ",
-            "      ++.++     ",
-            "       +.+      "]))
+                                       "      c None",
+                                       ".     c #FF0000",
+                                       "+     c #FFFFFF",
+                                       "                ",
+                                       "       +.+      ",
+                                       "      ++.++     ",
+                                       "     +.....+    ",
+                                       "    +.     .+   ",
+                                       "   +.   .   .+  ",
+                                       "  +.    .    .+ ",
+                                       " ++.    .    .++",
+                                       " ... ...+... ...",
+                                       " ++.    .    .++",
+                                       "  +.    .    .+ ",
+                                       "   +.   .   .+  ",
+                                       "   ++.     .+   ",
+                                       "    ++.....+    ",
+                                       "      ++.++     ",
+                                       "       +.+      "]))
 
         self.captureaction = CaptureAction(self, "line")
+        self.trackingactions = GPSTrackingAction(self)
         self.endcaptureaction = EndCaptureAction(self)
+
+        self.trackingactions.toggled.connect(self.set_tracking)
 
         self.captureaction.toggled.connect(self.endcaptureaction.setEnabled)
         self.endcaptureaction.setEnabled(False)
 
         self.endcaptureaction.triggered.connect(self.endcapture)
 
+        self.gpscapture = GPSCaptureAction(self)
+        self.gpscapture.setText("Add Vertex")
+        self.gpscapture.triggered.connect(self.add_vertex)
+
+        self.timer = QTimer()
+        self.timer.setInterval(1000)
+
+    def set_tracking(self, istracking):
+        if istracking:
+            self.band.removeLastPoint()
+            self.timer.timeout.connect(self.add_vertex)
+            self.timer.start()
+        else:
+            self.pointband.removeLastPoint()
+            try:
+                self.timer.stop()
+                self.timer.timeout.disconnect(self.add_vertex)
+            except TypeError:
+                pass
+
+    @property
+    def is_tracking(self):
+        return self.timer.isActive()
+
     @property
     def actions(self):
-        return [self.captureaction, self.endcaptureaction]
+        return [self.captureaction, self.trackingactions, self.endcaptureaction, self.gpscapture]
+
+    def add_vertex(self):
+        location = GPS.postion
+        self.add_point(location)
 
     def canvasPressEvent(self, event):
         point = self.canvas.getCoordinateTransform().toMapCoordinates(event.pos())
@@ -203,6 +252,9 @@ class PolylineTool(QgsMapTool):
         return point
 
     def canvasMoveEvent(self, event):
+        if self.is_tracking:
+            return
+
         if self.capturing:
             point = self.snappoint(event.pos())
             self.band.movePoint(point)
@@ -221,13 +273,16 @@ class PolylineTool(QgsMapTool):
         if not self.editmode:
             point = self.snappoint(event.pos())
             qgspoint = QgsPoint(point)
-            self.points.append(qgspoint)
-            self.band.addPoint(point)
-            self.pointband.addPoint(point)
+            self.add_point(qgspoint)
             self.capturing = True
             self.endcaptureaction.setEnabled(True)
         else:
             self.editvertex = None
+
+    def add_point(self, point):
+        self.points.append(point)
+        self.band.addPoint(point)
+        self.pointband.addPoint(point)
 
     def endcapture(self):
         self.capturing = False
@@ -315,29 +370,29 @@ class PointTool(TouchMapTool):
     point based actions.
     """
     geometryComplete = pyqtSignal(QgsGeometry)
-    
+
     def __init__(self, canvas):
         super(PointTool, self).__init__(canvas)
         self.cursor = QCursor(QPixmap(["16 16 3 1",
-            "      c None",
-            ".     c #FF0000",
-            "+     c #FFFFFF",
-            "                ",
-            "       +.+      ",
-            "      ++.++     ",
-            "     +.....+    ",
-            "    +.     .+   ",
-            "   +.   .   .+  ",
-            "  +.    .    .+ ",
-            " ++.    .    .++",
-            " ... ...+... ...",
-            " ++.    .    .++",
-            "  +.    .    .+ ",
-            "   +.   .   .+  ",
-            "   ++.     .+   ",
-            "    ++.....+    ",
-            "      ++.++     ",
-            "       +.+      "]))
+                                       "      c None",
+                                       ".     c #FF0000",
+                                       "+     c #FFFFFF",
+                                       "                ",
+                                       "       +.+      ",
+                                       "      ++.++     ",
+                                       "     +.....+    ",
+                                       "    +.     .+   ",
+                                       "   +.   .   .+  ",
+                                       "  +.    .    .+ ",
+                                       " ++.    .    .++",
+                                       " ... ...+... ...",
+                                       " ++.    .    .++",
+                                       "  +.    .    .+ ",
+                                       "   +.   .   .+  ",
+                                       "   ++.     .+   ",
+                                       "    ++.....+    ",
+                                       "      ++.++     ",
+                                       "       +.+      "]))
 
         self.captureaction = CaptureAction(self, 'point')
         self.gpscapture = GPSCaptureAction(self)
