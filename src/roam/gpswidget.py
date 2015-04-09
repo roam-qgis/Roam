@@ -10,27 +10,35 @@ class GPSWidget(Ui_gpsWidget, QWidget):
         self.setupUi(self)
         self.gps = None
         self.logginginfolabel.setVisible(False)
-        self.gpstiming_edit.valueChanged.connect(self.update_tracking_timing)
+        self.gpstiming_edit.valueChanged.connect(self.update_tracking)
+        self.gpsdistance_edit.valueChanged.connect(self.update_tracking)
         self.set_gps_settings()
 
     def set_gps_settings(self):
         gpsettings = roam.config.settings.get("gps", {})
-        try:
-            config = gpsettings['tracking']
-            if "time" in config:
-                value = config['time']
-                self.gpstracking_timing_radio.setChecked(True)
-                self.gpstiming_edit.setValue(value)
-        except KeyError:
+        config = gpsettings['tracking']
+        if "time" in config:
+            value = config['time']
+            self.gpstracking_timing_radio.setChecked(True)
+            self.gpstiming_edit.setValue(value)
+        elif "distance" in config:
+            value = config['distance']
+            self.gpstracking_distance_radio.setChecked(True)
+            self.gpsdistance_edit.setValue(value)
+        else:
             self.gpstracking_timing_radio.setChecked(True)
             self.gpstiming_edit.setValue(1)
 
-    def update_tracking_timing(self, value):
+    def update_tracking(self, value):
+        gpssettings = {}
         if self.gpstracking_timing_radio.isChecked():
-            gpssettings = {}
             gpssettings['tracking'] = {"time": value}
             roam.config.settings['gps'] = gpssettings
-            roam.config.save()
+        elif self.gpstracking_distance_radio.isChecked():
+            gpssettings['tracking'] = {"distance": value}
+
+        roam.config.settings['gps'] = gpssettings
+        roam.config.save()
 
     def setgps(self, gps):
         self.gps = gps

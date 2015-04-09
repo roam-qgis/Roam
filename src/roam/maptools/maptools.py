@@ -160,6 +160,7 @@ class PolylineTool(QgsMapTool):
         self.editmode = False
         self.editvertex = None
         self.points = []
+        self.is_tracking = False
         self.canvas = canvas
         self.startcolour = QColor.fromRgb(0, 0, 255, 100)
         self.editcolour = QColor.fromRgb(0, 255, 0, 150)
@@ -235,6 +236,12 @@ class PolylineTool(QgsMapTool):
                 value *= 1000
                 self.timer.start(value)
                 self.capturing = True
+            elif "distance" in config:
+                self.band.removeLastPoint()
+                value = config['distance']
+                self.capturing = True
+                self.add_point(GPS.postion)
+                GPS.gpsposition.connect(self.track_gps_location_changed)
         else:
             if self.capturing:
                 point = self.pointband.getPoint(0, self.pointband.numberOfVertices() - 1)
@@ -246,9 +253,24 @@ class PolylineTool(QgsMapTool):
             except TypeError:
                 pass
 
+            try:
+                GPS.gpsposition.disconnect(self.track_gps_location_changed)
+            except TypeError:
+                pass
+        self.is_tracking = enable_tracking
+
     @property
-    def is_tracking(self):
-        return self.timer.isActive()
+    def max_distance(self):
+        gpsettings = roam.config.settings.get("gps", {})
+        config = gpsettings.get('tracking', {"time", 1})
+        value = config['distance']
+        return value
+
+    def track_gps_location_changed(self, point, info):
+        lastpoint = self.pointband.getPoint(0, self.pointband.numberOfVertices() - 1)
+        distance = point.sqrDist(lastpoint)
+        if distance >= self.max_distance:
+            self.add_point(point)
 
     @property
     def actions(self):
