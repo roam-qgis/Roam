@@ -367,7 +367,7 @@ class MapWidget(Ui_CanvasWidget, QMainWindow):
         self.currentfeatureband.setOutlineColour(QColor(186, 93, 212))
 
         self.gpsband = QgsRubberBand(self.canvas)
-        self.gpsband.setColor(QColor(0, 0, 212, 76))
+        self.gpsband.setColor(QColor(165, 111, 212, 75))
         self.gpsband.setWidth(5)
 
         RoamEvents.editgeometry.connect(self.queue_feature_for_edit)

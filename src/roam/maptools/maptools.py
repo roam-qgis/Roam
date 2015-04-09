@@ -236,8 +236,10 @@ class PolylineTool(QgsMapTool):
                 self.timer.start(value)
                 self.capturing = True
         else:
-            point = self.pointband.getPoint(0, self.pointband.numberOfVertices() - 1)
-            self.band.addPoint(point)
+            if self.capturing:
+                point = self.pointband.getPoint(0, self.pointband.numberOfVertices() - 1)
+                if point:
+                    self.band.addPoint(point)
             try:
                 self.timer.stop()
                 self.timer.timeout.disconnect(self.add_vertex)
@@ -250,7 +252,7 @@ class PolylineTool(QgsMapTool):
 
     @property
     def actions(self):
-        return [self.captureaction, self.trackingaction, self.endcaptureaction, self.gpscapture]
+        return [self.captureaction, self.trackingaction, self.gpscapture, self.endcaptureaction]
 
     def add_vertex(self):
         location = GPS.postion
@@ -307,6 +309,8 @@ class PolylineTool(QgsMapTool):
 
     def endcapture(self):
         self.capturing = False
+        self.set_tracking(False)
+        self.captureaction.setChecked(True)
         if not self.editmode:
             self.band.removeLastPoint()
         geometry = self.band.asGeometry()
