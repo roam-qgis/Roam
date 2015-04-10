@@ -16,7 +16,7 @@ class GPSWidget(Ui_gpsWidget, QWidget):
 
     def set_gps_settings(self):
         gpsettings = roam.config.settings.get("gps", {})
-        config = gpsettings['tracking']
+        config = gpsettings.get('tracking', {})
         if "time" in config:
             value = config['time']
             self.gpstracking_timing_radio.setChecked(True)
