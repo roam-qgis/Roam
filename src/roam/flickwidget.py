@@ -7,7 +7,6 @@ from PyQt4.QtGui import *
 from PyQt4.QtWebKit import *
 
 class FlickData:
-
     Steady = 0
     Pressed = 1
     ManualScroll = 2
@@ -53,6 +52,9 @@ class FlickCharm(QObject):
             self.d.flickData[viewport] = FlickData()
             self.d.flickData[viewport].widget = widget
             self.d.flickData[viewport].state = FlickData.Steady
+
+        if hasattr(widget, "setVerticalScrollMode"):
+            widget.setVerticalScrollMode(QAbstractItemView.ScrollPerPixel)
 
     def deactivateFrom(self, widget):
         if isinstance(widget, QWebView):
