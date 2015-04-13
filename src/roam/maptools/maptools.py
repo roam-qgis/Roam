@@ -101,8 +101,10 @@ class EndCaptureAction(BaseAction):
 
 class CaptureAction(BaseAction):
     def __init__(self, tool, geomtype, parent=None):
-        super(CaptureAction, self).__init__(QIcon(":/icons/capture-{}".format(geomtype)),
-                                            "Capture",
+        self._defaulticon = QIcon(":/icons/capture-{}".format(geomtype))
+        self._defaulttext = "Capture"
+        super(CaptureAction, self).__init__(self._defaulticon,
+                                            self._defaulttext,
                                             tool,
                                             parent)
         self.setObjectName("CaptureAction")
@@ -227,6 +229,8 @@ class PolylineTool(QgsMapTool):
 
     def set_tracking(self, enable_tracking):
         if enable_tracking:
+            self.captureaction.setIcon(QIcon(":/icons/pause"))
+            self.captureaction.setText("Pause")
             gpsettings = roam.config.settings.get("gps", {})
             config = gpsettings.get('tracking', {"time", 1})
             if "time" in config:
@@ -242,6 +246,9 @@ class PolylineTool(QgsMapTool):
                 self.add_point(GPS.postion)
                 GPS.gpsposition.connect(self.track_gps_location_changed)
         else:
+            self.captureaction.setIcon(self.captureaction._defaulticon)
+            self.captureaction.setText(self.captureaction._defaulttext)
+
             if self.capturing:
                 point = self.pointband.getPoint(0, self.pointband.numberOfVertices() - 1)
                 if point:

@@ -67,6 +67,7 @@
     <file alias="legend">resources/images/legend.svg</file>
     <file alias="download">resources/images/download.svg</file>
     <file alias="record">resources/images/record.svg</file>
+    <file alias="pause">resources/images/pause.svg</file>
   </qresource>
   <qresource prefix="branding">
       <file alias="config">resources/branding/config.ico</file>
