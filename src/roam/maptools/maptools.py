@@ -239,7 +239,6 @@ class PolylineTool(QgsMapTool):
             elif "distance" in config:
                 self.band.removeLastPoint()
                 value = config['distance']
-                self.capturing = True
                 self.add_point(GPS.postion)
                 GPS.gpsposition.connect(self.track_gps_location_changed)
         else:
@@ -319,8 +318,6 @@ class PolylineTool(QgsMapTool):
             point = self.snappoint(event.pos())
             qgspoint = QgsPoint(point)
             self.add_point(qgspoint)
-            self.capturing = True
-            self.endcaptureaction.setEnabled(True)
         else:
             self.editvertex = None
 
@@ -328,6 +325,8 @@ class PolylineTool(QgsMapTool):
         self.points.append(point)
         self.band.addPoint(point)
         self.pointband.addPoint(point)
+        self.capturing = True
+        self.endcaptureaction.setEnabled(True)
 
     def endcapture(self):
         self.capturing = False
