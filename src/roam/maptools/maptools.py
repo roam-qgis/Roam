@@ -341,6 +341,7 @@ class PolylineTool(QgsMapTool):
         self.capturing = False
         self.set_tracking(False)
         self.captureaction.setChecked(True)
+        self.endcaptureaction.setEnabled(False)
         if not self.editmode:
             self.band.removeLastPoint()
         geometry = self.band.asGeometry()
