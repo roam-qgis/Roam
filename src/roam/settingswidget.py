@@ -35,7 +35,7 @@ class SettingsWidget(Ui_settingsWidget, QWidget):
         self.gpsloggingCheck.toggled.connect(self.gpsloggingCheck_toggled)
         self.gpscentermapCheck.toggled.connect(self.gpscentermapCheck_toggled)
         self.keyboardCheck.toggled.connect(self.keyboardCheck_toggled)
-        self.updateServerEdit.editingFinished.connect(self.updateServerEdit_edited)
+        self.updateServerEdit.textChanged.connect(self.updateServerEdit_edited)
         self.distanceCheck.toggled.connect(self.distanceCheck_toggled)
         self.portfinder = PortFinder()
         self.portfinder.portsfound.connect(self._addports)
@@ -81,7 +81,7 @@ class SettingsWidget(Ui_settingsWidget, QWidget):
     def updateServerEdit_edited(self):
         server = self.updateServerEdit.text()
         self.settings["updateserver"] = server
-        self.notifysettingsupdate()
+        roam.config.save()
 
     def refreshPortsButton_pressed(self):
         self.updateCOMPorts()
