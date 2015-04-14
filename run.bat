@@ -6,4 +6,3 @@ ECHO If you get errors make sure you run build.bat first to build the resources 
 pushd %~dp0
 CALL scripts\setenv.bat
 python src\roam
-pause
