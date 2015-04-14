@@ -100,15 +100,14 @@ class EndCaptureAction(BaseAction):
 
 
 class CaptureAction(BaseAction):
-    def __init__(self, tool, geomtype, parent=None):
+    def __init__(self, tool, geomtype, parent=None, text="Capture"):
         self._defaulticon = QIcon(":/icons/capture-{}".format(geomtype))
-        self._defaulttext = "Capture"
+        self._defaulttext = text
         super(CaptureAction, self).__init__(self._defaulticon,
                                             self._defaulttext,
                                             tool,
                                             parent)
         self.setObjectName("CaptureAction")
-        self.setText(self.tr("Capture"))
         self.setCheckable(True)
         self.isdefault = True
         self.ismaptool = True
@@ -117,7 +116,7 @@ class CaptureAction(BaseAction):
         if enabled:
             self.setText(self.tr("Edit"))
         else:
-            self.setText(self.tr("Capture"))
+            self.setText(self._defaulttext)
 
 
 class GPSTrackingAction(BaseAction):
@@ -194,7 +193,7 @@ class PolylineTool(QgsMapTool):
                                        "      ++.++     ",
                                        "       +.+      "]))
 
-        self.captureaction = CaptureAction(self, "line")
+        self.captureaction = CaptureAction(self, "line", text="Digitize")
         self.trackingaction = GPSTrackingAction(self)
         self.endcaptureaction = EndCaptureAction(self)
 
@@ -247,7 +246,7 @@ class PolylineTool(QgsMapTool):
                 GPS.gpsposition.connect(self.track_gps_location_changed)
         else:
             self.captureaction.setIcon(self.captureaction._defaulticon)
-            self.captureaction.setText(self.captureaction._defaulttext)
+            self.captureaction.setText("Digitize")
 
             if self.capturing:
                 point = self.pointband.getPoint(0, self.pointband.numberOfVertices() - 1)
@@ -412,7 +411,7 @@ class PolygonTool(PolylineTool):
 
     def __init__(self, canvas):
         super(PolygonTool, self).__init__(canvas)
-        self.captureaction = CaptureAction(self, "polygon")
+        self.captureaction = CaptureAction(self, "polygon", text="Digitize")
         self.reset()
 
     def reset(self):
