@@ -28,28 +28,17 @@ class SettingsWidget(Ui_settingsWidget, QWidget):
         self.setupUi(self)
         self._settings = None
         self.populated = False
-        self.fullScreenCheck.toggled.connect(self.save)
-        self.gpsPortCombo.currentIndexChanged.connect(self.save)
-        self.refreshPortsButton.pressed.connect(self.save)
-        self.gpslocationCheck.toggled.connect(self.save)
-        self.gpsloggingCheck.toggled.connect(self.save)
-        self.gpscentermapCheck.toggled.connect(self.save)
-        self.keyboardCheck.toggled.connect(self.save)
-        self.updateServerEdit.editingFinished.connect(self.save)
-        self.distanceCheck.toggled.connect(self.save)
+        self.fullScreenCheck.toggled.connect(self.fullScreenCheck_stateChanged)
+        self.gpsPortCombo.currentIndexChanged.connect(self.gpsPortCombo_currentIndexChanged)
+        self.refreshPortsButton.pressed.connect(self.refreshPortsButton_pressed)
+        self.gpslocationCheck.toggled.connect(self.gpslocationCheck_toggled)
+        self.gpsloggingCheck.toggled.connect(self.gpsloggingCheck_toggled)
+        self.gpscentermapCheck.toggled.connect(self.gpscentermapCheck_toggled)
+        self.keyboardCheck.toggled.connect(self.keyboardCheck_toggled)
+        self.updateServerEdit.editingFinished.connect(self.updateServerEdit_edited)
+        self.distanceCheck.toggled.connect(self.distanceCheck_toggled)
         self.portfinder = PortFinder()
         self.portfinder.portsfound.connect(self._addports)
-
-    def save(self, *args):
-        self.settings['draw_distance'] = self.distanceCheck.isChecked()
-        self.settings['gpszoomonfix'] = self.gpslocationCheck.isChecked()
-        self.settings['gpslogging'] = self.gpsloggingCheck.isChecked()
-        self.settings["gpscenter"] = self.gpscentermapCheck.isChecked()
-        self.settings["fullscreen"] = self.fullScreenCheck.isChecked()
-        self.settings["keyboard"] = self.keyboardCheck.isChecked()
-        self.settings["gpsport"] = self.gpsPortCombo.currentText()
-        self.settings["updateserver"] = self.updateServerEdit.text()
-        self.notifysettingsupdate()
 
     @property
     def settings(self):
@@ -58,6 +47,41 @@ class SettingsWidget(Ui_settingsWidget, QWidget):
     def notifysettingsupdate(self):
         roam.config.save()
         self.settingsupdated.emit(self.settings)
+
+    def distanceCheck_toggled(self, checked):
+        self.settings['draw_distance'] = checked
+        self.notifysettingsupdate()
+
+    def gpslocationCheck_toggled(self, checked):
+        self.settings['gpszoomonfix'] = checked
+        self.notifysettingsupdate()
+
+    def gpsloggingCheck_toggled(self, checked):
+        self.settings['gpslogging'] = checked
+        self.notifysettingsupdate()
+
+    def gpscentermapCheck_toggled(self, checked):
+        self.settings["gpscenter"] = checked
+        self.notifysettingsupdate()
+
+    def fullScreenCheck_stateChanged(self, checked):
+        utils.log("fullscreen changed")
+        self.settings["fullscreen"] = checked
+        self.notifysettingsupdate()
+
+    def keyboardCheck_toggled(self, checked):
+        self.settings["keyboard"] = checked
+        self.notifysettingsupdate()
+
+    def gpsPortCombo_currentIndexChanged(self, index):
+        port = self.gpsPortCombo.itemText(index)
+        self.settings["gpsport"] = port
+        self.notifysettingsupdate()
+
+    def updateServerEdit_edited(self):
+        server = self.updateServerEdit.text()
+        self.settings["updateserver"] = server
+        self.notifysettingsupdate()
 
     def refreshPortsButton_pressed(self):
         self.updateCOMPorts()

@@ -91,7 +91,6 @@ class MainWindow(ui_mainwindow.Ui_MainWindow, QMainWindow):
     def __init__(self, roamapp):
         super(MainWindow, self).__init__()
         self.setupUi(self)
-        self.first_show = True
         self.projectwidget.project_base = roamapp.projectsroot
 
         self.menutoolbar.setStyleSheet(roam.roam_style.menubarstyle)
@@ -517,14 +516,6 @@ class MainWindow(ui_mainwindow.Ui_MainWindow, QMainWindow):
         Update the current stack page based on the current selected
         action
         """
-        widget = self.stackedWidget.currentWidget()
-
-        try:
-            # If a widget has a save method it can be used to save the state before the page changes
-            widget.save()
-        except AttributeError:
-            pass
-
         page = action.property("page")
         self.stackedWidget.setCurrentIndex(page)
 
@@ -536,13 +527,8 @@ class MainWindow(ui_mainwindow.Ui_MainWindow, QMainWindow):
         fullscreen = roam.config.settings.get("fullscreen", False)
         if fullscreen:
             self.showFullScreen()
-        elif self.first_show:
+        else:
             self.showMaximized()
-        elif not fullscreen and not self.first_show:
-            self.showNormal()
-
-        if self.first_show:
-            self.first_show = False
 
     def viewprojects(self):
         self.stackedWidget.setCurrentIndex(1)
