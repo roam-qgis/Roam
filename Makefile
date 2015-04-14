@@ -11,3 +11,6 @@ clean:
 
 package: clean build
 	python setup.py py2exe
+
+run:
+	python src/roam

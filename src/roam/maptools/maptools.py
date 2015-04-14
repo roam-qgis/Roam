@@ -285,6 +285,8 @@ class PolylineTool(QgsMapTool):
     def add_vertex(self):
         location = GPS.postion
         self.add_point(location)
+        # Add an extra point for the move band
+        self.band.addPoint(location)
 
     def canvasPressEvent(self, event):
         point = self.canvas.getCoordinateTransform().toMapCoordinates(event.pos())
