@@ -25,7 +25,5 @@ class HideableToolbar(QToolBar):
         else:
             self.setToolButtonStyle(Qt.ToolButtonIconOnly)
 
-        super(HideableToolbar, self).mouseDoubleClickEvent(*args, **kwargs)
-
     def setToolButtonStyle(self, style):
         super(HideableToolbar, self).setToolButtonStyle(style)
