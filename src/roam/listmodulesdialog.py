@@ -121,14 +121,24 @@ class ProjectsWidget(Ui_ListModules, QWidget):
             self.add_new_item(project.name, project, is_new=False)
 
     def show_new_updateable(self, updateprojects, newprojects):
+        print updateprojects, newprojects
         for project, info in updateprojects:
             item = self.projectitems[project.name]
             widget = self.item_widget(item)
             widget.serverversion = info['version']
 
         for info in newprojects:
-            self.add_new_item(info['name'], info, is_new=True)
+            if info['name'] in self.projectitems:
+                self.update_item(info['name'], info)
+            else:
+                self.add_new_item(info['name'], info, is_new=True)
 
+    def update_item(self, name, info):
+        item = self.projectitems[name]
+        item.setData(QListWidgetItem.UserType, project)
+        widget = self.moduleList.itemWidget(item)
+        widget.project = info
+    
     def add_new_item(self, name, project, is_new=False):
         item = QListWidgetItem(self.moduleList, QListWidgetItem.UserType)
         item.setData(QListWidgetItem.UserType, project)
