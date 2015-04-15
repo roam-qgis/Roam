@@ -1,5 +1,5 @@
 from PyQt4.QtCore import Qt, QSize, QEvent
-from PyQt4.QtGui import QDialog, QToolButton, QApplication, QWidget
+from PyQt4.QtGui import QDialog, QToolButton, QApplication, QWidget, QSizePolicy
 
 from roam.ui.ui_deletefeature import Ui_DeleteFeatureDialog
 from roam.ui.ui_actionpicker import Ui_ActionPickerDialog
@@ -77,6 +77,7 @@ class PickActionDialog(Ui_ActionPickerDialog, Dialogbase):
 
     def addAction(self, action, row, column):
         button = QToolButton(self)
+        button.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
         button.setProperty("action", True)
         button.setIconSize(QSize(64, 64))
         button.setToolButtonStyle(Qt.ToolButtonTextUnderIcon)
