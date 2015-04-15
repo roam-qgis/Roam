@@ -48,6 +48,9 @@ QLabel[active=false] {
       <bool>false</bool>
      </property>
      <layout class="QFormLayout" name="formLayout_2">
+      <property name="fieldGrowthPolicy">
+       <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
+      </property>
       <item row="1" column="0">
        <widget class="QRadioButton" name="gpstracking_timing_radio">
         <property name="text">
@@ -59,25 +62,9 @@ QLabel[active=false] {
        </widget>
       </item>
       <item row="1" column="1">
-       <widget class="QSpinBox" name="gpstiming_edit">
-        <property name="suffix">
-         <string> seconds</string>
-        </property>
-        <property name="prefix">
-         <string/>
-        </property>
-        <property name="minimum">
-         <number>0</number>
-        </property>
-        <property name="maximum">
-         <number>99999</number>
-        </property>
-        <property name="value">
-         <number>1</number>
-        </property>
-       </widget>
+       <widget class="Stepper" name="gpstiming_edit" native="true"/>
       </item>
-      <item row="2" column="0">
+      <item row="3" column="0">
        <widget class="QRadioButton" name="gpstracking_distance_radio">
         <property name="text">
          <string>Every</string>
@@ -87,24 +74,8 @@ QLabel[active=false] {
         </property>
        </widget>
       </item>
-      <item row="2" column="1">
-       <widget class="QSpinBox" name="gpsdistance_edit">
-        <property name="suffix">
-         <string> map units</string>
-        </property>
-        <property name="prefix">
-         <string/>
-        </property>
-        <property name="minimum">
-         <number>0</number>
-        </property>
-        <property name="maximum">
-         <number>99999</number>
-        </property>
-        <property name="value">
-         <number>1</number>
-        </property>
-       </widget>
+      <item row="3" column="1">
+       <widget class="Stepper" name="gpsdistance_edit" native="true"/>
       </item>
      </layout>
     </widget>
@@ -289,6 +260,14 @@ QLabel[active=false] {
    </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>Stepper</class>
+   <extends>QWidget</extends>
+   <header>roam.editorwidgets.numberwidget</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
  <resources>
   <include location="../resources.qrc"/>
   <include location="../resources.qrc"/>
@@ -296,34 +275,34 @@ QLabel[active=false] {
  </resources>
  <connections>
   <connection>
-   <sender>gpstracking_distance_radio</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>gpsdistance_edit</receiver>
-   <slot>setEnabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>65</x>
-     <y>434</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>161</x>
-     <y>434</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
    <sender>gpstracking_timing_radio</sender>
    <signal>toggled(bool)</signal>
    <receiver>gpstiming_edit</receiver>
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>83</x>
-     <y>405</y>
+     <x>57</x>
+     <y>396</y>
     </hint>
     <hint type="destinationlabel">
      <x>144</x>
-     <y>399</y>
+     <y>395</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>gpstracking_distance_radio</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>gpsdistance_edit</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>62</x>
+     <y>447</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>188</x>
+     <y>442</y>
     </hint>
    </hints>
   </connection>

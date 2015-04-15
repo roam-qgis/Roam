@@ -12,6 +12,10 @@ class GPSWidget(Ui_gpsWidget, QWidget):
         self.logginginfolabel.setVisible(False)
         self.gpstiming_edit.valueChanged.connect(self.update_tracking)
         self.gpsdistance_edit.valueChanged.connect(self.update_tracking)
+        self.gpstiming_edit.setSuffix(" seconds")
+        self.gpsdistance_edit.setSuffix(" map units")
+        self.gpstiming_edit.setEnabled(False)
+        self.gpsdistance_edit.setEnabled(False)
         self.set_gps_settings()
 
     def set_gps_settings(self):
