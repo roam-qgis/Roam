@@ -16,7 +16,9 @@ QToolButton:hover {
 QStatusBar {
     background: white;
     border: none;
+    font: 14pt "Segoe UI" ;
 }
+
 
 QStatusBar::item {
             border: none;
@@ -206,7 +208,7 @@ QLabel[projectlabel="true"] {
 }
 
 QLabel[headerlabel="true"] {
-	font: 75 17pt "Segoe UI";
+	font:14pt 75 17pt "Segoe UI";
 }
 
 QPushButton {

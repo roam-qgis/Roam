@@ -161,21 +161,10 @@ class MainWindow(ui_mainwindow.Ui_MainWindow, QMainWindow):
         sidespacewidget.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
         sidespacewidget2.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
 
-        def createlabel(text):
-            style = """
-                QLabel {
-                        color: #706565;
-                        font: 14px "Calibri" ;
-                        }"""
-            label = QLabel(text)
-            label.setStyleSheet(style)
-
-            return label
-
-        self.projectlabel = createlabel("Project: {project}")
-        self.userlabel = createlabel("User: {user}".format(user=getpass.getuser()))
-        self.positionlabel = createlabel('')
-        self.gpslabel = createlabel("GPS: Not active")
+        self.projectlabel = QLabel("Project: {project}")
+        self.userlabel = QLabel("User: {user}".format(user=getpass.getuser()))
+        self.positionlabel = QLabel('')
+        self.gpslabel = QLabel("GPS: Not active")
         self.statusbar.addWidget(self.projectlabel)
         self.statusbar.addWidget(self.userlabel)
         spacer = createSpacer()
