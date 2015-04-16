@@ -146,7 +146,8 @@ class FormWidget(ui_formwidget.Ui_Form, WidgetBase):
         """
         Return the list of fields that have been used by the the current form's widgets
         """
-        for widget in self.currentform.widgets:
+        widgets = self.widgetmodel.widgets()
+        for widget in widgets:
             yield widget['field']
 
     def openformfolder(self, url):
@@ -210,7 +211,11 @@ class FormWidget(ui_formwidget.Ui_Form, WidgetBase):
         self.userwidgets.setCurrentIndex(index)
 
     def auto_add_fields(self):
+        used = list(self.usedfields())
         for field in self.selected_layer.pendingFields():
+            if field.name() in used:
+                continue
+
             self.newwidget(field)
 
     def removewidget(self):
@@ -305,10 +310,8 @@ class FormWidget(ui_formwidget.Ui_Form, WidgetBase):
         self.useablewidgets.blockSignals(True)
 
         if last:
-            print "Save last widget"
             self._save_widget(last)
 
-        print "Update with new widget"
         widget = index.data(Qt.UserRole)
         if not widget:
             self.fieldList.blockSignals(False)
