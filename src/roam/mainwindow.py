@@ -30,7 +30,9 @@ from qgis.core import (QgsProjectBadLayerHandler,
                         QgsFeature,
                         QgsFields,
                         QgsGeometry,
-                        QgsRectangle, QGis)
+                        QgsRectangle,
+                        QGis,
+                        QgsApplication)
 from qgis.gui import (QgsMessageBar,
                         QgsMapToolZoom,
                         QgsRubberBand,
@@ -91,9 +93,15 @@ class MainWindow(ui_mainwindow.Ui_MainWindow, QMainWindow):
     def __init__(self, roamapp):
         super(MainWindow, self).__init__()
         self.setupUi(self)
+        import roam
         self.projectwidget.project_base = roamapp.projectsroot
 
-        self.menutoolbar.setStyleSheet(roam.roam_style.menubarstyle)
+        QgsApplication.instance().setStyleSheet(roam.roam_style.appstyle())
+        self.menutoolbar.setStyleSheet(roam.roam_style.menubarstyle())
+
+        icon = roam.roam_style.iconsize()
+        self.menutoolbar.setIconSize(QSize(icon, icon))
+
         self.projectupdater = ProjectUpdater(projects_base=roamapp.projectsroot)
         self.projectupdater.foundProjects.connect(self.projectwidget.show_new_updateable)
         self.projectupdater.projectUpdateStatus.connect(self.projectwidget.update_project_status)

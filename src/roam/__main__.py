@@ -21,6 +21,7 @@ if frozen:
 
 import roam.environ
 
+
 with roam.environ.setup(srcpath) as roamapp:
     import roam.config
     import roam

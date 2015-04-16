@@ -22,6 +22,8 @@ from roam.popupdialogs import PickActionDialog
 import roam.utils
 import roam.config
 
+import roam_style
+
 try:
     from qgis.gui import QgsMapToolTouch
     PanTool = TouchMapTool
@@ -300,6 +302,9 @@ class MapWidget(Ui_CanvasWidget, QMainWindow):
     def __init__(self, parent=None):
         super(MapWidget, self).__init__(parent)
         self.setupUi(self)
+
+        icon = roam_style.iconsize()
+        self.projecttoolbar.setIconSize(QSize(icon, icon))
 
         self.firstshow = True
         self.layerbuttons = []
