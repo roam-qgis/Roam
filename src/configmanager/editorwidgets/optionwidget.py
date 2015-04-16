@@ -29,8 +29,8 @@ class OptionWidgetConfig(Ui_Form, ConfigWidget):
     def setconfig(self, config):
         self.blockSignals(True)
         subconfig = config.get('list', {})
-        multi = subconfig.get('multi', False)
-        wrap = subconfig.get('wrap', 0)
+        multi = config.get('multi', False)
+        wrap = config.get('wrap', 0)
         self.list = subconfig.get('items', [])
         itemtext = '\n'.join(self.list)
         self.listText.setPlainText(itemtext)
