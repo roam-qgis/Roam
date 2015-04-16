@@ -100,7 +100,7 @@ class EndCaptureAction(BaseAction):
 
 
 class CaptureAction(BaseAction):
-    def __init__(self, tool, geomtype, parent=None, text="Capture"):
+    def __init__(self, tool, geomtype, parent=None, text="Digitize"):
         self._defaulticon = QIcon(":/icons/capture-{}".format(geomtype))
         self._defaulttext = text
         super(CaptureAction, self).__init__(self._defaulticon,
@@ -137,13 +137,13 @@ class GPSTrackingAction(BaseAction):
 
 
 class GPSCaptureAction(BaseAction):
-    def __init__(self, tool, parent=None):
-        super(GPSCaptureAction, self).__init__(QIcon(":/icons/gpsadd"),
+    def __init__(self, tool, geomtype, parent=None):
+        super(GPSCaptureAction, self).__init__(QIcon(":/icons/gpsadd-{}".format(geomtype)),
                                                "GPS Capture",
                                                tool,
                                                parent)
         self.setObjectName("GPSCaptureAction")
-        self.setText(self.tr("GPS Capture"))
+        self.setText(self.tr("GPS Point"))
         self.setEnabled(False)
 
         GPS.gpsfixed.connect(self.setstate)
@@ -207,7 +207,7 @@ class PolylineTool(QgsMapTool):
 
         self.endcaptureaction.triggered.connect(self.endcapture)
 
-        self.gpscapture = GPSCaptureAction(self)
+        self.gpscapture = GPSCaptureAction(self, "line")
         self.gpscapture.setText("Add Vertex")
         self.gpscapture.triggered.connect(self.add_vertex)
 
@@ -450,7 +450,7 @@ class PointTool(TouchMapTool):
                                        "       +.+      "]))
 
         self.captureaction = CaptureAction(self, 'point')
-        self.gpscapture = GPSCaptureAction(self)
+        self.gpscapture = GPSCaptureAction(self, 'point')
         self.gpscapture.triggered.connect(self.addatgps)
 
     @property

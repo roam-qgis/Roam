@@ -37,7 +37,8 @@
     <file alias="map">resources/images/map.svg</file>
     <file alias="save_default">resources/images/save_default.svg</file>
     <file alias="move">resources/images/move.png</file>
-    <file alias="gpsadd">resources/images/capturegps.svg</file>
+    <file alias="gpsadd-point">resources/images/capturegps-point.svg</file>
+    <file alias="gpsadd-line">resources/images/capturegps-line.svg</file>
     <file alias="syncing">resources/images/sync_progress.png</file>
     <file alias="syncdone">resources/images/sync_complete.png</file>
     <file alias="syncfail">resources/images/sync_fail.png</file>
