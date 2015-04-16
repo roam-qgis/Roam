@@ -94,7 +94,8 @@ class GPSMarker(QgsMapCanvasItem):
         self.green = Qt.darkGreen
 
         self.pointbrush = QBrush(self.red)
-        self.pointpen = QPen(self.red)
+        self.pointpen = QPen(Qt.black)
+        self.pointpen.setWidth(2)
         self.map_pos = QgsPoint(0.0, 0.0)
 
     def setSize(self, size):
@@ -115,12 +116,20 @@ class GPSMarker(QgsMapCanvasItem):
         else:
             color = self.red
 
-        self.pointpen.setColor(color)
+        self.pointpen.setColor(Qt.black)
         self.pointbrush.setColor(color)
 
         painter.setBrush(self.pointbrush)
         painter.setPen(self.pointpen)
+        y = 0 - halfSize
+        x = rect.width() / 2 - halfSize
+        line = QLine(x, y, x, rect.height() - halfSize)
+        y = rect.height() / 2 - halfSize
+        x = 0 - halfSize
+        line2 = QLine(x, y, rect.width() - halfSize, y)
         painter.drawEllipse(rect)
+        painter.drawLine(line)
+        painter.drawLine(line2)
 
     def boundingRect(self):
         halfSize = self.size / 2.0
