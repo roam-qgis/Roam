@@ -95,7 +95,7 @@ class GPSMarker(QgsMapCanvasItem):
 
         self.pointbrush = QBrush(self.red)
         self.pointpen = QPen(Qt.black)
-        self.pointpen.setWidth(2)
+        self.pointpen.setWidth(1)
         self.map_pos = QgsPoint(0.0, 0.0)
 
     def setSize(self, size):
