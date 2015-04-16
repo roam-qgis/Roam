@@ -63,13 +63,8 @@ class ProjectWidget(Ui_Form, QWidget):
         self.roamapp = None
 
         menu = QMenu()
-        publishdataAction = menu.addAction("Publish Project with data")
-        publishdataAction.setIcon(QIcon(":icons/sync"))
-        self.depolyProjectButton.setMenu(menu)
-        self.depolyProjectButton.setPopupMode(QToolButton.MenuButtonPopup)
-
-
         self.canvas.setCanvasColor(Qt.white)
+
         self.canvas.enableAntiAliasing(True)
         self.canvas.setWheelAction(QgsMapCanvas.WheelZoomToMouseCursor)
         self.canvas.mapRenderer().setLabelingEngine(QgsPalLabeling())
@@ -79,7 +74,7 @@ class ProjectWidget(Ui_Form, QWidget):
         self.openProjectFolderButton.pressed.connect(self.openprojectfolder)
         self.openinQGISButton.pressed.connect(self.openinqgis)
         self.depolyProjectButton.pressed.connect(self.deploy_project)
-        publishdataAction.triggered.connect(functools.partial(self.deploy_project, True))
+        self.depolyInstallProjectButton.pressed.connect(functools.partial(self.deploy_project, True))
 
         self.filewatcher = QFileSystemWatcher()
         self.filewatcher.fileChanged.connect(self.qgisprojectupdated)
