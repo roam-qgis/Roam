@@ -25,4 +25,4 @@ class MapTool(TouchMapTool):
         self.layersupdated.emit(True)
 
     def reset(self):
-        self.layers = []
+        self.layers = [] 

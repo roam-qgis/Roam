@@ -215,6 +215,8 @@ class ProjectUpdater(QObject):
 
     @property
     def configurl(self):
+        if not self.server.endswith("/"):
+            self.server += "/"
         url = urlparse.urljoin(self.server, "projects/roam.txt")
         return url
 
