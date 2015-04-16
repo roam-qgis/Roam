@@ -125,7 +125,6 @@ class GPSTrackingAction(BaseAction):
                                                 "Track",
                                                 tool,
                                                 parent)
-        self.toggled.connect(self.set_text)
         self.setObjectName("GPSTrackingAction")
         self.setCheckable(True)
 
@@ -194,6 +193,7 @@ class PolylineTool(QgsMapTool):
                                        "       +.+      "]))
 
         self.captureaction = CaptureAction(self, "line", text="Digitize")
+        self.captureaction.toggled.connect(self.update_state)
         self.trackingaction = GPSTrackingAction(self)
         self.endcaptureaction = EndCaptureAction(self)
 
@@ -226,7 +226,15 @@ class PolylineTool(QgsMapTool):
     def update_tracking_button(self, gps_fixed, info):
         self.trackingaction.setEnabled(gps_fixed)
 
+    def update_state(self, toggled):
+        if self.is_tracking:
+            self.set_tracking(False)
+
     def set_tracking(self, enable_tracking):
+        if not enable_tracking and not self.captureaction.isChecked():
+            # Some other tool is grabbing us so we will keep trakcing
+            return
+
         if enable_tracking:
             self.captureaction.setIcon(QIcon(":/icons/pause"))
             self.captureaction.setText("Pause")
@@ -263,6 +271,7 @@ class PolylineTool(QgsMapTool):
             except TypeError:
                 pass
         self.is_tracking = enable_tracking
+        self.trackingaction.set_text(enable_tracking)
 
     @property
     def max_distance(self):
@@ -364,7 +373,7 @@ class PolylineTool(QgsMapTool):
         """
         Deactive the tool.
         """
-        self.reset()
+        pass
 
     def isZoomTool(self):
         return False
@@ -412,6 +421,7 @@ class PolygonTool(PolylineTool):
     def __init__(self, canvas):
         super(PolygonTool, self).__init__(canvas)
         self.captureaction = CaptureAction(self, "polygon", text="Digitize")
+        self.captureaction.toggled.connect(self.update_state)
         self.reset()
 
     def reset(self):
