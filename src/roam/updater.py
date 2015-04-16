@@ -23,6 +23,9 @@ def checkversion(toversion, fromversion):
 
 
 def parse_serverprojects(configdata):
+    if not configdata:
+        return {}
+
     if isinstance(configdata, basestring):
         configdata = yaml.load(configdata)
 
