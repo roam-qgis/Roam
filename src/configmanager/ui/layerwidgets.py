@@ -124,6 +124,17 @@ class FormWidget(ui_formwidget.Ui_Form, WidgetBase):
                 item.widget().setParent(None)
 
             featureform = FeatureForm.from_form(form, form.settings, None, {})
+            from roam import defaults
+            defaultwidgets = form.widgetswithdefaults()
+            layer = form.QGISLayer
+            try:
+                values = {}
+                feature = layer.getFeatures().next()
+                defaultvalues = defaults.default_values(defaultwidgets, feature, layer)
+                values.update(defaultvalues)
+                featureform.bindvalues(values)
+            except StopIteration:
+                pass
 
             self.frame_2.layout().addWidget(featureform)
 

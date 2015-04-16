@@ -55,6 +55,9 @@ def default_values(widgets, feature, layer):
     return defaultvalues
 
 def layer_value(feature, layer, defaultconfig):
+    if not canvas:
+        roam.utils.warning("No canvas set for using layer_values default function")
+        return None
     layers = []
     # layer name can also be a list of layers to search
     layername = defaultconfig['layer']
