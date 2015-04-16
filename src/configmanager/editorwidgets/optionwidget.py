@@ -23,15 +23,18 @@ class OptionWidgetConfig(Ui_Form, ConfigWidget):
         config['list'] = {}
         config['list']['items'] = [item for item in self.listText.toPlainText().split('\n')]
         config['multi'] = self.multiCheck.isChecked()
+        config['wrap'] = self.wrapEdit.value()
         return config
 
     def setconfig(self, config):
         self.blockSignals(True)
         subconfig = config.get('list', {})
         multi = subconfig.get('multi', False)
+        wrap = subconfig.get('wrap', 0)
         self.list = subconfig.get('items', [])
         itemtext = '\n'.join(self.list)
         self.listText.setPlainText(itemtext)
         self.multiCheck.setChecked(multi)
+        self.wrapEdit.setValue(wrap)
         self.blockSignals(False)
 
