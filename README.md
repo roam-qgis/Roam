@@ -5,7 +5,7 @@ IntraMaps Roam is a field data collection application built using the QGIS libra
 IntraMaps Roam is built as a standalone fully packaged Python application with everything included. QGIS is **not** required to be installed on the client machine and only on the machine that builds Roam from source.  Pre-built binary packages will be available after the first release. 
 
 
-![a](http://i.imgur.com/F4TZScJ.png)
+![a](https://github.com/DMS-Aus/Roam-docs/blob/master/docs/images/2.3-Release.png)
 
 See the [wiki](https://github.com/DMS-Aus/Roam/wiki) for information on how to create a project and user guides.
 
