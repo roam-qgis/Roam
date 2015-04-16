@@ -55,32 +55,40 @@ def default_values(widgets, feature, layer):
     return defaultvalues
 
 def layer_value(feature, layer, defaultconfig):
+    layers = []
+    # layer name can also be a list of layers to search
     layername = defaultconfig['layer']
+    if isinstance(layername, basestring):
+        layers.append(layername)
+    else:
+        layers = layername
+
     expression = defaultconfig['expression']
     field = defaultconfig['field']
 
-    searchlayer = QgsMapLayerRegistry.instance().mapLayersByName(layername)[0]
-    if feature.geometry():
-        rect = feature.geometry().boundingBox()
-        if layer.geometryType() == QGis.Point:
-            point = feature.geometry().asPoint()
-            rect = QgsRectangle(point.x(), point.y(), point.x() + 10, point.y() + 10)
+    for searchlayer in layers:
+        searchlayer = QgsMapLayerRegistry.instance().mapLayersByName(searchlayer)[0]
+        if feature.geometry():
+            rect = feature.geometry().boundingBox()
+            if layer.geometryType() == QGis.Point:
+                point = feature.geometry().asPoint()
+                rect = QgsRectangle(point.x(), point.y(), point.x() + 10, point.y() + 10)
+            else:
+                rect.scale(20)
+
+            rect = canvas.mapRenderer().mapToLayerCoordinates(layer, rect)
+            rq = QgsFeatureRequest().setFilterRect(rect)\
+                                    .setFlags(QgsFeatureRequest.ExactIntersect)
+            features = searchlayer.getFeatures(rq)
         else:
-            rect.scale(20)
+            features = searchlayer.getFeatures()
 
-        rect = canvas.mapRenderer().mapToLayerCoordinates(layer, rect)
-        rq = QgsFeatureRequest().setFilterRect(rect)\
-                                .setFlags(QgsFeatureRequest.ExactIntersect)
-        features = searchlayer.getFeatures(rq)
-    else:
-        features = searchlayer.getFeatures()
+        exp = QgsExpression(expression)
+        exp.prepare(searchlayer.pendingFields())
 
-    exp = QgsExpression(expression)
-    exp.prepare(searchlayer.pendingFields())
-
-    for f in features:
-        if exp.evaluate(f):
-            return f[field]
+        for f in features:
+            if exp.evaluate(f):
+                return f[field]
 
     raise DefaultError('No features found')
 
