@@ -186,6 +186,8 @@ class FormWidget(ui_formwidget.Ui_Form, WidgetBase):
         widget = {}
         if not field:
             field = self.fieldsmodel.index(0, 0).data(Qt.UserRole)
+            if not field:
+                return
             widget['field'] = field.name()
         else:
             widget['field'] = field.name()
