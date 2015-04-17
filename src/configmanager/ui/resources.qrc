@@ -1,18 +1,18 @@
 <RCC>
   <qresource prefix="icons">
     <file alias="List">..\editorwidgets\icons\list.svg</file>
-  <file alias="List">..\editorwidgets\icons\mutlilist.svg</file>
+    <file>..\editorwidgets\icons\mutlilist.svg</file>
     <file alias="Image">..\editorwidgets\icons\picture.svg</file>
     <file alias="Checkbox">..\editorwidgets\icons\check.svg</file>
     <file alias="Text">..\editorwidgets\icons\text.svg</file>
     <file alias="TextBlock">..\editorwidgets\icons\text.svg</file>
     <file alias="Date">..\editorwidgets\icons\date.svg</file>
-     <file alias="Number">..\editorwidgets\icons\number.svg</file>
-      <file alias="Number(Double)">..\editorwidgets\icons\number.svg</file>
+    <file alias="Number">..\editorwidgets\icons\number.svg</file>
+    <file alias="Number(Double)">..\editorwidgets\icons\number.svg</file>
     <file alias="LineLayer">mIconLineLayer.svg</file>
-      <file alias="PointLayer">mIconPointLayer.svg</file>
-      <file alias="PolygonLayer">mIconPolygonLayer.svg</file>
-      <file alias="TableLayer">mIconTableLayer.svg</file>
-      <file alias="Expression">expression.svg</file>
+    <file alias="PointLayer">mIconPointLayer.svg</file>
+    <file alias="PolygonLayer">mIconPolygonLayer.svg</file>
+    <file alias="TableLayer">mIconTableLayer.svg</file>
+    <file alias="Expression">expression.svg</file>
   </qresource>
 </RCC>

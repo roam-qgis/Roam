@@ -5,6 +5,9 @@ from functools import partial
 from PyQt4.QtGui import QWidget
 from PyQt4.QtCore import Qt
 from qgis.core import QgsMapLayer
+from qgis.gui import QgsExpressionBuilderDialog
+
+from roam.api.utils import layer_by_name
 
 from configmanager.models import QgsLayerModel, QgsFieldModel
 from configmanager.editorwidgets.core import ConfigWidget
@@ -35,10 +38,22 @@ class ListWidgetConfig(Ui_Form, ConfigWidget):
         self.layerCombo.setModel(self.layermodel)
         self.keyCombo.setModel(self.fieldmodel)
         self.valueCombo.setModel(self.fieldmodel)
+        self.filterButton.pressed.connect(self.define_filter)
 
         self.fieldmodel.setLayerFilter(self.layerCombo.view().selectionModel())
         self.reset()
         self.blockSignals(False)
+
+    def define_filter(self):
+        layer = self.layerCombo.currentText()
+        if not layer:
+            return
+        layer = layer_by_name(layer)
+        dlg = QgsExpressionBuilderDialog(layer, "List filter", self)
+        text = self.filterText.toPlainText()
+        dlg.setExpressionText(text)
+        if dlg.exec_():
+            self.filterText.setPlainText(dlg.expressionText())
 
     def reset(self):
         self.listtype = 'layer'
