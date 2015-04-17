@@ -190,6 +190,8 @@ class InfoDock(infodock_widget, QWidget):
     def editgeom(self):
         cursor = self.selection
         RoamEvents.editgeometry.emit(cursor.form, cursor.feature)
+        self.editGeomButton.setEnabled(False)
+        self.deleteFeatureButton.setEnabled(False)
 
     def pageback(self):
         cursor = self.selection
@@ -257,6 +259,9 @@ class InfoDock(infodock_widget, QWidget):
 
     def refreshcurrent(self):
         self.update(self.selection)
+        self.editGeomButton.setEnabled(True)
+        self.editButton.setEnabled(True)
+        self.deleteFeatureButton.setEnabled(True)
 
     def update(self, cursor):
         if cursor is None:
