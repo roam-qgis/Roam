@@ -217,7 +217,8 @@ class PolylineTool(QgsMapTool):
         GPS.gpsdisconnected.connect(self.update_tracking_button_disconnect)
 
     def update_end_capture_state(self, *args):
-        self.endcaptureaction.setEnabled(self.capturing)
+        if self.trackingaction.isChecked() and self.captureaction.isChecked():
+            self.endcaptureaction.setEnabled(self.capturing)
 
     def update_tracking_button_disconnect(self):
         self.trackingaction.setEnabled(False)
