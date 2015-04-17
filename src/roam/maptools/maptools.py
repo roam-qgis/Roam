@@ -304,7 +304,8 @@ class PolylineTool(QgsMapTool):
             return
 
         close, at, before, after, dist = geom.closestVertex(point)
-        if dist < 2:
+        print dist
+        if dist < 30:
             self.editvertex = at
         else:
             self.editvertex = None
@@ -324,6 +325,14 @@ class PolylineTool(QgsMapTool):
         if self.editmode and self.editvertex is not None:
             at = self.editvertex
             point = self.snappoint(event.pos())
+            lastvertex = self.band.numberOfVertices() - 1
+            if isinstance(self, PolygonTool) and at == lastvertex:
+                self.band.movePoint(0, point)
+                self.pointband.movePoint(0, point)
+            elif isinstance(self, PolygonTool) and at == 0:
+                self.band.movePoint(lastvertex, point)
+                self.pointband.movePoint(lastvertex, point)
+
             self.band.movePoint(at, point)
             self.pointband.movePoint(at, point)
 
