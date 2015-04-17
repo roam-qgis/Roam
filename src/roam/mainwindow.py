@@ -39,6 +39,8 @@ from qgis.gui import (QgsMessageBar,
                         QgsMapCanvas, QgsScaleComboBox)
 
 
+from roam.popupdialogs import DeleteFeatureDialog
+from roam.api.featureform import DeleteFeatureException
 from roam.dataentrywidget import DataEntryWidget
 from roam.listmodulesdialog import ProjectsWidget
 from roam.settingswidget import SettingsWidget
@@ -157,6 +159,7 @@ class MainWindow(ui_mainwindow.Ui_MainWindow, QMainWindow):
         self.dataentrywidget.rejected.connect(self.formrejected)
         RoamEvents.featuresaved.connect(self.featureSaved)
         RoamEvents.helprequest.connect(self.showhelp)
+        RoamEvents.deletefeature.connect(self.delete_feature)
 
         def createSpacer(width=0, height=0):
             widget = QWidget()
@@ -327,6 +330,29 @@ class MainWindow(ui_mainwindow.Ui_MainWindow, QMainWindow):
         viewer = ImageViewer(self.stackedWidget)
         viewer.resize(self.stackedWidget.size())
         viewer.openimage(pixmap)
+
+    def delete_feature(self, form, feature):
+        """
+        Delete the selected feature
+        """
+        # We have to make the feature form because the user might have setup logic
+        # to handle the delete case
+
+        featureform = form.create_featureform(feature)
+        try:
+            msg = featureform.deletemessage
+        except AttributeError:
+            msg = 'Do you really want to delete this feature?'
+
+        if not DeleteFeatureDialog(msg).exec_():
+            return
+
+        try:
+            featureform.delete()
+        except DeleteFeatureException as ex:
+            RoamEvents.raisemessage(*ex.error)
+
+        featureform.featuredeleted(feature)
 
     def search_for_projects(self):
         server = roam.config.settings.get('updateserver', '')

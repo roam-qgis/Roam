@@ -629,3 +629,5 @@ class FeatureForm(FeatureFormBase):
                 errors = layer.commitErrors()
                 raise DeleteFeatureException.not_saved(errors)
 
+
+

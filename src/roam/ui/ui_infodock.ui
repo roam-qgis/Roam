@@ -176,6 +176,29 @@
           </widget>
          </item>
          <item>
+          <widget class="QToolButton" name="deleteFeatureButton">
+           <property name="text">
+            <string/>
+           </property>
+           <property name="icon">
+            <iconset resource="../resources.qrc">
+             <normaloff>:/icons/delete</normaloff>:/icons/delete</iconset>
+           </property>
+           <property name="iconSize">
+            <size>
+             <width>48</width>
+             <height>48</height>
+            </size>
+           </property>
+           <property name="toolButtonStyle">
+            <enum>Qt::ToolButtonTextUnderIcon</enum>
+           </property>
+           <property name="autoRaise">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+         <item>
           <spacer name="horizontalSpacer_2">
            <property name="orientation">
             <enum>Qt::Horizontal</enum>
@@ -274,8 +297,8 @@
    <slot>close()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>592</x>
-     <y>663</y>
+     <x>624</x>
+     <y>70</y>
     </hint>
     <hint type="destinationlabel">
      <x>647</x>

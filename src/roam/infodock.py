@@ -105,9 +105,15 @@ class InfoDock(infodock_widget, QWidget):
         self.bottomWidget.mouseReleaseEvent = self._sink
         self.navwidget.mouseMoveEvent = self._sink
         self.bottomWidget.mouseMoveEvent = self._sink
+        self.deleteFeatureButton.pressed.connect(self.delete_feature)
+        self.deleteFeatureButton.setCheckable(False)
 
         RoamEvents.selectioncleared.connect(self.clearResults)
         RoamEvents.editgeometry_complete.connect(self.refreshcurrent)
+
+    def delete_feature(self):
+        cursor = self.selection
+        RoamEvents.delete_feature(cursor.form, cursor.feature)
 
     def handle_link(self, url):
         if url.toString().endswith("/back"):
@@ -287,6 +293,8 @@ class InfoDock(infodock_widget, QWidget):
         hasform = not form is None
         editattributes = 'edit_attributes' in tools and hasform
         editgeom = 'edit_geom' in tools and hasform
+        deletefeature = 'delete' in tools and hasform
+        self.deleteFeatureButton.setVisible(deletefeature)
         self.editButton.setVisible(editattributes)
         self.editGeomButton.setVisible(editgeom)
         self.featureupdated.emit(layer, feature, cursor.features)

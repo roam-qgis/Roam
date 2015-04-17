@@ -17,6 +17,10 @@ class _Events(QObject):
 
     # Emit when requesting to open a feature form.
     openfeatureform = pyqtSignal(object, QgsFeature, bool, bool, object)
+    deletefeature = pyqtSignal(object, QgsFeature)
+
+    def delete_feature(self, form, feature):
+        self.deletefeature.emit(form, feature)
 
     def load_feature_form(self, form, feature, editmode, clearcurrent=True, callback=None):
         """
