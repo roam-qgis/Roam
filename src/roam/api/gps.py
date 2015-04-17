@@ -106,7 +106,12 @@ class GPSService(QObject):
         QgsGPSConnectionRegistry.instance().registerConnection(self.gpsConn)
 
     def parse_data(self, datastring):
-        data = pynmea2.parse(datastring)
+        try:
+            data = pynmea2.parse(datastring)
+        except AttributeError as er:
+            log(er.message)
+            return
+        
         mappings = {"RMC": self.extract_rmc,
                     "GGA": self.extract_gga,
                     "GSV": self.extract_gsv,

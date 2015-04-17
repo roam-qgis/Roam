@@ -160,6 +160,13 @@ def test_extact_gsa_handles_empty_values():
     assert info.fixType == 1
 
 
+def dont_crash_with_strange_gps_string():
+    # WAT the heck is the PQXFI message?
+    data = "$PQXFI,054109.0,2812.884789,S,15202.046024,E,462.1,2.92,4.14,0.82*73"
+    gps = GPSService()
+    gps.parse_data(data)
+
+
 def test_glonass_parse_from_file():
     def update(pos, info):
         pass
