@@ -12,11 +12,15 @@ import subprocess
 import roam.utils
 
 from collections import defaultdict
-from PyQt4.QtNetwork import QNetworkRequest, QNetworkAccessManager
+from PyQt4.QtNetwork import QNetworkRequest, QNetworkAccessManager, QNetworkReply
 from PyQt4.QtCore import QObject, pyqtSignal, QUrl, QThread
 
 import roam.project
 
+def add_slash(url):
+    if not url.endswith("/"):
+        url += "/"
+    return url
 
 def checkversion(toversion, fromversion):
     return int(toversion) > int(fromversion)
@@ -52,6 +56,7 @@ def install_project(info, basefolder, serverurl):
 
     roam.utils.info("Downloading project zip")
     filename = "{}-Install.zip".format(info['name'])
+    serverurl = add_slash(serverurl)
     url = urlparse.urljoin(serverurl, "projects/{}".format(filename))
     content = urllib2.urlopen(url).read()
     tempfolder = os.path.join(basefolder, "_updates")
@@ -84,6 +89,8 @@ def update_project(project, serverurl):
 
     roam.utils.info("Downloading project zip")
     filename = "{}.zip".format(project.basefolder)
+    serverurl = add_slash(serverurl)
+
     url = urlparse.urljoin(serverurl, "projects/{}".format(filename))
     content = urllib2.urlopen(url).read()
     rootfolder = os.path.join(project.folder, "..")
@@ -215,9 +222,8 @@ class ProjectUpdater(QObject):
 
     @property
     def configurl(self):
-        if not self.server.endswith("/"):
-            self.server += "/"
-        url = urlparse.urljoin(self.server, "projects/roam.txt")
+        url = urlparse.urljoin(add_slash(self.server), "projects/roam.txt")
+        print "URL", url
         return url
 
     def check_updates(self, server, installedprojects):
@@ -233,13 +239,15 @@ class ProjectUpdater(QObject):
         self.check_updates(newserverurl, installedprojects)
 
     def list_versions(self, reply, installedprojects):
-        content = reply.readAll().data()
-        print content
-        serverversions = parse_serverprojects(content)
-        updateable = list(updateable_projects(installedprojects, serverversions))
-        new = list(new_projects(installedprojects, serverversions))
-        if updateable or new:
-            self.foundProjects.emit(updateable, new)
+        if reply.error() == QNetworkReply.NoError:
+            content = reply.readAll().data()
+            serverversions = parse_serverprojects(content)
+            updateable = list(updateable_projects(installedprojects, serverversions))
+            new = list(new_projects(installedprojects, serverversions))
+            if updateable or new:
+                self.foundProjects.emit(updateable, new)
+        else:
+            roam.utils.warning("Error in network request for projects: {}".format(reply.error()))
 
     def update_project(self, project, version):
         self.projectUpdateStatus.emit(project.name, "Pending")

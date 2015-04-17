@@ -106,6 +106,7 @@ class MainWindow(ui_mainwindow.Ui_MainWindow, QMainWindow):
         self.projectupdater.foundProjects.connect(self.projectwidget.show_new_updateable)
         self.projectupdater.projectUpdateStatus.connect(self.projectwidget.update_project_status)
         self.projectupdater.projectInstalled.connect(self.projectwidget.project_installed)
+        self.projectwidget.search_for_updates.connect(self.search_for_projects)
         self.projectwidget.projectUpdate.connect(self.projectupdater.update_project)
         self.projectwidget.projectInstall.connect(self.projectupdater.install_project)
         self.project = None
@@ -144,6 +145,7 @@ class MainWindow(ui_mainwindow.Ui_MainWindow, QMainWindow):
         self.gpswidget.setgps(GPS)
         self.gpswidget.settracking(self.tracking)
 
+        self.settings = {}
         self.actionSettings.toggled.connect(self.settingswidget.populateControls)
         self.actionSettings.toggled.connect(self.settingswidget.readSettings)
         self.settingswidget.settingsupdated.connect(self.settingsupdated)
@@ -326,9 +328,13 @@ class MainWindow(ui_mainwindow.Ui_MainWindow, QMainWindow):
         viewer.resize(self.stackedWidget.size())
         viewer.openimage(pixmap)
 
-    def settingsupdated(self, settings):
-        server = settings.get('updateserver', '')
+    def search_for_projects(self):
+        server = roam.config.settings.get('updateserver', '')
+        print server
         self.projectupdater.update_server(server, self.projects)
+
+    def settingsupdated(self, settings):
+        self.settings = settings
         self.show()
         self.canvas_page.settings_updated(settings)
 
@@ -505,8 +511,7 @@ class MainWindow(ui_mainwindow.Ui_MainWindow, QMainWindow):
         self.projects = projects
         self.projectwidget.loadProjectList(projects)
         self.syncwidget.loadprojects(projects)
-        updateserver = roam.config.settings.get('updateserver', None)
-        self.projectupdater.update_server(updateserver, projects)
+        self.search_for_projects()
 
     def updatePage(self, action):
         """

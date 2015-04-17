@@ -98,6 +98,7 @@ class ProjectWidget(Ui_Form, QWidget):
 class ProjectsWidget(Ui_ListModules, QWidget):
     requestOpenProject = pyqtSignal(object)
     projectUpdate = pyqtSignal(object, object)
+    search_for_updates = pyqtSignal()
     projectInstall = pyqtSignal(dict)
 
     def __init__(self, parent=None):
@@ -109,6 +110,9 @@ class ProjectsWidget(Ui_ListModules, QWidget):
         self.moduleList.itemClicked.connect(self.openProject)
         self.projectitems = {}
         self.project_base = None
+
+    def showEvent(self, event):
+        self.search_for_updates.emit()
 
     def loadProjectList(self, projects):
         self.moduleList.clear()
@@ -135,7 +139,7 @@ class ProjectsWidget(Ui_ListModules, QWidget):
 
     def update_item(self, name, info):
         item = self.projectitems[name]
-        item.setData(QListWidgetItem.UserType, project)
+        item.setData(QListWidgetItem.UserType, info)
         widget = self.moduleList.itemWidget(item)
         widget.project = info
     
