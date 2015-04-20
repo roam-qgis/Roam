@@ -1,5 +1,5 @@
 import sys
-from PyQt4.QtCore import QEvent
+from PyQt4.QtCore import QEvent, QSize
 from PyQt4.QtGui import QDoubleSpinBox, QSpinBox, QWidget
 import functools
 
@@ -7,10 +7,15 @@ from roam.api import RoamEvents
 from roam.editorwidgets.core import EditorWidget, registerwidgets
 from roam.editorwidgets.uifiles.ui_singlestepper import Ui_stepper
 
+from roam.roam_style import iconsize
+
 class Stepper(Ui_stepper, QWidget):
     def __init__(self, parent=None, Type=QSpinBox):
         super(Stepper, self).__init__(parent)
         self.setupUi(self)
+        size = iconsize()
+        self.stepUp.setIconSize(QSize(size, size))
+        self.stepDown.setIconSize(QSize(size, size))
         self.spinBox = Type()
         self.spinBox.setButtonSymbols(2)
         self.layout().insertWidget(0, self.spinBox)
