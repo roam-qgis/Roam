@@ -23,7 +23,6 @@ class RoamApp(object):
     def init(self, logo, title):
         from qgis.core import QgsApplication
         from PyQt4.QtGui import QApplication, QFont, QIcon
-        from PyQt4.QtCore import QLocale, QTranslator
         try:
             import PyQt4.QtSql
         except ImportError:
@@ -32,12 +31,6 @@ class RoamApp(object):
         self.app = QgsApplication(self.sysargv, True)
         QgsApplication.setPrefixPath(self.prefixpath, True)
         QgsApplication.initQgis()
-
-        locale = QLocale.system().name()
-        self.translationFile = os.path.join(self.i18npath, '{0}.qm'.format(locale))
-        translator = QTranslator()
-        translator.load(self.translationFile, "i18n")
-        self.app.installTranslator(translator)
 
         QApplication.setStyle("Plastique")
         QApplication.setFont(QFont('Segoe UI'))
@@ -48,6 +41,16 @@ class RoamApp(object):
         roam.editorwidgets.core.registerallwidgets()
         import roam.qgisfunctions
         return self
+
+    def load_translations(self):
+        from PyQt4.QtCore import QLocale, QTranslator
+        import roam.config
+        locale = QLocale.system().uiLanguages()[0].replace("-", "_")
+        locale = roam.config.settings.get('locale', locale)
+        self.translationFile = '{0}.qm'.format(locale)
+        translator = QTranslator()
+        print translator.load(self.translationFile, self.i18npath)
+        self.app.installTranslator(translator)
 
     def set_error_handler(self, errorhandler, logger):
         sys.excepthook = functools.partial(self.excepthook, errorhandler)
@@ -96,7 +99,7 @@ def _setup(apppath=None, logo='', title='', **kwargs):
         print "Running from file"
         print os.getcwd()
         print apppath
-        i18npath = os.path.join(apppath, "i18n")
+        i18npath = os.path.join(apppath, "roam", "i18n")
         if os.name == 'posix':
             prefixpath = os.environ.get('QGIS_PREFIX_PATH', '/usr/')
         else:
@@ -137,6 +140,7 @@ def _setup(apppath=None, logo='', title='', **kwargs):
         roam.config.settings = app.settingspath
     else:
         roam.config.load(app.settingspath)
+    app.load_translations()
     return app
 
 
