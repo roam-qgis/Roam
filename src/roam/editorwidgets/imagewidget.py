@@ -99,11 +99,16 @@ class _CameraWidget(QWidget):
         self.imagecaptured.emit(self.pixmap)
         self.done.emit()
 
+    @property
+    def camera_res(self):
+        width, height = tuple(roam.config.settings['camera_res'].split(','))
+        return width, height
+
     def start(self, dev=1):
         try:
             self.cam = vc.Device(dev)
             try:
-                width, height = tuple(roam.config.settings['camera_res'].split(','))
+                width, height = self.camera_res
                 self.cam.setResolution(int(width), int(height))
             except KeyError:
                 pass
