@@ -259,9 +259,6 @@ class InfoDock(infodock_widget, QWidget):
 
     def refreshcurrent(self):
         self.update(self.selection)
-        self.editGeomButton.setEnabled(True)
-        self.editButton.setEnabled(True)
-        self.deleteFeatureButton.setEnabled(True)
 
     def update(self, cursor):
         if cursor is None:
@@ -413,6 +410,9 @@ class InfoDock(infodock_widget, QWidget):
         self.layerList.clear()
         self.attributesView.setHtml('')
         self.editButton.setVisible(False)
+        self.editGeomButton.setEnabled(True)
+        self.editButton.setEnabled(True)
+        self.deleteFeatureButton.setEnabled(True)
         self.navwidget.hide()
 
 def generate_rows(fields, attributes, **kwargs):

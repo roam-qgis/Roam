@@ -4,7 +4,7 @@ from qgis.core import *
 from qgis.gui import *
 
 from roam.maptools.touchtool import TouchMapTool
-from roam.api import GPS
+from roam.api import GPS, RoamEvents
 
 import roam.config
 
@@ -215,6 +215,13 @@ class PolylineTool(QgsMapTool):
 
         GPS.gpsfixed.connect(self.update_tracking_button)
         GPS.gpsdisconnected.connect(self.update_tracking_button_disconnect)
+        RoamEvents.selectioncleared.connect(self.selection_updated)
+        RoamEvents.selectionchanged.connect(self.selection_updated)
+
+    def selection_updated(self, *args):
+        if self.editmode:
+            self.reset()
+            self.setEditMode(False, None)
 
     def update_end_capture_state(self, *args):
         if self.trackingaction.isChecked() and self.captureaction.isChecked():
@@ -341,6 +348,7 @@ class PolylineTool(QgsMapTool):
             self.endcapture()
             return
 
+        print self.editmode
         if not self.editmode:
             point = self.snappoint(event.pos())
             qgspoint = QgsPoint(point)
@@ -371,7 +379,7 @@ class PolylineTool(QgsMapTool):
     def clearBand(self):
         self.reset()
 
-    def reset(self):
+    def reset(self, *args):
         self.band.reset(QGis.Line)
         self.pointband.reset(QGis.Point)
         self.points = []
