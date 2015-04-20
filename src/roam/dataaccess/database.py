@@ -130,4 +130,4 @@ class Database(object):
             model.setQuery(query)
             return model
         else:
-           raise DatabaseException(query.lastError().text()) 
+            raise DatabaseException(query.lastError().text()) 
