@@ -64,6 +64,7 @@ class BatchFileSync(SyncProvider):
             self.import_parser_module()
 
         self._output = ""
+        self.haserror = False
         self.process.start(self.cmd, [])
 
     @property
