@@ -26,7 +26,7 @@ class LegendWidget(Ui_legendsWidget, QWidget):
     def paintEvent(self, event):
         def itemlist():
             for layer, items in self.items.iteritems():
-                if len(items) == 1:
+                if len(items) == 1 and not layer.startswith("~"):
                     yield layer, items[0][1]
                 else:
                     for text, icon in items:
