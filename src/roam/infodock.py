@@ -3,7 +3,7 @@ import os
 from string import Template
 from collections import OrderedDict
 
-from PyQt4.QtGui import ( QWidget, QIcon, QListWidgetItem, QMouseEvent, QApplication)
+from PyQt4.QtGui import ( QWidget, QIcon, QListWidgetItem, QMouseEvent, QApplication, QKeySequence)
 
 from PyQt4.QtCore import (Qt, QUrl,
                           QEvent, pyqtSignal
@@ -88,6 +88,8 @@ class InfoDock(infodock_widget, QWidget):
         self.layerList.currentRowChanged.connect(self.layerIndexChanged)
         self.attributesView.linkClicked.connect(self.handle_link)
         self.attributesView.page().setLinkDelegationPolicy(QWebPage.DelegateAllLinks)
+        action = self.attributesView.pageAction(QWebPage.Copy)
+        action.setShortcut(QKeySequence.Copy)
         self.grabGesture(Qt.SwipeGesture)
         self.setAttribute(Qt.WA_AcceptTouchEvents)
         self.editButton.pressed.connect(self.openform)
