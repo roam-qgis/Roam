@@ -1,8 +1,10 @@
+import os
 import yaml as yaml
 
 settings = {}
 
 loaded_path = ''
+
 
 def load(path):
     with open(path, 'r') as f:
@@ -12,6 +14,7 @@ def load(path):
             settings = {}
         global loaded_path
         loaded_path = path
+
 
 def save(path=None):
     """
@@ -24,3 +27,5 @@ def save(path=None):
 
     with open(path, 'w') as f:
         yaml.dump(data=settings, stream=f, default_flow_style=False)
+
+

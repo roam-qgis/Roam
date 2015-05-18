@@ -32,6 +32,11 @@ class BatchFileSync(SyncProvider):
     def __init__(self, name, project, **kwargs):
         super(BatchFileSync, self).__init__(name, project)
         self.cmd = kwargs['cmd']
+        if self.project:
+            self.rootfolder = os.path.abspath(self.project.folder)
+        else:
+            self.rootfolder = kwargs['rootfolder']
+
         self.project = project
         self.closeproject = kwargs.get("close_project", False)
         self.process = QProcess()
@@ -52,9 +57,8 @@ class BatchFileSync(SyncProvider):
 
     def import_parser_module(self):
         import imp
-        rootfolder = os.path.abspath(self.project.folder)
         name = self.parser
-        module = imp.find_module(name, [rootfolder])
+        module = imp.find_module(name, [self.rootfolder])
         module = imp.load_module(name, *module)
         self.parsermodule = module
         print self.parsermodule

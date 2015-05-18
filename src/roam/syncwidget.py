@@ -7,6 +7,8 @@ from ui.ui_sync import Ui_Form
 from popupdialogs import ActionPickerWidget
 from roam.flickwidget import FlickCharm
 
+import roam.config
+import roam.syncing
 
 
 class SyncWidget(Ui_Form, QWidget):
@@ -20,8 +22,25 @@ class SyncWidget(Ui_Form, QWidget):
         self.flickcharm.activateOn(self.scrollArea)
         self.flickcharm.activateOn(self.syncstatus)
 
+    def load_application_sync(self):
+        print "Load application sync"
+        providers = list(roam.syncing.syncprovders())
+        if not providers:
+            return
+
+        actionwidget = ActionPickerWidget()
+        actionwidget.setTile("Roam Syncing")
+        for provider in providers:
+            action = QAction(None)
+            action.setText(provider.name)
+            action.setIcon(QIcon(":/icons/sync"))
+            action.triggered.connect(partial(self.run, action, provider))
+            actionwidget.addAction(action)
+        self.syncwidgets.layout().addWidget(actionwidget)
+
     def loadprojects(self, projects):
         #root = self.synctree.invisibleRootItem()
+        self.load_application_sync()
         for project in projects:
             providers = list(project.syncprovders())
             if not providers:
