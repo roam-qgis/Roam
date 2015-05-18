@@ -7,11 +7,16 @@ from qgis.gui import QgsRubberBand, QgsMapToolPan
 from roam.utils import log
 from roam.maptools import maptoolutils
 
+from roam.api import RoamEvents
+
+snapping = True
+
 try:
       from qgis.gui import QgsMapToolTouch
       maptooltype = QgsMapToolTouch
 except ImportError:
       maptooltype = QgsMapToolPan
+
 
 class TouchMapTool(maptooltype):
     def __init__(self, canvas):
@@ -19,6 +24,17 @@ class TouchMapTool(maptooltype):
         self.pinching = False
         self.canvas = canvas
         self.dragging = False
+        self.snapping = True
+
+    def keyPressEvent(self, event):
+        if event.key() == Qt.Key_S:
+            self.toggle_snapping()
+
+    def toggle_snapping(self):
+        self.snapping = not self.snapping
+        global snapping
+        snapping = self.snapping
+        RoamEvents.snappingChanged.emit(snapping)
 
     def canvasMoveEvent(self, event):
         if not self.pinching and event.buttons() & Qt.LeftButton:

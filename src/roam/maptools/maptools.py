@@ -10,6 +10,8 @@ import roam.config
 
 import roam.resources_rc
 
+snapping = True
+
 
 class RubberBand(QgsRubberBand):
     def __init__(self, canvas, geometrytype, width=5, iconsize=20):
@@ -218,9 +220,19 @@ class PolylineTool(QgsMapTool):
         RoamEvents.selectioncleared.connect(self.selection_updated)
         RoamEvents.selectionchanged.connect(self.selection_updated)
 
+        self.snapping = snapping
+
     def keyPressEvent(self, event):
         if event.key() == Qt.Key_Escape:
             self.reset()
+        if event.key() == Qt.Key_S:
+            self.toggle_snapping()
+
+    def toggle_snapping(self):
+        self.snapping = not self.snapping
+        global snapping
+        snapping = self.snapping
+        RoamEvents.snappingChanged.emit(snapping)
 
     def selection_updated(self, *args):
         if self.editmode:
@@ -408,6 +420,9 @@ class PolylineTool(QgsMapTool):
         return True
 
     def snappoint(self, point):
+        if not self.snapping:
+            return self.canvas.getCoordinateTransform().toMapCoordinates(point)
+
         try:
             _, results = self.snapper.snapToBackgroundLayers(point)
             point = results[0].snappedVertex

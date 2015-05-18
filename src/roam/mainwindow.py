@@ -178,14 +178,25 @@ class MainWindow(ui_mainwindow.Ui_MainWindow, QMainWindow):
         self.userlabel = QLabel("User: {user}".format(user=getpass.getuser()))
         self.positionlabel = QLabel('')
         self.gpslabel = QLabel("GPS: Not active")
-        self.statusbar.addWidget(self.projectlabel)
-        self.statusbar.addWidget(self.userlabel)
+        icon = QIcon(":/icons/info")
+        infobutton = QToolButton()
+        infobutton.setAutoRaise(True)
+        infobutton.setMaximumHeight(self.statusbar.height())
+        infobutton.setIcon(icon)
+        # self.statusbar.addWidget(infobutton)
+        self.snappingbutton = QToolButton()
+        self.snappingbutton.setText("Snapping: On")
+        self.snappingbutton.setAutoRaise(True)
+        self.snappingbutton.pressed.connect(self.toggle_snapping)
+        self.statusbar.addWidget(self.snappingbutton)
+        # self.statusbar.addWidget(self.projectlabel)
+        # self.statusbar.addWidget(self.userlabel)
         spacer = createSpacer()
         spacer2 = createSpacer()
         spacer.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
         spacer2.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
-        self.statusbar.addWidget(spacer)
-        self.statusbar.addWidget(self.positionlabel)
+        # self.statusbar.addWidget(spacer)
+        # self.statusbar.addWidget(self.positionlabel)
         self.statusbar.addWidget(spacer2)
         self.statusbar.addWidget(self.gpslabel)
 
@@ -231,6 +242,7 @@ class MainWindow(ui_mainwindow.Ui_MainWindow, QMainWindow):
         RoamEvents.selectionchanged.connect(self.showInfoResults)
         RoamEvents.show_widget.connect(self.dataentrywidget.add_widget)
         RoamEvents.closeProject.connect(self.close_project)
+        RoamEvents.snappingChanged.connect(self.snapping_changed)
 
         GPS.gpsposition.connect(self.update_gps_label)
         GPS.gpsdisconnected.connect(self.gps_disconnected)
@@ -238,6 +250,21 @@ class MainWindow(ui_mainwindow.Ui_MainWindow, QMainWindow):
         self.legendpage.showmap.connect(self.showmap)
 
         self.currentselection = {}
+
+    def snapping_changed(self, snapping):
+        if snapping:
+            self.snappingbutton.setText("Snapping: On")
+        else:
+            self.snappingbutton.setText("Snapping: Off")
+        
+    def toggle_snapping(self):
+        try:
+            tool = self.canvas.mapTool()
+            tool.toggle_snapping()
+            snapping = tool.snapping
+            self.snapping_changed(snapping)
+        except AttributeError:
+            pass
 
     def update_scale_from_item(self, index):
         scale, _ = self.scalewidget.toDouble(index.data(Qt.DisplayRole))
