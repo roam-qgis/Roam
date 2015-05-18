@@ -218,6 +218,10 @@ class PolylineTool(QgsMapTool):
         RoamEvents.selectioncleared.connect(self.selection_updated)
         RoamEvents.selectionchanged.connect(self.selection_updated)
 
+    def keyPressEvent(self, event):
+        if event.key() == Qt.Key_Escape:
+            self.reset()
+
     def selection_updated(self, *args):
         if self.editmode:
             self.reset()
@@ -320,6 +324,7 @@ class PolylineTool(QgsMapTool):
     def getPointFromEvent(self, event):
         point = self.canvas.getCoordinateTransform().toMapCoordinates(event.pos())
         return point
+
 
     def canvasMoveEvent(self, event):
         if self.is_tracking:
