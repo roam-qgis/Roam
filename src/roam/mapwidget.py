@@ -567,6 +567,8 @@ class MapWidget(Ui_CanvasWidget, QMainWindow):
         if self.scalebar_enabled:
             self.scalebar.update()
 
+        self.actionPan.toggle()
+
     def setMapTool(self, tool, *args):
         if tool == self.canvas.mapTool():
             return
