@@ -173,8 +173,9 @@ class ProjectsWidget(Ui_ListModules, QWidget):
     def set_open_project(self, currentproject):
         for project, item in self.projectitems.iteritems():
             widget = self.item_widget(item)
+            project = widget.project
             if currentproject:
-                showclose = currentproject.basefolder == project
+                showclose = currentproject.basefolder == project.basefolder
             else:
                 showclose = False
             widget.show_close(showclose)
