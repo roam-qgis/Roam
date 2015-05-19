@@ -9,7 +9,7 @@ from datetime import datetime
 
 from PyQt4.QtCore import Qt, QDir, QFileInfo, pyqtSignal, QModelIndex, QFileSystemWatcher, QUrl
 from PyQt4.QtGui import (QWidget, QStandardItemModel, QStandardItem, QIcon, QMessageBox, QPixmap, QDesktopServices, QMenu,
-                         QToolButton)
+                         QToolButton, QFileDialog)
 
 from qgis.core import QgsProject, QgsMapLayerRegistry, QgsPalLabeling, QGis
 from qgis.gui import QgsMapCanvas, QgsExpressionBuilderDialog, QgsMessageBar
@@ -85,6 +85,25 @@ class ProjectWidget(Ui_Form, QWidget):
         # self.setpage(4)
         self.currentnode = None
         self.form = None
+
+        qgislocation = r'C:\OSGeo4W\bin\qgis.bat'
+        qgislocation = roam.config.settings.setdefault('configmanager', {}) \
+            .setdefault('qgislocation', qgislocation)
+
+        self.qgispathEdit.setText(qgislocation)
+        self.qgispathEdit.textChanged.connect(self.save_qgis_path) 
+        self.filePickerButton.pressed.connect(self.set_qgis_path)
+
+    def set_qgis_path(self):
+        path = QFileDialog.getOpenFileName(self, "Select QGIS install file", filter="(*.bat)")
+        if not path:
+            return
+        self.qgispathEdit.setText(path)
+        self.save_qgis_path(path)
+
+    def save_qgis_path(self, path):
+        roam.config.settings['configmanager'] = {'qgislocation': path}
+        roam.config.save()
 
     def setpage(self, page, node):
         self.currentnode = node
