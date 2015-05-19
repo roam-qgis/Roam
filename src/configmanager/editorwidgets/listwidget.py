@@ -57,31 +57,56 @@ class ListWidgetConfig(Ui_Form, ConfigWidget):
 
     def reset(self):
         self.listtype = 'layer'
-        self.list = []
-        self.layer = None
-        self.key = None
-        self.value = None
-        self.filter = None
+        self.listText.setPlainText('')
+        self.orderby = False
+        self.allownull = False
+        self.filterText.setPlainText('')
+        self.layerCombo.setCurrentIndex(-1)
+        self.keyCombo.setCurrentIndex(-1)
+        self.valueCombo.setCurrentIndex(-1)
 
     def widgetchanged(self):
-        self.reset()
-        self.allownull = self.allownullCheck.isChecked()
-        self.orderby = self.orderbyCheck.isChecked()
-        if self.listRadio.isChecked():
-            self.listtype = 'list'
-            self.list = [item for item in self.listText.toPlainText().split('\n')]
-        else:
-            self.layer = self.layerCombo.currentText()
-            index_key = self.fieldmodel.index(self.keyCombo.currentIndex(), 0)
-            index_value = self.fieldmodel.index(self.valueCombo.currentIndex(), 0)
-            fieldname_key = self.fieldmodel.data(index_key, QgsFieldModel.FieldNameRole)
-            fieldname_value = self.fieldmodel.data(index_value, QgsFieldModel.FieldNameRole)
-            self.key = fieldname_key
-            self.value = fieldname_value
-            self.filter = self.filterText.toPlainText()
-
         self.widgetdirty.emit(self.getconfig())
 
+    @property
+    def allownull(self):
+        return self.allownullCheck.isChecked()
+
+    @allownull.setter
+    def allownull(self, value):
+        self.allownullCheck.setChecked(value)
+
+    @property
+    def orderby(self):
+        return self.orderbyCheck.isChecked()
+
+    @orderby.setter
+    def orderby(self, value):
+        self.orderbyCheck.setChecked(value)
+        
+    @property
+    def list(self):
+        return [item for item in self.listText.toPlainText().split('\n')]
+
+    @property
+    def filter(self):
+        return self.filterText.toPlainText()
+
+    @property
+    def layer(self):
+        return self.layerCombo.currentText()
+
+    @property
+    def key(self):
+        index_key = self.fieldmodel.index(self.keyCombo.currentIndex(), 0)
+        fieldname_key = self.fieldmodel.data(index_key, QgsFieldModel.FieldNameRole)
+        return fieldname_key
+
+    @property
+    def value(self):
+        index_value = self.fieldmodel.index(self.valueCombo.currentIndex(), 0)
+        return self.fieldmodel.data(index_value, QgsFieldModel.FieldNameRole)
+        
     def getconfig(self):
         config = {}
         config['allownull'] = self.allownull
@@ -122,8 +147,8 @@ class ListWidgetConfig(Ui_Form, ConfigWidget):
             subconfig = config.get('list', {})
             self.listRadio.setChecked(True)
             self.stackedWidget.setCurrentIndex(1)
-            self.list = subconfig.get('items', [])
-            itemtext = '\n'.join(self.list)
+            listitems = subconfig.get('items', [])
+            itemtext = '\n'.join(listitems)
             self.listText.setPlainText(itemtext)
         else:
             self.layerRadio.setChecked(True)

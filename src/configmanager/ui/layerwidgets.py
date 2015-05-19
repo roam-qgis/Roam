@@ -17,6 +17,7 @@ from configmanager.models import (CaptureLayersModel, LayerTypeFilter, QgsFieldM
 import roam.editorwidgets
 import configmanager.editorwidgets
 from roam.api import FeatureForm, utils
+from roam.utils import log
 
 
 class WidgetBase(QWidget):
