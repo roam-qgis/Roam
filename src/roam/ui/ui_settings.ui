@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>853</width>
-    <height>793</height>
+    <height>870</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -30,67 +30,6 @@
    <property name="margin">
     <number>0</number>
    </property>
-   <item row="0" column="0">
-    <widget class="QGroupBox" name="groupBox">
-     <property name="font">
-      <font>
-       <family>Segoe UI</family>
-       <pointsize>-1</pointsize>
-       <weight>50</weight>
-       <italic>false</italic>
-       <bold>false</bold>
-      </font>
-     </property>
-     <property name="title">
-      <string>Application</string>
-     </property>
-     <property name="flat">
-      <bool>true</bool>
-     </property>
-     <layout class="QGridLayout" name="gridLayout_2">
-      <item row="0" column="0">
-       <widget class="QCheckBox" name="fullScreenCheck">
-        <property name="text">
-         <string>Fullscreen</string>
-        </property>
-       </widget>
-      </item>
-      <item row="1" column="0">
-       <widget class="QCheckBox" name="keyboardCheck">
-        <property name="text">
-         <string>Use popout keyboard</string>
-        </property>
-        <property name="checked">
-         <bool>true</bool>
-        </property>
-       </widget>
-      </item>
-      <item row="2" column="0">
-       <widget class="QCheckBox" name="distanceCheck">
-        <property name="text">
-         <string>Draw line distance</string>
-        </property>
-        <property name="checked">
-         <bool>true</bool>
-        </property>
-       </widget>
-      </item>
-     </layout>
-    </widget>
-   </item>
-   <item row="3" column="1">
-    <spacer name="horizontalSpacer">
-     <property name="orientation">
-      <enum>Qt::Horizontal</enum>
-     </property>
-     <property name="sizeHint" stdset="0">
-      <size>
-       <width>40</width>
-       <height>20</height>
-      </size>
-     </property>
-    </spacer>
-   </item>
    <item row="4" column="2" rowspan="2">
     <widget class="QGroupBox" name="groupBox_3">
      <property name="title">
@@ -222,6 +161,121 @@ p, li { white-space: pre-wrap; }
      </layout>
     </widget>
    </item>
+   <item row="3" column="1">
+    <spacer name="horizontalSpacer">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>40</width>
+       <height>20</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+   <item row="3" column="0" rowspan="2">
+    <widget class="QGroupBox" name="groupBox_5">
+     <property name="title">
+      <string>GPS Feature Tracking</string>
+     </property>
+     <property name="flat">
+      <bool>true</bool>
+     </property>
+     <property name="checkable">
+      <bool>false</bool>
+     </property>
+     <layout class="QFormLayout" name="formLayout_2">
+      <property name="fieldGrowthPolicy">
+       <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
+      </property>
+      <item row="0" column="0">
+       <widget class="QRadioButton" name="gpstracking_timing_radio">
+        <property name="text">
+         <string>Every</string>
+        </property>
+        <property name="checked">
+         <bool>false</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1">
+       <widget class="Stepper" name="gpstiming_edit" native="true"/>
+      </item>
+      <item row="2" column="0">
+       <widget class="QRadioButton" name="gpstracking_distance_radio">
+        <property name="text">
+         <string>Every</string>
+        </property>
+        <property name="checked">
+         <bool>false</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="1">
+       <widget class="Stepper" name="gpsdistance_edit" native="true"/>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item row="0" column="0" colspan="3">
+    <widget class="QGroupBox" name="groupBox">
+     <property name="font">
+      <font>
+       <family>Segoe UI</family>
+       <pointsize>-1</pointsize>
+       <weight>50</weight>
+       <italic>false</italic>
+       <bold>false</bold>
+      </font>
+     </property>
+     <property name="title">
+      <string>Application</string>
+     </property>
+     <property name="flat">
+      <bool>true</bool>
+     </property>
+     <layout class="QFormLayout" name="formLayout_3">
+      <item row="0" column="0">
+       <widget class="QCheckBox" name="fullScreenCheck">
+        <property name="text">
+         <string>Fullscreen</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="0">
+       <widget class="QCheckBox" name="keyboardCheck">
+        <property name="text">
+         <string>Use popout keyboard</string>
+        </property>
+        <property name="checked">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="0">
+       <widget class="QCheckBox" name="distanceCheck">
+        <property name="text">
+         <string>Draw line distance</string>
+        </property>
+        <property name="checked">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="0">
+       <widget class="QLabel" name="label_7">
+        <property name="text">
+         <string>Project Server</string>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="1">
+       <widget class="QLineEdit" name="updateServerEdit"/>
+      </item>
+     </layout>
+    </widget>
+   </item>
    <item row="1" column="0" rowspan="2">
     <widget class="QGroupBox" name="groupBox_2">
      <property name="title">
@@ -295,44 +349,54 @@ p, li { white-space: pre-wrap; }
      </layout>
     </widget>
    </item>
-   <item row="5" column="0">
-    <widget class="QGroupBox" name="groupBox_4">
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
-       <horstretch>0</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
-     </property>
-     <property name="title">
-      <string>Updates</string>
-     </property>
-     <property name="flat">
-      <bool>true</bool>
-     </property>
-     <layout class="QFormLayout" name="formLayout">
-      <item row="0" column="0">
-       <widget class="QLabel" name="label_7">
-        <property name="text">
-         <string>Server</string>
-        </property>
-       </widget>
-      </item>
-      <item row="2" column="0">
-       <layout class="QHBoxLayout" name="horizontalLayout_4"/>
-      </item>
-      <item row="0" column="1">
-       <widget class="QLineEdit" name="updateServerEdit"/>
-      </item>
-     </layout>
-    </widget>
-   </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>Stepper</class>
+   <extends>QWidget</extends>
+   <header>roam.editorwidgets.numberwidget</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
  <resources>
   <include location="../resources.qrc"/>
   <include location="../resources.qrc"/>
   <include location="../resources.qrc"/>
   <include location="../resources.qrc"/>
  </resources>
- <connections/>
+ <connections>
+  <connection>
+   <sender>gpstracking_timing_radio</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>gpstiming_edit</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>67</x>
+     <y>524</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>168</x>
+     <y>505</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>gpstracking_distance_radio</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>gpsdistance_edit</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>58</x>
+     <y>553</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>154</x>
+     <y>553</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
 </ui>

@@ -28,6 +28,8 @@ class Stepper(Ui_stepper, QWidget):
         self.valueChanged = self.spinBox.valueChanged
         self.value = self.spinBox.value
         self.setValue = self.spinBox.setValue
+        self.stepUp.setIconSize(QSize(24, 24))
+        self.stepDown.setIconSize(QSize(24, 24))
 
     def installEventFilter(self, object):
         self.spinBox.installEventFilter(object)
