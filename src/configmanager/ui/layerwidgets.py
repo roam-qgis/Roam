@@ -91,6 +91,11 @@ class FormWidget(ui_formwidget.Ui_Form, WidgetBase):
         self.addWidgetButton.setMenu(menu)
         self.addWidgetButton.setPopupMode(QToolButton.MenuButtonPopup)
 
+        self.defaultLayerCombo.layerChanged.connect(self.default_layer_changed)
+
+    def default_layer_changed(self, layer):
+        self.defaultFieldCombo.setLayer(layer)
+
     def layer_updated(self, index):
         if not self.selected_layer:
             return
@@ -338,14 +343,24 @@ class FormWidget(ui_formwidget.Ui_Form, WidgetBase):
         self.readonlyCombo.setCurrentIndex(index)
 
         if not isinstance(default, dict):
+            self.defaultTab.setCurrentIndex(0)
             self.defaultvalueText.setText(default)
-            self.defaultvalueText.setEnabled(True)
-            self.expressionButton.setEnabled(True)
         else:
-            # TODO Handle the more advanced default values.
-            self.defaultvalueText.setText("Advanced default set in config")
-            self.defaultvalueText.setEnabled(False)
-            self.expressionButton.setEnabled(False)
+            self.defaultTab.setCurrentIndex(1)
+            layer = default['layer']
+            # TODO Handle the case of many layer fall though with defaults
+            # Not sure how to handle this in the UI just yet
+            if isinstance(layer, list):
+                layer = layer[0]
+
+            if isinstance(layer, basestring):
+                field = default['field']
+                expression = default['expression']
+                self.defaultValueExpression.setText(expression)
+                layer = roam.api.utils.layer_by_name(layer)
+                self.defaultLayerCombo.setLayer(layer)
+                self.defaultFieldCombo.setLayer(layer)
+                self.defaultFieldCombo.setField(field)
 
         self.nameText.setText(name)
         self.requiredCheck.setChecked(required)
@@ -414,6 +429,16 @@ class FormWidget(ui_formwidget.Ui_Form, WidgetBase):
         widgetdata = self._get_widget_config()
         self.widgetmodel.setData(index, widgetdata, Qt.UserRole)
 
+    def _get_default_config(self):
+        if self.defaultTab.currentIndex() == 0:
+            return self.defaultvalueText.text()
+        else:
+            default = {}
+            default['layer'] = self.defaultLayerCombo.currentLayer().name()
+            default['field'] = self.defaultFieldCombo.currentField()
+            default['expression'] = self.defaultValueExpression.text()
+            return default
+
     def _get_widget_config(self):
         def current_field():
             row = self.fieldList.currentIndex()
@@ -423,7 +448,7 @@ class FormWidget(ui_formwidget.Ui_Form, WidgetBase):
         configwidget, _, widgettype = self.current_config_widget
         widget = {}
         widget['field'] = current_field()
-        widget['default'] = self.defaultvalueText.text()
+        widget['default'] = self._get_default_config()
         widget['widget'] = widgettype
         widget['required'] = self.requiredCheck.isChecked()
         widget['rememberlastvalue'] = self.savevalueCheck.isChecked()
