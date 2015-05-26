@@ -505,13 +505,18 @@ class PointTool(TouchMapTool):
     def actions(self):
         return [self.captureaction, self.gpscapture]
 
+    def canvasPressEvent(self, event):
+        self.startpoint = event.pos()
+
     def canvasReleaseEvent(self, event):
         if self.pinching:
             return
 
         if self.dragging:
-            super(PointTool, self).canvasReleaseEvent(event)
-            return
+            diff = self.startpoint - event.pos()
+            if not abs(diff.x()) < 10 and not abs(diff.y()) < 10:
+                super(PointTool, self).canvasReleaseEvent(event)
+                return
 
         point = self.toMapCoordinates(event.pos())
         self.geometryComplete.emit(QgsGeometry.fromPoint(point))

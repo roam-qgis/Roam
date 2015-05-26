@@ -132,29 +132,7 @@ class FlickCharm(QObject):
                 consumed = True
                 data.state = FlickData.Steady
 
-        # elif data.state == FlickData.AutoScroll:
-        #     if eventType == QEvent.MouseButtonPress:
-        #         consumed = True
-        #         data.state = FlickData.Stop
-        #         data.speed = QPoint(0, 0)
-        #     elif eventType == QEvent.MouseButtonRelease:
-        #         consumed = True
-        #         data.state = FlickData.Steady
-        #         data.speed = QPoint(0, 0)
-
-        # elif data.state == FlickData.Stop:
-        #     if eventType == QEvent.MouseButtonRelease:
-        #         consumed = True
-        #         data.state = FlickData.Steady
-        #     elif eventType == QEvent.MouseMove:
-        #         consumed = True
-        #         data.state = FlickData.ManualScroll
-        #         data.dragPos = QCursor.pos()
-        #         if not self.d.ticker.isActive():
-        #             self.d.ticker.start(400, self)
-
         return consumed
-
 
     def timerEvent(self, event):
         count = 0
@@ -164,13 +142,6 @@ class FlickCharm(QObject):
                 cursorPos = QCursor.pos()
                 data.speed = cursorPos - data.dragPos
                 data.dragPos = cursorPos
-            # elif data.state == FlickData.AutoScroll:
-            #     count += 1
-            #     data.speed = deaccelerate(data.speed)
-            #     # p = scrollOffset(data.widget)
-            #     # setScrollOffset(data.widget, p - data.speed, data.pressPos)
-            #     if data.speed == QPoint(0, 0):
-            #         data.state = FlickData.Steady
 
         if count == 0:
             self.d.ticker.stop()
