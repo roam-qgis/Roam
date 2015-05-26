@@ -4,12 +4,14 @@ import roam.config
 
 
 def load(path):
-    print path
-    with open(path, 'r') as f:
-        settings = yaml.load(f)
-        if settings is None:
-            settings = {}
-        return settings
+    try:
+        with open(path, 'r') as f:
+            settings = yaml.load(f)
+            if settings is None:
+                settings = {}
+            return settings
+    except IOError:
+        return {}
 
 
 def syncprovders():
