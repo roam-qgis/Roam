@@ -220,6 +220,7 @@ if os.name is 'nt':
                              'msvcr80d.dll', 'msvcp80d.dll',
                              'powrprof.dll', 'mswsock.dll',
                              'w9xpopen.exe', 'MSVCP90.dll'],
+            # 'custom-boot-script': 'crash_handler.py',
             'excludes': ['PyQt4.uic.port_v3'],
             'includes': ['PyQt4.QtNetwork', 'sip', 'PyQt4.QtSql', 'sqlite3', "Queue", 'PyQt4.Qsci'],
             'skip_archive': True,

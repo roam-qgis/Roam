@@ -5,6 +5,7 @@ import getpass
 import traceback
 import os
 import sys
+import faulthandler
 
 
 from PyQt4.QtCore import Qt, QFileInfo, QDir, QSize

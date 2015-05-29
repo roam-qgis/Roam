@@ -7,6 +7,7 @@ The MainWindow object handles everything from there on in.
 import os
 import sys
 
+
 srcpath = os.path.dirname(os.path.realpath(sys.argv[0]))
 sys.path.append(srcpath)
 
@@ -19,8 +20,8 @@ if frozen:
     os.environ["GDAL_DRIVER_PATH"] = os.path.join(srcpath, 'libs')
     os.environ["GDAL_DATA"] = os.path.join(srcpath, 'libs', 'gdal')
 
-import roam.environ
 
+import roam.environ
 
 with roam.environ.setup(srcpath) as roamapp:
     import roam.config
@@ -38,7 +39,8 @@ with roam.environ.setup(srcpath) as roamapp:
     roamapp.setActiveWindow(window)
     roamapp.set_error_handler(window.raiseerror, roam.utils)
 
-    projectpaths = roam.environ.projectpaths(roamapp.projectsroot, roam.config.settings)
+    projectpaths = roam.environ.projectpaths(roamapp.projectsroot,
+                                             roam.config.settings)
     projects = roam.project.getProjects(projectpaths)
     window.loadprojects(projects)
     window.actionProject.toggle()
@@ -46,4 +48,3 @@ with roam.environ.setup(srcpath) as roamapp:
     pluginpath = os.path.join(roamapp.apppath, "plugins")
     roam.api.plugins.load_plugins_from([pluginpath])
     window.show()
-

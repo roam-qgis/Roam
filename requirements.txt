@@ -4,3 +4,4 @@ pytest
 pywin32==216
 pynmea2
 pyaml
+faulthandler

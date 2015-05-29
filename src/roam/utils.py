@@ -1,29 +1,32 @@
+import faulthandler
 import time
 import logging
 import os
-import inspect
 import sys
 import getpass
 
 from logging import handlers
 
 from PyQt4 import uic
-from PyQt4.QtGui import (QLabel, QDialog, QGridLayout, QLayout)
 
 try:
-   logpath = os.path.join(os.environ['ROAM_APPPATH'], 'log')
+    logpath = os.path.join(os.environ['ROAM_APPPATH'], 'log')
 except KeyError:
-   logpath = 'log' 
+    logpath = 'log'
 
 if not os.path.exists(logpath):
-   os.makedirs(logpath)
+    os.makedirs(logpath)
+
 LOG_FILENAME = os.path.join(logpath, "{}_roam.log".format(getpass.getuser()))
 log_format = '%(levelname)s - %(asctime)s - %(module)s-%(funcName)s:%(lineno)d - %(message)s'
 console_format = '%(levelname)s %(module)s-%(funcName)s:%(lineno)d - %(message)s'
 formater = logging.Formatter(log_format)
 console_formater = logging.Formatter(console_format)
 
-filehandler = handlers.RotatingFileHandler(LOG_FILENAME, mode='at', maxBytes=1000000, backupCount=5)
+filehandler = handlers.RotatingFileHandler(LOG_FILENAME,
+                                           mode='at',
+                                           maxBytes=1000000,
+                                           backupCount=5)
 filehandler.setLevel(logging.INFO)
 filehandler.setFormatter(formater)
 
@@ -38,7 +41,7 @@ logger.setLevel(logging.DEBUG)
 
 log = logger.debug
 debug = logger.debug
-info = logger.info 
+info = logger.info
 warning = logger.warning
 error = logger.error
 critical = logger.critical
@@ -46,6 +49,18 @@ exception = logger.exception
 
 uic.uiparser.logger.setLevel(logging.INFO)
 uic.properties.logger.setLevel(logging.INFO)
+
+
+# class CrashHandler(file):
+#     def write(self, msg):
+#         super(CrashHandler, self).write(msg)
+#         from PyQt4.QtGui import QApplication, QMessageBox
+#         app = QApplication()
+#         QMessageBox.critical(None, "Error", "Ouch!")
+#         app.exec_()
+
+
+faulthandler.enable(file=open(os.path.join(logpath, "crashlog.log"), 'w'))
 
 
 class Timer():
@@ -63,16 +78,16 @@ class Timer():
 
 def timeit(method):
     def wrapper(*args, **kwargs):
-        ts = time.time ()
+        ts = time.time()
         result = method(*args, **kwargs)
-        th = time.time ()
+        th = time.time()
 
-        message = "%r %2.2f seconds " % (method.__name__, th-ts)
+        message = "%r %2.2f seconds " % (method.__name__, th - ts)
         info(message)
         return result
+
     return wrapper
 
 
 def _pluralstring(text='', num=0):
-    return "%d %s%s" % (num, text, "s"[num==1:])
-
+    return "%d %s%s" % (num, text, "s" [num == 1:])
