@@ -437,6 +437,7 @@ class FormWidget(ui_formwidget.Ui_Form, WidgetBase):
             default['layer'] = self.defaultLayerCombo.currentLayer().name()
             default['field'] = self.defaultFieldCombo.currentField()
             default['expression'] = self.defaultValueExpression.text()
+            default['type'] = 'layer-value'
             return default
 
     def _get_widget_config(self):
