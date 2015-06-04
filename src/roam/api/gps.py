@@ -111,7 +111,7 @@ class GPSService(QObject):
         except AttributeError as er:
             log(er.message)
             return
-        
+
         mappings = {"RMC": self.extract_rmc,
                     "GGA": self.extract_gga,
                     "GSV": self.extract_gsv,
@@ -121,8 +121,9 @@ class GPSService(QObject):
             mappings[data.sentence_type](data)
             self.gpsStateChanged(self.info)
         except KeyError:
-            info("{} message not currently handled".format(data.sentence_type))
-            pass
+            return
+        except AttributeError:
+            return
 
     def extract_vtg(self, data):
         self.info.speed = safe_float(data.spd_over_grnd_kmph)
