@@ -19,8 +19,6 @@ class _Events(QObject):
     openfeatureform = pyqtSignal(object, QgsFeature, bool, bool, object)
     deletefeature = pyqtSignal(object, QgsFeature)
 
-    snappingChanged = pyqtSignal(bool)
-
     def delete_feature(self, form, feature):
         self.deletefeature.emit(form, feature)
 
