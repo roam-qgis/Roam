@@ -94,6 +94,9 @@ class ScribbleArea(QWidget):
         newImage = QtGui.QImage(self.size(), QtGui.QImage.Format_RGB32)
         newImage.fill(QtGui.qRgb(255, 255, 255))
         self.image = newImage
+        self.render_userimage()
+
+    def render_userimage(self):
         if self.userimage:
             self.addMap(self.userimage)
 
@@ -112,8 +115,6 @@ class ScribbleArea(QWidget):
     @pixmap.setter
     def pixmap(self, value):
         self.userimage = value
-        #if value:
-        #    self.addMap(value)
 
     def isModified(self):
         return self.modified
