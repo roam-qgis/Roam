@@ -191,8 +191,7 @@ class FeatureFormBase(QWidget):
             field = field.lower()
 
             if field in self.boundwidgets:
-                utils.warning("Sorry you can't bind the same field ({}) twice.".format(field))
-                utils.warning("{} for field {} has been ignored in setup".format(widget, field))
+                utils.warning("Can't bind the same field ({}) twice.".format(field))
                 continue
 
             widget = self.findcontrol(field)
