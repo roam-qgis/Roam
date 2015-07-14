@@ -381,6 +381,20 @@ class MainWindow(ui_mainwindow.Ui_MainWindow, QMainWindow):
             RoamEvents.raisemessage(*ex.error)
 
         featureform.featuredeleted(feature)
+        self.show_undo("Feature deleted", "Undo Delete", form, feature)
+
+    def show_undo(self, title, message, form, feature):
+        item = roam.messagebaritems.UndoMessageItem(title, message, form, feature)
+        item.undo.connect(self.undo_delete)
+        self.bar.pushItem(item)
+
+    def undo_delete(self, form, feature):
+        # Add the feature back to the layer
+        self.bar.popWidget()
+        layer = form.QGISLayer
+        layer.startEditing()
+        layer.addFeature(feature)
+        layer.commitChanges()
 
     def search_for_projects(self):
         server = roam.config.settings.get('updateserver', '')

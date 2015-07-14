@@ -8,7 +8,7 @@ from PyQt4.QtGui import (QApplication,
                          QDialog,
                          QToolButton,
                          QFont)
-from PyQt4.QtCore import QEvent, QObject, Qt, QSize
+from PyQt4.QtCore import QEvent, QObject, Qt, QSize, pyqtSignal
 
 from qgis.gui import QgsMessageBarItem, QgsMessageBar
 
@@ -165,5 +165,19 @@ class MissingLayerItem(ClickableMessage):
         roam.htmlviewer.showHTMLReport(title='Missing Layers', html=html, parent=self.parent())
 
 
+class UndoMessageItem(ClickableMessage):
+    undo = pyqtSignal(object, object)
 
+    def __init__(self, title, message, form, feature, parent=None):
+        super(UndoMessageItem, self).__init__(parent=parent)
+        self.setLevel(QgsMessageBar.INFO)
+        self.setDuration(3)
+        self.setTitle(title)
+        self.button = QPushButton(message)
+        self.button.clicked.connect(self.showmessage)
+        self.layout().insertWidget(0, self.button)
+        self.form = form
+        self.feature = feature
 
+    def showmessage(self):
+        self.undo.emit(self.form, self.feature)
