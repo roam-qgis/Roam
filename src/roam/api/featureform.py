@@ -11,6 +11,7 @@ from PyQt4 import uic
 from PyQt4.QtCore import pyqtSignal, QObject, QSize, QEvent, QProcess, Qt, QPyNullVariant, QRegExp
 from PyQt4.QtGui import (QWidget,
                          QDialogButtonBox,
+                         QStackedWidget,
                          QStatusBar,
                          QLabel,
                          QGridLayout,
@@ -25,8 +26,9 @@ from PyQt4.QtGui import (QWidget,
                          QFormLayout,
                          QSpinBox,
                          QDoubleSpinBox)
+from matplotlib.sphinxext.plot_directive import out_of_date
 
-from qgis.core import QgsFields, QgsFeature, QgsGPSConnectionRegistry
+from qgis.core import QgsFields, QgsFeature, QgsGPSConnectionRegistry, QGis, QgsGeometry, QgsPoint
 from qgis.gui import QgsMessageBar
 
 from roam.editorwidgets.core import EditorWidgetException
@@ -41,9 +43,40 @@ import roam.defaults as defaults
 import roam.roam_style
 import roam.utils
 
+from roam.ui.ui_geomwidget import Ui_GeomWidget
+
 values_file = os.path.join(tempfile.gettempdir(), "Roam")
 
 nullcheck = qgisutils.nullcheck
+
+
+class GeomWidget(Ui_GeomWidget, QStackedWidget):
+    def __init__(self, parent=None):
+        super(GeomWidget, self).__init__(parent)
+        self.setupUi(self)
+        self.geom = None
+        self.edited = False
+
+    def set_geometry(self, geom):
+        self.geom = geom
+        if self.geom.type() == QGis.Point:
+            self.setCurrentIndex(0)
+            point = geom.asPoint()
+            self.xedit.setText(str(point.x()))
+            self.yedit.setText(str(point.y()))
+            self.xedit.textChanged.connect(self.mark_edited)
+            self.yedit.textChanged.connect(self.mark_edited)
+        else:
+            self.setCurrentIndex(1)
+
+    def geometry(self):
+        if self.geom.type() == QGis.Point:
+            x = float(self.xedit.text())
+            y = float(self.yedit.text())
+            return QgsGeometry.fromPoint(QgsPoint(x, y))
+
+    def mark_edited(self):
+        self.edited = True
 
 
 def loadsavedvalues(layer):
@@ -83,6 +116,9 @@ def buildfromauto(formconfig, base):
     outlayout.setFieldGrowthPolicy(QFormLayout.AllNonFixedFieldsGrow)
     outwidget = base
     outwidget.setLayout(outlayout)
+    geomwidget = GeomWidget()
+    geomwidget.setObjectName("__geomwidget")
+    outlayout.addRow("Geometry", geomwidget)
     for config in widgetsconfig:
         widgettype = config['widget']
         field = config['field']
@@ -146,6 +182,7 @@ class FeatureFormBase(QWidget):
         self.boundwidgets = CaseInsensitiveDict()
         self.requiredfields = CaseInsensitiveDict()
         self.feature = feature
+        self.geomwidget = None
         self.defaults = defaults
         self.bindingvalues = CaseInsensitiveDict()
         self.editingmode = kwargs.get("editmode", False)
@@ -174,6 +211,8 @@ class FeatureFormBase(QWidget):
         """
         Setup the widget in the form
         """
+        self.geomwidget = self.findcontrol("__geomwidget")
+
         widgetsconfig = self.formconfig['widgets']
 
         layer = self.form.QGISLayer
@@ -260,6 +299,8 @@ class FeatureFormBase(QWidget):
                 utils.debug("Can't find control for field {}. Ignoring".format(field))
 
         self.validateall()
+        if self.geomwidget:
+            self.geomwidget.set_geometry(self.feature.geometry())
 
     def bind_feature(self, feature):
         self.feature = feature
@@ -590,6 +631,7 @@ class FeatureForm(FeatureFormBase):
         values, savedvalues = self.getvalues()
         save_images(values)
         updatefeautrefields(self.feature)
+        self.update_geometry()
         layer.startEditing()
         if self.editingmode:
             roam.utils.info("Updating feature {}".format(self.feature.id()))
@@ -607,6 +649,12 @@ class FeatureForm(FeatureFormBase):
             raise FeatureSaveException.not_saved(errors)
 
         self.featuresaved(self.feature, values)
+
+    def update_geometry(self):
+        if self.geomwidget and self.geomwidget.edited:
+            print "Edited geometry"
+            geometry = self.geomwidget.geometry()
+            self.feature.setGeometry(geometry)
 
     def delete(self):
         """
