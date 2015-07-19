@@ -613,6 +613,10 @@ class MainWindow(ui_mainwindow.Ui_MainWindow, QMainWindow):
         self.projectOpened()
         GPS.crs = crs
 
+    @property
+    def enabled_plugins(self):
+        return self.settings.get('plugins', [])
+
     @roam.utils.timeit
     def projectOpened(self):
         """
@@ -669,7 +673,8 @@ class MainWindow(ui_mainwindow.Ui_MainWindow, QMainWindow):
             # Remove the page widget, because we make it on each load
             widget = self.stackedWidget.widget(action.property("page"))
             self.stackedWidget.removeWidget(widget)
-            widget.deleteLater()
+            if widget:
+                widget.deleteLater()
 
             self.menutoolbar.removeAction(action)
         self.pluginactions = []
