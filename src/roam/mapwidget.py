@@ -10,7 +10,7 @@ from PyQt4.QtGui import QActionGroup, QFrame, QWidget, QSizePolicy, \
 from PyQt4.QtSvg import QGraphicsSvgItem
 
 from qgis.gui import QgsMapCanvas, QgsMapToolZoom, QgsRubberBand, QgsMapCanvasItem, QgsScaleComboBox
-from qgis.core import QgsPalLabeling, QgsMapLayerRegistry, QgsMapLayer, QgsFeature, QGis, QgsRectangle, QgsProject, QgsApplication, QgsComposerScaleBar, \
+from qgis.core import QgsPalLabeling, QgsMapLayerRegistry, QgsMapLayer, QGis, QgsRectangle, QgsProject, QgsApplication, QgsComposerScaleBar, \
                       QgsCoordinateReferenceSystem, QgsCoordinateTransform, QgsPoint, QgsCsException, QgsDistanceArea
 
 from roam.gps_action import GPSAction, GPSMarker
@@ -666,20 +666,7 @@ class MapWidget(Ui_CanvasWidget, QMainWindow):
         except IndexError:
             pass
 
-        layer = form.QGISLayer
-        fields = layer.pendingFields()
-
-        feature = QgsFeature(fields)
-        feature.setGeometry(geometry)
-
-        for index in xrange(fields.count()):
-            pkindexes = layer.dataProvider().pkAttributeIndexes()
-            if index in pkindexes and layer.dataProvider().name() == 'spatialite':
-                continue
-
-            value = layer.dataProvider().defaultValue(index)
-            feature[index] = value
-
+        feature = form.new_feature(geometry=geometry)
         RoamEvents.load_feature_form(form, feature, editmode=False)
 
     def editfeaturegeometry(self, form, feature, newgeometry):

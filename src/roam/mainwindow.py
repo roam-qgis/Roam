@@ -520,27 +520,6 @@ class MainWindow(ui_mainwindow.Ui_MainWindow, QMainWindow):
         self.canvas.refresh()
         RoamEvents.editgeometry_complete.emit(form, feature)
 
-    def addNewFeature(self, form, geometry):
-        """
-        Add a new new feature to the given layer
-        """
-        layer = form.QGISLayer
-
-        if layer.geometryType() in [QGis.WKBMultiLineString, QGis.WKBMultiPoint, QGis.WKBMultiPolygon]:
-            geometry.convertToMultiType()
-
-        try:
-            # TODO: This is a gross hack. We need to move this out into a edit tool with better control.
-            form, feature = self.editfeaturestack.pop()
-            self.editfeaturegeometry(form, feature, newgeometry=geometry)
-            return
-        except IndexError:
-            pass
-
-        feature = form.new_feature(set_defaults=True)
-        feature.setGeometry(geometry)
-        self.openForm(form, feature, editmode=False)
-
     def exit(self):
         """
         Exit the application.
