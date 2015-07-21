@@ -174,7 +174,7 @@ class ProjectsWidget(Ui_ListModules, QWidget):
         for project, item in self.projectitems.iteritems():
             widget = self.item_widget(item)
             project = widget.project
-            if currentproject:
+            if currentproject and not isinstance(project, dict):
                 showclose = currentproject.basefolder == project.basefolder
             else:
                 showclose = False
