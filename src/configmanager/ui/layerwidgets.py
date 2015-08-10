@@ -615,16 +615,44 @@ class LayerWidget(ui_layernode.Ui_Form, WidgetBase):
     def set_project(self, project, node):
         super(LayerWidget, self).set_project(project, node)
         self.layer = node.layer
+        forms = self.project.forms
+        self.inspection_form_combo.clear()
+        self.inspection_form_combo.clear()
+        for form in forms:
+            self.inspection_form_combo.addItem(form.name)
         tools = self.project.layer_tools(self.layer)
         delete = 'delete' in tools
         capture = 'capture' in tools
         edit_attr = 'edit_attributes' in tools
         edit_geom = 'edit_geom' in tools
+        inspection = 'inspection' in tools
         self.capture_check.setChecked(capture)
         self.delete_check.setChecked(delete)
         self.editattr_check.setChecked(edit_attr)
         self.editgeom_check.setChecked(edit_geom)
+        self.inspection_check.setChecked(inspection)
         self.datasouce_label.setText(self.layer.publicSource())
+
+        if inspection:
+            config = tools['inspection']
+            formindex = self.inspection_form_combo.findText(config['form'])
+            self.inspection_form_combo.setCurrentIndex(formindex)
+            for key, value in config['field_mapping'].iteritems():
+                self.inspection_fieldmappings.appendPlainText("{}, {}".format(key, value))
+        else:
+            self.inspection_form_combo.setCurrentIndex(0)
+            self.inspection_fieldmappings.setPlainText("")
+
+
+    def inspection_mappings(self):
+        if not self.inspection_fieldmappings.toPlainText():
+            return {}
+        text = self.inspection_fieldmappings.toPlainText().split('\n')
+        mappings = {}
+        for line in text:
+            field1, field2 = line.split(',')
+            mappings[field1] = field2.strip()
+        return mappings
 
     def write_config(self):
         config = self.project.settings.setdefault('selectlayerconfig', {})
@@ -634,15 +662,25 @@ class LayerWidget(ui_layernode.Ui_Form, WidgetBase):
         delete = self.delete_check.isChecked()
         editattr = self.editattr_check.isChecked()
         editgoem = self.editgeom_check.isChecked()
+        inspection = self.inspection_check.isChecked()
         tools = []
+
         if capture:
             tools.append("capture")
         if delete:
             tools.append("delete")
-        if editattr:
+        if editattr and not inspection:
+            # Inspection tool will override the edit button so you can't have both
             tools.append("edit_attributes")
         if editgoem:
             tools.append("edit_geom")
+        if inspection:
+            inspectionitem = dict(inspection=dict(
+                mode="Copy",
+                form=self.inspection_form_combo.currentText(),
+                field_mapping= self.inspection_mappings()
+            ))
+            tools.append(inspectionitem)
 
         infoconfig['tools'] = tools
 
