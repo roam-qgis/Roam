@@ -1,3 +1,4 @@
 PIL
 pynmea2
 pyaml
+faulthandler
