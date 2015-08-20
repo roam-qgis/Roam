@@ -6,6 +6,8 @@ from PyQt4.QtCore import Qt, QObject, pyqtSignal, QThread, QEvent
 from PyQt4.QtGui import QWidget, QGridLayout, QLabel, QListWidgetItem, QStyledItemDelegate, QFontMetricsF, QTextOption
 from PyQt4.uic import loadUiType
 
+from qgis.core import QgsMapLayer
+
 import roam.api.utils
 from roam.flickwidget import FlickCharm
 from roam.api.events import RoamEvents
@@ -39,7 +41,7 @@ def make_rank_func(weights):
 class IndexBuilder(QObject):
     indexBuilt = pyqtSignal(object, float)
     finished = pyqtSignal()
-    
+
     def __init__(self, indexpath, indexconfig):
         super(IndexBuilder, self).__init__()
         self.indexpath = indexpath
@@ -65,22 +67,40 @@ class IndexBuilder(QObject):
         c.execute("CREATE VIRTUAL TABLE search USING fts4({})".format(columns))
 
         def get_features():
-            count = 0
+            rowid = 0
             for layername, config in self.indexconfig.iteritems():
-                layer = roam.api.utils.layer_by_name(layername)
-                for feature in layer.getFeatures():
-                    data = {}
-                    for field in config['columns']:
-                        try:
-                            value = str(feature[field])
-                        except KeyError:
-                            continue
-                        data[field] = "{}: {}".format(field, value)
-                    if not data:
-                        continue
-                    fid = feature.id()
-                    yield count, layer.name(), fid, data
-                    count += 1
+                if layername == "_all":
+                    layers = roam.api.utils.layers(layertype=QgsMapLayer.VectorLayer)
+                    print layers
+                    for layer in layers:
+                        for count, layer, fid, data in get_data(layer, config, rowid):
+                            rowid = count
+                            yield count, layer, fid, data
+                else:
+                    layer = roam.api.utils.layer_by_name(layername)
+                    for count, layer, fid, data in get_data(layer, config, rowid):
+                        rowid = count
+                        yield count, layer, fid, data
+
+        def get_data(layer, config, rowid):
+            layerfields = [field.name() for field in layer.pendingFields()]
+            configfields = config['columns']
+            # Pull out the fields that match on the layer and the config:
+            fields = set(layerfields) & set(configfields)
+
+            if not fields:
+                return
+
+            for feature in layer.getFeatures():
+                data = {}
+                for field in fields:
+                    value = str(feature[field])
+                    data[field] = "{}: {}".format(field, value)
+                if not data:
+                    continue
+                fid = feature.id()
+                rowid += 1
+                yield rowid, layer.name(), fid, data
 
         start = time.time()
         for row in get_features():
@@ -223,4 +243,3 @@ class SearchPlugin(widget, base, Page):
         layer.removeSelection()
         self.api.mainwindow.showmap()
         RoamEvents.selectionchanged.emit({layer: [feature]})
-

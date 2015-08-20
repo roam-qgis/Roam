@@ -2,7 +2,7 @@ import sys
 import os
 import subprocess
 from contextlib import contextmanager
-from qgis.core import QgsMapLayerRegistry, QgsFeatureRequest, QgsGeometry
+from qgis.core import QgsMapLayerRegistry, QgsFeatureRequest, QgsGeometry, QgsMapLayer
 from qgis.gui import QgsMessageBar
 from PyQt4.QtCore import QPyNullVariant
 from roam.structs import CaseInsensitiveDict
@@ -44,8 +44,13 @@ def open_keyboard():
         cmd = 'onboard'
         subprocess.Popen(cmd)
 
-def layers():
-    return QgsMapLayerRegistry.instance().mapLayers().values()
+def layers(layertype=None):
+    _layers = QgsMapLayerRegistry.instance().mapLayers().values()
+    if layertype is None:
+        return _layers
+    else:
+        return [layer for layer in _layers if layer.type() == layertype]
+
 
 def layer_by_name(name):
     """
