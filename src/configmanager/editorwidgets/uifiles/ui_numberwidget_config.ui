@@ -67,6 +67,23 @@
    <item row="6" column="1">
     <widget class="QSpinBox" name="places_spin"/>
    </item>
+   <item row="8" column="0">
+    <widget class="QLabel" name="places_label_2">
+     <property name="text">
+      <string>Step</string>
+     </property>
+    </widget>
+   </item>
+   <item row="8" column="1">
+    <widget class="QSpinBox" name="step_spin">
+     <property name="maximum">
+      <number>999999999</number>
+     </property>
+     <property name="value">
+      <number>1</number>
+     </property>
+    </widget>
+   </item>
   </layout>
  </widget>
  <resources/>

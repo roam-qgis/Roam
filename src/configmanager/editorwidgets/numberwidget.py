@@ -28,6 +28,7 @@ class NumberWidgetConfig(Ui_Form, ConfigWidget):
         config['min'] = self.minEdit.text()
         config['prefix'] = self.prefixEdit.text()
         config['suffix'] = self.suffixEdit.text()
+        config['step'] = self.step_spin.value()
         return config
 
     def setconfig(self, config):
@@ -36,9 +37,11 @@ class NumberWidgetConfig(Ui_Form, ConfigWidget):
         min = config.get('min', '')
         prefix = config.get('prefix', '')
         suffix = config.get('suffix', '')
+        step = config.get('step', 1)
         self.minEdit.setText(min)
         self.maxEdit.setText(max)
         self.prefixEdit.setText(prefix)
+        self.step_spin.setValue(int(step))
         self.suffixEdit.setText(suffix)
         self.blockSignals(False)
 
