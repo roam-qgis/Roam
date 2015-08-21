@@ -10,7 +10,7 @@ REM ----------------------------------------------------------------------------
 
 pushd %~dp0
 
-SET QGISNAME=qgis
+SET QGISNAME=qgis-ltr
 call scripts/setenv.bat
 
 >package.log (

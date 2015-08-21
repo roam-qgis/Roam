@@ -2,6 +2,7 @@
 .coverage
 .deps
 .noseids
+projects/
 cover/
 *.log
 *.pyc
