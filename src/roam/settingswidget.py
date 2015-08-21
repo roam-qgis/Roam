@@ -144,7 +144,7 @@ class SettingsWidget(Ui_settingsWidget, QWidget):
         fullscreen = self.settings.get("fullscreen", False)
         gpszoom = self.settings.get('gpszoomonfix', True)
         gpscenter = self.settings.get('gpscenter', True)
-        gpslogging = self.settings.get('gpslogging', True)
+        gpslogging = self.settings.get('gpslogging', False)
         keyboard = self.settings.get('keyboard', True)
         updateserver = self.settings.get('updateserver', None)
         distance = self.settings.get('draw_distance', True)
