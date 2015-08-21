@@ -10,7 +10,7 @@ REM ----------------------------------------------------------------------------
 
 pushd %~dp0
 
-call scripts/setenv.bat
+call scripts/setenv.bat qgis
 
 >package.log (
 	make package
