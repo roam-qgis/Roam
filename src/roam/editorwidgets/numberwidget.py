@@ -80,6 +80,7 @@ class NumberWidget(EditorWidget):
             min = int(min)
         except ValueError:
             min = -sys.maxint - 1
+
         return max, min
 
     def _setwidgetvalues(self, min, max, prefix, suffix, step):
@@ -128,9 +129,10 @@ class DoubleNumberWidget(NumberWidget):
         try:
             min = float(min)
         except ValueError:
-            min = sys.float_info.min
-        print max, min
+            min = -sys.float_info.min - 1
+
         return max, min
+
 
     def setvalue(self, value):
         if not value:
