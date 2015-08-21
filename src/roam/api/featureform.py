@@ -298,7 +298,7 @@ class FeatureFormBase(QWidget):
                 utils.debug("Can't find control for field {}. Ignoring".format(field))
 
         self.validateall()
-        if self.geomwidget:
+        if self.geomwidget and self.feature:
             self.geomwidget.set_geometry(self.feature.geometry())
 
     def bind_feature(self, feature):
