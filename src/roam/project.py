@@ -23,6 +23,7 @@ from roam.structs import OrderedDictYAMLLoader
 from roam.dataaccess.database import Database
 from roam.structs import CaseInsensitiveDict
 
+import roam.qgisfunctions
 import roam.utils
 import roam
 import roam.maptools
@@ -370,6 +371,9 @@ class Form(object):
         :param feature: The feature that can be used for default values
         :return: A dict of default values for the form
         """
+        # One capture geometry, even for sub forms?
+        # HACK Remove me and do something smarter
+        roam.qgisfunctions.capturegeometry = feature.geometry()
         defaultwidgets = self.widgetswithdefaults()
         defaultvalues = defaults.default_values(defaultwidgets, feature, self.QGISLayer)
         return defaultvalues

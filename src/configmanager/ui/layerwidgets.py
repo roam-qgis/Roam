@@ -354,13 +354,13 @@ class FormWidget(ui_formwidget.Ui_Form, WidgetBase):
                 layer = layer[0]
 
             if isinstance(layer, basestring):
-                field = default['field']
+                defaultfield = default['field']
                 expression = default['expression']
                 self.defaultValueExpression.setText(expression)
                 layer = roam.api.utils.layer_by_name(layer)
                 self.defaultLayerCombo.setLayer(layer)
                 self.defaultFieldCombo.setLayer(layer)
-                self.defaultFieldCombo.setField(field)
+                self.defaultFieldCombo.setField(defaultfield)
 
         self.nameText.setText(name)
         self.requiredCheck.setChecked(required)

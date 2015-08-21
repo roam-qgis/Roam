@@ -15,7 +15,6 @@ from roam.api import featureform, RoamEvents
 from roam.ui.uifiles import dataentry_widget, dataentry_base
 from roam.structs import CaseInsensitiveDict
 
-import roam.qgisfunctions
 import roam.defaults as defaults
 import roam.editorwidgets.core
 
@@ -114,10 +113,6 @@ class DataEntryWidget(dataentry_widget, dataentry_base):
         if clear:
             # Clear all the other open widgets that might be open.
             self.clear(dontemit=True)
-
-        # One capture geometry, even for sub forms?
-        # HACK Remove me and do something smarter
-        roam.qgisfunctions.capturegeometry = feature.geometry()
 
         layer = form.QGISLayer
         attributes = feature.attributes()
