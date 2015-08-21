@@ -1,6 +1,6 @@
 from PyQt4.QtCore import pyqtSignal, QThread, QObject
 from PyQt4.QtGui import QWidget
-from qgis.core import QgsGPSDetector, QGis
+from qgis.core import QgsGPSDetector, QGis, QgsProviderRegistry
 
 import roam
 import roam.utils as utils
@@ -181,3 +181,5 @@ class SettingsWidget(Ui_settingsWidget, QWidget):
 
         self.versionLabel.setText(roam.__version__)
         self.qgisapiLabel.setText(str(QGis.QGIS_VERSION))
+        ecwsupport = 'ecw' in QgsProviderRegistry.instance().fileRasterFilters()
+        self.ecwlabel.setText("Yes" if ecwsupport else "No")
