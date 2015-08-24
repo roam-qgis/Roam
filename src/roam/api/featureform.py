@@ -41,6 +41,7 @@ import roam.editorwidgets.core
 import roam.defaults as defaults
 import roam.roam_style
 import roam.utils
+import roam.config
 
 from roam.ui.ui_geomwidget import Ui_GeomWidget
 
@@ -115,9 +116,10 @@ def buildfromauto(formconfig, base):
     outlayout.setFieldGrowthPolicy(QFormLayout.AllNonFixedFieldsGrow)
     outwidget = base
     outwidget.setLayout(outlayout)
-    geomwidget = GeomWidget()
-    geomwidget.setObjectName("__geomwidget")
-    outlayout.addRow("Geometry", geomwidget)
+    if roam.config.settings.get("form_geom_edit", False):
+        geomwidget = GeomWidget()
+        geomwidget.setObjectName("__geomwidget")
+        outlayout.addRow("Geometry", geomwidget)
     for config in widgetsconfig:
         widgettype = config['widget']
         field = config['field']
