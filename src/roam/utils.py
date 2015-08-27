@@ -50,16 +50,6 @@ exception = logger.exception
 uic.uiparser.logger.setLevel(logging.INFO)
 uic.properties.logger.setLevel(logging.INFO)
 
-
-# class CrashHandler(file):
-#     def write(self, msg):
-#         super(CrashHandler, self).write(msg)
-#         from PyQt4.QtGui import QApplication, QMessageBox
-#         app = QApplication()
-#         QMessageBox.critical(None, "Error", "Ouch!")
-#         app.exec_()
-
-
 faulthandler.enable(file=open(os.path.join(logpath, "crashlog.log"), 'w'))
 
 

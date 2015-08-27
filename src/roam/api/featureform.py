@@ -58,6 +58,9 @@ class GeomWidget(Ui_GeomWidget, QStackedWidget):
         self.edited = False
 
     def set_geometry(self, geom):
+        if not geom:
+            return
+
         self.geom = geom
         if self.geom.type() == QGis.Point:
             self.setCurrentIndex(0)
