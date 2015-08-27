@@ -3,15 +3,17 @@ from functools import partial
 from collections import defaultdict
 
 from PyQt4.QtCore import Qt, pyqtSignal, QSize, QPropertyAnimation, QObject, pyqtProperty, QEasingCurve, QThread, \
-                         QRectF, QLocale, QPointF, QPoint
+    QRectF, QLocale, QPointF, QPoint
 from PyQt4.QtGui import QActionGroup, QFrame, QWidget, QSizePolicy, \
-                        QAction, QPixmap, QCursor, QIcon, QColor, QMainWindow, QPen, QGraphicsItem, QPolygon, QFont, QFontMetrics, QBrush, QPainterPath, QPainter
+    QAction, QPixmap, QCursor, QIcon, QColor, QMainWindow, QPen, QGraphicsItem, QPolygon, QFont, QFontMetrics, QBrush, \
+    QPainterPath, QPainter
 
 from PyQt4.QtSvg import QGraphicsSvgItem
 
 from qgis.gui import QgsMapCanvas, QgsMapToolZoom, QgsRubberBand, QgsMapCanvasItem, QgsScaleComboBox
-from qgis.core import QgsPalLabeling, QgsMapLayerRegistry, QgsMapLayer, QGis, QgsRectangle, QgsProject, QgsApplication, QgsComposerScaleBar, \
-                      QgsCoordinateReferenceSystem, QgsCoordinateTransform, QgsPoint, QgsCsException, QgsDistanceArea
+from qgis.core import QgsPalLabeling, QgsMapLayerRegistry, QgsMapLayer, QGis, QgsRectangle, QgsProject, QgsApplication, \
+    QgsComposerScaleBar, \
+    QgsCoordinateReferenceSystem, QgsCoordinateTransform, QgsPoint, QgsCsException, QgsDistanceArea
 
 from roam.gps_action import GPSAction, GPSMarker
 from roam.projectparser import ProjectParser
@@ -26,9 +28,11 @@ import roam_style
 
 try:
     from qgis.gui import QgsMapToolTouch
+
     PanTool = TouchMapTool
 except ImportError:
     from qgis.gui import QgsMapToolPan
+
     PanTool = QgsMapToolPan
 
 
@@ -36,7 +40,7 @@ class NorthArrow(QGraphicsSvgItem):
     def __init__(self, path, canvas, parent=None):
         super(NorthArrow, self).__init__(path, parent)
         self.canvas = canvas
-        self.setTransformOriginPoint(self.boundingRect().width() /2, self.boundingRect().height() /2)
+        self.setTransformOriginPoint(self.boundingRect().width() / 2, self.boundingRect().height() / 2)
 
     def paint(self, painter, styleoptions, widget=None):
         angle = self._calc_north()
@@ -131,7 +135,7 @@ class ScaleBarItem(QGraphicsItem):
         x1, y1 = originx, originy
         x2, y2 = originx, originy + self.ticksize
         x3, y3 = originx + width, originy + self.ticksize
-        midx, midy = originx + width /2, originy + self.ticksize / 2
+        midx, midy = originx + width / 2, originy + self.ticksize / 2
         x4, y4 = originx + width, originy
 
         for pen in self.pens:
@@ -247,6 +251,7 @@ class CurrentSelection(QgsRubberBand):
     """
     Position marker for the current location in the viewer.
     """
+
     class AniObject(QObject):
         def __init__(self, band):
             super(CurrentSelection.AniObject, self).__init__()
@@ -294,6 +299,7 @@ class CurrentSelection(QgsRubberBand):
     def setColor(self, color):
         self.aniobject.color = color
         super(CurrentSelection, self).setColor(color)
+
 
 from ui.ui_mapwidget import Ui_CanvasWidget
 
@@ -352,7 +358,7 @@ class MapWidget(Ui_CanvasWidget, QMainWindow):
 
         self.projecttoolbar.setContextMenuPolicy(Qt.CustomContextMenu)
 
-        gpsspacewidget= QWidget()
+        gpsspacewidget = QWidget()
         gpsspacewidget.setMinimumWidth(30)
         gpsspacewidget.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
 
@@ -396,9 +402,9 @@ class MapWidget(Ui_CanvasWidget, QMainWindow):
         self.canvas.mapRenderer().readXML(canvasnode)
         self.canvaslayers = parser.canvaslayers()
         self.canvas.setLayerSet(self.canvaslayers)
-        red = QgsProject.instance().readNumEntry( "Gui", "/CanvasColorRedPart", 255 )[0]
-        green = QgsProject.instance().readNumEntry( "Gui", "/CanvasColorGreenPart", 255 )[0]
-        blue = QgsProject.instance().readNumEntry( "Gui", "/CanvasColorBluePart", 255 )[0]
+        red = QgsProject.instance().readNumEntry("Gui", "/CanvasColorRedPart", 255)[0]
+        green = QgsProject.instance().readNumEntry("Gui", "/CanvasColorGreenPart", 255)[0]
+        blue = QgsProject.instance().readNumEntry("Gui", "/CanvasColorBluePart", 255)[0]
         color = QColor(red, green, blue)
         self.canvas.setCanvasColor(color)
         self.canvas.updateScale()
@@ -581,7 +587,7 @@ class MapWidget(Ui_CanvasWidget, QMainWindow):
 
         def cursor(name):
             pix = QPixmap(name)
-            pix = pix.scaled(QSize(24,24))
+            pix = pix.scaled(QSize(24, 24))
             return QCursor(pix)
 
         self.zoomInTool = QgsMapToolZoom(self.canvas, False)
@@ -610,6 +616,12 @@ class MapWidget(Ui_CanvasWidget, QMainWindow):
         self.canvas.refresh()
 
     def form_valid_for_capture(self, form):
+        if not form.has_geometry:
+            extra = "No geometry information found for the layer {}.  Layer might not have loaded correctly".format(
+                form.layername)
+            RoamEvents.raisemessage("Invalid form", "Form {} layer could not be loaded".format(form.name), level=1,
+                                    extra=extra)
+
         return form.has_geometry and self.project.layer_can_capture(form.QGISLayer)
 
     def first_capture_form(self):
@@ -700,13 +712,13 @@ class MapWidget(Ui_CanvasWidget, QMainWindow):
         if not self.canvaslayers:
             return
 
-        #Freeze the canvas to save on UI refresh
+        # Freeze the canvas to save on UI refresh
         self.canvas.freeze()
         for layer in self.canvaslayers:
             if layer.layer().type() == QgsMapLayer.RasterLayer:
                 layer.setVisible(not layer.isVisible())
                 # Really!? We have to reload the whole layer set every time?
-            # WAT?
+                # WAT?
         self.canvas.setLayerSet(self.canvaslayers)
         self.canvas.freeze(False)
         self.canvas.refresh()

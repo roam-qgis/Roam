@@ -380,6 +380,9 @@ class Form(object):
 
     @property
     def has_geometry(self):
+        if not self.QGISLayer:
+            return False
+
         geomtype = self.QGISLayer.geometryType()
         return geomtype in supportedgeometry
 
