@@ -10,7 +10,7 @@ REM Change %OSGEO4W_ROOT% in setenv.bat to change in the location of QGIS.
 REM ---------------------------------------------------------------------------------------
 
 
-CALL setenv.bat
+CALL ..\setenv.bat
 
 SET PYCHARM="C:\Program Files (x86)\JetBrains\PyCharm 3.0\bin\pycharm.exe"
 
