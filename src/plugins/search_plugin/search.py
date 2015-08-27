@@ -77,7 +77,10 @@ class IndexBuilder(QObject):
                             rowid = count
                             yield count, layer, fid, data
                 else:
-                    layer = roam.api.utils.layer_by_name(layername)
+                    try:
+                        layer = roam.api.utils.layer_by_name(layername)
+                    except IndexError:
+                        continue
                     for count, layer, fid, data in get_data(layer, config, rowid):
                         rowid = count
                         yield count, layer, fid, data
