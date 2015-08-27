@@ -346,7 +346,9 @@ class Form(object):
         layer = self.QGISLayer
         fields = layer.pendingFields()
         feature = QgsFeature(fields)
-        feature.setGeometry(geometry)
+        if geometry:
+            feature.setGeometry(geometry)
+
         if set_defaults:
             for index in xrange(fields.count()):
                 pkindexes = layer.dataProvider().pkAttributeIndexes()
