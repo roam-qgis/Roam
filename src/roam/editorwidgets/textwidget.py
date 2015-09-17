@@ -17,6 +17,9 @@ class TextWidget(EditorWidget):
     def initWidget(self, widget):
         widget.textChanged.connect(self.emitvaluechanged)
         widget.installEventFilter(self)
+        length = self.field.length()
+        if length > 0:
+            widget.setMaxLength(length)
 
     def eventFilter(self, object, event):
         # Hack I really don't like this but there doesn't seem to be a better way at the
@@ -56,3 +59,21 @@ class TextBlockWidget(TextWidget):
 
     def createWidget(self, parent):
         return QPlainTextEdit(parent)
+
+    def limit_text(self, text):
+        limit = self.field.length()
+        if limit > 0 and text > limit:
+            text = text[:limit]
+            self.setPlainText(text)
+
+            cursor = self.widget.textCursor()
+            cursor.setPosition(self.widget.document().characterCount() - 1)
+            self.widget.setTextCursor(cursor)
+
+        self.emitvaluechanged(self.widget.toPlainText())
+
+    def initWidget(self, widget):
+        widget.textChanged.connect(self.limit_text)
+        widget.installEventFilter(self)
+        length = self.field.length()
+        widget.setMaxLength(length)
