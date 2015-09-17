@@ -206,10 +206,14 @@ class ProjectUpdater(QObject):
 
     def __init__(self, server=None, projects_base=''):
         super(ProjectUpdater, self).__init__()
+        self.updatethread = None
         self.server = server
         self.net = QNetworkAccessManager()
         self.projects_base = projects_base
         self.create_worker()
+
+    def quit(self):
+        self.updatethread.quit()
 
     def create_worker(self):
         self.updatethread = QThread()

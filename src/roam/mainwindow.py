@@ -524,6 +524,7 @@ class MainWindow(ui_mainwindow.Ui_MainWindow, QMainWindow):
         """
         Exit the application.
         """
+        self.projectupdater.quit()
         self.close()
 
     def showInfoResults(self, results):
