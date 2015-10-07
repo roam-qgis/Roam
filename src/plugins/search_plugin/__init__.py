@@ -6,7 +6,7 @@ Install into roam install\plugins\search_plugin
 Add the following config to project.config
 
 plugins:
- - search_pluing
+ - search_plugin
 
 search:
     layer2:
