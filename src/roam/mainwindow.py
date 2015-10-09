@@ -398,7 +398,6 @@ class MainWindow(ui_mainwindow.Ui_MainWindow, QMainWindow):
 
     def search_for_projects(self):
         server = roam.config.settings.get('updateserver', '')
-        print server
         self.projectupdater.update_server(server, self.projects)
 
     def settingsupdated(self, settings):

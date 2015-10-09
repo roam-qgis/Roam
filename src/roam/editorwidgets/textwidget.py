@@ -60,20 +60,21 @@ class TextBlockWidget(TextWidget):
     def createWidget(self, parent):
         return QPlainTextEdit(parent)
 
-    def limit_text(self, text):
+    def limit_text(self):
+        text = self.widget.toPlainText()
         limit = self.field.length()
         if limit > 0 and text > limit:
             text = text[:limit]
-            self.setPlainText(text)
+            self.widget.blockSignals(True)
+            self.setvalue(text)
 
             cursor = self.widget.textCursor()
             cursor.setPosition(self.widget.document().characterCount() - 1)
             self.widget.setTextCursor(cursor)
 
+        self.widget.blockSignals(False)
         self.emitvaluechanged(self.widget.toPlainText())
 
     def initWidget(self, widget):
         widget.textChanged.connect(self.limit_text)
         widget.installEventFilter(self)
-        length = self.field.length()
-        widget.setMaxLength(length)
