@@ -5,9 +5,11 @@ from PyQt4 import QtCore, QtGui
 
 from PyQt4.QtGui import QWidget, QPixmap, QPainter, QColorDialog
 from PyQt4.QtCore import Qt
-from qgis.core import QGis
+from qgis.core import QGis, QgsMapRendererParallelJob, QgsVectorLayer, QgsMapLayerRegistry, QgsPoint, \
+    QgsGeometry, QgsFeature, QgsMarkerSymbolV2
 
 from roam.editorwidgets.uifiles.ui_drawingpad import Ui_DrawingWindow
+from roam.api import GPS
 
 
 class ScribbleArea(QWidget):
@@ -170,22 +172,40 @@ class DrawingPad(Ui_DrawingWindow, QWidget):
     def rendermap(self):
         image = self.renderjob.renderedImage()
         self.scribbleArea.addMapImage(image)
+        try:
+            gpslayer = QgsMapLayerRegistry.instance().mapLayersByName("__gps_layer")[0]
+            gpslayer.rollBack()
+        except IndexError:
+            pass
 
     def getmap(self):
         if self.canvas:
-            if QGis.QGIS_VERSION_INT > 20200:
-                from qgis.core import QgsMapRendererParallelJob
-                self.renderjob = QgsMapRendererParallelJob(self.canvas.mapSettings())
-                self.renderjob.finished.connect(self.rendermap)
-                self.renderjob.start()
-            else:
-                pixmap = QPixmap(self.canvas.size())
-                pixmap.fill(self.canvas.canvasColor())
-                painter = QPainter(pixmap)
-                renderer = self.canvas.mapRenderer()
-                renderer.render(painter)
-                del painter
-                self.scribbleArea.addMap(pixmap)
+            settings = self.canvas.mapSettings()
+            layers = settings.layers()
+            if GPS.isConnected:
+                try:
+                    gpslayer = QgsMapLayerRegistry.instance().mapLayersByName("__gps_layer")[0]
+                except IndexError:
+                    gpslayer = QgsVectorLayer("Point", "__gps_layer", "memory")
+                    symbol = QgsMarkerSymbolV2.createSimple({'name': 'circle', 'color': 'blue', "size": '5'})
+                    gpslayer.rendererV2().setSymbol(symbol)
+                    QgsMapLayerRegistry.instance().addMapLayer(gpslayer, False)
+
+                layers.append(gpslayer.id())
+                settings.setLayers(layers)
+
+                map_pos = QgsPoint(GPS.gpsinfo("longitude"), GPS.gpsinfo("latitude"))
+                # map_pos = QgsPoint(115.72589,-32.29597)
+                geom = QgsGeometry.fromPoint(map_pos)
+                feature = QgsFeature()
+                feature.setGeometry(geom)
+                gpslayer.startEditing()
+                gpslayer.addFeature(feature)
+                # gpslayer.commitChanges()
+
+            self.renderjob = QgsMapRendererParallelJob(settings)
+            self.renderjob.finished.connect(self.rendermap)
+            self.renderjob.start()
 
     def openImage(self, image):
         if not image is None and os.path.exists(image):

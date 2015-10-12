@@ -63,6 +63,7 @@ def stamp_image(image, expression_str, position, feature):
     doc.setDefaultStyleSheet(style)
     data = "<body>{}</body>".format(data)
     doc.setHtml(data)
+    print data
     point = QPointF(20, 20)
 
     # Wrap the text so we don't go crazy
