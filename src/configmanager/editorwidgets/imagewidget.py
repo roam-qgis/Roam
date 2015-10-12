@@ -24,12 +24,16 @@ class ImageWidgetConfig(Ui_Form, ConfigWidget):
         location = self.defaultLocationText.text()
         savetofile = self.savetofileCheck.isChecked()
         imagestamp = self.imageStampText.toPlainText()
+        stamplocation = self.imageStampLocation.currentText()
         return {"defaultlocation": location,
                 'savetofile': savetofile,
-                'stamp': imagestamp}
+                'stamp': dict(value=imagestamp,
+                              position=stamplocation)}
 
     def setconfig(self, config):
         self.defaultLocationText.setText(config.get('defaultlocation', ''))
         self.savetofileCheck.setChecked(config.get('savetofile', False))
-        self.imageStampText.setPlainText(config.get('stamp', ''))
-
+        stamp = config.get('stamp', dict(value='', position='top-left'))
+        self.imageStampText.setPlainText(stamp['value'])
+        index = self.imageStampLocation.findText(stamp['position'])
+        self.imageStampLocation.setCurrentIndex(index)

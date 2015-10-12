@@ -37,16 +37,17 @@ def stamp_from_config(image, config):
     stamp = config.get('stamp', None)
     form = config.get('formwidget', None)
     feature = None
+    print stamp
     if not stamp:
         return image
 
     if form:
         feature = form.to_feature()
-    image = stamp_image(image, stamp, feature)
+    image = stamp_image(image, stamp['value'], stamp['position'], feature)
     return image
 
 
-def stamp_image(image, expression_str, feature):
+def stamp_image(image, expression_str, position, feature):
     painter = QPainter(image)
     data = QgsExpression.replaceExpressionText(expression_str, feature, None)
     if not data:
@@ -55,7 +56,23 @@ def stamp_image(image, expression_str, feature):
     data = data.replace(r"\n", "<br>")
     doc = QTextDocument()
     doc.setHtml(data)
-    painter.translate(QPointF(50, 50))
+    point = QPointF(20, 20)
+
+    # Wrap the text so we don't go crazy
+    if doc.size().width() > 300:
+        doc.setTextWidth(300)
+    if position == "top-left":
+        point = QPointF(20, 20)
+    elif position == "top-right":
+        x = image.width() - 20 - doc.size().width()
+        point = QPointF(x, 20)
+    elif position == "bottom-left":
+        point = QPointF(20, image.height() - 20 - doc.size().height())
+    elif position == "bottom-right":
+        x = image.width() - 20 - doc.size().width()
+        y = image.height() - 20 - doc.size().height()
+        point = QPointF(x, y)
+    painter.translate(point)
     doc.drawContents(painter)
     return image
 
