@@ -2,9 +2,10 @@ import sys
 import os
 import subprocess
 from contextlib import contextmanager
-from qgis.core import QgsMapLayerRegistry, QgsFeatureRequest, QgsGeometry, QgsMapLayer
+from qgis.core import QgsMapLayerRegistry, QgsFeatureRequest, QgsGeometry, QgsMapLayer, QgsExpression
 from qgis.gui import QgsMessageBar
-from PyQt4.QtCore import QPyNullVariant
+from PyQt4.QtGui import QTextDocument, QPainter
+from PyQt4.QtCore import QPyNullVariant, QPointF
 from roam.structs import CaseInsensitiveDict
 
 
@@ -174,3 +175,4 @@ def format_values(fieldnames, valuestore, with_char='\n'):
         if nullcheck(valuestore[field]):
             value.append(valuestore[field])
     return with_char.join(value)
+

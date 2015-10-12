@@ -115,6 +115,7 @@ class ScribbleArea(QWidget):
     @pixmap.setter
     def pixmap(self, value):
         self.userimage = value
+        self.render_userimage()
 
     def isModified(self):
         return self.modified

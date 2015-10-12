@@ -6,25 +6,45 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>400</width>
-    <height>300</height>
+    <width>451</width>
+    <height>334</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Form</string>
   </property>
   <layout class="QFormLayout" name="formLayout">
+   <property name="fieldGrowthPolicy">
+    <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
+   </property>
    <property name="margin">
     <number>0</number>
    </property>
-   <item row="2" column="0">
+   <item row="1" column="0">
+    <widget class="QLabel" name="label_2">
+     <property name="text">
+      <string>Save to file</string>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="1">
+    <widget class="QCheckBox" name="savetofileCheck">
+     <property name="text">
+      <string/>
+     </property>
+     <property name="checked">
+      <bool>true</bool>
+     </property>
+    </widget>
+   </item>
+   <item row="4" column="0">
     <widget class="QLabel" name="label_3">
      <property name="text">
       <string>Default Location</string>
      </property>
     </widget>
    </item>
-   <item row="2" column="1">
+   <item row="4" column="1">
     <layout class="QHBoxLayout" name="horizontalLayout">
      <item>
       <widget class="QLineEdit" name="defaultLocationText"/>
@@ -38,37 +58,42 @@
      </item>
     </layout>
    </item>
-   <item row="3" column="1">
-    <widget class="QLabel" name="label">
+   <item row="8" column="0">
+    <widget class="QLabel" name="label_5">
      <property name="text">
-      <string>You may also use environment variables in place of hard paths. e.g %USERPROFILE%Pictures may be used to access the users home pictures folder </string>
+      <string>Image Stamp (HTML supported)</string>
+     </property>
+    </widget>
+   </item>
+   <item row="8" column="1">
+    <widget class="QPlainTextEdit" name="imageStampText"/>
+   </item>
+   <item row="2" column="0" colspan="2">
+    <widget class="QLabel" name="label_4">
+     <property name="font">
+      <font>
+       <pointsize>8</pointsize>
+       <italic>true</italic>
+      </font>
+     </property>
+     <property name="text">
+      <string>Saving to file will save the file into the _images folder inside the project folder.  If this is unticked it will be saved as binary or base64 based on the field type </string>
      </property>
      <property name="wordWrap">
       <bool>true</bool>
      </property>
     </widget>
    </item>
-   <item row="0" column="0">
-    <widget class="QLabel" name="label_2">
-     <property name="text">
-      <string>Save to file</string>
+   <item row="5" column="0" colspan="2">
+    <widget class="QLabel" name="label">
+     <property name="font">
+      <font>
+       <pointsize>8</pointsize>
+       <italic>true</italic>
+      </font>
      </property>
-    </widget>
-   </item>
-   <item row="0" column="1">
-    <widget class="QCheckBox" name="savetofileCheck">
      <property name="text">
-      <string/>
-     </property>
-     <property name="checked">
-      <bool>true</bool>
-     </property>
-    </widget>
-   </item>
-   <item row="1" column="1">
-    <widget class="QLabel" name="label_4">
-     <property name="text">
-      <string>Saving to file will save the file into the _images folder inside the project folder.  If this is unticked it will be saved as binary or base64 based on the field type </string>
+      <string>You may also use environment variables in place of hard paths. e.g %USERPROFILE%Pictures may be used to access the users home pictures folder </string>
      </property>
      <property name="wordWrap">
       <bool>true</bool>

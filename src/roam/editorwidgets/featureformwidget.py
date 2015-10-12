@@ -154,11 +154,11 @@ class FeatureFormWidgetEditor(LargeEditorWidget):
     def initWidget(self, widget):
         widget.actionCancel.triggered.connect(self.cancelform)
         widget.canceled.connect(self.cancelform)
-        widget.featuresaved.connect(self.emitfished)
-        widget.featuredeleted.connect(self.emitfished)
+        widget.featuresaved.connect(self.emit_finished)
+        widget.featuredeleted.connect(self.emit_finished)
 
     def cancelform(self, *args):
-        self.emitcancel(*args)
+        self.emit_cancel(*args)
 
     def updatefromconfig(self):
         self.widget.set_config(self.config)

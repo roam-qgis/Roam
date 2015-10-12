@@ -62,6 +62,7 @@ class EditorWidget(QObject):
         self.layer = layer
         self.field = field
         self.label = label
+        self.formwidget = None
         self._required = False
         self._readonly = True
         self.initconfig = kwargs.get('initconfig', {})
@@ -85,6 +86,19 @@ class EditorWidget(QObject):
             config = {}
 
         return cls(initconfig=config).createWidget(parent)
+
+    def open_large_widget(self, widget, startvalue, callback, config=None):
+        """
+        Request to open a large widget.
+        :param widget: The widget of type LargeEditorWidget to open
+        :param startvalue: The value to preload the widget with.
+        :param callback: Callback used when the value is set in the widget.
+        :param config: The config passed to the widget.
+        :return: None
+        """
+        if not config:
+            config = {}
+        self.largewidgetrequest.emit(widget, startvalue, callback, config)
 
     @property
     def passing(self):
@@ -239,10 +253,10 @@ class LargeEditorWidget(EditorWidget):
     def __init__(self, *args, **kwargs):
         EditorWidget.__init__(self, *args, **kwargs)
 
-    def emitfished(self):
+    def emit_finished(self):
         self.finished.emit(self.value())
 
-    def emitcancel(self, reason=None, level=1):
+    def emit_cancel(self, reason=None, level=1):
         self.cancel.emit(reason, level)
 
     def before_load(self):

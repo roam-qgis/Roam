@@ -248,6 +248,7 @@ class FeatureFormBase(QWidget):
                 utils.debug("No label found for {}".format(field))
 
             widgetconfig = config.get('config', {})
+            widgetconfig['formwidget'] = self
             qgsfield = fields[field]
             try:
                 widgetwrapper = roam.editorwidgets.core.widgetwrapper(widgettype=widgettype,
@@ -270,6 +271,7 @@ class FeatureFormBase(QWidget):
             widgetwrapper.hidden = config.get('hidden', False)
 
             widgetwrapper.required = config.get('required', False)
+
 
             widgetwrapper.valuechanged.connect(self.updaterequired)
             widgetwrapper.largewidgetrequest.connect(RoamEvents.show_widget.emit)
@@ -590,6 +592,35 @@ class FeatureForm(FeatureFormBase):
     def missingfields(self):
         return [field for field, valid in self.requiredfields.iteritems() if valid == False]
 
+    def to_feature(self):
+        """
+        Create a QgsFeature from the current form values
+        """
+        feature = QgsFeature(self.feature.fields())
+        feature.setGeometry(QgsGeometry(self.feature.geometry()))
+        self.updatefeautrefields(feature, self.getvalues()[0])
+        self.update_geometry(feature)
+        return feature
+
+    def updatefeautrefields(self, feature, values):
+        def field_or_null(field):
+            if field == '' \
+                    or field is None \
+                    or isinstance(field, QPyNullVariant):
+                return QPyNullVariant(str)
+            return field
+
+        for key, value in values.iteritems():
+            try:
+                fields = [w['field'] for w in self.formconfig['widgets']]
+                if key in fields:
+                    feature[key] = field_or_null(value)
+                else:
+                    feature[key] = value
+            except KeyError:
+                continue
+        return feature
+
     def save(self):
         """
         Save the values from the form into the set feature
@@ -598,23 +629,6 @@ class FeatureForm(FeatureFormBase):
         """
         if not self.allpassing:
             raise MissingValuesException.missing_values()
-
-        def updatefeautrefields(feature):
-            def field_or_null(field):
-                if field == '' or field is None or isinstance(field, QPyNullVariant):
-                    return QPyNullVariant(str)
-                return field
-
-            for key, value in values.iteritems():
-                try:
-                    fields = [w['field'] for w in self.formconfig['widgets']]
-                    if key in fields:
-                        feature[key] = field_or_null(value)
-                    else:
-                        feature[key] = value
-                except KeyError:
-                    continue
-            return feature
 
         def save_images(values):
             for field, wrapper in self.boundwidgets.iteritems():
@@ -634,8 +648,8 @@ class FeatureForm(FeatureFormBase):
         layer = self.form.QGISLayer
         values, savedvalues = self.getvalues()
         save_images(values)
-        updatefeautrefields(self.feature)
-        self.update_geometry()
+        self.updatefeautrefields(self.feature, values)
+        self.update_geometry(self.feature)
         layer.startEditing()
         if self.editingmode:
             roam.utils.info("Updating feature {}".format(self.feature.id()))
@@ -654,11 +668,11 @@ class FeatureForm(FeatureFormBase):
 
         self.featuresaved(self.feature, values)
 
-    def update_geometry(self):
+    def update_geometry(self, feature):
         if self.geomwidget and self.geomwidget.edited:
-            print "Edited geometry"
             geometry = self.geomwidget.geometry()
-            self.feature.setGeometry(geometry)
+            feature.setGeometry(geometry)
+        return feature
 
     def delete(self):
         """

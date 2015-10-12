@@ -11,6 +11,7 @@ class ImageWidgetConfig(Ui_Form, ConfigWidget):
         super(ImageWidgetConfig, self).__init__(parent)
         self.setupUi(self)
         self.defaultLocationText.textChanged.connect(self.widgetchanged)
+        self.imageStampText.textChanged.connect(self.widgetchanged)
         self.savetofileCheck.stateChanged.connect(self.widgetchanged)
         self.locatioButton.pressed.connect(self.openfilepicker)
 
@@ -22,10 +23,13 @@ class ImageWidgetConfig(Ui_Form, ConfigWidget):
     def getconfig(self):
         location = self.defaultLocationText.text()
         savetofile = self.savetofileCheck.isChecked()
+        imagestamp = self.imageStampText.toPlainText()
         return {"defaultlocation": location,
-                'savetofile': savetofile }
+                'savetofile': savetofile,
+                'stamp': imagestamp}
 
     def setconfig(self, config):
         self.defaultLocationText.setText(config.get('defaultlocation', ''))
         self.savetofileCheck.setChecked(config.get('savetofile', False))
+        self.imageStampText.setPlainText(config.get('stamp', ''))
 

@@ -31,13 +31,13 @@ class BigListWidget(LargeEditorWidget):
 
     def initWidget(self, widget):
         widget.itemselected.connect(self.selectitems)
-        widget.closewidget.connect(self.emitcancel)
-        widget.savewidget.connect(self.emitfished)
+        widget.closewidget.connect(self.emit_cancel)
+        widget.savewidget.connect(self.emit_finished)
         widget.search.installEventFilter(self)
 
     def selectitems(self):
         if not self.multi:
-            self.emitfished()
+            self.emit_finished()
 
     def updatefromconfig(self):
         super(BigListWidget, self).updatefromconfig()

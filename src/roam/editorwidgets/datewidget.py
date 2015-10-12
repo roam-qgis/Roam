@@ -17,8 +17,8 @@ class BigDateWidget(LargeEditorWidget):
         return DateTimePickerWidget(parent)
 
     def initWidget(self, widget):
-        widget.ok.connect(self.emitfished)
-        widget.cancel.connect(self.emitcancel)
+        widget.ok.connect(self.emit_finished)
+        widget.cancel.connect(self.emit_cancel)
 
     def updatefromconfig(self):
         super(BigDateWidget, self).updatefromconfig()
