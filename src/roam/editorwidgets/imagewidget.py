@@ -54,7 +54,14 @@ def stamp_image(image, expression_str, position, feature):
         return image
 
     data = data.replace(r"\n", "<br>")
+    style = """
+    body {
+        color: yellow;
+    }
+    """
     doc = QTextDocument()
+    doc.setDefaultStyleSheet(style)
+    data = "<body>{}</body>".format(data)
     doc.setHtml(data)
     point = QPointF(20, 20)
 
