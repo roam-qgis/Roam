@@ -148,6 +148,7 @@ class GPSCaptureAction(BaseAction):
         self.setEnabled(False)
 
         GPS.gpsfixed.connect(self.setstate)
+        GPS.gpsdisconnected.connect(lambda: self.setEnabled(False))
 
     def setstate(self, fixed, *args):
         self.setEnabled(fixed)
