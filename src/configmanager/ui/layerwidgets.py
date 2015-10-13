@@ -66,6 +66,7 @@ class FormWidget(ui_formwidget.Ui_Form, WidgetBase):
 
         self.formfolderLabel.linkActivated.connect(self.openformfolder)
         self.expressionButton.clicked.connect(self.opendefaultexpression)
+        self.expressionButton_2.clicked.connect(self.opendefaultexpression_advanced)
 
         self.fieldList.currentIndexChanged.connect(self.updatewidgetname)
         self.fieldwarninglabel.hide()
@@ -114,6 +115,14 @@ class FormWidget(ui_formwidget.Ui_Form, WidgetBase):
         foundfield = self.fieldsmodel.findfield(currenttext)
         if foundfield:
             self.nameText.setText(field)
+
+    def opendefaultexpression_advanced(self):
+        layer = self.form.QGISLayer
+        dlg = QgsExpressionBuilderDialog(layer, "Create default value expression", self)
+        text = self.defaultValueExpression.text().strip('[%').strip('%]').strip()
+        dlg.setExpressionText(text)
+        if dlg.exec_():
+            self.defaultValueExpression.setText('[% {} %]'.format(dlg.expressionText()))
 
     def opendefaultexpression(self):
         layer = self.form.QGISLayer
