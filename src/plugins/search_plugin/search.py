@@ -234,10 +234,13 @@ class SearchPlugin(widget, base, Page):
 
         if self.resultsView.count() == 0:
             self.resultsView.addItem("No Results")
+            self.resultsView.setEnabled(False)
         db.close()
 
     def jump_to(self, item):
         data = item.data(32)
+        if not data:
+            return
         layername, fid = data[0], data[1]
         layer = roam.api.utils.layer_by_name(layername)
         layer.select(fid)
