@@ -317,7 +317,7 @@ class MainWindow(ui_mainwindow.Ui_MainWindow, QMainWindow):
 
     def update_gps_label(self, position, gpsinfo):
         # Recenter map if we go outside of the 95% of the area
-        self.gpslabel.setText("GPS: PDOP {}   HDOP {}    VDOP {}".format(gpsinfo.pdop,
+        self.gpslabel.setText("GPS: PDOP {0:.2f}   HDOP {1:.2f}    VDOP {2:.2f}".format(gpsinfo.pdop,
                                                                         gpsinfo.hdop,
                                                                         gpsinfo.vdop))
 
