@@ -245,7 +245,10 @@ class SearchPlugin(widget, base, Page):
         layer = roam.api.utils.layer_by_name(layername)
         layer.select(fid)
         feature = layer.selectedFeatures()[0]
+        self.api.mainwindow.canvas.freeze()
         self.api.mainwindow.canvas.zoomToSelected(layer)
+        self.api.mainwindow.canvas.zoomOut()
+        self.api.mainwindow.canvas.freeze(False)
         layer.removeSelection()
         self.api.mainwindow.showmap()
         RoamEvents.selectionchanged.emit({layer: [feature]})
