@@ -46,6 +46,7 @@ class _Events(QObject):
 
     projectloaded = pyqtSignal(object)
     closeProject = pyqtSignal(object)
+    projectClosing = pyqtSignal()
     projectClosed = pyqtSignal(object)
 
     helprequest = pyqtSignal(QWidget, str)

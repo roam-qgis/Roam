@@ -6,7 +6,7 @@ from PyQt4.QtCore import Qt, QObject, pyqtSignal, QThread, QEvent
 from PyQt4.QtGui import QWidget, QGridLayout, QLabel, QListWidgetItem, QStyledItemDelegate, QFontMetricsF, QTextOption
 from PyQt4.uic import loadUiType
 
-from qgis.core import QgsMapLayer
+from qgis.core import QgsMapLayer, QgsMapLayerRegistry
 
 import roam.api.utils
 from roam.flickwidget import FlickCharm
@@ -63,7 +63,6 @@ class IndexBuilder(QObject):
             return columns
 
         columns = ','.join(get_columns())
-        print columns
         c.execute("CREATE VIRTUAL TABLE search USING fts4({})".format(columns))
 
         def get_features():
@@ -199,6 +198,8 @@ class SearchPlugin(widget, base, Page):
         self.indexthread = QThread()
         self.indexbuilder = IndexBuilder(project.folder, settings)
         self.indexbuilder.moveToThread(self.indexthread)
+
+        QgsMapLayerRegistry.instance().removeAll.connect(self.indexthread.quit)
 
         self.indexbuilder.indexBuilt.connect(self.index_built)
         self.indexbuilder.finished.connect(self.indexthread.quit)

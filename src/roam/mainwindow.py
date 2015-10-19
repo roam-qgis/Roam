@@ -720,6 +720,7 @@ class MainWindow(ui_mainwindow.Ui_MainWindow, QMainWindow):
         if not project is None and not project == self.project:
             return
 
+        RoamEvents.projectClosing.emit()
         self.tracking.clear_logging()
         self.dataentrywidget.clear()
         self.canvas_page.cleanup()
