@@ -38,11 +38,7 @@ class GPSAction(QAction):
         GPS.gpsdisconnected.connect(self.disconnected)
 
     def updateGPSPort(self):
-        print GPS.isConnected
-        print roam.config.settings['gpsport']
-        print GPS.currentport
-
-        if GPS.isConnected and not roam.config.settings['gpsport'] == GPS.currentport:
+        if GPS.isConnected and not roam.config.settings.get('gpsport', '') == GPS.currentport:
             GPS.disconnectGPS()
             self.connectGPS()
 
