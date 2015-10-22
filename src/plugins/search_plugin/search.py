@@ -6,7 +6,7 @@ from PyQt4.QtCore import Qt, QObject, pyqtSignal, QThread, QEvent
 from PyQt4.QtGui import QWidget, QGridLayout, QLabel, QListWidgetItem, QStyledItemDelegate, QFontMetricsF, QTextOption
 from PyQt4.uic import loadUiType
 
-from qgis.core import QgsMapLayer, QgsMapLayerRegistry
+from qgis.core import QgsMapLayer, QgsMapLayerRegistry, QgsFeatureRequest, QgsRectangle
 
 import roam.api.utils
 from roam.flickwidget import FlickCharm
@@ -244,12 +244,15 @@ class SearchPlugin(widget, base, Page):
             return
         layername, fid = data[0], data[1]
         layer = roam.api.utils.layer_by_name(layername)
-        layer.select(fid)
-        feature = layer.selectedFeatures()[0]
-        self.api.mainwindow.canvas.freeze()
-        self.api.mainwindow.canvas.zoomToSelected(layer)
-        self.api.mainwindow.canvas.zoomOut()
-        self.api.mainwindow.canvas.freeze(False)
-        layer.removeSelection()
+        feature = layer.getFeatures(QgsFeatureRequest(fid)).next()
+        box = feature.geometry().boundingBox()
+        xmin, xmax, ymin, ymax = box.xMinimum(), box.xMaximum(), box.yMinimum(), box.yMaximum()
+        xmin -= 5
+        xmax += 5
+        ymin -= 5
+        ymax += 5
+        box = QgsRectangle(xmin, ymin, xmax, ymax)
+        self.api.mainwindow.canvas.setExtent(box)
+        self.api.mainwindow.canvas.refresh()
         self.api.mainwindow.showmap()
         RoamEvents.selectionchanged.emit({layer: [feature]})
