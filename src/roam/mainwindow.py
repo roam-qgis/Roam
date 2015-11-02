@@ -241,7 +241,6 @@ class MainWindow(ui_mainwindow.Ui_MainWindow, QMainWindow):
     def updatelegend(self):
         self.legendpage.updatecanvas(self.canvas)
 
-
     def openkeyboard(self):
         if not roam.config.settings.get('keyboard', True):
             return
@@ -447,7 +446,6 @@ class MainWindow(ui_mainwindow.Ui_MainWindow, QMainWindow):
         self.currentselection = results
         self.infodock.setResults(results, forms, self.project)
         self.infodock.show()
-
 
     def missingLayers(self, layers):
         """
