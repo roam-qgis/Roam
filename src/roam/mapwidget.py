@@ -6,7 +6,7 @@ from PyQt4.QtCore import Qt, pyqtSignal, QSize, QPropertyAnimation, QObject, pyq
     QRectF, QLocale, QPointF, QPoint
 from PyQt4.QtGui import QActionGroup, QFrame, QWidget, QSizePolicy, \
     QAction, QPixmap, QCursor, QIcon, QColor, QMainWindow, QPen, QGraphicsItem, QPolygon, QFont, QFontMetrics, QBrush, \
-    QPainterPath, QPainter
+    QPainterPath, QPainter, QToolButton, QLabel
 
 from PyQt4.QtSvg import QGraphicsSvgItem
 
@@ -20,6 +20,8 @@ from roam.projectparser import ProjectParser
 from roam.maptools import MoveTool, InfoTool, EditTool, PointTool, TouchMapTool
 from roam.api.events import RoamEvents
 from roam.popupdialogs import PickActionDialog
+from biglist import BigList
+from roam.api import GPS
 
 import roam.utils
 import roam.config
@@ -386,13 +388,102 @@ class MapWidget(Ui_CanvasWidget, QMainWindow):
         RoamEvents.selectionchanged.connect(self.highlight_selection)
         RoamEvents.openfeatureform.connect(self.feature_form_loaded)
         RoamEvents.sync_complete.connect(self.refresh_map)
+        RoamEvents.snappingChanged.connect(self.snapping_changed)
+
+        self.snappingbutton = QToolButton()
+        self.snappingbutton.setText("Snapping: On")
+        self.snappingbutton.setAutoRaise(True)
+        self.snappingbutton.pressed.connect(self.toggle_snapping)
+
+        spacer = QWidget()
+        spacer2 = QWidget()
+        spacer.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
+        spacer2.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
+
+        self.scalewidget = QgsScaleComboBox()
+
+        self.scalebutton = QToolButton()
+        self.scalebutton.setAutoRaise(True)
+        self.scalebutton.setMaximumHeight(self.statusbar.height())
+        self.scalebutton.pressed.connect(self.selectscale)
+        self.scalebutton.setText("Scale")
+
+        self.scalelist = BigList(parent=self.canvas, centeronparent=True, showsave=False)
+        self.scalelist.hide()
+        self.scalelist.setlabel("Map Scale")
+        self.scalelist.setmodel(self.scalewidget.model())
+        self.scalelist.closewidget.connect(self.scalelist.close)
+        self.scalelist.itemselected.connect(self.update_scale_from_item)
+        self.scalelist.itemselected.connect(self.scalelist.close)
+
+        self.positionlabel = QLabel('')
+        self.gpslabel = QLabel("GPS: Not active")
+
+        self.statusbar.addWidget(self.snappingbutton)
+        self.statusbar.addWidget(spacer2)
+        self.statusbar.addWidget(self.gpslabel)
+        self.statusbar.addPermanentWidget(self.scalebutton)
+
+        self.canvas.extentsChanged.connect(self.updatestatuslabel)
+        self.canvas.scaleChanged.connect(self.updatestatuslabel)
+
+        GPS.gpsposition.connect(self.update_gps_label)
+        GPS.gpsdisconnected.connect(self.gps_disconnected)
 
         self.connectButtons()
 
+    def snapping_changed(self, snapping):
+        if snapping:
+            self.snappingbutton.setText("Snapping: On")
+        else:
+            self.snappingbutton.setText("Snapping: Off")
+
+    def toggle_snapping(self):
+        try:
+            tool = self.canvas.mapTool()
+            tool.toggle_snapping()
+            snapping = tool.snapping
+            self.snapping_changed(snapping)
+        except AttributeError:
+            pass
+
+    def selectscale(self):
+        self.scalelist.show()
+
+    def update_scale_from_item(self, index):
+        scale, _ = self.scalewidget.toDouble(index.data(Qt.DisplayRole))
+        self.canvas.zoomScale(1.0 / scale)
+
+    def update_gps_label(self, position, gpsinfo):
+        # Recenter map if we go outside of the 95% of the area
+        self.gpslabel.setText("GPS: PDOP {0:.2f}   HDOP {1:.2f}    VDOP {2:.2f}".format(gpsinfo.pdop,
+                                                                                        gpsinfo.hdop,
+                                                                                        gpsinfo.vdop))
+
+    def gps_disconnected(self):
+        self.gpslabel.setText("GPS Not Active")
+
+    def updatestatuslabel(self, *args):
+        """
+        Update the status bar labels when the information has changed.
+        """
+        extent = self.canvas.extent()
+        self.positionlabel.setText("Map Center: {}".format(extent.center().toString()))
+        scale = 1.0 / self.canvas.scale()
+        scale = self.scalewidget.toString(scale)
+        self.scalebutton.setText(scale)
+
     def refresh_map(self):
+        """
+        Refresh the map
+        """
         self.canvas.refresh()
 
     def updatescale(self):
+        """
+        Update the scale of the map with the current scale from the scale widget
+        :return:
+        """
         self.canvas.zoomScale(1.0 / self.scalewidget.scale())
 
     def init_qgisproject(self, doc):
@@ -569,6 +660,17 @@ class MapWidget(Ui_CanvasWidget, QMainWindow):
 
         self.canvas.freeze(False)
         self.canvas.refresh()
+
+        projectscales, _ = QgsProject.instance().readBoolEntry("Scales", "/useProjectScales")
+        if projectscales:
+            projectscales, _ = QgsProject.instance().readListEntry("Scales", "/ScalesList")
+
+            self.scalewidget.updateScales(projectscales)
+        else:
+            scales = ["1:50000", "1:25000", "1:10000", "1:5000",
+                      "1:2500", "1:1000", "1:500", "1:250", "1:200", "1:100"]
+            scales = roam.config.settings.get('scales', scales)
+            self.scalewidget.updateScales(scales)
 
         if self.scalebar_enabled:
             self.scalebar.update()

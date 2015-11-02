@@ -56,7 +56,6 @@ from roam.api import RoamEvents, GPS, RoamInterface, plugins
 from roam.ui import ui_mainwindow
 from PyQt4.QtGui import QMainWindow
 from roam.gpslogging import GPSLogging
-from biglist import BigList
 
 
 import roam.messagebaritems
@@ -175,55 +174,10 @@ class MainWindow(ui_mainwindow.Ui_MainWindow, QMainWindow):
         sidespacewidget.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
         sidespacewidget2.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
 
-        self.projectlabel = QLabel("Project: {project}")
-        self.userlabel = QLabel("User: {user}".format(user=getpass.getuser()))
-        self.positionlabel = QLabel('')
-        self.gpslabel = QLabel("GPS: Not active")
-        icon = QIcon(":/icons/info")
-        infobutton = QToolButton()
-        infobutton.setAutoRaise(True)
-        infobutton.setMaximumHeight(self.statusbar.height())
-        infobutton.setIcon(icon)
-        # self.statusbar.addWidget(infobutton)
-        self.snappingbutton = QToolButton()
-        self.snappingbutton.setText("Snapping: On")
-        self.snappingbutton.setAutoRaise(True)
-        self.snappingbutton.pressed.connect(self.toggle_snapping)
-        self.statusbar.addWidget(self.snappingbutton)
-        # self.statusbar.addWidget(self.projectlabel)
-        # self.statusbar.addWidget(self.userlabel)
-        spacer = createSpacer()
-        spacer2 = createSpacer()
-        spacer.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
-        spacer2.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
-        # self.statusbar.addWidget(spacer)
-        # self.statusbar.addWidget(self.positionlabel)
-        self.statusbar.addWidget(spacer2)
-        self.statusbar.addWidget(self.gpslabel)
-
-        self.scalewidget = QgsScaleComboBox()
-
-        self.scalebutton = QToolButton()
-        self.scalebutton.setAutoRaise(True)
-        self.scalebutton.setMaximumHeight(self.statusbar.height())
-        self.scalebutton.pressed.connect(self.selectscale)
-        self.scalebutton.setText("Scale")
-        self.statusbar.addPermanentWidget(self.scalebutton)
-
-        self.scalelist = BigList(parent=self.canvas, centeronparent=True, showsave=False)
-        self.scalelist.hide()
-        self.scalelist.setlabel("Map Scale")
-        self.scalelist.setmodel(self.scalewidget.model())
-        self.scalelist.closewidget.connect(self.scalelist.close)
-        self.scalelist.itemselected.connect(self.update_scale_from_item)
-        self.scalelist.itemselected.connect(self.scalelist.close)
-
         self.menutoolbar.insertWidget(self.actionQuit, sidespacewidget2)
         self.spaceraction = self.menutoolbar.insertWidget(self.actionProject, sidespacewidget)
 
         self.panels = []
-
-        self.centralwidget.layout().addWidget(self.statusbar)
 
         self.actionGPSFeature.setProperty('dataentry', True)
 
@@ -231,8 +185,6 @@ class MainWindow(ui_mainwindow.Ui_MainWindow, QMainWindow):
         self.infodock.featureupdated.connect(self.highlightfeature)
         self.infodock.hide()
         self.hidedataentry()
-        self.canvas.extentsChanged.connect(self.updatestatuslabel)
-        self.canvas.scaleChanged.connect(self.updatestatuslabel)
 
         RoamEvents.openimage.connect(self.openimage)
         RoamEvents.openurl.connect(self.viewurl)
@@ -243,36 +195,10 @@ class MainWindow(ui_mainwindow.Ui_MainWindow, QMainWindow):
         RoamEvents.selectionchanged.connect(self.showInfoResults)
         RoamEvents.show_widget.connect(self.dataentrywidget.add_widget)
         RoamEvents.closeProject.connect(self.close_project)
-        RoamEvents.snappingChanged.connect(self.snapping_changed)
-
-        GPS.gpsposition.connect(self.update_gps_label)
-        GPS.gpsdisconnected.connect(self.gps_disconnected)
 
         self.legendpage.showmap.connect(self.showmap)
 
         self.currentselection = {}
-
-    def snapping_changed(self, snapping):
-        if snapping:
-            self.snappingbutton.setText("Snapping: On")
-        else:
-            self.snappingbutton.setText("Snapping: Off")
-        
-    def toggle_snapping(self):
-        try:
-            tool = self.canvas.mapTool()
-            tool.toggle_snapping()
-            snapping = tool.snapping
-            self.snapping_changed(snapping)
-        except AttributeError:
-            pass
-
-    def update_scale_from_item(self, index):
-        scale, _ = self.scalewidget.toDouble(index.data(Qt.DisplayRole))
-        self.canvas.zoomScale(1.0 / scale)
-
-    def selectscale(self):
-        self.scalelist.show()
 
     def set_projectbuttons(self, visible):
         for action in self.projectbuttons:
@@ -315,14 +241,6 @@ class MainWindow(ui_mainwindow.Ui_MainWindow, QMainWindow):
     def updatelegend(self):
         self.legendpage.updatecanvas(self.canvas)
 
-    def update_gps_label(self, position, gpsinfo):
-        # Recenter map if we go outside of the 95% of the area
-        self.gpslabel.setText("GPS: PDOP {0:.2f}   HDOP {1:.2f}    VDOP {2:.2f}".format(gpsinfo.pdop,
-                                                                        gpsinfo.hdop,
-                                                                        gpsinfo.vdop))
-
-    def gps_disconnected(self):
-        self.gpslabel.setText("GPS Not Active")
 
     def openkeyboard(self):
         if not roam.config.settings.get('keyboard', True):
@@ -404,13 +322,6 @@ class MainWindow(ui_mainwindow.Ui_MainWindow, QMainWindow):
         self.settings = settings
         self.show()
         self.canvas_page.settings_updated(settings)
-
-    def updatestatuslabel(self, *args):
-        extent = self.canvas.extent()
-        self.positionlabel.setText("Map Center: {}".format(extent.center().toString()))
-        scale = 1.0 / self.canvas.scale()
-        scale = self.scalewidget.toString(scale)
-        self.scalebutton.setText(scale)
 
     def on_geometryedit(self, form, feature):
         layer = form.QGISLayer
@@ -603,7 +514,6 @@ class MainWindow(ui_mainwindow.Ui_MainWindow, QMainWindow):
         """
         projectpath = QgsProject.instance().fileName()
         self.project = Project.from_folder(os.path.dirname(projectpath))
-        self.projectlabel.setText("Project: {}".format(self.project.name))
 
         # Show panels
         for panel in self.project.getPanels():
@@ -632,16 +542,6 @@ class MainWindow(ui_mainwindow.Ui_MainWindow, QMainWindow):
         self.showmap()
         self.set_projectbuttons(True)
         self.dataentrywidget.project = self.project
-        projectscales, _ = QgsProject.instance().readBoolEntry("Scales", "/useProjectScales")
-        if projectscales:
-            projectscales, _ = QgsProject.instance().readListEntry("Scales", "/ScalesList")
-
-            self.scalewidget.updateScales(projectscales)
-        else:
-            scales = ["1:50000", "1:25000", "1:10000", "1:5000",
-                      "1:2500", "1:1000", "1:500", "1:250", "1:200", "1:100"]
-            scales = roam.config.settings.get('scales', scales)
-            self.scalewidget.updateScales(scales)
         RoamEvents.projectloaded.emit(self.project)
 
     def clear_plugins(self):

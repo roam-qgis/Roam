@@ -55,6 +55,7 @@
    <addaction name="actionZoom_Out"/>
    <addaction name="actionInfo"/>
   </widget>
+  <widget class="QStatusBar" name="statusbar"/>
   <action name="actionHome">
    <property name="icon">
     <iconset resource="../resources.qrc">
@@ -124,15 +125,15 @@
  </widget>
  <customwidgets>
   <customwidget>
+   <class>HideableToolbar</class>
+   <extends>QToolBar</extends>
+   <header>roam.gui</header>
+  </customwidget>
+  <customwidget>
    <class>QgsMapCanvas</class>
    <extends>QWidget</extends>
    <header>qgis.gui</header>
    <container>1</container>
-  </customwidget>
-  <customwidget>
-   <class>HideableToolbar</class>
-   <extends>QToolBar</extends>
-   <header>roam.gui</header>
   </customwidget>
  </customwidgets>
  <resources>
