@@ -317,6 +317,8 @@ class WidgetItem(QStandardItem):
         elif role == Qt.UserRole:
             return self.widget
         elif role == Qt.DecorationRole:
+            if self.is_section:
+                return QIcon(":/icons/Section")
             return widgeticon(self.widget['widget'])
 
     def iscontainor(self):
