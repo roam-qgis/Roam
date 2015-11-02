@@ -10,6 +10,7 @@
     <file alias="Date">..\editorwidgets\icons\date.svg</file>
     <file alias="Number">..\editorwidgets\icons\number.svg</file>
     <file alias="Number(Double)">..\editorwidgets\icons\number.svg</file>
+    <file alias="Option Row">..\editorwidgets\icons\row.svg</file>
     <file alias="LineLayer">mIconLineLayer.svg</file>
     <file alias="PointLayer">mIconPointLayer.svg</file>
     <file alias="PolygonLayer">mIconPolygonLayer.svg</file>
