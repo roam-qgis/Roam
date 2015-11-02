@@ -25,7 +25,9 @@ from PyQt4.QtGui import (QWidget,
                          QSpacerItem,
                          QFormLayout,
                          QSpinBox,
-                         QDoubleSpinBox)
+                         QDoubleSpinBox,
+                         QVBoxLayout,
+                        QSizePolicy)
 
 from qgis.core import QgsFields, QgsFeature, QgsGPSConnectionRegistry, QGis, QgsGeometry, QgsPoint
 from qgis.gui import QgsMessageBar
@@ -112,17 +114,24 @@ def buildfromui(uifile, base):
     return installflickcharm(widget)
 
 
-def buildfromauto(formconfig, base):
+def buildfromauto(formconfig, base, project=None):
     widgetsconfig = formconfig['widgets']
 
-    outlayout = QFormLayout()
-    outlayout.setFieldGrowthPolicy(QFormLayout.AllNonFixedFieldsGrow)
+    newstyle = formconfig.get("newstyle", False)
+
+    if newstyle:
+        outlayout = QVBoxLayout()
+    else:
+        outlayout = QFormLayout()
+        outlayout.setFieldGrowthPolicy(QFormLayout.AllNonFixedFieldsGrow)
+
     outwidget = base
     outwidget.setLayout(outlayout)
     if roam.config.settings.get("form_geom_edit", False):
         geomwidget = GeomWidget()
         geomwidget.setObjectName("__geomwidget")
         outlayout.addRow("Geometry", geomwidget)
+
     for config in widgetsconfig:
         widgettype = config['widget']
         field = config['field']
@@ -131,19 +140,37 @@ def buildfromauto(formconfig, base):
             utils.warning("Field can't be null for {}".format(name))
             utils.warning("Skipping widget")
             continue
+
         label = QLabel(name)
         label.setObjectName(field + "_label")
+        labelwidget = QWidget()
+        labelwidget.setLayout(QBoxLayout(QBoxLayout.LeftToRight))
+        labelwidget.layout().addWidget(label)
+        labelwidget.layout().setContentsMargins(0,0,0,0)
+
         widget = roam.editorwidgets.core.createwidget(widgettype, parent=base)
         widget.setObjectName(field)
         layoutwidget = QWidget()
         layoutwidget.setLayout(QBoxLayout(QBoxLayout.LeftToRight))
         layoutwidget.layout().addWidget(widget)
+        layoutwidget.layout().setContentsMargins(0,0,0,10)
+
         if config.get('rememberlastvalue', False):
             savebutton = QToolButton()
             savebutton.setObjectName('{}_save'.format(field))
-            layoutwidget.layout().addWidget(savebutton)
+            if newstyle:
+                spacer = QWidget()
+                spacer.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
+                labelwidget.layout().addWidget(spacer)
+                labelwidget.layout().addWidget(savebutton)
+            else:
+                layoutwidget.layout().addWidget(savebutton)
 
-        outlayout.addRow(label, layoutwidget)
+        if newstyle:
+            outlayout.addWidget(labelwidget)
+            outlayout.addWidget(layoutwidget)
+        else:
+            outlayout.addRow(labelwidget, layoutwidget)
 
     outlayout.addItem(QSpacerItem(10, 500))
     installflickcharm(outwidget)
@@ -473,7 +500,7 @@ class FeatureForm(FeatureFormBase):
             uifile = os.path.join(form.folder, "form.ui")
             featureform = buildfromui(uifile, base=featureform)
         elif formtype == 'auto':
-            featureform = buildfromauto(formconfig, base=featureform)
+            featureform = buildfromauto(formconfig, base=featureform, project=form.project)
         else:
             raise NotImplemented('Other form types not supported yet')
 
