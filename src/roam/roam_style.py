@@ -248,30 +248,53 @@ def featureform():
         color: #4f4f4f;
     }
 
+    /* Style the tab using the tab sub-control. Note that
+        it reads QTabBar _not_ QTabWidget */
+    QTabBar::tab {
+        background: white;
+        border: 2px solid #C4C4C3;
+        border-bottom-color: #C2C7CB; /* same as the pane color */
+        padding: 2ex;
+    }
+
+    QTabBar::tab:selected, QTabBar::tab:hover {
+        background: #5B93C2;
+        color: white;
+    }
+
+    QTabBar::tab:selected {
+        border-color: #5B93C2;
+        border-bottom-color: #C2C7CB; /* same as pane color */
+    }
+
+    QTabBar::tab:!selected {
+        margin-top: 2ex; /* make non-selected tabs look smaller */
+    }
+
     QScrollBar:vertical {
-    border: 2px solid grey;
-    background: rgba(80, 80, 80, 20);
-    width: 40px;
-    margin: 22px 0 22px 0;
+        border: 2px solid grey;
+        background: rgba(80, 80, 80, 20);
+        width: 40px;
+        margin: 22px 0 22px 0;
     }
     QScrollBar::handle:vertical {
-    background: #678fb2;
-    min-height: 20px;
+        background: #678fb2;
+        min-height: 20px;
     }
     QScrollBar::add-line:vertical {
-    border: 2px solid grey;
-    background: rgba(80, 80, 80, 20);
-    height: 20px;
-    subcontrol-position: bottom;
-    subcontrol-origin: margin;
+        border: 2px solid grey;
+        background: rgba(80, 80, 80, 20);
+        height: 20px;
+        subcontrol-position: bottom;
+        subcontrol-origin: margin;
     }
 
     QScrollBar::sub-line:vertical {
-    border: 2px solid grey;
-    background: rgba(80, 80, 80, 20);
-    height: 20px;
-    subcontrol-position: top;
-    subcontrol-origin: margin;
+        border: 2px solid grey;
+        background: rgba(80, 80, 80, 20);
+        height: 20px;
+        subcontrol-position: top;
+        subcontrol-origin: margin;
     }
 
     QPushButton:checked  {

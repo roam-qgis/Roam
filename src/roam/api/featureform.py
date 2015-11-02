@@ -27,7 +27,9 @@ from PyQt4.QtGui import (QWidget,
                          QSpinBox,
                          QDoubleSpinBox,
                          QVBoxLayout,
-                        QSizePolicy)
+                        QSizePolicy,
+                        QTabWidget)
+from matplotlib.sphinxext.plot_directive import out_of_date
 
 from qgis.core import QgsFields, QgsFeature, QgsGPSConnectionRegistry, QGis, QgsGeometry, QgsPoint
 from qgis.gui import QgsMessageBar
@@ -118,22 +120,61 @@ def buildfromauto(formconfig, base):
     widgetsconfig = formconfig['widgets']
 
     newstyle = formconfig.get("newstyle", False)
+    hassections = any(config['widget'] == "Section" for config in widgetsconfig)
 
-    if newstyle:
-        outlayout = QVBoxLayout()
+    def make_layout():
+        if newstyle:
+            return QVBoxLayout()
+        else:
+            layout = QFormLayout()
+            layout.setFieldGrowthPolicy(QFormLayout.AllNonFixedFieldsGrow)
+            return layout
+
+    def make_tab(tabwidget, name):
+        widget = QWidget()
+        widget.setLayout(make_layout())
+        tabwidget.addTab(widget, name)
+        return widget, widget.layout()
+
+    if hassections:
+        outwidget = QTabWidget(base)
+        outlayout = None
+        base.setLayout(QVBoxLayout())
+        base.layout().setContentsMargins(0,0,0,0)
+        base.layout().addWidget(outwidget)
     else:
-        outlayout = QFormLayout()
-        outlayout.setFieldGrowthPolicy(QFormLayout.AllNonFixedFieldsGrow)
+        outwidget = base
+        outlayout = make_layout()
+        outwidget.setLayout(outlayout)
 
-    outwidget = base
-    outwidget.setLayout(outlayout)
     if roam.config.settings.get("form_geom_edit", False):
         geomwidget = GeomWidget()
         geomwidget.setObjectName("__geomwidget")
         outlayout.addRow("Geometry", geomwidget)
 
+    insection = False
     for config in widgetsconfig:
         widgettype = config['widget']
+
+        ## Make the first tab if one isn't defined already and we have other sections in the config
+        if not insection and hassections and not widgettype == "Section":
+            name = formconfig['label']
+            tabwidget, outlayout = make_tab(outwidget, name)
+            insection = True
+
+        if widgettype == 'Section':
+            # Add a spacer to the last widget
+            if outlayout:
+                spacer = QWidget()
+                spacer.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Expanding)
+                outlayout.addWidget(spacer)
+
+            name = config['name']
+            tabwidget, outlayout = make_tab(outwidget, name)
+            installflickcharm(tabwidget)
+            insection = True
+            continue
+
         field = config['field']
         name = config.get('name', field)
         if not field:
@@ -172,9 +213,13 @@ def buildfromauto(formconfig, base):
         else:
             outlayout.addRow(labelwidget, layoutwidget)
 
-    outlayout.addItem(QSpacerItem(10, 500))
-    installflickcharm(outwidget)
-    return outwidget
+    spacer = QWidget()
+    spacer.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Expanding)
+    outlayout.addWidget(spacer)
+    if not hassections:
+        outlayout.addItem(QSpacerItem(10, 500))
+        installflickcharm(outwidget)
+    return base
 
 
 def installflickcharm(widget):
@@ -251,8 +296,12 @@ class FeatureFormBase(QWidget):
         # We just make a dict with all fields lower because QgsFields is case sensitive.
         fields = {field.name().lower():field for field in layer.pendingFields().toList()}
 
+        import copy
+        widgetsconfig = copy.deepcopy(widgetsconfig)
         for config in widgetsconfig:
             widgettype = config['widget']
+            if widgettype == "Section":
+                continue
             field = config['field']
             if not field:
                 utils.info("Skipping widget. No field defined")

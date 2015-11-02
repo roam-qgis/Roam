@@ -62,6 +62,7 @@ class FormWidget(ui_formwidget.Ui_Form, WidgetBase):
         self.widgetmodel.modelReset.connect(self.setwidgetconfigvisiable)
 
         self.addWidgetButton.pressed.connect(self.newwidget)
+        self.addSectionButton.pressed.connect(self.add_section)
         self.removeWidgetButton.pressed.connect(self.removewidget)
 
         self.formfolderLabel.linkActivated.connect(self.openformfolder)
@@ -82,6 +83,8 @@ class FormWidget(ui_formwidget.Ui_Form, WidgetBase):
 
         self.fieldList.currentIndexChanged.connect(self._save_current_widget)
         self.nameText.textChanged.connect(self._save_current_widget)
+        self.sectionNameText.textChanged.connect(self._save_current_widget)
+
         self.useablewidgets.currentIndexChanged.connect(self._save_current_widget)
         self.useablewidgets.currentIndexChanged.connect(self.swapwidgetconfig)
 
@@ -154,8 +157,9 @@ class FormWidget(ui_formwidget.Ui_Form, WidgetBase):
             self.frame_2.layout().addWidget(featureform)
 
         if index == 1:
-            self.form.settings['widgets'] = list(self.widgetmodel.widgets())
-            setformpreview(self.form)
+            form = self.form.copy()
+            form.settings['widgets'] = list(self.widgetmodel.widgets())
+            setformpreview(form)
 
     def usedfields(self):
         """
@@ -188,6 +192,13 @@ class FormWidget(ui_formwidget.Ui_Form, WidgetBase):
     def setwidgetconfigvisiable(self, *args):
         haswidgets = self.widgetmodel.rowCount() > 0
         self.widgetConfigTabs.setVisible(haswidgets)
+
+    def add_section(self):
+        currentindex = self.userwidgets.currentIndex()
+        widget = {"widget": "Section",
+                  "name": "default"}
+        index = self.widgetmodel.addwidget(widget, currentindex.parent())
+        self.userwidgets.setCurrentIndex(index)
 
     def newwidget(self, field=None):
         """
@@ -335,6 +346,16 @@ class FormWidget(ui_formwidget.Ui_Form, WidgetBase):
             return
 
         widgettype = widget['widget']
+        if widgettype == "Section":
+            self.propertiesStack.setCurrentIndex(1)
+            self.sectionNameText.blockSignals(True)
+            name = widget['name']
+            self.sectionNameText.setText(name)
+            self.sectionNameText.blockSignals(False)
+            return
+        else:
+            self.propertiesStack.setCurrentIndex(0)
+
         field = widget['field']
         required = widget.setdefault('required', False)
         savevalue = widget.setdefault('rememberlastvalue', False)
@@ -456,6 +477,10 @@ class FormWidget(ui_formwidget.Ui_Form, WidgetBase):
             return field
 
         configwidget, _, widgettype = self.current_config_widget
+        if self.propertiesStack.currentIndex() == 1:
+            return {'name': self.sectionNameText.text(),
+                    "widget": "Section"}
+
         widget = {}
         widget['field'] = current_field()
         widget['default'] = self._get_default_config()

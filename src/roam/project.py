@@ -191,6 +191,11 @@ class Form(object):
         form.init_form()
         return form
 
+    def copy(self):
+        import copy
+        settings = copy.copy(self.settings)
+        return Form(self.name, settings, self.folder, self.project)
+
     @classmethod
     def from_folder(cls, name, folder):
         config = readfolderconfig(folder, "form")

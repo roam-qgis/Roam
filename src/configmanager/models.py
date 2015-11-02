@@ -308,6 +308,9 @@ class WidgetItem(QStandardItem):
                 length = len(self.widget.get('config', {}).get('widgets', []))
                 return "{} ({} items)".format(name, length)
 
+            if self.is_section:
+                return "Section - {}".format(name)
+
             field = (self.widget.get('field', '') or '').lower()
             text = name or field
             return "{} ({})".format(text, self.widget['widget'])
@@ -318,6 +321,10 @@ class WidgetItem(QStandardItem):
 
     def iscontainor(self):
         return self.widget['widget'] == 'Group'
+
+    @property
+    def is_section(self):
+        return self.widget['widget'] == 'Section'
 
     def loadchildren(self):
         if not self.iscontainor():
