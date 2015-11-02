@@ -114,7 +114,7 @@ def buildfromui(uifile, base):
     return installflickcharm(widget)
 
 
-def buildfromauto(formconfig, base, project=None):
+def buildfromauto(formconfig, base):
     widgetsconfig = formconfig['widgets']
 
     newstyle = formconfig.get("newstyle", False)
@@ -500,7 +500,7 @@ class FeatureForm(FeatureFormBase):
             uifile = os.path.join(form.folder, "form.ui")
             featureform = buildfromui(uifile, base=featureform)
         elif formtype == 'auto':
-            featureform = buildfromauto(formconfig, base=featureform, project=form.project)
+            featureform = buildfromauto(formconfig, base=featureform)
         else:
             raise NotImplemented('Other form types not supported yet')
 
