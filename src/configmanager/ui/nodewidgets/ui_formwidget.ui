@@ -233,8 +233,8 @@ p, li { white-space: pre-wrap; }
                     <string>Add Section</string>
                    </property>
                    <property name="icon">
-                    <iconset resource="../../../roam/resources.qrc">
-                     <normaloff>:/icons/add</normaloff>:/icons/add</iconset>
+                    <iconset resource="../resources.qrc">
+                     <normaloff>:/icons/Section</normaloff>:/icons/Section</iconset>
                    </property>
                    <property name="toolButtonStyle">
                     <enum>Qt::ToolButtonTextUnderIcon</enum>
