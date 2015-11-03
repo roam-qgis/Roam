@@ -108,6 +108,26 @@ p, li { white-space: pre-wrap; }
        </item>
       </layout>
      </item>
+     <item row="4" column="1">
+      <widget class="QCheckBox" name="newStyleCheck">
+       <property name="text">
+        <string/>
+       </property>
+       <property name="checked">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item row="4" column="0">
+      <widget class="QLabel" name="label_20">
+       <property name="toolTip">
+        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;New style forms are using a new layout which places the label above the input field.  Default for new forms.  Untick for the old style of label | control &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+       </property>
+       <property name="text">
+        <string>New Style form</string>
+       </property>
+      </widget>
+     </item>
     </layout>
    </item>
    <item row="1" column="0">
@@ -322,7 +342,7 @@ p, li { white-space: pre-wrap; }
              <property name="currentIndex">
               <number>0</number>
              </property>
-             <widget class="QWidget" name="widgetstackedWidgetPage1" native="true">
+             <widget class="QWidget" name="widgetstackedWidgetPage1">
               <layout class="QFormLayout" name="formLayout_3">
                <property name="fieldGrowthPolicy">
                 <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
@@ -801,7 +821,7 @@ p, li { white-space: pre-wrap; }
                <x>0</x>
                <y>0</y>
                <width>885</width>
-               <height>581</height>
+               <height>562</height>
               </rect>
              </property>
              <property name="autoFillBackground">

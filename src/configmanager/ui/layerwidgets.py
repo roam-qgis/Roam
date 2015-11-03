@@ -79,6 +79,7 @@ class FormWidget(ui_formwidget.Ui_Form, WidgetBase):
         self.loadwidgettypes()
 
         self.formLabelText.textChanged.connect(self.form_name_changed)
+        self.newStyleCheck.stateChanged.connect(self.form_style_changed)
         self.layerCombo.currentIndexChanged.connect(self.layer_updated)
 
         self.fieldList.currentIndexChanged.connect(self._save_current_widget)
@@ -105,6 +106,10 @@ class FormWidget(ui_formwidget.Ui_Form, WidgetBase):
             return
 
         self.updatefields(self.selected_layer)
+
+    def form_style_changed(self, text):
+        self.form.settings['newstyle'] = self.newStyleCheck.isChecked()
+        self.treenode.emitDataChanged()
 
     def form_name_changed(self, text):
         self.form.settings['label'] = self.formLabelText.text()
@@ -298,10 +303,12 @@ class FormWidget(ui_formwidget.Ui_Form, WidgetBase):
 
         formtype = settings.setdefault('type', 'auto')
         widgets = settings.setdefault('widgets', [])
+        newstyleform = settings.setdefault('newstyle', False)
 
         self.formLabelText.setText(label)
         folderurl = "<a href='{path}'>{name}</a>".format(path=form.folder, name=os.path.basename(form.folder))
         self.formfolderLabel.setText(folderurl)
+        self.newStyleCheck.setChecked(newstyleform)
         self.layerCombo.setCurrentIndex(layerindex.row())
         self.updatefields(layer)
 
@@ -507,6 +514,7 @@ class FormWidget(ui_formwidget.Ui_Form, WidgetBase):
         self.form.settings['layer'] = self.selected_layer.name()
         self.form.settings['type'] = self.formtypeCombo.currentText()
         self.form.settings['label'] = self.formLabelText.text()
+        self.form.settings['newstyle'] = self.newStyleCheck.isChecked()
         self.form.settings['widgets'] = list(self.widgetmodel.widgets())
 
 
