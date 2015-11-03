@@ -320,6 +320,11 @@ class WidgetItem(QStandardItem):
             if self.is_section:
                 return QIcon(":/icons/Section")
             return widgeticon(self.widget['widget'])
+        elif role == Qt.FontRole:
+            if self.is_section:
+                font = QFont()
+                font.setBold(True)
+                return font
 
     def iscontainor(self):
         return self.widget['widget'] == 'Group'
