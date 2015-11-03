@@ -17,12 +17,12 @@
    <item row="0" column="0">
     <layout class="QFormLayout" name="formLayout_2">
      <property name="fieldGrowthPolicy">
-      <enum>QFormLayout::ExpandingFieldsGrow</enum>
+      <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
      </property>
      <item row="0" column="0">
       <widget class="QLabel" name="label_16">
        <property name="text">
-        <string>Form folder</string>
+        <string>Form Folder</string>
        </property>
       </widget>
      </item>
@@ -47,19 +47,6 @@
        </property>
        <item>
         <widget class="QLineEdit" name="formLabelText"/>
-       </item>
-       <item>
-        <spacer name="horizontalSpacer_8">
-         <property name="orientation">
-          <enum>Qt::Horizontal</enum>
-         </property>
-         <property name="sizeHint" stdset="0">
-          <size>
-           <width>40</width>
-           <height>20</height>
-          </size>
-         </property>
-        </spacer>
        </item>
       </layout>
      </item>
@@ -101,7 +88,7 @@ p, li { white-space: pre-wrap; }
         <widget class="QComboBox" name="formtypeCombo">
          <item>
           <property name="text">
-           <string>auto</string>
+           <string>Auto Generated</string>
           </property>
          </item>
         </widget>

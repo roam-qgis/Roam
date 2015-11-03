@@ -128,7 +128,7 @@ class FormWidget(ui_formwidget.Ui_Form, WidgetBase):
         layer = self.form.QGISLayer
         dlg = QgsExpressionBuilderDialog(layer, "Create default value expression", self)
         text = self.defaultValueExpression.text().strip('[%').strip('%]').strip()
-        dlg.setExpressionText(text)
+        dlg.setExpressimnText(text)
         if dlg.exec_():
             self.defaultValueExpression.setText('[% {} %]'.format(dlg.expressionText()))
 
@@ -312,6 +312,8 @@ class FormWidget(ui_formwidget.Ui_Form, WidgetBase):
         self.layerCombo.setCurrentIndex(layerindex.row())
         self.updatefields(layer)
 
+        if formtype == "auto":
+            formtype = "Auto Generated"
         index = self.formtypeCombo.findText(formtype)
         if index == -1:
             self.formtypeCombo.insertItem(0, formtype)
@@ -512,7 +514,8 @@ class FormWidget(ui_formwidget.Ui_Form, WidgetBase):
 
         self._save_current_widget()
         self.form.settings['layer'] = self.selected_layer.name()
-        self.form.settings['type'] = self.formtypeCombo.currentText()
+        formtype = self.formtypeCombo.currentText()
+        self.form.settings['type'] = "auto" if formtype == "Auto Generated" else formtype
         self.form.settings['label'] = self.formLabelText.text()
         self.form.settings['newstyle'] = self.newStyleCheck.isChecked()
         self.form.settings['widgets'] = list(self.widgetmodel.widgets())
