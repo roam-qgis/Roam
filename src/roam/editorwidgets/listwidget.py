@@ -79,6 +79,7 @@ class ListWidget(EditorWidget):
 
             try:
                 path = parts[2]
+                path = path.strip()
                 icon = QIcon(path)
             except:
                 icon = QIcon()
