@@ -201,6 +201,35 @@ def appstyle():
     subcontrol-position: top;
     subcontrol-origin: margin;
     }
+
+    QTabWidget {
+        border: none;
+    }
+
+
+    /* Style the tab using the tab sub-control. Note that
+        it reads QTabBar _not_ QTabWidget */
+    QTabBar::tab {
+        background: white;
+        border: 2px solid #C4C4C3;
+        border-bottom-color: #C2C7CB; /* same as the pane color */
+        padding: 2ex;
+    }
+
+    QTabBar::tab:selected, QTabBar::tab:hover {
+        background: #5B93C2;
+        color: white;
+    }
+
+    QTabBar::tab:selected {
+        border-color: #5B93C2;
+        border-bottom-color: #C2C7CB; /* same as pane color */
+    }
+
+    QTabBar::tab:!selected {
+        margin-top: 2ex; /* make non-selected tabs look smaller */
+    }
+
     """).substitute(FONT=font())
 
 
