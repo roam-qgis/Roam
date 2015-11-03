@@ -248,6 +248,11 @@ def featureform():
         color: #4f4f4f;
     }
 
+    QTabWidget {
+        border: none;
+    }
+
+
     /* Style the tab using the tab sub-control. Note that
         it reads QTabBar _not_ QTabWidget */
     QTabBar::tab {
