@@ -29,7 +29,6 @@ from PyQt4.QtGui import (QWidget,
                          QVBoxLayout,
                         QSizePolicy,
                         QTabWidget)
-from matplotlib.sphinxext.plot_directive import out_of_date
 
 from qgis.core import QgsFields, QgsFeature, QgsGPSConnectionRegistry, QGis, QgsGeometry, QgsPoint
 from qgis.gui import QgsMessageBar
