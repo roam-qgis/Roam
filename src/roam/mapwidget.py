@@ -718,12 +718,6 @@ class MapWidget(Ui_CanvasWidget, QMainWindow):
         self.canvas.refresh()
 
     def form_valid_for_capture(self, form):
-        if not form.has_geometry:
-            extra = "No geometry information found for the layer {}.  Layer might not have loaded correctly".format(
-                form.layername)
-            RoamEvents.raisemessage("Invalid form", "Form {} layer could not be loaded".format(form.name), level=1,
-                                    extra=extra)
-
         return form.has_geometry and self.project.layer_can_capture(form.QGISLayer)
 
     def first_capture_form(self):
