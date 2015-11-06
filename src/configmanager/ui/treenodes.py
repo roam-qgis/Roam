@@ -200,7 +200,7 @@ class RoamNode(Treenode):
 class LayerSearchNode(Treenode):
     nodetype = Treenode.LayerSearchNode
     def __init__(self, text="Searching", project=None):
-        super(LayerSearchNode, self).__init__(text, QIcon(":/icons/map"), project)
+        super(LayerSearchNode, self).__init__(text, QIcon(":/icons/search"), project)
         self._text = text
 
     def data(self, role):
@@ -226,7 +226,7 @@ class LayerSearchConfigNode(Treenode):
     def __init__(self, layer, project):
         self.layer = layer
         text = layer.name()
-        super(LayerSearchConfigNode, self).__init__(text, QIcon(":/icons/map"), project)
+        super(LayerSearchConfigNode, self).__init__(text, QIcon(":/icons/search"), project)
 
 class MapNode(Treenode):
     nodetype = Treenode.MapNode
@@ -256,6 +256,8 @@ class FormNode(Treenode):
     def data(self, role):
         if role == Qt.DisplayRole:
             return self.form.label
+        elif role == Qt.DecorationRole:
+            return QIcon(self.form.icon)
 
         return super(FormNode, self).data(role)
 

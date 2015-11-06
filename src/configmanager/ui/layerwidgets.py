@@ -45,6 +45,8 @@ class FormWidget(ui_formwidget.Ui_Form, WidgetBase):
         self.setupUi(self)
         self.form = None
 
+        self.iconlabel.mouseReleaseEvent = self.change_icon
+
         self.fieldsmodel = QgsFieldModel()
         self.widgetmodel = WidgetsModel()
         self.possiblewidgetsmodel = QStandardItemModel()
@@ -98,6 +100,28 @@ class FormWidget(ui_formwidget.Ui_Form, WidgetBase):
         self.addWidgetButton.setPopupMode(QToolButton.MenuButtonPopup)
 
         self.defaultLayerCombo.layerChanged.connect(self.default_layer_changed)
+
+    def change_icon(self, *args):
+        """
+        Change the icon for the form
+        """
+        icon = QFileDialog.getOpenFileName(self, "Select form icon image", filter="Images (*.png *.svg)")
+        if not icon:
+            return
+        ext = os.path.splitext(icon)[1]
+        shutil.copy(icon, os.path.join(self.form.folder, "icon" + ext))
+        self.set_icon(self.form.icon)
+        self.treenode.emitDataChanged()
+
+    def set_icon(self, path):
+        """
+        Set the forms icon preview
+        :param path: The path to icon.
+        """
+        pixmap = QPixmap(path)
+        w = self.iconlabel.width()
+        h = self.iconlabel.height()
+        self.iconlabel.setPixmap(pixmap.scaled(w, h, Qt.KeepAspectRatio))
 
     def default_layer_changed(self, layer):
         self.defaultFieldCombo.setLayer(layer)
@@ -305,6 +329,7 @@ class FormWidget(ui_formwidget.Ui_Form, WidgetBase):
         formtype = settings.setdefault('type', 'auto')
         widgets = settings.setdefault('widgets', [])
         newstyleform = settings.setdefault('newstyle', False)
+        self.set_icon(form.icon)
 
         self.formLabelText.setText(label)
         folderurl = "<a href='{path}'>{name}</a>".format(path=form.folder, name=os.path.basename(form.folder))
