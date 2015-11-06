@@ -656,6 +656,9 @@ class ProjectInfoWidget(ui_projectinfo.Ui_Form, WidgetBase):
 
 
 class InfoNode(ui_infonode.Ui_Form, WidgetBase):
+    """
+    Info query node for a layer. Allows setting the SQL query if a layer is SQL Server or SQLite.
+    """
     def __init__(self, parent=None):
         super(InfoNode, self).__init__(parent)
         self.setupUi(self)
@@ -669,6 +672,9 @@ class InfoNode(ui_infonode.Ui_Form, WidgetBase):
         self.connectionCombo.blockSignals(True)
 
     def update_panel_status(self, *args):
+        """
+        Update if the SQL panel is enabled or disable if the source is SQL Server or SQLite.
+        """
         layer = None
         if self.fromlayer_radio.isChecked():
             layer = self.connectionCombo.currentLayer()
@@ -690,6 +696,9 @@ class InfoNode(ui_infonode.Ui_Form, WidgetBase):
             return False
 
     def set_project(self, project, node):
+        """
+        Set the project for the widget. Updates the selection query for the current widget..
+        """
         self.connectionCombo.blockSignals(False)
         super(InfoNode, self).set_project(project, node)
         self.layer = self.treenode.layer
@@ -714,6 +723,9 @@ class InfoNode(ui_infonode.Ui_Form, WidgetBase):
         self.Editor.setText(query)
 
     def write_config(self):
+        """
+        Wrtie the config for the widget back to the project config
+        """
         config = self.project.settings.setdefault('selectlayerconfig', {})
         infoconfig = config.setdefault(self.layer.name(), {})
 
@@ -742,11 +754,18 @@ class InfoNode(ui_infonode.Ui_Form, WidgetBase):
 
 
 class LayerWidget(ui_layernode.Ui_Form, WidgetBase):
+    """
+    Select layer widget.
+    """
     def __init__(self, parent=None):
         super(LayerWidget, self).__init__(parent)
         self.setupUi(self)
 
     def set_project(self, project, node):
+        """
+        Set the project for this widget. Updates the select layer config based on the project info
+        for the layer.
+        """
         super(LayerWidget, self).set_project(project, node)
         self.layer = node.layer
         forms = self.project.forms
@@ -779,6 +798,9 @@ class LayerWidget(ui_layernode.Ui_Form, WidgetBase):
 
 
     def inspection_mappings(self):
+        """
+        Return the inspection config mapping.
+        """
         if not self.inspection_fieldmappings.toPlainText():
             return {}
         text = self.inspection_fieldmappings.toPlainText().split('\n')
@@ -789,6 +811,9 @@ class LayerWidget(ui_layernode.Ui_Form, WidgetBase):
         return mappings
 
     def write_config(self):
+        """
+        Wrtie the config for the widget back to the project config
+        """
         config = self.project.settings.setdefault('selectlayerconfig', {})
         infoconfig = config.setdefault(self.layer.name(), {})
 
@@ -823,6 +848,9 @@ class LayerWidget(ui_layernode.Ui_Form, WidgetBase):
 
 
 class LayersWidget(ui_layersnode.Ui_Form, WidgetBase):
+    """
+    Root widget for select layers config.
+    """
     def __init__(self, parent=None):
         super(LayersWidget, self).__init__(parent)
         self.setupUi(self)
@@ -835,24 +863,41 @@ class LayersWidget(ui_layersnode.Ui_Form, WidgetBase):
         self.selectLayers.setModel(self.selectlayerfilter)
 
     def selectlayerschanged(self):
+        """
+        Update the tree node if selection layers are added or removed.
+        """
         self.treenode.refresh()
 
     def set_project(self, project, node):
+        """
+        Set the project for this widget. Updates the select layers config.
+        """
         super(LayersWidget, self).set_project(project, node)
         self.selectlayermodel.config = project.settings
         self.selectlayermodel.refresh()
 
 
 class LayerSearchWidget(ui_searchsnode.Ui_Form, WidgetBase):
+    """
+    Root widget for the search config UI. Nothing here at the moment.
+    """
     def __init__(self, parent=None):
         super(LayerSearchWidget, self).__init__(parent)
         self.setupUi(self)
 
     def set_project(self, project, node):
+        """
+        Set the project for this widget.
+        """
         super(LayerSearchWidget, self).set_project(project, node)
 
 
 class LayerSearchConfigWidget(ui_searchnode.Ui_Form, WidgetBase):
+    """
+    Widget to handle setting which fields are enabled for searching on the selected layer.
+
+    Auto adds the search plugin if not loaded as well as the columns for the current layer.
+    """
     def __init__(self, parent=None):
         super(LayerSearchConfigWidget, self).__init__(parent)
         self.setupUi(self)
@@ -861,11 +906,17 @@ class LayerSearchConfigWidget(ui_searchnode.Ui_Form, WidgetBase):
         self.fieldsview.setModel(self.fieldsmodel)
 
     def set_project(self, project, node):
+        """
+        Set the project for this widget.  Updates the config on the fields model.
+        """
         super(LayerSearchConfigWidget, self).set_project(project, node)
         self.fieldsmodel.setLayer(node.layer)
         self.fieldsmodel.set_settings(project.settings)
 
     def write_config(self):
+        """
+        Wrtie the config for the widget back to the project config
+        """
         layers = self.fieldsmodel.layerconfig
         if layers:
             plugins = self.project.settings.setdefault('plugins', [])
