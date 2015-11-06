@@ -10,9 +10,10 @@ from PyQt4.Qsci import QsciLexerSQL, QsciScintilla
 from qgis.core import QgsDataSourceURI
 from qgis.gui import QgsExpressionBuilderDialog
 
-from configmanager.ui.nodewidgets import ui_layersnode, ui_layernode, ui_infonode, ui_projectinfo, ui_formwidget
+from configmanager.ui.nodewidgets import (ui_layersnode, ui_layernode, ui_infonode, ui_projectinfo, ui_formwidget,
+                                          ui_searchsnode, ui_searchnode)
 from configmanager.models import (CaptureLayersModel, LayerTypeFilter, QgsFieldModel, WidgetsModel,
-                                  QgsLayerModel, CaptureLayerFilter, widgeticon)
+                                  QgsLayerModel, CaptureLayerFilter, widgeticon, SearchFieldsModel)
 
 import roam.editorwidgets
 import configmanager.editorwidgets
@@ -753,3 +754,35 @@ class LayersWidget(ui_layersnode.Ui_Form, WidgetBase):
         self.selectlayermodel.config = project.settings
         self.selectlayermodel.refresh()
 
+
+class LayerSearchWidget(ui_searchsnode.Ui_Form, WidgetBase):
+    def __init__(self, parent=None):
+        super(LayerSearchWidget, self).__init__(parent)
+        self.setupUi(self)
+
+    def set_project(self, project, node):
+        super(LayerSearchWidget, self).set_project(project, node)
+
+
+class LayerSearchConfigWidget(ui_searchnode.Ui_Form, WidgetBase):
+    def __init__(self, parent=None):
+        super(LayerSearchConfigWidget, self).__init__(parent)
+        self.setupUi(self)
+
+        self.fieldsmodel = SearchFieldsModel()
+        self.fieldsview.setModel(self.fieldsmodel)
+
+    def set_project(self, project, node):
+        super(LayerSearchConfigWidget, self).set_project(project, node)
+        self.fieldsmodel.setLayer(node.layer)
+        self.fieldsmodel.set_settings(project.settings)
+
+    def write_config(self):
+        layers = self.fieldsmodel.layerconfig
+        if layers:
+            plugins = self.project.settings.setdefault('plugins', [])
+            if "search_plugin" not in plugins:
+                plugins.append("search_plugin")
+                self.project.settings['plugins'] = plugins
+            config = self.project.settings.setdefault('search', {})
+            config[self.treenode.layer.name()] = dict(columns=layers)

@@ -42,22 +42,11 @@ class ConfigManagerDialog(ui_configmanager.Ui_ProjectInstallerDialog, QDialog):
         self.newProjectButton.pressed.connect(self.newproject)
         self.removeProjectButton.pressed.connect(self.deletebuttonpressed)
         self.projectwidget.projectupdated.connect(self.projectupdated)
-        # self.projectwidget.projectsaved.connect(self.projectupdated)
-        self.projectwidget.projectloaded.connect(self.updateformsnode)
-        self.projectwidget.selectlayersupdated.connect(self.updateformsnode)
 
         self.projectwidget.setaboutinfo()
         self.projectwidget.projects_page.newproject.connect(self.newproject)
         self.projectwidget.projects_page.projectlocationchanged.connect(self.loadprojects)
         self.setuprootitems()
-
-    def updateformsnode(self, *args):
-        pass
-        # haslayers = self.projectwidget.checkcapturelayers()
-        # index = self.projectList.currentIndex()
-        # node = index.data(Qt.UserRole)
-        # if node.nodetype == Treenode.FormsNode:
-        #     self.newProjectButton.setEnabled(haslayers)
 
     def raiseerror(self, *exinfo):
         info = traceback.format_exception(*exinfo)

@@ -87,6 +87,8 @@ class Treenode(QStandardItem):
     LayerNode = QStandardItem.UserType + 9
     LayersNode = QStandardItem.UserType + 8
     InfoNode = QStandardItem.UserType + 10
+    LayerSearchNode = QStandardItem.UserType + 11
+    LayerSearchConfigNode = QStandardItem.UserType + 12
 
     nodetype = TreeNode
 
@@ -195,6 +197,36 @@ class RoamNode(Treenode):
     def __init__(self, text="Roam", project=None):
         super(RoamNode, self).__init__(text, QIcon(":/icons/open"))
 
+class LayerSearchNode(Treenode):
+    nodetype = Treenode.LayerSearchNode
+    def __init__(self, text="Searching", project=None):
+        super(LayerSearchNode, self).__init__(text, QIcon(":/icons/map"), project)
+        self._text = text
+
+    def data(self, role):
+        if role == Qt.DisplayRole:
+            return "{} ({})".format(self._text, self.rowCount())
+        return super(LayerSearchNode, self).data(role)
+
+    def create_children(self):
+        self.removeRows(0, self.rowCount())
+        layers = QgsMapLayerRegistry.instance().mapLayers().values()
+        for layer in layers:
+            if not layer.type() == QgsMapLayer.VectorLayer:
+                continue
+
+            node = LayerSearchConfigNode(layer, self.project)
+            self.appendRow(node)
+
+        super(LayerSearchNode, self).create_children()
+
+class LayerSearchConfigNode(Treenode):
+    nodetype = Treenode.LayerSearchConfigNode
+
+    def __init__(self, layer, project):
+        self.layer = layer
+        text = layer.name()
+        super(LayerSearchConfigNode, self).__init__(text, QIcon(":/icons/map"), project)
 
 class MapNode(Treenode):
     nodetype = Treenode.MapNode
@@ -306,10 +338,11 @@ class ProjectNode(Treenode):
     def create_children(self):
         self.removeRows(0, self.rowCount())
         if self.project.valid:
+            self.searchnode = LayerSearchNode("Searching", project=self.project)
             self.formsnode = FormsNode("Forms", project=self.project)
             self.mapnode = MapNode("Map", project=self.project)
             self.layersnode = LayersNode("Select Layers", project=self.project)
-            self.appendRows([self.mapnode, self.layersnode, self.formsnode])
+            self.appendRows([self.mapnode, self.layersnode, self.formsnode, self.searchnode])
 
         super(ProjectNode, self).create_children()
 

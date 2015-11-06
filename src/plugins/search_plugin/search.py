@@ -59,7 +59,7 @@ class IndexBuilder(QObject):
             columns = set()
             for config in self.indexconfig.itervalues():
                 for c in config['columns']:
-                    columns.add(c)
+                    columns.add('"{}"'.format(c))
             return columns
 
         columns = ','.join(get_columns())
@@ -97,7 +97,7 @@ class IndexBuilder(QObject):
                 data = {}
                 for field in fields:
                     value = unicode(feature[field])
-                    data[field] = unicode("{}: {}").format(field, value)
+                    data['"{}"'.format(field)] = unicode("{}: {}").format(field, value)
                 if not data:
                     continue
                 fid = feature.id()

@@ -87,7 +87,16 @@ QLabel[warning=true]
 	</string>
   </property>
   <layout class="QGridLayout" name="gridLayout">
-   <property name="margin">
+   <property name="leftMargin">
+    <number>0</number>
+   </property>
+   <property name="topMargin">
+    <number>0</number>
+   </property>
+   <property name="rightMargin">
+    <number>0</number>
+   </property>
+   <property name="bottomMargin">
     <number>0</number>
    </property>
    <item row="1" column="0" colspan="2">
@@ -112,7 +121,16 @@ QLabel[warning=true]
        </sizepolicy>
       </property>
       <layout class="QGridLayout" name="gridLayout_3">
-       <property name="margin">
+       <property name="leftMargin">
+        <number>0</number>
+       </property>
+       <property name="topMargin">
+        <number>0</number>
+       </property>
+       <property name="rightMargin">
+        <number>0</number>
+       </property>
+       <property name="bottomMargin">
         <number>0</number>
        </property>
       </layout>
@@ -494,6 +512,8 @@ p, li { white-space: pre-wrap; }
      <widget class="LayersWidget" name="layers_page"/>
      <widget class="LayerWidget" name="layerpage"/>
      <widget class="InfoNode" name="infopage"/>
+     <widget class="LayerSearchWidget" name="searchspage"/>
+     <widget class="LayerSearchConfigWidget" name="searchconfigpage"/>
     </widget>
    </item>
    <item row="0" column="0">
@@ -550,7 +570,16 @@ p, li { white-space: pre-wrap; }
         <enum>QFrame::Raised</enum>
        </property>
        <layout class="QHBoxLayout" name="horizontalLayout_5">
-        <property name="margin">
+        <property name="leftMargin">
+         <number>0</number>
+        </property>
+        <property name="topMargin">
+         <number>0</number>
+        </property>
+        <property name="rightMargin">
+         <number>0</number>
+        </property>
+        <property name="bottomMargin">
          <number>0</number>
         </property>
         <item>
@@ -738,6 +767,18 @@ p, li { white-space: pre-wrap; }
   </customwidget>
   <customwidget>
    <class>FormWidget</class>
+   <extends>QWidget</extends>
+   <header>configmanager.ui.layerwidgets</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>LayerSearchWidget</class>
+   <extends>QWidget</extends>
+   <header>configmanager.ui.layerwidgets</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>LayerSearchConfigWidget</class>
    <extends>QWidget</extends>
    <header>configmanager.ui.layerwidgets</header>
    <container>1</container>
