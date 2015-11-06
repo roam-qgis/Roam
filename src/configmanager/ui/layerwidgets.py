@@ -60,9 +60,9 @@ class FormWidget(ui_formwidget.Ui_Form, WidgetBase):
 
         self.userwidgets.setModel(self.widgetmodel)
         self.userwidgets.selectionModel().currentChanged.connect(self.load_widget)
-        self.widgetmodel.rowsRemoved.connect(self.setwidgetconfigvisiable)
-        self.widgetmodel.rowsInserted.connect(self.setwidgetconfigvisiable)
-        self.widgetmodel.modelReset.connect(self.setwidgetconfigvisiable)
+        self.widgetmodel.rowsRemoved.connect(self.set_widget_config_state)
+        self.widgetmodel.rowsInserted.connect(self.set_widget_config_state)
+        self.widgetmodel.modelReset.connect(self.set_widget_config_state)
 
         self.addWidgetButton.pressed.connect(self.newwidget)
         self.addSectionButton.pressed.connect(self.add_section)
@@ -99,7 +99,7 @@ class FormWidget(ui_formwidget.Ui_Form, WidgetBase):
         self.addWidgetButton.setMenu(menu)
         self.addWidgetButton.setPopupMode(QToolButton.MenuButtonPopup)
 
-        self.defaultLayerCombo.layerChanged.connect(self.default_layer_changed)
+        self.defaultLayerCombo.layerChanged.connect(self.defaultFieldCombo.setLayer)
 
     def change_icon(self, *args):
         """
@@ -123,24 +123,38 @@ class FormWidget(ui_formwidget.Ui_Form, WidgetBase):
         h = self.iconlabel.height()
         self.iconlabel.setPixmap(pixmap.scaled(w, h, Qt.KeepAspectRatio))
 
-    def default_layer_changed(self, layer):
-        self.defaultFieldCombo.setLayer(layer)
-
     def layer_updated(self, index):
+        """
+        Called when the forms layer has changed.
+        :param index: The index of the new layer.
+        """
         if not self.selected_layer:
             return
 
         self.updatefields(self.selected_layer)
 
-    def form_style_changed(self, text):
-        self.form.settings['newstyle'] = self.newStyleCheck.isChecked()
+    def form_style_changed(self, newstyle):
+        """
+        Called when the form style has changed from label-above style to label-beside style.
+        :param newstyle: True if to use the new label-above style forms.
+        """
+        self.form.settings['newstyle'] = newstyle
         self.treenode.emitDataChanged()
 
     def form_name_changed(self, text):
-        self.form.settings['label'] = self.formLabelText.text()
+        """
+        Called when the forms name has changed. Also updates the tree view to reflect the new name.
+        :param text: The new text of the label.
+        :return:
+        """
+        self.form.settings['label'] = text
         self.treenode.emitDataChanged()
 
     def updatewidgetname(self, index):
+        """
+        Update the widget name if the field has changed. Doesn't change the name if it has been user set already.
+        :param index: index of the new field.
+        """
         # Only change the edit text on name field if it's not already set to something other then the
         # field name.
         field = self.fieldsmodel.index(index, 0).data(QgsFieldModel.FieldNameRole)
@@ -150,14 +164,20 @@ class FormWidget(ui_formwidget.Ui_Form, WidgetBase):
             self.nameText.setText(field)
 
     def opendefaultexpression_advanced(self):
+        """
+        Open the default expression builder for setting advanced default values based on QGIS Expressions.
+        """
         layer = self.form.QGISLayer
         dlg = QgsExpressionBuilderDialog(layer, "Create default value expression", self)
-        text = self.defaultValueExpression.text().strip('[%').strip('%]').strip()
-        dlg.setExpressimnText(text)
+        text = self.defaultValueExpression.text()
+        dlg.setExpressionText(text)
         if dlg.exec_():
-            self.defaultValueExpression.setText('[% {} %]'.format(dlg.expressionText()))
+            self.defaultValueExpression.setText(dlg.expressionText())
 
     def opendefaultexpression(self):
+        """
+        Open the default expression builder for setting default values based on QGIS Expressions.
+        """
         layer = self.form.QGISLayer
         dlg = QgsExpressionBuilderDialog(layer, "Create default value expression", self)
         text = self.defaultvalueText.text().strip('[%').strip('%]').strip()
@@ -166,7 +186,14 @@ class FormWidget(ui_formwidget.Ui_Form, WidgetBase):
             self.defaultvalueText.setText('[% {} %]'.format(dlg.expressionText()))
 
     def formtabchanged(self, index):
+        """
+        Called when the tab widget changes tab.  Normally used to control when to render the form preview on demand.
+        :param index: The index of the new tab.
+        """
         def setformpreview(form):
+            """
+            Create the form preview to show to the user.
+            """
             item = self.frame_2.layout().itemAt(0)
             if item and item.widget():
                 item.widget().setParent(None)
@@ -186,7 +213,8 @@ class FormWidget(ui_formwidget.Ui_Form, WidgetBase):
 
             self.frame_2.layout().addWidget(featureform)
 
-        if index == 1:
+        # Don't generate the form preview if we are not on the preview tab.
+        if index == 2:
             form = self.form.copy()
             form.settings['widgets'] = list(self.widgetmodel.widgets())
             setformpreview(form)
@@ -200,9 +228,18 @@ class FormWidget(ui_formwidget.Ui_Form, WidgetBase):
             yield widget['field']
 
     def openformfolder(self, url):
+        """
+        Open the form folder using the OS file manager.
+        :param url:
+        :return:
+        """
         QDesktopServices.openUrl(QUrl.fromLocalFile(self.form.folder))
 
     def loadwidgettypes(self):
+        """
+        Load all supported widgets into the combobox for the form designer.
+        :return:
+        """
         self.useablewidgets.blockSignals(True)
         for widgettype in roam.editorwidgets.core.supportedwidgets():
             try:
@@ -219,9 +256,14 @@ class FormWidget(ui_formwidget.Ui_Form, WidgetBase):
             self.widgetstack.addWidget(configwidget)
         self.useablewidgets.blockSignals(False)
 
-    def setwidgetconfigvisiable(self, *args):
+    def set_widget_config_state(self, *args):
+        """
+        Enable or disable the widget config section based on widget count
+        :param args: Unused.
+        :return:
+        """
         haswidgets = self.widgetmodel.rowCount() > 0
-        self.widgetConfigTabs.setVisible(haswidgets)
+        self.widgetConfigTabs.setEnabled(haswidgets)
 
     def add_section(self):
         currentindex = self.userwidgets.currentIndex()
