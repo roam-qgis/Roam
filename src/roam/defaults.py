@@ -76,8 +76,8 @@ def layer_value(feature, layer, defaultconfig):
             if layer.geometryType() == QGis.Point:
                 point = feature.geometry().asPoint()
                 rect = QgsRectangle(point.x(), point.y(), point.x() + 10, point.y() + 10)
-            else:
-                rect.scale(20)
+
+            rect.scale(20)
 
             rect = canvas.mapRenderer().mapToLayerCoordinates(layer, rect)
             rq = QgsFeatureRequest().setFilterRect(rect)\
@@ -88,9 +88,16 @@ def layer_value(feature, layer, defaultconfig):
 
         exp = QgsExpression(expression)
         exp.prepare(searchlayer.pendingFields())
+        if exp.hasParserError():
+            error = exp.parserErrorString()
+            roam.utils.warning(error)
 
         for f in features:
-            if exp.evaluate(f):
+            value = exp.evaluate(f)
+            if exp.hasEvalError():
+                error = exp.evalErrorString()
+                roam.utils.warning(error)
+            if value:
                 return f[field]
 
     raise DefaultError('No features found')
