@@ -266,6 +266,10 @@ class FormWidget(ui_formwidget.Ui_Form, WidgetBase):
         self.widgetConfigTabs.setEnabled(haswidgets)
 
     def add_section(self):
+        """
+        Add a new widget section into the form. Widget sections can be used to group
+        widgets on the form together.
+        """
         currentindex = self.userwidgets.currentIndex()
         widget = {"widget": "Section",
                   "name": "default"}
@@ -274,7 +278,7 @@ class FormWidget(ui_formwidget.Ui_Form, WidgetBase):
 
     def newwidget(self, field=None):
         """
-        Create a new widget.  The default is a list.
+        Create a new widget. Tries to match the field type to the right kind of widget as a best guess.
         """
         mapping = {QVariant.String: "Text",
                    QVariant.Int: "Number",
@@ -309,6 +313,9 @@ class FormWidget(ui_formwidget.Ui_Form, WidgetBase):
         self.userwidgets.setCurrentIndex(index)
 
     def auto_add_fields(self):
+        """
+        Auto add all fields to the form config. Any missing fields will be added.
+        """
         used = list(self.usedfields())
         for field in self.selected_layer.pendingFields():
             if field.name() in used:
@@ -325,6 +332,14 @@ class FormWidget(ui_formwidget.Ui_Form, WidgetBase):
             self.widgetmodel.removeRow(index.row(), index.parent())
 
     def set_project(self, project, treenode):
+        """
+        Set the project for this widget also sets the form from the tree node.
+
+        :note: This method is called from the parent node when the page and widget is loaded.
+        :param project: The current project.j
+        :param treenode: The current tree node.  Can be used to signel a update back to the tree for it to update it
+        self.
+        """
         super(FormWidget, self).set_project(project, treenode)
         self.formlayers.setSelectLayers(self.project.selectlayers)
         form = self.treenode.form
@@ -343,6 +358,9 @@ class FormWidget(ui_formwidget.Ui_Form, WidgetBase):
         """
 
         def getfirstlayer():
+            """
+            Get the first layer from the forms layer combo box
+            """
             index = self.formlayers.index(0, 0)
             layer = index.data(Qt.UserRole)
             layer = layer.name()
@@ -356,6 +374,9 @@ class FormWidget(ui_formwidget.Ui_Form, WidgetBase):
             self.widgetmodel.loadwidgets(form.widgets)
 
         def findlayer(layername):
+            """
+            Find the layer with the same name in the layer combobox widget
+            """
             index = self.formlayersmodel.findlayer(layername)
             index = self.formlayers.mapFromSource(index)
             layer = index.data(Qt.UserRole)
