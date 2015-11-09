@@ -574,7 +574,7 @@ class MainWindow(ui_mainwindow.Ui_MainWindow, QMainWindow):
     @roam.utils.timeit
     def loadProject(self, project):
         """
-        Load a project into the application .
+        Load a project into the application.
         """
         roam.utils.log(project)
         roam.utils.log(project.name)

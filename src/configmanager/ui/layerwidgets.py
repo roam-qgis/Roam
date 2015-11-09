@@ -20,6 +20,8 @@ import configmanager.editorwidgets
 from roam.api import FeatureForm, utils
 from roam.utils import log
 
+from configmanager.utils import openqgis
+
 
 class WidgetBase(QWidget):
     def set_project(self, project, treenode):
@@ -616,6 +618,15 @@ class ProjectInfoWidget(ui_projectinfo.Ui_Form, WidgetBase):
         self.setupUi(self)
         self.titleText.textChanged.connect(self.updatetitle)
         self.splashlabel.mouseReleaseEvent = self.change_splash
+        self.btnAddLayers.pressed.connect(self.open_qgis)
+
+    def open_qgis(self):
+        try:
+            openqgis(self.project.projectfile)
+        except OSError:
+            self.bar.pushMessage("Looks like I couldn't find QGIS",
+                                 "Check qgislocation in roam.config", QgsMessageBar.WARNING)
+
 
     def change_splash(self, event):
         splash = QFileDialog.getOpenFileName(self, "Select splash image", filter="Images (*.png *.svg)")

@@ -11,12 +11,13 @@ from PyQt4.QtCore import Qt, QDir, QFileInfo, pyqtSignal, QModelIndex, QFileSyst
 from PyQt4.QtGui import (QWidget, QStandardItemModel, QStandardItem, QIcon, QMessageBox, QPixmap, QDesktopServices, QMenu,
                          QToolButton, QFileDialog)
 
-from qgis.core import QgsProject, QgsMapLayerRegistry, QgsPalLabeling, QGis
+from qgis.core import QgsProject, QgsMapLayerRegistry, QgsPalLabeling, QGis, QgsProjectBadLayerHandler
 from qgis.gui import QgsMapCanvas, QgsExpressionBuilderDialog, QgsMessageBar
 
 from configmanager.ui.ui_projectwidget import Ui_Form
 from configmanager.models import widgeticon, WidgetItem, WidgetsModel, QgsLayerModel, QgsFieldModel, LayerTypeFilter, \
     CaptureLayerFilter, CaptureLayersModel
+from configmanager.utils import openqgis
 
 from roam.api import FeatureForm
 from roam import bundle
@@ -32,19 +33,39 @@ import configmanager.logger as logger
 
 
 def layer(name):
+    """
+    Return a layer with the given name in the QGIS session
+    :param name: The name of the layer to return.
+    :return: A QgsMapLayer object with the given name.
+    """
     return QgsMapLayerRegistry.instance.mapLayersByName(name)[0]
 
 
 def openfolder(folder):
+    """
+    Open a folder using the OS
+    :param folder: The path to the folder to open.
+    """
     QDesktopServices.openUrl(QUrl.fromLocalFile(folder))
 
 
-def openqgis(project, qgislocation):
-    # TODO This needs to look in other places for QGIS.
-    cmd = 'qgis'
-    if sys.platform == 'win32':
-        cmd = qgislocation
-    subprocess.Popen([cmd, "--noplugins", project])
+class BadLayerHandler(QgsProjectBadLayerHandler):
+    """
+    Handler class for any layers that fail to load when
+    opening the project.
+    """
+
+    def __init__(self, callback):
+        """
+            callback - Any bad layers are passed to the callback so it
+            can do what it wills with them
+        """
+        super(BadLayerHandler, self).__init__()
+        self.callback = callback
+
+    def handleBadLayers(self, domNodes, domDocument):
+        layers = [node.namedItem("layername").toElement().text() for node in domNodes]
+        self.callback(layers)
 
 
 class ProjectWidget(Ui_Form, QWidget):
@@ -94,7 +115,22 @@ class ProjectWidget(Ui_Form, QWidget):
         self.qgispathEdit.textChanged.connect(self.save_qgis_path) 
         self.filePickerButton.pressed.connect(self.set_qgis_path)
 
+        self.connect_page_events()
+
+    def connect_page_events(self):
+        """
+        Connect the events from all the pages back to here
+        """
+        for index in range(self.stackedWidget.count()):
+            widget = self.stackedWidget.widget(index)
+            if hasattr(widget, "raiseMessage"):
+                widget.raiseMessage.connect(self.bar.pushMessage)
+
     def set_qgis_path(self):
+        """
+        Set the location of the QGIS install.  We need the path to be able to create Roam
+        projects
+        """
         path = QFileDialog.getOpenFileName(self, "Select QGIS install file", filter="(*.bat)")
         if not path:
             return
@@ -102,28 +138,39 @@ class ProjectWidget(Ui_Form, QWidget):
         self.save_qgis_path(path)
 
     def save_qgis_path(self, path):
+        """
+        Save the QGIS path back to the Roam config.
+        """
         roam.config.settings['configmanager'] = {'qgislocation': path}
         roam.config.save()
 
     def setpage(self, page, node):
+        """
+        Set the current page in the config manager.  We pass the project into the current
+        page so that it knows what the project is.
+        """
         self.currentnode = node
 
         self.write_config_currentwidget()
 
         self.stackedWidget.setCurrentIndex(page)
-        if self.project:
-            print self.project.dump_settings()
 
         widget = self.stackedWidget.currentWidget()
         if hasattr(widget, "set_project"):
             widget.set_project(self.project, self.currentnode)
 
     def write_config_currentwidget(self):
+        """
+        Call the write config command on the current widget.
+        """
         widget = self.stackedWidget.currentWidget()
         if hasattr(widget, "write_config"):
             widget.write_config()
 
     def deploy_project(self, with_data=False):
+        """
+        Run the step to deploy a project. Projects are deplyed as a bundled zip of the project folder.
+        """
         if self.roamapp.sourcerun:
             base = os.path.join(self.roamapp.apppath, "..")
         else:
@@ -145,42 +192,49 @@ class ProjectWidget(Ui_Form, QWidget):
         bundle.bundle_project(self.project, path, options, as_install=with_data)
 
     def setaboutinfo(self):
+        """
+        Set the current about info on the widget
+        """
         self.versionLabel.setText(roam.__version__)
         self.qgisapiLabel.setText(str(QGis.QGIS_VERSION))
 
-    def checkcapturelayers(self):
-        haslayers = self.project.hascapturelayers()
-        self.formslayerlabel.setVisible(not haslayers)
-        return haslayers
-
-
     def selectlayerschanged(self, *args):
+        """
+        Run the updates when the selection layers have changed
+        """
         self.formlayers.setSelectLayers(self.project.selectlayers)
-        self.checkcapturelayers()
         self.selectlayersupdated.emit(self.project.selectlayers)
 
     def reloadproject(self, *args):
+        """
+        Reload the project. At the moment this will drop any unsaved changes to the config.
+        Note: Should look at making sure it doesn't do that because it's not really needed.
+        """
         self.setproject(self.project)
         self.projectupdated.emit()
 
     def qgisprojectupdated(self, path):
+        """
+        Show a message when the QGIS project file has been updated.
+        """
         self.projectupdatedlabel.show()
         self.projectupdatedlabel.setText("The QGIS project has been updated. <a href='reload'> "
                                          "Click to reload</a>. <b style=\"color:red\">Unsaved data will be lost</b>")
 
     def openinqgis(self):
-        projectfile = self.project.projectfile
-        qgislocation = r'C:\OSGeo4W\bin\qgis.bat'
-        qgislocation = roam.config.settings.setdefault('configmanager', {}) \
-            .setdefault('qgislocation', qgislocation)
-
+        """
+        Open a QGIS session for the user to config the project layers.
+        """
         try:
-            openqgis(projectfile, qgislocation)
+            openqgis(self.project.projectfile)
         except OSError:
             self.bar.pushMessage("Looks like I couldn't find QGIS",
                                  "Check qgislocation in roam.config", QgsMessageBar.WARNING)
 
     def openprojectfolder(self):
+        """
+        Open the project folder in the file manager for the OS.
+        """
         folder = self.project.folder
         openfolder(folder)
 
@@ -205,9 +259,23 @@ class ProjectWidget(Ui_Form, QWidget):
         QDir.setCurrent(os.path.dirname(project.projectfile))
         fileinfo = QFileInfo(project.projectfile)
         self.projectLocationLabel.setText("Project File: {}".format(os.path.basename(project.projectfile)))
+        # No idea why we have to set this each time.  Maybe QGIS deletes it for
+        # some reason.
+        self.badLayerHandler = BadLayerHandler(callback=self.missing_layers)
+        QgsProject.instance().setBadLayerHandler(self.badLayerHandler)
         QgsProject.instance().read(fileinfo)
 
+    def missing_layers(self, layers):
+        """
+        Handle any and show any missing layers.
+        """
+        for layer in layers:
+            print layer
+
     def _closeqgisproject(self):
+        """
+        Close the current QGIS project and clean up after..
+        """
         if self.canvas.isDrawing():
             return
 
@@ -216,6 +284,9 @@ class ProjectWidget(Ui_Form, QWidget):
         self.canvas.freeze(False)
 
     def loadmap(self):
+        """
+        Load the map into the canvas widget of config manager.
+        """
         if self.mapisloaded:
             return
 
