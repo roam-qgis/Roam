@@ -7,16 +7,17 @@ from PyQt4.QtGui import (QWidget, QPixmap, QStandardItem, QStandardItemModel, QI
                          QFileDialog)
 from PyQt4.Qsci import QsciLexerSQL, QsciScintilla
 
-from qgis.core import QgsDataSourceURI
-from qgis.gui import QgsExpressionBuilderDialog
+from qgis.core import QgsDataSourceURI, QgsPalLabeling
+from qgis.gui import QgsExpressionBuilderDialog, QgsMapCanvas
 
 from configmanager.ui.nodewidgets import (ui_layersnode, ui_layernode, ui_infonode, ui_projectinfo, ui_formwidget,
-                                          ui_searchsnode, ui_searchnode)
+                                          ui_searchsnode, ui_searchnode, ui_mapwidget)
 from configmanager.models import (CaptureLayersModel, LayerTypeFilter, QgsFieldModel, WidgetsModel,
                                   QgsLayerModel, CaptureLayerFilter, widgeticon, SearchFieldsModel)
 
 import roam.editorwidgets
 import configmanager.editorwidgets
+import roam.projectparser
 from roam.api import FeatureForm, utils
 from roam.utils import log
 
@@ -936,3 +937,36 @@ class LayerSearchConfigWidget(ui_searchnode.Ui_Form, WidgetBase):
                 self.project.settings['plugins'] = plugins
             config = self.project.settings.setdefault('search', {})
             config[self.treenode.layer.name()] = dict(columns=layers)
+
+
+class MapWidget(ui_mapwidget.Ui_Form, WidgetBase):
+    def __init__(self, parent=None):
+        super(MapWidget, self).__init__(parent)
+        self.setupUi(self)
+
+        self.canvas.setCanvasColor(Qt.white)
+        self.canvas.enableAntiAliasing(True)
+        self.canvas.setWheelAction(QgsMapCanvas.WheelZoomToMouseCursor)
+        self.canvas.mapRenderer().setLabelingEngine(QgsPalLabeling())
+
+    def set_project(self, project, treenode):
+        self.loadmap(project)
+
+    def loadmap(self, project):
+        """
+        Load the map into the canvas widget of config manager.
+        """
+
+        # This is a dirty hack to work around the timer that is in QgsMapCanvas in 2.2.
+        # Refresh will stop the canvas timer
+        # Repaint will redraw the widget.
+        self.canvas.refresh()
+        self.canvas.repaint()
+
+        parser = roam.projectparser.ProjectParser.fromFile(project.projectfile)
+        canvasnode = parser.canvasnode
+        self.canvas.mapRenderer().readXML(canvasnode)
+        self.canvaslayers = parser.canvaslayers()
+        self.canvas.setLayerSet(self.canvaslayers)
+        self.canvas.updateScale()
+        self.canvas.refresh()

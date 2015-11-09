@@ -79,16 +79,10 @@ class ProjectWidget(Ui_Form, QWidget):
         super(ProjectWidget, self).__init__(parent)
         self.setupUi(self)
         self.project = None
-        self.mapisloaded = False
         self.bar = None
         self.roamapp = None
 
         menu = QMenu()
-        self.canvas.setCanvasColor(Qt.white)
-
-        self.canvas.enableAntiAliasing(True)
-        self.canvas.setWheelAction(QgsMapCanvas.WheelZoomToMouseCursor)
-        self.canvas.mapRenderer().setLabelingEngine(QgsPalLabeling())
 
         # self.roamVersionLabel.setText("You are running IntraMaps Roam version {}".format(roam.__version__))
 
@@ -242,7 +236,6 @@ class ProjectWidget(Ui_Form, QWidget):
         """
         Set the widgets active project.
         """
-        self.mapisloaded = False
         self.filewatcher.removePaths(self.filewatcher.files())
         self.projectupdatedlabel.hide()
         self._closeqgisproject()
@@ -258,7 +251,6 @@ class ProjectWidget(Ui_Form, QWidget):
     def loadqgisproject(self, project, projectfile):
         QDir.setCurrent(os.path.dirname(project.projectfile))
         fileinfo = QFileInfo(project.projectfile)
-        self.projectLocationLabel.setText("Project File: {}".format(os.path.basename(project.projectfile)))
         # No idea why we have to set this each time.  Maybe QGIS deletes it for
         # some reason.
         self.badLayerHandler = BadLayerHandler(callback=self.missing_layers)
@@ -276,36 +268,7 @@ class ProjectWidget(Ui_Form, QWidget):
         """
         Close the current QGIS project and clean up after..
         """
-        if self.canvas.isDrawing():
-            return
-
-        self.canvas.freeze(True)
         QgsMapLayerRegistry.instance().removeAllMapLayers()
-        self.canvas.freeze(False)
-
-    def loadmap(self):
-        """
-        Load the map into the canvas widget of config manager.
-        """
-        if self.mapisloaded:
-            return
-
-        # This is a dirty hack to work around the timer that is in QgsMapCanvas in 2.2.
-        # Refresh will stop the canvas timer
-        # Repaint will redraw the widget.
-        # loadmap is only called once per project load so it's safe to do this here.
-        self.canvas.refresh()
-        self.canvas.repaint()
-
-        parser = roam.projectparser.ProjectParser.fromFile(self.project.projectfile)
-        canvasnode = parser.canvasnode
-        self.canvas.mapRenderer().readXML(canvasnode)
-        self.canvaslayers = parser.canvaslayers()
-        self.canvas.setLayerSet(self.canvaslayers)
-        self.canvas.updateScale()
-        self.canvas.refresh()
-
-        self.mapisloaded = True
 
     def _saveproject(self):
         """
