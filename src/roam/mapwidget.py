@@ -10,7 +10,7 @@ from PyQt4.QtGui import QActionGroup, QFrame, QWidget, QSizePolicy, \
 
 from PyQt4.QtSvg import QGraphicsSvgItem
 
-from qgis.gui import QgsMapCanvas, QgsMapToolZoom, QgsRubberBand, QgsMapCanvasItem, QgsScaleComboBox
+from qgis.gui import QgsMapCanvas, QgsMapToolZoom, QgsRubberBand, QgsMapCanvasItem, QgsScaleComboBox, QgsLayerTreeMapCanvasBridge
 from qgis.core import QgsPalLabeling, QgsMapLayerRegistry, QgsMapLayer, QGis, QgsRectangle, QgsProject, QgsApplication, \
     QgsComposerScaleBar, \
     QgsCoordinateReferenceSystem, QgsCoordinateTransform, QgsPoint, QgsCsException, QgsDistanceArea
@@ -323,6 +323,10 @@ class MapWidget(Ui_CanvasWidget, QMainWindow):
         self.gpslogging = None
         self.selectionbands = defaultdict(partial(QgsRubberBand, self.canvas))
 
+        self.bridge = QgsLayerTreeMapCanvasBridge(QgsProject.instance().layerTreeRoot(), self.canvas)
+        QgsProject.instance().writeProject.connect(self.bridge.writeProject)
+        QgsProject.instance().readProject.connect(self.bridge.readProject)
+
         # self.canvas.setInteractive(False)
         self.canvas.setCanvasColor(Qt.white)
         self.canvas.enableAntiAliasing(True)
@@ -487,20 +491,7 @@ class MapWidget(Ui_CanvasWidget, QMainWindow):
         self.canvas.zoomScale(1.0 / self.scalewidget.scale())
 
     def init_qgisproject(self, doc):
-        parser = ProjectParser(doc)
-        canvasnode = parser.canvasnode
-        self.canvas.freeze()
-        self.canvas.mapRenderer().readXML(canvasnode)
-        self.canvaslayers = parser.canvaslayers()
-        self.canvas.setLayerSet(self.canvaslayers)
-        red = QgsProject.instance().readNumEntry("Gui", "/CanvasColorRedPart", 255)[0]
-        green = QgsProject.instance().readNumEntry("Gui", "/CanvasColorGreenPart", 255)[0]
-        blue = QgsProject.instance().readNumEntry("Gui", "/CanvasColorBluePart", 255)[0]
-        color = QColor(red, green, blue)
-        self.canvas.setCanvasColor(color)
-        self.canvas.updateScale()
-        self.canvas.freeze(False)
-        return self.canvas.mapRenderer().destinationCrs()
+        return self.canvas.mapSettings().destinationCrs()
 
     def showEvent(self, *args, **kwargs):
         if QGis.QGIS_VERSION_INT == 20200 and self.firstshow:
