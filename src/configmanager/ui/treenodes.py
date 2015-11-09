@@ -84,7 +84,7 @@ class Treenode(QStandardItem):
     FormsNode = QStandardItem.UserType + 5
     ProjectsNode = QStandardItem.UserType + 6
     ProjectsNode_Invalid = QStandardItem.UserType + 7
-    LayerNode = QStandardItem.UserType + 9
+    SelectLayerNode = QStandardItem.UserType + 9
     LayersNode = QStandardItem.UserType + 8
     InfoNode = QStandardItem.UserType + 10
     LayerSearchNode = QStandardItem.UserType + 11
@@ -156,7 +156,7 @@ class LayersNode(Treenode):
             if not layer.name() in self.project.selectlayers:
                 continue
 
-            node = LayerNode(layer, self.project)
+            node = SelectLayerNode(layer, self.project)
             self.appendRow(node)
 
         super(LayersNode, self).create_children()
@@ -175,13 +175,13 @@ class InfoNode(Treenode):
         super(InfoNode, self).__init__(text, QIcon(":/icons/map"), project)
 
 
-class LayerNode(Treenode):
-    nodetype = Treenode.LayerNode
+class SelectLayerNode(Treenode):
+    nodetype = Treenode.SelectLayerNode
 
     def __init__(self, layer, project):
         self.layer = layer
         text = layer.name()
-        super(LayerNode, self).__init__(text, QIcon(":/icons/map"), project)
+        super(SelectLayerNode, self).__init__(text, QIcon(":/icons/map"), project)
 
     def create_children(self):
         self.removeRows(0, self.rowCount())
