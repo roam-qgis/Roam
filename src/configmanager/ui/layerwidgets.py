@@ -1,13 +1,16 @@
+from sphinx.addnodes import index
+
 __author__ = 'Nathan.Woodrow'
 
 import os
 import shutil
+from string import Template
 from PyQt4.QtCore import Qt, QUrl, QVariant
 from PyQt4.QtGui import (QWidget, QPixmap, QStandardItem, QStandardItemModel, QIcon, QDesktopServices, QMenu, QToolButton,
                          QFileDialog)
 from PyQt4.Qsci import QsciLexerSQL, QsciScintilla
 
-from qgis.core import QgsDataSourceURI, QgsPalLabeling
+from qgis.core import QgsDataSourceURI, QgsPalLabeling, QgsMapLayerRegistry
 from qgis.gui import QgsExpressionBuilderDialog, QgsMapCanvas
 
 from configmanager.ui.nodewidgets import (ui_layersnode, ui_layernode, ui_infonode, ui_projectinfo, ui_formwidget,
@@ -21,7 +24,7 @@ import roam.projectparser
 from roam.api import FeatureForm, utils
 from roam.utils import log
 
-from configmanager.utils import openqgis
+from configmanager.utils import openqgis, render_tample
 
 
 class WidgetBase(QWidget):
@@ -951,6 +954,13 @@ class MapWidget(ui_mapwidget.Ui_Form, WidgetBase):
 
     def set_project(self, project, treenode):
         self.loadmap(project)
+        missing = project.missing_layers
+        layers = QgsMapLayerRegistry.instance().mapLayers().values()
+        proj = self.canvas.mapSettings().destinationCrs().authid()
+        html = render_tample("projectinfo", projection=proj,
+                             layers=layers,
+                             missinglayers=missing)
+        self.textMapReport.setHtml(html)
 
     def loadmap(self, project):
         """

@@ -29,14 +29,14 @@
      <item>
       <widget class="QTextBrowser" name="textMapReport">
        <property name="sizePolicy">
-        <sizepolicy hsizetype="Ignored" vsizetype="Expanding">
+        <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
          <horstretch>0</horstretch>
          <verstretch>0</verstretch>
         </sizepolicy>
        </property>
        <property name="maximumSize">
         <size>
-         <width>400</width>
+         <width>16777215</width>
          <height>16777215</height>
         </size>
        </property>

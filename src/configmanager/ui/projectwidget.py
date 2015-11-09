@@ -257,12 +257,11 @@ class ProjectWidget(Ui_Form, QWidget):
         QgsProject.instance().setBadLayerHandler(self.badLayerHandler)
         QgsProject.instance().read(fileinfo)
 
-    def missing_layers(self, layers):
+    def missing_layers(self, missinglayers):
         """
         Handle any and show any missing layers.
         """
-        for layer in layers:
-            print layer
+        self.project.missing_layers = missinglayers
 
     def _closeqgisproject(self):
         """

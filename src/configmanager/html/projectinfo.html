@@ -1,0 +1,22 @@
+<h1>Project Info</h1>
+Projection: {{ projection }}
+<h2>Loaded Layers</h2>
+<table>
+  {% for layer in layers %}
+    <tr>
+        <td>
+            {{ layer.name() }}
+        </td>
+        <td>
+           {{ layer.crs().authid() }}
+        </td>
+    </tr>
+  {% endfor %}
+</table>
+<h2>Failed to load</h2>
+These layers failed to load from the project.
+<ul>
+    {% for layer in missinglayers %}
+      <li>{{ layer }}</a></li>
+    {% endfor %}
+</ul>

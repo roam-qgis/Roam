@@ -421,6 +421,7 @@ class Project(QObject):
         self.error = ''
         self.basepath = os.path.join(rootfolder, "..")
         self.projectUpdated.connect(self.project_updated)
+        self._missinglayers = []
 
     @classmethod
     def from_folder(cls, rootfolder):
@@ -735,3 +736,13 @@ class Project(QObject):
         import pprint
 
         pprint.pprint(self.settings)
+
+    @property
+    def missing_layers(self):
+        return self._missinglayers
+
+    @missing_layers.setter
+    def missing_layers(self, layers):
+        self._missinglayers = layers
+
+
