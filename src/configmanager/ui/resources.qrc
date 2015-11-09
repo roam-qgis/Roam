@@ -17,4 +17,13 @@
     <file alias="TableLayer">mIconTableLayer.svg</file>
     <file alias="Expression">expression.svg</file>
   </qresource>
+  <qresource prefix="images/themes/default">
+    <file alias="locked.svg">images\locked.svg</file>
+    <file alias="unlocked.svg">images\unlocked.svg</file>
+    <file alias="symbologyAdd.svg">images\symbologyAdd.svg</file>
+    <file alias="symbologyRemove.svg">images\symbologyRemove.svg</file>
+    <file alias="symbologyEdit.png">images\symbologyEdit.svg</file>
+    <file alias="symbologyUp.svg">images\symbologyUp.svg</file>
+    <file alias="symbologyDown.svg">images\symbologyDown.svg</file>
+  </qresource>
 </RCC>

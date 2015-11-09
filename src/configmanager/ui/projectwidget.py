@@ -276,4 +276,7 @@ class ProjectWidget(Ui_Form, QWidget):
         self.write_config_currentwidget()
         # self.project.dump_settings()
         self.project.save(update_version=True)
+        self.filewatcher.removePaths(self.filewatcher.files())
+        QgsProject.instance().write()
+        self.filewatcher.addPath(self.project.projectfile)
         self.projectsaved.emit()

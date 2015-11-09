@@ -10,8 +10,8 @@ from PyQt4.QtGui import (QWidget, QPixmap, QStandardItem, QStandardItemModel, QI
                          QFileDialog)
 from PyQt4.Qsci import QsciLexerSQL, QsciScintilla
 
-from qgis.core import QgsDataSourceURI, QgsPalLabeling, QgsMapLayerRegistry
-from qgis.gui import QgsExpressionBuilderDialog, QgsMapCanvas
+from qgis.core import QgsDataSourceURI, QgsPalLabeling, QgsMapLayerRegistry, QgsStyleV2, QgsMapLayer, QGis, QgsProject
+from qgis.gui import QgsExpressionBuilderDialog, QgsMapCanvas, QgsRendererV2PropertiesDialog, QgsLayerTreeMapCanvasBridge
 
 from configmanager.ui.nodewidgets import (ui_layersnode, ui_layernode, ui_infonode, ui_projectinfo, ui_formwidget,
                                           ui_searchsnode, ui_searchnode, ui_mapwidget)
@@ -951,9 +951,49 @@ class MapWidget(ui_mapwidget.Ui_Form, WidgetBase):
         self.canvas.enableAntiAliasing(True)
         self.canvas.setWheelAction(QgsMapCanvas.WheelZoomToMouseCursor)
         self.canvas.mapRenderer().setLabelingEngine(QgsPalLabeling())
+        self.style = QgsStyleV2.defaultStyle()
+        self.styledlg = None
+        self.bridge = QgsLayerTreeMapCanvasBridge(QgsProject.instance().layerTreeRoot(), self.canvas)
+
+        self.applyStyleButton.pressed.connect(self.apply_style)
+
+    def apply_style(self):
+        if self.styledlg:
+            self.styledlg.apply()
+            self.canvas.refresh()
 
     def set_project(self, project, treenode):
-        self.loadmap(project)
+        if hasattr(treenode, "layer"):
+            layer = treenode.layer
+            if layer.type() == QgsMapLayer.VectorLayer and layer.geometryType() == QGis.NoGeometry:
+                self.stackedWidget.setCurrentIndex(0)
+            self.set_style_widget(treenode.layer)
+            self.stackedWidget.setCurrentIndex(1)
+        else:
+            self.loadmap(project)
+            self.stackedWidget.setCurrentIndex(0)
+
+    def set_style_widget(self, layer):
+        if self.styledlg:
+            widget = self.styleWidget.layout().removeWidget(self.styledlg)
+
+        self.styledlg = QgsRendererV2PropertiesDialog(layer, self.style, True)
+        self.styledlg.setParent(self)
+        # TODO Only in 2.12
+        # self.styledlg.setMapCanvas(self.canvas)
+        self.styleWidget.layout().addWidget(self.styledlg)
+
+
+    def loadmap(self, project):
+        """
+        Load the map into the canvas widget of config manager.
+        """
+
+        # Refresh will stop the canvas timer
+        # Repaint will redraw the widget.
+        self.canvas.refresh()
+        self.canvas.repaint()
+
         missing = project.missing_layers
         layers = QgsMapLayerRegistry.instance().mapLayers().values()
         proj = self.canvas.mapSettings().destinationCrs().authid()
@@ -961,22 +1001,3 @@ class MapWidget(ui_mapwidget.Ui_Form, WidgetBase):
                              layers=layers,
                              missinglayers=missing)
         self.textMapReport.setHtml(html)
-
-    def loadmap(self, project):
-        """
-        Load the map into the canvas widget of config manager.
-        """
-
-        # This is a dirty hack to work around the timer that is in QgsMapCanvas in 2.2.
-        # Refresh will stop the canvas timer
-        # Repaint will redraw the widget.
-        self.canvas.refresh()
-        self.canvas.repaint()
-
-        parser = roam.projectparser.ProjectParser.fromFile(project.projectfile)
-        canvasnode = parser.canvasnode
-        self.canvas.mapRenderer().readXML(canvasnode)
-        self.canvaslayers = parser.canvaslayers()
-        self.canvas.setLayerSet(self.canvaslayers)
-        self.canvas.updateScale()
-        self.canvas.refresh()
