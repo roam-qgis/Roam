@@ -954,6 +954,7 @@ class MapWidget(ui_mapwidget.Ui_Form, WidgetBase):
         self.style = QgsStyleV2.defaultStyle()
         self.styledlg = None
         self.bridge = QgsLayerTreeMapCanvasBridge(QgsProject.instance().layerTreeRoot(), self.canvas)
+        self.bridge.setAutoSetupOnFirstLayer(False)
         QgsProject.instance().writeProject.connect(self.bridge.writeProject)
         QgsProject.instance().readProject.connect(self.bridge.readProject)
 

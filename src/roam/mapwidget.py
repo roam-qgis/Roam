@@ -324,6 +324,7 @@ class MapWidget(Ui_CanvasWidget, QMainWindow):
         self.selectionbands = defaultdict(partial(QgsRubberBand, self.canvas))
 
         self.bridge = QgsLayerTreeMapCanvasBridge(QgsProject.instance().layerTreeRoot(), self.canvas)
+        self.bridge.setAutoSetupOnFirstLayer(False)
         QgsProject.instance().writeProject.connect(self.bridge.writeProject)
         QgsProject.instance().readProject.connect(self.bridge.readProject)
 
@@ -649,7 +650,6 @@ class MapWidget(Ui_CanvasWidget, QMainWindow):
 
         self.infoTool.selectionlayers = project.selectlayersmapping()
 
-        self.canvas.freeze(False)
         self.canvas.refresh()
 
         projectscales, _ = QgsProject.instance().readBoolEntry("Scales", "/useProjectScales")
@@ -811,6 +811,7 @@ class MapWidget(Ui_CanvasWidget, QMainWindow):
         self.canvas.refresh()
 
     def cleanup(self):
+        self.bridge.clear()
         self.gpsband.reset()
         self.gpsband.hide()
         self.clear_selection()
