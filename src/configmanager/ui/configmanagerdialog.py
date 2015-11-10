@@ -130,9 +130,6 @@ class ConfigManagerDialog(ui_configmanager.Ui_ProjectInstallerDialog, QDialog):
 
         if node.nodetype == Treenode.RoamNode:
             self.projectwidget.projectlabel.setText("IntraMaps Roam Config Manager")
-        elif node.nodetype == Treenode.FormsNode:
-            haslayers = self.projectwidget.checkcapturelayers()
-            self.newProjectButton.setEnabled(haslayers)
 
         self.projectwidget.projectbuttonframe.setVisible(not project is None)
         self.projectwidget.setpage(node.page, node)

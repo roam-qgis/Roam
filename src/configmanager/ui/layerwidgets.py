@@ -21,6 +21,7 @@ import configmanager.editorwidgets
 import roam.projectparser
 from roam.api import FeatureForm, utils
 from roam.utils import log
+from roam import roam_style
 
 from configmanager.utils import openqgis, render_tample
 
@@ -979,6 +980,7 @@ class MapWidget(ui_mapwidget.Ui_Form, WidgetBase):
             widget = self.styleWidget.layout().removeWidget(self.styledlg)
 
         self.styledlg = QgsRendererV2PropertiesDialog(layer, self.style, True)
+        # self.styledlg.setStyleSheet(roam_style.appstyle())
         self.styledlg.setParent(self)
         # TODO Only in 2.12
         # self.styledlg.setMapCanvas(self.canvas)
