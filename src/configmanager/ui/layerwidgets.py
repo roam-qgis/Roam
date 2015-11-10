@@ -23,7 +23,7 @@ from roam.api import FeatureForm, utils
 from roam.utils import log
 from roam import roam_style
 
-from configmanager.utils import openqgis, render_tample
+from configmanager.utils import openqgis, render_tample, openfolder
 
 
 class WidgetBase(QWidget):
@@ -622,16 +622,29 @@ class ProjectInfoWidget(ui_projectinfo.Ui_Form, WidgetBase):
         self.titleText.textChanged.connect(self.updatetitle)
         self.splashlabel.mouseReleaseEvent = self.change_splash
         self.btnAddLayers.pressed.connect(self.open_qgis)
+        self.btnAddData.pressed.connect(self.open_data_folder)
+
+    def open_data_folder(self):
+        """
+        Open the data folder of the project using the OS
+        """
+        path = os.path.join(self.project.folder, "_data")
+        openfolder(path)
 
     def open_qgis(self):
+        """
+        Open a instance of QGIS to add new layers and config the project.
+        """
         try:
             openqgis(self.project.projectfile)
         except OSError:
             self.bar.pushMessage("Looks like I couldn't find QGIS",
                                  "Check qgislocation in roam.config", QgsMessageBar.WARNING)
 
-
     def change_splash(self, event):
+        """
+        Open a file browser to load a new splash icon.
+        """
         splash = QFileDialog.getOpenFileName(self, "Select splash image", filter="Images (*.png *.svg)")
         if not splash:
             return
@@ -640,27 +653,46 @@ class ProjectInfoWidget(ui_projectinfo.Ui_Form, WidgetBase):
         self.setsplash(self.project.splash)
 
     def updatetitle(self, text):
+        """
+        Called when the title text box changes and we need to update the config file
+        :param text: The new text for the title.
+        """
         self.project.settings['title'] = text
         self.titleText.setText(text)
 
     def setsplash(self, splash):
+        """
+        Set the project image to the given image.
+        :param splash: The path to the image to use as a the splash screen.
+        """
         pixmap = QPixmap(splash)
         w = self.splashlabel.width()
         h = self.splashlabel.height()
         self.splashlabel.setPixmap(pixmap.scaled(w, h, Qt.KeepAspectRatio))
 
     def update_items(self):
+        """
+        Update the UI widgets form the current project.
+        """
         self.titleText.setText(self.project.name)
         self.descriptionText.setPlainText(self.project.description)
         self.setsplash(self.project.splash)
         self.versionText.setText(str(self.project.version))
 
     def set_project(self, project, treenode):
+        """
+        Set the project for the current widget.
+        :param project: The new active project
+        :param treenode: The active tree node
+        """
         super(ProjectInfoWidget, self).set_project(project, treenode)
         self.project.projectUpdated.connect(self.update_items)
         self.update_items()
 
     def write_config(self):
+        """
+        Wrtie the config for the widget back to the project config
+        """
         title = self.titleText.text()
         description = self.descriptionText.toPlainText()
 

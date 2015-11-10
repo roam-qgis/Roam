@@ -3,6 +3,9 @@ import os
 import subprocess
 import roam.config
 
+from PyQt4.QtCore import QUrl
+from PyQt4.QtGui import QDesktopServices
+
 from jinja2 import Environment, FileSystemLoader
 path = os.path.join(os.path.dirname(__file__), "templates", "html")
 
@@ -27,4 +30,13 @@ def openqgis(project):
 def render_tample(name, **data):
     template = env.get_template('{}.html'.format(name))
     return template.render(**data)
+
+
+def openfolder(folder):
+    """
+    Open a folder using the OS
+    :param folder: The path to the folder to open.
+    """
+    QDesktopServices.openUrl(QUrl.fromLocalFile(folder))
+
 

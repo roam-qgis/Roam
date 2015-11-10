@@ -17,7 +17,7 @@ from qgis.gui import QgsMapCanvas, QgsExpressionBuilderDialog, QgsMessageBar
 from configmanager.ui.ui_projectwidget import Ui_Form
 from configmanager.models import widgeticon, WidgetItem, WidgetsModel, QgsLayerModel, QgsFieldModel, LayerTypeFilter, \
     CaptureLayerFilter, CaptureLayersModel
-from configmanager.utils import openqgis
+from configmanager.utils import openqgis, openfolder
 
 from roam.api import FeatureForm
 from roam import bundle
@@ -39,14 +39,6 @@ def layer(name):
     :return: A QgsMapLayer object with the given name.
     """
     return QgsMapLayerRegistry.instance.mapLayersByName(name)[0]
-
-
-def openfolder(folder):
-    """
-    Open a folder using the OS
-    :param folder: The path to the folder to open.
-    """
-    QDesktopServices.openUrl(QUrl.fromLocalFile(folder))
 
 
 class BadLayerHandler(QgsProjectBadLayerHandler):
