@@ -13,6 +13,7 @@ Projection: {{ projection }}
     </tr>
   {% endfor %}
 </table>
+{% if missinglayers %}
 <h2>Failed to load</h2>
 These layers failed to load from the project.
 <ul>
@@ -20,3 +21,4 @@ These layers failed to load from the project.
       <li>{{ layer }}</a></li>
     {% endfor %}
 </ul>
+{% endif %}
