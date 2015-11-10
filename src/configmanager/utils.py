@@ -3,10 +3,10 @@ import os
 import subprocess
 import roam.config
 
-from jinja2 import Environment, PackageLoader
+from jinja2 import Environment, FileSystemLoader
 path = os.path.join(os.path.dirname(__file__), "html")
 
-env = Environment(loader=PackageLoader('roam', path))
+env = Environment(loader=FileSystemLoader(path))
 
 
 def openqgis(project):
