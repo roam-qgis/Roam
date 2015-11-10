@@ -39,12 +39,9 @@ class ConfigManagerDialog(ui_configmanager.Ui_ProjectInstallerDialog, QDialog):
         self.projectwidget.adjustSize()
         self.setWindowFlags(Qt.Window)
 
-        self.newProjectButton.pressed.connect(self.newproject)
-        self.removeProjectButton.pressed.connect(self.deletebuttonpressed)
         self.projectwidget.projectupdated.connect(self.projectupdated)
 
         self.projectwidget.setaboutinfo()
-        self.projectwidget.projects_page.newproject.connect(self.newproject)
         self.projectwidget.projects_page.projectlocationchanged.connect(self.loadprojects)
         self.setuprootitems()
 
@@ -61,18 +58,7 @@ class ConfigManagerDialog(ui_configmanager.Ui_ProjectInstallerDialog, QDialog):
         self.projectsnode = ProjectsNode(folder=None)
         rootitem.appendRow(self.projectsnode)
 
-    def newproject(self):
-        index = self.projectList.currentIndex()
-        node = index.data(Qt.UserRole)
-        if node and node.canadd:
-            try:
-                item = node.additem()
-            except ValueError:
-                return
-            newindex = self.treemodel.indexFromItem(item)
-            self.projectList.setCurrentIndex(newindex)
-
-    def deletebuttonpressed(self):
+    def delete_project(self):
         index = self.projectList.currentIndex()
         node = index.data(Qt.UserRole)
         if node.type() == Treenode.ProjectNode:
@@ -109,11 +95,6 @@ class ConfigManagerDialog(ui_configmanager.Ui_ProjectInstallerDialog, QDialog):
         if node is None:
             return
 
-        self.removeProjectButton.setEnabled(node.canremove)
-        self.newProjectButton.setEnabled(node.canadd)
-        #self.newProjectButton.setText(node.addtext)
-        #self.removeProjectButton.setText(node.removetext)
-
         project = node.project
         if project and not self.projectwidget.project == project:
             # Only load the project if it's different the current one.
@@ -130,6 +111,15 @@ class ConfigManagerDialog(ui_configmanager.Ui_ProjectInstallerDialog, QDialog):
 
         if node.nodetype == Treenode.RoamNode:
             self.projectwidget.projectlabel.setText("IntraMaps Roam Config Manager")
+
+        if node.nodetype == Treenode.AddNew:
+            try:
+                item = node.additem()
+            except ValueError:
+                return
+            newindex = self.treemodel.indexFromItem(item)
+            self.projectList.setCurrentIndex(newindex)
+            return
 
         self.projectwidget.projectbuttonframe.setVisible(not project is None)
         self.projectwidget.setpage(node.page, node)

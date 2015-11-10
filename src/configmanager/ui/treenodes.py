@@ -90,6 +90,7 @@ class Treenode(QStandardItem):
     LayerSearchNode = QStandardItem.UserType + 11
     LayerSearchConfigNode = QStandardItem.UserType + 12
     LayerNode = TreeNode
+    AddNew = TreeNode
 
     nodetype = TreeNode
 
@@ -266,6 +267,16 @@ class MapNode(Treenode):
         self.create_children()
 
 
+class AddNewNode(Treenode):
+    nodetype = Treenode.AddNew
+
+    def __init__(self, text):
+        super(AddNewNode, self).__init__(text, QIcon(":/icons/add"))
+
+    def additem(self):
+        return self.parent().additem()
+
+
 class FormNode(Treenode):
     nodetype = Treenode.FormNode
 
@@ -312,6 +323,8 @@ class FormsNode(Treenode):
         for form in forms:
             item = FormNode(form, self.project)
             self.appendRow(item)
+        node = AddNewNode("New Form")
+        self.appendRow(node)
         super(FormsNode, self).create_children()
 
     def data(self, role):
@@ -350,7 +363,8 @@ class FormsNode(Treenode):
         form = newform(self.project)
         self.project.save()
         item = FormNode(form, self.project)
-        self.appendRow(item)
+        count = self.rowCount()
+        self.insertRow(count - 1, item)
         return item
 
 
@@ -426,7 +440,8 @@ class ProjectsNode(Treenode):
     def additem(self):
         project = newproject(self.projectfolder)
         item = ProjectNode(project)
-        self.appendRow(item)
+        count = self.rowCount()
+        self.insertRow(count - 1, item)
         return item
 
     def data(self, role):
@@ -440,6 +455,8 @@ class ProjectsNode(Treenode):
         for project in projects:
             node = ProjectNode(project)
             self.appendRow(node)
+        node = AddNewNode("New Project")
+        self.appendRow(node)
 
 
 def find_node(index, nodetype=Treenode.ProjectNode):

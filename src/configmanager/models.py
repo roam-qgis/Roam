@@ -412,7 +412,7 @@ class WidgetsModel(QStandardItemModel):
 
         widgettext = yaml.dump(widgets)
         bytes = QByteArray(widgettext)
-        data.setData(self.mimeTypes()[0], bytes)
+        data.setData(self.mimeTypes()[0], bytesnodnodee)
         return data
 
     def dropMimeData(self, mimedata, action, row, column, parent):

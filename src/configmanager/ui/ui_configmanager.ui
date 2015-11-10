@@ -119,65 +119,6 @@ background-color: rgb(85,85,85);
           <property name="bottomMargin">
            <number>10</number>
           </property>
-          <item>
-           <widget class="QPushButton" name="newProjectButton">
-            <property name="styleSheet">
-             <string notr="true">color: white;</string>
-            </property>
-            <property name="text">
-             <string/>
-            </property>
-            <property name="icon">
-             <iconset resource="../../roam/resources.qrc">
-              <normaloff>:/icons/add</normaloff>:/icons/add</iconset>
-            </property>
-            <property name="iconSize">
-             <size>
-              <width>24</width>
-              <height>24</height>
-             </size>
-            </property>
-            <property name="flat">
-             <bool>true</bool>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <spacer name="horizontalSpacer">
-            <property name="orientation">
-             <enum>Qt::Horizontal</enum>
-            </property>
-            <property name="sizeHint" stdset="0">
-             <size>
-              <width>40</width>
-              <height>20</height>
-             </size>
-            </property>
-           </spacer>
-          </item>
-          <item>
-           <widget class="QPushButton" name="removeProjectButton">
-            <property name="styleSheet">
-             <string notr="true">color: white;</string>
-            </property>
-            <property name="text">
-             <string/>
-            </property>
-            <property name="icon">
-             <iconset resource="../../roam/resources.qrc">
-              <normaloff>:/icons/remove</normaloff>:/icons/remove</iconset>
-            </property>
-            <property name="iconSize">
-             <size>
-              <width>24</width>
-              <height>24</height>
-             </size>
-            </property>
-            <property name="flat">
-             <bool>true</bool>
-            </property>
-           </widget>
-          </item>
          </layout>
         </widget>
        </item>
@@ -293,7 +234,6 @@ QTreeView::item {
  </customwidgets>
  <resources>
   <include location="../../roam/resources.qrc"/>
-  <include location="../resources.qrc"/>
  </resources>
  <connections/>
 </ui>
