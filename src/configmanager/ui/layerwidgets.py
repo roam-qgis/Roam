@@ -1,5 +1,3 @@
-from sphinx.addnodes import index
-
 __author__ = 'Nathan.Woodrow'
 
 import os

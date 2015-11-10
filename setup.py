@@ -109,8 +109,8 @@ def get_data_files():
     ]
 
     for source, dest in extapaths:
-        files = getfiles(source, dest)
-        datafiles.append(files)
+        for files in getfiles(source, dest):
+            datafiles.append(files)
 
     versiontext = os.path.join(appsrcopyFilesath, "version.txt")
 
