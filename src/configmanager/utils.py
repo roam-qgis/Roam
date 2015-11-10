@@ -4,7 +4,7 @@ import subprocess
 import roam.config
 
 from jinja2 import Environment, FileSystemLoader
-path = os.path.join(os.path.dirname(__file__), "html")
+path = os.path.join(os.path.dirname(__file__), "templates", "html")
 
 env = Environment(loader=FileSystemLoader(path))
 
