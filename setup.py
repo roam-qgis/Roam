@@ -100,29 +100,17 @@ def get_data_files():
                  (r'libs\roam\editorwidgets', glob.glob(os.path.join(srceditorwidgets, "*.pyd"))),
                  (r'libs\roam\editorwidgets', glob.glob(os.path.join(srceditorwidgets, "*.png")))]
 
-    for files in getfiles(r"src\roam\templates", r"libs\roam"):
+    extapaths = [
+        (r"src\roam\templates", r"libs\roam"),
+        (svgs, r'libs\qgis\svg'),
+        (r'src\configmanager\templates', r'libs\configmanager\templates'),
+        (r'src\plugins', r'plugins'),
+        (gdalsharepath, r'libs')
+    ]
+
+    for source, dest in extapaths:
+        files = getfiles(source, dest)
         datafiles.append(files)
-
-    for path, collection in getfiles(svgs, r'libs\qgis\svg'):
-        datafiles.append((path, collection))
-
-    for path, collection in getfiles(r'src\configmanager\templates', r'libs\configmanager\templates'):
-        datafiles.append((path, collection))
-
-    for path, collection in getfiles(r'src\plugins', r'plugins'):
-        print path, collection
-        datafiles.append((path, collection))
-
-    for path, collection in getfiles(gdalsharepath, r'libs'):
-        datafiles.append((path, collection))
-
-    # We copy the ogr2ogr10 and ogrinfo10 from the sdk folder because
-    # MS SQL support in GDAL 1.11 is busted.  Do this until OSGeo4W gets a new
-    # GDAL build.
-    # GDAL ticket http://trac.osgeo.org/gdal/ticket/5474
-    # Fixed in 1.11.1
-    for path, collection in getfiles(sdkpath, r'libs', includebase=False):
-        datafiles.append((path, collection))
 
     versiontext = os.path.join(appsrcopyFilesath, "version.txt")
 
