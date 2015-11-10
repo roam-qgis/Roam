@@ -438,12 +438,19 @@ class MapWidget(Ui_CanvasWidget, QMainWindow):
         self.connectButtons()
 
     def snapping_changed(self, snapping):
+        """
+        Called when the snapping settings have changed. Updates the label in the status bar.
+        :param snapping:
+        """
         if snapping:
             self.snappingbutton.setText("Snapping: On")
         else:
             self.snappingbutton.setText("Snapping: Off")
 
     def toggle_snapping(self):
+        """
+        Toggle snapping on or off.
+        """
         try:
             tool = self.canvas.mapTool()
             tool.toggle_snapping()
@@ -453,19 +460,35 @@ class MapWidget(Ui_CanvasWidget, QMainWindow):
             pass
 
     def selectscale(self):
+        """
+        Show the select scale widget.
+        :return:
+        """
         self.scalelist.show()
 
     def update_scale_from_item(self, index):
+        """
+        Update the canvas scale from the selected scale item.
+        :param index: The index of the selected item.
+        """
         scale, _ = self.scalewidget.toDouble(index.data(Qt.DisplayRole))
         self.canvas.zoomScale(1.0 / scale)
 
     def update_gps_label(self, position, gpsinfo):
-        # Recenter map if we go outside of the 95% of the area
+        """
+        Update the GPS label in the status bar with the GPS status.
+        :param position: The current GPS position.
+        :param gpsinfo: The current extra GPS information.
+        """
         self.gpslabel.setText("GPS: PDOP {0:.2f}   HDOP {1:.2f}    VDOP {2:.2f}".format(gpsinfo.pdop,
                                                                                         gpsinfo.hdop,
                                                                                         gpsinfo.vdop))
 
     def gps_disconnected(self):
+        """
+        Called when the GPS is disconnected. Updates the label in the status bar with the message.
+        :return:
+        """
         self.gpslabel.setText("GPS Not Active")
 
     def updatestatuslabel(self, *args):
@@ -492,18 +515,36 @@ class MapWidget(Ui_CanvasWidget, QMainWindow):
         self.canvas.zoomScale(1.0 / self.scalewidget.scale())
 
     def init_qgisproject(self, doc):
+        """
+        Called when the project file is read for the firs time.
+        :param doc: The XML doc.
+        :return: The current canvas CRS
+        :note: This method is old and needs to be refactored into something else.
+        """
         return self.canvas.mapSettings().destinationCrs()
 
     def showEvent(self, *args, **kwargs):
+        """
+        Handle the show event of the of the map widget. We have to do a little hack here to make the QGIS map refresh.
+        """
         if QGis.QGIS_VERSION_INT == 20200 and self.firstshow:
             self.canvas.refresh()
             self.canvas.repaint()
             self.firstshow = False
 
     def feature_form_loaded(self, form, feature, *args):
+        """
+        Called when the feature form is loaded.
+        :param form: The Form object. Holds a reference to the forms layer.
+        :param feature: The current capture feature
+        """
         self.currentfeatureband.setToGeometry(feature.geometry(), form.QGISLayer)
 
     def highlight_selection(self, results):
+        """
+        Highlight the selection on the canvas.  This updates all selected objects based on the result set.
+        :param results: A dict-of-list of layer-features.
+        """
         self.clear_selection()
         for layer, features in results.iteritems():
             band = self.selectionbands[layer]
@@ -518,12 +559,23 @@ class MapWidget(Ui_CanvasWidget, QMainWindow):
         self.canvas.update()
 
     def highlight_active_selection(self, layer, feature, features):
+        """
+        Update the current active selected feature.
+        :param layer: The layer of the active feature.
+        :param feature: The active feature.
+        :param features: The other features in the set to show as non active selection.
+        :return:
+        """
         self.clear_selection()
         self.highlight_selection({layer: features})
         self.currentfeatureband.setToGeometry(feature.geometry(), layer)
         self.canvas.update()
 
     def clear_selection(self):
+        """
+        Clear the selection from the canvas.   Resets all selection rubbber bands.
+        :return:
+        """
         # Clear the main selection rubber band
         self.canvas.scene().update()
         self.currentfeatureband.reset()
@@ -535,6 +587,12 @@ class MapWidget(Ui_CanvasWidget, QMainWindow):
         self.editfeaturestack = []
 
     def queue_feature_for_edit(self, form, feature):
+        """
+        Push a feature on the edit stack so the feature can have the geometry edited.
+        :note: This is a big hack and I don't like it!
+        :param form: The form for the current feature
+        :param feature: The active feature.
+        """
         def trigger_default_action():
             for action in self.projecttoolbar.actions():
                 if action.property('dataentry') and action.isdefault:
@@ -547,6 +605,10 @@ class MapWidget(Ui_CanvasWidget, QMainWindow):
         trigger_default_action()
 
     def clear_temp_objects(self):
+        """
+        Clear all temp objects from the canvas.
+        :return:
+        """
         def clear_tool_band():
             """
             Clear the rubber band of the active tool if it has one
@@ -562,12 +624,19 @@ class MapWidget(Ui_CanvasWidget, QMainWindow):
         clear_tool_band()
 
     def settings_updated(self, settings):
+        """
+        Called when the settings have been updated in the Roam config.
+        :param settings: A dict of the settings.
+        """
         self.actionGPS.updateGPSPort()
         gpslogging = settings.get('gpslogging', True)
         if self.gpslogging:
             self.gpslogging.logging = gpslogging
 
     def set_gps(self, gps, logging):
+        """
+        Set the GPS for the map widget.  Connects GPS signals
+        """
         self.gps = gps
         self.gpslogging = logging
         self.gps.gpsposition.connect(self.gps_update_canvas)
@@ -575,6 +644,12 @@ class MapWidget(Ui_CanvasWidget, QMainWindow):
         self.gps.gpsdisconnected.connect(self.gps_disconnected)
 
     def gps_update_canvas(self, position, gpsinfo):
+        """
+        Updates the map canvas based on the GPS position.  By default if the GPS is outside the canvas
+        extent the canvas will move to center on the GPS.  Can be turned off in settings.
+        :param postion: The current GPS position.
+        :param gpsinfo: The extra GPS information
+        """
         # Recenter map if we go outside of the 95% of the area
         if self.gpslogging.logging:
             self.gpsband.addPoint(position)
@@ -595,20 +670,34 @@ class MapWidget(Ui_CanvasWidget, QMainWindow):
         self.marker.quality = gpsinfo.quality
 
     def gps_first_fix(self, postion, gpsinfo):
+        """
+        Called the first time the GPS gets a fix.  If set this will zoom to the GPS after the first fix
+        :param postion: The current GPS position.
+        :param gpsinfo: The extra GPS information
+        """
         zoomtolocation = roam.config.settings.get('gpszoomonfix', True)
         if zoomtolocation:
             self.canvas.zoomScale(1000)
             self.zoom_to_location(postion)
 
     def zoom_to_location(self, position):
+        """
+        Zoom to ta given position on the map..
+        """
         rect = QgsRectangle(position, position)
         self.canvas.setExtent(rect)
         self.canvas.refresh()
 
     def gps_disconnected(self):
+        """
+        Called when the GPS is disconnected
+        """
         self.marker.hide()
 
     def select_data_entry(self):
+        """
+        Open the form selection widget to allow the user to pick the active capture form.
+        """
         def showformerror(form):
             pass
 
@@ -632,6 +721,10 @@ class MapWidget(Ui_CanvasWidget, QMainWindow):
         formpicker.exec_()
 
     def project_loaded(self, project):
+        """
+        Called when the project is loaded. Main entry point for a loade project.
+        :param project: The Roam project that has been loaded.
+        """
         self.project = project
         self.actionPan.trigger()
         firstform = self.first_capture_form()
@@ -669,12 +762,19 @@ class MapWidget(Ui_CanvasWidget, QMainWindow):
         self.actionPan.toggle()
 
     def setMapTool(self, tool, *args):
+        """
+        Set the active map tool in the canvas.
+        :param tool: The QgsMapTool to set.
+        """
         if tool == self.canvas.mapTool():
             return
 
         self.canvas.setMapTool(tool)
 
     def connectButtons(self):
+        """
+        Connect the default buttons in the interface. Zoom, pan, etc
+        """
         def connectAction(action, tool):
             action.toggled.connect(partial(self.setMapTool, tool))
 
@@ -709,25 +809,37 @@ class MapWidget(Ui_CanvasWidget, QMainWindow):
         self.canvas.refresh()
 
     def form_valid_for_capture(self, form):
+        """
+        Check if the given form is valid for capture.
+        :param form: The form to check.
+        :return: True if valid form for capture
+        """
         return form.has_geometry and self.project.layer_can_capture(form.QGISLayer)
 
     def first_capture_form(self):
+        """
+        Return the first valid form for capture.
+        """
         for form in self.project.forms:
             if self.form_valid_for_capture(form):
                 return form
 
     def load_form(self, form):
+        """
+        Load the given form so it's the active one for capture
+        :param form: The form to load
+        """
         self.clearCapatureTools()
         self.dataentryselection.setIcon(QIcon(form.icon))
         self.dataentryselection.setText(form.icontext)
         self.create_capture_buttons(form)
 
-    def feature_added(self, featureid):
-        roam.utils.info("QGIS Added feature {}".format(featureid))
-
     def create_capture_buttons(self, form):
+        """
+        Create the capture buttons in the toolbar for the given form.
+        :param form: The active form.
+        """
         layer = form.QGISLayer
-        layer.featureAdded.connect(self.feature_added)
         tool = form.getMaptool()(self.canvas)
         for action in tool.actions:
             # Create the action here.
@@ -783,6 +895,10 @@ class MapWidget(Ui_CanvasWidget, QMainWindow):
         self.canvas.mapTool().setEditMode(False, None)
 
     def clearCapatureTools(self):
+        """
+        Clear the capture tools from the toolbar.
+        :return: True if the capture button was active at the time of clearing.
+        """
         captureselected = False
         for action in self.projecttoolbar.actions():
             if action.objectName() == "capture" and action.isChecked():
@@ -811,6 +927,10 @@ class MapWidget(Ui_CanvasWidget, QMainWindow):
         self.canvas.refresh()
 
     def cleanup(self):
+        """
+        Clean up when the project has changed.
+        :return:
+        """
         self.bridge.clear()
         self.gpsband.reset()
         self.gpsband.hide()
