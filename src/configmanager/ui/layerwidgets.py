@@ -1002,5 +1002,6 @@ class MapWidget(ui_mapwidget.Ui_Form, WidgetBase):
         proj = self.canvas.mapSettings().destinationCrs().authid()
         html = render_tample("projectinfo", projection=proj,
                              layers=layers,
-                             missinglayers=missing)
+                             missinglayers=missing,
+                             file=project.projectfile)
         self.textMapReport.setHtml(html)
