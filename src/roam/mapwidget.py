@@ -820,7 +820,6 @@ class MapWidget(Ui_CanvasWidget, QMainWindow):
         """
         Return the first valid form for capture.
         """
-        raise NotImplementedError
         for form in self.project.forms:
             if self.form_valid_for_capture(form):
                 return form

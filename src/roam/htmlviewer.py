@@ -142,7 +142,6 @@ class HtmlViewerWidget(QWidget):
         self.anim.setEndValue(0.0)
         self.anim.setEasingCurve(QEasingCurve.OutQuad )
 
-
     def copy_text(self):
         self.label.setText("Copied to clipboard")
         text = self.view.page().mainFrame().toPlainText()
