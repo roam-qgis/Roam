@@ -20,19 +20,18 @@ import roam.utils
 import roam.resources_rc
 
 
-class MessageBar(QWidget):
+class MessageBar():
     def __init__(self, parent=None):
-        super(MessageBar, self).__init__(parent)
+        self.parent = parent
         self.items = []
         self.messagestack = []
 
     def pushMessage(self, title, text=None, level=QgsMessageBar.INFO, duration=0, extrainfo=None):
-        item = ClickableMessage(title, text, level, duration, extrainfo, self.parent())
-        self.messagestack.append(item)
-        item.show()
+        item = ClickableMessage(title, text, level, duration, extrainfo, self.parent)
+        self.pushItem(item)
 
     def pushItem(self, item):
-        item.setParent(self.parent())
+        item.setParent(self.parent)
         self.messagestack.append(item)
         item.show()
 
@@ -43,16 +42,14 @@ class MessageBar(QWidget):
         except IndexError:
             pass
 
-    def pushError(self, text, extrainfo):
-        self.pushMessage(QApplication.translate('MessageBarItems', 'Oops', None,
-                                                QApplication.UnicodeUTF8),
-                         text, QgsMessageBar.CRITICAL, extrainfo=extrainfo)
+    def pushError(self, *exinfo):
+        item = ExceptionItem(*exinfo)
+        self.pushItem(item)
 
 
 class ClickableMessage(roam.htmlviewer.HtmlViewerWidget):
     def __init__(self, title=None, text=None, level=QgsMessageBar.INFO, duration=0, extrainfo=None, parent=None):
         super(ClickableMessage, self).__init__(parent)
-        self.parent().installEventFilter(self)
         self.extrainfo = extrainfo
         self.template = "notice"
         self.level = level
@@ -67,22 +64,22 @@ class ClickableMessage(roam.htmlviewer.HtmlViewerWidget):
         self.setStyleSheet("""
             /* INFO */
             QFrame[level="0"] {
-                border: 5px solid #b9cfe4;
+                border: 2px solid #b9cfe4;
             }
 
             /* WARNING */
             QFrame[level="1"] {
-                border: 5px solid #e0aa00;
+                border: 2px solid #e0aa00;
             }
 
             /* CRITICAL */
             QFrame[level="2"] {
-                border: 5px solid #9b3d3d;
+                border: 2px solid #9b3d3d;
             }
 
             /* SUCCESS */
             QFrame[level="3"] {
-                border: 5px solid green;
+                border: 2px solid green;
             }
         """)
 
@@ -92,6 +89,7 @@ class ClickableMessage(roam.htmlviewer.HtmlViewerWidget):
 
     def load_content(self):
         self.showHTML(self.template, self.level, **self.data)
+        self.resize(500, self.height())
 
     def eventFilter(self, object, event):
         if event.type() == QEvent.Resize:
@@ -101,7 +99,6 @@ class ClickableMessage(roam.htmlviewer.HtmlViewerWidget):
 
     def showEvent(self, event):
         self.load_content()
-        self.resize(500, 300)
         width = self.parent().geometry().size().width() - self.width() - 20
         self.move(width, 0)
 
@@ -109,12 +106,22 @@ class ClickableMessage(roam.htmlviewer.HtmlViewerWidget):
 class MissingLayerItem(ClickableMessage):
     def __init__(self, layers, parent=None):
         super(MissingLayerItem, self).__init__(level=QgsMessageBar.WARNING, parent=parent)
-        message = "Seems like {} didn't load correctly".format(roam.utils._pluralstring('layer', len(layers)))
         self.template = "missing_layers"
-        self.data["message"] = message
         self.data["missinglayers"] = layers
-        self.data['title'] = "Failed to load"
+        self.data['title'] = "Layers failed to load"
 
+
+class ExceptionItem(ClickableMessage):
+    def __init__(self, *exinfo):
+        super(ExceptionItem, self).__init__(level=QgsMessageBar.CRITICAL)
+        message = "Something has gone wrong."
+        self.template = "exception"
+        self.data["message"] = message
+        info = traceback.format_exception(*exinfo)
+        error = info[-1]
+        self.data["stack"] = "".join(info).replace(r"\n", "<br>")
+        self.data['title'] = message
+        self.data['error'] = error
 
 class UndoMessageItem(ClickableMessage):
     undo = pyqtSignal(object, object)

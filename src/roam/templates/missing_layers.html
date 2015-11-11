@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Info</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="bootstrap/bootstrap.css" rel="stylesheet">
+    <script src="bootstrap/jquery-1.9.1.js"></script>
+    <script src="bootstrap/bootstrap.min.js"></script>
+  </head>
+  <body>
+      <style>
+          .header {
+              color: black;
+          }
+      </style>
+    <div class="container-fluid">
+      <div class="row-fluid">
+      <div class="text-center">
+           <b class="header">{{ title }}</b>
+      </div>
+            The following layers field to load
+            <div class="text-left">
+                <ul>
+                    {% for layer in missinglayers %}
+                    <li>{{ layer }}</a></li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    </div>
+  </body>
+</html>
+

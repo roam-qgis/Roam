@@ -379,11 +379,7 @@ class MainWindow(ui_mainwindow.Ui_MainWindow, QMainWindow):
         self.actionDataEntry.trigger()
 
     def raiseerror(self, *exinfo):
-        info = traceback.format_exception(*exinfo)
-        item = self.bar.pushError(QApplication.translate('MainWindowPy','Seems something has gone wrong. Press for more details', None, QApplication.UnicodeUTF8),
-                                  info)
-
-
+        info = self.bar.pushError(*exinfo)
 
     def showhelp(self, parent, url):
         help = HelpPage(parent)
@@ -453,9 +449,7 @@ class MainWindow(ui_mainwindow.Ui_MainWindow, QMainWindow):
         """
         roam.utils.warning("Missing layers")
         map(roam.utils.warning, layers)
-
-        missinglayers = roam.messagebaritems.MissingLayerItem(layers,
-                                                              parent=self.bar)
+        missinglayers = roam.messagebaritems.MissingLayerItem(layers)
         self.bar.pushItem(missinglayers)
 
     def loadprojects(self, projects):

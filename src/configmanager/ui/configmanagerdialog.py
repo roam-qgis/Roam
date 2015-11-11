@@ -46,9 +46,7 @@ class ConfigManagerDialog(ui_configmanager.Ui_ProjectInstallerDialog, QDialog):
         self.setuprootitems()
 
     def raiseerror(self, *exinfo):
-        info = traceback.format_exception(*exinfo)
-        self.bar.pushError('Seems something has gone wrong. Press for more details',
-                                  info)
+        self.bar.pushError(*exinfo)
 
     def setuprootitems(self):
         rootitem = self.treemodel.invisibleRootItem()
