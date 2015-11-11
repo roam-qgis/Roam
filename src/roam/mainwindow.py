@@ -494,6 +494,7 @@ class MainWindow(ui_mainwindow.Ui_MainWindow, QMainWindow):
         crs = self.canvas_page.init_qgisproject(doc)
         self.projectOpened()
         GPS.crs = crs
+        text = "This is a extra bit of info \n but just as a notice"
 
     @property
     def enabled_plugins(self):

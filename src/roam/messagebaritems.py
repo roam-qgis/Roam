@@ -27,7 +27,7 @@ class MessageBar():
         self.messagestack = []
 
     def pushMessage(self, title, text=None, level=QgsMessageBar.INFO, duration=0, extrainfo=None):
-        item = ClickableMessage(title, text, level, duration, extrainfo, self.parent)
+        item = ClickableMessage(title, text, level, duration, extrainfo)
         self.pushItem(item)
 
     def pushItem(self, item):
@@ -57,8 +57,15 @@ class ClickableMessage(roam.htmlviewer.HtmlViewerWidget):
             self.template = "error"
 
         self.data = {}
-        self.data['title'] = self.template.upper()
-        self.data["info"] = self.extrainfo
+        self.data['title'] = title
+        if not title:
+            self.data['title'] = self.template.title()
+
+        self.data["message"] = text
+        if extrainfo:
+            self.data["info"] = self.extrainfo.replace(r"\n", "<br>")
+        else:
+            self.data['info'] = ""
         self.data['message_level'] = level
         self.frame.setProperty("level", level)
         self.setStyleSheet("""

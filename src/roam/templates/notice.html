@@ -8,12 +8,19 @@
     <script src="bootstrap/bootstrap.min.js"></script>
   </head>
   <body>
+      <style>
+          .header {
+              color: #b9cfe4;
+          }
+      </style>
     <div class="container-fluid">
-      <div class="row-fluid">
       <div class="text-center">
-               <h4>{{ title }}</h4>
+           <h4 class="header">{{ title }}</h4>
       </div>
             <div class="text-left">
+                <b>{{ message }}</b>
+                <br>
+                <br>
                 {{ info }}
             </div>
         </div>
