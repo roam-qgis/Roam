@@ -152,7 +152,7 @@ class MainWindow(ui_mainwindow.Ui_MainWindow, QMainWindow):
         self.actionSettings.toggled.connect(self.settingswidget.readSettings)
         self.settingswidget.settingsupdated.connect(self.settingsupdated)
 
-        self.dataentrywidget = DataEntryWidget(self.canvas, self.bar)
+        self.dataentrywidget = DataEntryWidget(self.canvas)
         self.dataentrywidget.lastwidgetremoved.connect(self.dataentryfinished)
         self.widgetpage.layout().addWidget(self.dataentrywidget)
 

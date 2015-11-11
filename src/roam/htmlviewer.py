@@ -2,9 +2,10 @@ import os
 from types import NoneType
 from string import Template
 
-from PyQt4.QtCore import QUrl, QByteArray, QDate, QDateTime, QTime
-from PyQt4.QtGui import (QDialog, QWidget, QGridLayout, QPixmap,
-                         QImageReader, QDesktopServices)
+from PyQt4.QtCore import QUrl, QByteArray, QDate, QDateTime, QTime, QSize, QEvent
+from PyQt4.QtGui import (QDialog, QWidget, QGridLayout, QPixmap, QFrame,
+                         QImageReader, QDesktopServices, QApplication, QToolBar,
+                         QSizePolicy)
 from PyQt4.QtWebKit import QWebView, QWebPage
 
 from roam import utils
@@ -101,23 +102,10 @@ blocks = {QByteArray: image_handler,
           NoneType: none_handler}
 
 
-def showHTMLReport(title, html, data={}, parent=None):
-    dialog = HtmlViewerDialog(title)
-    dialog.showHTML(html, data)
-    dialog.exec_()
-
-
-class HtmlViewerDialog(QDialog):
-    def __init__(self, title, parent=None):
-        super(HtmlViewerDialog, self).__init__(parent)
-        self.setWindowTitle(title)
-        self.setLayout(QGridLayout())
-        self.layout().setContentsMargins(0,0,0,0)
-        self.htmlviewer = HtmlViewerWidget(self)
-        self.layout().addWidget(self.htmlviewer)
-
-    def showHTML(self, html, data):
-        self.htmlviewer.showHTML(html, data)
+def showHTMLReport(template, data={}, parent=None, level=0):
+    widget = HtmlViewerWidget(parent)
+    widget.showHTML(template, level, **data)
+    widget.show()
 
 
 class HtmlViewerWidget(QWidget):
@@ -127,13 +115,21 @@ class HtmlViewerWidget(QWidget):
         self.layout().setContentsMargins(0, 0, 0, 0)
         self.view = QWebView()
         self.view.page().setLinkDelegationPolicy(QWebPage.DelegateAllLinks)
-        self.layout().addWidget(self.view)
+        self.frame = QFrame()
+        self.frame.setLayout(QGridLayout())
+        self.frame.layout().setContentsMargins(0, 0, 0, 0)
 
-    def showHTML(self, html, data):
-        if os.path.isfile(html):
-            html = open(html).read()
+        self.toolbar = QToolBar()
+        self.spacer = QWidget()
+        self.spacer.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
+        self.closeAction = self.toolbar.addAction("Close")
+        self.toolbar.insertWidget(self.closeAction, self.spacer)
+        self.closeAction.triggered.connect(self.close)
+        self.layout().addWidget(self.frame)
+        self.frame.layout().addWidget(self.toolbar)
+        self.frame.layout().addWidget(self.view)
 
-        html = html.replace(r'\n', '<br>')
-        templte = Template(html)
-        html = updateTemplate(data, templte)
+    def showHTML(self, template, level, **data):
+        html = templates.render_tample(template, **data)
         self.view.setHtml(html, templates.baseurl)
+

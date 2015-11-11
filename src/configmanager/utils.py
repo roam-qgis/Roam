@@ -27,11 +27,6 @@ def openqgis(project):
     subprocess.Popen([cmd, "--noplugins", project])
 
 
-def render_tample(name, **data):
-    template = env.get_template('{}.html'.format(name))
-    return template.render(**data)
-
-
 def openfolder(folder):
     """
     Open a folder using the OS
@@ -39,4 +34,8 @@ def openfolder(folder):
     """
     QDesktopServices.openUrl(QUrl.fromLocalFile(folder))
 
+
+def render_tample(name, **data):
+    template = env.get_template('{}.html'.format(name))
+    return template.render(**data)
 

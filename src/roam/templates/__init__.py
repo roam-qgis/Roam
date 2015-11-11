@@ -2,6 +2,15 @@ import os
 from string import Template
 from PyQt4.QtCore import QUrl
 
+from jinja2 import Environment, FileSystemLoader
+path = os.path.join(os.path.dirname(__file__))
+
+env = Environment(loader=FileSystemLoader(path))
+
+def render_tample(name, **data):
+    template = env.get_template('{}.html'.format(name))
+    return template.render(**data)
+
 
 def get_template(name):
     """

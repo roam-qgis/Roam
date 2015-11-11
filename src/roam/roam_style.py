@@ -92,6 +92,25 @@ def appstyle():
         background-color: rgb(255,255,255);
     }
 
+    /* INFO */
+    QFrame[level="0"] {
+        border: 5px solid #b9cfe4;
+    }
+
+    /* WARNING */
+    QFrame[level="1"] {
+        border: 5px solid #e0aa00;
+    }
+
+    /* CRITICAL */
+    QFrame[level="2"] {
+        border: 5px solid #9b3d3d;
+    }
+
+    /* SUCCESS */
+    QFrame[level="3"] {
+        border: 5px solid green;
+    }
 
     QFrame#infoframe {
         background-color: rgb(255,255,255, 220);
