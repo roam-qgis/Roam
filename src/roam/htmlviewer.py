@@ -5,7 +5,7 @@ from string import Template
 from PyQt4.QtCore import QUrl, QByteArray, QDate, QDateTime, QTime, QSize, QEvent
 from PyQt4.QtGui import (QDialog, QWidget, QGridLayout, QPixmap, QFrame,
                          QImageReader, QDesktopServices, QApplication, QToolBar,
-                         QSizePolicy)
+                         QSizePolicy, QIcon)
 from PyQt4.QtWebKit import QWebView, QWebPage
 
 from roam import utils
@@ -122,7 +122,8 @@ class HtmlViewerWidget(QWidget):
         self.toolbar = QToolBar()
         self.spacer = QWidget()
         self.spacer.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
-        self.closeAction = self.toolbar.addAction("Close")
+        self.copyAction = self.toolbar.addAction(QIcon(":/icons/clipboard"), "Copy Text")
+        self.closeAction = self.toolbar.addAction(QIcon(":/icons/cancel"), "Close")
         self.toolbar.insertWidget(self.closeAction, self.spacer)
         self.closeAction.triggered.connect(self.close)
         self.layout().addWidget(self.frame)

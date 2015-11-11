@@ -12,6 +12,7 @@
     <file alias="blue">resources/widgets/blue.svg</file>
   </qresource>
   <qresource prefix="icons">
+    <file alias="clipboard">resources/images/clipboard.svg</file>
     <file alias="search">resources/images/search.svg</file>
     <file alias="north">resources/images/north.svg</file>
       <file alias="plus">resources/images/plus.svg</file>
