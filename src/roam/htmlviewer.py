@@ -2,10 +2,11 @@ import os
 from types import NoneType
 from string import Template
 
-from PyQt4.QtCore import QUrl, QByteArray, QDate, QDateTime, QTime, QSize, QEvent
+from PyQt4.QtCore import (QUrl, QByteArray, QDate, QDateTime, QTime, QSize, QEvent, QPropertyAnimation,
+                          QEasingCurve, QAbstractAnimation)
 from PyQt4.QtGui import (QDialog, QWidget, QGridLayout, QPixmap, QFrame,
                          QImageReader, QDesktopServices, QApplication, QToolBar,
-                         QSizePolicy, QIcon)
+                         QSizePolicy, QIcon, QLabel, QGraphicsOpacityEffect)
 from PyQt4.QtWebKit import QWebView, QWebPage
 
 from roam import utils
@@ -123,12 +124,31 @@ class HtmlViewerWidget(QWidget):
         self.spacer = QWidget()
         self.spacer.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
         self.copyAction = self.toolbar.addAction(QIcon(":/icons/clipboard"), "Copy Text")
+        self.label = QLabel()
         self.closeAction = self.toolbar.addAction(QIcon(":/icons/cancel"), "Close")
-        self.toolbar.insertWidget(self.closeAction, self.spacer)
+        self.spaceraction = self.toolbar.insertWidget(self.closeAction, self.spacer)
+        self.labelaction = self.toolbar.insertWidget(self.spaceraction, self.label)
         self.closeAction.triggered.connect(self.close)
+        self.copyAction.triggered.connect(self.copy_text)
         self.layout().addWidget(self.frame)
         self.frame.layout().addWidget(self.toolbar)
         self.frame.layout().addWidget(self.view)
+
+        self.effect = QGraphicsOpacityEffect()
+        self.label.setGraphicsEffect(self.effect)
+        self.anim = QPropertyAnimation(self.effect, "opacity")
+        self.anim.setDuration(2000)
+        self.anim.setStartValue(1.0)
+        self.anim.setEndValue(0.0)
+        self.anim.setEasingCurve(QEasingCurve.OutQuad )
+
+
+    def copy_text(self):
+        self.label.setText("Copied to clipboard")
+        text = self.view.page().mainFrame().toPlainText()
+        QApplication.clipboard().setText(text)
+        self.anim.stop()
+        self.anim.start()
 
     def showHTML(self, template, level, **data):
         html = templates.render_tample(template, **data)
