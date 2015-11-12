@@ -866,7 +866,6 @@ class MapWidget(Ui_CanvasWidget, QMainWindow):
         """
         # TODO Extract into function.
         # NOTE This function is doing too much, acts as add and also edit.
-        raise NotImplementedError
         layer = form.QGISLayer
         if layer.geometryType() in [QGis.WKBMultiLineString, QGis.WKBMultiPoint, QGis.WKBMultiPolygon]:
             geometry.convertToMultiType()

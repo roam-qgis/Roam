@@ -36,7 +36,7 @@ stream.setFormatter(console_formater)
 
 logger = logging.getLogger("roam")
 logger.addHandler(stream)
-# logger.addHandler(filehandler)
+logger.addHandler(filehandler)
 logger.setLevel(logging.DEBUG)
 
 log = logger.debug
