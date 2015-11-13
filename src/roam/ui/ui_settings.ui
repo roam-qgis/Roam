@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>800</width>
+    <width>802</width>
     <height>670</height>
    </rect>
   </property>
@@ -27,7 +27,16 @@
         }	</string>
   </property>
   <layout class="QGridLayout" name="gridLayout">
-   <property name="margin">
+   <property name="leftMargin">
+    <number>0</number>
+   </property>
+   <property name="topMargin">
+    <number>0</number>
+   </property>
+   <property name="rightMargin">
+    <number>0</number>
+   </property>
+   <property name="bottomMargin">
     <number>0</number>
    </property>
    <item row="4" column="0">
@@ -212,6 +221,13 @@
       </item>
       <item row="3" column="1">
        <widget class="QLineEdit" name="updateServerEdit"/>
+      </item>
+      <item row="4" column="0" colspan="2">
+       <widget class="QCheckBox" name="errorReportCheck">
+        <property name="text">
+         <string>Send error and crash logs</string>
+        </property>
+       </widget>
       </item>
      </layout>
     </widget>
