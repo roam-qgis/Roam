@@ -379,7 +379,9 @@ class MainWindow(ui_mainwindow.Ui_MainWindow, QMainWindow):
         self.actionDataEntry.trigger()
 
     def raiseerror(self, *exinfo):
+        import errors
         info = self.bar.pushError(*exinfo)
+        errors.send_exception(exinfo)
 
     def showhelp(self, parent, url):
         help = HelpPage(parent)
