@@ -10,7 +10,16 @@
   <body>
       <style>
           .header {
-              color: #b9cfe4;
+              font-weight: bold;
+              {% if message_level == 1 %}
+                  color: #e0aa00;
+              {% elif message_level == 2 %}
+                  color: #9b3d3d;
+              {% elif message_level == 3 %}
+                  color: green;
+              {% else %}
+                  color: #b9cfe4;
+              {% endif %}
           }
       </style>
     <div class="container-fluid">
