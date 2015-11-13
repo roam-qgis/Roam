@@ -11,7 +11,6 @@ from PyQt4.QtGui import (QApplication,
 from PyQt4.QtCore import QEvent, QObject, Qt, QSize, pyqtSignal
 
 from qgis.gui import QgsMessageBarItem, QgsMessageBar
-from fabricate import _after
 
 import roam_style
 
