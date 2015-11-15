@@ -1,6 +1,7 @@
 from raven import Client
 import roam
 import roam.config
+import roam.utils
 
 
 client = Client(
@@ -19,5 +20,6 @@ def can_send():
 
 def send_exception(exinfo):
     if can_send():
+        roam.utils.info("Sending error report.")
         client.captureException(exinfo)
 
