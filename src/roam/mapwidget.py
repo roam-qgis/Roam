@@ -14,6 +14,7 @@ from qgis.gui import QgsMapCanvas, QgsMapToolZoom, QgsRubberBand, QgsMapCanvasIt
 from qgis.core import QgsPalLabeling, QgsMapLayerRegistry, QgsMapLayer, QGis, QgsRectangle, QgsProject, QgsApplication, \
     QgsComposerScaleBar, \
     QgsCoordinateReferenceSystem, QgsCoordinateTransform, QgsPoint, QgsCsException, QgsDistanceArea
+from tornado.template import _Node
 
 from roam.gps_action import GPSAction, GPSMarker
 from roam.projectparser import ProjectParser
@@ -912,17 +913,17 @@ class MapWidget(Ui_CanvasWidget, QMainWindow):
         """
         Toggle all raster layers on or off.
         """
-        if not self.canvaslayers:
-            return
-
         # Freeze the canvas to save on UI refresh
         self.canvas.freeze()
-        for layer in self.canvaslayers:
-            if layer.layer().type() == QgsMapLayer.RasterLayer:
-                layer.setVisible(not layer.isVisible())
-                # Really!? We have to reload the whole layer set every time?
-                # WAT?
-        self.canvas.setLayerSet(self.canvaslayers)
+        tree = QgsProject.instance().layerTreeRoot()
+        for node in tree.findLayers():
+            if node.layer().type() == QgsMapLayer.RasterLayer:
+                if node.isVisible() == Qt.Checked:
+                    state = Qt.Unchecked
+                else:
+                    state = Qt.Checked
+                node.setVisible(state)
+
         self.canvas.freeze(False)
         self.canvas.refresh()
 
