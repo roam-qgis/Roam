@@ -210,7 +210,7 @@ if os.name is 'nt':
                              'w9xpopen.exe', 'MSVCP90.dll'],
             'excludes': ['PyQt4.uic.port_v3'],
             'includes': ['PyQt4.QtNetwork', 'sip', 'PyQt4.QtSql', 'sqlite3', "Queue", 'PyQt4.Qsci'],
-            'packages': ['raven']
+            'packages': ['raven'],
             'skip_archive': True,
         }},
         windows=[roam_target, configmanager_target],
