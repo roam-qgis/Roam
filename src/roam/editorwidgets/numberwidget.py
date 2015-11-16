@@ -9,6 +9,7 @@ from roam.editorwidgets.uifiles.ui_singlestepper import Ui_stepper
 
 from roam.roam_style import iconsize
 
+
 class Stepper(Ui_stepper, QWidget):
     def __init__(self, parent=None, Type=QSpinBox):
         super(Stepper, self).__init__(parent)

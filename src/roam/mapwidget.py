@@ -14,7 +14,6 @@ from qgis.gui import QgsMapCanvas, QgsMapToolZoom, QgsRubberBand, QgsMapCanvasIt
 from qgis.core import QgsPalLabeling, QgsMapLayerRegistry, QgsMapLayer, QGis, QgsRectangle, QgsProject, QgsApplication, \
     QgsComposerScaleBar, \
     QgsCoordinateReferenceSystem, QgsCoordinateTransform, QgsPoint, QgsCsException, QgsDistanceArea
-from tornado.template import _Node
 
 from roam.gps_action import GPSAction, GPSMarker
 from roam.projectparser import ProjectParser
