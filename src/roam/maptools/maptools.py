@@ -328,7 +328,6 @@ class PolylineTool(QgsMapTool):
             return
 
         close, at, before, after, dist = geom.closestVertex(point)
-        print dist
         if dist < 30:
             self.editvertex = at
         else:
@@ -501,6 +500,13 @@ class PointTool(TouchMapTool):
         self.captureaction = CaptureAction(self, 'point')
         self.gpscapture = GPSCaptureAction(self, 'point')
         self.gpscapture.triggered.connect(self.addatgps)
+        self.snapper = QgsMapCanvasSnapper(self.canvas)
+        self.pointband = QgsRubberBand(self.canvas, QGis.Point)
+        self.startcolour = QColor.fromRgb(0, 0, 255, 100)
+        self.pointband.setColor(self.startcolour)
+        self.pointband.setIconSize(20)
+        self.pointband.addPoint(QgsPoint(0,0))
+        self.pointband.hide()
 
     @property
     def actions(self):
@@ -508,6 +514,17 @@ class PointTool(TouchMapTool):
 
     def canvasPressEvent(self, event):
         self.startpoint = event.pos()
+
+    def snappoint(self, point):
+        if not self.snapping:
+            return False, self.canvas.getCoordinateTransform().toMapCoordinates(point)
+
+        try:
+            _, results = self.snapper.snapToBackgroundLayers(point)
+            point = results[0].snappedVertex
+            return True, point
+        except IndexError:
+            return False, self.canvas.getCoordinateTransform().toMapCoordinates(point)
 
     def canvasReleaseEvent(self, event):
         if self.pinching:
@@ -519,8 +536,16 @@ class PointTool(TouchMapTool):
                 super(PointTool, self).canvasReleaseEvent(event)
                 return
 
-        point = self.toMapCoordinates(event.pos())
+        hassnap, point = self.snappoint(event.pos())
         self.geometryComplete.emit(QgsGeometry.fromPoint(point))
+
+    def canvasMoveEvent(self, event):
+        hassnap, point = self.snappoint(event.pos())
+        if hassnap:
+            self.pointband.movePoint(point)
+            self.pointband.show()
+        else:
+            self.pointband.hide()
 
     def addatgps(self):
         location = GPS.postion
