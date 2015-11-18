@@ -17,10 +17,12 @@ from PyQt4.QtCore import QObject, pyqtSignal, QUrl, QThread
 
 import roam.project
 
+
 def add_slash(url):
     if not url.endswith("/"):
         url += "/"
     return url
+
 
 def checkversion(toversion, fromversion):
     return int(toversion) > int(fromversion)
@@ -58,14 +60,14 @@ def install_project(info, basefolder, serverurl):
     filename = "{}-Install.zip".format(info['name'])
     serverurl = add_slash(serverurl)
     url = urlparse.urljoin(serverurl, "projects/{}".format(filename))
-    content = urllib2.urlopen(url).read()
+
     tempfolder = os.path.join(basefolder, "_updates")
     if not os.path.exists(tempfolder):
         os.mkdir(tempfolder)
 
     zippath = os.path.join(tempfolder, filename)
-    with open(zippath, "wb") as f:
-        f.write(content)
+    for status in download_file(url, zippath):
+        yield status
 
     yield "Installing"
     with zipfile.ZipFile(zippath, "r") as z:
@@ -82,17 +84,43 @@ def install_project(info, basefolder, serverurl):
         yield status
 
 
+def download_file(url, fileout):
+    """
+    Download the file from the given URL and yield the status of the download
+
+    Will open and write to fileout
+    """
+    result = urllib2.urlopen(url)
+    length = result.headers['content-length']
+
+    length = int(length) / 1024 / 1024
+    yield "Downloading 0/{}MB".format(length)
+    bytes_done = 0
+    with open(fileout, "wb") as f:
+        chunk = 4096
+        while True:
+            data = result.read(chunk)
+            if not data:
+                yield "Download complete"
+                break
+
+            bytes_done += len(data)
+            f.write(data)
+            so_far = bytes_done / 1024 / 1024
+            yield "Downloading {}/{}MB".format(so_far, length)
+
+
 def update_project(project, serverurl):
+    """
+    Download the update zip file for the project from the server
+    """
     if not serverurl:
         roam.utils.warning("No server url set for update")
         raise ValueError("No server url given")
 
     roam.utils.info("Downloading project zip")
-    filename = "{}.zip".format(project.basefolder)
     serverurl = add_slash(serverurl)
 
-    url = urlparse.urljoin(serverurl, "projects/{}".format(filename))
-    content = urllib2.urlopen(url).read()
     rootfolder = os.path.join(project.folder, "..")
     tempfolder = os.path.join(rootfolder, "_updates")
     if not os.path.exists(tempfolder):
@@ -102,9 +130,11 @@ def update_project(project, serverurl):
     yield "Running pre update scripts.."
     run_install_script(project.settings, "before_update")
 
+    filename = "{}.zip".format(project.basefolder)
+    url = urlparse.urljoin(serverurl, "projects/{}".format(filename))
     zippath = os.path.join(tempfolder, filename)
-    with open(zippath, "wb") as f:
-        f.write(content)
+    for status in download_file(url, zippath):
+        yield status
 
     yield "Installing"
     with zipfile.ZipFile(zippath, "r") as z:
