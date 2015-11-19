@@ -418,7 +418,6 @@ class FeatureFormBase(QWidget):
                         value = wrapper.get_filename()
                     else:
                         value = ''
-                print value
 
             if shouldsave(field):
                 savedvalues[field] = value
@@ -678,22 +677,19 @@ class FeatureForm(FeatureFormBase):
         return feature
 
     def updatefeautrefields(self, feature, values):
-        def field_or_null(field):
-            if field == '' \
-                    or field is None \
-                    or isinstance(field, QPyNullVariant):
+        def field_or_null(v):
+            if v == '' \
+                    or v is None \
+                    or isinstance(v, QPyNullVariant):
                 return QPyNullVariant(str)
-            return field
+            return v
 
         for key, value in values.iteritems():
             try:
-                fields = [w['field'] for w in self.formconfig['widgets']]
-                if key in fields:
-                    feature[key] = field_or_null(value)
-                else:
-                    feature[key] = value
+                feature[key] = field_or_null(value)
             except KeyError:
                 continue
+
         return feature
 
     def save(self):
