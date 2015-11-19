@@ -298,7 +298,9 @@ class MainWindow(ui_mainwindow.Ui_MainWindow, QMainWindow):
             RoamEvents.raisemessage(*ex.error)
 
         featureform.featuredeleted(feature)
-        self.show_undo("Feature deleted", "Undo Delete", form, feature)
+
+        # TODO Fix undo delete stuff
+        # self.show_undo("Feature deleted", "Undo Delete", form, feature)
 
     def show_undo(self, title, message, form, feature):
         item = roam.messagebaritems.UndoMessageItem(title, message, form, feature)
