@@ -123,7 +123,7 @@ class DateTimePickerWidget(datepicker_widget, QWidget):
             minute = ""
 
         zone = self.ambutton.isChecked() and "AM" or "PM"
-        return QTime.fromString("%s%s%s" % (hour, minute, zone), "hmAP")
+        return QTime.fromString("%s%s%s" % (hour.zfill(2), minute.zfill(2), zone), "hhmAP")
 
     def getSelectedDate(self):
         """
