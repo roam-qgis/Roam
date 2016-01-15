@@ -2,7 +2,42 @@ from roam.api import RoamEvents
 from PyQt4.QtGui import QLineEdit, QPlainTextEdit
 from PyQt4.QtCore import QEvent
 
+from qgis.core import QgsDataSourceURI
+from roam.dataaccess.database import Database
 from roam.editorwidgets.core import EditorWidget, registerwidgets
+
+
+def _get_sqlite_col_length(layer, fieldname):
+    """
+    Get the length of a sqlite based column using the metadata
+
+    NOTE: SQLITE doesn't support this. And this is a bit of a hack.
+
+    NOTE NOTE: Looks for VARCHAR(...) as the datatype which isn't really a
+    sqlite data type.
+
+    :returns: True, length if column is found in table metadata
+    """
+    source = layer.source()
+    if ".sqlite" not in source:
+        return
+
+    database = Database.fromLayer(layer)
+    index = source.index("|") + 1
+    args = source[index:].split("=")
+    args = dict(zip(args[0::2], args[1::2]))
+    layer = args['layername']
+    tabledata = list(database.query("pragma table_info({})".format(layer)))
+    for row in tabledata:
+        if not row['name'] == fieldname:
+            continue
+
+        import re
+        # Look for varchar(...) so we can grab the length.
+        match = re.search("VARCHAR\((\d.*)\)", row['type'], re.IGNORECASE)
+        if match:
+            length = match.group(1)
+            return True, int(length)
 
 
 class TextWidget(EditorWidget):
@@ -10,6 +45,7 @@ class TextWidget(EditorWidget):
 
     def __init__(self, *args, **kwargs):
         super(TextWidget, self).__init__(*args)
+        self.text_length = 0
 
     def createWidget(self, parent):
         return QLineEdit(parent)
@@ -17,8 +53,12 @@ class TextWidget(EditorWidget):
     def initWidget(self, widget):
         widget.textChanged.connect(self.emitvaluechanged)
         widget.installEventFilter(self)
-        length = self.field.length()
-        if length > 0:
+        self.text_length = self.field.length()
+        passed, length = _get_sqlite_col_length(self.layer, self.field.name())
+        if passed:
+            self.text_length = length
+
+        if self.text_length > 0:
             if hasattr(widget, "setMaxLength"):
                 widget.setMaxLength(length)
 
@@ -57,15 +97,15 @@ class TextBlockWidget(TextWidget):
 
     def __init__(self, *args, **kwargs):
         super(TextBlockWidget, self).__init__(*args)
+        self.text_length = 0
 
     def createWidget(self, parent):
         return QPlainTextEdit(parent)
 
     def limit_text(self):
         text = self.widget.toPlainText()
-        limit = self.field.length()
-        if limit > 0 and text > limit:
-            text = text[:limit]
+        if 0 < self.text_length < text:
+            text = text[:self.text_length]
             self.widget.blockSignals(True)
             self.setvalue(text)
 
@@ -77,5 +117,9 @@ class TextBlockWidget(TextWidget):
         self.emitvaluechanged(self.widget.toPlainText())
 
     def initWidget(self, widget):
+        self.text_length = self.field.length()
+        found, length = _get_sqlite_col_length(self.layer, self.field.name())
+        if found:
+            self.text_length = length
         widget.textChanged.connect(self.limit_text)
         widget.installEventFilter(self)
