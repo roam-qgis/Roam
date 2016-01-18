@@ -20,7 +20,7 @@ def _get_sqlite_col_length(layer, fieldname):
     """
     source = layer.source()
     if ".sqlite" not in source:
-        return
+        return False, 0
 
     database = Database.fromLayer(layer)
     index = source.index("|") + 1
