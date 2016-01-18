@@ -85,6 +85,21 @@ def stamp_image(image, expression_str, position, feature):
     return image
 
 
+def resize_image(image, size):
+    """
+    Resize the given image to the given size.  Doesn't resize if smaller.
+    :param image: a QImage to resize.
+    :param size: The QSize of the result image. Will not resize if image is smaller.
+    :return: The new sized image.
+    """
+    print image.size()
+    print size
+    if size and not size.isEmpty() and image.width() > size.width() and image.height() > size.height():
+        return image.scaled(size, Qt.KeepAspectRatio)
+    else:
+        return image
+
+
 def save_image(image, path, name):
     if isinstance(image, QByteArray):
         _image = QImage()
@@ -259,7 +274,7 @@ class ImageWidget(EditorWidget):
         self.selectAction.triggered.connect(self._selectImage)
         self.cameraAction.triggered.connect(self._selectCamera)
         self.drawingAction.triggered.connect(self._selectDrawing)
-
+        self.image_size = QSize()
 
     def createWidget(self, parent):
         return QMapImageWidget(parent)
@@ -270,6 +285,7 @@ class ImageWidget(EditorWidget):
         widget.imageremoved.connect(self.emitvaluechanged)
         widget.imageloadrequest.connect(self.showpicker)
         widget.annotateimage.connect(self._selectDrawing)
+        self.image_size = roam.config.read_qsize("image_size")
 
     def showpicker(self):
         actionpicker = PickActionDialog(msg="Select image source")
@@ -291,6 +307,7 @@ class ImageWidget(EditorWidget):
         if image is None or not image:
             return
 
+        image = resize_image(image, self.image_size)
         self.widget.loadImage(image)
         self.modified = True
 
@@ -303,10 +320,12 @@ class ImageWidget(EditorWidget):
 
     def phototaken_camera(self, value):
         pix = value.copy()
+        pix = resize_image(pix, self.image_size)
         self.setvalue(pix)
         self.modified = True
 
     def phototaken(self, value):
+        value = resize_image(value, self.image_size)
         self.setvalue(value)
         self.modified = True
 

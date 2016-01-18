@@ -1,9 +1,28 @@
 import os
 import yaml as yaml
+from PyQt4.QtCore import QSize
 
 settings = {}
 
 loaded_path = ''
+
+
+def read_qsize(key):
+    """
+    Read a size from the settings into the QSize.
+    :param key: The key to search.
+    :return:
+    """
+    size = settings.get(key, None)
+    if not size:
+        return QSize()
+
+    try:
+        w, h = size.split(',')
+        w, h = int(w.strip()), int(h.strip())
+        return QSize(w, h)
+    except ValueError:
+        return QSize()
 
 
 def load(path):
