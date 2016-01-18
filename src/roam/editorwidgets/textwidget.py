@@ -38,6 +38,7 @@ def _get_sqlite_col_length(layer, fieldname):
         if match:
             length = match.group(1)
             return True, int(length)
+    return False, 0
 
 
 class TextWidget(EditorWidget):
