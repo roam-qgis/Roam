@@ -61,7 +61,7 @@ class TextWidget(EditorWidget):
 
         if self.text_length > 0:
             if hasattr(widget, "setMaxLength"):
-                widget.setMaxLength(length)
+                widget.setMaxLength(self.text_length)
 
     def eventFilter(self, object, event):
         # Hack I really don't like this but there doesn't seem to be a better way at the
