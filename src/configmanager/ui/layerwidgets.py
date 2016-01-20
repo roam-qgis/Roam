@@ -9,7 +9,7 @@ from PyQt4.QtGui import (QWidget, QPixmap, QStandardItem, QStandardItemModel, QI
 from PyQt4.Qsci import QsciLexerSQL, QsciScintilla
 
 from qgis.core import QgsDataSourceURI, QgsPalLabeling, QgsMapLayerRegistry, QgsStyleV2, QgsMapLayer, QGis, QgsProject
-from qgis.gui import QgsExpressionBuilderDialog, QgsMapCanvas, QgsRendererV2PropertiesDialog, QgsLayerTreeMapCanvasBridge
+from qgis.gui import QgsExpressionBuilderDialog, QgsMapCanvas, QgsRendererV2PropertiesDialog, QgsLayerTreeMapCanvasBridge, QgsRasterRendererWidget
 
 from configmanager.ui.nodewidgets import (ui_layersnode, ui_layernode, ui_infonode, ui_projectinfo, ui_formwidget,
                                           ui_searchsnode, ui_searchnode, ui_mapwidget)
@@ -1010,7 +1010,12 @@ class MapWidget(ui_mapwidget.Ui_Form, WidgetBase):
         if self.styledlg:
             widget = self.styleWidget.layout().removeWidget(self.styledlg)
 
-        self.styledlg = QgsRendererV2PropertiesDialog(layer, self.style, True)
+        if layer.type() == QgsMapLayer.VectorLayer:
+            self.styledlg = QgsRendererV2PropertiesDialog(layer, self.style, True)
+        else:
+            # TODO Nothing else is supported yet.
+            return
+
         # self.styledlg.setStyleSheet(roam_style.appstyle())
         self.styledlg.setParent(self)
         # TODO Only in 2.12
