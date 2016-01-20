@@ -658,7 +658,6 @@ class ProjectInfoWidget(ui_projectinfo.Ui_Form, WidgetBase):
         :param text: The new text for the title.
         """
         self.project.settings['title'] = text
-        self.titleText.setText(text)
 
     def setsplash(self, splash):
         """
