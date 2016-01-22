@@ -8,6 +8,7 @@ from configmanager.editorwidgets.textwidget import TextBlockWidgetConfig, TextWi
 from configmanager.editorwidgets.listwidget import ListWidgetConfig
 from configmanager.editorwidgets.numberwidget import NumberWidgetConfig, DoubleNumberWidgetConfig
 from configmanager.editorwidgets.optionwidget import OptionWidgetConfig
+from configmanager.editorwidgets.attachmentwidget import AttachmentWidgetConfig
 
 
 widgetconfigs = {"Checkbox" : CheckboxWidgetConfig,
@@ -19,4 +20,5 @@ widgetconfigs = {"Checkbox" : CheckboxWidgetConfig,
                  "TextBlock": TextBlockWidgetConfig,
                  "Number": NumberWidgetConfig,
                  "Number(Double)": DoubleNumberWidgetConfig,
+                 "Attachment": AttachmentWidgetConfig,
                  "Option Row": OptionWidgetConfig}

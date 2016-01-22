@@ -8,9 +8,11 @@ widgets = OrderedDict()
 class EditorWidgetException(Exception):
     pass
 
+
 def registerwidgets(*widgetclasses):
     for widgetclass in widgetclasses:
         widgets[widgetclass.widgettype] = widgetclass
+
 
 def registerallwidgets():
     from roam.editorwidgets.imagewidget import ImageWidget
@@ -21,11 +23,15 @@ def registerallwidgets():
     from roam.editorwidgets.textwidget import TextWidget, TextBlockWidget
     from roam.editorwidgets.tablewidget import TableWidget
     from roam.editorwidgets.optionwidget import OptionWidget
+    from roam.editorwidgets.attachmentwidget import AttachmentWidget
+
     registerwidgets(ImageWidget, ListWidget, MultiList, CheckboxWidget, DateWidget,
-                    NumberWidget, DoubleNumberWidget, TextWidget, TextBlockWidget, OptionWidget)
+                    NumberWidget, DoubleNumberWidget, TextWidget, TextBlockWidget, OptionWidget, AttachmentWidget)
+
 
 def supportedwidgets():
     return widgets.keys()
+
 
 def widgetwrapper(widgettype, widget, config, layer, label, field, parent=None):
     try:

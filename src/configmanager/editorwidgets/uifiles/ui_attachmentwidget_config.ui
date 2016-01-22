@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>Form</class>
+ <widget class="QWidget" name="Form">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>451</width>
+    <height>334</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Form</string>
+  </property>
+  <layout class="QFormLayout" name="formLayout">
+   <item row="0" column="0">
+    <widget class="QLabel" name="label_3">
+     <property name="text">
+      <string>Default load folder</string>
+     </property>
+     <property name="buddy">
+      <cstring>defaultLocationText</cstring>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="1">
+    <layout class="QHBoxLayout" name="horizontalLayout">
+     <item>
+      <widget class="QLineEdit" name="defaultLocationText"/>
+     </item>
+     <item>
+      <widget class="QPushButton" name="locatioButton">
+       <property name="text">
+        <string>...</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item row="1" column="0" colspan="2">
+    <widget class="QGroupBox" name="savingGroupBox">
+     <property name="title">
+      <string>File actions</string>
+     </property>
+     <property name="checkable">
+      <bool>false</bool>
+     </property>
+     <property name="checked">
+      <bool>false</bool>
+     </property>
+     <layout class="QFormLayout" name="formLayout_2">
+      <item row="1" column="0">
+       <widget class="QRadioButton" name="moveButton">
+        <property name="text">
+         <string>Move file</string>
+        </property>
+        <attribute name="buttonGroup">
+         <string notr="true">fileActionGroup</string>
+        </attribute>
+       </widget>
+      </item>
+      <item row="5" column="0" colspan="2">
+       <widget class="QLabel" name="label">
+        <property name="text">
+         <string>Default save location is _attachment folder in projects folder.  Use custom location to set another location to save the attachment.</string>
+        </property>
+        <property name="wordWrap">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="7" column="0">
+       <widget class="QLabel" name="label_6">
+        <property name="text">
+         <string>Custom save location</string>
+        </property>
+       </widget>
+      </item>
+      <item row="7" column="1">
+       <layout class="QHBoxLayout" name="horizontalLayout_2">
+        <item>
+         <widget class="QLineEdit" name="saveLocationText"/>
+        </item>
+        <item>
+         <widget class="QPushButton" name="locatioButton_2">
+          <property name="text">
+           <string>...</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item row="0" column="0">
+       <widget class="QRadioButton" name="copyButton">
+        <property name="text">
+         <string>Copy file</string>
+        </property>
+        <property name="checked">
+         <bool>true</bool>
+        </property>
+        <attribute name="buttonGroup">
+         <string notr="true">fileActionGroup</string>
+        </attribute>
+       </widget>
+      </item>
+      <item row="2" column="0">
+       <widget class="QRadioButton" name="noActionButton">
+        <property name="text">
+         <string>No action</string>
+        </property>
+        <attribute name="buttonGroup">
+         <string notr="true">fileActionGroup</string>
+        </attribute>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <tabstops>
+  <tabstop>defaultLocationText</tabstop>
+  <tabstop>locatioButton</tabstop>
+  <tabstop>copyButton</tabstop>
+  <tabstop>moveButton</tabstop>
+  <tabstop>noActionButton</tabstop>
+  <tabstop>saveLocationText</tabstop>
+  <tabstop>locatioButton_2</tabstop>
+ </tabstops>
+ <resources/>
+ <connections/>
+ <buttongroups>
+  <buttongroup name="fileActionGroup"/>
+ </buttongroups>
+</ui>
