@@ -63,25 +63,26 @@ class RoamAttachmentWidget(ui_attachmentwidget.Ui_attachmentWidget, QWidget):
         self.filename = None
 
     def attach(self, event):
-        if self.isDefault:
+        if not self.valid:
             self.attachmentloadrequest.emit()
         else:
             QDesktopServices.openUrl(QUrl.fromLocalFile(self.filename))
 
     @property
-    def isDefault(self):
-        return self.filename is None
-
-    @property
     def filename(self):
         return self._filename
+
+    @property
+    def valid(self):
+        value = self.filename
+        return value is not None and value != "" and not os.path.isdir(value)
 
     @filename.setter
     def filename(self, value):
         self._filename = value
-        self.selectbutton.setVisible(value is not None)
-        self.deletebutton.setVisible(value is not None)
-        if value:
+        self.selectbutton.setVisible(self.valid)
+        self.deletebutton.setVisible(self.valid)
+        if self.valid:
             self.attachmentloaded.emit()
             self.attachmentInfoLabel.setText(self.filename)
             self.attachmentImage.setPixmap(QPixmap(":/icons/view-attachment"))
@@ -127,17 +128,13 @@ class AttachmentWidget(EditorWidget):
             return
 
         if self.action == "move":
-            print "Moving file"
             attachment = move_attachment(attachment, self.savelocation)
         elif self.action == "copy":
-            print "Copying file"
             attachment = copy_attachment(attachment, self.savelocation)
 
         name = os.path.basename(attachment)
-        self.filename = name
         self.widget.filename = attachment
-
-        print "Attachment:", self.value()
+        self.filename = name
 
         self.modified = True
 
@@ -154,6 +151,13 @@ class AttachmentWidget(EditorWidget):
 
     def setvalue(self, value):
         self.filename = value
+        if not value:
+            value = ''
+
+        if os.path.isabs(value):
+            self.widget.filename = value
+        else:
+            self.widget.filename = os.path.join(self.savelocation, value)
 
     def value(self):
         return self.filename
