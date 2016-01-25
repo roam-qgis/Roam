@@ -33,13 +33,16 @@ def supportedwidgets():
     return widgets.keys()
 
 
-def widgetwrapper(widgettype, widget, config, layer, label, field, parent=None):
+def widgetwrapper(widgettype, widget, config, layer, label, field, context=None, parent=None):
+    if not context:
+        context = {}
     try:
         editorwidget = widgets[widgettype]
     except KeyError:
         raise EditorWidgetException("No widget wrapper for type {} was found".format(widgettype))
 
     widgetwrapper = editorwidget.for_widget(widget, layer, label, field, parent)
+    widgetwrapper.context = context
     widgetwrapper.initWidget(widget)
     widgetwrapper.config = config
     return widgetwrapper
@@ -68,6 +71,7 @@ class EditorWidget(QObject):
         self.layer = layer
         self.field = field
         self.label = label
+        self.context = {}
         self.formwidget = None
         self._required = False
         self._readonly = True

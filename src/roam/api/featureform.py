@@ -325,13 +325,17 @@ class FeatureFormBase(QWidget):
             widgetconfig = config.get('config', {})
             widgetconfig['formwidget'] = self
             qgsfield = fields[field]
+            context = dict(project=self.form.project,
+                           form=self.form,
+                           featureform=self)
             try:
                 widgetwrapper = roam.editorwidgets.core.widgetwrapper(widgettype=widgettype,
                                                                       layer=self.form.QGISLayer,
                                                                       field=qgsfield,
                                                                       widget=widget,
                                                                       label=label,
-                                                                      config=widgetconfig)
+                                                                      config=widgetconfig,
+                                                                      context=context)
             except EditorWidgetException as ex:
                 utils.exception(ex)
                 continue

@@ -1,3 +1,4 @@
+import shutil
 import os
 from PyQt4.QtCore import pyqtSignal, QUrl
 from PyQt4.QtGui import QWidget, QAction, QIcon, QFileDialog, QPixmap, QDesktopServices
@@ -7,6 +8,37 @@ from roam.editorwidgets.uifiles import ui_attachmentwidget
 from roam.popupdialogs import PickActionDialog
 
 import roam.utils
+
+
+def copy_attachment(attachment, dest):
+    """
+    Copy the attachment to the given folder. If the file already exists the new path is returned
+    but no copy happens.
+    :param attachment: The path to the attachment to copy.
+    :param dest: The destination folder.
+    :return: The new path of the attachment.
+    """
+    return move_attachment(attachment, dest, copy_only=True)
+
+
+def move_attachment(attachment, dest, copy_only=False):
+    """
+    Move the attachment to the given folder. If the file already exists the new path is returned
+    but no move happens.
+    :param attachment: The path to the attachment to move.
+    :param dest: The destination folder.
+    :return: The new path of the attachment.
+    """
+    if not os.path.exists(dest):
+        os.makedirs(dest)
+    newpath = os.path.join(dest, os.path.basename(attachment))
+    if os.path.exists(newpath):
+        return newpath
+    if copy_only:
+        shutil.copyfile(attachment, newpath)
+    else:
+        shutil.move(attachment, newpath)
+    return newpath
 
 
 class RoamAttachmentWidget(ui_attachmentwidget.Ui_attachmentWidget, QWidget):
@@ -51,10 +83,12 @@ class RoamAttachmentWidget(ui_attachmentwidget.Ui_attachmentWidget, QWidget):
         self.deletebutton.setVisible(value is not None)
         if value:
             self.attachmentloaded.emit()
-            # TODO Add some generic file icons here.
+            self.attachmentInfoLabel.setText(self.filename)
+            self.attachmentImage.setPixmap(QPixmap(":/icons/view-attachment"))
         else:
             self.attachmentremoved.emit()
-            self.attachmentImage.setPixmap(QPixmap(":/widgets/add"))
+            self.attachmentInfoLabel.setText("")
+            self.attachmentImage.setPixmap(QPixmap(":/icons/attachment"))
 
 
 class AttachmentWidget(EditorWidget):
@@ -67,9 +101,6 @@ class AttachmentWidget(EditorWidget):
         self.action = True
         self.modified = False
         self.filename = None
-
-        # self.selectAction = QAction(QIcon(r":\widgets\folder"), "Add Attachment", None)
-        # self.selectAction.triggered.connect(self._select_attachment)
 
     def createWidget(self, parent):
         return RoamAttachmentWidget(parent)
@@ -92,15 +123,15 @@ class AttachmentWidget(EditorWidget):
         # Show the file picker
         defaultlocation = os.path.expandvars(self.defaultlocation)
         attachment = QFileDialog.getOpenFileName(self.widget, "Select Attachment", defaultlocation)
-        roam.utils.debug(attachment)
         if not attachment:
             return
 
-        # TODO Move attachment to set folder.
         if self.action == "move":
             print "Moving file"
+            attachment = move_attachment(attachment, self.savelocation)
         elif self.action == "copy":
             print "Copying file"
+            attachment = copy_attachment(attachment, self.savelocation)
 
         name = os.path.basename(attachment)
         self.filename = name
@@ -113,7 +144,10 @@ class AttachmentWidget(EditorWidget):
     def updatefromconfig(self):
         self.defaultlocation = self.config.get('defaultlocation', '')
         self.action = self.config.get('action', 'copy')
-        self.savelocation = self.config.get('savelocation', '')
+        attachpath = os.path.join(self.context['project'].folder, "_attachments")
+        self.savelocation = self.config.get('savelocation', attachpath)
+        if not self.savelocation:
+            self.savelocation = attachpath
 
     def validate(self, *args):
         return self.filename is not None
