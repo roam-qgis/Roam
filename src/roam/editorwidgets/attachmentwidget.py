@@ -1,5 +1,6 @@
 import shutil
 import os
+from qgis.core import QgsExpression
 from PyQt4.QtCore import pyqtSignal, QUrl
 from PyQt4.QtGui import QWidget, QAction, QIcon, QFileDialog, QPixmap, QDesktopServices
 
@@ -10,7 +11,7 @@ from roam.popupdialogs import PickActionDialog
 import roam.utils
 
 
-def copy_attachment(attachment, dest):
+def copy_attachment(attachment, dest, filename=None):
     """
     Copy the attachment to the given folder. If the file already exists the new path is returned
     but no copy happens.
@@ -18,10 +19,10 @@ def copy_attachment(attachment, dest):
     :param dest: The destination folder.
     :return: The new path of the attachment.
     """
-    return move_attachment(attachment, dest, copy_only=True)
+    return move_attachment(attachment, dest, filename=filename, copy_only=True)
 
 
-def move_attachment(attachment, dest, copy_only=False):
+def move_attachment(attachment, dest, filename=None, copy_only=False):
     """
     Move the attachment to the given folder. If the file already exists the new path is returned
     but no move happens.
@@ -31,7 +32,13 @@ def move_attachment(attachment, dest, copy_only=False):
     """
     if not os.path.exists(dest):
         os.makedirs(dest)
-    newpath = os.path.join(dest, os.path.basename(attachment))
+    if not filename:
+        name = os.path.basename(attachment)
+    else:
+        # Use the new name and the ext from the old file.
+        name = filename + os.path.splitext(attachment)[1]
+
+    newpath = os.path.join(dest, name)
     if os.path.exists(newpath):
         return newpath
     if copy_only:
@@ -99,6 +106,7 @@ class AttachmentWidget(EditorWidget):
         super(AttachmentWidget, self).__init__(*args)
         self.defaultlocation = ''
         self.savelocation = ''
+        self.customname = ''
         self.action = True
         self.modified = False
         self.filename = None
@@ -127,12 +135,18 @@ class AttachmentWidget(EditorWidget):
         if not attachment:
             return
 
-        if self.action == "move":
-            attachment = move_attachment(attachment, self.savelocation)
-        elif self.action == "copy":
-            attachment = copy_attachment(attachment, self.savelocation)
-
         name = os.path.basename(attachment)
+
+        # If there is a custom name set we eval it in the context of a QgsExpression
+        if self.customname:
+            feature = self.context['featureform'].to_feature()
+            name = QgsExpression(self.customname).evaluate(feature)
+
+        if self.action == "move":
+            attachment = move_attachment(attachment, self.savelocation, filename=name)
+        elif self.action == "copy":
+            attachment = copy_attachment(attachment, self.savelocation, filename=name)
+
         self.widget.filename = attachment
         self.filename = name
 
@@ -141,6 +155,7 @@ class AttachmentWidget(EditorWidget):
     def updatefromconfig(self):
         self.defaultlocation = self.config.get('defaultlocation', '')
         self.action = self.config.get('action', 'copy')
+        self.customname = self.config.get('nameformat', '')
         attachpath = os.path.join(self.context['project'].folder, "_attachments")
         self.savelocation = self.config.get('savelocation', attachpath)
         if not self.savelocation:

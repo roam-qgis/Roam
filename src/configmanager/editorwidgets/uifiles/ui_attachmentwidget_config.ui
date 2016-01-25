@@ -63,7 +63,7 @@
       <item row="5" column="0" colspan="2">
        <widget class="QLabel" name="label">
         <property name="text">
-         <string>Default save location is _attachment folder in projects folder.  Use custom location to set another location to save the attachment.</string>
+         <string>Default save location is _attachment folder in projects folder.  Use custom location to set another location to save the attachment. Also used as the loading folder for other attachments</string>
         </property>
         <property name="wordWrap">
          <bool>true</bool>
@@ -114,7 +114,39 @@
         </attribute>
        </widget>
       </item>
+      <item row="8" column="0">
+       <widget class="QLabel" name="label_4">
+        <property name="text">
+         <string>Custom naming</string>
+        </property>
+       </widget>
+      </item>
+      <item row="8" column="1">
+       <layout class="QHBoxLayout" name="horizontalLayout_3">
+        <item>
+         <widget class="QLineEdit" name="namingText"/>
+        </item>
+        <item>
+         <widget class="QPushButton" name="nameExpressionButton">
+          <property name="text">
+           <string/>
+          </property>
+          <property name="icon">
+           <iconset resource="../../ui/resources.qrc">
+            <normaloff>:/icons/Expression</normaloff>:/icons/Expression</iconset>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
      </layout>
+    </widget>
+   </item>
+   <item row="2" column="0" colspan="2">
+    <widget class="QLabel" name="label_2">
+     <property name="text">
+      <string>Note: Only the name of the file is saved in the feature record.</string>
+     </property>
     </widget>
    </item>
   </layout>
@@ -128,7 +160,10 @@
   <tabstop>saveLocationText</tabstop>
   <tabstop>locatioButton_2</tabstop>
  </tabstops>
- <resources/>
+ <resources>
+  <include location="../../../roam/resources.qrc"/>
+  <include location="../../ui/resources.qrc"/>
+ </resources>
  <connections/>
  <buttongroups>
   <buttongroup name="fileActionGroup"/>

@@ -3,6 +3,8 @@ import functools
 from PyQt4.QtGui import QFileDialog
 from PyQt4.QtCore import QDir
 
+from qgis.gui import QgsExpressionBuilderDialog
+
 from configmanager.editorwidgets.core import ConfigWidget
 from configmanager.editorwidgets.uifiles.ui_attachmentwidget_config import Ui_Form
 
@@ -18,7 +20,14 @@ class AttachmentWidgetConfig(Ui_Form, ConfigWidget):
         self.locatioButton_2.pressed.connect(functools.partial(self.openfilepicker, self.saveLocationText))
 
         self.saveLocationText.textChanged.connect(self.widgetchanged)
+        self.namingText.textChanged.connect(self.widgetchanged)
         self.fileActionGroup.buttonClicked[int].connect(self.widgetchanged)
+        self.nameExpressionButton.pressed.connect(self.show_builder)
+
+    def show_builder(self):
+        dlg = QgsExpressionBuilderDialog(None)
+        if dlg.exec_():
+            self.namingText.setText(dlg.expressionText())
 
     def selected_action(self):
         button = self.fileActionGroup.checkedButton()
@@ -50,13 +59,16 @@ class AttachmentWidgetConfig(Ui_Form, ConfigWidget):
     def getconfig(self):
         location = self.defaultLocationText.text()
         savelocation = self.saveLocationText.text()
+        nameing = self.namingText.text()
         action = self.selected_action()
         return {"defaultlocation": location,
                 'action': action,
-                'savelocation': savelocation}
+                'savelocation': savelocation,
+                'nameformat': nameing}
 
     def setconfig(self, config):
         self.defaultLocationText.setText(config.get('defaultlocation', ''))
         self.saveLocationText.setText(config.get('savelocation', ''))
+        self.namingText.setText(config.get('nameformat', ''))
         action = config.get('action', 'copy')
         self.action_to_button(action)
