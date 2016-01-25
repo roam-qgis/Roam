@@ -160,12 +160,18 @@ class PolylineTool(QgsMapTool):
 
     def __init__(self, canvas):
         super(PolylineTool, self).__init__(canvas)
+        self.minpoints = 2
         self.editmode = False
         self.editvertex = None
         self.points = []
         self.is_tracking = False
         self.canvas = canvas
-        self.startcolour = QColor.fromRgb(0, 0, 255, 100)
+        # TODO These are no good for colour blind
+        self.valid_color = QColor.fromRgb(0, 0, 255, 100)
+        # TODO These are no good for colour blind
+        self.invalid_color = QColor.fromRgb(255, 0, 0, 100)
+
+        self.startcolour = self.valid_color
         self.editcolour = QColor.fromRgb(0, 255, 0, 150)
         self.band = RubberBand(self.canvas, QGis.Line, width=5, iconsize=20)
         self.band.setColor(self.startcolour)
@@ -337,7 +343,6 @@ class PolylineTool(QgsMapTool):
         point = self.canvas.getCoordinateTransform().toMapCoordinates(event.pos())
         return point
 
-
     def canvasMoveEvent(self, event):
         if self.is_tracking:
             return
@@ -360,15 +365,45 @@ class PolylineTool(QgsMapTool):
             self.band.movePoint(at, point)
             self.pointband.movePoint(at, point)
 
+        self.update_valid_state()
+
+    def update_valid_state(self):
+        geom = self.band.asGeometry()
+        if geom and self.band.numberOfVertices() > 0:
+            errors = geom.validateGeometry()
+            if errors:
+                self.band.setColor(self.invalid_color)
+                self.pointband.setColor(self.invalid_color)
+            else:
+                self.band.setColor(self.valid_color)
+                self.pointband.setColor(self.valid_color)
+
+            for error in errors:
+                print error.what()
+
     def canvasReleaseEvent(self, event):
+        geom = self.band.asGeometry()
+        if geom:
+            errors = geom.validateGeometry()
+        else:
+            errors = []
+
         if event.button() == Qt.RightButton:
-            self.endcapture()
+            if errors and self.band.numberOfVertices() >= self.minpoints:
+                # TODO we need to handle invalid geometry case.
+                pass
+            else:
+                self.endcapture()
             return
 
-        print self.editmode
         if not self.editmode:
             point = self.snappoint(event.pos())
             qgspoint = QgsPoint(point)
+            if errors and self.band.numberOfVertices() >= self.minpoints:
+                # Don't allow adding point here.
+                # Need to notify the user that this isn't allowed.
+                RoamEvents.raisemessage("Invalid Feature", "Adding a point here will create a invalid geometry which is not currently allowed", level=1)
+                return
             self.add_point(qgspoint)
         else:
             self.editvertex = None
@@ -458,6 +493,7 @@ class PolygonTool(PolylineTool):
 
     def __init__(self, canvas):
         super(PolygonTool, self).__init__(canvas)
+        self.minpoints = 4
         self.captureaction = CaptureAction(self, "polygon", text="Digitize")
         self.captureaction.toggled.connect(self.update_state)
         self.reset()
