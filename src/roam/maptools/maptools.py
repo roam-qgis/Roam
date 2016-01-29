@@ -399,11 +399,6 @@ class PolylineTool(QgsMapTool):
         if not self.editmode:
             point = self.snappoint(event.pos())
             qgspoint = QgsPoint(point)
-            if errors and self.band.numberOfVertices() >= self.minpoints:
-                # Don't allow adding point here.
-                # Need to notify the user that this isn't allowed.
-                RoamEvents.raisemessage("Invalid Feature", "Adding a point here will create a invalid geometry which is not currently allowed", level=1)
-                return
             self.add_point(qgspoint)
         else:
             self.editvertex = None
