@@ -370,26 +370,43 @@ class PolylineTool(QgsMapTool):
     def update_valid_state(self):
         geom = self.band.asGeometry()
         if geom and self.band.numberOfVertices() > 0:
-            errors = geom.validateGeometry()
-            if errors:
+            if self.has_errors():
                 self.band.setColor(self.invalid_color)
                 self.pointband.setColor(self.invalid_color)
             else:
                 self.band.setColor(self.valid_color)
                 self.pointband.setColor(self.valid_color)
 
-            for error in errors:
-                print error.what()
+    def has_errors(self):
+        geom = self.band.asGeometry()
+        if not geom:
+            return False
+
+        errors = geom.validateGeometry()
+
+        skippable = ["duplicate node", "Geometry has"]
+        othererrors = []
+
+        def is_safe(message):
+            for safe in skippable:
+                if safe in message:
+                    return True
+            return False
+
+        # We need to remove errors that are "ok" and not really that bad
+        for error in errors:
+            if not is_safe(error.what()):
+                othererrors.append(error)
+
+        for error in othererrors:
+            print error.what()
+
+        invalid = len(othererrors) > 0
+        return invalid
 
     def canvasReleaseEvent(self, event):
-        geom = self.band.asGeometry()
-        if geom:
-            errors = geom.validateGeometry()
-        else:
-            errors = []
-
         if event.button() == Qt.RightButton:
-            if errors and self.band.numberOfVertices() >= self.minpoints:
+            if self.has_errors() and self.band.numberOfVertices() >= self.minpoints:
                 # TODO we need to handle invalid geometry case.
                 pass
             else:
