@@ -382,6 +382,11 @@ class InfoDock(infodock_widget, QWidget):
             fields = result.keys()
             attributes = result.values()
             rows = generate_rows(fields, attributes, imagepath=self.project.image_folder)
+            try:
+                caption = caption.format(**dict(zip(fields, attributes)))
+            except KeyError:
+                pass
+
             blocks.append(updateTemplate(dict(ROWS=rows,
                                               HEADER=caption,
                                               CONTROLS=countblock),
@@ -440,6 +445,7 @@ class InfoDock(infodock_widget, QWidget):
         self.editButton.setEnabled(True)
         self.deleteFeatureButton.setEnabled(True)
         self.navwidget.hide()
+
 
 def generate_rows(fields, attributes, **kwargs):
     data = OrderedDict()
