@@ -117,6 +117,8 @@ class MainWindow(ui_mainwindow.Ui_MainWindow, QMainWindow):
         self.canvas_page.set_gps(GPS, self.tracking)
 
         self.canvas = self.canvas_page.canvas
+        self.canvas_page.projecttoolbar.stateChanged.connect(self.menutoolbar.setSmallMode)
+        self.menutoolbar.stateChanged.connect(self.canvas_page.projecttoolbar.setSmallMode)
 
         roam.defaults.canvas = self.canvas
         self.bar = roam.messagebaritems.MessageBar(self.centralwidget)
