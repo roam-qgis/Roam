@@ -289,6 +289,17 @@ def featureform():
         $FONT
     }
 
+    QHeaderView {
+    }
+
+    QHeaderView::section {
+        background: 1px solid rgb(137, 175, 255);
+        background-color: rgb(203, 203, 203, 50);
+        color: #777;
+        border: 1px solid rgb(137, 175, 255);
+        padding: 0 0 2px 3px
+    }
+
     QPushButton {
         border: 1px solid rgb(137, 175, 255);
         background-color: rgb(203, 203, 203, 50);
