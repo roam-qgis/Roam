@@ -135,8 +135,7 @@ class AttachmentWidget(EditorWidget):
         if not attachment:
             return
 
-        name = os.path.basename(attachment)
-
+        name = None
         # If there is a custom name set we eval it in the context of a QgsExpression
         if self.customname:
             feature = self.context['featureform'].to_feature()
@@ -148,6 +147,7 @@ class AttachmentWidget(EditorWidget):
             attachment = copy_attachment(attachment, self.savelocation, filename=name)
 
         self.widget.filename = attachment
+        name = os.path.basename(attachment)
         self.filename = name
 
         self.modified = True
