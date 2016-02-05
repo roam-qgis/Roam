@@ -154,7 +154,7 @@ class GPSCaptureAction(BaseAction):
         self.setEnabled(fixed)
 
 
-class PolylineTool(QgsMapTool):
+class PolylineTool(QgsMapToolEdit):
     mouseClicked = pyqtSignal(QgsPoint)
     geometryComplete = pyqtSignal(QgsGeometry)
 
@@ -228,6 +228,7 @@ class PolylineTool(QgsMapTool):
         RoamEvents.selectionchanged.connect(self.selection_updated)
 
         self.snapping = snapping
+
 
     def keyPressEvent(self, event):
         if event.key() == Qt.Key_Escape:
@@ -348,12 +349,12 @@ class PolylineTool(QgsMapTool):
             return
 
         if self.capturing:
-            point = self.snappoint(event.pos())
+            point = self.snappoint(event)
             self.band.movePoint(point)
 
         if self.editmode and self.editvertex is not None:
             at = self.editvertex
-            point = self.snappoint(event.pos())
+            point = self.snappoint(event)
             lastvertex = self.band.numberOfVertices() - 1
             if isinstance(self, PolygonTool) and at == lastvertex:
                 self.band.movePoint(0, point)
@@ -414,7 +415,7 @@ class PolylineTool(QgsMapTool):
             return
 
         if not self.editmode:
-            point = self.snappoint(event.pos())
+            point = self.snappoint(event)
             qgspoint = QgsPoint(point)
             self.add_point(qgspoint)
         else:
@@ -466,16 +467,15 @@ class PolylineTool(QgsMapTool):
     def isEditTool(self):
         return True
 
-    def snappoint(self, point):
-        if not self.snapping:
-            return self.canvas.getCoordinateTransform().toMapCoordinates(point)
+    def cadCanvasMoveEvent(self, e):
+        print e
 
-        try:
-            _, results = self.snapper.snapToBackgroundLayers(point)
-            point = results[0].snappedVertex
-            return point
-        except IndexError:
-            return self.canvas.getCoordinateTransform().toMapCoordinates(point)
+    def snappoint(self, event):
+        if not self.snapping:
+            return event.originalMapPoint()
+
+        point = event.snapPoint(QgsMapMouseEvent.SnapAllLayers)
+        return point
 
     def setEditMode(self, enabled, geom):
         self.reset()
@@ -563,16 +563,12 @@ class PointTool(TouchMapTool):
     def canvasPressEvent(self, event):
         self.startpoint = event.pos()
 
-    def snappoint(self, point):
+    def snappoint(self, event):
         if not self.snapping:
-            return False, self.canvas.getCoordinateTransform().toMapCoordinates(point)
+            return False, event.originalMapPoint()
 
-        try:
-            _, results = self.snapper.snapToBackgroundLayers(point)
-            point = results[0].snappedVertex
-            return True, point
-        except IndexError:
-            return False, self.canvas.getCoordinateTransform().toMapCoordinates(point)
+        point = event.snapPoint(QgsMapMouseEvent.SnapAllLayers)
+        return event.isSnapped(), point
 
     def canvasReleaseEvent(self, event):
         if self.pinching:
@@ -584,11 +580,11 @@ class PointTool(TouchMapTool):
                 super(PointTool, self).canvasReleaseEvent(event)
                 return
 
-        hassnap, point = self.snappoint(event.pos())
+        hassnap, point = self.snappoint(event)
         self.geometryComplete.emit(QgsGeometry.fromPoint(point))
 
     def canvasMoveEvent(self, event):
-        hassnap, point = self.snappoint(event.pos())
+        hassnap, point = self.snappoint(event)
         if hassnap:
             self.pointband.movePoint(point)
             self.pointband.show()
