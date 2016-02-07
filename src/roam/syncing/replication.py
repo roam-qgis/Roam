@@ -101,4 +101,5 @@ class BatchFileSync(SyncProvider):
             self.process.kill()
             self.syncError.emit(output)
         else:
-            self.syncMessage.emit(output)
+            if output:
+                self.syncMessage.emit(output)
