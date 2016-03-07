@@ -135,11 +135,6 @@ tests_target = dict(
     dest_base='Roam_tests',
     icon_resources=[(1, icon)])
 
-projectupdater_target = dict(
-    script=r'src\project_installer\__main__.py',
-    dest_base='Roam Project Updater',
-    icon_resources=[(1, icon)])
-
 configmanager_target = dict(
     script=r'src\configmanager\__main__.py',
     dest_base='Roam Config Manager',
