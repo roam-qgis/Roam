@@ -666,8 +666,7 @@ class MapWidget(Ui_CanvasWidget, QMainWindow):
                     self.zoom_to_location(position)
 
         self.marker.show()
-        self.marker.setCenter(position)
-        self.marker.quality = gpsinfo.quality
+        self.marker.setCenter(position, gpsinfo)
 
     def gps_first_fix(self, postion, gpsinfo):
         """

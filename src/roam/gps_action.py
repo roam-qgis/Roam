@@ -33,6 +33,7 @@ class GPSAction(QAction):
                                         parent)
         self.canvas = canvas
         self.triggered.connect(self.connectGPS)
+
         GPS.gpsfixed.connect(self.fixed)
         GPS.gpsfailed.connect(self.failed)
         GPS.gpsdisconnected.connect(self.disconnected)
@@ -48,7 +49,7 @@ class GPSAction(QAction):
             self.setIcon(QIcon(":/icons/gps"))
             self.setIconText(self.tr("Connecting.."))
             self.setEnabled(False)
-            portname = roam.config.settings.get("gpsport", '')
+            portname = roam.config.settings.get('gpsport', '')
             GPS.connectGPS(portname)
         else:
             GPS.disconnectGPS()
@@ -84,10 +85,12 @@ class GPSMarker(QgsMapCanvasItem):
         super(GPSMarker, self).__init__(canvas)
         self.canvas = canvas
         self._quaility = 0
+        self._heading = 0
         self.size = roam.config.settings.get('gps', {}).get('marker_size', 64)
         self.red = Qt.darkRed
         self.blue = QColor(129, 173, 210)
         self.green = Qt.darkGreen
+        self._gpsinfo = QgsGPSInformation()
 
         self.pointbrush = QBrush(self.red)
         self.pointpen = QPen(Qt.black)
@@ -155,8 +158,7 @@ class GPSMarker(QgsMapCanvasItem):
             painter.restore()
 
         painter.save()
-        direction = GPS.gpsinfo("direction")
-        painter.rotate(direction)
+        painter.rotate(self._heading)
         path = QPainterPath()
         path.addPolygon(p)
         painter.drawPath(path)
@@ -173,17 +175,19 @@ class GPSMarker(QgsMapCanvasItem):
 
     @property
     def quality(self):
-        return self._quaility
+        return self._gpsinfo.quality
 
     @quality.setter
     def quality(self, value):
         self._quaility = value
         self.update()
 
-    def setCenter(self, map_pos):
+    def setCenter(self, map_pos, gpsinfo):
+        self._heading = gpsinfo.direction
+        self._gpsinfo = gpsinfo
         self.map_pos = map_pos
         self.setPos(self.toCanvasCoordinates(self.map_pos))
 
     def updatePosition(self):
-        self.setCenter(self.map_pos)
+        self.setCenter(self.map_pos, self._gpsinfo)
 

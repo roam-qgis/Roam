@@ -1,6 +1,15 @@
 __author__ = 'Nathan.Woodrow'
 
-from roam.api.gps import GPS
+import gps
+GPS = gps.GPSService()
+
+import roam.config
+import os
+portname = roam.config.settings.get('gpsport', '')
+if os.path.exists(portname):
+    print "Setting fake GPS"
+    GPS = gps.FileGPSService(portname)
+
 from roam.api.events import RoamEvents
 from roam.api.featureform import FeatureForm
 from roam.api.interface import RoamInterface

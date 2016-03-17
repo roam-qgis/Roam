@@ -1,3 +1,4 @@
+import os
 import pynmea2
 
 from PyQt4.QtCore import QObject, pyqtSignal, QDate, QDateTime, QTime, Qt, QTimer
@@ -6,6 +7,7 @@ from qgis.core import (QgsGPSDetector, QgsGPSConnectionRegistry, QgsPoint, \
                         QgsCoordinateTransform, QgsCoordinateReferenceSystem, \
                         QgsGPSInformation, QgsCsException)
 from roam.utils import log, info
+import roam.config
 
 NMEA_FIX_BAD = 1
 NMEA_FIX_2D = 2
@@ -196,21 +198,19 @@ class GPSService(QObject):
             self.elevation = gpsInfo.elevation
 
 class FileGPSService(GPSService):
-    def __init__(self):
+    def __init__(self, filename):
         super(FileGPSService, self).__init__()
         self.file = None
         self.timer = QTimer()
         self.timer.setInterval(100)
         self.timer.timeout.connect(self._read_from_file)
+        self.filename = filename
 
     def connectGPS(self, portname):
         # Normally the portname is passed but we will take a filename
         # because it's a fake GPS service
-        filename = portname
         if not self.isConnected:
-            import os
-            f = os.path.join(os.path.dirname(__file__), "fake_data", "fake.nmea")
-            self.file = open(f, "r")
+            self.file = open(self.filename, "r")
             self.timer.start()
             self.isConnected = True
 
@@ -229,4 +229,5 @@ class FileGPSService(GPSService):
         self.gpsdisconnected.emit()
 
 
-GPS = FileGPSService()
+GPS = GPSService()
+

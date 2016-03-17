@@ -7,6 +7,7 @@ settings = {}
 loaded_path = ''
 
 
+
 def read_qsize(key):
     """
     Read a size from the settings into the QSize.
