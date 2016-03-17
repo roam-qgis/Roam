@@ -3,7 +3,7 @@ import os
 from string import Template
 from collections import OrderedDict
 
-from PyQt4.QtGui import ( QWidget, QIcon, QListWidgetItem, QMouseEvent, QApplication, QKeySequence)
+from PyQt4.QtGui import ( QWidget, QIcon, QListWidgetItem, QMouseEvent, QApplication, QKeySequence, QAction)
 
 from PyQt4.QtCore import (Qt, QUrl,
                           QEvent, pyqtSignal
@@ -15,10 +15,11 @@ from qgis.core import (QgsExpression, QgsFeature,
                        QgsMapLayer, QgsFeatureRequest, QgsGeometry)
 
 from roam import utils
+from roam.popupdialogs import PickActionDialog
 from roam.flickwidget import FlickCharm
 from roam.htmlviewer import updateTemplate, clear_image_cache
 from roam.ui.uifiles import (infodock_widget)
-from roam.api import RoamEvents
+from roam.api import RoamEvents, GPS
 from roam.dataaccess import database
 from roam.api.utils import layer_by_name, values_from_feature
 
@@ -100,7 +101,13 @@ class InfoDock(infodock_widget, QWidget):
         self.expaned = False
         self.layerList.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
 
-        self.expandButton.pressed.connect(self.change_expanded_state)
+        self.expandAction = QAction(QIcon(":/icons/expand"), "Expand Panel", self)
+        self.expandAction.triggered.connect(self.change_expanded_state)
+
+        self.navigateAction = QAction(QIcon(":/icons/expand"), "Navigate To..", self)
+        self.navigateAction.triggered.connect(self._navigate_to_selection)
+
+        self.moreActionsButton.pressed.connect(self._show_more_actions)
         self.navwidget.mousePressEvent = self._sink
         self.bottomWidget.mousePressEvent = self._sink
         self.navwidget.mouseReleaseEvent = self._sink
@@ -112,6 +119,20 @@ class InfoDock(infodock_widget, QWidget):
 
         RoamEvents.selectioncleared.connect(self.clearResults)
         RoamEvents.editgeometry_complete.connect(self.refreshcurrent)
+
+    def _navigate_to_selection(self):
+        pass
+
+    def _show_more_actions(self):
+        dlg = PickActionDialog()
+        self.navigateAction.setEnabled(GPS.isConnected)
+        if not GPS.isConnected:
+            self.navigateAction.setText("Navigate To.. (No GPS)")
+        else:
+            self.navigateAction.setText("Navigate To..")
+
+        dlg.addactions([self.expandAction, self.navigateAction])
+        dlg.exec_()
 
     def delete_feature(self):
         cursor = self.selection

@@ -84,7 +84,7 @@ class GPSMarker(QgsMapCanvasItem):
         super(GPSMarker, self).__init__(canvas)
         self.canvas = canvas
         self._quaility = 0
-        self.size = 24
+        self.size = roam.config.settings.get('gps', {}).get('marker_size', 64)
         self.red = Qt.darkRed
         self.blue = QColor(129, 173, 210)
         self.green = Qt.darkGreen
@@ -113,7 +113,9 @@ class GPSMarker(QgsMapCanvasItem):
             color = self.red
 
         self.pointpen.setColor(Qt.black)
+        self.pointpen.setWidth(2)
         self.pointbrush.setColor(color)
+
 
         painter.setBrush(self.pointbrush)
         painter.setPen(self.pointpen)
@@ -123,13 +125,51 @@ class GPSMarker(QgsMapCanvasItem):
         y = rect.height() / 2 - halfSize
         x = 0 - halfSize
         line2 = QLine(x, y, rect.width() - halfSize, y)
+
+        # Arrow
+        p = QPolygonF()
+        p.append(QPoint(0 - halfSize, 0))
+        p.append(QPoint(0, -self.size))
+        x = rect.width() - halfSize
+        p.append(QPoint(x, 0))
+        p.append(QPoint(0, 0))
+
+        offsetp = QPolygonF()
+        offsetp.append(QPoint(0 - halfSize, 0))
+        offsetp.append(QPoint(0, -self.size))
+        x = rect.width() - halfSize
+        offsetp.append(QPoint(x, 0))
+        offsetp.append(QPoint(0, 0))
+
+        # qpoint = QgsPoint(529417.09, 6918492.74)
+        # az = self.map_pos.azimuth(qpoint)
+        az = -90
+
+        painter.save()
+        painter.rotate(az)
+        self.pointbrush.setColor(Qt.red)
+        painter.setBrush(self.pointbrush)
+        path = QPainterPath()
+        path.addPolygon(offsetp)
+        painter.drawPath(path)
+        painter.restore()
+
+        painter.save()
+        direction = GPS.gpsinfo("direction")
+        painter.rotate(direction)
+        path = QPainterPath()
+        path.addPolygon(p)
+        painter.drawPath(path)
+
+        painter.restore()
         painter.drawEllipse(rect)
         painter.drawLine(line)
         painter.drawLine(line2)
 
     def boundingRect(self):
         halfSize = self.size / 2.0
-        return QRectF(-halfSize, -halfSize, 2.0 * halfSize, 2.0 * halfSize)
+        size = self.size * 2
+        return QRectF(-size, -size, 2.0 * size, 2.0 * size)
 
     @property
     def quality(self):
@@ -146,3 +186,4 @@ class GPSMarker(QgsMapCanvasItem):
 
     def updatePosition(self):
         self.setCenter(self.map_pos)
+
