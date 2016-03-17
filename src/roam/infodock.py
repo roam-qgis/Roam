@@ -121,7 +121,13 @@ class InfoDock(infodock_widget, QWidget):
         RoamEvents.editgeometry_complete.connect(self.refreshcurrent)
 
     def _navigate_to_selection(self):
-        pass
+        feature = self.selection.feature
+        geom = feature.geometry()
+        point = geom.centroid().asPoint()
+        if GPS.waypoint == point:
+            GPS.waypoint = None
+        else:
+            GPS.waypoint = point
 
     def _show_more_actions(self):
         dlg = PickActionDialog()

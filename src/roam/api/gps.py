@@ -45,6 +45,7 @@ class GPSService(QObject):
         self.info = QgsGPSInformation()
         self.wgs84CRS = QgsCoordinateReferenceSystem(4326)
         self.crs = None
+        self.waypoint = None
 
     def gpsinfo(self, attribute):
         """

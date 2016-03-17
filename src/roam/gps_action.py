@@ -141,18 +141,18 @@ class GPSMarker(QgsMapCanvasItem):
         offsetp.append(QPoint(x, 0))
         offsetp.append(QPoint(0, 0))
 
-        # qpoint = QgsPoint(529417.09, 6918492.74)
-        # az = self.map_pos.azimuth(qpoint)
-        az = -90
+        waypoint = GPS.waypoint
+        if waypoint:
+            az = self.map_pos.azimuth(waypoint)
 
-        painter.save()
-        painter.rotate(az)
-        self.pointbrush.setColor(Qt.red)
-        painter.setBrush(self.pointbrush)
-        path = QPainterPath()
-        path.addPolygon(offsetp)
-        painter.drawPath(path)
-        painter.restore()
+            painter.save()
+            painter.rotate(az)
+            self.pointbrush.setColor(Qt.red)
+            painter.setBrush(self.pointbrush)
+            path = QPainterPath()
+            path.addPolygon(offsetp)
+            painter.drawPath(path)
+            painter.restore()
 
         painter.save()
         direction = GPS.gpsinfo("direction")
