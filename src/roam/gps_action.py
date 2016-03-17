@@ -86,7 +86,7 @@ class GPSMarker(QgsMapCanvasItem):
         self.canvas = canvas
         self._quaility = 0
         self._heading = 0
-        self.size = roam.config.settings.get('gps', {}).get('marker_size', 64)
+        self.size = roam.config.settings.get('gps', {}).get('marker_size', 24)
         self.red = Qt.darkRed
         self.blue = QColor(129, 173, 210)
         self.green = Qt.darkGreen
