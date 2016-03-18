@@ -39,6 +39,7 @@ def open_keyboard():
         try:
             os.startfile(cmd)
         except WindowsError:
+            import roam.config
             roam.config.settings['keyboard'] = False
             roam.config.save()
     else:
