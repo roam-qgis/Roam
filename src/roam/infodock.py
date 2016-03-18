@@ -104,7 +104,7 @@ class InfoDock(infodock_widget, QWidget):
         self.expandAction = QAction(QIcon(":/icons/expand"), "Expand Panel", self)
         self.expandAction.triggered.connect(self.change_expanded_state)
 
-        self.navigateAction = QAction(QIcon(":/icons/expand"), "Navigate To..", self)
+        self.navigateAction = QAction(QIcon(":/icons/navigate"), "Navigate To..", self)
         self.navigateAction.triggered.connect(self._navigate_to_selection)
 
         self.moreActionsButton.pressed.connect(self._show_more_actions)
