@@ -1,11 +1,13 @@
+import os
 import pynmea2
 
-from PyQt4.QtCore import QObject, pyqtSignal, QDate, QDateTime, QTime, Qt
+from PyQt4.QtCore import QObject, pyqtSignal, QDate, QDateTime, QTime, Qt, QTimer
 
 from qgis.core import (QgsGPSDetector, QgsGPSConnectionRegistry, QgsPoint, \
                         QgsCoordinateTransform, QgsCoordinateReferenceSystem, \
                         QgsGPSInformation, QgsCsException)
 from roam.utils import log, info
+import roam.config
 
 NMEA_FIX_BAD = 1
 NMEA_FIX_2D = 2
@@ -45,6 +47,7 @@ class GPSService(QObject):
         self.info = QgsGPSInformation()
         self.wgs84CRS = QgsCoordinateReferenceSystem(4326)
         self.crs = None
+        self.waypoint = None
 
     def gpsinfo(self, attribute):
         """
@@ -194,5 +197,37 @@ class GPSService(QObject):
             self.postion = map_pos
             self.elevation = gpsInfo.elevation
 
+class FileGPSService(GPSService):
+    def __init__(self, filename):
+        super(FileGPSService, self).__init__()
+        self.file = None
+        self.timer = QTimer()
+        self.timer.setInterval(100)
+        self.timer.timeout.connect(self._read_from_file)
+        self.filename = filename
+
+    def connectGPS(self, portname):
+        # Normally the portname is passed but we will take a filename
+        # because it's a fake GPS service
+        if not self.isConnected:
+            self.file = open(self.filename, "r")
+            self.timer.start()
+            self.isConnected = True
+
+    def _read_from_file(self):
+        line = self.file.readline()
+        if not line:
+            self.file.seek(0)
+            line = self.file.readline()
+        self.parse_data(line)
+
+    def disconnectGPS(self):
+        if self.file:
+            self.file.close()
+        self.timer.stop()
+        self.file = None
+        self.gpsdisconnected.emit()
+
 
 GPS = GPSService()
+

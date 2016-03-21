@@ -130,13 +130,14 @@ def _setup(apppath=None, logo='', title='', **kwargs):
     if not os.path.exists(args.projectsroot):
         os.makedirs(args.projectsroot)
 
+    import roam.config
+    if isinstance(args.config, dict):
+        roam.config.settings = args.config
+    else:
+        roam.config.load(args.config)
+
     app = RoamApp(sys.argv, apppath, prefixpath, args.config, libspath, i18npath, args.projectsroot).init(logo, title)
     app.sourcerun = RUNNING_FROM_FILE
-    import roam.config
-    if isinstance(app.settingspath, dict):
-        roam.config.settings = app.settingspath
-    else:
-        roam.config.load(app.settingspath)
     return app
 
 
