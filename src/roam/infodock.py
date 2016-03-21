@@ -453,8 +453,9 @@ def generate_rows(fields, attributes, **kwargs):
     for field, value in zip(fields, attributes):
         if field == 'mapkey':
             continue
-        data[field.replace(" ", "_")] = value
-        item = u"<tr><th>{0}</th> <td>${{{1}}}</td></tr>".format(field, field.replace(" ", "_"))
+        safefieldname = "_" + field.replace(" ", "_")
+        data[safefieldname] = value
+        item = u"<tr><th>{0}</th> <td>${{{1}}}</td></tr>".format(field, safefieldname)
         items.append(item)
     rowtemple = Template(''.join(items))
     rowshtml = updateTemplate(data, rowtemple, **kwargs)
