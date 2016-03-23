@@ -76,6 +76,7 @@ class EditorWidget(QObject):
         self._required = False
         self._readonly = True
         self.initconfig = kwargs.get('initconfig', {})
+        self.newstyleform = False
         self.starttext = ''
         self.valuechanged.connect(self.updatecontrolstate)
 
@@ -150,9 +151,10 @@ class EditorWidget(QObject):
             return
 
         if self.passing:
-            self.label.setText("<b style='color:grey'>*</b> {}".format(self.starttext))
+            self.label.setText("{}".format(self.starttext))
         else:
-            self.label.setText("<b style='color:red'>*</b> {}".format(self.starttext))
+            requiredtext = "required" if self.newstyleform else "*"
+            self.label.setText("{} <b style='color:red'>({})</b>".format(self.starttext, requiredtext))
 
     def setrequired(self):
         self.required = True
@@ -167,7 +169,8 @@ class EditorWidget(QObject):
             self.starttext = self.labeltext
 
         if state and self.label:
-            self.label.setText("<b style='color:red'>*</b> {}".format(self.starttext))
+            requiredtext = "required" if self.newstyleform else "*"
+            self.label.setText("{} <b style='color:red'>({})</b>".format(self.starttext, requiredtext))
 
         self._required = state
 

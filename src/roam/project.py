@@ -365,7 +365,10 @@ class Form(object):
             # Update the feature with the defaults from the widget config
             defaults = self.default_values(feature)
             for key, value in defaults.iteritems():
-                feature[key] = value
+                try:
+                    feature[key] = value
+                except KeyError:
+                    roam.utils.info("Couldn't find key {} on feature".format(key))
 
         return feature
 

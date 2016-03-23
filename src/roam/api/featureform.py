@@ -349,6 +349,7 @@ class FeatureFormBase(QWidget):
 
             widgetwrapper.hidden = config.get('hidden', False)
 
+            widgetwrapper.newstyleform = self.formconfig.get("newstyle", False)
             widgetwrapper.required = config.get('required', False)
 
 
