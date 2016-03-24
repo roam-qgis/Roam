@@ -20,7 +20,7 @@
       <enum>QTabWidget::Rounded</enum>
      </property>
      <property name="currentIndex">
-      <number>0</number>
+      <number>1</number>
      </property>
      <property name="iconSize">
       <size>
@@ -489,6 +489,25 @@ p, li { white-space: pre-wrap; }
                      </property>
                     </widget>
                    </item>
+                   <item row="2" column="1">
+                    <widget class="QLabel" name="fieldwarninglabel">
+                     <property name="sizePolicy">
+                      <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
+                       <horstretch>0</horstretch>
+                       <verstretch>0</verstretch>
+                      </sizepolicy>
+                     </property>
+                     <property name="text">
+                      <string>Warning: Field is already used. Roam only supports one field per attribute. This attribute will be ignored when setting values.</string>
+                     </property>
+                     <property name="wordWrap">
+                      <bool>true</bool>
+                     </property>
+                     <property name="warning" stdset="0">
+                      <bool>true</bool>
+                     </property>
+                    </widget>
+                   </item>
                    <item row="5" column="0">
                     <widget class="QLabel" name="label_11">
                      <property name="text">
@@ -606,6 +625,17 @@ p, li { white-space: pre-wrap; }
                      </property>
                     </widget>
                    </item>
+                   <item row="19" column="1">
+                    <widget class="QFrame" name="frame_3">
+                     <property name="frameShape">
+                      <enum>QFrame::StyledPanel</enum>
+                     </property>
+                     <property name="frameShadow">
+                      <enum>QFrame::Raised</enum>
+                     </property>
+                     <zorder>defaultTab</zorder>
+                    </widget>
+                   </item>
                    <item row="20" column="0">
                     <widget class="QLabel" name="label">
                      <property name="text">
@@ -614,193 +644,217 @@ p, li { white-space: pre-wrap; }
                     </widget>
                    </item>
                    <item row="20" column="1">
-                    <widget class="QTabWidget" name="defaultTab">
-                     <property name="tabPosition">
-                      <enum>QTabWidget::North</enum>
+                    <widget class="QFrame" name="frame_5">
+                     <property name="frameShape">
+                      <enum>QFrame::StyledPanel</enum>
                      </property>
-                     <property name="currentIndex">
-                      <number>0</number>
+                     <property name="frameShadow">
+                      <enum>QFrame::Raised</enum>
                      </property>
-                     <property name="documentMode">
-                      <bool>true</bool>
-                     </property>
-                     <widget class="QWidget" name="tab_5">
-                      <attribute name="title">
-                       <string>Simple</string>
-                      </attribute>
-                      <layout class="QVBoxLayout" name="verticalLayout">
-                       <property name="spacing">
-                        <number>6</number>
-                       </property>
-                       <property name="leftMargin">
-                        <number>3</number>
-                       </property>
-                       <property name="topMargin">
-                        <number>3</number>
-                       </property>
-                       <property name="rightMargin">
-                        <number>3</number>
-                       </property>
-                       <property name="bottomMargin">
-                        <number>3</number>
-                       </property>
-                       <item>
-                        <layout class="QHBoxLayout" name="horizontalLayout_7">
-                         <item>
-                          <widget class="QLabel" name="label_14">
-                           <property name="text">
-                            <string>Value</string>
-                           </property>
-                          </widget>
-                         </item>
-                         <item>
-                          <widget class="QLineEdit" name="defaultvalueText"/>
-                         </item>
-                         <item>
-                          <widget class="QPushButton" name="expressionButton">
-                           <property name="text">
-                            <string/>
-                           </property>
-                           <property name="icon">
-                            <iconset resource="../resources.qrc">
-                             <normaloff>:/icons/Expression</normaloff>:/icons/Expression</iconset>
-                           </property>
-                           <property name="iconSize">
-                            <size>
-                             <width>24</width>
-                             <height>24</height>
-                            </size>
-                           </property>
-                          </widget>
-                         </item>
-                        </layout>
-                       </item>
-                       <item>
-                        <widget class="QLabel" name="label_18">
-                         <property name="font">
-                          <font>
-                           <italic>true</italic>
-                          </font>
-                         </property>
-                         <property name="text">
-                          <string>Value to be used as the default value.  QGIS Expressions can be included using [% {expression} %]</string>
-                         </property>
+                     <layout class="QVBoxLayout" name="verticalLayout_3">
+                      <property name="leftMargin">
+                       <number>0</number>
+                      </property>
+                      <property name="topMargin">
+                       <number>0</number>
+                      </property>
+                      <property name="rightMargin">
+                       <number>0</number>
+                      </property>
+                      <item>
+                       <widget class="QComboBox" name="defaultEventsCombo"/>
+                      </item>
+                      <item>
+                       <widget class="QTabWidget" name="defaultTab">
+                        <property name="tabPosition">
+                         <enum>QTabWidget::North</enum>
+                        </property>
+                        <property name="currentIndex">
+                         <number>0</number>
+                        </property>
+                        <property name="documentMode">
+                         <bool>true</bool>
+                        </property>
+                        <widget class="QWidget" name="tab_5">
+                         <attribute name="title">
+                          <string>Simple</string>
+                         </attribute>
+                         <layout class="QVBoxLayout" name="verticalLayout">
+                          <property name="spacing">
+                           <number>6</number>
+                          </property>
+                          <property name="leftMargin">
+                           <number>3</number>
+                          </property>
+                          <property name="topMargin">
+                           <number>3</number>
+                          </property>
+                          <property name="rightMargin">
+                           <number>3</number>
+                          </property>
+                          <property name="bottomMargin">
+                           <number>3</number>
+                          </property>
+                          <item>
+                           <layout class="QHBoxLayout" name="horizontalLayout_7">
+                            <item>
+                             <widget class="QLabel" name="label_14">
+                              <property name="text">
+                               <string>Value</string>
+                              </property>
+                             </widget>
+                            </item>
+                            <item>
+                             <widget class="QLineEdit" name="defaultvalueText"/>
+                            </item>
+                            <item>
+                             <widget class="QPushButton" name="expressionButton">
+                              <property name="text">
+                               <string/>
+                              </property>
+                              <property name="icon">
+                               <iconset resource="../resources.qrc">
+                                <normaloff>:/icons/Expression</normaloff>:/icons/Expression</iconset>
+                              </property>
+                              <property name="iconSize">
+                               <size>
+                                <width>24</width>
+                                <height>24</height>
+                               </size>
+                              </property>
+                             </widget>
+                            </item>
+                           </layout>
+                          </item>
+                          <item>
+                           <widget class="QLabel" name="label_18">
+                            <property name="font">
+                             <font>
+                              <italic>true</italic>
+                             </font>
+                            </property>
+                            <property name="text">
+                             <string>Value to be used as the default value.  QGIS Expressions can be included using [% {expression} %]</string>
+                            </property>
+                           </widget>
+                          </item>
+                          <item>
+                           <spacer name="verticalSpacer">
+                            <property name="orientation">
+                             <enum>Qt::Vertical</enum>
+                            </property>
+                            <property name="sizeHint" stdset="0">
+                             <size>
+                              <width>20</width>
+                              <height>40</height>
+                             </size>
+                            </property>
+                           </spacer>
+                          </item>
+                         </layout>
                         </widget>
-                       </item>
-                       <item>
-                        <spacer name="verticalSpacer">
-                         <property name="orientation">
-                          <enum>Qt::Vertical</enum>
-                         </property>
-                         <property name="sizeHint" stdset="0">
-                          <size>
-                           <width>20</width>
-                           <height>40</height>
-                          </size>
-                         </property>
-                        </spacer>
-                       </item>
-                      </layout>
-                     </widget>
-                     <widget class="QWidget" name="tab_6">
-                      <attribute name="title">
-                       <string>Advanced</string>
-                      </attribute>
-                      <layout class="QFormLayout" name="formLayout_4">
-                       <property name="leftMargin">
-                        <number>3</number>
-                       </property>
-                       <property name="topMargin">
-                        <number>3</number>
-                       </property>
-                       <property name="rightMargin">
-                        <number>3</number>
-                       </property>
-                       <property name="bottomMargin">
-                        <number>3</number>
-                       </property>
-                       <item row="0" column="0">
-                        <widget class="QLabel" name="label_2">
-                         <property name="text">
-                          <string>Capture Layer</string>
-                         </property>
+                        <widget class="QWidget" name="tab_6">
+                         <attribute name="title">
+                          <string>Advanced</string>
+                         </attribute>
+                         <layout class="QFormLayout" name="formLayout_4">
+                          <property name="leftMargin">
+                           <number>3</number>
+                          </property>
+                          <property name="topMargin">
+                           <number>3</number>
+                          </property>
+                          <property name="rightMargin">
+                           <number>3</number>
+                          </property>
+                          <property name="bottomMargin">
+                           <number>3</number>
+                          </property>
+                          <item row="0" column="0">
+                           <widget class="QLabel" name="label_2">
+                            <property name="text">
+                             <string>Capture Layer</string>
+                            </property>
+                           </widget>
+                          </item>
+                          <item row="2" column="0">
+                           <widget class="QLabel" name="label_3">
+                            <property name="text">
+                             <string>Value Field</string>
+                            </property>
+                           </widget>
+                          </item>
+                          <item row="2" column="1">
+                           <widget class="QgsFieldComboBox" name="defaultFieldCombo">
+                            <property name="sizePolicy">
+                             <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                              <horstretch>0</horstretch>
+                              <verstretch>0</verstretch>
+                             </sizepolicy>
+                            </property>
+                           </widget>
+                          </item>
+                          <item row="4" column="1">
+                           <layout class="QHBoxLayout" name="horizontalLayout_8">
+                            <item>
+                             <widget class="QLineEdit" name="defaultValueExpression"/>
+                            </item>
+                            <item>
+                             <widget class="QPushButton" name="expressionButton_2">
+                              <property name="text">
+                               <string/>
+                              </property>
+                              <property name="icon">
+                               <iconset resource="../resources.qrc">
+                                <normaloff>:/icons/Expression</normaloff>:/icons/Expression</iconset>
+                              </property>
+                              <property name="iconSize">
+                               <size>
+                                <width>24</width>
+                                <height>24</height>
+                               </size>
+                              </property>
+                             </widget>
+                            </item>
+                           </layout>
+                          </item>
+                          <item row="4" column="0">
+                           <widget class="QLabel" name="label_9">
+                            <property name="toolTip">
+                             <string>If expression is true the value from the value field is used as the default value</string>
+                            </property>
+                            <property name="text">
+                             <string>QGIS Expression</string>
+                            </property>
+                           </widget>
+                          </item>
+                          <item row="0" column="1">
+                           <widget class="QgsMapLayerComboBox" name="defaultLayerCombo">
+                            <property name="sizePolicy">
+                             <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                              <horstretch>0</horstretch>
+                              <verstretch>0</verstretch>
+                             </sizepolicy>
+                            </property>
+                           </widget>
+                          </item>
+                          <item row="5" column="1">
+                           <widget class="QLabel" name="label_17">
+                            <property name="font">
+                             <font>
+                              <italic>true</italic>
+                             </font>
+                            </property>
+                            <property name="text">
+                             <string>If expression is true the value from the value field is used as the default value</string>
+                            </property>
+                           </widget>
+                          </item>
+                         </layout>
                         </widget>
-                       </item>
-                       <item row="2" column="0">
-                        <widget class="QLabel" name="label_3">
-                         <property name="text">
-                          <string>Value Field</string>
-                         </property>
-                        </widget>
-                       </item>
-                       <item row="2" column="1">
-                        <widget class="QgsFieldComboBox" name="defaultFieldCombo">
-                         <property name="sizePolicy">
-                          <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-                           <horstretch>0</horstretch>
-                           <verstretch>0</verstretch>
-                          </sizepolicy>
-                         </property>
-                        </widget>
-                       </item>
-                       <item row="4" column="1">
-                        <layout class="QHBoxLayout" name="horizontalLayout_8">
-                         <item>
-                          <widget class="QLineEdit" name="defaultValueExpression"/>
-                         </item>
-                         <item>
-                          <widget class="QPushButton" name="expressionButton_2">
-                           <property name="text">
-                            <string/>
-                           </property>
-                           <property name="icon">
-                            <iconset resource="../resources.qrc">
-                             <normaloff>:/icons/Expression</normaloff>:/icons/Expression</iconset>
-                           </property>
-                           <property name="iconSize">
-                            <size>
-                             <width>24</width>
-                             <height>24</height>
-                            </size>
-                           </property>
-                          </widget>
-                         </item>
-                        </layout>
-                       </item>
-                       <item row="4" column="0">
-                        <widget class="QLabel" name="label_9">
-                         <property name="toolTip">
-                          <string>If expression is true the value from the value field is used as the default value</string>
-                         </property>
-                         <property name="text">
-                          <string>QGIS Expression</string>
-                         </property>
-                        </widget>
-                       </item>
-                       <item row="0" column="1">
-                        <widget class="QgsMapLayerComboBox" name="defaultLayerCombo">
-                         <property name="sizePolicy">
-                          <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-                           <horstretch>0</horstretch>
-                           <verstretch>0</verstretch>
-                          </sizepolicy>
-                         </property>
-                        </widget>
-                       </item>
-                       <item row="5" column="1">
-                        <widget class="QLabel" name="label_17">
-                         <property name="font">
-                          <font>
-                           <italic>true</italic>
-                          </font>
-                         </property>
-                         <property name="text">
-                          <string>If expression is true the value from the value field is used as the default value</string>
-                         </property>
-                        </widget>
-                       </item>
-                      </layout>
-                     </widget>
+                       </widget>
+                      </item>
+                     </layout>
                     </widget>
                    </item>
                    <item row="21" column="0" colspan="2">
@@ -813,25 +867,6 @@ p, li { white-space: pre-wrap; }
                      </property>
                      <widget class="QWidget" name="page_4"/>
                      <widget class="QWidget" name="page_5"/>
-                    </widget>
-                   </item>
-                   <item row="2" column="1">
-                    <widget class="QLabel" name="fieldwarninglabel">
-                     <property name="sizePolicy">
-                      <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
-                       <horstretch>0</horstretch>
-                       <verstretch>0</verstretch>
-                      </sizepolicy>
-                     </property>
-                     <property name="text">
-                      <string>Warning: Field is already used. Roam only supports one field per attribute. This attribute will be ignored when setting values.</string>
-                     </property>
-                     <property name="wordWrap">
-                      <bool>true</bool>
-                     </property>
-                     <property name="warning" stdset="0">
-                      <bool>true</bool>
-                     </property>
                     </widget>
                    </item>
                   </layout>

@@ -78,6 +78,7 @@ class EditorWidget(QObject):
         self.initconfig = kwargs.get('initconfig', {})
         self.newstyleform = False
         self.starttext = ''
+        self.default_events = ['capture']
         self.valuechanged.connect(self.updatecontrolstate)
 
     @classmethod
@@ -223,6 +224,10 @@ class EditorWidget(QObject):
         to restore the last value.
         """
         self._lastvalue = self.value()
+
+    @property
+    def get_default_value_on_save(self):
+        return 'save' in self.default_events
 
     def endupdatefromconfig(self):
         self.setvalue(self._lastvalue)

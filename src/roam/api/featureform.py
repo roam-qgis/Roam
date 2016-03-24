@@ -340,6 +340,7 @@ class FeatureFormBase(QWidget):
                 utils.exception(ex)
                 continue
 
+            widgetwrapper.default_events = config.get('default_events', ['capture'])
             readonlyrules = config.get('read-only-rules', [])
 
             if self.editingmode and 'editing' in readonlyrules:
@@ -354,6 +355,13 @@ class FeatureFormBase(QWidget):
 
 
             widgetwrapper.valuechanged.connect(self.updaterequired)
+
+            try:
+                changedslot = getattr(self, "widget_{}_changed".format(field))
+                widgetwrapper.valuechanged.connect(changedslot)
+            except AttributeError:
+                pass
+
             widgetwrapper.largewidgetrequest.connect(RoamEvents.show_widget.emit)
 
             self._bindsavebutton(field)
@@ -403,8 +411,14 @@ class FeatureFormBase(QWidget):
         savedvalues = {}
         values = CaseInsensitiveDict(self.bindingvalues)
         for field, wrapper in self.boundwidgets.iteritems():
-            value = wrapper.value()
-            # TODO this should put pulled out and unit tested
+            if wrapper.get_default_value_on_save:
+                print "Getting default values"
+                value = self.widget_default(field)
+            else:
+                value = wrapper.value()
+
+            # TODO this should put pulled out and unit tested. MOVE ME!
+            # NOTE: This is photo widget stuff and really really doesn't belong here.
             if hasattr(wrapper, 'savetofile') and wrapper.savetofile:
                 if wrapper.filename and self.editingmode:
                     name = os.path.basename(wrapper.filename)

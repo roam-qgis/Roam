@@ -324,7 +324,8 @@ class Form(object):
                 yield config['field'], config
 
     def widget_by_field(self, fieldname):
-        return [widget for widget in self.widgets if widget['field'] == fieldname][0]
+        widgets = [widget for widget in self.widgets if not widget['widget'].lower() == 'section']
+        return [widget for widget in widgets if widget['field'] == fieldname][0]
 
     def _loadmodule(self):
         projectfolder = os.path.abspath(os.path.join(self.folder, '..'))

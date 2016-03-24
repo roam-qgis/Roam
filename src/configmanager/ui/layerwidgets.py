@@ -43,6 +43,10 @@ readonlyvalues = [('Never', 'never'),
                   ('When editing', 'editing'),
                   ('When inserting', 'insert')]
 
+defaultevents = [('Capture Only', ['capture']),
+                  ('Save Only', ['save']),
+                  ('Capture and Save', ['capture', 'save'])]
+
 
 class FormWidget(ui_formwidget.Ui_Form, WidgetBase):
     def __init__(self, parent=None):
@@ -83,6 +87,9 @@ class FormWidget(ui_formwidget.Ui_Form, WidgetBase):
 
         for item, data in readonlyvalues:
             self.readonlyCombo.addItem(item, data)
+
+        for item, data in defaultevents:
+            self.defaultEventsCombo.addItem(item, data)
 
         self.loadwidgettypes()
 
@@ -466,6 +473,7 @@ class FormWidget(ui_formwidget.Ui_Form, WidgetBase):
         default = widget.setdefault('default', '')
         readonly = widget.setdefault('read-only-rules', [])
         hidden = widget.setdefault('hidden', False)
+        defaultevents = widget.setdefault('default_events', ['capture'])
 
         try:
             data = readonly[0]
@@ -474,6 +482,10 @@ class FormWidget(ui_formwidget.Ui_Form, WidgetBase):
 
         index = self.readonlyCombo.findData(data)
         self.readonlyCombo.setCurrentIndex(index)
+
+        print defaultevents
+        index = self.defaultEventsCombo.findData(defaultevents)
+        self.defaultEventsCombo.setCurrentIndex(index)
 
         if not isinstance(default, dict):
             self.defaultTab.setCurrentIndex(0)
@@ -592,6 +604,7 @@ class FormWidget(ui_formwidget.Ui_Form, WidgetBase):
         widget['rememberlastvalue'] = self.savevalueCheck.isChecked()
         widget['name'] = self.nameText.text()
         widget['read-only-rules'] = [self.readonlyCombo.itemData(self.readonlyCombo.currentIndex())]
+        widget['default_events'] = self.defaultEventsCombo.itemData(self.defaultEventsCombo.currentIndex())
         widget['hidden'] = self.hiddenCheck.isChecked()
         widget['config'] = configwidget.getconfig()
         return widget
