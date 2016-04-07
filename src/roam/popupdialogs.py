@@ -39,6 +39,7 @@ class Dialogbase(QDialog):
         self.close()
 
 
+
 class DeleteFeatureDialog(Ui_DeleteFeatureDialog, Dialogbase):
     def __init__(self, msg=None, parent=None):
         super(DeleteFeatureDialog, self).__init__(parent)

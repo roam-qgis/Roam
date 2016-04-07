@@ -6,7 +6,7 @@ from PyQt4.QtCore import Qt, pyqtSignal, QSize, QPropertyAnimation, QObject, pyq
     QRectF, QLocale, QPointF, QPoint
 from PyQt4.QtGui import QActionGroup, QFrame, QWidget, QSizePolicy, \
     QAction, QPixmap, QCursor, QIcon, QColor, QMainWindow, QPen, QGraphicsItem, QPolygon, QFont, QFontMetrics, QBrush, \
-    QPainterPath, QPainter, QToolButton, QLabel
+    QPainterPath, QPainter, QToolButton, QLabel, QDoubleSpinBox, QHBoxLayout, QVBoxLayout
 
 from PyQt4.QtSvg import QGraphicsSvgItem
 
@@ -20,7 +20,9 @@ from roam.projectparser import ProjectParser
 from roam.maptools import MoveTool, InfoTool, EditTool, PointTool, TouchMapTool
 from roam.api.events import RoamEvents
 from roam.popupdialogs import PickActionDialog
+from roam.editorwidgets.numberwidget import Stepper
 from biglist import BigList
+from ui.ui_rotation import Ui_Form as rotation_widget
 from roam.api import GPS
 
 import roam.utils
@@ -36,6 +38,34 @@ except ImportError:
     from qgis.gui import QgsMapToolPan
 
     PanTool = QgsMapToolPan
+
+
+class RotationWidget(rotation_widget, QWidget):
+    def __init__(self, canvas, parent=None):
+        super(RotationWidget, self).__init__(parent)
+        self.setupUi(self)
+        self.canvas = canvas
+        self.step = Stepper(self, Type=QDoubleSpinBox)
+        self.frame.layout().addWidget(self.step)
+        self.step.valueChanged.connect(self._update_rotation)
+        self.canvas.rotationChanged.connect(self.step.setValue)
+        self.followGPSCheck.toggled.connect(self.step.setDisabled)
+        self.step.setRange(-360, 360)
+        self.step.setSingleStep(5)
+        GPS.gpsposition.connect(self._update_from_gps)
+
+    def _update_from_gps(self, location, gpsinfo):
+        if self.followGPSCheck.isChecked():
+            self.step.setValue(-gpsinfo.direction)
+
+    def _update_rotation(self, value):
+        self.canvas.setRotation(value)
+        self.canvas.refresh()
+
+    def showEvent(self, QShowEvent):
+        corner = self.parent().geometry().bottomRight()
+        x, y = corner.x(), corner.y()
+        self.move(x - self.width(), y - self.height())
 
 
 class NorthArrow(QGraphicsSvgItem):
@@ -79,7 +109,7 @@ class NorthArrow(QGraphicsSvgItem):
             area.setEllipsoidalMode(True)
             area.setSourceCrs(crs)
             distance, angle, _ = area.computeDistanceBearing(pp1, pp2)
-            angle = math.degrees(angle)
+            angle = math.degrees(angle) + self.canvas.rotation()
             return angle
         else:
             return 0
@@ -424,18 +454,32 @@ class MapWidget(Ui_CanvasWidget, QMainWindow):
         self.positionlabel = QLabel('')
         self.gpslabel = QLabel("GPS: Not active")
 
+        self.rotationbutton = QToolButton()
+        self.rotationbutton.setAutoRaise(True)
+        self.rotationbutton.setMaximumHeight(self.statusbar.height())
+        self.rotationbutton.pressed.connect(self.set_rotation)
+        self.rotationbutton.setText("Rotation: {}".format(self.canvas.rotation()))
+
         self.statusbar.addWidget(self.snappingbutton)
         self.statusbar.addWidget(spacer2)
         self.statusbar.addWidget(self.gpslabel)
+        self.statusbar.addPermanentWidget(self.rotationbutton)
         self.statusbar.addPermanentWidget(self.scalebutton)
 
         self.canvas.extentsChanged.connect(self.updatestatuslabel)
         self.canvas.scaleChanged.connect(self.updatestatuslabel)
+        self.canvas.rotationChanged.connect(self.updatestatuslabel)
 
         GPS.gpsposition.connect(self.update_gps_label)
         GPS.gpsdisconnected.connect(self.gps_disconnected)
 
+        self.rotationwidget = RotationWidget(self.canvas, parent=self.canvas)
+        self.rotationwidget.hide()
+
         self.connectButtons()
+
+    def set_rotation(self):
+        self.rotationwidget.setVisible(not self.rotationwidget.isVisible())
 
     def snapping_changed(self, snapping):
         """
@@ -500,6 +544,7 @@ class MapWidget(Ui_CanvasWidget, QMainWindow):
         scale = 1.0 / self.canvas.scale()
         scale = self.scalewidget.toString(scale)
         self.scalebutton.setText(scale)
+        self.rotationbutton.setText("Rotation: {}".format(self.canvas.rotation()))
 
     def refresh_map(self):
         """

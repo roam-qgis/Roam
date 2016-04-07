@@ -129,20 +129,15 @@ class GPSMarker(QgsMapCanvasItem):
         x = 0 - halfSize
         line2 = QLine(x, y, rect.width() - halfSize, y)
 
-        # Arrow
-        p = QPolygonF()
-        p.append(QPoint(0 - halfSize, 0))
-        p.append(QPoint(0, -self.size))
-        x = rect.width() - halfSize
-        p.append(QPoint(x, 0))
-        p.append(QPoint(0, 0))
-
         offsetp = QPolygonF()
         offsetp.append(QPoint(0 - halfSize, 0))
         offsetp.append(QPoint(0, -self.size))
         x = rect.width() - halfSize
         offsetp.append(QPoint(x, 0))
         offsetp.append(QPoint(0, 0))
+
+        # Rotate to the canvas size
+        painter.rotate(self.canvas.rotation())
 
         waypoint = GPS.waypoint
         if waypoint:
@@ -157,16 +152,26 @@ class GPSMarker(QgsMapCanvasItem):
             painter.drawPath(path)
             painter.restore()
 
+        # Arrow
+        p = QPolygonF()
+        p.append(QPoint(0 - halfSize, 0))
+        p.append(QPoint(0, -self.size))
+        x = rect.width() - halfSize
+        p.append(QPoint(x, 0))
+        p.append(QPoint(0, 0))
+
         painter.save()
-        painter.rotate(self._heading)
+        print self._heading, self.canvas.rotation(), self._heading - self.canvas.rotation()
+        painter.rotate(self._heading - self.canvas.rotation())
+
         path = QPainterPath()
         path.addPolygon(p)
         painter.drawPath(path)
 
-        painter.restore()
         painter.drawEllipse(rect)
         painter.drawLine(line)
         painter.drawLine(line2)
+        painter.restore()
 
     def boundingRect(self):
         halfSize = self.size / 2.0
