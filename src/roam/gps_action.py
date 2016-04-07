@@ -137,13 +137,13 @@ class GPSMarker(QgsMapCanvasItem):
         offsetp.append(QPoint(0, 0))
 
         # Rotate to the canvas size
-        painter.rotate(self.canvas.rotation())
 
         waypoint = GPS.waypoint
         if waypoint:
             az = self.map_pos.azimuth(waypoint)
 
             painter.save()
+            painter.rotate(self.canvas.rotation())
             painter.rotate(az)
             self.pointbrush.setColor(Qt.red)
             painter.setBrush(self.pointbrush)
@@ -160,18 +160,18 @@ class GPSMarker(QgsMapCanvasItem):
         p.append(QPoint(x, 0))
         p.append(QPoint(0, 0))
 
+        # print self._heading, self.canvas.rotation(), self._heading - self.canvas.rotation()
         painter.save()
-        print self._heading, self.canvas.rotation(), self._heading - self.canvas.rotation()
-        painter.rotate(self._heading - self.canvas.rotation())
-
+        if self._heading != abs(self.canvas.rotation()):
+            painter.rotate(self._heading + abs(self.canvas.rotation()))
         path = QPainterPath()
         path.addPolygon(p)
         painter.drawPath(path)
+        painter.restore()
 
         painter.drawEllipse(rect)
         painter.drawLine(line)
         painter.drawLine(line2)
-        painter.restore()
 
     def boundingRect(self):
         halfSize = self.size / 2.0

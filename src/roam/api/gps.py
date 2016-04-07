@@ -226,6 +226,7 @@ class FileGPSService(GPSService):
             self.file.close()
         self.timer.stop()
         self.file = None
+        self.isConnected = False
         self.gpsdisconnected.emit()
 
 
