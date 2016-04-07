@@ -10,7 +10,8 @@ from PyQt4.QtGui import QActionGroup, QFrame, QWidget, QSizePolicy, \
 
 from PyQt4.QtSvg import QGraphicsSvgItem
 
-from qgis.gui import QgsMapCanvas, QgsMapToolZoom, QgsRubberBand, QgsMapCanvasItem, QgsScaleComboBox, QgsLayerTreeMapCanvasBridge
+from qgis.gui import QgsMapCanvas, QgsMapToolZoom, QgsRubberBand, QgsMapCanvasItem, QgsScaleComboBox, QgsLayerTreeMapCanvasBridge, \
+                     QgsMapCanvasSnappingUtils
 from qgis.core import QgsPalLabeling, QgsMapLayerRegistry, QgsMapLayer, QGis, QgsRectangle, QgsProject, QgsApplication, \
     QgsComposerScaleBar, \
     QgsCoordinateReferenceSystem, QgsCoordinateTransform, QgsPoint, QgsCsException, QgsDistanceArea
@@ -332,6 +333,10 @@ class MapWidget(Ui_CanvasWidget, QMainWindow):
         self.canvas.setCanvasColor(Qt.white)
         self.canvas.enableAntiAliasing(True)
         self.canvas.setWheelAction(QgsMapCanvas.WheelZoomToMouseCursor)
+
+        self.snapping = QgsMapCanvasSnappingUtils(self.canvas, self)
+        self.canvas.setSnappingUtils(self.snapping)
+        QgsProject.instance().readProject.connect(self.snapping.readConfigFromProject)
 
         if hasattr(self.canvas, 'setParallelRenderingEnabled'):
             threadcount = QThread.idealThreadCount()
