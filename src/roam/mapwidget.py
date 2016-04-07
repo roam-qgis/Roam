@@ -53,10 +53,14 @@ class RotationWidget(rotation_widget, QWidget):
         self.followGPSCheck.toggled.connect(self.step.setDisabled)
         self.step.setRange(-360, 360)
         self.step.setSingleStep(5)
+        self.northButton.pressed.connect(lambda : self.step.setValue(0))
         GPS.gpsposition.connect(self._update_from_gps)
 
     def _update_from_gps(self, location, gpsinfo):
         if self.followGPSCheck.isChecked():
+            current = self.step.value()
+            # new = int(5 * round(float(gpsinfo.direction) / 5))
+            # if new != current:
             self.step.setValue(-gpsinfo.direction)
 
     def _update_rotation(self, value):

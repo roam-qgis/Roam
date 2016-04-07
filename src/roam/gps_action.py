@@ -160,7 +160,6 @@ class GPSMarker(QgsMapCanvasItem):
         p.append(QPoint(x, 0))
         p.append(QPoint(0, 0))
 
-        # print self._heading, self.canvas.rotation(), self._heading - self.canvas.rotation()
         painter.save()
         if self._heading != abs(self.canvas.rotation()):
             painter.rotate(self._heading + abs(self.canvas.rotation()))

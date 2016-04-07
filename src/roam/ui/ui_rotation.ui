@@ -57,11 +57,22 @@
        </widget>
       </item>
       <item>
-       <widget class="QCheckBox" name="followGPSCheck">
-        <property name="text">
-         <string>Follow GPS</string>
-        </property>
-       </widget>
+       <layout class="QHBoxLayout" name="horizontalLayout">
+        <item>
+         <widget class="QCheckBox" name="followGPSCheck">
+          <property name="text">
+           <string>Follow GPS</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="northButton">
+          <property name="text">
+           <string>North</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
       </item>
      </layout>
     </widget>
