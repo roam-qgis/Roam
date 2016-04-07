@@ -474,7 +474,7 @@ class PolylineTool(QgsMapToolEdit):
         if not self.snapping:
             return event.originalMapPoint()
 
-        point = event.snapPoint(QgsMapMouseEvent.SnapAllLayers)
+        point = event.snapPoint(QgsMapMouseEvent.SnapProjectConfig)
         return point
 
     def setEditMode(self, enabled, geom):
@@ -567,7 +567,7 @@ class PointTool(TouchMapTool):
         if not self.snapping:
             return False, event.originalMapPoint()
 
-        point = event.snapPoint(QgsMapMouseEvent.SnapAllLayers)
+        point = event.snapPoint(QgsMapMouseEvent.SnapProjectConfig)
         return event.isSnapped(), point
 
     def canvasReleaseEvent(self, event):
