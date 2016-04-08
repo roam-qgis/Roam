@@ -353,6 +353,9 @@ class FeatureFormBase(QWidget):
             widgetwrapper.newstyleform = self.formconfig.get("newstyle", False)
             widgetwrapper.required = config.get('required', False)
 
+            # Handle update events
+            events = config.get('events', [])
+            widgetwrapper.valuechanged.connect(partial(self.check_for_update_events, widgetwrapper, events))
 
             widgetwrapper.valuechanged.connect(self.updaterequired)
 
@@ -366,6 +369,33 @@ class FeatureFormBase(QWidget):
 
             self._bindsavebutton(field)
             self.boundwidgets[field] = widgetwrapper
+
+    def check_for_update_events(self, widget, events, value):
+        from qgis.core import QgsExpression, QgsExpressionContext, QgsExpressionContextScope
+        for event in events:
+            action = event['action'].lower()
+            field = event['field']
+            expression = event['expression']
+            eventtype = event['event'].lower()
+
+            exp = QgsExpression(expression)
+            context = QgsExpressionContext()
+            scope = QgsExpressionContextScope()
+            scope.setVariable("value", value)
+            scope.setVariable("field", widget.field)
+            context.setFeature(self.to_feature())
+            context.appendScope(scope)
+
+            if eventtype == 'onupdate':
+                if action.lower() == "show":
+                    if field in self.boundwidgets:
+                        widget = self.boundwidgets[field]
+                        widget.hidden = not exp.evaluate(context)
+                if action == 'redo expression':
+                    if field in self.boundwidgets:
+                        widget = self.boundwidgets[field]
+                        newvalue = self.widget_default(field, feature=self.to_feature())
+                        widget.setvalue(newvalue)
 
     def bindvalues(self, values, update=False):
         """
@@ -492,7 +522,7 @@ class FeatureFormBase(QWidget):
         for label in self.findChildren(QLabel):
             createhelplink(label, self.form.folder)
 
-    def widget_default(self, name):
+    def widget_default(self, name, feature=None):
         """
         Return the default value for the given widget
         """
@@ -504,10 +534,23 @@ class FeatureFormBase(QWidget):
         if not 'default' in widgetconfig:
             raise KeyError('Default value not defined for this field {}'.format(name))
 
-        return defaults.widget_default(widgetconfig, self.feature, self.form.QGISLayer)
+        if not feature:
+            feature = self.feature
+
+        return defaults.widget_default(widgetconfig, feature, self.form.QGISLayer)
 
     def close_form(self, reason=None, level=1):
         self.rejected.emit(reason, level)
+
+    def to_feature(self):
+        """
+        Create a QgsFeature from the current form values
+        """
+        feature = QgsFeature(self.feature.fields())
+        feature.setGeometry(QgsGeometry(self.feature.geometry()))
+        self.updatefeautrefields(feature, self.getvalues()[0])
+        self.update_geometry(feature)
+        return feature
 
 
 class FeatureForm(FeatureFormBase):
@@ -685,15 +728,7 @@ class FeatureForm(FeatureFormBase):
     def missingfields(self):
         return [field for field, valid in self.requiredfields.iteritems() if valid == False]
 
-    def to_feature(self):
-        """
-        Create a QgsFeature from the current form values
-        """
-        feature = QgsFeature(self.feature.fields())
-        feature.setGeometry(QgsGeometry(self.feature.geometry()))
-        self.updatefeautrefields(feature, self.getvalues()[0])
-        self.update_geometry(feature)
-        return feature
+
 
     def updatefeautrefields(self, feature, values):
         def field_or_null(v):

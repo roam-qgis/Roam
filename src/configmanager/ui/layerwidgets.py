@@ -6,6 +6,7 @@ from string import Template
 from PyQt4.QtCore import Qt, QUrl, QVariant
 from PyQt4.QtGui import (QWidget, QPixmap, QStandardItem, QStandardItemModel, QIcon, QDesktopServices, QMenu, QToolButton,
                          QFileDialog)
+from PyQt4.QtGui import QTableWidgetItem
 from PyQt4.Qsci import QsciLexerSQL, QsciScintilla
 
 from qgis.core import QgsDataSourceURI, QgsPalLabeling, QgsMapLayerRegistry, QgsStyleV2, QgsMapLayer, QGis, QgsProject
@@ -112,6 +113,15 @@ class FormWidget(ui_formwidget.Ui_Form, WidgetBase):
         self.addWidgetButton.setPopupMode(QToolButton.MenuButtonPopup)
 
         self.defaultLayerCombo.layerChanged.connect(self.defaultFieldCombo.setLayer)
+        self.addEvent.pressed.connect(self._add_event)
+        self.removeEvent.pressed.connect(self._remove_event)
+
+    def _add_event(self):
+        self.eventsTable.insertRow(self.eventsTable.rowCount())
+
+    def _remove_event(self):
+        index = self.eventsTable.currentRow()
+        self.eventsTable.removeRow(index)
 
     def change_icon(self, *args):
         """
@@ -466,6 +476,9 @@ class FormWidget(ui_formwidget.Ui_Form, WidgetBase):
         else:
             self.propertiesStack.setCurrentIndex(0)
 
+
+        self.eventsTable.setRowCount(0)
+
         field = widget['field']
         required = widget.setdefault('required', False)
         savevalue = widget.setdefault('rememberlastvalue', False)
@@ -474,6 +487,18 @@ class FormWidget(ui_formwidget.Ui_Form, WidgetBase):
         readonly = widget.setdefault('read-only-rules', [])
         hidden = widget.setdefault('hidden', False)
         defaultevents = widget.setdefault('default_events', ['capture'])
+        events = widget.get('events', [])
+        for event in events:
+            row = self.eventsTable.rowCount()
+            item = QTableWidgetItem(event['event'])
+            self.eventsTable.insertRow(row)
+            self.eventsTable.setItem(row, 0, item)
+            item = QTableWidgetItem(event['action'])
+            self.eventsTable.setItem(row, 1, item)
+            item = QTableWidgetItem(event['field'])
+            self.eventsTable.setItem(row, 2, item)
+            item = QTableWidgetItem(event['expression'])
+            self.eventsTable.setItem(row, 3, item)
 
         try:
             data = readonly[0]
@@ -483,7 +508,6 @@ class FormWidget(ui_formwidget.Ui_Form, WidgetBase):
         index = self.readonlyCombo.findData(data)
         self.readonlyCombo.setCurrentIndex(index)
 
-        print defaultevents
         index = self.defaultEventsCombo.findData(defaultevents)
         self.defaultEventsCombo.setCurrentIndex(index)
 
@@ -607,6 +631,23 @@ class FormWidget(ui_formwidget.Ui_Form, WidgetBase):
         widget['default_events'] = self.defaultEventsCombo.itemData(self.defaultEventsCombo.currentIndex())
         widget['hidden'] = self.hiddenCheck.isChecked()
         widget['config'] = configwidget.getconfig()
+        events = []
+        def value(row, col):
+            item = self.eventsTable.item(row, col)
+            if not item:
+                return ''
+            else:
+                return item.text()
+
+        for row in xrange(self.eventsTable.rowCount()):
+            event = value(row, 0)
+            action = value(row, 1)
+            field = value(row, 2)
+            expression = value(row, 3)
+            eventdata = dict(event=event, action=action, field=field, expression=expression)
+            events.append(eventdata)
+
+        widget['events'] = events
         return widget
 
     @property
