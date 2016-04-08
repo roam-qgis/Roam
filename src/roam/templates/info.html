@@ -18,19 +18,6 @@
             float: right;
         }
     </style>
-    <script type="text/javascript">
-        function init() {
-            $(document).ready(function () {
-                $("th:contains('_')").each(function () {
-                    $(this).text($(this).text().replace(new RegExp("_", "g"), " "));
-                });
-                $("th").each(function () {
-                    $(this).text($(this).text().toLowerCase());
-                });
-                $("th").css("text-transform", "capitalize");
-            });
-        }
-    </script>
   </head>
   <body onload="init()">
     <div class="container-fluid" style="padding:0px">
