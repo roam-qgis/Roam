@@ -28,7 +28,7 @@ class NumberWidgetConfig(Ui_Form, ConfigWidget):
         config['min'] = self.minEdit.text()
         config['prefix'] = self.prefixEdit.text()
         config['suffix'] = self.suffixEdit.text()
-        config['step'] = self.step_spin.value()
+        config['step'] = int(self.step_spin.value())
         return config
 
     def setconfig(self, config):
@@ -58,6 +58,7 @@ class DoubleNumberWidgetConfig(NumberWidgetConfig):
     def getconfig(self):
         config = super(DoubleNumberWidgetConfig, self).getconfig()
         config['places'] = self.places_spin.value()
+        config['step'] = self.step_spin.value()
         return config
 
     def setconfig(self, config):
