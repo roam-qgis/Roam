@@ -373,11 +373,14 @@ class FeatureFormBase(QWidget):
     def check_for_update_events(self, widget, events, value):
         from qgis.core import QgsExpression, QgsExpressionContext, QgsExpressionContextScope
         for event in events:
+            eventtype = event['event'].lower()
+            if not eventtype == "onupdate":
+                continue
+
             action = event['action'].lower()
             field = event['field']
             condition = event.get('condition', '')
             expression = event['expression']
-            eventtype = event['event'].lower()
 
             feature = self.to_feature(no_defaults=True)
 
@@ -391,17 +394,23 @@ class FeatureFormBase(QWidget):
             conditionexp = QgsExpression(condition)
             exp = QgsExpression(expression)
 
-            if eventtype == 'onupdate':
-                if action.lower() == "show":
-                    if field in self.boundwidgets:
-                        widget = self.boundwidgets[field]
-                        widget.hidden = not conditionexp.evaluate(context)
-                if action == 'field expression':
-                    if field in self.boundwidgets:
-                        widget = self.boundwidgets[field]
-                        if conditionexp.evaluate(context):
-                            newvalue = self.widget_default(field, feature=feature)
-                            widget.setvalue(newvalue)
+            if field not in self.boundwidgets:
+                utils.log("Can't find widget for field {} in form widgets".format(field))
+                continue
+
+            widget = self.boundwidgets[field]
+
+            if action.lower() == "show":
+                widget.hidden = not conditionexp.evaluate(context)
+            if action.lower() == "hide":
+                widget.hidden = conditionexp.evaluate(context)
+            if action == 'widget expression':
+                if conditionexp.evaluate(context):
+                    newvalue = self.widget_default(field, feature=feature)
+                    widget.setvalue(newvalue)
+            if action == 'set value':
+                newvalue = exp.evaluate(context)
+                widget.setvalue(newvalue)
 
     def bindvalues(self, values, update=False):
         """

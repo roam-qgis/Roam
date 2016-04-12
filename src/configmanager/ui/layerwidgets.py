@@ -49,6 +49,14 @@ defaultevents = [('Capture Only', ['capture']),
                   ('Capture and Save', ['capture', 'save'])]
 
 
+import nodewidgets.ui_eventwidget
+class EventWidget(nodewidgets.ui_eventwidget.Ui_Form, QWidget):
+    def __init__(self, parent=None):
+        super(EventWidget, self).__init__(parent=None)
+        self.setupUi(self)
+
+
+
 class FormWidget(ui_formwidget.Ui_Form, WidgetBase):
     def __init__(self, parent=None):
         super(FormWidget, self).__init__(parent)
@@ -236,7 +244,7 @@ class FormWidget(ui_formwidget.Ui_Form, WidgetBase):
             self.frame_2.layout().addWidget(featureform)
 
         # Don't generate the form preview if we are not on the preview tab.
-        if index == 2:
+        if index == 3:
             form = self.form.copy()
             form.settings['widgets'] = list(self.widgetmodel.widgets())
             setformpreview(form)
@@ -440,6 +448,11 @@ class FormWidget(ui_formwidget.Ui_Form, WidgetBase):
             self.userwidgets.setCurrentIndex(index)
             self.load_widget(index, None)
 
+        # Load events
+        for i in range(3):
+            widget = EventWidget(self.eventsWidget)
+            self.eventsWidget.layout().insertWidget(0, widget)
+
     def swapwidgetconfig(self, index):
         widgetconfig, _, _ = self.current_config_widget
         defaultvalue = widgetconfig.defaultvalue
@@ -497,8 +510,10 @@ class FormWidget(ui_formwidget.Ui_Form, WidgetBase):
             self.eventsTable.setItem(row, 1, item)
             item = QTableWidgetItem(event['field'])
             self.eventsTable.setItem(row, 2, item)
-            item = QTableWidgetItem(event['expression'])
+            item = QTableWidgetItem(event['condition'])
             self.eventsTable.setItem(row, 3, item)
+            item = QTableWidgetItem(event['expression'])
+            self.eventsTable.setItem(row, 4, item)
 
         try:
             data = readonly[0]
@@ -643,8 +658,9 @@ class FormWidget(ui_formwidget.Ui_Form, WidgetBase):
             event = value(row, 0)
             action = value(row, 1)
             field = value(row, 2)
-            expression = value(row, 3)
-            eventdata = dict(event=event, action=action, field=field, expression=expression)
+            condition = value(row, 3)
+            expression = value(row, 4)
+            eventdata = dict(event=event, action=action, field=field, expression=expression, condition=condition)
             events.append(eventdata)
 
         widget['events'] = events
