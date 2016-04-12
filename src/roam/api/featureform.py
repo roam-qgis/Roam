@@ -375,27 +375,33 @@ class FeatureFormBase(QWidget):
         for event in events:
             action = event['action'].lower()
             field = event['field']
+            condition = event.get('condition', '')
             expression = event['expression']
             eventtype = event['event'].lower()
 
-            exp = QgsExpression(expression)
+            feature = self.to_feature(no_defaults=True)
+
             context = QgsExpressionContext()
             scope = QgsExpressionContextScope()
             scope.setVariable("value", value)
             scope.setVariable("field", widget.field)
-            context.setFeature(self.to_feature())
+            context.setFeature(feature)
             context.appendScope(scope)
+
+            conditionexp = QgsExpression(condition)
+            exp = QgsExpression(expression)
 
             if eventtype == 'onupdate':
                 if action.lower() == "show":
                     if field in self.boundwidgets:
                         widget = self.boundwidgets[field]
-                        widget.hidden = not exp.evaluate(context)
-                if action == 'redo expression':
+                        widget.hidden = not conditionexp.evaluate(context)
+                if action == 'field expression':
                     if field in self.boundwidgets:
                         widget = self.boundwidgets[field]
-                        newvalue = self.widget_default(field, feature=self.to_feature())
-                        widget.setvalue(newvalue)
+                        if conditionexp.evaluate(context):
+                            newvalue = self.widget_default(field, feature=feature)
+                            widget.setvalue(newvalue)
 
     def bindvalues(self, values, update=False):
         """
@@ -431,7 +437,8 @@ class FeatureFormBase(QWidget):
         values = self.form.values_from_feature(feature)
         self.bindvalues(values)
 
-    def getvalues(self):
+    @utils.timeit
+    def getvalues(self, no_defaults=False):
         def shouldsave(field):
             name = "{}_save".format(field)
             button = self.findcontrol(name)
@@ -441,8 +448,7 @@ class FeatureFormBase(QWidget):
         savedvalues = {}
         values = CaseInsensitiveDict(self.bindingvalues)
         for field, wrapper in self.boundwidgets.iteritems():
-            if wrapper.get_default_value_on_save:
-                print "Getting default values"
+            if not no_defaults and wrapper.get_default_value_on_save:
                 value = self.widget_default(field)
             else:
                 value = wrapper.value()
@@ -542,13 +548,14 @@ class FeatureFormBase(QWidget):
     def close_form(self, reason=None, level=1):
         self.rejected.emit(reason, level)
 
-    def to_feature(self):
+    @utils.timeit
+    def to_feature(self, no_defaults=False):
         """
         Create a QgsFeature from the current form values
         """
         feature = QgsFeature(self.feature.fields())
         feature.setGeometry(QgsGeometry(self.feature.geometry()))
-        self.updatefeautrefields(feature, self.getvalues()[0])
+        self.updatefeautrefields(feature, self.getvalues(no_defaults=no_defaults)[0])
         self.update_geometry(feature)
         return feature
 
@@ -727,8 +734,6 @@ class FeatureForm(FeatureFormBase):
     @property
     def missingfields(self):
         return [field for field, valid in self.requiredfields.iteritems() if valid == False]
-
-
 
     def updatefeautrefields(self, feature, values):
         def field_or_null(v):

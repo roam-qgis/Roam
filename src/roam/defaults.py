@@ -34,7 +34,6 @@ def default_value(defaultconfig, feature, layer):
             # TODO Use regex
             value = QgsExpression.replaceExpressionText(value, feature, layer)
 
-    roam.utils.debug("Default value: {}".format(value))
     return value
 
 

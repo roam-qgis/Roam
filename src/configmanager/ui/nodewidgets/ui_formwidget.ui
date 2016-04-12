@@ -628,25 +628,14 @@ p, li { white-space: pre-wrap; }
                      </property>
                     </widget>
                    </item>
-                   <item row="19" column="1">
-                    <widget class="QFrame" name="frame_3">
-                     <property name="frameShape">
-                      <enum>QFrame::StyledPanel</enum>
-                     </property>
-                     <property name="frameShadow">
-                      <enum>QFrame::Raised</enum>
-                     </property>
-                     <zorder>defaultTab</zorder>
-                    </widget>
-                   </item>
-                   <item row="20" column="0">
+                   <item row="19" column="0">
                     <widget class="QLabel" name="label">
                      <property name="text">
-                      <string>Default Value</string>
+                      <string>Expression</string>
                      </property>
                     </widget>
                    </item>
-                   <item row="20" column="1">
+                   <item row="19" column="1">
                     <widget class="QFrame" name="frame_5">
                      <property name="frameShape">
                       <enum>QFrame::NoFrame</enum>
@@ -680,7 +669,7 @@ p, li { white-space: pre-wrap; }
                         </property>
                         <widget class="QWidget" name="tab_5">
                          <attribute name="title">
-                          <string>Simple</string>
+                          <string>Simple Value</string>
                          </attribute>
                          <layout class="QVBoxLayout" name="verticalLayout">
                           <property name="spacing">
@@ -700,13 +689,6 @@ p, li { white-space: pre-wrap; }
                           </property>
                           <item>
                            <layout class="QHBoxLayout" name="horizontalLayout_7">
-                            <item>
-                             <widget class="QLabel" name="label_14">
-                              <property name="text">
-                               <string>Value</string>
-                              </property>
-                             </widget>
-                            </item>
                             <item>
                              <widget class="QLineEdit" name="defaultvalueText"/>
                             </item>
@@ -737,7 +719,7 @@ p, li { white-space: pre-wrap; }
                              </font>
                             </property>
                             <property name="text">
-                             <string>Value to be used as the default value.  QGIS Expressions can be included using [% {expression} %]</string>
+                             <string>Expressions can be included using [% {expression} %] or the expression button</string>
                             </property>
                            </widget>
                           </item>
@@ -758,7 +740,7 @@ p, li { white-space: pre-wrap; }
                         </widget>
                         <widget class="QWidget" name="tab_6">
                          <attribute name="title">
-                          <string>Advanced</string>
+                          <string>Capture value from field</string>
                          </attribute>
                          <layout class="QFormLayout" name="formLayout_4">
                           <property name="leftMargin">
@@ -773,21 +755,31 @@ p, li { white-space: pre-wrap; }
                           <property name="bottomMargin">
                            <number>3</number>
                           </property>
-                          <item row="0" column="0">
+                          <item row="1" column="0">
                            <widget class="QLabel" name="label_2">
                             <property name="text">
                              <string>Capture Layer</string>
                             </property>
                            </widget>
                           </item>
-                          <item row="2" column="0">
+                          <item row="1" column="1">
+                           <widget class="QgsMapLayerComboBox" name="defaultLayerCombo">
+                            <property name="sizePolicy">
+                             <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                              <horstretch>0</horstretch>
+                              <verstretch>0</verstretch>
+                             </sizepolicy>
+                            </property>
+                           </widget>
+                          </item>
+                          <item row="3" column="0">
                            <widget class="QLabel" name="label_3">
                             <property name="text">
                              <string>Value Field</string>
                             </property>
                            </widget>
                           </item>
-                          <item row="2" column="1">
+                          <item row="3" column="1">
                            <widget class="QgsFieldComboBox" name="defaultFieldCombo">
                             <property name="sizePolicy">
                              <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
@@ -797,7 +789,17 @@ p, li { white-space: pre-wrap; }
                             </property>
                            </widget>
                           </item>
-                          <item row="4" column="1">
+                          <item row="5" column="0">
+                           <widget class="QLabel" name="label_9">
+                            <property name="toolTip">
+                             <string>If expression is true the value from the value field is used as the default value</string>
+                            </property>
+                            <property name="text">
+                             <string>Expression</string>
+                            </property>
+                           </widget>
+                          </item>
+                          <item row="5" column="1">
                            <layout class="QHBoxLayout" name="horizontalLayout_8">
                             <item>
                              <widget class="QLineEdit" name="defaultValueExpression"/>
@@ -821,35 +823,10 @@ p, li { white-space: pre-wrap; }
                             </item>
                            </layout>
                           </item>
-                          <item row="4" column="0">
-                           <widget class="QLabel" name="label_9">
-                            <property name="toolTip">
-                             <string>If expression is true the value from the value field is used as the default value</string>
-                            </property>
+                          <item row="0" column="0" colspan="2">
+                           <widget class="QLabel" name="label_14">
                             <property name="text">
-                             <string>QGIS Expression</string>
-                            </property>
-                           </widget>
-                          </item>
-                          <item row="0" column="1">
-                           <widget class="QgsMapLayerComboBox" name="defaultLayerCombo">
-                            <property name="sizePolicy">
-                             <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-                              <horstretch>0</horstretch>
-                              <verstretch>0</verstretch>
-                             </sizepolicy>
-                            </property>
-                           </widget>
-                          </item>
-                          <item row="5" column="1">
-                           <widget class="QLabel" name="label_17">
-                            <property name="font">
-                             <font>
-                              <italic>true</italic>
-                             </font>
-                            </property>
-                            <property name="text">
-                             <string>If expression is true the value from the value field is used as the default value</string>
+                             <string>Capture value from layer if expression returns true</string>
                             </property>
                            </widget>
                           </item>
@@ -860,7 +837,7 @@ p, li { white-space: pre-wrap; }
                      </layout>
                     </widget>
                    </item>
-                   <item row="21" column="0" colspan="2">
+                   <item row="20" column="0" colspan="2">
                     <widget class="QStackedWidget" name="widgetstack">
                      <property name="styleSheet">
                       <string notr="true"/>
@@ -937,6 +914,11 @@ p, li { white-space: pre-wrap; }
              <column>
               <property name="text">
                <string>Field</string>
+              </property>
+             </column>
+             <column>
+              <property name="text">
+               <string>Condition</string>
               </property>
              </column>
              <column>
@@ -1067,8 +1049,8 @@ p, li { white-space: pre-wrap; }
               <rect>
                <x>0</x>
                <y>0</y>
-               <width>885</width>
-               <height>690</height>
+               <width>100</width>
+               <height>30</height>
               </rect>
              </property>
              <property name="autoFillBackground">
