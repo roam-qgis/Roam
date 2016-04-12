@@ -2,6 +2,7 @@ import os
 from qgis.core import QgsExpression, QgsMapLayerRegistry, QgsFeatureRequest, QGis, QgsPoint, QgsRectangle
 
 import roam.utils
+from roam.api import RoamEvents
 
 canvas = None
 
@@ -70,7 +71,14 @@ def layer_value(feature, layer, defaultconfig):
     field = defaultconfig['field']
 
     for searchlayer in layers:
-        searchlayer = QgsMapLayerRegistry.instance().mapLayersByName(searchlayer)[0]
+        try:
+            searchlayer = QgsMapLayerRegistry.instance().mapLayersByName(searchlayer)[0]
+        except IndexError:
+            RoamEvents.raisemessage("Missing layer",
+                                    "Unable to find layer used in widget expression {}".format(searchlayer),
+                                    level=1)
+            roam.utils.warning("Unable to find expression layer {}".format(searchlayer))
+            return
         if feature.geometry():
             rect = feature.geometry().boundingBox()
             if layer.geometryType() == QGis.Point:
