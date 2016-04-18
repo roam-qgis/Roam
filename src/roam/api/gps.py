@@ -117,6 +117,12 @@ class GPSService(QObject):
         except pynmea2.SentenceTypeError as er:
             log(er.message)
             return
+        except pynmea2.ParseError as er:
+            log(er.message)
+            return
+        except pynmea2.ChecksumError as er:
+            log(er.message)
+            return
 
         mappings = {"RMC": self.extract_rmc,
                     "GGA": self.extract_gga,
