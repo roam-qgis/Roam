@@ -11,6 +11,7 @@ from PyQt4.Qsci import QsciLexerSQL, QsciScintilla
 
 from qgis.core import QgsDataSourceURI, QgsPalLabeling, QgsMapLayerRegistry, QgsStyleV2, QgsMapLayer, QGis, QgsProject
 from qgis.gui import QgsExpressionBuilderDialog, QgsMapCanvas, QgsRendererV2PropertiesDialog, QgsLayerTreeMapCanvasBridge, QgsRasterRendererWidget
+from qgis.gui import QgsFieldModel as RealQgsFieldModel
 
 from configmanager.ui.nodewidgets import (ui_layersnode, ui_layernode, ui_infonode, ui_projectinfo, ui_formwidget,
                                           ui_searchsnode, ui_searchnode, ui_mapwidget)
@@ -54,7 +55,15 @@ class EventWidget(nodewidgets.ui_eventwidget.Ui_Form, QWidget):
     def __init__(self, parent=None):
         super(EventWidget, self).__init__(parent=None)
         self.setupUi(self)
+        self._layer = None
+        self.sourcemodel = RealQgsFieldModel()
+        self.destmodel = RealQgsFieldModel()
+        self.sourceFieldCombo.setModel(self.sourcemodel)
+        self.targetFieldCombo.setModel(self.destmodel)
 
+    def set_layer(self, layer):
+        self.sourcemodel.setLayer(layer)
+        self.destmodel.setLayer(layer)
 
 
 class FormWidget(ui_formwidget.Ui_Form, WidgetBase):
@@ -448,9 +457,16 @@ class FormWidget(ui_formwidget.Ui_Form, WidgetBase):
             self.userwidgets.setCurrentIndex(index)
             self.load_widget(index, None)
 
+        for i in reversed(range(self.eventsWidget.layout().count())):
+            child = self.eventsWidget.layout().itemAt(i)
+            if child.widget() and isinstance(child.widget(), EventWidget):
+                child = self.eventsWidget.layout().takeAt(i)
+                child.widget().deleteLater()
+
         # Load events
         for i in range(3):
             widget = EventWidget(self.eventsWidget)
+            widget.set_layer(layer)
             self.eventsWidget.layout().insertWidget(0, widget)
 
     def swapwidgetconfig(self, index):

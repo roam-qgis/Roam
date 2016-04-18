@@ -22,7 +22,7 @@
     </widget>
    </item>
    <item>
-    <widget class="QComboBox" name="comboBox_3"/>
+    <widget class="QComboBox" name="sourceFieldCombo"/>
    </item>
    <item>
     <widget class="QLabel" name="label">
@@ -32,7 +32,7 @@
     </widget>
    </item>
    <item>
-    <widget class="QComboBox" name="comboBox">
+    <widget class="QComboBox" name="eventCombo">
      <item>
       <property name="text">
        <string>Update</string>
@@ -41,7 +41,7 @@
     </widget>
    </item>
    <item>
-    <widget class="QComboBox" name="comboBox_2">
+    <widget class="QComboBox" name="actionCombo">
      <item>
       <property name="text">
        <string>Show</string>
@@ -65,7 +65,7 @@
     </widget>
    </item>
    <item>
-    <widget class="QComboBox" name="comboBox_4"/>
+    <widget class="QComboBox" name="targetFieldCombo"/>
    </item>
    <item>
     <widget class="QLabel" name="label_4">
@@ -75,7 +75,7 @@
     </widget>
    </item>
    <item>
-    <widget class="QLineEdit" name="lineEdit"/>
+    <widget class="QLineEdit" name="condtionText"/>
    </item>
   </layout>
  </widget>
