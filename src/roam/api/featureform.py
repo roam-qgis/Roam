@@ -403,6 +403,10 @@ class FeatureFormBase(QWidget):
 
             action = event['action'].lower()
             targetid = event['target']
+            if targetid == widget.id:
+                utils.log("Can't connect events to the same widget. ID {}".format(targetid))
+                continue
+
             widget = self.get_widget_from_id(targetid)
             if not widget:
                 utils.log("Can't find widget for id {} in form".format(targetid))
