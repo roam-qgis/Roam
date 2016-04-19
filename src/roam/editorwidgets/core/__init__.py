@@ -78,6 +78,7 @@ class EditorWidget(QObject):
         self.initconfig = kwargs.get('initconfig', {})
         self.newstyleform = False
         self.starttext = ''
+        self.id = ''
         self.default_events = ['capture']
         self.valuechanged.connect(self.updatecontrolstate)
 

@@ -1,6 +1,7 @@
 import os
 import sys
 import subprocess
+import collections
 import types
 import tempfile
 import json
@@ -261,6 +262,7 @@ class FeatureFormBase(QWidget):
         self.defaults = defaults
         self.bindingvalues = CaseInsensitiveDict()
         self.editingmode = kwargs.get("editmode", False)
+        self.widgetidlookup = {}
 
     def open_large_widget(self, widgettype, lastvalue, callback, config=None):
         self.showlargewidget.emit(widgettype, lastvalue, callback, config)
@@ -294,6 +296,11 @@ class FeatureFormBase(QWidget):
         # Crash in QGIS if you lookup a field that isn't found.
         # We just make a dict with all fields lower because QgsFields is case sensitive.
         fields = {field.name().lower():field for field in layer.pendingFields().toList()}
+
+        # Build a lookup for events
+        self.events = collections.defaultdict(list)
+        for event in self.form.events:
+            self.events[event['source']].append(event)
 
         import copy
         widgetsconfig = copy.deepcopy(widgetsconfig)
@@ -352,10 +359,12 @@ class FeatureFormBase(QWidget):
 
             widgetwrapper.newstyleform = self.formconfig.get("newstyle", False)
             widgetwrapper.required = config.get('required', False)
+            widgetwrapper.id = config.get('_id', '')
 
-            # Handle update events
-            events = config.get('events', [])
-            widgetwrapper.valuechanged.connect(partial(self.check_for_update_events, widgetwrapper, events))
+
+            # Only connect widgets that have events
+            if widgetwrapper.id in self.events:
+                widgetwrapper.valuechanged.connect(partial(self.check_for_update_events, widgetwrapper))
 
             widgetwrapper.valuechanged.connect(self.updaterequired)
 
@@ -369,18 +378,37 @@ class FeatureFormBase(QWidget):
 
             self._bindsavebutton(field)
             self.boundwidgets[field] = widgetwrapper
+            try:
+                self.widgetidlookup[config['_id']] = widgetwrapper
+            except KeyError:
+                pass
 
-    def check_for_update_events(self, widget, events, value):
+    def get_widget_from_id(self, id):
+        try:
+            return self.widgetidlookup[id]
+        except KeyError:
+            return None
+
+    def check_for_update_events(self, widget, value):
         from qgis.core import QgsExpression, QgsExpressionContext, QgsExpressionContextScope
+        # If we don't have any events for this widgets just get out now
+        if not widget.id in self.events:
+            return
+
+        events = self.events[widget.id]
         for event in events:
             eventtype = event['event'].lower()
-            if not eventtype == "onupdate":
+            if not eventtype == "update":
                 continue
 
             action = event['action'].lower()
-            field = event['field']
-            condition = event.get('condition', '')
-            expression = event['expression']
+            targetid = event['target']
+            widget = self.get_widget_from_id(targetid)
+            if not widget:
+                utils.log("Can't find widget for id {} in form".format(targetid))
+                continue
+            condition = event['condition']
+            expression = event['value']
 
             feature = self.to_feature(no_defaults=True)
 
@@ -393,12 +421,6 @@ class FeatureFormBase(QWidget):
 
             conditionexp = QgsExpression(condition)
             exp = QgsExpression(expression)
-
-            if field not in self.boundwidgets:
-                utils.log("Can't find widget for field {} in form widgets".format(field))
-                continue
-
-            widget = self.boundwidgets[field]
 
             if action.lower() == "show":
                 widget.hidden = not conditionexp.evaluate(context)
@@ -446,7 +468,6 @@ class FeatureFormBase(QWidget):
         values = self.form.values_from_feature(feature)
         self.bindvalues(values)
 
-    @utils.timeit
     def getvalues(self, no_defaults=False):
         def shouldsave(field):
             name = "{}_save".format(field)
@@ -557,7 +578,6 @@ class FeatureFormBase(QWidget):
     def close_form(self, reason=None, level=1):
         self.rejected.emit(reason, level)
 
-    @utils.timeit
     def to_feature(self, no_defaults=False):
         """
         Create a QgsFeature from the current form values

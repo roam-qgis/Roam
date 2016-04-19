@@ -226,6 +226,10 @@ class Form(object):
         return self.settings['layer']
 
     @property
+    def events(self):
+        return self.settings.get('events', [])
+
+    @property
     def icon(self):
         icon = os.path.join(self.folder, 'icon.svg')
         if os.path.exists(icon):

@@ -303,6 +303,14 @@ class WidgetItem(QStandardItem):
 
         super(WidgetItem, self).setData(value, role)
 
+    @property
+    def field(self):
+        return self.widget.get('field', '')
+
+    @property
+    def id(self):
+        return self.widget.get('_id', '')
+
     def data(self, role):
         if role == Qt.DisplayRole:
             name = self.widget.get('name', None)
@@ -389,6 +397,16 @@ class WidgetsModel(QStandardItemModel):
             if item.iscontainor():
                 item.loadchildren()
             self.invisibleRootItem().appendRow(item)
+
+    def idFromIndex(self, index):
+        item = self.item(index, 0)
+        return item.id
+
+    def indexFromId(self, id):
+        for row in xrange(self.rowCount()):
+            item = self.item(row, 0)
+            if item.id == id:
+                return row
 
     def flags(self, index):
         if not index.isValid():
