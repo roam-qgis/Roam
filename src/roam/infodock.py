@@ -117,6 +117,9 @@ class InfoDock(infodock_widget, QWidget):
         self.deleteFeatureButton.pressed.connect(self.delete_feature)
         self.deleteFeatureButton.setCheckable(False)
 
+        self.nextButton.pressed.connect(self.pagenext)
+        self.prevButton.pressed.connect(self.pageback)
+
         RoamEvents.selectioncleared.connect(self.clearResults)
         RoamEvents.editgeometry_complete.connect(self.refreshcurrent)
 
@@ -328,6 +331,8 @@ class InfoDock(infodock_widget, QWidget):
         layer = cursor.layer
 
         clear_image_cache()
+
+        self.countLabel.setText(str(cursor))
 
         info1, results = self.generate_info("info1", self.project, layer, feature.id(), feature, countlabel=str(cursor))
         info2, _= self.generate_info("info2", self.project, layer, feature.id(), feature, lastresults=results[0])

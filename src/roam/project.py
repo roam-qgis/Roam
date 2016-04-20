@@ -210,8 +210,8 @@ class Form(object):
     def name(self):
         return self._name
 
-    def createuiaction(self):
-        action = QAction(QIcon(self.icon), self.icontext, None)
+    def createuiaction(self, parent=None):
+        action = QAction(QIcon(self.icon), self.icontext, parent)
         if not self.valid[0]:
             action.setEnabled(False)
             action.setText(action.text() + " (invalid)")

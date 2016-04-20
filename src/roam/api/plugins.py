@@ -1,13 +1,82 @@
 import pkgutil
 import sys
 import importlib
+from PyQt4.QtCore import QSize, pyqtSignal, Qt
+from PyQt4.QtGui import QToolBar
+
+from roam.api import RoamEvents, GPS
 
 loaded_plugins = {}
+api = None
+
+# from roam.gui import HideableToolbar
+
+class HideableToolbar(QToolBar):
+    stateChanged = pyqtSignal(bool)
+
+    def __init__(self, parent=None):
+        super(HideableToolbar, self).__init__(parent)
+        self.startstyle = None
+
+    def mouseDoubleClickEvent(self, *args, **kwargs):
+        currentstyle = self.toolButtonStyle()
+        if currentstyle == Qt.ToolButtonIconOnly:
+            self.setSmallMode(False)
+        else:
+            self.setSmallMode(True)
+
+    def setSmallMode(self, smallmode):
+        currentstyle = self.toolButtonStyle()
+
+        if self.startstyle is None:
+            self.startstyle = currentstyle
+
+        if not smallmode:
+            self.setToolButtonStyle(self.startstyle)
+        else:
+            self.setToolButtonStyle(Qt.ToolButtonIconOnly)
+        self.stateChanged.emit(smallmode)
+
+    def setToolButtonStyle(self, style):
+        super(HideableToolbar, self).setToolButtonStyle(style)
+
+
+def safe_connect(method, to):
+    try:
+        method.connect(to)
+    except AttributeError:
+        pass
+
 
 class Page(object):
     title = ""
     icon = ""
     projectpage = True
+
+    def selection_changed(self, selection):
+        """
+        Auto connected selection changed event.
+        :param selection:
+        :return:
+        """
+        pass
+
+    def project_loaded(self, project):
+        """
+        Auto connected projet loaded event
+        """
+        pass
+
+
+class ToolBar(HideableToolbar):
+    def __init__(self, parent=None):
+        super(ToolBar, self).__init__()
+
+        self.setIconSize(QSize(32, 32))
+        self.setMovable(False)
+
+        RoamEvents.selectionchanged.connect(self.selection_changed)
+        RoamEvents.projectloaded.connect(self.project_loaded)
 
     def selection_changed(self, selection):
         """

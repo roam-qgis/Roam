@@ -63,6 +63,8 @@
     <file alias="capture-line">resources/images/capture-line.svg</file>
     <file alias="capture-polygon">resources/images/capture-polygon.svg</file>
     <file alias="stop-capture">resources/images/stop-capture.svg</file>
+    <file alias="left">resources/images/left.svg</file>
+    <file alias="right">resources/images/right.svg</file>
     <file alias="down">resources/images/down.svg</file>
     <file alias="remove">resources/images/remove.svg</file>
     <file alias="next">resources/images/next.svg</file>

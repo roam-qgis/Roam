@@ -6,7 +6,7 @@ from PyQt4.QtCore import Qt, pyqtSignal, QSize, QPropertyAnimation, QObject, pyq
     QRectF, QLocale, QPointF, QPoint
 from PyQt4.QtGui import QActionGroup, QFrame, QWidget, QSizePolicy, \
     QAction, QPixmap, QCursor, QIcon, QColor, QMainWindow, QPen, QGraphicsItem, QPolygon, QFont, QFontMetrics, QBrush, \
-    QPainterPath, QPainter, QToolButton, QLabel
+    QPainterPath, QPainter, QToolButton, QLabel, QToolBar
 
 from PyQt4.QtSvg import QGraphicsSvgItem
 
@@ -22,7 +22,7 @@ from roam.maptools import MoveTool, InfoTool, EditTool, PointTool, TouchMapTool
 from roam.api.events import RoamEvents
 from roam.popupdialogs import PickActionDialog
 from biglist import BigList
-from roam.api import GPS
+from roam.api import GPS, plugins
 
 import roam.utils
 import roam.config
@@ -442,6 +442,34 @@ class MapWidget(Ui_CanvasWidget, QMainWindow):
 
         self.connectButtons()
 
+    def clear_plugins(self):
+        toolbars = self.findChildren(QToolBar)
+        for toolbar in toolbars:
+            if toolbar.property("plugin_toolbar"):
+                self.removeToolBar(toolbar)
+                toolbar.deleteLater()
+
+    def add_plugins(self, pluginnames):
+        for name in pluginnames:
+            # Get the plugin
+            try:
+                plugin_mod = plugins.loaded_plugins[name]
+            except KeyError:
+                continue
+
+            if not hasattr(plugin_mod, 'toolbars'):
+                roam.utils.warning("No toolbars() function found in {}".format(name))
+                continue
+
+            toolbars = plugin_mod.toolbars()
+            self.load_plugin_toolbars(toolbars)
+
+    def load_plugin_toolbars(self, toolbars):
+        for ToolBarClass in toolbars:
+            toolbar = ToolBarClass(self)
+            self.addToolBar(Qt.BottomToolBarArea, toolbar)
+            toolbar.setProperty("plugin_toolbar", True)
+
     def snapping_changed(self, snapping):
         """
         Called when the snapping settings have changed. Updates the label in the status bar.
@@ -764,6 +792,8 @@ class MapWidget(Ui_CanvasWidget, QMainWindow):
             self.scalebar.update()
 
         self.actionPan.toggle()
+        self.clear_plugins()
+        self.add_plugins(project.enabled_plugins)
 
     def setMapTool(self, tool, *args):
         """
