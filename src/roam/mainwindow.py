@@ -202,6 +202,9 @@ class MainWindow(ui_mainwindow.Ui_MainWindow, QMainWindow):
 
         self.currentselection = {}
 
+        iface = RoamInterface(RoamEvents, GPS, self)
+        plugins.api = iface
+
     def set_projectbuttons(self, visible):
         for action in self.projectbuttons:
             action.setVisible(visible)
@@ -226,8 +229,7 @@ class MainWindow(ui_mainwindow.Ui_MainWindow, QMainWindow):
             else:
                 self.menutoolbar.insertAction(self.actionProject, action)
 
-            iface = RoamInterface(RoamEvents, GPS, self)
-            pagewidget = PageClass(iface, self)
+            pagewidget = PageClass(plugins.api, self)
 
             safe_connect(RoamEvents.selectionchanged, pagewidget.selection_changed)
             safe_connect(RoamEvents.projectloaded, pagewidget.project_loaded)
