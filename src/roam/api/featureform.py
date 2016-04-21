@@ -53,6 +53,21 @@ values_file = os.path.join(tempfile.gettempdir(), "Roam")
 
 nullcheck = qgisutils.nullcheck
 
+import contextlib
+import time
+
+totals = collections.defaultdict(int)
+
+@contextlib.contextmanager
+def timed(title):
+    ts = time.time()
+    yield
+    th = time.time()
+    took = th - ts
+    totals[title] += took
+    message = "{} {}".format(title, took)
+    print message
+
 
 class GeomWidget(Ui_GeomWidget, QStackedWidget):
     def __init__(self, parent=None):
@@ -399,11 +414,13 @@ class FeatureFormBase(QWidget):
             return
 
         events = self.events[widget.id]
-        for event in events:
-            eventtype = event['event'].lower()
-            if not eventtype == "update":
-                continue
+        events = [event for event in events if event['event'].lower() == 'update']
+        if not events:
+            return
 
+        feature = self.to_feature(no_defaults=True)
+
+        for event in events:
             action = event['action'].lower()
             targetid = event['target']
             if targetid == widget.id:
@@ -411,13 +428,13 @@ class FeatureFormBase(QWidget):
                 continue
 
             widget = self.get_widget_from_id(targetid)
+
             if not widget:
                 utils.log("Can't find widget for id {} in form".format(targetid))
                 continue
+
             condition = event['condition']
             expression = event['value']
-
-            feature = self.to_feature(no_defaults=True)
 
             context = QgsExpressionContext()
             scope = QgsExpressionContextScope()
@@ -438,8 +455,9 @@ class FeatureFormBase(QWidget):
                     newvalue = self.widget_default(field, feature=feature)
                     widget.setvalue(newvalue)
             if action == 'set value':
-                newvalue = exp.evaluate(context)
-                widget.setvalue(newvalue)
+                if conditionexp.evaluate(context):
+                    newvalue = exp.evaluate(context)
+                    widget.setvalue(newvalue)
 
     def bindvalues(self, values, update=False):
         """
