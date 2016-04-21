@@ -586,6 +586,9 @@ class FeatureFormBase(QWidget):
         """
         Create a QgsFeature from the current form values
         """
+        if not self.feature:
+            return
+
         feature = QgsFeature(self.feature.fields())
         feature.setGeometry(QgsGeometry(self.feature.geometry()))
         self.updatefeautrefields(feature, self.getvalues(no_defaults=no_defaults)[0])
