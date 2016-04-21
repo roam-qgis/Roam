@@ -390,6 +390,9 @@ class FeatureFormBase(QWidget):
             return None
 
     def check_for_update_events(self, widget, value):
+        if not self.feature:
+            return
+
         from qgis.core import QgsExpression, QgsExpressionContext, QgsExpressionContextScope
         # If we don't have any events for this widgets just get out now
         if not widget.id in self.events:
