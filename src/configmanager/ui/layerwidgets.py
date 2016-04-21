@@ -4,10 +4,11 @@ import uuid
 import os
 import shutil
 from string import Template
+from PyQt4.QtWebKit import QWebView
 from PyQt4.QtCore import Qt, QUrl, QVariant, pyqtSignal
 from PyQt4.QtGui import (QWidget, QPixmap, QStandardItem, QStandardItemModel, QIcon, QDesktopServices, QMenu, QToolButton,
                          QFileDialog)
-from PyQt4.QtGui import QTableWidgetItem, QComboBox
+from PyQt4.QtGui import QTableWidgetItem, QComboBox, QGridLayout
 from PyQt4.Qsci import QsciLexerSQL, QsciScintilla
 
 from qgis.core import QgsDataSourceURI, QgsPalLabeling, QgsMapLayerRegistry, QgsStyleV2, QgsMapLayer, QGis, QgsProject
@@ -129,6 +130,30 @@ class EventWidget(nodewidgets.ui_eventwidget.Ui_Form, QWidget):
         data['condition'] = self.condtionText.text()
         data['value'] = self.newValueText.text()
         return data
+
+
+import markdown
+    
+class PluginsWidget(WidgetBase):
+    def __init__(self, parent=None):
+        super(PluginsWidget, self).__init__(parent)
+
+class PluginWidget(WidgetBase):
+    def __init__(self, parent=None):
+        super(PluginWidget, self).__init__(parent)
+        self.setLayout(QGridLayout())
+        self.webpage = QWebView(self)
+        self.layout().addWidget(self.webpage)
+
+    def set_project(self, project, treenode):
+        super(PluginWidget, self).set_project(project, treenode)
+        self.webpage.setHtml("")
+        pluginhome = treenode.pluginlocation
+        readme = os.path.join(pluginhome, "README")
+        if os.path.exists(readme):
+            with open(readme) as f:
+                data = f.read()
+                self.webpage.setHtml(markdown.markdown(data))
 
 
 class FormWidget(ui_formwidget.Ui_Form, WidgetBase):

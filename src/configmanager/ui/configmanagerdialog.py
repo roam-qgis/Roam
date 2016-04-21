@@ -26,6 +26,8 @@ class ConfigManagerDialog(ui_configmanager.Ui_ProjectInstallerDialog, QDialog):
         self.setupUi(self)
         self.bar = roam.messagebaritems.MessageBar(self)
 
+        self.roamapp = roamapp
+
         # Nope!
         self.projectwidget.roamapp = roamapp
         self.projectwidget.bar = self.bar
@@ -57,6 +59,13 @@ class ConfigManagerDialog(ui_configmanager.Ui_ProjectInstallerDialog, QDialog):
 
         self.projectsnode = ProjectsNode(folder=None)
         rootitem.appendRow(self.projectsnode)
+
+        self.pluginsnode = PluginsNode()
+        pluginpath = os.path.join(self.roamapp.apppath, "plugins")
+        rootitem.appendRow(self.pluginsnode)
+        self.pluginsnode.add_plugin_paths([pluginpath])
+
+
 
     def delete_project(self):
         index = self.projectList.currentIndex()

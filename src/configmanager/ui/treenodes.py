@@ -17,6 +17,7 @@ from roam import resources_rc
 import shutil
 import roam.project
 import roam.messagebaritems
+import roam.api.plugins
 
 templatefolder = os.path.join(os.path.dirname(__file__), "..", "templates")
 
@@ -89,6 +90,8 @@ class Treenode(QStandardItem):
     InfoNode = QStandardItem.UserType + 10
     LayerSearchNode = QStandardItem.UserType + 11
     LayerSearchConfigNode = QStandardItem.UserType + 12
+    PluginsNode = QStandardItem.UserType + 13
+    PluginNode = QStandardItem.UserType + 14
     LayerNode = TreeNode
     AddNew = TreeNode
 
@@ -96,17 +99,24 @@ class Treenode(QStandardItem):
 
     def __init__(self, text, icon, project=None):
         super(Treenode, self).__init__(QIcon(icon), text)
+        self._text = text
         self.project = project
         self.canadd = False
         self.canremove = False
         self.addtext = ''
         self.removetext = ''
+        self.hascount = False
 
     def data(self, role=None):
         if role == Qt.UserRole:
             return self
         if role == ProjectRole:
             return self.project
+        if role == Qt.DisplayRole:
+            if self.hascount:
+                return "{} ({})".format(self._text, self.rowCount())
+            else:
+                return self._text
 
         return super(Treenode, self).data(role)
 
@@ -142,11 +152,7 @@ class SelectLayersNode(Treenode):
         super(SelectLayersNode, self).__init__(text, QIcon(":/icons/map"), project)
         self._text = text
         self.nodes = {}
-
-    def data(self, role):
-        if role == Qt.DisplayRole:
-            return "{} ({})".format(self._text, self.rowCount())
-        return super(SelectLayersNode, self).data(role)
+        self.hascount = True
 
     def create_children(self):
         self.removeRows(0, self.rowCount())
@@ -208,6 +214,12 @@ class RoamNode(Treenode):
     def __init__(self, text="Roam", project=None):
         super(RoamNode, self).__init__(text, QIcon(":/icons/open"))
 
+    def data(self, role=None):
+        if role == Qt.DisplayRole:
+            return self._text
+
+        return super(RoamNode, self).data(role)
+
 class LayerSearchNode(Treenode):
     nodetype = Treenode.LayerSearchNode
     def __init__(self, text="Searching", project=None):
@@ -245,6 +257,7 @@ class MapNode(Treenode):
     def __init__(self, text, project):
         self._text = text
         super(MapNode, self).__init__(text, QIcon(":/icons/map"), project=project)
+        self.hascount = True
 
     def data(self, role):
         if role == Qt.DisplayRole:
@@ -316,20 +329,21 @@ class FormsNode(Treenode):
         self.canadd = True
         self._text = text
         self.addtext = 'Add new form'
+        self.hascount = True
 
     def create_children(self):
         forms = self.project.forms
         self.removeRows(0, self.rowCount())
+        node = AddNewNode("New Form")
+        self.appendRow(node)
         for form in forms:
             item = FormNode(form, self.project)
             self.appendRow(item)
-        node = AddNewNode("New Form")
-        self.appendRow(node)
         super(FormsNode, self).create_children()
 
     def data(self, role):
         if role == Qt.DisplayRole:
-            return "{} ({})".format(self._text, self.rowCount())
+            return "{} ({})".format(self._text, self.rowCount() - 1)
 
         return super(FormsNode, self).data(role)
 
@@ -411,6 +425,30 @@ class ProjectNode(Treenode):
                 return QIcon(":/icons/folder_broken")
         return super(ProjectNode, self).data(role)
 
+class PluginNode(Treenode):
+    nodetype = Treenode.PluginNode
+
+    def __init__(self, text, pluginlocation):
+        super(PluginNode, self).__init__(text, QIcon(":/icons/plugin"))
+        self.canadd = False
+        self.pluginlocation = pluginlocation
+
+
+class PluginsNode(Treenode):
+    nodetype = Treenode.PluginsNode
+
+    def __init__(self, text="Installed plugins"):
+        super(PluginsNode, self).__init__(text, QIcon(":/icons/plugin"))
+        self.canadd = False
+        self.hascount = True
+
+    def add_plugin_paths(self, paths):
+        for path in paths:
+            for plugin in roam.api.plugins.find_plugins([path]):
+                pluginlocation = os.path.join(path, plugin)
+                node = PluginNode(plugin, pluginlocation)
+                self.appendRow(node)
+
 
 class ProjectsNode(Treenode):
     nodetype = Treenode.ProjectsNode
@@ -421,6 +459,7 @@ class ProjectsNode(Treenode):
         self.canadd = True
         self.addtext = 'Add new project'
         self._text = text
+        self.hascount = True
 
     def delete(self, index):
         nodes = self.takeRow(index)
@@ -444,19 +483,14 @@ class ProjectsNode(Treenode):
         self.insertRow(count - 1, item)
         return item
 
-    def data(self, role):
-        if role == Qt.DisplayRole:
-            return "{} ({})".format(self._text, self.rowCount())
-        return super(ProjectsNode, self).data(role)
-
     def loadprojects(self, projects, projectsbase):
         self.removeRows(0, self.rowCount())
         self.projectfolder = projectsbase
+        node = AddNewNode("New Project")
+        self.appendRow(node)
         for project in projects:
             node = ProjectNode(project)
             self.appendRow(node)
-        node = AddNewNode("New Project")
-        self.appendRow(node)
 
 
 def find_node(index, nodetype=Treenode.ProjectNode):
