@@ -161,7 +161,7 @@ class MainWindow(ui_mainwindow.Ui_MainWindow, QMainWindow):
         self.dataentrywidget.rejected.connect(self.formrejected)
         RoamEvents.featuresaved.connect(self.featureSaved)
         RoamEvents.helprequest.connect(self.showhelp)
-        RoamEvents.deletefeature.connect(self.delete_feature)
+        # RoamEvents.deletefeature.connect(self.delete_feature)
 
         def createSpacer(width=0, height=0):
             widget = QWidget()
@@ -202,7 +202,7 @@ class MainWindow(ui_mainwindow.Ui_MainWindow, QMainWindow):
 
         self.currentselection = {}
 
-        iface = RoamInterface(RoamEvents, GPS, self)
+        iface = RoamInterface(RoamEvents, GPS, self, self.canvas_page)
         plugins.api = iface
 
     def set_projectbuttons(self, visible):
@@ -280,7 +280,7 @@ class MainWindow(ui_mainwindow.Ui_MainWindow, QMainWindow):
         viewer.resize(self.stackedWidget.size())
         viewer.openimage(pixmap)
 
-    def delete_feature(self, form, feature):
+    def delete_featue(self, form, feature):
         """
         Delete the selected feature
         """
@@ -371,6 +371,7 @@ class MainWindow(ui_mainwindow.Ui_MainWindow, QMainWindow):
 
     def highlightfeature(self, layer, feature, features):
         self.canvas_page.highlight_active_selection(layer, feature, features)
+        RoamEvents.activeselectionchanged.emit(layer, feature, features)
 
     def showmap(self):
         self.actionMap.setVisible(True)

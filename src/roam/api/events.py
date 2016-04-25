@@ -43,6 +43,7 @@ class _Events(QObject):
 
     selectioncleared = pyqtSignal()
     selectionchanged = pyqtSignal(dict)
+    activeselectionchanged = pyqtSignal(object, QgsFeature, list)
 
     projectloaded = pyqtSignal(object)
     closeProject = pyqtSignal(object)

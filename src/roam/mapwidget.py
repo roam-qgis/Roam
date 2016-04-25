@@ -466,7 +466,7 @@ class MapWidget(Ui_CanvasWidget, QMainWindow):
 
     def load_plugin_toolbars(self, toolbars):
         for ToolBarClass in toolbars:
-            toolbar = ToolBarClass(self)
+            toolbar = ToolBarClass(plugins.api, self)
             self.addToolBar(Qt.BottomToolBarArea, toolbar)
             toolbar.setProperty("plugin_toolbar", True)
 

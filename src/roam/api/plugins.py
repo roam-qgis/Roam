@@ -76,7 +76,11 @@ class ToolBar(HideableToolbar):
         self.setMovable(False)
 
         RoamEvents.selectionchanged.connect(self.selection_changed)
+        RoamEvents.activeselectionchanged.connect(self.active_selection_changed)
         RoamEvents.projectloaded.connect(self.project_loaded)
+
+    def active_selection_changed(self, layer, feature, features):
+        pass
 
     def selection_changed(self, selection):
         """
