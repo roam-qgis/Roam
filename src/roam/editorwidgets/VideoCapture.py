@@ -136,7 +136,7 @@ class Device:
             text = time.asctime(time.localtime(time.time()))
         buffer, width, height = self.getBuffer()
         if buffer:
-            im = Image.fromstring('RGB', (width, height), buffer, 'raw', 'BGR', 0, -1)
+            im = Image.frombytes('RGB', (width, height), buffer, 'raw', 'BGR', 0, -1)
             if timestamp:
                 if boldfont:
                     self.font = self.boldfont
