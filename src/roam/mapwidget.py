@@ -39,6 +39,9 @@ except ImportError:
     PanTool = QgsMapToolPan
 
 
+snapping = True
+
+
 class NorthArrow(QGraphicsSvgItem):
     def __init__(self, path, canvas, parent=None):
         super(NorthArrow, self).__init__(path, parent)
@@ -484,13 +487,10 @@ class MapWidget(Ui_CanvasWidget, QMainWindow):
         """
         Toggle snapping on or off.
         """
-        try:
-            tool = self.canvas.mapTool()
-            tool.toggle_snapping()
-            snapping = tool.snapping
-            self.snapping_changed(snapping)
-        except AttributeError:
-            pass
+        snap = not snapping
+        global snapping
+        snapping = snap
+        RoamEvents.snappingChanged.emit(snapping)
 
     def selectscale(self):
         """
@@ -803,6 +803,8 @@ class MapWidget(Ui_CanvasWidget, QMainWindow):
         if tool == self.canvas.mapTool():
             return
 
+        if hasattr(tool, "setSnapping"):
+            tool.setSnapping(snapping)
         self.canvas.setMapTool(tool)
 
     def connectButtons(self):

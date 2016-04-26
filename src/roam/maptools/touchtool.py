@@ -25,6 +25,7 @@ class TouchMapTool(maptooltype):
         self.canvas = canvas
         self.dragging = False
         self.snapping = True
+        RoamEvents.snappingChanged.connect(self.setSnapping)
 
     def keyPressEvent(self, event):
         if event.key() == Qt.Key_S:
@@ -66,3 +67,8 @@ class TouchMapTool(maptooltype):
         pos = self.canvas.mapFromGlobal(pos)
         center = self.canvas.getCoordinateTransform().toMapPoint(pos.x(), pos.y())
         return center
+
+    def setSnapping(self, enabled):
+        self.snapping = enabled
+
+
