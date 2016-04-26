@@ -182,6 +182,7 @@ def buildfromauto(formconfig, base):
             if outlayout:
                 spacer = QWidget()
                 spacer.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Expanding)
+                outlayout.addItem(QSpacerItem(10, 500))
                 outlayout.addWidget(spacer)
 
             name = config['name']
