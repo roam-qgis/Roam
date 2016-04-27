@@ -15,6 +15,9 @@ class Database(object):
         self.db = sqldatabase
         self.form = None
 
+    def close(self):
+        self.db.close()
+
     @classmethod
     def fromLayer(cls, layer):
         source = layer.source()

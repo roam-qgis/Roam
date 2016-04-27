@@ -233,6 +233,8 @@ class PolylineTool(QgsMapToolEdit):
         RoamEvents.selectioncleared.connect(self.selection_updated)
         RoamEvents.selectionchanged.connect(self.selection_updated)
 
+        self.snapping = True
+
     def keyPressEvent(self, event):
         if event.key() == Qt.Key_Escape:
             self.reset()

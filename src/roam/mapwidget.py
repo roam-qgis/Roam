@@ -42,6 +42,14 @@ except ImportError:
 snapping = True
 
 
+class SnappingUtils(QgsMapCanvasSnappingUtils):
+    def prepareIndexStarting(self, count):
+        print count
+
+    def prepareIndexProgress(self, index):
+        print index
+
+
 class NorthArrow(QGraphicsSvgItem):
     def __init__(self, path, canvas, parent=None):
         super(NorthArrow, self).__init__(path, parent)
@@ -337,7 +345,7 @@ class MapWidget(Ui_CanvasWidget, QMainWindow):
         self.canvas.enableAntiAliasing(True)
         self.canvas.setWheelAction(QgsMapCanvas.WheelZoomToMouseCursor)
 
-        self.snapping = QgsMapCanvasSnappingUtils(self.canvas, self)
+        self.snapping = SnappingUtils(self.canvas, self)
         self.canvas.setSnappingUtils(self.snapping)
         QgsProject.instance().readProject.connect(self.snapping.readConfigFromProject)
 
