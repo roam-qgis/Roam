@@ -135,7 +135,6 @@ class Device:
             #text = now()
             text = time.asctime(time.localtime(time.time()))
         buffer, width, height = self.getBuffer()
-        roam.utils.log("Camera: {}, {}".format(width, height))
         if buffer:
             im = Image.frombytes('RGB', (width, height), buffer, 'raw', 'BGR', 0, -1)
             if timestamp:
