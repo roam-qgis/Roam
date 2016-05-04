@@ -464,8 +464,9 @@ class InfoDock(infodock_widget, QWidget):
 
         db = database.Database.fromLayer(layer)
         mapkey = get_key()
-        attributes = values_from_feature(feature)
-        results = db.query(sql, mapkey=mapkey, **attributes)
+        attributes = values_from_feature(feature, safe_names=True)
+        attributes['mapkey'] = mapkey
+        results = db.query(sql, **attributes)
         results = list(results)
         return results
 

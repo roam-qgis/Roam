@@ -127,9 +127,15 @@ def editing(layer):
         errors = layer.commitErrors()
         raise FeatureSaveException.not_saved(errors)
 
-def values_from_feature(feature):
+def values_from_feature(feature, safe_names=False):
+    def escape(value):
+        if safe_names:
+            value = value.replace(" ", "_")
+            return value
+        else:
+            return value
     attributes = feature.attributes()
-    fields = [field.name().lower() for field in feature.fields()]
+    fields = [escape(field.name().lower()) for field in feature.fields()]
     values = CaseInsensitiveDict(zip(fields, attributes))
     return values
 

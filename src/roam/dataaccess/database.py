@@ -4,6 +4,8 @@ from qgis.core import QgsDataSourceURI
 from roam.structs import OrderedDict
 import roam.utils
 
+import re
+
 class DatabaseException(Exception):
     def __init__(self, msg):
         super(DatabaseException, self).__init__(msg)
@@ -47,6 +49,7 @@ class Database(object):
 
     @classmethod
     def connect(cls, **connection):
+        print  connection
         dbtype = connection.get('type', "QODBC")
         connectionname = connection.get("connectionname", hash(tuple(connection.items())))
         db = QSqlDatabase.database(connectionname)
@@ -98,9 +101,11 @@ class Database(object):
         querystring = querystring.replace(r"\r\n", " ")
         query = QSqlQuery(self.db)
         query.prepare(querystring)
+        print querystring
+        print mappings
         for key, value in mappings.iteritems():
             bindvalue = ":{}".format(key)
-            if bindvalue in querystring:
+            if re.search(r"{}\b".format(bindvalue), querystring):
                 query.bindValue(bindvalue, value)
         return query
 

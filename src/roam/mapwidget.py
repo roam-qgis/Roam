@@ -457,6 +457,7 @@ class MapWidget(Ui_CanvasWidget, QMainWindow):
         toolbars = self.findChildren(QToolBar)
         for toolbar in toolbars:
             if toolbar.property("plugin_toolbar"):
+                toolbar.unload()
                 self.removeToolBar(toolbar)
                 toolbar.deleteLater()
 
@@ -531,6 +532,17 @@ class MapWidget(Ui_CanvasWidget, QMainWindow):
         :return:
         """
         self.gpslabel.setText("GPS Not Active")
+
+    def zoom_to_feature(self, feature):
+        box = feature.geometry().boundingBox()
+        xmin, xmax, ymin, ymax = box.xMinimum(), box.xMaximum(), box.yMinimum(), box.yMaximum()
+        xmin -= 5
+        xmax += 5
+        ymin -= 5
+        ymax += 5
+        box = QgsRectangle(xmin, ymin, xmax, ymax)
+        self.canvas.setExtent(box)
+        self.canvas.refresh()
 
     def updatestatuslabel(self, *args):
         """
@@ -832,6 +844,11 @@ class MapWidget(Ui_CanvasWidget, QMainWindow):
         self.panTool = PanTool(self.canvas)
         self.infoTool = InfoTool(self.canvas)
 
+        self.infoTool.setAction(self.actionInfo)
+        self.zoomInTool.setAction(self.actionZoom_In)
+        self.zoomOutTool.setAction(self.actionZoom_Out)
+        self.panTool.setAction(self.actionPan)
+
         connectAction(self.actionZoom_In, self.zoomInTool)
         connectAction(self.actionZoom_Out, self.zoomOutTool)
         connectAction(self.actionPan, self.panTool)
@@ -873,7 +890,7 @@ class MapWidget(Ui_CanvasWidget, QMainWindow):
         Load the given form so it's the active one for capture
         :param form: The form to load
         """
-        self.clearCapatureTools()
+        self.clearCaptureTools()
         self.dataentryselection.setIcon(QIcon(form.icon))
         self.dataentryselection.setText(form.icontext)
         self.create_capture_buttons(form)
@@ -938,7 +955,7 @@ class MapWidget(Ui_CanvasWidget, QMainWindow):
         RoamEvents.editgeometry_complete.emit(form, feature)
         self.canvas.mapTool().setEditMode(False, None)
 
-    def clearCapatureTools(self):
+    def clearCaptureTools(self):
         """
         Clear the capture tools from the toolbar.
         :return: True if the capture button was active at the time of clearing.
@@ -980,7 +997,7 @@ class MapWidget(Ui_CanvasWidget, QMainWindow):
         self.gpsband.hide()
         self.clear_selection()
         self.clear_temp_objects()
-        self.clearCapatureTools()
+        self.clearCaptureTools()
         self.canvas.freeze()
         self.canvas.clear()
         self.canvas.freeze(False)

@@ -96,6 +96,12 @@ class ToolBar(HideableToolbar):
         """
         pass
 
+    def unload(self):
+        """
+        Called when the toolbar is unloaded from the interface
+        """
+        pass
+
 
 def find_plugins(pluginfolders=None):
     """
