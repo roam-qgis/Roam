@@ -19,6 +19,7 @@ if frozen:
     os.environ['PATH'] += ";{}".format(srcpath)
     os.environ["GDAL_DRIVER_PATH"] = os.path.join(srcpath, 'libs')
     os.environ["GDAL_DATA"] = os.path.join(srcpath, 'libs', 'gdal')
+    os.environ['OGR_SQLITE_PRAGMA'] = "journal_mode=WAL"
 
 
 import roam.environ

@@ -16,7 +16,7 @@ class _Events(QObject):
     openurl = pyqtSignal(QUrl)
 
     # Emit when requesting to open a feature form.
-    openfeatureform = pyqtSignal(object, QgsFeature, bool, bool, object)
+    openfeatureform = pyqtSignal(object, QgsFeature, bool, bool, object, object)
     deletefeature = pyqtSignal(object, QgsFeature)
 
     snappingChanged = pyqtSignal(bool)
@@ -24,7 +24,7 @@ class _Events(QObject):
     def delete_feature(self, form, feature):
         self.deletefeature.emit(form, feature)
 
-    def load_feature_form(self, form, feature, editmode, clearcurrent=True, callback=None):
+    def load_feature_form(self, form, feature, editmode, clearcurrent=True, callback=None, cancel_callback=None):
         """
         Load a form into the data entry tab.
         :param form: The Form to load. See roam.project.Form
@@ -32,7 +32,7 @@ class _Events(QObject):
         :param editmode: Open in edit mode
         :param clearcurrent: Clear the current stack of open widgets.
         """
-        self.openfeatureform.emit(form, feature, editmode, clearcurrent, callback)
+        self.openfeatureform.emit(form, feature, editmode, clearcurrent, callback, cancel_callback)
 
     editgeometry = pyqtSignal(object, QgsFeature)
 

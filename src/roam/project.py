@@ -183,6 +183,7 @@ class Form(object):
         self._formclass = None
         self._action = None
         self.project = project
+        self.template_values = {}
 
     @classmethod
     def from_config(cls, name, config, folder, project=None):

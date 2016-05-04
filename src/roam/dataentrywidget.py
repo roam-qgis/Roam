@@ -54,7 +54,7 @@ class DataEntryWidget(dataentry_widget, dataentry_base):
         wrapper.deleteLater()
         wrapper.setParent(None)
 
-    def add_widget(self, widgettype, lastvalue, callback, config, initconfig=None):
+    def add_widget(self, widgettype, lastvalue, callback, config, initconfig=None, cancel_callback=None):
         if inspect.isclass(widgettype):
             widget = widgettype.createwidget(config=initconfig)
             largewidgetwrapper = widgettype.for_widget(widget, None, None, None, None, map=self.canvas)
@@ -67,6 +67,7 @@ class DataEntryWidget(dataentry_widget, dataentry_base):
         largewidgetwrapper.finished.connect(callback)
         largewidgetwrapper.finished.connect(functools.partial(self.cleanup, largewidgetwrapper))
         largewidgetwrapper.cancel.connect(functools.partial(self.cleanup, largewidgetwrapper))
+        largewidgetwrapper.cancel.connect(cancel_callback)
 
         largewidgetwrapper.initWidget(widget)
         largewidgetwrapper.config = config
@@ -100,7 +101,8 @@ class DataEntryWidget(dataentry_widget, dataentry_base):
             if not dontemit:
                 self.lastwidgetremoved.emit()
 
-    def load_feature_form(self, feature, form, editmode, clear=True, callback=None):
+    def load_feature_form(self, feature, form, editmode, clear=True, callback=None,
+                          cancel_callback=None):
         """
         Opens the form for the given feature.
         """
@@ -109,6 +111,9 @@ class DataEntryWidget(dataentry_widget, dataentry_base):
 
         if not callback:
             callback = _sink
+
+        if not cancel_callback:
+            cancel_callback = _sink
 
         if clear:
             # Clear all the other open widgets that might be open.
@@ -130,6 +135,8 @@ class DataEntryWidget(dataentry_widget, dataentry_base):
         if not editmode:
             savedvalues = featureform.loadsavedvalues(layer)
             values.update(savedvalues)
+            if form.template_values:
+                values.update(form.template_values)
 
         initconfig = dict(form=form,
                           canvas=self.canvas,
@@ -143,4 +150,4 @@ class DataEntryWidget(dataentry_widget, dataentry_base):
         if self.project:
             layertools = self.project.layer_tools(layer)
             config['tools'] = layertools
-        self.add_widget(FeatureFormWidgetEditor, values, callback, config, initconfig=initconfig)
+        self.add_widget(FeatureFormWidgetEditor, values, callback, config, initconfig=initconfig, cancel_callback=cancel_callback)
