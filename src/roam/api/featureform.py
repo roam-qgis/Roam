@@ -101,10 +101,9 @@ class GeomWidget(Ui_GeomWidget, QStackedWidget):
         self.edited = True
 
 
-def loadsavedvalues(layer):
+def loadsavedvalues(form):
     attr = {}
-    id = str(layer.id())
-    savedvaluesfile = os.path.join(values_file, "%s.json" % id)
+    savedvaluesfile = os.path.join(values_file, "{}.json".format(form.savekey))
     try:
         utils.log(savedvaluesfile)
         with open(savedvaluesfile, 'r') as f:
@@ -116,8 +115,8 @@ def loadsavedvalues(layer):
     return attr
 
 
-def savevalues(layer, values):
-    savedvaluesfile = os.path.join(values_file, "%s.json" % str(layer.id()))
+def savevalues(form, values):
+    savedvaluesfile = os.path.join(values_file, "{}.json".format(form.savekey))
     folder = os.path.dirname(savedvaluesfile)
     if not os.path.exists(folder):
         os.makedirs(folder)
@@ -846,7 +845,7 @@ class FeatureForm(FeatureFormBase):
         else:
             roam.utils.info("Adding feature {}".format(self.feature.id()))
             layer.addFeature(self.feature)
-            savevalues(layer, savedvalues)
+            savevalues(self.form, savedvalues)
 
         saved = layer.commitChanges()
 

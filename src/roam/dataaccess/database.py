@@ -49,7 +49,6 @@ class Database(object):
 
     @classmethod
     def connect(cls, **connection):
-        print  connection
         dbtype = connection.get('type', "QODBC")
         connectionname = connection.get("connectionname", hash(tuple(connection.items())))
         db = QSqlDatabase.database(connectionname)
@@ -101,8 +100,6 @@ class Database(object):
         querystring = querystring.replace(r"\r\n", " ")
         query = QSqlQuery(self.db)
         query.prepare(querystring)
-        print querystring
-        print mappings
         for key, value in mappings.iteritems():
             bindvalue = ":{}".format(key)
             if re.search(r"{}\b".format(bindvalue), querystring):
@@ -132,7 +129,6 @@ class Database(object):
     def querymodel(self, sql, **mappings):
         sql = sql.replace(r"\r\n", " ")
         query = self._query(sql, **mappings)
-        print sql, mappings
         if query.exec_():
             model = QSqlQueryModel()
             model.setQuery(query)

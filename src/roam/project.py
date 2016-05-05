@@ -184,6 +184,7 @@ class Form(object):
         self._action = None
         self.project = project
         self.template_values = {}
+        self.suppressform = False
 
     @classmethod
     def from_config(cls, name, config, folder, project=None):
@@ -202,6 +203,10 @@ class Form(object):
         config = readfolderconfig(folder, "form")
         print config
         return Form.from_config(name, config, folder)
+
+    @property
+    def savekey(self):
+        return self.settings.get('savekey', str(self.QGISLayer.id()))
 
     @property
     def label(self):

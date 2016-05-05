@@ -63,17 +63,28 @@ class DataEntryWidget(dataentry_widget, dataentry_base):
             largewidgetwrapper = widgettype
             widget = largewidgetwrapper.widget
 
-        largewidgetwrapper.largewidgetrequest.connect(RoamEvents.show_widget.emit)
         largewidgetwrapper.finished.connect(callback)
-        largewidgetwrapper.finished.connect(functools.partial(self.cleanup, largewidgetwrapper))
-        largewidgetwrapper.cancel.connect(functools.partial(self.cleanup, largewidgetwrapper))
-        largewidgetwrapper.cancel.connect(cancel_callback)
 
         largewidgetwrapper.initWidget(widget)
         largewidgetwrapper.config = config
         if isinstance(lastvalue, QPixmap):
             lastvalue = QPixmap(lastvalue)
         largewidgetwrapper.setvalue(lastvalue)
+
+        # This is a bit crappy but will do now
+        # until the rest is refactored
+        print initconfig
+        if initconfig.get('suppressform', False) and isinstance(largewidgetwrapper, FeatureFormWidgetEditor):
+            largewidgetwrapper.before_load()
+            largewidgetwrapper.after_load()
+            largewidgetwrapper.save()
+            self.lastwidgetremoved.emit()
+            return
+
+        largewidgetwrapper.largewidgetrequest.connect(RoamEvents.show_widget.emit)
+        largewidgetwrapper.finished.connect(functools.partial(self.cleanup, largewidgetwrapper))
+        largewidgetwrapper.cancel.connect(functools.partial(self.cleanup, largewidgetwrapper))
+        largewidgetwrapper.cancel.connect(cancel_callback)
 
         try:
             largewidgetwrapper.before_load()
@@ -133,15 +144,20 @@ class DataEntryWidget(dataentry_widget, dataentry_base):
 
         savedvalues = {}
         if not editmode:
-            savedvalues = featureform.loadsavedvalues(layer)
+            savedvalues = featureform.loadsavedvalues(form)
             values.update(savedvalues)
             if form.template_values:
                 values.update(form.template_values)
 
+        suppressform = form.suppressform
+        if editmode:
+            suppressform = False
+
         initconfig = dict(form=form,
                           canvas=self.canvas,
                           editmode=editmode,
-                          defaults=savedvalues)
+                          defaults=savedvalues,
+                          suppressform=suppressform)
 
         config = dict(editmode=editmode,
                       layers=QgsMapLayerRegistry.instance().mapLayers(),
@@ -150,4 +166,6 @@ class DataEntryWidget(dataentry_widget, dataentry_base):
         if self.project:
             layertools = self.project.layer_tools(layer)
             config['tools'] = layertools
-        self.add_widget(FeatureFormWidgetEditor, values, callback, config, initconfig=initconfig, cancel_callback=cancel_callback)
+        self.add_widget(FeatureFormWidgetEditor, values, callback, config,
+                        initconfig=initconfig,
+                        cancel_callback=cancel_callback)

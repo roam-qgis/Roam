@@ -175,3 +175,6 @@ class FeatureFormWidgetEditor(LargeEditorWidget):
 
     def after_load(self):
         self.widget.after_load()
+
+    def save(self):
+        self.widget.save_feature()
