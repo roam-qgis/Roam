@@ -612,7 +612,12 @@ class FeatureFormBase(QWidget):
 
         feature = QgsFeature(self.feature.fields())
         feature.setGeometry(QgsGeometry(self.feature.geometry()))
-        self.updatefeautrefields(feature, self.getvalues(no_defaults=no_defaults)[0])
+        try:
+            values, _ = self.getvalues(no_defaults=no_defaults)
+        except TypeError:
+            values, _ = self.getvalues()
+
+        self.updatefeautrefields(feature, values)
         self.update_geometry(feature)
         return feature
 
