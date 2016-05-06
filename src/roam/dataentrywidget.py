@@ -55,6 +55,9 @@ class DataEntryWidget(dataentry_widget, dataentry_base):
         wrapper.setParent(None)
 
     def add_widget(self, widgettype, lastvalue, callback, config, initconfig=None, cancel_callback=None):
+        if not initconfig:
+            initconfig = {}
+
         if inspect.isclass(widgettype):
             widget = widgettype.createwidget(config=initconfig)
             largewidgetwrapper = widgettype.for_widget(widget, None, None, None, None, map=self.canvas)
@@ -73,7 +76,6 @@ class DataEntryWidget(dataentry_widget, dataentry_base):
 
         # This is a bit crappy but will do now
         # until the rest is refactored
-        print initconfig
         if initconfig.get('suppressform', False) and isinstance(largewidgetwrapper, FeatureFormWidgetEditor):
             largewidgetwrapper.before_load()
             largewidgetwrapper.after_load()
@@ -84,7 +86,8 @@ class DataEntryWidget(dataentry_widget, dataentry_base):
         largewidgetwrapper.largewidgetrequest.connect(RoamEvents.show_widget.emit)
         largewidgetwrapper.finished.connect(functools.partial(self.cleanup, largewidgetwrapper))
         largewidgetwrapper.cancel.connect(functools.partial(self.cleanup, largewidgetwrapper))
-        largewidgetwrapper.cancel.connect(cancel_callback)
+        if cancel_callback:
+            largewidgetwrapper.cancel.connect(cancel_callback)
 
         try:
             largewidgetwrapper.before_load()
