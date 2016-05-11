@@ -473,6 +473,13 @@ class ProjectsNode(Treenode):
         except Exception as ex:
             logger.exception("Could not remove form folder")
 
+    def data(self, role=None):
+        if role == Qt.DisplayRole:
+            return "{} ({})".format(self._text, self.rowCount() - 1)
+
+        return super(ProjectsNode, self).data(role)
+
+
     def removeRow(self, index):
         return True
 
