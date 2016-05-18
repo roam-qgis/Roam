@@ -3,7 +3,8 @@ import sys
 
 try:
     import vidcap
-    from roam.editorwidgets import VideoCapture as vc
+    import camera
+    # from roam.editorwidgets import VideoCapture as vc
 
     hascamera = True
 except ImportError:
@@ -135,7 +136,7 @@ class _CameraWidget(QWidget):
         self.layout().addWidget(self.toolbar)
         self.layout().addWidget(self.cameralabel)
         self.timer = QTimer()
-        self.timer.setInterval(20)
+        self.timer.setInterval(10)
         self.timer.timeout.connect(self.showimage)
         self.cam = None
         self.pixmap = None
@@ -152,33 +153,31 @@ class _CameraWidget(QWidget):
         if self.cam is None:
             return
 
-        img = self.cam.getImage()
+        img = self.cam.get_image()
         self.image = ImageQt(img)
         pixmap = QPixmap.fromImage(self.image)
         self.cameralabel.setPixmap(pixmap)
 
     def takeimage(self, *args):
         self.timer.stop()
-        img = self.cam.getImage()
+        img = self.cam.get_image()
         self.image = ImageQt(img)
         self.pixmap = QPixmap.fromImage(self.image)
         self.cameralabel.setPixmap(self.pixmap)
         self.imagecaptured.emit(self.pixmap)
         self.done.emit()
+        self.cam.disconnect()
 
     @property
     def camera_res(self):
-        width, height = tuple(roam.config.settings['camera_res'].split(','))
+        res = roam.config.settings.get('camera_res', '1920,1080')
+        width, height = tuple(int(v) for v in res.split(','))
         return width, height
 
     def start(self, dev=1):
         try:
-            self.cam = vc.Device(dev)
-            try:
-                width, height = self.camera_res
-                self.cam.setResolution(int(width), int(height))
-            except KeyError:
-                pass
+            width, height = self.camera_res
+            self.cam = camera.Device.connect(dev, width, height)
             self.currentdevice = dev
         except vidcap.error:
             if dev == 0:
@@ -192,6 +191,7 @@ class _CameraWidget(QWidget):
 
     def stop(self):
         self.timer.stop()
+        self.cam.disconnect()
         del self.cam
         self.cam = None
 
