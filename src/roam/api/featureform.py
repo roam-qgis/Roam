@@ -133,6 +133,11 @@ def buildfromui(uifile, base):
 def buildfromauto(formconfig, base):
     widgetsconfig = formconfig['widgets']
 
+    try:
+        widgetsconfig = widgetsconfig + base.userwidgets()
+    except AttributeError:
+        pass
+
     newstyle = formconfig.get("newstyle", False)
     hassections = any(config['widget'] == "Section" for config in widgetsconfig)
 
@@ -306,6 +311,11 @@ class FeatureFormBase(QWidget):
         self.geomwidget = self.findcontrol("__geomwidget")
 
         widgetsconfig = self.formconfig['widgets']
+
+        try:
+            widgetsconfig = widgetsconfig + self.userwidgets()
+        except AttributeError:
+            pass
 
         layer = self.form.QGISLayer
         # Crash in QGIS if you lookup a field that isn't found.

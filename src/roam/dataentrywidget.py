@@ -160,7 +160,8 @@ class DataEntryWidget(dataentry_widget, dataentry_base):
                           canvas=self.canvas,
                           editmode=editmode,
                           defaults=savedvalues,
-                          suppressform=suppressform)
+                          suppressform=suppressform,
+                          feature=feature)
 
         config = dict(editmode=editmode,
                       layers=QgsMapLayerRegistry.instance().mapLayers(),
