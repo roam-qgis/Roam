@@ -307,6 +307,7 @@ class ImageWidget(EditorWidget):
         if image is None or not image:
             return
 
+        image = QPixmap(image)
         image = resize_image(image, self.image_size)
         self.widget.loadImage(image)
         self.modified = True
