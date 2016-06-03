@@ -22,6 +22,7 @@ class BigList(Ui_BigList, QWidget):
         self.filtermodel = QSortFilterProxyModel()
         self.filtermodel.setFilterCaseSensitivity(Qt.CaseInsensitive)
         self.listView.setModel(self.filtermodel)
+        self.listView.setWordWrap(True)
 
         self.charm = FlickCharm()
         self.charm.activateOn(self.listView)

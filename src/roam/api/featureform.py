@@ -134,7 +134,7 @@ def buildfromauto(formconfig, base):
     widgetsconfig = formconfig['widgets']
 
     try:
-        widgetsconfig = widgetsconfig + base.userwidgets()
+        widgetsconfig = base.get_widgets(widgetsconfig)
     except AttributeError:
         pass
 
@@ -313,7 +313,7 @@ class FeatureFormBase(QWidget):
         widgetsconfig = self.formconfig['widgets']
 
         try:
-            widgetsconfig = widgetsconfig + self.userwidgets()
+            widgetsconfig = self.get_widgets(widgetsconfig)
         except AttributeError:
             pass
 

@@ -1,4 +1,4 @@
-from PyQt4.QtGui import QComboBox, QStandardItem, QStandardItemModel, QIcon, QListView
+from PyQt4.QtGui import QComboBox, QStandardItem, QStandardItemModel, QIcon, QListView, QColor, QBrush
 from PyQt4.QtCore import QSize, Qt, QEvent
 from qgis.core import QgsMessageLog, QgsMapLayerRegistry, QgsExpression, QgsFeatureRequest
 import qgis.core
@@ -170,6 +170,7 @@ class ListWidget(EditorWidget):
         widget.showPopup = self.showpopup
         widget.setIconSize(QSize(24,24))
         widget.setStyleSheet("QComboBox::drop-down {border-width: 0px;} QComboBox::down-arrow {image: url(noimg); border-width: 0px;}")
+        widget.setSizeAdjustPolicy(QComboBox.AdjustToMinimumContentsLength)
 
 
     def showpopup(self):

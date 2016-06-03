@@ -30,6 +30,7 @@ def default_value(defaultconfig, feature, layer):
             value = None
     else:
         # Pass it though a series of filters to get the default value if it's just pain text
+        defaultconfig = str(defaultconfig)
         value = os.path.expandvars(defaultconfig)
         if '[%' in defaultconfig and '%]' in defaultconfig:
             # TODO Use regex
