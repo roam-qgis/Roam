@@ -58,13 +58,16 @@ class Database(object):
         if dbtype == "QSQLITE":
             db.setDatabaseName(connection['database'])
         else:
-            constring = "driver={driver};server={host};database={database};uid={user};pwd={password}"
-            connection["driver"] = "{SQL Server}"
-            constring = constring.format(**connection)
-            db.setHostName(connection['host'])
-            db.setDatabaseName(constring)
-            db.setUserName(connection['user'])
-            db.setPassword(connection['password'])
+            if "constring" in connection:
+                db.setDatabaseName(connection['constring'])
+            else:
+                constring = "driver={driver};server={host};database={database};uid={user};pwd={password}"
+                connection["driver"] = "{SQL Server}"
+                constring = constring.format(**connection)
+                db.setHostName(connection['host'])
+                db.setDatabaseName(constring)
+                db.setUserName(connection['user'])
+                db.setPassword(connection['password'])
 
         if not db.open():
             raise DatabaseException(db.lastError().text())

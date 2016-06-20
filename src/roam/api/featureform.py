@@ -5,6 +5,7 @@ import collections
 import types
 import tempfile
 import json
+import copy
 
 from functools import partial
 
@@ -131,7 +132,7 @@ def buildfromui(uifile, base):
 
 
 def buildfromauto(formconfig, base):
-    widgetsconfig = formconfig['widgets']
+    widgetsconfig = copy.deepcopy(formconfig['widgets'])
 
     try:
         widgetsconfig = base.get_widgets(widgetsconfig)
@@ -310,7 +311,7 @@ class FeatureFormBase(QWidget):
         """
         self.geomwidget = self.findcontrol("__geomwidget")
 
-        widgetsconfig = self.formconfig['widgets']
+        widgetsconfig = copy.deepcopy(self.formconfig['widgets'])
 
         try:
             widgetsconfig = self.get_widgets(widgetsconfig)
@@ -327,7 +328,6 @@ class FeatureFormBase(QWidget):
         for event in self.form.events:
             self.events[event['source']].append(event)
 
-        import copy
         widgetsconfig = copy.deepcopy(widgetsconfig)
         for config in widgetsconfig:
             widgettype = config['widget']
