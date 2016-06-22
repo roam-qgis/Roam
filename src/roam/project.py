@@ -484,7 +484,10 @@ class Project(QObject):
 
     @property
     def projectfile(self):
-        return glob.glob(os.path.join(self.folder, '*.qgs'))[0]
+        try:
+            return os.path.abspath(self.settings['projectfile'])
+        except KeyError:
+            return os.path.join(self.folder, "project.qgs")
 
     def validate(self):
         """
