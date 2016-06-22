@@ -516,6 +516,9 @@ class Project(QObject):
         """
         return not list(self.validate())
 
+    def datafolder(self):
+        return os.path.join(self.folder, "_data")
+
     def basedatadb(self):
         path = os.path.join(self.folder, "_data", "basedata.sqlite")
         return Database.connect(type="QSQLITE", database=path)
