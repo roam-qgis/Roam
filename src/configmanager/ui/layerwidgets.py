@@ -347,7 +347,8 @@ class FormWidget(ui_formwidget.Ui_Form, WidgetBase):
         """
         widgets = self.widgetmodel.widgets()
         for widget in widgets:
-            yield widget['field']
+            if 'field' in widget:
+                yield widget['field']
 
     def openformfolder(self, url):
         """
