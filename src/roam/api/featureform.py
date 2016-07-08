@@ -329,10 +329,17 @@ class FeatureFormBase(QWidget):
             self.events[event['source']].append(event)
 
         widgetsconfig = copy.deepcopy(widgetsconfig)
+        self.sectionwidgets = {}
+
+        currentsection = None
         for config in widgetsconfig:
             widgettype = config['widget']
             if widgettype == "Section":
+                name = config['name']
+                currentsection = name
+                self.sectionwidgets[name] = []
                 continue
+
             field = config['field']
             if not field:
                 utils.info("Skipping widget. No field defined")
@@ -386,7 +393,6 @@ class FeatureFormBase(QWidget):
             widgetwrapper.required = config.get('required', False)
             widgetwrapper.id = config.get('_id', '')
 
-
             # Only connect widgets that have events
             if widgetwrapper.id in self.events:
                 widgetwrapper.valuechanged.connect(partial(self.check_for_update_events, widgetwrapper))
@@ -407,6 +413,15 @@ class FeatureFormBase(QWidget):
                 self.widgetidlookup[config['_id']] = widgetwrapper
             except KeyError:
                 pass
+
+            if currentsection:
+                self.sectionwidgets[currentsection].append(widgetwrapper)
+
+    def widgets_for_section(self, name):
+        try:
+            return self.sectionwidgets[name]
+        except KeyError:
+            return []
 
     def get_widget_from_id(self, id):
         try:
