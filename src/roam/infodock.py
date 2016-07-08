@@ -483,13 +483,15 @@ class InfoDock(infodock_widget, QWidget):
 def generate_rows(fields, attributes, **kwargs):
     data = OrderedDict()
     items = []
+    count = 0
     for field, value in zip(fields, attributes):
         if field == 'mapkey':
             continue
-        safefieldname = "_" + field.replace(" ", "_")
-        data[safefieldname] = value
-        item = u"<tr><th>{0}</th> <td>${{{1}}}</td></tr>".format(field, safefieldname)
+        name = "field_" + str(count)
+        data[name] = value
+        item = u"<tr><th>{0}</th> <td>${{{1}}}</td></tr>".format(field, name)
         items.append(item)
+        count += 1
     rowtemple = Template(''.join(items))
     rowshtml = updateTemplate(data, rowtemple, **kwargs)
     return rowshtml
