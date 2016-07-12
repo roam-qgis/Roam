@@ -104,6 +104,9 @@ class MainWindow(ui_mainwindow.Ui_MainWindow, QMainWindow):
         icon = roam.roam_style.iconsize()
         self.menutoolbar.setIconSize(QSize(icon, icon))
 
+        smallmode = roam.config.settings.get("smallmode", False)
+        self.menutoolbar.setSmallMode(smallmode)
+
         self.projectupdater = ProjectUpdater(projects_base=roamapp.projectsroot)
         self.projectupdater.foundProjects.connect(self.projectwidget.show_new_updateable)
         self.projectupdater.projectUpdateStatus.connect(self.projectwidget.update_project_status)
