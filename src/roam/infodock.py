@@ -234,11 +234,14 @@ class InfoDock(infodock_widget, QWidget):
         newform = self.project.form_by_name(form)
         if config.get('mode', "copy").lower() == 'copy':
             geom = current_feature.geometry()
-            newgeom = QgsGeometry(geom)
-            newfeature = newform.new_feature(geometry=newgeom)
             mappings = config.get('field_mapping', {})
+            data = {}
             for fieldfrom, fieldto in mappings.iteritems():
-                newfeature[fieldto] = current_feature[fieldfrom]
+                data[fieldto] = current_feature[fieldfrom]
+
+            newgeom = QgsGeometry(geom)
+            newfeature = newform.new_feature(geometry=newgeom, data=data)
+
             return newform, newfeature
         else:
             raise NotImplementedError("Only copy mode supported currently")
@@ -387,6 +390,8 @@ class InfoDock(infodock_widget, QWidget):
                 else:
                     results = queryresults
             except database.DatabaseException as ex:
+                RoamEvents.raisemessage("Query Error", ex.message, 3)
+                utils.error(ex.message)
                 if not isinfo1:
                     error = "<b> Error: {} <b>".format(ex.msg)
                 else:

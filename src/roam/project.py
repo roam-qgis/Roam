@@ -353,7 +353,7 @@ class Form(object):
     def saveconfig(cls, config, folder):
         writefolderconfig(config, folder, configname='form')
 
-    def new_feature(self, set_defaults=True, geometry=None):
+    def new_feature(self, set_defaults=True, geometry=None, data=None):
         """
         Returns a new feature that is created for the layer this form is bound too
         :return: A new QgsFeature
@@ -362,6 +362,11 @@ class Form(object):
         layer = self.QGISLayer
         fields = layer.pendingFields()
         feature = QgsFeature(fields)
+        if data:
+            print "Loading data"
+            for key, value in data.iteritems():
+                feature[key] = value
+
         if geometry:
             feature.setGeometry(geometry)
 
@@ -371,11 +376,18 @@ class Form(object):
                 if index in pkindexes and layer.dataProvider().name() == 'spatialite':
                     continue
 
+                # Don't override fields we have already set.
+                if fields.field(index).name() in data:
+                    continue
+
                 value = layer.dataProvider().defaultValue(index)
                 feature[index] = value
             # Update the feature with the defaults from the widget config
             defaults = self.default_values(feature)
             for key, value in defaults.iteritems():
+                # Don't override fields we have already set.
+                if key in data:
+                    continue
                 try:
                     feature[key] = value
                 except KeyError:
