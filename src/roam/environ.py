@@ -12,6 +12,7 @@ class RoamApp(object):
         self.apppath = apppath
         self.prefixpath = prefixpath
         self.settingspath = settingspath
+        self.approot = apppath
         self.libspath = libspath
         self.i18npath = i18npath
         self.app = None
