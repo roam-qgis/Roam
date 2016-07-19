@@ -366,6 +366,8 @@ class Form(object):
             print "Loading data"
             for key, value in data.iteritems():
                 feature[key] = value
+        else:
+            data = {}
 
         if geometry:
             feature.setGeometry(geometry)
