@@ -269,6 +269,7 @@ class FeatureFormBase(QWidget):
     showwidget = pyqtSignal(QWidget)
     loadform = pyqtSignal()
     rejected = pyqtSignal(str, int)
+    accepted = pyqtSignal()
     enablesave = pyqtSignal(bool)
     showlargewidget = pyqtSignal(object, object, object, dict)
 
@@ -838,13 +839,13 @@ class FeatureForm(FeatureFormBase):
 
         return feature
 
-    def save(self):
+    def save(self, ignore_required=False):
         """
         Save the values from the form into the set feature
 
         Override this method to handle saving things your own way if needed.
         """
-        if not self.allpassing:
+        if not self.allpassing and not ignore_required:
             raise MissingValuesException.missing_values()
 
         def save_images(values):
@@ -884,6 +885,7 @@ class FeatureForm(FeatureFormBase):
             raise FeatureSaveException.not_saved(errors)
 
         self.featuresaved(self.feature, values)
+        self.accepted.emit()
 
     def update_geometry(self, feature):
         if self.geomwidget and self.geomwidget.edited:
