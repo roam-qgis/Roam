@@ -45,8 +45,11 @@ class DataEntryWidget(dataentry_widget, dataentry_base):
                 level = args[1]
                 RoamEvents.raisemessage("Message", message, level=level)
 
-        index = self.widgetstack.index(wrapper)
-        del self.widgetstack[index]
+        try:
+            index = self.widgetstack.index(wrapper)
+            del self.widgetstack[index]
+        except ValueError:
+            pass
         index = self.stackedWidget.indexOf(wrapper.widget)
         if index == -1:
             return
