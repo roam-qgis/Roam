@@ -109,8 +109,7 @@ class FeatureFormWidget(Ui_Form, QWidget):
         except featureform.FeatureSaveException as ex:
             RoamEvents.raisemessage(*ex.error)
 
-        self.featuresaved()
-
+        self.feature_saved()
 
     def set_config(self, config):
         self.config = config
