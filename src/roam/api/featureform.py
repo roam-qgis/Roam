@@ -533,6 +533,8 @@ class FeatureFormBase(QWidget):
                 value = self.widget_default(field)
             else:
                 value = wrapper.value()
+                extradata = wrapper.extraData()
+                values.update(extradata)
 
             # TODO this should put pulled out and unit tested. MOVE ME!
             # NOTE: This is photo widget stuff and really really doesn't belong here.

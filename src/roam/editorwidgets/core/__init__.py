@@ -251,6 +251,15 @@ class EditorWidget(QObject):
         """
         self.valuechanged.emit(self.value())
 
+    def extraData(self):
+        """
+        Returns extra field mappings and data this widget can write.
+        Some widgets add extra information to fields that are not bound.
+        Example: Image widget can write the GPS position to a {field}_GPS fields
+        to include GPS information.
+        """
+        return {}
+
 class RejectedException(Exception):
     WARNING = 1
     ERROR = 2

@@ -23,7 +23,7 @@ from roam.editorwidgets.uifiles import drawingpad
 from roam.ui.uifiles import actionpicker_widget, actionpicker_base
 from roam.popupdialogs import PickActionDialog
 from roam import utils
-from roam.api import RoamEvents
+from roam.api import RoamEvents, GPS
 
 import roam.config
 import roam.resources_rc
@@ -275,6 +275,10 @@ class ImageWidget(EditorWidget):
         self.cameraAction.triggered.connect(self._selectCamera)
         self.drawingAction.triggered.connect(self._selectDrawing)
         self.image_size = QSize()
+        self.data = {}
+
+    def extraData(self):
+        return self.data
 
     def createWidget(self, parent):
         return QMapImageWidget(parent)
@@ -299,6 +303,13 @@ class ImageWidget(EditorWidget):
             yield self.cameraAction
         yield self.drawingAction
 
+    def _updateImageGPSData(self):
+        # Write to the field with {fieldname}_GPS
+        fieldname = self.field.name() + "_GPS"
+        if GPS.isConnected:
+            location = GPS.latlong_position
+            self.data[fieldname] = "{},{}".format(location.x(), location.y())
+
     def _selectImage(self):
         # Show the file picker
         defaultlocation = os.path.expandvars(self.defaultlocation)
@@ -311,6 +322,7 @@ class ImageWidget(EditorWidget):
         image = resize_image(image, self.image_size)
         self.widget.loadImage(image)
         self.modified = True
+        self._updateImageGPSData()
 
     def _selectDrawing(self, *args):
         image = self.widget.orignalimage
@@ -324,11 +336,13 @@ class ImageWidget(EditorWidget):
         pix = resize_image(pix, self.image_size)
         self.setvalue(pix)
         self.modified = True
+        self._updateImageGPSData()
 
     def phototaken(self, value):
         value = resize_image(value, self.image_size)
         self.setvalue(value)
         self.modified = True
+        self._updateImageGPSData()
 
     def updatefromconfig(self):
         self.defaultlocation = self.config.get('defaultlocation', '')
