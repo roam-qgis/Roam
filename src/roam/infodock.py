@@ -471,6 +471,8 @@ class InfoDock(infodock_widget, QWidget):
         mapkey = get_key()
         attributes = values_from_feature(feature, safe_names=True)
         attributes['mapkey'] = mapkey
+        # Run the SQL text though the QGIS expression engine first.
+        sql = QgsExpression.replaceExpressionText(sql, feature, layer)
         results = db.query(sql, **attributes)
         results = list(results)
         return results
