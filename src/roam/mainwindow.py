@@ -164,7 +164,7 @@ class MainWindow(ui_mainwindow.Ui_MainWindow, QMainWindow):
         self.dataentrywidget.rejected.connect(self.formrejected)
         RoamEvents.featuresaved.connect(self.featureSaved)
         RoamEvents.helprequest.connect(self.showhelp)
-        # RoamEvents.deletefeature.connect(self.delete_feature)
+        RoamEvents.deletefeature.connect(self.delete_feature)
 
         def createSpacer(width=0, height=0):
             widget = QWidget()
@@ -207,6 +207,27 @@ class MainWindow(ui_mainwindow.Ui_MainWindow, QMainWindow):
 
         iface = RoamInterface(RoamEvents, GPS, self, self.canvas_page)
         plugins.api = iface
+
+    def delete_feature(self, form, feature):
+        featureform = form.create_featureform(feature)
+
+        try:
+            msg = featureform.deletemessage
+        except AttributeError:
+            msg = 'Do you really want to delete this feature?'
+
+        box = DeleteFeatureDialog(msg)
+
+        if not box.exec_():
+            return
+
+        try:
+            featureform.delete()
+        except featureform.DeleteFeatureException as ex:
+            RoamEvents.raisemessage(*ex.error)
+            return
+
+        featureform.featuredeleted(feature)
 
     def set_projectbuttons(self, visible):
         for action in self.projectbuttons:
