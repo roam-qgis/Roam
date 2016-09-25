@@ -10,11 +10,11 @@ REM ----------------------------------------------------------------------------
 
 pushd %~dp0
 
-SET QGISNAME=qgis-ltr
-call scripts/setenv.bat
+IF NOT DEFINED QGISNAME SET QGISNAME=qgis
+call setenv.bat
 
 >package.log (
-	make package
+	make -C "%~dp0\.." package
 )
 popd
 

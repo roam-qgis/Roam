@@ -73,6 +73,7 @@ class FeatureFormWidget(Ui_Form, QWidget):
         self.featureform.enablesave.connect(self.actionSave.setEnabled)
         self.featureform.enablesave.connect(self.actionSave.setVisible)
         self.featureform.rejected.connect(self.canceled.emit)
+        self.featureform.accepted.connect(self.featuresaved)
 
         self.featureformarea.layout().addWidget(self.featureform)
 
@@ -95,6 +96,10 @@ class FeatureFormWidget(Ui_Form, QWidget):
         self.featureform.featuredeleted(self.feature)
         self.featuredeleted.emit()
 
+    def feature_saved(self):
+        self.featuresaved.emit()
+        RoamEvents.featuresaved.emit()
+
     def save_feature(self):
         try:
             self.featureform.save()
@@ -104,8 +109,7 @@ class FeatureFormWidget(Ui_Form, QWidget):
         except featureform.FeatureSaveException as ex:
             RoamEvents.raisemessage(*ex.error)
 
-        self.featuresaved.emit()
-        RoamEvents.featuresaved.emit()
+        self.feature_saved()
 
     def set_config(self, config):
         self.config = config
@@ -147,7 +151,7 @@ class FeatureFormWidgetEditor(LargeEditorWidget):
         canvas = config.get('canvas', None)
         formwidget = FeatureFormWidget()
         editmode = config['editmode']
-        featureform = form.create_featureform(None, defaults=defaults, canvas=canvas, editmode=editmode)
+        featureform = form.create_featureform(config['feature'], defaults=defaults, canvas=canvas, editmode=editmode)
         formwidget.set_featureform(featureform)
         return formwidget
 
@@ -175,3 +179,6 @@ class FeatureFormWidgetEditor(LargeEditorWidget):
 
     def after_load(self):
         self.widget.after_load()
+
+    def save(self):
+        self.widget.save_feature()

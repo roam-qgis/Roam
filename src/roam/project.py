@@ -183,6 +183,8 @@ class Form(object):
         self._formclass = None
         self._action = None
         self.project = project
+        self.template_values = {}
+        self.suppressform = False
 
     @classmethod
     def from_config(cls, name, config, folder, project=None):
@@ -203,6 +205,10 @@ class Form(object):
         return Form.from_config(name, config, folder)
 
     @property
+    def savekey(self):
+        return self.settings.get('savekey', str(self.QGISLayer.id()))
+
+    @property
     def label(self):
         return self.settings.setdefault('label', self.name)
 
@@ -210,8 +216,8 @@ class Form(object):
     def name(self):
         return self._name
 
-    def createuiaction(self):
-        action = QAction(QIcon(self.icon), self.icontext, None)
+    def createuiaction(self, parent=None):
+        action = QAction(QIcon(self.icon), self.icontext, parent)
         if not self.valid[0]:
             action.setEnabled(False)
             action.setText(action.text() + " (invalid)")
@@ -224,6 +230,10 @@ class Form(object):
     @property
     def layername(self):
         return self.settings['layer']
+
+    @property
+    def events(self):
+        return self.settings.get('events', [])
 
     @property
     def icon(self):
@@ -343,7 +353,7 @@ class Form(object):
     def saveconfig(cls, config, folder):
         writefolderconfig(config, folder, configname='form')
 
-    def new_feature(self, set_defaults=True, geometry=None):
+    def new_feature(self, set_defaults=True, geometry=None, data=None):
         """
         Returns a new feature that is created for the layer this form is bound too
         :return: A new QgsFeature
@@ -352,6 +362,13 @@ class Form(object):
         layer = self.QGISLayer
         fields = layer.pendingFields()
         feature = QgsFeature(fields)
+        if data:
+            print "Loading data"
+            for key, value in data.iteritems():
+                feature[key] = value
+        else:
+            data = {}
+
         if geometry:
             feature.setGeometry(geometry)
 
@@ -361,11 +378,18 @@ class Form(object):
                 if index in pkindexes and layer.dataProvider().name() == 'spatialite':
                     continue
 
+                # Don't override fields we have already set.
+                if fields.field(index).name() in data:
+                    continue
+
                 value = layer.dataProvider().defaultValue(index)
                 feature[index] = value
             # Update the feature with the defaults from the widget config
             defaults = self.default_values(feature)
             for key, value in defaults.iteritems():
+                # Don't override fields we have already set.
+                if key in data:
+                    continue
                 try:
                     feature[key] = value
                 except KeyError:
@@ -474,7 +498,10 @@ class Project(QObject):
 
     @property
     def projectfile(self):
-        return glob.glob(os.path.join(self.folder, '*.qgs'))[0]
+        try:
+            return os.path.abspath(self.settings['projectfile'])
+        except KeyError:
+            return os.path.join(self.folder, "project.qgs")
 
     def validate(self):
         """
@@ -505,6 +532,9 @@ class Project(QObject):
         :return: True if this project is valid.
         """
         return not list(self.validate())
+
+    def datafolder(self):
+        return os.path.join(self.folder, "_data")
 
     def basedatadb(self):
         path = os.path.join(self.folder, "_data", "basedata.sqlite")

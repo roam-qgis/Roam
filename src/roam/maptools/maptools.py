@@ -10,11 +10,9 @@ import roam.config
 
 import roam.resources_rc
 
-snapping = True
-
 
 class RubberBand(QgsRubberBand):
-    def __init__(self, canvas, geometrytype, width=5, iconsize=20):
+    def __init__(self, canvas, geometrytype, width=5, iconsize=10):
         super(RubberBand, self).__init__(canvas, geometrytype)
         self.canvas = canvas
         self.setIconSize(iconsize)
@@ -42,6 +40,9 @@ class RubberBand(QgsRubberBand):
     def paint(self, p, *args):
         super(RubberBand, self).paint(p)
 
+        # Enable to debug the render area
+
+        # p.drawRect(self.boundingRect())
         if not roam.config.settings.get("draw_distance", True):
             return
 
@@ -78,8 +79,13 @@ class RubberBand(QgsRubberBand):
     def boundingRect(self):
         rect = super(RubberBand, self).boundingRect()
         width = rect.size().width()
-        rect.setWidth(width + 200)
-        return rect
+        height = rect.size().height()
+        m2p = self.canvas.getCoordinateTransform()
+        res = m2p.mapUnitsPerPixel()
+        new = 50 / res
+        top = rect.topLeft() - QPoint(0, new)
+        bottom = rect.bottomRight() + QPoint(new, 0)
+        return QRectF(top, bottom)
 
 
 class BaseAction(QAction):
@@ -227,20 +233,13 @@ class PolylineTool(QgsMapToolEdit):
         RoamEvents.selectioncleared.connect(self.selection_updated)
         RoamEvents.selectionchanged.connect(self.selection_updated)
 
-        self.snapping = snapping
-
+        self.snapping = True
 
     def keyPressEvent(self, event):
         if event.key() == Qt.Key_Escape:
             self.reset()
         if event.key() == Qt.Key_S:
             self.toggle_snapping()
-
-    def toggle_snapping(self):
-        self.snapping = not self.snapping
-        global snapping
-        snapping = self.snapping
-        RoamEvents.snappingChanged.emit(snapping)
 
     def selection_updated(self, *args):
         if self.editmode:
@@ -549,7 +548,7 @@ class PointTool(TouchMapTool):
         self.gpscapture = GPSCaptureAction(self, 'point')
         self.gpscapture.triggered.connect(self.addatgps)
         self.snapper = QgsMapCanvasSnapper(self.canvas)
-        self.pointband = QgsRubberBand(self.canvas, QGis.Point)
+        self.pointband = RubberBand(self.canvas, QGis.Point)
         self.startcolour = QColor.fromRgb(0, 0, 255, 100)
         self.pointband.setColor(self.startcolour)
         self.pointband.setIconSize(20)

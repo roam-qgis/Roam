@@ -2,6 +2,7 @@ import os
 from qgis.core import QgsExpression, QgsMapLayerRegistry, QgsFeatureRequest, QGis, QgsPoint, QgsRectangle
 
 import roam.utils
+from roam.api import RoamEvents
 
 canvas = None
 
@@ -29,12 +30,12 @@ def default_value(defaultconfig, feature, layer):
             value = None
     else:
         # Pass it though a series of filters to get the default value if it's just pain text
+        defaultconfig = str(defaultconfig)
         value = os.path.expandvars(defaultconfig)
         if '[%' in defaultconfig and '%]' in defaultconfig:
             # TODO Use regex
             value = QgsExpression.replaceExpressionText(value, feature, layer)
 
-    roam.utils.debug("Default value: {}".format(value))
     return value
 
 
@@ -70,7 +71,14 @@ def layer_value(feature, layer, defaultconfig):
     field = defaultconfig['field']
 
     for searchlayer in layers:
-        searchlayer = QgsMapLayerRegistry.instance().mapLayersByName(searchlayer)[0]
+        try:
+            searchlayer = QgsMapLayerRegistry.instance().mapLayersByName(searchlayer)[0]
+        except IndexError:
+            RoamEvents.raisemessage("Missing layer",
+                                    "Unable to find layer used in widget expression {}".format(searchlayer),
+                                    level=1)
+            roam.utils.warning("Unable to find expression layer {}".format(searchlayer))
+            return
         if feature.geometry():
             rect = feature.geometry().boundingBox()
             if layer.geometryType() == QGis.Point:

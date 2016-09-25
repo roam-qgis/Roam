@@ -35,6 +35,7 @@ def _get_sqlite_col_length(layer, fieldname):
         layer = layer.name()
 
     tabledata = list(database.query("pragma table_info({})".format(layer)))
+    database.close()
     for row in tabledata:
         if not row['name'] == fieldname:
             continue

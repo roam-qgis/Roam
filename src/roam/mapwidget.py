@@ -25,11 +25,14 @@ from roam.editorwidgets.numberwidget import Stepper
 from biglist import BigList
 from ui.ui_rotation import Ui_Form as rotation_widget
 from roam.api import GPS
+from roam.api import GPS, plugins
 
 import roam.utils
 import roam.config
 
 import roam_style
+
+snapping = True
 
 try:
     from qgis.gui import QgsMapToolTouch
@@ -71,6 +74,15 @@ class RotationWidget(rotation_widget, QWidget):
         corner = self.parent().geometry().bottomRight()
         x, y = corner.x(), corner.y()
         self.move(x - self.width(), y - self.height())
+
+
+
+class SnappingUtils(QgsMapCanvasSnappingUtils):
+    def prepareIndexStarting(self, count):
+        print count
+
+    def prepareIndexProgress(self, index):
+        print index
 
 
 class NorthArrow(QGraphicsSvgItem):
@@ -368,7 +380,7 @@ class MapWidget(Ui_CanvasWidget, QMainWindow):
         self.canvas.enableAntiAliasing(True)
         self.canvas.setWheelAction(QgsMapCanvas.WheelZoomToMouseCursor)
 
-        self.snapping = QgsMapCanvasSnappingUtils(self.canvas, self)
+        self.snapping = SnappingUtils(self.canvas, self)
         self.canvas.setSnappingUtils(self.snapping)
         QgsProject.instance().readProject.connect(self.snapping.readConfigFromProject)
 
@@ -396,6 +408,10 @@ class MapWidget(Ui_CanvasWidget, QMainWindow):
             self.northarrow = NorthArrow(":/icons/north", self.canvas)
             self.northarrow.setPos(10, 10)
             self.canvas.scene().addItem(self.northarrow)
+
+
+        smallmode = roam.config.settings.get("smallmode", False)
+        self.projecttoolbar.setSmallMode(smallmode)
 
         self.scalebar_enabled = roam.config.settings.get('scale_bar', False)
         if self.scalebar_enabled:
@@ -490,6 +506,35 @@ class MapWidget(Ui_CanvasWidget, QMainWindow):
     def set_rotation(self):
         self.rotationwidget.setVisible(not self.rotationwidget.isVisible())
 
+    def clear_plugins(self):
+        toolbars = self.findChildren(QToolBar)
+        for toolbar in toolbars:
+            if toolbar.property("plugin_toolbar"):
+                toolbar.unload()
+                self.removeToolBar(toolbar)
+                toolbar.deleteLater()
+
+    def add_plugins(self, pluginnames):
+        for name in pluginnames:
+            # Get the plugin
+            try:
+                plugin_mod = plugins.loaded_plugins[name]
+            except KeyError:
+                continue
+
+            if not hasattr(plugin_mod, 'toolbars'):
+                roam.utils.warning("No toolbars() function found in {}".format(name))
+                continue
+
+            toolbars = plugin_mod.toolbars()
+            self.load_plugin_toolbars(toolbars)
+
+    def load_plugin_toolbars(self, toolbars):
+        for ToolBarClass in toolbars:
+            toolbar = ToolBarClass(plugins.api, self)
+            self.addToolBar(Qt.BottomToolBarArea, toolbar)
+            toolbar.setProperty("plugin_toolbar", True)
+
     def snapping_changed(self, snapping):
         """
         Called when the snapping settings have changed. Updates the label in the status bar.
@@ -504,13 +549,10 @@ class MapWidget(Ui_CanvasWidget, QMainWindow):
         """
         Toggle snapping on or off.
         """
-        try:
-            tool = self.canvas.mapTool()
-            tool.toggle_snapping()
-            snapping = tool.snapping
-            self.snapping_changed(snapping)
-        except AttributeError:
-            pass
+        snap = not snapping
+        global snapping
+        snapping = snap
+        RoamEvents.snappingChanged.emit(snapping)
 
     def selectscale(self):
         """
@@ -543,6 +585,17 @@ class MapWidget(Ui_CanvasWidget, QMainWindow):
         :return:
         """
         self.gpslabel.setText("GPS Not Active")
+
+    def zoom_to_feature(self, feature):
+        box = feature.geometry().boundingBox()
+        xmin, xmax, ymin, ymax = box.xMinimum(), box.xMaximum(), box.yMinimum(), box.yMaximum()
+        xmin -= 5
+        xmax += 5
+        ymin -= 5
+        ymax += 5
+        box = QgsRectangle(xmin, ymin, xmax, ymax)
+        self.canvas.setExtent(box)
+        self.canvas.refresh()
 
     def updatestatuslabel(self, *args):
         """
@@ -813,6 +866,8 @@ class MapWidget(Ui_CanvasWidget, QMainWindow):
             self.scalebar.update()
 
         self.actionPan.toggle()
+        self.clear_plugins()
+        self.add_plugins(project.enabled_plugins)
 
     def setMapTool(self, tool, *args):
         """
@@ -822,6 +877,8 @@ class MapWidget(Ui_CanvasWidget, QMainWindow):
         if tool == self.canvas.mapTool():
             return
 
+        if hasattr(tool, "setSnapping"):
+            tool.setSnapping(snapping)
         self.canvas.setMapTool(tool)
 
     def connectButtons(self):
@@ -840,6 +897,11 @@ class MapWidget(Ui_CanvasWidget, QMainWindow):
         self.zoomOutTool = QgsMapToolZoom(self.canvas, True)
         self.panTool = PanTool(self.canvas)
         self.infoTool = InfoTool(self.canvas)
+
+        self.infoTool.setAction(self.actionInfo)
+        self.zoomInTool.setAction(self.actionZoom_In)
+        self.zoomOutTool.setAction(self.actionZoom_Out)
+        self.panTool.setAction(self.actionPan)
 
         connectAction(self.actionZoom_In, self.zoomInTool)
         connectAction(self.actionZoom_Out, self.zoomOutTool)
@@ -882,7 +944,7 @@ class MapWidget(Ui_CanvasWidget, QMainWindow):
         Load the given form so it's the active one for capture
         :param form: The form to load
         """
-        self.clearCapatureTools()
+        self.clearCaptureTools()
         self.dataentryselection.setIcon(QIcon(form.icon))
         self.dataentryselection.setText(form.icontext)
         self.create_capture_buttons(form)
@@ -947,7 +1009,7 @@ class MapWidget(Ui_CanvasWidget, QMainWindow):
         RoamEvents.editgeometry_complete.emit(form, feature)
         self.canvas.mapTool().setEditMode(False, None)
 
-    def clearCapatureTools(self):
+    def clearCaptureTools(self):
         """
         Clear the capture tools from the toolbar.
         :return: True if the capture button was active at the time of clearing.
@@ -989,7 +1051,7 @@ class MapWidget(Ui_CanvasWidget, QMainWindow):
         self.gpsband.hide()
         self.clear_selection()
         self.clear_temp_objects()
-        self.clearCapatureTools()
+        self.clearCaptureTools()
         self.canvas.freeze()
         self.canvas.clear()
         self.canvas.freeze(False)

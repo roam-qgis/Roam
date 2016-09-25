@@ -117,6 +117,9 @@ class InfoDock(infodock_widget, QWidget):
         self.deleteFeatureButton.pressed.connect(self.delete_feature)
         self.deleteFeatureButton.setCheckable(False)
 
+        self.nextButton.pressed.connect(self.pagenext)
+        self.prevButton.pressed.connect(self.pageback)
+
         RoamEvents.selectioncleared.connect(self.clearResults)
         RoamEvents.editgeometry_complete.connect(self.refreshcurrent)
 
@@ -231,11 +234,14 @@ class InfoDock(infodock_widget, QWidget):
         newform = self.project.form_by_name(form)
         if config.get('mode', "copy").lower() == 'copy':
             geom = current_feature.geometry()
-            newgeom = QgsGeometry(geom)
-            newfeature = newform.new_feature(geometry=newgeom)
             mappings = config.get('field_mapping', {})
+            data = {}
             for fieldfrom, fieldto in mappings.iteritems():
-                newfeature[fieldto] = current_feature[fieldfrom]
+                data[fieldto] = current_feature[fieldfrom]
+
+            newgeom = QgsGeometry(geom)
+            newfeature = newform.new_feature(geometry=newgeom, data=data)
+
             return newform, newfeature
         else:
             raise NotImplementedError("Only copy mode supported currently")
@@ -329,6 +335,8 @@ class InfoDock(infodock_widget, QWidget):
 
         clear_image_cache()
 
+        self.countLabel.setText(str(cursor))
+
         info1, results = self.generate_info("info1", self.project, layer, feature.id(), feature, countlabel=str(cursor))
         info2, _= self.generate_info("info2", self.project, layer, feature.id(), feature, lastresults=results[0])
 
@@ -382,6 +390,8 @@ class InfoDock(infodock_widget, QWidget):
                 else:
                     results = queryresults
             except database.DatabaseException as ex:
+                RoamEvents.raisemessage("Query Error", ex.message, 3)
+                utils.error(ex.message)
                 if not isinfo1:
                     error = "<b> Error: {} <b>".format(ex.msg)
                 else:
@@ -459,8 +469,11 @@ class InfoDock(infodock_widget, QWidget):
 
         db = database.Database.fromLayer(layer)
         mapkey = get_key()
-        attributes = values_from_feature(feature)
-        results = db.query(sql, mapkey=mapkey, **attributes)
+        attributes = values_from_feature(feature, safe_names=True)
+        attributes['mapkey'] = mapkey
+        # Run the SQL text though the QGIS expression engine first.
+        sql = QgsExpression.replaceExpressionText(sql, feature, layer)
+        results = db.query(sql, **attributes)
         results = list(results)
         return results
 
@@ -477,13 +490,15 @@ class InfoDock(infodock_widget, QWidget):
 def generate_rows(fields, attributes, **kwargs):
     data = OrderedDict()
     items = []
+    count = 0
     for field, value in zip(fields, attributes):
         if field == 'mapkey':
             continue
-        safefieldname = "_" + field.replace(" ", "_")
-        data[safefieldname] = value
-        item = u"<tr><th>{0}</th> <td>${{{1}}}</td></tr>".format(field, safefieldname)
+        name = "field_" + str(count)
+        data[name] = value
+        item = u"<tr><th>{0}</th> <td>${{{1}}}</td></tr>".format(field, name)
         items.append(item)
+        count += 1
     rowtemple = Template(''.join(items))
     rowshtml = updateTemplate(data, rowtemple, **kwargs)
     return rowshtml

@@ -43,6 +43,7 @@ class GPSService(QObject):
         self.isConnected = False
         self._currentport = None
         self.postion = None
+        self.latlong_position = None
         self.elevation = None
         self.info = QgsGPSInformation()
         self.wgs84CRS = QgsCoordinateReferenceSystem(4326)
@@ -117,6 +118,12 @@ class GPSService(QObject):
         except pynmea2.SentenceTypeError as er:
             log(er.message)
             return
+        except pynmea2.ParseError as er:
+            log(er.message)
+            return
+        except pynmea2.ChecksumError as er:
+            log(er.message)
+            return
 
         mappings = {"RMC": self.extract_rmc,
                     "GGA": self.extract_gga,
@@ -180,6 +187,7 @@ class GPSService(QObject):
 
 
         map_pos = QgsPoint(gpsInfo.longitude, gpsInfo.latitude)
+        self.latlong_position = map_pos
 
         if self.crs:
             transform = QgsCoordinateTransform(self.wgs84CRS, self.crs)

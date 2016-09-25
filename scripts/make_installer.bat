@@ -4,7 +4,7 @@ SET INSTALLER=1
 pushd %~dp0
 ECHO Creating installer package.
 SET QGISNAME=qgis
-CALL ..\package.bat
+IF NOT DEFINED DONTPACKAGE (CALL package.bat)
 MKDIR ..\release
 CALL installer\makesfx.bat "..\release\IntraMaps Roam Installer" ..\dist\
 CALL installer\makesfx.bat "..\release\IntraMaps Roam Installer - Silent" ..\dist\ -s

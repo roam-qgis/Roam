@@ -12,6 +12,7 @@ class RoamApp(object):
         self.apppath = apppath
         self.prefixpath = prefixpath
         self.settingspath = settingspath
+        self.approot = apppath
         self.libspath = libspath
         self.i18npath = i18npath
         self.app = None
@@ -83,7 +84,7 @@ class RoamApp(object):
         config.append("====Translation File===")
         config.append(self.translationFile)
         config.append("Roam Version: {}".format(roam.__version__))
-        config.append("QGIS Version: {}".format(str(QGis.QGIS_VERSION)))
+        config.append(u"QGIS Version: {}".format(unicode(QGis.QGIS_VERSION)))
         return '\n'.join(config)
 
 def _setup(apppath=None, logo='', title='', **kwargs):

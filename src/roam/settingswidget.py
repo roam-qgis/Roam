@@ -186,7 +186,7 @@ class SettingsWidget(Ui_settingsWidget, QWidget):
         self.updateCOMPorts()
         # Read version
 
-        self.versionLabel.setText(roam.__version__)
-        self.qgisapiLabel.setText(str(QGis.QGIS_VERSION))
+        self.versionLabel.setText(unicode(roam.__version__))
+        self.qgisapiLabel.setText(unicode(QGis.QGIS_VERSION))
         ecwsupport = 'ecw' in QgsProviderRegistry.instance().fileRasterFilters()
         self.ecwlabel.setText("Yes" if ecwsupport else "No")

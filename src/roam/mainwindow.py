@@ -104,6 +104,9 @@ class MainWindow(ui_mainwindow.Ui_MainWindow, QMainWindow):
         icon = roam.roam_style.iconsize()
         self.menutoolbar.setIconSize(QSize(icon, icon))
 
+        smallmode = roam.config.settings.get("smallmode", False)
+        self.menutoolbar.setSmallMode(smallmode)
+
         self.projectupdater = ProjectUpdater(projects_base=roamapp.projectsroot)
         self.projectupdater.foundProjects.connect(self.projectwidget.show_new_updateable)
         self.projectupdater.projectUpdateStatus.connect(self.projectwidget.update_project_status)
@@ -202,6 +205,30 @@ class MainWindow(ui_mainwindow.Ui_MainWindow, QMainWindow):
 
         self.currentselection = {}
 
+        iface = RoamInterface(RoamEvents, GPS, self, self.canvas_page)
+        plugins.api = iface
+
+    def delete_feature(self, form, feature):
+        featureform = form.create_featureform(feature)
+
+        try:
+            msg = featureform.deletemessage
+        except AttributeError:
+            msg = 'Do you really want to delete this feature?'
+
+        box = DeleteFeatureDialog(msg)
+
+        if not box.exec_():
+            return
+
+        try:
+            featureform.delete()
+        except featureform.DeleteFeatureException as ex:
+            RoamEvents.raisemessage(*ex.error)
+            return
+
+        featureform.featuredeleted(feature)
+
     def set_projectbuttons(self, visible):
         for action in self.projectbuttons:
             action.setVisible(visible)
@@ -226,8 +253,7 @@ class MainWindow(ui_mainwindow.Ui_MainWindow, QMainWindow):
             else:
                 self.menutoolbar.insertAction(self.actionProject, action)
 
-            iface = RoamInterface(RoamEvents, GPS, self)
-            pagewidget = PageClass(iface, self)
+            pagewidget = PageClass(plugins.api, self)
 
             safe_connect(RoamEvents.selectionchanged, pagewidget.selection_changed)
             safe_connect(RoamEvents.projectloaded, pagewidget.project_loaded)
@@ -278,7 +304,7 @@ class MainWindow(ui_mainwindow.Ui_MainWindow, QMainWindow):
         viewer.resize(self.stackedWidget.size())
         viewer.openimage(pixmap)
 
-    def delete_feature(self, form, feature):
+    def delete_featue(self, form, feature):
         """
         Delete the selected feature
         """
@@ -369,6 +395,7 @@ class MainWindow(ui_mainwindow.Ui_MainWindow, QMainWindow):
 
     def highlightfeature(self, layer, feature, features):
         self.canvas_page.highlight_active_selection(layer, feature, features)
+        RoamEvents.activeselectionchanged.emit(layer, feature, features)
 
     def showmap(self):
         self.actionMap.setVisible(True)

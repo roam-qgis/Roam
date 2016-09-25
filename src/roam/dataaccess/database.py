@@ -4,6 +4,8 @@ from qgis.core import QgsDataSourceURI
 from roam.structs import OrderedDict
 import roam.utils
 
+import re
+
 class DatabaseException(Exception):
     def __init__(self, msg):
         super(DatabaseException, self).__init__(msg)
@@ -14,6 +16,9 @@ class Database(object):
     def __init__(self, sqldatabase):
         self.db = sqldatabase
         self.form = None
+
+    def close(self):
+        self.db.close()
 
     @classmethod
     def fromLayer(cls, layer):
@@ -53,13 +58,16 @@ class Database(object):
         if dbtype == "QSQLITE":
             db.setDatabaseName(connection['database'])
         else:
-            constring = "driver={driver};server={host};database={database};uid={user};pwd={password}"
-            connection["driver"] = "{SQL Server}"
-            constring = constring.format(**connection)
-            db.setHostName(connection['host'])
-            db.setDatabaseName(constring)
-            db.setUserName(connection['user'])
-            db.setPassword(connection['password'])
+            if "constring" in connection:
+                db.setDatabaseName(connection['constring'])
+            else:
+                constring = "driver={driver};server={host};database={database};uid={user};pwd={password}"
+                connection["driver"] = "{SQL Server}"
+                constring = constring.format(**connection)
+                db.setHostName(connection['host'])
+                db.setDatabaseName(constring)
+                db.setUserName(connection['user'])
+                db.setPassword(connection['password'])
 
         if not db.open():
             raise DatabaseException(db.lastError().text())
@@ -97,7 +105,7 @@ class Database(object):
         query.prepare(querystring)
         for key, value in mappings.iteritems():
             bindvalue = ":{}".format(key)
-            if bindvalue in querystring:
+            if re.search(r"{}\b".format(bindvalue), querystring):
                 query.bindValue(bindvalue, value)
         return query
 
@@ -124,7 +132,6 @@ class Database(object):
     def querymodel(self, sql, **mappings):
         sql = sql.replace(r"\r\n", " ")
         query = self._query(sql, **mappings)
-        print sql, mappings
         if query.exec_():
             model = QSqlQueryModel()
             model.setQuery(query)

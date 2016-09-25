@@ -4,6 +4,7 @@ from distutils.command.build import build
 from scripts.fabricate import run
 
 import os
+from scripts import fabricate
 
 if os.name is 'nt':
     try:

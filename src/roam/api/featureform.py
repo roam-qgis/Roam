@@ -1,9 +1,11 @@
 import os
 import sys
 import subprocess
+import collections
 import types
 import tempfile
 import json
+import copy
 
 from functools import partial
 
@@ -52,6 +54,21 @@ values_file = os.path.join(tempfile.gettempdir(), "Roam")
 
 nullcheck = qgisutils.nullcheck
 
+import contextlib
+import time
+
+totals = collections.defaultdict(int)
+
+@contextlib.contextmanager
+def timed(title):
+    ts = time.time()
+    yield
+    th = time.time()
+    took = th - ts
+    totals[title] += took
+    message = "{} {}".format(title, took)
+    print message
+
 
 class GeomWidget(Ui_GeomWidget, QStackedWidget):
     def __init__(self, parent=None):
@@ -85,10 +102,9 @@ class GeomWidget(Ui_GeomWidget, QStackedWidget):
         self.edited = True
 
 
-def loadsavedvalues(layer):
+def loadsavedvalues(form):
     attr = {}
-    id = str(layer.id())
-    savedvaluesfile = os.path.join(values_file, "%s.json" % id)
+    savedvaluesfile = os.path.join(values_file, "{}.json".format(form.savekey))
     try:
         utils.log(savedvaluesfile)
         with open(savedvaluesfile, 'r') as f:
@@ -100,8 +116,8 @@ def loadsavedvalues(layer):
     return attr
 
 
-def savevalues(layer, values):
-    savedvaluesfile = os.path.join(values_file, "%s.json" % str(layer.id()))
+def savevalues(form, values):
+    savedvaluesfile = os.path.join(values_file, "{}.json".format(form.savekey))
     folder = os.path.dirname(savedvaluesfile)
     if not os.path.exists(folder):
         os.makedirs(folder)
@@ -116,7 +132,12 @@ def buildfromui(uifile, base):
 
 
 def buildfromauto(formconfig, base):
-    widgetsconfig = formconfig['widgets']
+    widgetsconfig = copy.deepcopy(formconfig['widgets'])
+
+    try:
+        widgetsconfig = base.get_widgets(widgetsconfig)
+    except AttributeError:
+        pass
 
     newstyle = formconfig.get("newstyle", False)
     hassections = any(config['widget'] == "Section" for config in widgetsconfig)
@@ -166,6 +187,7 @@ def buildfromauto(formconfig, base):
             if outlayout:
                 spacer = QWidget()
                 spacer.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Expanding)
+                outlayout.addItem(QSpacerItem(10, 500))
                 outlayout.addWidget(spacer)
 
             name = config['name']
@@ -247,6 +269,7 @@ class FeatureFormBase(QWidget):
     showwidget = pyqtSignal(QWidget)
     loadform = pyqtSignal()
     rejected = pyqtSignal(str, int)
+    accepted = pyqtSignal()
     enablesave = pyqtSignal(bool)
     showlargewidget = pyqtSignal(object, object, object, dict)
 
@@ -261,6 +284,7 @@ class FeatureFormBase(QWidget):
         self.defaults = defaults
         self.bindingvalues = CaseInsensitiveDict()
         self.editingmode = kwargs.get("editmode", False)
+        self.widgetidlookup = {}
 
     def open_large_widget(self, widgettype, lastvalue, callback, config=None):
         self.showlargewidget.emit(widgettype, lastvalue, callback, config)
@@ -288,19 +312,35 @@ class FeatureFormBase(QWidget):
         """
         self.geomwidget = self.findcontrol("__geomwidget")
 
-        widgetsconfig = self.formconfig['widgets']
+        widgetsconfig = copy.deepcopy(self.formconfig['widgets'])
+
+        try:
+            widgetsconfig = self.get_widgets(widgetsconfig)
+        except AttributeError:
+            pass
 
         layer = self.form.QGISLayer
         # Crash in QGIS if you lookup a field that isn't found.
         # We just make a dict with all fields lower because QgsFields is case sensitive.
         fields = {field.name().lower():field for field in layer.pendingFields().toList()}
 
-        import copy
+        # Build a lookup for events
+        self.events = collections.defaultdict(list)
+        for event in self.form.events:
+            self.events[event['source']].append(event)
+
         widgetsconfig = copy.deepcopy(widgetsconfig)
+        self.sectionwidgets = {}
+
+        currentsection = None
         for config in widgetsconfig:
             widgettype = config['widget']
             if widgettype == "Section":
+                name = config['name']
+                currentsection = name
+                self.sectionwidgets[name] = []
                 continue
+
             field = config['field']
             if not field:
                 utils.info("Skipping widget. No field defined")
@@ -352,7 +392,11 @@ class FeatureFormBase(QWidget):
 
             widgetwrapper.newstyleform = self.formconfig.get("newstyle", False)
             widgetwrapper.required = config.get('required', False)
+            widgetwrapper.id = config.get('_id', '')
 
+            # Only connect widgets that have events
+            if widgetwrapper.id in self.events:
+                widgetwrapper.valuechanged.connect(partial(self.check_for_update_events, widgetwrapper))
 
             widgetwrapper.valuechanged.connect(self.updaterequired)
 
@@ -366,6 +410,80 @@ class FeatureFormBase(QWidget):
 
             self._bindsavebutton(field)
             self.boundwidgets[field] = widgetwrapper
+            try:
+                self.widgetidlookup[config['_id']] = widgetwrapper
+            except KeyError:
+                pass
+
+            if currentsection:
+                self.sectionwidgets[currentsection].append(widgetwrapper)
+
+    def widgets_for_section(self, name):
+        try:
+            return self.sectionwidgets[name]
+        except KeyError:
+            return []
+
+    def get_widget_from_id(self, id):
+        try:
+            return self.widgetidlookup[id]
+        except KeyError:
+            return None
+
+    def check_for_update_events(self, widget, value):
+        if not self.feature:
+            return
+
+        from qgis.core import QgsExpression, QgsExpressionContext, QgsExpressionContextScope
+        # If we don't have any events for this widgets just get out now
+        if not widget.id in self.events:
+            return
+
+        events = self.events[widget.id]
+        events = [event for event in events if event['event'].lower() == 'update']
+        if not events:
+            return
+
+        feature = self.to_feature(no_defaults=True)
+
+        for event in events:
+            action = event['action'].lower()
+            targetid = event['target']
+            if targetid == widget.id:
+                utils.log("Can't connect events to the same widget. ID {}".format(targetid))
+                continue
+
+            widget = self.get_widget_from_id(targetid)
+
+            if not widget:
+                utils.log("Can't find widget for id {} in form".format(targetid))
+                continue
+
+            condition = event['condition']
+            expression = event['value']
+
+            context = QgsExpressionContext()
+            scope = QgsExpressionContextScope()
+            scope.setVariable("value", value)
+            scope.setVariable("field", widget.field)
+            context.setFeature(feature)
+            context.appendScope(scope)
+
+            conditionexp = QgsExpression(condition)
+            exp = QgsExpression(expression)
+
+            if action.lower() == "show":
+                widget.hidden = not conditionexp.evaluate(context)
+            if action.lower() == "hide":
+                widget.hidden = conditionexp.evaluate(context)
+            if action == 'widget expression':
+                if conditionexp.evaluate(context):
+                    newvalue = self.widget_default(field, feature=feature)
+                    widget.setvalue(newvalue)
+            if action == 'set value':
+                if conditionexp.evaluate(context):
+                    newvalue = exp.evaluate(context)
+                    widget.setvalue(newvalue)
 
     def bindvalues(self, values, update=False):
         """
@@ -401,7 +519,7 @@ class FeatureFormBase(QWidget):
         values = self.form.values_from_feature(feature)
         self.bindvalues(values)
 
-    def getvalues(self):
+    def getvalues(self, no_defaults=False):
         def shouldsave(field):
             name = "{}_save".format(field)
             button = self.findcontrol(name)
@@ -411,11 +529,12 @@ class FeatureFormBase(QWidget):
         savedvalues = {}
         values = CaseInsensitiveDict(self.bindingvalues)
         for field, wrapper in self.boundwidgets.iteritems():
-            if wrapper.get_default_value_on_save:
-                print "Getting default values"
+            if not no_defaults and wrapper.get_default_value_on_save:
                 value = self.widget_default(field)
             else:
                 value = wrapper.value()
+                extradata = wrapper.extraData()
+                values.update(extradata)
 
             # TODO this should put pulled out and unit tested. MOVE ME!
             # NOTE: This is photo widget stuff and really really doesn't belong here.
@@ -492,7 +611,7 @@ class FeatureFormBase(QWidget):
         for label in self.findChildren(QLabel):
             createhelplink(label, self.form.folder)
 
-    def widget_default(self, name):
+    def widget_default(self, name, feature=None):
         """
         Return the default value for the given widget
         """
@@ -504,10 +623,31 @@ class FeatureFormBase(QWidget):
         if not 'default' in widgetconfig:
             raise KeyError('Default value not defined for this field {}'.format(name))
 
-        return defaults.widget_default(widgetconfig, self.feature, self.form.QGISLayer)
+        if not feature:
+            feature = self.feature
+
+        return defaults.widget_default(widgetconfig, feature, self.form.QGISLayer)
 
     def close_form(self, reason=None, level=1):
         self.rejected.emit(reason, level)
+
+    def to_feature(self, no_defaults=False):
+        """
+        Create a QgsFeature from the current form values
+        """
+        if not self.feature:
+            return
+
+        feature = QgsFeature(self.feature.fields())
+        feature.setGeometry(QgsGeometry(self.feature.geometry()))
+        try:
+            values, _ = self.getvalues(no_defaults=no_defaults)
+        except TypeError:
+            values, _ = self.getvalues()
+
+        self.updatefeautrefields(feature, values)
+        self.update_geometry(feature)
+        return feature
 
 
 class FeatureForm(FeatureFormBase):
@@ -685,16 +825,6 @@ class FeatureForm(FeatureFormBase):
     def missingfields(self):
         return [field for field, valid in self.requiredfields.iteritems() if valid == False]
 
-    def to_feature(self):
-        """
-        Create a QgsFeature from the current form values
-        """
-        feature = QgsFeature(self.feature.fields())
-        feature.setGeometry(QgsGeometry(self.feature.geometry()))
-        self.updatefeautrefields(feature, self.getvalues()[0])
-        self.update_geometry(feature)
-        return feature
-
     def updatefeautrefields(self, feature, values):
         def field_or_null(v):
             if v == '' \
@@ -711,13 +841,13 @@ class FeatureForm(FeatureFormBase):
 
         return feature
 
-    def save(self):
+    def save(self, ignore_required=False):
         """
         Save the values from the form into the set feature
 
         Override this method to handle saving things your own way if needed.
         """
-        if not self.allpassing:
+        if not self.allpassing and not ignore_required:
             raise MissingValuesException.missing_values()
 
         def save_images(values):
@@ -748,7 +878,7 @@ class FeatureForm(FeatureFormBase):
         else:
             roam.utils.info("Adding feature {}".format(self.feature.id()))
             layer.addFeature(self.feature)
-            savevalues(layer, savedvalues)
+            savevalues(self.form, savedvalues)
 
         saved = layer.commitChanges()
 
@@ -757,6 +887,7 @@ class FeatureForm(FeatureFormBase):
             raise FeatureSaveException.not_saved(errors)
 
         self.featuresaved(self.feature, values)
+        self.accepted.emit()
 
     def update_geometry(self, feature):
         if self.geomwidget and self.geomwidget.edited:

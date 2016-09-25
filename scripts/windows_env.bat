@@ -1,2 +1,2 @@
-CALL setup.env
+CALL setenv.bat
 cmd

@@ -87,16 +87,7 @@ QLabel[warning=true]
 	</string>
   </property>
   <layout class="QGridLayout" name="gridLayout">
-   <property name="leftMargin">
-    <number>0</number>
-   </property>
-   <property name="topMargin">
-    <number>0</number>
-   </property>
-   <property name="rightMargin">
-    <number>0</number>
-   </property>
-   <property name="bottomMargin">
+   <property name="margin">
     <number>0</number>
    </property>
    <item row="0" column="0">
@@ -153,16 +144,7 @@ QLabel[warning=true]
         <enum>QFrame::Raised</enum>
        </property>
        <layout class="QHBoxLayout" name="horizontalLayout_5">
-        <property name="leftMargin">
-         <number>0</number>
-        </property>
-        <property name="topMargin">
-         <number>0</number>
-        </property>
-        <property name="rightMargin">
-         <number>0</number>
-        </property>
-        <property name="bottomMargin">
+        <property name="margin">
          <number>0</number>
         </property>
         <item>
@@ -318,7 +300,7 @@ QLabel[warning=true]
       </sizepolicy>
      </property>
      <property name="currentIndex">
-      <number>4</number>
+      <number>14</number>
      </property>
      <widget class="ProjectInfoWidget" name="project_info_page">
       <layout class="QGridLayout" name="gridLayout_11"/>
@@ -331,16 +313,7 @@ QLabel[warning=true]
        </sizepolicy>
       </property>
       <layout class="QGridLayout" name="gridLayout_3">
-       <property name="leftMargin">
-        <number>0</number>
-       </property>
-       <property name="topMargin">
-        <number>0</number>
-       </property>
-       <property name="rightMargin">
-        <number>0</number>
-       </property>
-       <property name="bottomMargin">
+       <property name="margin">
         <number>0</number>
        </property>
       </layout>
@@ -669,6 +642,8 @@ p, li { white-space: pre-wrap; }
      <widget class="InfoNode" name="infopage"/>
      <widget class="LayerSearchWidget" name="searchspage"/>
      <widget class="LayerSearchConfigWidget" name="searchconfigpage"/>
+     <widget class="PluginsWidget" name="pluginspage"/>
+     <widget class="PluginWidget" name="pluginpage"/>
     </widget>
    </item>
   </layout>
@@ -724,6 +699,18 @@ p, li { white-space: pre-wrap; }
   </customwidget>
   <customwidget>
    <class>MapWidget</class>
+   <extends>QWidget</extends>
+   <header>configmanager.ui.layerwidgets</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>PluginsWidget</class>
+   <extends>QWidget</extends>
+   <header>configmanager.ui.layerwidgets</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>PluginWidget</class>
    <extends>QWidget</extends>
    <header>configmanager.ui.layerwidgets</header>
    <container>1</container>

@@ -1,15 +1,19 @@
 __author__ = 'Nathan.Woodrow'
 
+import uuid
 import os
 import shutil
 from string import Template
-from PyQt4.QtCore import Qt, QUrl, QVariant
+from PyQt4.QtWebKit import QWebView
+from PyQt4.QtCore import Qt, QUrl, QVariant, pyqtSignal
 from PyQt4.QtGui import (QWidget, QPixmap, QStandardItem, QStandardItemModel, QIcon, QDesktopServices, QMenu, QToolButton,
                          QFileDialog)
+from PyQt4.QtGui import QTableWidgetItem, QComboBox, QGridLayout
 from PyQt4.Qsci import QsciLexerSQL, QsciScintilla
 
 from qgis.core import QgsDataSourceURI, QgsPalLabeling, QgsMapLayerRegistry, QgsStyleV2, QgsMapLayer, QGis, QgsProject
 from qgis.gui import QgsExpressionBuilderDialog, QgsMapCanvas, QgsRendererV2PropertiesDialog, QgsLayerTreeMapCanvasBridge, QgsRasterRendererWidget
+from qgis.gui import QgsFieldModel as RealQgsFieldModel
 
 from configmanager.ui.nodewidgets import (ui_layersnode, ui_layernode, ui_infonode, ui_projectinfo, ui_formwidget,
                                           ui_searchsnode, ui_searchnode, ui_mapwidget)
@@ -48,6 +52,110 @@ defaultevents = [('Capture Only', ['capture']),
                   ('Capture and Save', ['capture', 'save'])]
 
 
+import nodewidgets.ui_eventwidget
+
+
+class EventWidget(nodewidgets.ui_eventwidget.Ui_Form, QWidget):
+    removeItem = pyqtSignal(QWidget)
+
+    def __init__(self, layer, model, parent=None):
+        super(EventWidget, self).__init__(parent=None)
+        self.setupUi(self)
+        self.layer = layer
+        self.model = model
+        self.removeEvent.pressed.connect(self.remove)
+        self.sourceFieldCombo.setSizeAdjustPolicy(QComboBox.AdjustToContents)
+        self.targetFieldCombo.setSizeAdjustPolicy(QComboBox.AdjustToContents)
+        self.condtionTextButton.pressed.connect(self.add_expression_condition)
+        self.newValueButton.pressed.connect(self.add_expression_newvalue)
+        self.sourceFieldCombo.setModel(model)
+        self.targetFieldCombo.setModel(model)
+        self.eventCombo.setCurrentIndex(0)
+        self.actionCombo.setCurrentIndex(0)
+        self.newValueFrame.hide()
+        self.actionCombo.currentIndexChanged.connect(self.update_controls)
+
+    def update_controls(self, index):
+        action = self.actionCombo.currentText()
+        showframe = action.lower() == 'set value'
+        self.newValueFrame.setVisible(showframe)
+
+    def remove(self):
+        self.removeItem.emit(self)
+
+    def add_expression_newvalue(self):
+        dlg = QgsExpressionBuilderDialog(self.layer, "Set expression for new value", self)
+        text = self.newValueText.text()
+        dlg.setExpressionText(text)
+        if dlg.exec_():
+            self.newValueText.setText(dlg.expressionText())
+
+    def add_expression_condition(self):
+        dlg = QgsExpressionBuilderDialog(self.layer, "Set condition expression", self)
+        text = self.condtionText.text()
+        dlg.setExpressionText(text)
+        if dlg.exec_():
+            self.condtionText.setText(dlg.expressionText())
+
+    def set_data(self, data):
+        if not data:
+            return
+
+        source = data['source']
+        dest = data['target']
+        action = data['action']
+        event = data['event']
+        condition = data['condition']
+        value = data['value']
+
+        sourcewidgetindex = self.model.indexFromId(source)
+        destwidgetindex = self.model.indexFromId(dest)
+        self.sourceFieldCombo.setCurrentIndex(sourcewidgetindex)
+        self.targetFieldCombo.setCurrentIndex(destwidgetindex)
+        index = self.actionCombo.findText(action)
+        self.actionCombo.setCurrentIndex(index)
+        index = self.eventCombo.findText(event)
+        self.eventCombo.setCurrentIndex(index)
+        self.condtionText.setText(condition)
+        self.newValueText.setText(value)
+
+    def get_data(self):
+        sourcewidgetid = self.model.idFromIndex(self.sourceFieldCombo.currentIndex())
+        destwidgetid = self.model.idFromIndex(self.targetFieldCombo.currentIndex())
+        data = {}
+        data['source'] = sourcewidgetid
+        data['target'] = destwidgetid
+        data['action'] = self.actionCombo.currentText()
+        data['event'] = self.eventCombo.currentText()
+        data['condition'] = self.condtionText.text()
+        data['value'] = self.newValueText.text()
+        return data
+
+
+import markdown
+    
+class PluginsWidget(WidgetBase):
+    def __init__(self, parent=None):
+        super(PluginsWidget, self).__init__(parent)
+
+class PluginWidget(WidgetBase):
+    def __init__(self, parent=None):
+        super(PluginWidget, self).__init__(parent)
+        self.setLayout(QGridLayout())
+        self.webpage = QWebView(self)
+        self.layout().addWidget(self.webpage)
+
+    def set_project(self, project, treenode):
+        super(PluginWidget, self).set_project(project, treenode)
+        self.webpage.setHtml("")
+        pluginhome = treenode.pluginlocation
+        readme = os.path.join(pluginhome, "README")
+        if os.path.exists(readme):
+            with open(readme) as f:
+                data = f.read()
+                self.webpage.setHtml(markdown.markdown(data))
+
+
 class FormWidget(ui_formwidget.Ui_Form, WidgetBase):
     def __init__(self, parent=None):
         super(FormWidget, self).__init__(parent)
@@ -56,6 +164,7 @@ class FormWidget(ui_formwidget.Ui_Form, WidgetBase):
 
         self.iconlabel.mouseReleaseEvent = self.change_icon
 
+        self._currentwidgetid = ''
         self.fieldsmodel = QgsFieldModel()
         self.widgetmodel = WidgetsModel()
         self.possiblewidgetsmodel = QStandardItemModel()
@@ -112,6 +221,7 @@ class FormWidget(ui_formwidget.Ui_Form, WidgetBase):
         self.addWidgetButton.setPopupMode(QToolButton.MenuButtonPopup)
 
         self.defaultLayerCombo.layerChanged.connect(self.defaultFieldCombo.setLayer)
+        self.addEvent.pressed.connect(self.addEventItem)
 
     def change_icon(self, *args):
         """
@@ -226,7 +336,7 @@ class FormWidget(ui_formwidget.Ui_Form, WidgetBase):
             self.frame_2.layout().addWidget(featureform)
 
         # Don't generate the form preview if we are not on the preview tab.
-        if index == 2:
+        if index == 3:
             form = self.form.copy()
             form.settings['widgets'] = list(self.widgetmodel.widgets())
             setformpreview(form)
@@ -237,7 +347,8 @@ class FormWidget(ui_formwidget.Ui_Form, WidgetBase):
         """
         widgets = self.widgetmodel.widgets()
         for widget in widgets:
-            yield widget['field']
+            if 'field' in widget:
+                yield widget['field']
 
     def openformfolder(self, url):
         """
@@ -430,6 +541,29 @@ class FormWidget(ui_formwidget.Ui_Form, WidgetBase):
             self.userwidgets.setCurrentIndex(index)
             self.load_widget(index, None)
 
+        for i in reversed(range(self.eventsLayout.count())):
+            child = self.eventsLayout.itemAt(i)
+            if child.widget() and isinstance(child.widget(), EventWidget):
+                child = self.eventsLayout.takeAt(i)
+                child.widget().deleteLater()
+
+        events = settings.get('events', [])
+        self.load_events(events)
+
+    def load_events(self, events):
+        for event in events:
+            self.addEventItem(data=event)
+
+    def addEventItem(self, data=None):
+        widget = EventWidget(self.form.QGISLayer, self.widgetmodel, self.eventsWidget)
+        widget.removeItem.connect(self.removeEventItem)
+        widget.set_data(data)
+        self.eventsLayout.addWidget(widget)
+
+    def removeEventItem(self, widget):
+        child = self.eventsLayout.removeWidget(widget)
+        widget.deleteLater()
+
     def swapwidgetconfig(self, index):
         widgetconfig, _, _ = self.current_config_widget
         defaultvalue = widgetconfig.defaultvalue
@@ -466,7 +600,10 @@ class FormWidget(ui_formwidget.Ui_Form, WidgetBase):
         else:
             self.propertiesStack.setCurrentIndex(0)
 
+
+
         field = widget['field']
+        self._currentwidgetid = widget.setdefault('_id', str(uuid.uuid4()))
         required = widget.setdefault('required', False)
         savevalue = widget.setdefault('rememberlastvalue', False)
         name = widget.setdefault('name', field)
@@ -483,7 +620,6 @@ class FormWidget(ui_formwidget.Ui_Form, WidgetBase):
         index = self.readonlyCombo.findData(data)
         self.readonlyCombo.setCurrentIndex(index)
 
-        print defaultevents
         index = self.defaultEventsCombo.findData(defaultevents)
         self.defaultEventsCombo.setCurrentIndex(index)
 
@@ -602,6 +738,7 @@ class FormWidget(ui_formwidget.Ui_Form, WidgetBase):
         widget['widget'] = widgettype
         widget['required'] = self.requiredCheck.isChecked()
         widget['rememberlastvalue'] = self.savevalueCheck.isChecked()
+        widget['_id'] = self._currentwidgetid
         widget['name'] = self.nameText.text()
         widget['read-only-rules'] = [self.readonlyCombo.itemData(self.readonlyCombo.currentIndex())]
         widget['default_events'] = self.defaultEventsCombo.itemData(self.defaultEventsCombo.currentIndex())
@@ -626,6 +763,14 @@ class FormWidget(ui_formwidget.Ui_Form, WidgetBase):
         self.form.settings['label'] = self.formLabelText.text()
         self.form.settings['newstyle'] = self.newStyleCheck.isChecked()
         self.form.settings['widgets'] = list(self.widgetmodel.widgets())
+        events = []
+        for i in range(self.eventsLayout.count()):
+            child = self.eventsLayout.itemAt(i)
+            if child.widget() and isinstance(child.widget(), EventWidget):
+                widget = child.widget()
+                eventdata = widget.get_data()
+                events.append(eventdata)
+        self.form.settings['events'] = events
 
 
 class ProjectInfoWidget(ui_projectinfo.Ui_Form, WidgetBase):
