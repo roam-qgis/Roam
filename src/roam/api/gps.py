@@ -237,6 +237,3 @@ class FileGPSService(GPSService):
         self.isConnected = False
         self.gpsdisconnected.emit()
 
-
-GPS = GPSService()
-

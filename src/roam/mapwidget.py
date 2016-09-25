@@ -6,7 +6,7 @@ from PyQt4.QtCore import Qt, pyqtSignal, QSize, QPropertyAnimation, QObject, pyq
     QRectF, QLocale, QPointF, QPoint
 from PyQt4.QtGui import QActionGroup, QFrame, QWidget, QSizePolicy, \
     QAction, QPixmap, QCursor, QIcon, QColor, QMainWindow, QPen, QGraphicsItem, QPolygon, QFont, QFontMetrics, QBrush, \
-    QPainterPath, QPainter, QToolButton, QLabel, QDoubleSpinBox, QHBoxLayout, QVBoxLayout
+    QPainterPath, QPainter, QToolButton, QLabel, QDoubleSpinBox, QHBoxLayout, QVBoxLayout, QToolBar
 
 from PyQt4.QtSvg import QGraphicsSvgItem
 
