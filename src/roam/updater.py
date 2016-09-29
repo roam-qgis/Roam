@@ -15,6 +15,8 @@ from collections import defaultdict
 from PyQt4.QtNetwork import QNetworkRequest, QNetworkAccessManager, QNetworkReply
 from PyQt4.QtCore import QObject, pyqtSignal, QUrl, QThread
 
+from qgis.core import QgsNetworkAccessManager
+
 import roam.project
 
 
@@ -238,7 +240,7 @@ class ProjectUpdater(QObject):
         super(ProjectUpdater, self).__init__()
         self.updatethread = None
         self.server = server
-        self.net = QNetworkAccessManager()
+        self.net = QgsNetworkAccessManager.instance()
         self.projects_base = projects_base
         self.create_worker()
 
