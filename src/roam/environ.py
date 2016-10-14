@@ -13,6 +13,7 @@ class RoamApp(object):
         self.prefixpath = prefixpath
         self.settingspath = settingspath
         self.approot = apppath
+        self.profileroot = apppath
         self.libspath = libspath
         self.i18npath = i18npath
         self.app = None
@@ -103,7 +104,6 @@ def _setup(apppath=None, logo='', title='', **kwargs):
         else:
             prefixpath = os.environ['QGIS_PREFIX_PATH']
         libspath = prefixpath
-        projectroot = os.path.join(apppath, "..")
     else:
         # Set the PATH and GDAL_DRIVER_PATH for gdal to find the plugins.
         # Not sure why we have to set these here but GDAL doesn't like it if we
@@ -111,9 +111,9 @@ def _setup(apppath=None, logo='', title='', **kwargs):
         prefixpath = os.path.join(apppath, "libs", "qgis")
         libspath = os.path.join(apppath, "libs", "roam")
         i18npath = os.path.join(libspath, "i18n")
-        projectroot = apppath
 
-    projectroot = os.path.join(projectroot, "projects")
+    projectroot = os.path.join(apppath, "projects")
+    profileroot = apppath
 
     try:
         settingspath = kwargs['config']
@@ -123,22 +123,36 @@ def _setup(apppath=None, logo='', title='', **kwargs):
             settingspath = os.path.join(apppath, "settings.config")
 
     parser = argparse.ArgumentParser(description="IntraMaps Roam")
+
     parser.add_argument('--config', metavar='c', type=str, default=settingspath, help='Path to Roam.config')
+    parser.add_argument('--profile', metavar='p', type=str, default=profileroot, help='Root folder for roam.config, and roam settings'
+                                                                                       'including plugins and projects')
     parser.add_argument('projectsroot', nargs='?', default=projectroot, help="Root location of projects. Will override"
                                                                              "default projects folder path")
     args, unknown = parser.parse_known_args()
 
-    if not os.path.exists(args.projectsroot):
-        os.makedirs(args.projectsroot)
+    projectroot = args.projectsroot
+
+    # Profile will override the projectroot
+    if args.profile:
+        profileroot = args.profile
+        projectroot = os.path.join(args.profile, "projects")
+
+    if not os.path.exists(projectroot):
+        os.makedirs(projectroot)
 
     import roam.config
+
     if isinstance(args.config, dict):
         roam.config.settings = args.config
     else:
         roam.config.load(args.config)
 
-    app = RoamApp(sys.argv, apppath, prefixpath, args.config, libspath, i18npath, args.projectsroot).init(logo, title)
+    app = RoamApp(sys.argv, apppath, prefixpath, args.config, libspath, i18npath, projectroot).init(logo, title)
     app.sourcerun = RUNNING_FROM_FILE
+    app.profileroot = profileroot
+    print "Profile Root: {0}".format(app.profileroot)
+    print "Project Root: {0}".format(app.projectsroot)
     return app
 
 
