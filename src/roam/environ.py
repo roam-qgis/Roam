@@ -138,8 +138,13 @@ def _setup(apppath=None, logo='', title='', **kwargs):
         profileroot = args.profile
         projectroot = os.path.join(args.profile, "projects")
 
+    # This will also make the higher level profile folder for use
     if not os.path.exists(projectroot):
         os.makedirs(projectroot)
+
+    pluginfolder = os.path.join(profileroot, "plugins")
+    if not os.path.exists(pluginfolder):
+        os.makedirs(pluginfolder)
 
     import roam.config
 
