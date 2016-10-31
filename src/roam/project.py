@@ -723,25 +723,29 @@ class Project(QObject):
         return form
 
     def removeform(self, name):
+        print "Removing {0}".format(name)
         forms = self.settings.setdefault("forms", [])
         if hasattr(forms, 'iteritems'):
             del self.settings['forms'][name]
         else:
             index = forms.index(name)
             del self.settings['forms'][index]
+        print self.settings['forms']
 
-    def save(self, update_version=True):
+    def save(self, update_version=True, save_forms=True):
         """
         Save the project config to disk.
         """
         self.increament_version()
         writefolderconfig(self.settings, self.folder, configname='project')
-        formsstorage = self.settings.setdefault("forms", [])
-        if not hasattr(formsstorage, 'iteritems'):
-            for form in self.forms:
-                debug("Saving {}".format(form.name))
-                debug(form.settings)
-                form.save()
+        if save_forms:
+            # Clear the form cache
+            formsstorage = self.settings.setdefault("forms", [])
+            if not hasattr(formsstorage, 'iteritems'):
+                for form in self.forms:
+                    debug("Saving {}".format(form.name))
+                    debug(form.settings)
+                    form.save()
         self.projectUpdated.emit(self)
 
     @property

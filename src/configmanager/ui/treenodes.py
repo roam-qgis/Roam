@@ -371,7 +371,7 @@ class FormsNode(Treenode):
             return
 
         self.project.removeform(form.name)
-        self.project.save()
+        self.project.save(save_forms=False)
 
     def additem(self):
         form = newform(self.project)
@@ -424,6 +424,7 @@ class ProjectNode(Treenode):
             if not self.project.valid:
                 return QIcon(":/icons/folder_broken")
         return super(ProjectNode, self).data(role)
+
 
 class PluginNode(Treenode):
     nodetype = Treenode.PluginNode
@@ -478,7 +479,6 @@ class ProjectsNode(Treenode):
             return "{} ({})".format(self._text, self.rowCount() - 1)
 
         return super(ProjectsNode, self).data(role)
-
 
     def removeRow(self, index):
         return True

@@ -9,6 +9,8 @@ from PyQt4.QtGui import QDialog, QFont, QColor, QIcon, QMessageBox, QStandardIte
 from PyQt4.QtCore import QAbstractItemModel, QModelIndex, Qt
 
 
+from configmanager.events import ConfigEvents
+
 from configmanager.ui import ui_configmanager
 import configmanager.logger as logger
 from roam import resources_rc
@@ -47,6 +49,8 @@ class ConfigManagerDialog(ui_configmanager.Ui_ProjectInstallerDialog, QDialog):
         self.projectwidget.projects_page.projectlocationchanged.connect(self.loadprojects)
         self.setuprootitems()
 
+        ConfigEvents.deleteForm.connect(self.delete_form)
+
     def raiseerror(self, *exinfo):
         self.bar.pushError(*exinfo)
         import roam.errors
@@ -65,7 +69,28 @@ class ConfigManagerDialog(ui_configmanager.Ui_ProjectInstallerDialog, QDialog):
         rootitem.appendRow(self.pluginsnode)
         self.pluginsnode.add_plugin_paths([pluginpath])
 
+    def delete_form(self):
+        index = self.projectList.currentIndex()
+        node = index.data(Qt.UserRole)
+        if not node.type() == Treenode.FormNode:
+            return
 
+        title, removemessage = node.removemessage
+        delete = node.canremove
+        if node.canremove and removemessage:
+            button = QMessageBox.warning(self, title, removemessage, QMessageBox.Yes | QMessageBox.No)
+            delete = button == QMessageBox.Yes
+
+        print "Delete"
+        if delete:
+            parentindex = index.parent()
+            newindex = self.treemodel.index(index.row(), 0, parentindex)
+            if parentindex.isValid():
+                parent = parentindex.data(Qt.UserRole)
+                parent.delete(index.row())
+
+            print parentindex
+            self.projectList.setCurrentIndex(parentindex)
 
     def delete_project(self):
         index = self.projectList.currentIndex()

@@ -7,7 +7,7 @@ from string import Template
 from PyQt4.QtWebKit import QWebView
 from PyQt4.QtCore import Qt, QUrl, QVariant, pyqtSignal
 from PyQt4.QtGui import (QWidget, QPixmap, QStandardItem, QStandardItemModel, QIcon, QDesktopServices, QMenu, QToolButton,
-                         QFileDialog)
+                         QFileDialog, QMessageBox)
 from PyQt4.QtGui import QTableWidgetItem, QComboBox, QGridLayout
 from PyQt4.Qsci import QsciLexerSQL, QsciScintilla
 
@@ -20,6 +20,7 @@ from configmanager.ui.nodewidgets import (ui_layersnode, ui_layernode, ui_infono
 from configmanager.models import (CaptureLayersModel, LayerTypeFilter, QgsFieldModel, WidgetsModel,
                                   QgsLayerModel, CaptureLayerFilter, widgeticon, SearchFieldsModel)
 
+from configmanager.events import ConfigEvents
 import roam.editorwidgets
 import configmanager.editorwidgets
 import roam.projectparser
@@ -222,6 +223,7 @@ class FormWidget(ui_formwidget.Ui_Form, WidgetBase):
 
         self.defaultLayerCombo.layerChanged.connect(self.defaultFieldCombo.setLayer)
         self.addEvent.pressed.connect(self.addEventItem)
+        self.btnDeleteForm.pressed.connect(ConfigEvents.deleteForm.emit)
 
     def change_icon(self, *args):
         """
