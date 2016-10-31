@@ -3,7 +3,7 @@ from PyQt4.QtGui import QLineEdit, QPlainTextEdit
 from PyQt4.QtCore import QEvent
 
 from qgis.core import QgsDataSourceURI
-from roam.dataaccess.database import Database
+from roam.dataaccess.database import Database, DatabaseException
 from roam.editorwidgets.core import EditorWidget, registerwidgets
 
 
@@ -34,18 +34,23 @@ def _get_sqlite_col_length(layer, fieldname):
     except ValueError:
         layer = layer.name()
 
-    tabledata = list(database.query("pragma table_info({})".format(layer)))
-    database.close()
-    for row in tabledata:
-        if not row['name'] == fieldname:
-            continue
+    try:
+        tabledata = list(database.query("pragma table_info({})".format(layer)))
+        for row in tabledata:
+            if not row['name'] == fieldname:
+                continue
 
-        import re
-        # Look for varchar(...) so we can grab the length.
-        match = re.search("VARCHAR\((\d.*)\)", row['type'], re.IGNORECASE)
-        if match:
-            length = match.group(1)
-            return True, int(length)
+            import re
+            # Look for varchar(...) so we can grab the length.
+            match = re.search("VARCHAR\((\d.*)\)", row['type'], re.IGNORECASE)
+            if match:
+                length = match.group(1)
+                return True, int(length)
+    except DatabaseException:
+        pass
+    finally:
+        database.close()
+
     return False, 0
 
 
