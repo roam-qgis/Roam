@@ -1,0 +1,1306 @@
+make: Entering directory `/f/dev/IntraMaps Roam/roam/'
+python setup.py clean
+running clean
+python setup.py build
+running build
+Updating 'f:\dev\IntraMaps Roam\roam\src\roam\i18n\de_DE.qm'...
+    Generated 131 translation(s) (131 finished and 0 unfinished)
+Updating 'f:\dev\IntraMaps Roam\roam\src\roam\i18n\fi_FI.qm'...
+    Generated 131 translation(s) (131 finished and 0 unfinished)
+Updating 'f:\dev\IntraMaps Roam\roam\src\roam\i18n\fr_FR.qm'...
+    Generated 131 translation(s) (131 finished and 0 unfinished)
+Warning: dropping duplicate messages in 'f:\dev\IntraMaps Roam\roam\src\roam\i18n\pl_PL.qm':
+
+* Context: MainWindow
+* Source: Sync 
+
+Updating 'f:\dev\IntraMaps Roam\roam\src\roam\i18n\pl_PL.qm'...
+    Generated 131 translation(s) (131 finished and 0 unfinished)
+Updating 'f:\dev\IntraMaps Roam\roam\src\roam\i18n\uk_UA.qm'...
+    Generated 131 translation(s) (131 finished and 0 unfinished)
+pyrcc4 -o "f:\dev\IntraMaps Roam\roam\src\roam\resources_rc.py" "f:\dev\IntraMaps Roam\roam\src\roam\resources.qrc"
+pyuic4.bat -o "f:\dev\IntraMaps Roam\roam\src\roam\editorwidgets\uifiles\ui_attachmentwidget.py" "f:\dev\IntraMaps Roam\roam\src\roam\editorwidgets\uifiles\ui_attachmentwidget.ui"
+pyuic4.bat -o "f:\dev\IntraMaps Roam\roam\src\roam\editorwidgets\uifiles\ui_datewidget.py" "f:\dev\IntraMaps Roam\roam\src\roam\editorwidgets\uifiles\ui_datewidget.ui"
+pyuic4.bat -o "f:\dev\IntraMaps Roam\roam\src\roam\editorwidgets\uifiles\ui_drawingpad.py" "f:\dev\IntraMaps Roam\roam\src\roam\editorwidgets\uifiles\ui_drawingpad.ui"
+pyuic4.bat -o "f:\dev\IntraMaps Roam\roam\src\roam\editorwidgets\uifiles\ui_imagewidget.py" "f:\dev\IntraMaps Roam\roam\src\roam\editorwidgets\uifiles\ui_imagewidget.ui"
+pyuic4.bat -o "f:\dev\IntraMaps Roam\roam\src\roam\editorwidgets\uifiles\ui_singlestepper.py" "f:\dev\IntraMaps Roam\roam\src\roam\editorwidgets\uifiles\ui_singlestepper.ui"
+pyuic4.bat -o "f:\dev\IntraMaps Roam\roam\src\roam\editorwidgets\uifiles\ui_tablewidget.py" "f:\dev\IntraMaps Roam\roam\src\roam\editorwidgets\uifiles\ui_tablewidget.ui"
+lrelease "f:\dev\IntraMaps Roam\roam\src\roam\i18n\de_DE.ts" -qm "f:\dev\IntraMaps Roam\roam\src\roam\i18n\de_DE.qm"
+lrelease "f:\dev\IntraMaps Roam\roam\src\roam\i18n\fi_FI.ts" -qm "f:\dev\IntraMaps Roam\roam\src\roam\i18n\fi_FI.qm"
+lrelease "f:\dev\IntraMaps Roam\roam\src\roam\i18n\fr_FR.ts" -qm "f:\dev\IntraMaps Roam\roam\src\roam\i18n\fr_FR.qm"
+lrelease "f:\dev\IntraMaps Roam\roam\src\roam\i18n\pl_PL.ts" -qm "f:\dev\IntraMaps Roam\roam\src\roam\i18n\pl_PL.qm"
+lrelease "f:\dev\IntraMaps Roam\roam\src\roam\i18n\uk_UA.ts" -qm "f:\dev\IntraMaps Roam\roam\src\roam\i18n\uk_UA.qm"
+pyuic4.bat -o "f:\dev\IntraMaps Roam\roam\src\roam\ui\ui_actionpicker.py" "f:\dev\IntraMaps Roam\roam\src\roam\ui\ui_actionpicker.ui"
+pyuic4.bat -o "f:\dev\IntraMaps Roam\roam\src\roam\ui\ui_actionpickerwidget.py" "f:\dev\IntraMaps Roam\roam\src\roam\ui\ui_actionpickerwidget.ui"
+pyuic4.bat -o "f:\dev\IntraMaps Roam\roam\src\roam\ui\ui_capturetemplates.py" "f:\dev\IntraMaps Roam\roam\src\roam\ui\ui_capturetemplates.ui"
+pyuic4.bat -o "f:\dev\IntraMaps Roam\roam\src\roam\ui\ui_dataentrywidget.py" "f:\dev\IntraMaps Roam\roam\src\roam\ui\ui_dataentrywidget.ui"
+pyuic4.bat -o "f:\dev\IntraMaps Roam\roam\src\roam\ui\ui_datatimerpicker.py" "f:\dev\IntraMaps Roam\roam\src\roam\ui\ui_datatimerpicker.ui"
+pyuic4.bat -o "f:\dev\IntraMaps Roam\roam\src\roam\ui\ui_deletefeature.py" "f:\dev\IntraMaps Roam\roam\src\roam\ui\ui_deletefeature.ui"
+pyuic4.bat -o "f:\dev\IntraMaps Roam\roam\src\roam\ui\ui_errorlist.py" "f:\dev\IntraMaps Roam\roam\src\roam\ui\ui_errorlist.ui"
+pyuic4.bat -o "f:\dev\IntraMaps Roam\roam\src\roam\ui\ui_featureformwidget.py" "f:\dev\IntraMaps Roam\roam\src\roam\ui\ui_featureformwidget.ui"
+pyuic4.bat -o "f:\dev\IntraMaps Roam\roam\src\roam\ui\ui_geomwidget.py" "f:\dev\IntraMaps Roam\roam\src\roam\ui\ui_geomwidget.ui"
+pyuic4.bat -o "f:\dev\IntraMaps Roam\roam\src\roam\ui\ui_gps.py" "f:\dev\IntraMaps Roam\roam\src\roam\ui\ui_gps.ui"
+pyuic4.bat -o "f:\dev\IntraMaps Roam\roam\src\roam\ui\ui_helppage.py" "f:\dev\IntraMaps Roam\roam\src\roam\ui\ui_helppage.ui"
+pyuic4.bat -o "f:\dev\IntraMaps Roam\roam\src\roam\ui\ui_helpviewer.py" "f:\dev\IntraMaps Roam\roam\src\roam\ui\ui_helpviewer.ui"
+pyuic4.bat -o "f:\dev\IntraMaps Roam\roam\src\roam\ui\ui_imageviewer.py" "f:\dev\IntraMaps Roam\roam\src\roam\ui\ui_imageviewer.ui"
+pyuic4.bat -o "f:\dev\IntraMaps Roam\roam\src\roam\ui\ui_infodock.py" "f:\dev\IntraMaps Roam\roam\src\roam\ui\ui_infodock.ui"
+pyuic4.bat -o "f:\dev\IntraMaps Roam\roam\src\roam\ui\ui_legend.py" "f:\dev\IntraMaps Roam\roam\src\roam\ui\ui_legend.ui"
+pyuic4.bat -o "f:\dev\IntraMaps Roam\roam\src\roam\ui\ui_list.py" "f:\dev\IntraMaps Roam\roam\src\roam\ui\ui_list.ui"
+pyuic4.bat -o "f:\dev\IntraMaps Roam\roam\src\roam\ui\ui_listmodules.py" "f:\dev\IntraMaps Roam\roam\src\roam\ui\ui_listmodules.ui"
+pyuic4.bat -o "f:\dev\IntraMaps Roam\roam\src\roam\ui\ui_mainwindow.py" "f:\dev\IntraMaps Roam\roam\src\roam\ui\ui_mainwindCannot find file: ..\editorwidgets\icons\mutlilist.svg
+Cannot find file: images\symbologyEdit.svg
+ow.ui"
+pyuic4.bat -o "f:\dev\IntraMaps Roam\roam\src\roam\ui\ui_mapwidget.py" "f:\dev\IntraMaps Roam\roam\src\roam\ui\ui_mapwidget.ui"
+pyuic4.bat -o "f:\dev\IntraMaps Roam\roam\src\roam\ui\ui_projectwidget.py" "f:\dev\IntraMaps Roam\roam\src\roam\ui\ui_projectwidget.ui"
+pyuic4.bat -o "f:\dev\IntraMaps Roam\roam\src\roam\ui\ui_settings.py" "f:\dev\IntraMaps Roam\roam\src\roam\ui\ui_settings.ui"
+pyuic4.bat -o "f:\dev\IntraMaps Roam\roam\src\roam\ui\ui_sync.py" "f:\dev\IntraMaps Roam\roam\src\roam\ui\ui_sync.ui"
+pyuic4.bat -o "f:\dev\IntraMaps Roam\roam\src\configmanager\editorwidgets\uifiles\ui_attachmentwidget_config.py" "f:\dev\IntraMaps Roam\roam\src\configmanager\editorwidgets\uifiles\ui_attachmentwidget_config.ui"
+pyuic4.bat -o "f:\dev\IntraMaps Roam\roam\src\configmanager\editorwidgets\uifiles\ui_checkwidget_config.py" "f:\dev\IntraMaps Roam\roam\src\configmanager\editorwidgets\uifiles\ui_checkwidget_config.ui"
+pyuic4.bat -o "f:\dev\IntraMaps Roam\roam\src\configmanager\editorwidgets\uifiles\ui_configwidget_template.py" "f:\dev\IntraMaps Roam\roam\src\configmanager\editorwidgets\uifiles\ui_configwidget_template.ui"
+pyuic4.bat -o "f:\dev\IntraMaps Roam\roam\src\configmanager\editorwidgets\uifiles\ui_datewidget_config.py" "f:\dev\IntraMaps Roam\roam\src\configmanager\editorwidgets\uifiles\ui_datewidget_config.ui"
+pyuic4.bat -o "f:\dev\IntraMaps Roam\roam\src\configmanager\editorwidgets\uifiles\ui_listwidget_config.py" "f:\dev\IntraMaps Roam\roam\src\configmanager\editorwidgets\uifiles\ui_listwidget_config.ui"
+pyuic4.bat -o "f:\dev\IntraMaps Roam\roam\src\configmanager\editorwidgets\uifiles\ui_numberwidget_config.py" "f:\dev\IntraMaps Roam\roam\src\configmanager\editorwidgets\uifiles\ui_numberwidget_config.ui"
+pyuic4.bat -o "f:\dev\IntraMaps Roam\roam\src\configmanager\editorwidgets\uifiles\ui_option_config.py" "f:\dev\IntraMaps Roam\roam\src\configmanager\editorwidgets\uifiles\ui_option_config.ui"
+pyuic4.bat -o "f:\dev\IntraMaps Roam\roam\src\configmanager\editorwidgets\uifiles\ui_photowidget_config.py" "f:\dev\IntraMaps Roam\roam\src\configmanager\editorwidgets\uifiles\ui_photowidget_config.ui"
+pyuic4.bat -o "f:\dev\IntraMaps Roam\roam\src\configmanager\editorwidgets\uifiles\ui_textwidget_config.py" "f:\dev\IntraMaps Roam\roam\src\configmanager\editorwidgets\uifiles\ui_textwidget_config.ui"
+pyrcc4 -o "f:\dev\IntraMaps Roam\roam\src\configmanager\ui\resources_rc.py" "f:\dev\IntraMaps Roam\roam\src\configmanager\ui\resources.qrc"
+pyuic4.bat -o "f:\dev\IntraMaps Roam\roam\src\configmanager\ui\ui_configmanager.py" "f:\dev\IntraMaps Roam\roam\src\configmanager\ui\ui_configmanager.ui"
+pyuic4.bat -o "f:\dev\IntraMaps Roam\roam\src\configmanager\ui\ui_projectwidget.py" "f:\dev\IntraMaps Roam\roam\src\configmanager\ui\ui_projectwidget.ui"
+pyuic4.bat -o "f:\dev\IntraMaps Roam\roam\src\configmanager\ui\nodewidgets\ui_eventwidget.py" "f:\dev\IntraMaps Roam\roam\src\configmanager\ui\nodewidgets\ui_eventwidget.ui"
+pyuic4.bat -o "f:\dev\IntraMaps Roam\roam\src\configmanager\ui\nodewidgets\ui_formwidget.py" "f:\dev\IntraMaps Roam\roam\src\configmanager\ui\nodewidgets\ui_formwidget.ui"
+pyuic4.bat -o "f:\dev\IntraMaps Roam\roam\src\configmanager\ui\nodewidgets\ui_infonode.py" "f:\dev\IntraMaps Roam\roam\src\configmanager\ui\nodewidgets\ui_infonode.ui"
+pyuic4.bat -o "f:\dev\IntraMaps Roam\roam\src\configmanager\ui\nodewidgets\ui_layernode.py" "f:\dev\IntraMaps Roam\roam\src\configmanager\ui\nodewidgets\ui_layernode.ui"
+pyuic4.bat -o "f:\dev\IntraMaps Roam\roam\src\configmanager\ui\nodewidgets\ui_layersnode.py" "f:\dev\IntraMaps Roam\roam\src\configmanager\ui\nodewidgets\ui_layersnode.ui"
+pyuic4.bat -o "f:\dev\IntraMaps Roam\roam\src\configmanager\ui\nodewidgets\ui_listconfig.py" "f:\dev\IntraMaps Roam\roam\src\configmanager\ui\nodewidgets\ui_listconfig.ui"
+pyuic4.bat -o "f:\dev\IntraMaps Roam\roam\src\configmanager\ui\nodewidgets\ui_mapwidget.py" "f:\dev\IntraMaps Roam\roam\src\configmanager\ui\nodewidgets\ui_mapwidget.ui"
+pyuic4.bat -o "f:\dev\IntraMaps Roam\roam\src\configmanager\ui\nodewidgets\ui_projectinfo.py" "f:\dev\IntraMaps Roam\roam\src\configmanager\ui\nodewidgets\ui_projectinfo.ui"
+pyuic4.bat -o "f:\dev\IntraMaps Roam\roam\src\configmanager\ui\nodewidgets\ui_projectswidget.py" "f:\dev\IntraMaps Roam\roam\src\configmanager\ui\nodewidgets\ui_projectswidget.ui"
+pyuic4.bat -o "f:\dev\IntraMaps Roam\roam\src\configmanager\ui\nodewidgets\ui_searchnode.py" "f:\dev\IntraMaps Roam\roam\src\configmanager\ui\nodewidgets\ui_searchnode.ui"
+pyuic4.bat -o "f:\dev\IntraMaps Roam\roam\src\configmanager\ui\nodewidgets\ui_searchsnode.py" "f:\dev\IntraMaps Roam\roam\src\configmanager\ui\nodewidgets\ui_searchsnode.ui"
+pyuic4.bat -o "f:\dev\IntraMaps Roam\roam\src\configmanager\ui\nodewidgets\ui_syncwidget.py" "f:\dev\IntraMaps Roam\roam\src\configmanager\ui\nodewidgets\ui_syncwidget.ui"
+running build_py
+copying src\roam\resources_rc.py -> build\lib\roam
+copying src\configmanager\ui\resources_rc.py -> build\lib\configmanager\ui
+copying src\configmanager\ui\ui_configmanager.py -> build\lib\configmanager\ui
+copying src\configmanager\ui\ui_projectwidget.py -> build\lib\configmanager\ui
+copying src\configmanager\editorwidgets\uifiles\ui_attachmentwidget_config.py -> build\lib\configmanager\editorwidgets\uifiles
+copying src\configmanager\editorwidgets\uifiles\ui_checkwidget_config.py -> build\lib\configmanager\editorwidgets\uifiles
+copying src\configmanager\editorwidgets\uifiles\ui_configwidget_template.py -> build\lib\configmanager\editorwidgets\uifiles
+copying src\configmanager\editorwidgets\uifiles\ui_datewidget_config.py -> build\lib\configmanager\editorwidgets\uifiles
+copying src\configmanager\editorwidgets\uifiles\ui_listwidget_config.py -> build\lib\configmanager\editorwidgets\uifiles
+copying src\configmanager\editorwidgets\uifiles\ui_numberwidget_config.py -> build\lib\configmanager\editorwidgets\uifiles
+copying src\configmanager\editorwidgets\uifiles\ui_option_config.py -> build\lib\configmanager\editorwidgets\uifiles
+copying src\configmanager\editorwidgets\uifiles\ui_photowidget_config.py -> build\lib\configmanager\editorwidgets\uifiles
+copying src\configmanager\editorwidgets\uifiles\ui_textwidget_config.py -> build\lib\configmanager\editorwidgets\uifiles
+copying src\configmanager\ui\nodewidgets\ui_eventwidget.py -> build\lib\configmanager\ui\nodewidgets
+copying src\configmanager\ui\nodewidgets\ui_formwidget.py -> build\lib\configmanager\ui\nodewidgets
+copying src\configmanager\ui\nodewidgets\ui_infonode.py -> build\lib\configmanager\ui\nodewidgets
+copying src\configmanager\ui\nodewidgets\ui_layernode.py -> build\lib\configmanager\ui\nodewidgets
+copying src\configmanager\ui\nodewidgets\ui_layersnode.py -> build\lib\configmanager\ui\nodewidgets
+copying src\configmanager\ui\nodewidgets\ui_listconfig.py -> build\lib\configmanager\ui\nodewidgets
+copying src\configmanager\ui\nodewidgets\ui_mapwidget.py -> build\lib\configmanager\ui\nodewidgets
+copying src\configmanager\ui\nodewidgets\ui_projectinfo.py -> build\lib\configmanager\ui\nodewidgets
+copying src\configmanager\ui\nodewidgets\ui_projectswidget.py -> build\lib\configmanager\ui\nodewidgets
+copying src\configmanager\ui\nodewidgets\ui_searchnode.py -> build\lib\configmanager\ui\nodewidgets
+copying src\configmanager\ui\nodewidgets\ui_searchsnode.py -> build\lib\configmanager\ui\nodewidgets
+copying src\configmanager\ui\nodewidgets\ui_syncwidget.py -> build\lib\configmanager\ui\nodewidgets
+copying src\roam\ui\ui_actionpicker.py -> build\lib\roam\ui
+copying src\roam\ui\ui_actionpickerwidget.py -> build\lib\roam\ui
+copying src\roam\ui\ui_capturetemplates.py -> build\lib\roam\ui
+copying src\roam\ui\ui_dataentrywidget.py -> build\lib\roam\ui
+copying src\roam\ui\ui_datatimerpicker.py -> build\lib\roam\ui
+copying src\roam\ui\ui_deletefeature.py -> build\lib\roam\ui
+copying src\roam\ui\ui_errorlist.py -> build\lib\roam\ui
+copying src\roam\ui\ui_featureformwidget.py -> build\lib\roam\ui
+copying src\roam\ui\ui_geomwidget.py -> build\lib\roam\ui
+copying src\roam\ui\ui_gps.py -> build\lib\roam\ui
+copying src\roam\ui\ui_helppage.py -> build\lib\roam\ui
+copying src\roam\ui\ui_helpviewer.py -> build\lib\roam\ui
+copying src\roam\ui\ui_imageviewer.py -> build\lib\roam\ui
+copying src\roam\ui\ui_infodock.py -> build\lib\roam\ui
+copying src\roam\ui\ui_legend.py -> build\lib\roam\ui
+copying src\roam\ui\ui_list.py -> build\lib\roam\ui
+copying src\roam\ui\ui_listmodules.py -> build\lib\roam\ui
+copying src\roam\ui\ui_mainwindow.py -> build\lib\roam\ui
+copying src\roam\ui\ui_mapwidget.py -> build\lib\roam\ui
+copying src\roam\ui\ui_projectwidget.py -> build\lib\roam\ui
+copying src\roam\ui\ui_settings.py -> build\lib\roam\ui
+copying src\roam\ui\ui_sync.py -> build\lib\roam\ui
+copying src\roam\editorwidgets\uifiles\ui_attachmentwidget.py -> build\lib\roam\editorwidgets\uifiles
+copying src\roam\editorwidgets\uifiles\ui_datewidget.py -> build\lib\roam\editorwidgets\uifiles
+copying src\roam\editorwidgets\uifiles\ui_drawingpad.py -> build\lib\roam\editorwidgets\uifiles
+copying src\roam\editorwidgets\uifiles\ui_imagewidget.py -> build\lib\roam\editorwidgets\uifiles
+copying src\roam\editorwidgets\uifiles\ui_singlestepper.py -> build\lib\roam\editorwidgets\uifiles
+copying src\roam\editorwidgets\uifiles\ui_tablewidget.py -> build\lib\roam\editorwidgets\uifiles
+python setup.py py2exe
+running py2exe
+Updating 'f:\dev\IntraMaps Roam\roam\src\roam\i18n\de_DE.qm'...
+    Generated 131 translation(s) (131 finished and 0 unfinished)
+Updating 'f:\dev\IntraMaps Roam\roam\src\roam\i18n\fi_FI.qm'...
+    Generated 131 translation(s) (131 finished and 0 unfinished)
+Updating 'f:\dev\IntraMaps Roam\roam\src\roam\i18n\fr_FR.qm'...
+    Generated 131 translation(s) (131 finished and 0 unfinished)
+Warning: dropping duplicate messages in 'f:\dev\IntraMaps Roam\roam\src\roam\i18n\pl_PL.qm':
+
+* Context: MainWindow
+* Source: Sync 
+
+Updating 'f:\dev\IntraMaps Roam\roam\src\roam\i18n\pl_PL.qm'...
+    Generated 131 translation(s) (131 finished and 0 unfinished)
+Updating 'f:\dev\IntraMaps Roam\roam\src\roam\i18n\uk_UA.qm'...
+    Generated 131 translation(s) (131 finished and 0 unfinished)
+pyrcc4 -o "f:\dev\IntraMaps Roam\roam\src\roam\resources_rc.py" "f:\dev\IntraMaps Roam\roam\src\roam\resources.qrc"
+pyuic4.bat -o "f:\dev\IntraMaps Roam\roam\src\roam\editorwidgets\uifiles\ui_attachmentwidget.py" "f:\dev\IntraMaps Roam\roam\src\roam\editorwidgets\uifiles\ui_attachmentwidget.ui"
+pyuic4.bat -o "f:\dev\IntraMaps Roam\roam\src\roam\editorwidgets\uifiles\ui_datewidget.py" "f:\dev\IntraMaps Roam\roam\src\roam\editorwidgets\uifiles\ui_datewidget.ui"
+pyuic4.bat -o "f:\dev\IntraMaps Roam\roam\src\roam\editorwidgets\uifiles\ui_drawingpad.py" "f:\dev\IntraMaps Roam\roam\src\roam\editorwidgets\uifiles\ui_drawingpad.ui"
+pyuic4.bat -o "f:\dev\IntraMaps Roam\roam\src\roam\editorwidgets\uifiles\ui_imagewidget.py" "f:\dev\IntraMaps Roam\roam\src\roam\editorwidgets\uifiles\ui_imagewidget.ui"
+pyuic4.bat -o "f:\dev\IntraMaps Roam\roam\src\roam\editorwidgets\uifiles\ui_singlestepper.py" "f:\dev\IntraMaps Roam\roam\src\roam\editorwidgets\uifiles\ui_singlestepper.ui"
+pyuic4.bat -o "f:\dev\IntraMaps Roam\roam\src\roam\editorwidgets\uifiles\ui_tablewidget.py" "f:\dev\IntraMaps Roam\roam\src\roam\editorwidgets\uifiles\ui_tablewidget.ui"
+lrelease "f:\dev\IntraMaps Roam\roam\src\roam\i18n\de_DE.ts" -qm "f:\dev\IntraMaps Roam\roam\src\roam\i18n\de_DE.qm"
+lrelease "f:\dev\IntraMaps Roam\roam\src\roam\i18n\fi_FI.ts" -qm "f:\dev\IntraMaps Roam\roam\src\roam\i18n\fi_FI.qm"
+lrelease "f:\dev\IntraMaps Roam\roam\src\roam\i18n\fr_FR.ts" -qm "f:\dev\IntraMaps Roam\roam\src\roam\i18n\fr_FR.qm"
+lrelease "f:\dev\IntraMaps Roam\roam\src\roam\i18n\pl_PL.ts" -qm "f:\dev\IntraMaps Roam\roam\src\roam\i18n\pl_PL.qm"
+lrelease "f:\dev\IntraMaps Roam\roam\src\roam\i18n\uk_UA.ts" -qm "f:\dev\IntraMaps Roam\roam\src\roam\i18n\uk_UA.qm"
+pyuic4.bat -o "f:\dev\IntraMaps Roam\roam\src\roam\ui\ui_actionpicker.py" "f:\dev\IntraMaps Roam\roam\src\roam\ui\ui_actionpicker.ui"
+pyuic4.bat -o "f:\dev\IntraMaps Roam\roam\src\roam\ui\ui_actionpickerwidget.py" "f:\dev\IntraMaps Roam\roam\src\roam\ui\ui_actionpickerwidget.ui"
+pyuic4.bat -o "f:\dev\IntraMaps Roam\roam\src\roam\ui\ui_capturetemplates.py" "f:\dev\IntraMaps Roam\roam\src\roam\ui\ui_capturetemplates.ui"
+pyuic4.bat -o "f:\dev\IntraMaps Roam\roam\src\roam\ui\ui_dataentrywidget.py" "f:\dev\IntraMaps Roam\roam\src\roam\ui\ui_dataentrywidget.ui"
+pyuic4.bat -o "f:\dev\IntraMaps Roam\roam\src\roam\ui\ui_datatimerpicker.py" "f:\dev\IntraMaps Roam\roam\src\roam\ui\ui_datatimerpicker.ui"
+pyuic4.bat -o "f:\dev\IntraMaps Roam\roam\src\roam\ui\ui_deletefeature.py" "f:\dev\IntraMaps Roam\roam\src\roam\ui\ui_deletefeature.ui"
+pyuic4.bat -o "f:\dev\IntraMaps Roam\roam\src\roam\ui\ui_errorlist.py" "f:\dev\IntraMaps Roam\roam\src\roam\ui\ui_errorlist.ui"
+pyuic4.bat -o "f:\dev\IntraMaps Roam\roam\src\roam\ui\ui_featureformwidget.py" "f:\dev\IntraMaps Roam\roam\src\roam\ui\ui_featureformwidget.ui"
+pyuic4.bat -o "f:\dev\IntraMaps Roam\roam\src\roam\ui\ui_geomwidget.py" "f:\dev\IntraMaps Roam\roam\src\roam\ui\ui_geomwidget.ui"
+pyuic4.bat -o "f:\dev\IntraMaps Roam\roam\src\roam\ui\ui_gps.py" "f:\dev\IntraMaps Roam\roam\src\roam\ui\ui_gps.ui"
+pyuic4.bat -o "f:\dev\IntraMaps Roam\roam\src\roam\ui\ui_helppage.py" "f:\dev\IntraMaps Roam\roam\src\roam\ui\ui_helppage.ui"
+pyuic4.bat -o "f:\dev\IntraMaps Roam\roam\src\roam\ui\ui_helpviewer.py" "f:\dev\IntraMaps Roam\roam\src\roam\ui\ui_helpviewer.ui"
+pyuic4.bat -o "f:\dev\IntraMaps Roam\roam\src\roam\ui\ui_imageviewer.py" "f:\dev\IntraMaps Roam\roam\src\roam\ui\ui_imageviewer.ui"
+pyuic4.bat -o "f:\dev\IntraMaps Roam\roam\src\roam\ui\ui_infodock.py" "f:\dev\IntraMaps Roam\roam\src\roam\ui\ui_infodock.ui"
+pyuic4.bat -o "f:\dev\IntraMaps Roam\roam\src\roam\ui\ui_legend.py" "f:\dev\IntraMaps Roam\roam\src\roam\ui\ui_legend.ui"
+pyuic4.bat -o "f:\dev\IntraMaps Roam\roam\src\roam\ui\ui_list.py" "f:\dev\IntraMaps Roam\roam\src\roam\ui\ui_list.ui"
+pyuic4.bat -o "f:\dev\IntraMaps Roam\roam\src\roam\ui\ui_listmodules.py" "f:\dev\IntraMaps Roam\roam\src\roam\ui\ui_listmodules.ui"
+pyuic4.bat -o "f:\dev\IntraMaps Roam\roam\src\roam\ui\ui_mainwindow.py" "f:\dev\IntraMaps Roam\roam\src\roam\ui\ui_mainwindCannot find file: ..\editorwidgets\icons\mutlilist.svg
+Cannot find file: images\symbologyEdit.svg
+ow.ui"
+pyuic4.bat -o "f:\dev\IntraMaps Roam\roam\src\roam\ui\ui_mapwidget.py" "f:\dev\IntraMaps Roam\roam\src\roam\ui\ui_mapwidget.ui"
+pyuic4.bat -o "f:\dev\IntraMaps Roam\roam\src\roam\ui\ui_projectwidget.py" "f:\dev\IntraMaps Roam\roam\src\roam\ui\ui_projectwidget.ui"
+pyuic4.bat -o "f:\dev\IntraMaps Roam\roam\src\roam\ui\ui_settings.py" "f:\dev\IntraMaps Roam\roam\src\roam\ui\ui_settings.ui"
+pyuic4.bat -o "f:\dev\IntraMaps Roam\roam\src\roam\ui\ui_sync.py" "f:\dev\IntraMaps Roam\roam\src\roam\ui\ui_sync.ui"
+pyuic4.bat -o "f:\dev\IntraMaps Roam\roam\src\configmanager\editorwidgets\uifiles\ui_attachmentwidget_config.py" "f:\dev\IntraMaps Roam\roam\src\configmanager\editorwidgets\uifiles\ui_attachmentwidget_config.ui"
+pyuic4.bat -o "f:\dev\IntraMaps Roam\roam\src\configmanager\editorwidgets\uifiles\ui_checkwidget_config.py" "f:\dev\IntraMaps Roam\roam\src\configmanager\editorwidgets\uifiles\ui_checkwidget_config.ui"
+pyuic4.bat -o "f:\dev\IntraMaps Roam\roam\src\configmanager\editorwidgets\uifiles\ui_configwidget_template.py" "f:\dev\IntraMaps Roam\roam\src\configmanager\editorwidgets\uifiles\ui_configwidget_template.ui"
+pyuic4.bat -o "f:\dev\IntraMaps Roam\roam\src\configmanager\editorwidgets\uifiles\ui_datewidget_config.py" "f:\dev\IntraMaps Roam\roam\src\configmanager\editorwidgets\uifiles\ui_datewidget_config.ui"
+pyuic4.bat -o "f:\dev\IntraMaps Roam\roam\src\configmanager\editorwidgets\uifiles\ui_listwidget_config.py" "f:\dev\IntraMaps Roam\roam\src\configmanager\editorwidgets\uifiles\ui_listwidget_config.ui"
+pyuic4.bat -o "f:\dev\IntraMaps Roam\roam\src\configmanager\editorwidgets\uifiles\ui_numberwidget_config.py" "f:\dev\IntraMaps Roam\roam\src\configmanager\editorwidgets\uifiles\ui_numberwidget_config.ui"
+pyuic4.bat -o "f:\dev\IntraMaps Roam\roam\src\configmanager\editorwidgets\uifiles\ui_option_config.py" "f:\dev\IntraMaps Roam\roam\src\configmanager\editorwidgets\uifiles\ui_option_config.ui"
+pyuic4.bat -o "f:\dev\IntraMaps Roam\roam\src\configmanager\editorwidgets\uifiles\ui_photowidget_config.py" "f:\dev\IntraMaps Roam\roam\src\configmanager\editorwidgets\uifiles\ui_photowidget_config.ui"
+pyuic4.bat -o "f:\dev\IntraMaps Roam\roam\src\configmanager\editorwidgets\uifiles\ui_textwidget_config.py" "f:\dev\IntraMaps Roam\roam\src\configmanager\editorwidgets\uifiles\ui_textwidget_config.ui"
+pyrcc4 -o "f:\dev\IntraMaps Roam\roam\src\configmanager\ui\resources_rc.py" "f:\dev\IntraMaps Roam\roam\src\configmanager\ui\resources.qrc"
+pyuic4.bat -o "f:\dev\IntraMaps Roam\roam\src\configmanager\ui\ui_configmanager.py" "f:\dev\IntraMaps Roam\roam\src\configmanager\ui\ui_configmanager.ui"
+pyuic4.bat -o "f:\dev\IntraMaps Roam\roam\src\configmanager\ui\ui_projectwidget.py" "f:\dev\IntraMaps Roam\roam\src\configmanager\ui\ui_projectwidget.ui"
+pyuic4.bat -o "f:\dev\IntraMaps Roam\roam\src\configmanager\ui\nodewidgets\ui_eventwidget.py" "f:\dev\IntraMaps Roam\roam\src\configmanager\ui\nodewidgets\ui_eventwidget.ui"
+pyuic4.bat -o "f:\dev\IntraMaps Roam\roam\src\configmanager\ui\nodewidgets\ui_formwidget.py" "f:\dev\IntraMaps Roam\roam\src\configmanager\ui\nodewidgets\ui_formwidget.ui"
+pyuic4.bat -o "f:\dev\IntraMaps Roam\roam\src\configmanager\ui\nodewidgets\ui_infonode.py" "f:\dev\IntraMaps Roam\roam\src\configmanager\ui\nodewidgets\ui_infonode.ui"
+pyuic4.bat -o "f:\dev\IntraMaps Roam\roam\src\configmanager\ui\nodewidgets\ui_layernode.py" "f:\dev\IntraMaps Roam\roam\src\configmanager\ui\nodewidgets\ui_layernode.ui"
+pyuic4.bat -o "f:\dev\IntraMaps Roam\roam\src\configmanager\ui\nodewidgets\ui_layersnode.py" "f:\dev\IntraMaps Roam\roam\src\configmanager\ui\nodewidgets\ui_layersnode.ui"
+pyuic4.bat -o "f:\dev\IntraMaps Roam\roam\src\configmanager\ui\nodewidgets\ui_listconfig.py" "f:\dev\IntraMaps Roam\roam\src\configmanager\ui\nodewidgets\ui_listconfig.ui"
+pyuic4.bat -o "f:\dev\IntraMaps Roam\roam\src\configmanager\ui\nodewidgets\ui_mapwidget.py" "f:\dev\IntraMaps Roam\roam\src\configmanager\ui\nodewidgets\ui_mapwidget.ui"
+pyuic4.bat -o "f:\dev\IntraMaps Roam\roam\src\configmanager\ui\nodewidgets\ui_projectinfo.py" "f:\dev\IntraMaps Roam\roam\src\configmanager\ui\nodewidgets\ui_projectinfo.ui"
+pyuic4.bat -o "f:\dev\IntraMaps Roam\roam\src\configmanager\ui\nodewidgets\ui_projectswidget.py" "f:\dev\IntraMaps Roam\roam\src\configmanager\ui\nodewidgets\ui_projectswidget.ui"
+pyuic4.bat -o "f:\dev\IntraMaps Roam\roam\src\configmanager\ui\nodewidgets\ui_searchnode.py" "f:\dev\IntraMaps Roam\roam\src\configmanager\ui\nodewidgets\ui_searchnode.ui"
+pyuic4.bat -o "f:\dev\IntraMaps Roam\roam\src\configmanager\ui\nodewidgets\ui_searchsnode.py" "f:\dev\IntraMaps Roam\roam\src\configmanager\ui\nodewidgets\ui_searchsnode.ui"
+pyuic4.bat -o "f:\dev\IntraMaps Roam\roam\src\configmanager\ui\nodewidgets\ui_syncwidget.py" "f:\dev\IntraMaps Roam\roam\src\configmanager\ui\nodewidgets\ui_syncwidget.ui"
+running build_py
+copying src\roam\resources_rc.py -> build\lib\roam
+copying src\configmanager\ui\resources_rc.py -> build\lib\configmanager\ui
+copying src\configmanager\ui\ui_configmanager.py -> build\lib\configmanager\ui
+copying src\configmanager\ui\ui_projectwidget.py -> build\lib\configmanager\ui
+copying src\configmanager\editorwidgets\uifiles\ui_attachmentwidget_config.py -> build\lib\configmanager\editorwidgets\uifiles
+copying src\configmanager\editorwidgets\uifiles\ui_checkwidget_config.py -> build\lib\configmanager\editorwidgets\uifiles
+copying src\configmanager\editorwidgets\uifiles\ui_configwidget_template.py -> build\lib\configmanager\editorwidgets\uifiles
+copying src\configmanager\editorwidgets\uifiles\ui_datewidget_config.py -> build\lib\configmanager\editorwidgets\uifiles
+copying src\configmanager\editorwidgets\uifiles\ui_listwidget_config.py -> build\lib\configmanager\editorwidgets\uifiles
+copying src\configmanager\editorwidgets\uifiles\ui_numberwidget_config.py -> build\lib\configmanager\editorwidgets\uifiles
+copying src\configmanager\editorwidgets\uifiles\ui_option_config.py -> build\lib\configmanager\editorwidgets\uifiles
+copying src\configmanager\editorwidgets\uifiles\ui_photowidget_config.py -> build\lib\configmanager\editorwidgets\uifiles
+copying src\configmanager\editorwidgets\uifiles\ui_textwidget_config.py -> build\lib\configmanager\editorwidgets\uifiles
+copying src\configmanager\ui\nodewidgets\ui_eventwidget.py -> build\lib\configmanager\ui\nodewidgets
+copying src\configmanager\ui\nodewidgets\ui_formwidget.py -> build\lib\configmanager\ui\nodewidgets
+copying src\configmanager\ui\nodewidgets\ui_infonode.py -> build\lib\configmanager\ui\nodewidgets
+copying src\configmanager\ui\nodewidgets\ui_layernode.py -> build\lib\configmanager\ui\nodewidgets
+copying src\configmanager\ui\nodewidgets\ui_layersnode.py -> build\lib\configmanager\ui\nodewidgets
+copying src\configmanager\ui\nodewidgets\ui_listconfig.py -> build\lib\configmanager\ui\nodewidgets
+copying src\configmanager\ui\nodewidgets\ui_mapwidget.py -> build\lib\configmanager\ui\nodewidgets
+copying src\configmanager\ui\nodewidgets\ui_projectinfo.py -> build\lib\configmanager\ui\nodewidgets
+copying src\configmanager\ui\nodewidgets\ui_projectswidget.py -> build\lib\configmanager\ui\nodewidgets
+copying src\configmanager\ui\nodewidgets\ui_searchnode.py -> build\lib\configmanager\ui\nodewidgets
+copying src\configmanager\ui\nodewidgets\ui_searchsnode.py -> build\lib\configmanager\ui\nodewidgets
+copying src\configmanager\ui\nodewidgets\ui_syncwidget.py -> build\lib\configmanager\ui\nodewidgets
+copying src\roam\ui\ui_actionpicker.py -> build\lib\roam\ui
+copying src\roam\ui\ui_actionpickerwidget.py -> build\lib\roam\ui
+copying src\roam\ui\ui_capturetemplates.py -> build\lib\roam\ui
+copying src\roam\ui\ui_dataentrywidget.py -> build\lib\roam\ui
+copying src\roam\ui\ui_datatimerpicker.py -> build\lib\roam\ui
+copying src\roam\ui\ui_deletefeature.py -> build\lib\roam\ui
+copying src\roam\ui\ui_errorlist.py -> build\lib\roam\ui
+copying src\roam\ui\ui_featureformwidget.py -> build\lib\roam\ui
+copying src\roam\ui\ui_geomwidget.py -> build\lib\roam\ui
+copying src\roam\ui\ui_gps.py -> build\lib\roam\ui
+copying src\roam\ui\ui_helppage.py -> build\lib\roam\ui
+copying src\roam\ui\ui_helpviewer.py -> build\lib\roam\ui
+copying src\roam\ui\ui_imageviewer.py -> build\lib\roam\ui
+copying src\roam\ui\ui_infodock.py -> build\lib\roam\ui
+copying src\roam\ui\ui_legend.py -> build\lib\roam\ui
+copying src\roam\ui\ui_list.py -> build\lib\roam\ui
+copying src\roam\ui\ui_listmodules.py -> build\lib\roam\ui
+copying src\roam\ui\ui_mainwindow.py -> build\lib\roam\ui
+copying src\roam\ui\ui_mapwidget.py -> build\lib\roam\ui
+copying src\roam\ui\ui_projectwidget.py -> build\lib\roam\ui
+copying src\roam\ui\ui_settings.py -> build\lib\roam\ui
+copying src\roam\ui\ui_sync.py -> build\lib\roam\ui
+copying src\roam\editorwidgets\uifiles\ui_attachmentwidget.py -> build\lib\roam\editorwidgets\uifiles
+copying src\roam\editorwidgets\uifiles\ui_datewidget.py -> build\lib\roam\editorwidgets\uifiles
+copying src\roam\editorwidgets\uifiles\ui_drawingpad.py -> build\lib\roam\editorwidgets\uifiles
+copying src\roam\editorwidgets\uifiles\ui_imagewidget.py -> build\lib\roam\editorwidgets\uifiles
+copying src\roam\editorwidgets\uifiles\ui_singlestepper.py -> build\lib\roam\editorwidgets\uifiles
+copying src\roam\editorwidgets\uifiles\ui_tablewidget.py -> build\lib\roam\editorwidgets\uifiles
+creating f:\dev\IntraMaps Roam\roam\build\bdist.win32
+creating f:\dev\IntraMaps Roam\roam\build\bdist.win32\winexe
+creating f:\dev\IntraMaps Roam\roam\build\bdist.win32\winexe\collect-2.7
+creating f:\dev\IntraMaps Roam\roam\build\bdist.win32\winexe\bundle-2.7
+creating f:\dev\IntraMaps Roam\roam\build\bdist.win32\winexe\temp
+creating f:\dev\IntraMaps Roam\roam\dist
+creating f:\dev\IntraMaps Roam\roam\dist\libs
+*** searching for required modules ***
+*** parsing results ***
+creating f:\dev\IntraMaps Roam\roam\dist\libs\tcl
+creating f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\auto.tcl -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\clock.tcl -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5
+creating f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\encoding
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\encoding\ascii.enc -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\encoding
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\encoding\big5.enc -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\encoding
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\encoding\cp1250.enc -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\encoding
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\encoding\cp1251.enc -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\encoding
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\encoding\cp1252.enc -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\encoding
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\encoding\cp1253.enc -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\encoding
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\encoding\cp1254.enc -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\encoding
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\encoding\cp1255.enc -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\encoding
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\encoding\cp1256.enc -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\encoding
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\encoding\cp1257.enc -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\encoding
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\encoding\cp1258.enc -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\encoding
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\encoding\cp437.enc -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\encoding
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\encoding\cp737.enc -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\encoding
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\encoding\cp775.enc -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\encoding
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\encoding\cp850.enc -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\encoding
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\encoding\cp852.enc -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\encoding
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\encoding\cp855.enc -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\encoding
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\encoding\cp857.enc -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\encoding
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\encoding\cp860.enc -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\encoding
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\encoding\cp861.enc -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\encoding
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\encoding\cp862.enc -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\encoding
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\encoding\cp863.enc -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\encoding
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\encoding\cp864.enc -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\encoding
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\encoding\cp865.enc -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\encoding
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\encoding\cp866.enc -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\encoding
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\encoding\cp869.enc -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\encoding
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\encoding\cp874.enc -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\encoding
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\encoding\cp932.enc -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\encoding
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\encoding\cp936.enc -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\encoding
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\encoding\cp949.enc -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\encoding
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\encoding\cp950.enc -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\encoding
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\encoding\dingbats.enc -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\encoding
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\encoding\ebcdic.enc -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\encoding
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\encoding\euc-cn.enc -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\encoding
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\encoding\euc-jp.enc -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\encoding
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\encoding\euc-kr.enc -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\encoding
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\encoding\gb12345.enc -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\encoding
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\encoding\gb1988.enc -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\encoding
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\encoding\gb2312-raw.enc -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\encoding
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\encoding\gb2312.enc -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\encoding
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\encoding\iso2022-jp.enc -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\encoding
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\encoding\iso2022-kr.enc -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\encoding
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\encoding\iso2022.enc -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\encoding
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\encoding\iso8859-1.enc -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\encoding
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\encoding\iso8859-10.enc -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\encoding
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\encoding\iso8859-13.enc -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\encoding
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\encoding\iso8859-14.enc -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\encoding
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\encoding\iso8859-15.enc -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\encoding
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\encoding\iso8859-16.enc -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\encoding
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\encoding\iso8859-2.enc -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\encoding
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\encoding\iso8859-3.enc -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\encoding
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\encoding\iso8859-4.enc -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\encoding
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\encoding\iso8859-5.enc -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\encoding
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\encoding\iso8859-6.enc -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\encoding
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\encoding\iso8859-7.enc -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\encoding
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\encoding\iso8859-8.enc -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\encoding
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\encoding\iso8859-9.enc -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\encoding
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\encoding\jis0201.enc -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\encoding
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\encoding\jis0208.enc -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\encoding
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\encoding\jis0212.enc -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\encoding
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\encoding\koi8-r.enc -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\encoding
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\encoding\koi8-u.enc -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\encoding
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\encoding\ksc5601.enc -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\encoding
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\encoding\macCentEuro.enc -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\encoding
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\encoding\macCroatian.enc -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\encoding
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\encoding\macCyrillic.enc -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\encoding
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\encoding\macDingbats.enc -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\encoding
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\encoding\macGreek.enc -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\encoding
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\encoding\macIceland.enc -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\encoding
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\encoding\macJapan.enc -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\encoding
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\encoding\macRoman.enc -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\encoding
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\encoding\macRomania.enc -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\encoding
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\encoding\macThai.enc -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\encoding
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\encoding\macTurkish.enc -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\encoding
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\encoding\macUkraine.enc -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\encoding
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\encoding\shiftjis.enc -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\encoding
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\encoding\symbol.enc -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\encoding
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\encoding\tis-620.enc -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\encoding
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\history.tcl -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5
+creating f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\http1.0
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\http1.0\http.tcl -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\http1.0
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\http1.0\pkgIndex.tcl -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\http1.0
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\init.tcl -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5
+creating f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\msgs
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\msgs\af.msg -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\msgs
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\msgs\af_za.msg -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\msgs
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\msgs\ar.msg -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\msgs
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\msgs\ar_in.msg -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\msgs
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\msgs\ar_jo.msg -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\msgs
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\msgs\ar_lb.msg -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\msgs
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\msgs\ar_sy.msg -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\msgs
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\msgs\be.msg -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\msgs
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\msgs\bg.msg -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\msgs
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\msgs\bn.msg -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\msgs
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\msgs\bn_in.msg -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\msgs
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\msgs\ca.msg -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\msgs
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\msgs\cs.msg -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\msgs
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\msgs\da.msg -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\msgs
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\msgs\de.msg -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\msgs
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\msgs\de_at.msg -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\msgs
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\msgs\de_be.msg -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\msgs
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\msgs\el.msg -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\msgs
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\msgs\en_au.msg -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\msgs
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\msgs\en_be.msg -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\msgs
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\msgs\en_bw.msg -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\msgs
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\msgs\en_ca.msg -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\msgs
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\msgs\en_gb.msg -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\msgs
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\msgs\en_hk.msg -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\msgs
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\msgs\en_ie.msg -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\msgs
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\msgs\en_in.msg -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\msgs
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\msgs\en_nz.msg -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\msgs
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\msgs\en_ph.msg -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\msgs
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\msgs\en_sg.msg -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\msgs
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\msgs\en_za.msg -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\msgs
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\msgs\en_zw.msg -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\msgs
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\msgs\eo.msg -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\msgs
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\msgs\es.msg -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\msgs
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\msgs\es_ar.msg -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\msgs
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\msgs\es_bo.msg -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\msgs
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\msgs\es_cl.msg -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\msgs
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\msgs\es_co.msg -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\msgs
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\msgs\es_cr.msg -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\msgs
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\msgs\es_do.msg -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\msgs
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\msgs\es_ec.msg -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\msgs
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\msgs\es_gt.msg -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\msgs
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\msgs\es_hn.msg -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\msgs
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\msgs\es_mx.msg -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\msgs
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\msgs\es_ni.msg -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\msgs
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\msgs\es_pa.msg -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\msgs
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\msgs\es_pe.msg -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\msgs
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\msgs\es_pr.msg -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\msgs
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\msgs\es_py.msg -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\msgs
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\msgs\es_sv.msg -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\msgs
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\msgs\es_uy.msg -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\msgs
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\msgs\es_ve.msg -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\msgs
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\msgs\et.msg -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\msgs
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\msgs\eu.msg -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\msgs
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\msgs\eu_es.msg -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\msgs
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\msgs\fa.msg -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\msgs
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\msgs\fa_in.msg -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\msgs
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\msgs\fa_ir.msg -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\msgs
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\msgs\fi.msg -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\msgs
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\msgs\fo.msg -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\msgs
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\msgs\fo_fo.msg -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\msgs
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\msgs\fr.msg -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\msgs
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\msgs\fr_be.msg -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\msgs
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\msgs\fr_ca.msg -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\msgs
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\msgs\fr_ch.msg -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\msgs
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\msgs\ga.msg -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\msgs
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\msgs\ga_ie.msg -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\msgs
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\msgs\gl.msg -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\msgs
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\msgs\gl_es.msg -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\msgs
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\msgs\gv.msg -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\msgs
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\msgs\gv_gb.msg -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\msgs
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\msgs\he.msg -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\msgs
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\msgs\hi.msg -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\msgs
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\msgs\hi_in.msg -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\msgs
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\msgs\hr.msg -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\msgs
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\msgs\hu.msg -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\msgs
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\msgs\id.msg -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\msgs
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\msgs\id_id.msg -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\msgs
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\msgs\is.msg -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\msgs
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\msgs\it.msg -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\msgs
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\msgs\it_ch.msg -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\msgs
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\msgs\ja.msg -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\msgs
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\msgs\kl.msg -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\msgs
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\msgs\kl_gl.msg -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\msgs
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\msgs\ko.msg -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\msgs
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\msgs\kok.msg -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\msgs
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\msgs\kok_in.msg -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\msgs
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\msgs\ko_kr.msg -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\msgs
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\msgs\kw.msg -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\msgs
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\msgs\kw_gb.msg -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\msgs
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\msgs\lt.msg -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\msgs
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\msgs\lv.msg -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\msgs
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\msgs\mk.msg -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\msgs
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\msgs\mr.msg -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\msgs
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\msgs\mr_in.msg -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\msgs
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\msgs\ms.msg -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\msgs
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\msgs\ms_my.msg -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\msgs
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\msgs\mt.msg -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\msgs
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\msgs\nb.msg -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\msgs
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\msgs\nl.msg -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\msgs
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\msgs\nl_be.msg -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\msgs
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\msgs\nn.msg -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\msgs
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\msgs\pl.msg -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\msgs
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\msgs\pt.msg -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\msgs
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\msgs\pt_br.msg -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\msgs
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\msgs\ro.msg -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\msgs
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\msgs\ru.msg -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\msgs
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\msgs\ru_ua.msg -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\msgs
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\msgs\sh.msg -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\msgs
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\msgs\sk.msg -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\msgs
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\msgs\sl.msg -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\msgs
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\msgs\sq.msg -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\msgs
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\msgs\sr.msg -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\msgs
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\msgs\sv.msg -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\msgs
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\msgs\sw.msg -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\msgs
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\msgs\ta.msg -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\msgs
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\msgs\ta_in.msg -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\msgs
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\msgs\te.msg -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\msgs
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\msgs\te_in.msg -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\msgs
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\msgs\th.msg -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\msgs
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\msgs\tr.msg -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\msgs
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\msgs\uk.msg -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\msgs
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\msgs\vi.msg -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\msgs
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\msgs\zh.msg -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\msgs
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\msgs\zh_cn.msg -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\msgs
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\msgs\zh_hk.msg -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\msgs
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\msgs\zh_sg.msg -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\msgs
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\msgs\zh_tw.msg -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\msgs
+creating f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\opt0.4
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\opt0.4\optparse.tcl -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\opt0.4
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\opt0.4\pkgIndex.tcl -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\opt0.4
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\package.tcl -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\parray.tcl -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\safe.tcl -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tclIndex -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tm.tcl -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5
+creating f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata
+creating f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Africa
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Africa\Abidjan -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Africa
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Africa\Accra -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Africa
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Africa\Addis_Ababa -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Africa
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Africa\Algiers -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Africa
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Africa\Asmara -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Africa
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Africa\Asmera -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Africa
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Africa\Bamako -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Africa
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Africa\Bangui -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Africa
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Africa\Banjul -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Africa
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Africa\Bissau -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Africa
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Africa\Blantyre -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Africa
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Africa\Brazzaville -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Africa
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Africa\Bujumbura -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Africa
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Africa\Cairo -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Africa
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Africa\Casablanca -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Africa
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Africa\Ceuta -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Africa
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Africa\Conakry -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Africa
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Africa\Dakar -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Africa
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Africa\Dar_es_Salaam -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Africa
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Africa\Djibouti -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Africa
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Africa\Douala -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Africa
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Africa\El_Aaiun -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Africa
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Africa\Freetown -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Africa
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Africa\Gaborone -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Africa
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Africa\Harare -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Africa
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Africa\Johannesburg -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Africa
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Africa\Kampala -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Africa
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Africa\Khartoum -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Africa
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Africa\Kigali -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Africa
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Africa\Kinshasa -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Africa
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Africa\Lagos -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Africa
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Africa\Libreville -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Africa
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Africa\Lome -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Africa
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Africa\Luanda -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Africa
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Africa\Lubumbashi -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Africa
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Africa\Lusaka -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Africa
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Africa\Malabo -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Africa
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Africa\Maputo -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Africa
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Africa\Maseru -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Africa
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Africa\Mbabane -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Africa
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Africa\Mogadishu -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Africa
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Africa\Monrovia -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Africa
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Africa\Nairobi -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Africa
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Africa\Ndjamena -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Africa
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Africa\Niamey -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Africa
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Africa\Nouakchott -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Africa
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Africa\Ouagadougou -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Africa
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Africa\Porto-Novo -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Africa
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Africa\Sao_Tome -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Africa
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Africa\Timbuktu -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Africa
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Africa\Tripoli -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Africa
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Africa\Tunis -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Africa
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Africa\Windhoek -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Africa
+creating f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\America
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\America\Adak -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\America
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\America\Anchorage -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\America
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\America\Anguilla -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\America
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\America\Antigua -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\America
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\America\Araguaina -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\America
+creating f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\America\Argentina
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\America\Argentina\Buenos_Aires -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\America\Argentina
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\America\Argentina\Catamarca -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\America\Argentina
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\America\Argentina\ComodRivadavia -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\America\Argentina
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\America\Argentina\Cordoba -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\America\Argentina
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\America\Argentina\Jujuy -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\America\Argentina
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\America\Argentina\La_Rioja -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\America\Argentina
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\America\Argentina\Mendoza -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\America\Argentina
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\America\Argentina\Rio_Gallegos -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\America\Argentina
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\America\Argentina\San_Juan -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\America\Argentina
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\America\Argentina\San_Luis -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\America\Argentina
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\America\Argentina\Tucuman -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\America\Argentina
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\America\Argentina\Ushuaia -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\America\Argentina
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\America\Aruba -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\America
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\America\Asuncion -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\America
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\America\Atikokan -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\America
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\America\Atka -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\America
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\America\Bahia -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\America
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\America\Barbados -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\America
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\America\Belem -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\America
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\America\Belize -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\America
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\America\Blanc-Sablon -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\America
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\America\Boa_Vista -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\America
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\America\Bogota -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\America
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\America\Boise -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\America
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\America\Buenos_Aires -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\America
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\America\Cambridge_Bay -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\America
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\America\Campo_Grande -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\America
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\America\Cancun -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\America
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\America\Caracas -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\America
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\America\Catamarca -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\America
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\America\Cayenne -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\America
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\America\Cayman -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\America
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\America\Chicago -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\America
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\America\Chihuahua -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\America
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\America\Coral_Harbour -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\America
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\America\Cordoba -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\America
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\America\Costa_Rica -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\America
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\America\Cuiaba -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\America
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\America\Curacao -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\America
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\America\Danmarkshavn -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\America
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\America\Dawson -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\America
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\America\Dawson_Creek -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\America
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\America\Denver -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\America
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\America\Detroit -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\America
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\America\Dominica -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\America
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\America\Edmonton -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\America
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\America\Eirunepe -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\America
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\America\El_Salvador -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\America
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\America\Ensenada -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\America
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\America\Fortaleza -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\America
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\America\Fort_Wayne -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\America
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\America\Glace_Bay -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\America
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\America\Godthab -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\America
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\America\Goose_Bay -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\America
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\America\Grand_Turk -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\America
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\America\Grenada -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\America
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\America\Guadeloupe -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\America
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\America\Guatemala -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\America
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\America\Guayaquil -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\America
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\America\Guyana -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\America
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\America\Halifax -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\America
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\America\Havana -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\America
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\America\Hermosillo -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\America
+creating f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\America\Indiana
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\America\Indiana\Indianapolis -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\America\Indiana
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\America\Indiana\Knox -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\America\Indiana
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\America\Indiana\Marengo -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\America\Indiana
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\America\Indiana\Petersburg -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\America\Indiana
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\America\Indiana\Tell_City -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\America\Indiana
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\America\Indiana\Vevay -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\America\Indiana
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\America\Indiana\Vincennes -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\America\Indiana
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\America\Indiana\Winamac -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\America\Indiana
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\America\Indianapolis -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\America
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\America\Inuvik -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\America
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\America\Iqaluit -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\America
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\America\Jamaica -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\America
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\America\Jujuy -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\America
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\America\Juneau -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\America
+creating f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\America\Kentucky
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\America\Kentucky\Louisville -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\America\Kentucky
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\America\Kentucky\Monticello -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\America\Kentucky
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\America\Knox_IN -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\America
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\America\La_Paz -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\America
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\America\Lima -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\America
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\America\Los_Angeles -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\America
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\America\Louisville -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\America
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\America\Maceio -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\America
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\America\Managua -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\America
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\America\Manaus -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\America
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\America\Marigot -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\America
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\America\Martinique -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\America
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\America\Mazatlan -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\America
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\America\Mendoza -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\America
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\America\Menominee -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\America
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\America\Merida -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\America
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\America\Mexico_City -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\America
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\America\Miquelon -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\America
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\America\Moncton -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\America
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\America\Monterrey -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\America
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\America\Montevideo -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\America
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\America\Montreal -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\America
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\America\Montserrat -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\America
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\America\Nassau -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\America
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\America\New_York -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\America
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\America\Nipigon -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\America
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\America\Nome -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\America
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\America\Noronha -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\America
+creating f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\America\North_Dakota
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\America\North_Dakota\Center -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\America\North_Dakota
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\America\North_Dakota\New_Salem -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\America\North_Dakota
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\America\Panama -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\America
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\America\Pangnirtung -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\America
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\America\Paramaribo -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\America
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\America\Phoenix -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\America
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\America\Port-au-Prince -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\America
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\America\Porto_Acre -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\America
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\America\Porto_Velho -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\America
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\America\Port_of_Spain -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\America
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\America\Puerto_Rico -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\America
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\America\Rainy_River -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\America
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\America\Rankin_Inlet -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\America
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\America\Recife -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\America
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\America\Regina -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\America
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\America\Resolute -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\America
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\America\Rio_Branco -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\America
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\America\Rosario -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\America
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\America\Santiago -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\America
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\America\Santo_Domingo -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\America
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\America\Sao_Paulo -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\America
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\America\Scoresbysund -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\America
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\America\Shiprock -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\America
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\America\St_Barthelemy -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\America
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\America\St_Johns -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\America
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\America\St_Kitts -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\America
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\America\St_Lucia -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\America
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\America\St_Thomas -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\America
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\America\St_Vincent -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\America
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\America\Swift_Current -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\America
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\America\Tegucigalpa -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\America
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\America\Thule -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\America
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\America\Thunder_Bay -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\America
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\America\Tijuana -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\America
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\America\Toronto -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\America
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\America\Tortola -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\America
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\America\Vancouver -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\America
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\America\Virgin -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\America
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\America\Whitehorse -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\America
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\America\Winnipeg -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\America
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\America\Yakutat -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\America
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\America\Yellowknife -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\America
+creating f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Antarctica
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Antarctica\Casey -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Antarctica
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Antarctica\Davis -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Antarctica
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Antarctica\DumontDUrville -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Antarctica
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Antarctica\Mawson -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Antarctica
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Antarctica\McMurdo -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Antarctica
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Antarctica\Palmer -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Antarctica
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Antarctica\Rothera -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Antarctica
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Antarctica\South_Pole -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Antarctica
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Antarctica\Syowa -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Antarctica
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Antarctica\Vostok -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Antarctica
+creating f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Arctic
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Arctic\Longyearbyen -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Arctic
+creating f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Asia
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Asia\Aden -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Asia
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Asia\Almaty -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Asia
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Asia\Amman -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Asia
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Asia\Anadyr -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Asia
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Asia\Aqtau -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Asia
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Asia\Aqtobe -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Asia
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Asia\Ashgabat -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Asia
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Asia\Ashkhabad -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Asia
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Asia\Baghdad -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Asia
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Asia\Bahrain -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Asia
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Asia\Baku -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Asia
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Asia\Bangkok -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Asia
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Asia\Beirut -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Asia
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Asia\Bishkek -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Asia
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Asia\Brunei -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Asia
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Asia\Calcutta -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Asia
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Asia\Choibalsan -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Asia
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Asia\Chongqing -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Asia
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Asia\Chungking -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Asia
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Asia\Colombo -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Asia
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Asia\Dacca -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Asia
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Asia\Damascus -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Asia
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Asia\Dhaka -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Asia
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Asia\Dili -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Asia
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Asia\Dubai -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Asia
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Asia\Dushanbe -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Asia
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Asia\Gaza -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Asia
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Asia\Harbin -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Asia
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Asia\Hong_Kong -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Asia
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Asia\Hovd -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Asia
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Asia\Ho_Chi_Minh -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Asia
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Asia\Irkutsk -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Asia
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Asia\Istanbul -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Asia
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Asia\Jakarta -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Asia
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Asia\Jayapura -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Asia
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Asia\Jerusalem -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Asia
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Asia\Kabul -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Asia
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Asia\Kamchatka -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Asia
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Asia\Karachi -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Asia
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Asia\Kashgar -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Asia
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Asia\Katmandu -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Asia
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Asia\Kolkata -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Asia
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Asia\Krasnoyarsk -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Asia
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Asia\Kuala_Lumpur -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Asia
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Asia\Kuching -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Asia
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Asia\Kuwait -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Asia
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Asia\Macao -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Asia
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Asia\Macau -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Asia
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Asia\Magadan -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Asia
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Asia\Makassar -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Asia
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Asia\Manila -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Asia
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Asia\Muscat -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Asia
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Asia\Nicosia -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Asia
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Asia\Novosibirsk -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Asia
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Asia\Omsk -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Asia
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Asia\Oral -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Asia
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Asia\Phnom_Penh -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Asia
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Asia\Pontianak -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Asia
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Asia\Pyongyang -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Asia
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Asia\Qatar -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Asia
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Asia\Qyzylorda -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Asia
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Asia\Rangoon -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Asia
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Asia\Riyadh -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Asia
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Asia\Saigon -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Asia
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Asia\Sakhalin -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Asia
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Asia\Samarkand -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Asia
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Asia\Seoul -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Asia
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Asia\Shanghai -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Asia
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Asia\Singapore -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Asia
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Asia\Taipei -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Asia
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Asia\Tashkent -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Asia
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Asia\Tbilisi -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Asia
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Asia\Tehran -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Asia
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Asia\Tel_Aviv -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Asia
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Asia\Thimbu -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Asia
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Asia\Thimphu -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Asia
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Asia\Tokyo -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Asia
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Asia\Ujung_Pandang -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Asia
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Asia\Ulaanbaatar -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Asia
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Asia\Ulan_Bator -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Asia
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Asia\Urumqi -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Asia
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Asia\Vientiane -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Asia
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Asia\Vladivostok -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Asia
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Asia\Yakutsk -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Asia
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Asia\Yekaterinburg -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Asia
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Asia\Yerevan -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Asia
+creating f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Atlantic
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Atlantic\Azores -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Atlantic
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Atlantic\Bermuda -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Atlantic
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Atlantic\Canary -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Atlantic
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Atlantic\Cape_Verde -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Atlantic
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Atlantic\Faeroe -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Atlantic
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Atlantic\Faroe -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Atlantic
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Atlantic\Jan_Mayen -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Atlantic
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Atlantic\Madeira -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Atlantic
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Atlantic\Reykjavik -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Atlantic
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Atlantic\South_Georgia -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Atlantic
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Atlantic\Stanley -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Atlantic
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Atlantic\St_Helena -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Atlantic
+creating f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Australia
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Australia\ACT -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Australia
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Australia\Adelaide -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Australia
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Australia\Brisbane -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Australia
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Australia\Broken_Hill -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Australia
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Australia\Canberra -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Australia
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Australia\Currie -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Australia
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Australia\Darwin -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Australia
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Australia\Eucla -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Australia
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Australia\Hobart -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Australia
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Australia\LHI -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Australia
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Australia\Lindeman -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Australia
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Australia\Lord_Howe -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Australia
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Australia\Melbourne -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Australia
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Australia\North -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Australia
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Australia\NSW -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Australia
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Australia\Perth -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Australia
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Australia\Queensland -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Australia
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Australia\South -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Australia
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Australia\Sydney -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Australia
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Australia\Tasmania -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Australia
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Australia\Victoria -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Australia
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Australia\West -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Australia
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Australia\Yancowinna -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Australia
+creating f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Brazil
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Brazil\Acre -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Brazil
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Brazil\DeNoronha -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Brazil
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Brazil\East -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Brazil
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Brazil\West -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Brazil
+creating f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Canada
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Canada\Atlantic -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Canada
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Canada\Central -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Canada
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Canada\East-Saskatchewan -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Canada
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Canada\Eastern -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Canada
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Canada\Mountain -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Canada
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Canada\Newfoundland -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Canada
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Canada\Pacific -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Canada
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Canada\Saskatchewan -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Canada
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Canada\Yukon -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Canada
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\CET -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata
+creating f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Chile
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Chile\Continental -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Chile
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Chile\EasterIsland -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Chile
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\CST6CDT -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Cuba -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\EET -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Egypt -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Eire -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\EST -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\EST5EDT -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata
+creating f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Etc
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Etc\GMT -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Etc
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Etc\GMT+0 -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Etc
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Etc\GMT+1 -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Etc
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Etc\GMT+10 -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Etc
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Etc\GMT+11 -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Etc
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Etc\GMT+12 -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Etc
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Etc\GMT+2 -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Etc
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Etc\GMT+3 -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Etc
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Etc\GMT+4 -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Etc
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Etc\GMT+5 -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Etc
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Etc\GMT+6 -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Etc
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Etc\GMT+7 -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Etc
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Etc\GMT+8 -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Etc
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Etc\GMT+9 -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Etc
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Etc\GMT-0 -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Etc
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Etc\GMT-1 -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Etc
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Etc\GMT-10 -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Etc
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Etc\GMT-11 -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Etc
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Etc\GMT-12 -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Etc
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Etc\GMT-13 -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Etc
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Etc\GMT-14 -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Etc
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Etc\GMT-2 -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Etc
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Etc\GMT-3 -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Etc
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Etc\GMT-4 -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Etc
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Etc\GMT-5 -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Etc
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Etc\GMT-6 -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Etc
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Etc\GMT-7 -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Etc
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Etc\GMT-8 -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Etc
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Etc\GMT-9 -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Etc
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Etc\GMT0 -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Etc
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Etc\Greenwich -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Etc
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Etc\UCT -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Etc
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Etc\Universal -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Etc
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Etc\UTC -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Etc
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Etc\Zulu -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Etc
+creating f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Europe
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Europe\Amsterdam -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Europe
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Europe\Andorra -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Europe
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Europe\Athens -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Europe
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Europe\Belfast -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Europe
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Europe\Belgrade -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Europe
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Europe\Berlin -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Europe
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Europe\Bratislava -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Europe
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Europe\Brussels -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Europe
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Europe\Bucharest -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Europe
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Europe\Budapest -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Europe
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Europe\Chisinau -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Europe
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Europe\Copenhagen -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Europe
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Europe\Dublin -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Europe
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Europe\Gibraltar -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Europe
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Europe\Guernsey -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Europe
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Europe\Helsinki -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Europe
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Europe\Isle_of_Man -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Europe
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Europe\Istanbul -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Europe
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Europe\Jersey -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Europe
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Europe\Kaliningrad -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Europe
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Europe\Kiev -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Europe
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Europe\Lisbon -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Europe
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Europe\Ljubljana -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Europe
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Europe\London -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Europe
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Europe\Luxembourg -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Europe
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Europe\Madrid -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Europe
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Europe\Malta -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Europe
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Europe\Mariehamn -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Europe
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Europe\Minsk -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Europe
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Europe\Monaco -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Europe
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Europe\Moscow -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Europe
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Europe\Nicosia -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Europe
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Europe\Oslo -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Europe
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Europe\Paris -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Europe
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Europe\Podgorica -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Europe
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Europe\Prague -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Europe
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Europe\Riga -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Europe
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Europe\Rome -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Europe
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Europe\Samara -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Europe
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Europe\San_Marino -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Europe
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Europe\Sarajevo -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Europe
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Europe\Simferopol -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Europe
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Europe\Skopje -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Europe
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Europe\Sofia -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Europe
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Europe\Stockholm -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Europe
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Europe\Tallinn -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Europe
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Europe\Tirane -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Europe
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Europe\Tiraspol -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Europe
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Europe\Uzhgorod -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Europe
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Europe\Vaduz -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Europe
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Europe\Vatican -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Europe
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Europe\Vienna -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Europe
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Europe\Vilnius -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Europe
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Europe\Volgograd -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Europe
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Europe\Warsaw -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Europe
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Europe\Zagreb -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Europe
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Europe\Zaporozhye -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Europe
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Europe\Zurich -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Europe
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\GB -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\GB-Eire -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\GMT -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\GMT+0 -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\GMT-0 -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\GMT0 -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Greenwich -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Hongkong -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\HST -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Iceland -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata
+creating f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Indian
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Indian\Antananarivo -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Indian
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Indian\Chagos -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Indian
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Indian\Christmas -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Indian
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Indian\Cocos -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Indian
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Indian\Comoro -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Indian
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Indian\Kerguelen -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Indian
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Indian\Mahe -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Indian
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Indian\Maldives -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Indian
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Indian\Mauritius -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Indian
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Indian\Mayotte -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Indian
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Indian\Reunion -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Indian
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Iran -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Israel -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Jamaica -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Japan -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Kwajalein -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Libya -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\MET -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata
+creating f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Mexico
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Mexico\BajaNorte -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Mexico
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Mexico\BajaSur -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Mexico
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Mexico\General -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Mexico
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\MST -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\MST7MDT -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Navajo -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\NZ -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\NZ-CHAT -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata
+creating f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Pacific
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Pacific\Apia -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Pacific
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Pacific\Auckland -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Pacific
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Pacific\Chatham -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Pacific
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Pacific\Easter -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Pacific
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Pacific\Efate -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Pacific
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Pacific\Enderbury -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Pacific
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Pacific\Fakaofo -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Pacific
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Pacific\Fiji -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Pacific
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Pacific\Funafuti -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Pacific
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Pacific\Galapagos -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Pacific
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Pacific\Gambier -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Pacific
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Pacific\Guadalcanal -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Pacific
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Pacific\Guam -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Pacific
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Pacific\Honolulu -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Pacific
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Pacific\Johnston -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Pacific
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Pacific\Kiritimati -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Pacific
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Pacific\Kosrae -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Pacific
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Pacific\Kwajalein -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Pacific
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Pacific\Majuro -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Pacific
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Pacific\Marquesas -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Pacific
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Pacific\Midway -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Pacific
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Pacific\Nauru -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Pacific
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Pacific\Niue -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Pacific
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Pacific\Norfolk -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Pacific
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Pacific\Noumea -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Pacific
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Pacific\Pago_Pago -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Pacific
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Pacific\Palau -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Pacific
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Pacific\Pitcairn -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Pacific
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Pacific\Ponape -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Pacific
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Pacific\Port_Moresby -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Pacific
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Pacific\Rarotonga -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Pacific
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Pacific\Saipan -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Pacific
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Pacific\Samoa -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Pacific
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Pacific\Tahiti -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Pacific
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Pacific\Tarawa -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Pacific
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Pacific\Tongatapu -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Pacific
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Pacific\Truk -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Pacific
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Pacific\Wake -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Pacific
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Pacific\Wallis -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Pacific
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Pacific\Yap -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\Pacific
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Poland -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Portugal -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\PRC -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\PST8PDT -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\ROC -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\ROK -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Singapore -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata
+creating f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\SystemV
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\SystemV\AST4 -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\SystemV
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\SystemV\AST4ADT -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\SystemV
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\SystemV\CST6 -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\SystemV
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\SystemV\CST6CDT -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\SystemV
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\SystemV\EST5 -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\SystemV
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\SystemV\EST5EDT -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\SystemV
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\SystemV\HST10 -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\SystemV
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\SystemV\MST7 -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\SystemV
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\SystemV\MST7MDT -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\SystemV
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\SystemV\PST8 -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\SystemV
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\SystemV\PST8PDT -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\SystemV
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\SystemV\YST9 -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\SystemV
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\SystemV\YST9YDT -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\SystemV
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Turkey -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\UCT -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Universal -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata
+creating f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\US
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\US\Alaska -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\US
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\US\Aleutian -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\US
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\US\Arizona -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\US
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\US\Central -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\US
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\US\East-Indiana -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\US
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\US\Eastern -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\US
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\US\Hawaii -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\US
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\US\Indiana-Starke -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\US
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\US\Michigan -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\US
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\US\Mountain -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\US
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\US\Pacific -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\US
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\US\Pacific-New -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\US
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\US\Samoa -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata\US
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\UTC -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\W-SU -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\WET -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\tzdata\Zulu -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5\tzdata
+copying C:\OSGeo4W\apps\Python27\tcl\tcl8.5\word.tcl -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tcl8.5
+creating f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tk8.5
+copying C:\OSGeo4W\apps\Python27\tcl\tk8.5\bgerror.tcl -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tk8.5
+copying C:\OSGeo4W\apps\Python27\tcl\tk8.5\button.tcl -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tk8.5
+copying C:\OSGeo4W\apps\Python27\tcl\tk8.5\choosedir.tcl -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tk8.5
+copying C:\OSGeo4W\apps\Python27\tcl\tk8.5\clrpick.tcl -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tk8.5
+copying C:\OSGeo4W\apps\Python27\tcl\tk8.5\comdlg.tcl -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tk8.5
+copying C:\OSGeo4W\apps\Python27\tcl\tk8.5\console.tcl -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tk8.5
+creating f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tk8.5\demos
+copying C:\OSGeo4W\apps\Python27\tcl\tk8.5\demos\anilabel.tcl -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tk8.5\demos
+copying C:\OSGeo4W\apps\Python27\tcl\tk8.5\demos\aniwave.tcl -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tk8.5\demos
+copying C:\OSGeo4W\apps\Python27\tcl\tk8.5\demos\arrow.tcl -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tk8.5\demos
+copying C:\OSGeo4W\apps\Python27\tcl\tk8.5\demos\bind.tcl -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tk8.5\demos
+copying C:\OSGeo4W\apps\Python27\tcl\tk8.5\demos\bitmap.tcl -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tk8.5\demos
+copying C:\OSGeo4W\apps\Python27\tcl\tk8.5\demos\browse -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tk8.5\demos
+copying C:\OSGeo4W\apps\Python27\tcl\tk8.5\demos\button.tcl -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tk8.5\demos
+copying C:\OSGeo4W\apps\Python27\tcl\tk8.5\demos\check.tcl -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tk8.5\demos
+copying C:\OSGeo4W\apps\Python27\tcl\tk8.5\demos\clrpick.tcl -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tk8.5\demos
+copying C:\OSGeo4W\apps\Python27\tcl\tk8.5\demos\colors.tcl -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tk8.5\demos
+copying C:\OSGeo4W\apps\Python27\tcl\tk8.5\demos\combo.tcl -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tk8.5\demos
+copying C:\OSGeo4W\apps\Python27\tcl\tk8.5\demos\cscroll.tcl -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tk8.5\demos
+copying C:\OSGeo4W\apps\Python27\tcl\tk8.5\demos\ctext.tcl -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tk8.5\demos
+copying C:\OSGeo4W\apps\Python27\tcl\tk8.5\demos\dialog1.tcl -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tk8.5\demos
+copying C:\OSGeo4W\apps\Python27\tcl\tk8.5\demos\dialog2.tcl -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tk8.5\demos
+copying C:\OSGeo4W\apps\Python27\tcl\tk8.5\demos\en.msg -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tk8.5\demos
+copying C:\OSGeo4W\apps\Python27\tcl\tk8.5\demos\entry1.tcl -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tk8.5\demos
+copying C:\OSGeo4W\apps\Python27\tcl\tk8.5\demos\entry2.tcl -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tk8.5\demos
+copying C:\OSGeo4W\apps\Python27\tcl\tk8.5\demos\entry3.tcl -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tk8.5\demos
+copying C:\OSGeo4W\apps\Python27\tcl\tk8.5\demos\filebox.tcl -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tk8.5\demos
+copying C:\OSGeo4W\apps\Python27\tcl\tk8.5\demos\floor.tcl -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tk8.5\demos
+copying C:\OSGeo4W\apps\Python27\tcl\tk8.5\demos\form.tcl -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tk8.5\demos
+copying C:\OSGeo4W\apps\Python27\tcl\tk8.5\demos\goldberg.tcl -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tk8.5\demos
+copying C:\OSGeo4W\apps\Python27\tcl\tk8.5\demos\hello -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tk8.5\demos
+copying C:\OSGeo4W\apps\Python27\tcl\tk8.5\demos\hscale.tcl -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tk8.5\demos
+copying C:\OSGeo4W\apps\Python27\tcl\tk8.5\demos\icon.tcl -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tk8.5\demos
+copying C:\OSGeo4W\apps\Python27\tcl\tk8.5\demos\image1.tcl -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tk8.5\demos
+copying C:\OSGeo4W\apps\Python27\tcl\tk8.5\demos\image2.tcl -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tk8.5\demos
+creating f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tk8.5\demos\images
+copying C:\OSGeo4W\apps\Python27\tcl\tk8.5\demos\images\earth.gif -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tk8.5\demos\images
+copying C:\OSGeo4W\apps\Python27\tcl\tk8.5\demos\images\earthris.gif -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tk8.5\demos\images
+copying C:\OSGeo4W\apps\Python27\tcl\tk8.5\demos\images\face.xbm -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tk8.5\demos\images
+copying C:\OSGeo4W\apps\Python27\tcl\tk8.5\demos\images\flagdown.xbm -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tk8.5\demos\images
+copying C:\OSGeo4W\apps\Python27\tcl\tk8.5\demos\images\flagup.xbm -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tk8.5\demos\images
+copying C:\OSGeo4W\apps\Python27\tcl\tk8.5\demos\images\gray25.xbm -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tk8.5\demos\images
+copying C:\OSGeo4W\apps\Python27\tcl\tk8.5\demos\images\letters.xbm -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tk8.5\demos\images
+copying C:\OSGeo4W\apps\Python27\tcl\tk8.5\demos\images\noletter.xbm -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tk8.5\demos\images
+copying C:\OSGeo4W\apps\Python27\tcl\tk8.5\demos\images\pattern.xbm -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tk8.5\demos\images
+copying C:\OSGeo4W\apps\Python27\tcl\tk8.5\demos\images\tcllogo.gif -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tk8.5\demos\images
+copying C:\OSGeo4W\apps\Python27\tcl\tk8.5\demos\images\teapot.ppm -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tk8.5\demos\images
+copying C:\OSGeo4W\apps\Python27\tcl\tk8.5\demos\items.tcl -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tk8.5\demos
+copying C:\OSGeo4W\apps\Python27\tcl\tk8.5\demos\ixset -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tk8.5\demos
+copying C:\OSGeo4W\apps\Python27\tcl\tk8.5\demos\knightstour.tcl -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tk8.5\demos
+copying C:\OSGeo4W\apps\Python27\tcl\tk8.5\demos\label.tcl -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tk8.5\demos
+copying C:\OSGeo4W\apps\Python27\tcl\tk8.5\demos\labelframe.tcl -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tk8.5\demos
+copying C:\OSGeo4W\apps\Python27\tcl\tk8.5\demos\license.terms -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tk8.5\demos
+copying C:\OSGeo4W\apps\Python27\tcl\tk8.5\demos\mclist.tcl -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tk8.5\demos
+copying C:\OSGeo4W\apps\Python27\tcl\tk8.5\demos\menu.tcl -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tk8.5\demos
+copying C:\OSGeo4W\apps\Python27\tcl\tk8.5\demos\menubu.tcl -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tk8.5\demos
+copying C:\OSGeo4W\apps\Python27\tcl\tk8.5\demos\msgbox.tcl -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tk8.5\demos
+copying C:\OSGeo4W\apps\Python27\tcl\tk8.5\demos\nl.msg -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tk8.5\demos
+copying C:\OSGeo4W\apps\Python27\tcl\tk8.5\demos\paned1.tcl -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tk8.5\demos
+copying C:\OSGeo4W\apps\Python27\tcl\tk8.5\demos\paned2.tcl -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tk8.5\demos
+copying C:\OSGeo4W\apps\Python27\tcl\tk8.5\demos\pendulum.tcl -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tk8.5\demos
+copying C:\OSGeo4W\apps\Python27\tcl\tk8.5\demos\plot.tcl -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tk8.5\demos
+copying C:\OSGeo4W\apps\Python27\tcl\tk8.5\demos\puzzle.tcl -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tk8.5\demos
+copying C:\OSGeo4W\apps\Python27\tcl\tk8.5\demos\radio.tcl -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tk8.5\demos
+copying C:\OSGeo4W\apps\Python27\tcl\tk8.5\demos\README -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tk8.5\demos
+copying C:\OSGeo4W\apps\Python27\tcl\tk8.5\demos\rmt -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tk8.5\demos
+copying C:\OSGeo4W\apps\Python27\tcl\tk8.5\demos\rolodex -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tk8.5\demos
+copying C:\OSGeo4W\apps\Python27\tcl\tk8.5\demos\ruler.tcl -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tk8.5\demos
+copying C:\OSGeo4W\apps\Python27\tcl\tk8.5\demos\sayings.tcl -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tk8.5\demos
+copying C:\OSGeo4W\apps\Python27\tcl\tk8.5\demos\search.tcl -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tk8.5\demos
+copying C:\OSGeo4W\apps\Python27\tcl\tk8.5\demos\spin.tcl -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tk8.5\demos
+copying C:\OSGeo4W\apps\Python27\tcl\tk8.5\demos\square -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tk8.5\demos
+copying C:\OSGeo4W\apps\Python27\tcl\tk8.5\demos\states.tcl -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tk8.5\demos
+copying C:\OSGeo4W\apps\Python27\tcl\tk8.5\demos\style.tcl -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tk8.5\demos
+copying C:\OSGeo4W\apps\Python27\tcl\tk8.5\demos\tclIndex -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tk8.5\demos
+copying C:\OSGeo4W\apps\Python27\tcl\tk8.5\demos\tcolor -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tk8.5\demos
+copying C:\OSGeo4W\apps\Python27\tcl\tk8.5\demos\text.tcl -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tk8.5\demos
+copying C:\OSGeo4W\apps\Python27\tcl\tk8.5\demos\textpeer.tcl -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tk8.5\demos
+copying C:\OSGeo4W\apps\Python27\tcl\tk8.5\demos\timer -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tk8.5\demos
+copying C:\OSGeo4W\apps\Python27\tcl\tk8.5\demos\toolbar.tcl -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tk8.5\demos
+copying C:\OSGeo4W\apps\Python27\tcl\tk8.5\demos\tree.tcl -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tk8.5\demos
+copying C:\OSGeo4W\apps\Python27\tcl\tk8.5\demos\ttkbut.tcl -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tk8.5\demos
+copying C:\OSGeo4W\apps\Python27\tcl\tk8.5\demos\ttkmenu.tcl -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tk8.5\demos
+copying C:\OSGeo4W\apps\Python27\tcl\tk8.5\demos\ttknote.tcl -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tk8.5\demos
+copying C:\OSGeo4W\apps\Python27\tcl\tk8.5\demos\ttkpane.tcl -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tk8.5\demos
+copying C:\OSGeo4W\apps\Python27\tcl\tk8.5\demos\ttkprogress.tcl -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tk8.5\demos
+copying C:\OSGeo4W\apps\Python27\tcl\tk8.5\demos\twind.tcl -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tk8.5\demos
+copying C:\OSGeo4W\apps\Python27\tcl\tk8.5\demos\unicodeout.tcl -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tk8.5\demos
+copying C:\OSGeo4W\apps\Python27\tcl\tk8.5\demos\vscale.tcl -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tk8.5\demos
+copying C:\OSGeo4W\apps\Python27\tcl\tk8.5\demos\widget -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tk8.5\demos
+copying C:\OSGeo4W\apps\Python27\tcl\tk8.5\dialog.tcl -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tk8.5
+copying C:\OSGeo4W\apps\Python27\tcl\tk8.5\entry.tcl -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tk8.5
+copying C:\OSGeo4W\apps\Python27\tcl\tk8.5\focus.tcl -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tk8.5
+creating f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tk8.5\images
+copying C:\OSGeo4W\apps\Python27\tcl\tk8.5\images\logo.eps -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tk8.5\images
+copying C:\OSGeo4W\apps\Python27\tcl\tk8.5\images\logo100.gif -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tk8.5\images
+copying C:\OSGeo4W\apps\Python27\tcl\tk8.5\images\logo64.gif -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tk8.5\images
+copying C:\OSGeo4W\apps\Python27\tcl\tk8.5\images\logoLarge.gif -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tk8.5\images
+copying C:\OSGeo4W\apps\Python27\tcl\tk8.5\images\logoMed.gif -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tk8.5\images
+copying C:\OSGeo4W\apps\Python27\tcl\tk8.5\images\pwrdLogo.eps -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tk8.5\images
+copying C:\OSGeo4W\apps\Python27\tcl\tk8.5\images\pwrdLogo100.gif -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tk8.5\images
+copying C:\OSGeo4W\apps\Python27\tcl\tk8.5\images\pwrdLogo150.gif -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tk8.5\images
+copying C:\OSGeo4W\apps\Python27\tcl\tk8.5\images\pwrdLogo175.gif -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tk8.5\images
+copying C:\OSGeo4W\apps\Python27\tcl\tk8.5\images\pwrdLogo200.gif -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tk8.5\images
+copying C:\OSGeo4W\apps\Python27\tcl\tk8.5\images\pwrdLogo75.gif -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tk8.5\images
+copying C:\OSGeo4W\apps\Python27\tcl\tk8.5\images\README -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tk8.5\images
+copying C:\OSGeo4W\apps\Python27\tcl\tk8.5\images\tai-ku.gif -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tk8.5\images
+copying C:\OSGeo4W\apps\Python27\tcl\tk8.5\license.terms -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tk8.5
+copying C:\OSGeo4W\apps\Python27\tcl\tk8.5\listbox.tcl -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tk8.5
+copying C:\OSGeo4W\apps\Python27\tcl\tk8.5\menu.tcl -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tk8.5
+copying C:\OSGeo4W\apps\Python27\tcl\tk8.5\mkpsenc.tcl -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tk8.5
+copying C:\OSGeo4W\apps\Python27\tcl\tk8.5\msgbox.tcl -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tk8.5
+creating f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tk8.5\msgs
+copying C:\OSGeo4W\apps\Python27\tcl\tk8.5\msgs\cs.msg -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tk8.5\msgs
+copying C:\OSGeo4W\apps\Python27\tcl\tk8.5\msgs\da.msg -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tk8.5\msgs
+copying C:\OSGeo4W\apps\Python27\tcl\tk8.5\msgs\de.msg -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tk8.5\msgs
+copying C:\OSGeo4W\apps\Python27\tcl\tk8.5\msgs\el.msg -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tk8.5\msgs
+copying C:\OSGeo4W\apps\Python27\tcl\tk8.5\msgs\en.msg -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tk8.5\msgs
+copying C:\OSGeo4W\apps\Python27\tcl\tk8.5\msgs\en_gb.msg -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tk8.5\msgs
+copying C:\OSGeo4W\apps\Python27\tcl\tk8.5\msgs\eo.msg -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tk8.5\msgs
+copying C:\OSGeo4W\apps\Python27\tcl\tk8.5\msgs\es.msg -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tk8.5\msgs
+copying C:\OSGeo4W\apps\Python27\tcl\tk8.5\msgs\fr.msg -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tk8.5\msgs
+copying C:\OSGeo4W\apps\Python27\tcl\tk8.5\msgs\hu.msg -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tk8.5\msgs
+copying C:\OSGeo4W\apps\Python27\tcl\tk8.5\msgs\it.msg -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tk8.5\msgs
+copying C:\OSGeo4W\apps\Python27\tcl\tk8.5\msgs\nl.msg -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tk8.5\msgs
+copying C:\OSGeo4W\apps\Python27\tcl\tk8.5\msgs\pl.msg -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tk8.5\msgs
+copying C:\OSGeo4W\apps\Python27\tcl\tk8.5\msgs\pt.msg -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tk8.5\msgs
+copying C:\OSGeo4W\apps\Python27\tcl\tk8.5\msgs\ru.msg -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tk8.5\msgs
+copying C:\OSGeo4W\apps\Python27\tcl\tk8.5\msgs\sv.msg -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tk8.5\msgs
+copying C:\OSGeo4W\apps\Python27\tcl\tk8.5\obsolete.tcl -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tk8.5
+copying C:\OSGeo4W\apps\Python27\tcl\tk8.5\optMenu.tcl -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tk8.5
+copying C:\OSGeo4W\apps\Python27\tcl\tk8.5\palette.tcl -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tk8.5
+copying C:\OSGeo4W\apps\Python27\tcl\tk8.5\panedwindow.tcl -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tk8.5
+copying C:\OSGeo4W\apps\Python27\tcl\tk8.5\pkgIndex.tcl -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tk8.5
+copying C:\OSGeo4W\apps\Python27\tcl\tk8.5\safetk.tcl -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tk8.5
+copying C:\OSGeo4W\apps\Python27\tcl\tk8.5\scale.tcl -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tk8.5
+copying C:\OSGeo4W\apps\Python27\tcl\tk8.5\scrlbar.tcl -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tk8.5
+copying C:\OSGeo4W\apps\Python27\tcl\tk8.5\spinbox.tcl -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tk8.5
+copying C:\OSGeo4W\apps\Python27\tcl\tk8.5\tclIndex -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tk8.5
+copying C:\OSGeo4W\apps\Python27\tcl\tk8.5\tearoff.tcl -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tk8.5
+copying C:\OSGeo4W\apps\Python27\tcl\tk8.5\text.tcl -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tk8.5
+copying C:\OSGeo4W\apps\Python27\tcl\tk8.5\tk.tcl -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tk8.5
+copying C:\OSGeo4W\apps\Python27\tcl\tk8.5\tkfbox.tcl -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tk8.5
+creating f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tk8.5\ttk
+copying C:\OSGeo4W\apps\Python27\tcl\tk8.5\ttk\altTheme.tcl -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tk8.5\ttk
+copying C:\OSGeo4W\apps\Python27\tcl\tk8.5\ttk\aquaTheme.tcl -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tk8.5\ttk
+copying C:\OSGeo4W\apps\Python27\tcl\tk8.5\ttk\button.tcl -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tk8.5\ttk
+copying C:\OSGeo4W\apps\Python27\tcl\tk8.5\ttk\clamTheme.tcl -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tk8.5\ttk
+copying C:\OSGeo4W\apps\Python27\tcl\tk8.5\ttk\classicTheme.tcl -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tk8.5\ttk
+copying C:\OSGeo4W\apps\Python27\tcl\tk8.5\ttk\combobox.tcl -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tk8.5\ttk
+copying C:\OSGeo4W\apps\Python27\tcl\tk8.5\ttk\cursors.tcl -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tk8.5\ttk
+copying C:\OSGeo4W\apps\Python27\tcl\tk8.5\ttk\defaults.tcl -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tk8.5\ttk
+copying C:\OSGeo4W\apps\Python27\tcl\tk8.5\ttk\entry.tcl -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tk8.5\ttk
+copying C:\OSGeo4W\apps\Python27\tcl\tk8.5\ttk\fonts.tcl -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tk8.5\ttk
+copying C:\OSGeo4W\apps\Python27\tcl\tk8.5\ttk\menubutton.tcl -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tk8.5\ttk
+copying C:\OSGeo4W\apps\Python27\tcl\tk8.5\ttk\notebook.tcl -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tk8.5\ttk
+copying C:\OSGeo4W\apps\Python27\tcl\tk8.5\ttk\panedwindow.tcl -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tk8.5\ttk
+copying C:\OSGeo4W\apps\Python27\tcl\tk8.5\ttk\progress.tcl -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tk8.5\ttk
+copying C:\OSGeo4W\apps\Python27\tcl\tk8.5\ttk\scale.tcl -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tk8.5\ttk
+copying C:\OSGeo4W\apps\Python27\tcl\tk8.5\ttk\scrollbar.tcl -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tk8.5\ttk
+copying C:\OSGeo4W\apps\Python27\tcl\tk8.5\ttk\sizegrip.tcl -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tk8.5\ttk
+copying C:\OSGeo4W\apps\Python27\tcl\tk8.5\ttk\treeview.tcl -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tk8.5\ttk
+copying C:\OSGeo4W\apps\Python27\tcl\tk8.5\ttk\ttk.tcl -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tk8.5\ttk
+copying C:\OSGeo4W\apps\Python27\tcl\tk8.5\ttk\utils.tcl -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tk8.5\ttk
+copying C:\OSGeo4W\apps\Python27\tcl\tk8.5\ttk\winTheme.tcl -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tk8.5\ttk
+copying C:\OSGeo4W\apps\Python27\tcl\tk8.5\ttk\xpTheme.tcl -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tk8.5\ttk
+copying C:\OSGeo4W\apps\Python27\tcl\tk8.5\unsupported.tcl -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tk8.5
+copying C:\OSGeo4W\apps\Python27\tcl\tk8.5\xmfbox.tcl -> f:\dev\IntraMaps Roam\roam\dist\libs\tcl\tk8.5
+creating python loader for extension 'qgis._server' (C:\OSGeo4W\apps\qgis\python\qgis\_server.pyd -> qgis._server.pyd)
+creating python loader for extension 'gevent._util' (C:\OSGeo4W\apps\Python27\lib\site-packages\gevent\_util.pyd -> gevent._util.pyd)
+creating python loader for extension '_elementtree' (C:\OSGeo4W\apps\Python27\DLLs\_elementtree.pyd -> _elementtree.pyd)
+creating python loader for extension 'greenlet' (C:\OSGeo4W\apps\Python27\lib\site-packages\greenlet.pyd -> greenlet.pyd)
+creating python loader for extension 'gevent.ares' (C:\OSGeo4W\apps\Python27\lib\site-packages\gevent\ares.pyd -> gevent.ares.pyd)
+creating python loader for extension '_ctypes' (C:\OSGeo4W\apps\Python27\DLLs\_ctypes.pyd -> _ctypes.pyd)
+creating python loader for extension '_testcapi' (C:\OSGeo4W\apps\Python27\DLLs\_testcapi.pyd -> _testcapi.pyd)
+creating python loader for extension 'win32pipe' (C:\OSGeo4W\apps\Python27\lib\site-packages\win32\win32pipe.pyd -> win32pipe.pyd)
+creating python loader for extension 'select' (C:\OSGeo4W\apps\Python27\DLLs\select.pyd -> select.pyd)
+creating python loader for extension '_curses' (C:\OSGeo4W\apps\Python27\lib\site-packages\_curses.pyd -> _curses.pyd)
+creating python loader for extension 'unicodedata' (C:\OSGeo4W\apps\Python27\DLLs\unicodedata.pyd -> unicodedata.pyd)
+creating python loader for extension 'win32gui' (C:\OSGeo4W\apps\Python27\lib\site-packages\win32\win32gui.pyd -> win32gui.pyd)
+creating python loader for extension 'sip' (C:\OSGeo4W\apps\Python27\lib\site-packages\sip.pyd -> sip.pyd)
+creating python loader for extension 'win32evtlog' (C:\OSGeo4W\apps\Python27\lib\site-packages\win32\win32evtlog.pyd -> win32evtlog.pyd)
+creating python loader for extension 'gevent._semaphore' (C:\OSGeo4W\apps\Python27\lib\site-packages\gevent\_semaphore.pyd -> gevent._semaphore.pyd)
+creating python loader for extension 'win32wnet' (C:\OSGeo4W\apps\Python27\lib\site-packages\win32\win32wnet.pyd -> win32wnet.pyd)
+creating python loader for extension '_tkinter' (C:\OSGeo4W\apps\Python27\DLLs\_tkinter.pyd -> _tkinter.pyd)
+creating python loader for extension 'PyQt4.QtNetwork' (C:\OSGeo4W\apps\Python27\lib\site-packages\PyQt4\QtNetwork.pyd -> PyQt4.QtNetwork.pyd)
+creating python loader for extension 'win32ui' (C:\OSGeo4W\apps\Python27\lib\site-packages\Pythonwin\win32ui.pyd -> win32ui.pyd)
+creating python loader for extension '_hashlib' (C:\OSGeo4W\apps\Python27\DLLs\_hashlib.pyd -> _hashlib.pyd)
+creating python loader for extension 'markupsafe._speedups' (c:\osgeo4w\apps\python27\lib\site-packages\markupsafe-0.23-py2.7-win32.egg\markupsafe\_speedups.pyd -> markupsafe._speedups.pyd)
+creating python loader for extension 'bz2' (C:\OSGeo4W\apps\Python27\DLLs\bz2.pyd -> bz2.pyd)
+creating python loader for extension '_ssl' (C:\OSGeo4W\apps\Python27\DLLs\_ssl.pyd -> _ssl.pyd)
+creating python loader for extension 'PyQt4.QtCore' (C:\OSGeo4W\apps\Python27\lib\site-packages\PyQt4\QtCore.pyd -> PyQt4.QtCore.pyd)
+creating python loader for extension '_sqlite3' (C:\OSGeo4W\apps\Python27\DLLs\_sqlite3.pyd -> _sqlite3.pyd)
+creating python loader for extension 'PyQt4.QtSql' (C:\OSGeo4W\apps\Python27\lib\site-packages\PyQt4\QtSql.pyd -> PyQt4.QtSql.pyd)
+creating python loader for extension 'PyQt4.QtWebKit' (C:\OSGeo4W\apps\Python27\lib\site-packages\PyQt4\QtWebKit.pyd -> PyQt4.QtWebKit.pyd)
+creating python loader for extension '_cffi_backend' (C:\OSGeo4W\apps\Python27\lib\site-packages\_cffi_backend.pyd -> _cffi_backend.pyd)
+creating python loader for extension '_win32sysloader' (C:\OSGeo4W\apps\Python27\lib\site-packages\win32\_win32sysloader.pyd -> _win32sysloader.pyd)
+creating python loader for extension 'gevent.core' (C:\OSGeo4W\apps\Python27\lib\site-packages\gevent\core.pyd -> gevent.core.pyd)
+creating python loader for extension 'simplejson._speedups' (C:\OSGeo4W\apps\Python27\lib\site-packages\simplejson\_speedups.pyd -> simplejson._speedups.pyd)
+creating python loader for extension 'faulthandler' (C:\OSGeo4W\apps\Python27\lib\site-packages\faulthandler.pyd -> faulthandler.pyd)
+creating python loader for extension 'pyexpat' (C:\OSGeo4W\apps\Python27\DLLs\pyexpat.pyd -> pyexpat.pyd)
+creating python loader for extension 'PIL._imagingft' (C:\OSGeo4W\apps\Python27\lib\site-packages\PIL\_imagingft.pyd -> PIL._imagingft.pyd)
+creating python loader for extension 'cryptography.hazmat.bindings._openssl' (C:\OSGeo4W\apps\Python27\lib\site-packages\cryptography\hazmat\bindings\_openssl.pyd -> cryptography.hazmat.bindings._openssl.pyd)
+creating python loader for extension 'PyQt4.QtXml' (C:\OSGeo4W\apps\Python27\lib\site-packages\PyQt4\QtXml.pyd -> PyQt4.QtXml.pyd)
+creating python loader for extension 'qgis._core' (C:\OSGeo4W\apps\qgis\python\qgis\_core.pyd -> qgis._core.pyd)
+creating python loader for extension 'PyQt4.Qsci' (C:\OSGeo4W\apps\Python27\lib\site-packages\PyQt4\Qsci.pyd -> PyQt4.Qsci.pyd)
+creating python loader for extension 'tornado.speedups' (C:\OSGeo4W\apps\Python27\lib\site-packages\tornado\speedups.pyd -> tornado.speedups.pyd)
+creating python loader for extension 'PyQt4.QtGui' (C:\OSGeo4W\apps\Python27\lib\site-packages\PyQt4\QtGui.pyd -> PyQt4.QtGui.pyd)
+creating python loader for extension 'win32api' (C:\OSGeo4W\apps\Python27\lib\site-packages\win32\win32api.pyd -> win32api.pyd)
+creating python loader for extension 'qgis._gui' (C:\OSGeo4W\apps\qgis\python\qgis\_gui.pyd -> qgis._gui.pyd)
+creating python loader for extension '_socket' (C:\OSGeo4W\apps\Python27\DLLs\_socket.pyd -> _socket.pyd)
+creating python loader for extension 'PyQt4.QtSvg' (C:\OSGeo4W\apps\Python27\lib\site-packages\PyQt4\QtSvg.pyd -> PyQt4.QtSvg.pyd)
+creating python loader for extension 'PIL._imaging' (C:\OSGeo4W\apps\Python27\lib\site-packages\PIL\_imaging.pyd -> PIL._imaging.pyd)
+*** finding dlls needed ***
+make: Leaving directory `/f/dev/IntraMaps Roam/roam/'

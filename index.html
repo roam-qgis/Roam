@@ -1,123 +1,80 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
+<head>
 
-  <head>
-    <meta charset='utf-8'>
-    <meta http-equiv="X-UA-Compatible" content="chrome=1">
-    <meta name="description" content="IntraMaps Roam : Simple and flexible data collection built using QGIS.">
+  <!-- Basic Page Needs
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+  <meta charset="utf-8">
+  <title>Roam</title>
+  <meta name="description" content="IntraMaps Roam Landing Page">
+  <meta name="author" content="Nathan Woodrow">
 
-    <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
+  <!-- Mobile Specific Metas
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+  <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <title>IntraMaps Roam</title>
-  </head>
+  <!-- FONT
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+  <link href='//fonts.googleapis.com/css?family=Raleway:400,300,600' rel='stylesheet' type='text/css'>
 
-  <body>
+  <!-- CSS
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+  <link rel="stylesheet" href="css/normalize.css">
+  <link rel="stylesheet" href="css/skeleton.css">
+  <link rel="stylesheet" href="css/custom.css">
 
-    <!-- HEADER -->
-    <div id="header_wrap" class="outer">
-        <header class="inner">
-          <a id="forkme_banner" href="https://github.com/DMS-Aus/Roam">View on GitHub</a>
+  <!-- Scripts
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
 
-          <h1 id="project_title">IntraMaps Roam</h1>
-          <h2 id="project_tagline">Simple and flexible data collection built using QGIS.</h2>
+  <!-- Favicon
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+  <link rel="icon" type="image/png" href="../../dist/images/favicon.png">
 
-            <section id="downloads">
-          <a target="_blank" onclick="_gaq.push(['_trackEvent','Download','ZIP',this.href]);" href="https://github.com/DMS-Aus/Roam/releases/download/v2.3.1/IntraMaps.Roam.zip" class="zip_download_link"><span>Download Zip</span></a>
-      <a target="_blank" onclick="_gaq.push(['_trackEvent','Download','EXE',this.href]);" href="https://github.com/DMS-Aus/Roam/releases/download/v2.3.1/IntraMaps.Roam.Installer.exe" class="zip_download_link"><span>Download Installer</span></a>
-            </section>
-        </header>
+</head>
+<body>
+
+  <!-- Primary Page Layout
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+
+  <div class="section hero">
+    <div class="container">
+      <div class="row">
+        <div class="one-half column">
+          <h4 class="hero-heading">Roam: Powerful Field Data Collection Powered by QGIS</h4>
+          <a class="button button-primary" href="https://github.com/DMS-Aus/Roam/releases">Get the latest release (2.5.1)</a>
+		            <a class="button button-primary" href="http://roam-docs.readthedocs.io/en/latest/">Read the docs</a>
+        </div>
+      </div>
     </div>
+  </div>
 
-    <!-- MAIN CONTENT -->
-    <div id="main_content_wrap" class="outer">
-      <section id="main_content" class="inner">
-        <p>IntraMaps Roam is a field, and office, data collection application built using the QGIS libraries and Python. It was built to be easy to use on (windows) based devices in an offline situation without a internet connection and the need for easy to use data collection. Roam supports point, line, and polygon capture, include Point at GPS capture.</p>
+  <div class="section values">
+  </div>
 
-<p>Roam supports custom Qt forms, or the much simpler but much more rapid, auto generated forms.  Both form types support the same widget types and allow for custom Python logic to be added in order to fit the exact workflow needed.</p>
-
-<p><img src="https://github.com/DMS-Aus/Roam/wiki/images/2.3-Release.png" alt=""></p>
-
-<p><img src="https://github.com/DMS-Aus/Roam/wiki/images/2.3-Release-Capture2.png" alt=""></p>
-
-<p><img src="https://github.com/DMS-Aus/Roam/wiki/images/2.3-Release-Capture3.png" alt=""></p>
-
-<h2>
-<a id="latest-release" class="anchor" href="#latest-release" aria-hidden="true"><span class="octicon octicon-link"></span></a>Latest Release</h2>
-
-<p>The latest release is <a href="https://github.com/DMS-Aus/Roam/releases"><strong>V2.3.1</strong></a></p>
-
-<h2>
-<a id="major-features-23" class="anchor" href="#major-features-23" aria-hidden="true"><span class="octicon octicon-link"></span></a>Major Features 2.3</h2>
-
-<p>Newest <a href="https://github.com/DMS-Aus/Roam/wiki/Features-2.3">features in 2.2 include:</a></p>
-
-<ul>
-<li>Search plugin</li>
-<li>Support for using sqlite in info panel</li>
-<li>Feature attributes passed to info queries</li>
-<li>Skip edit buffer for saving (should make edits faster)</li>
-<li>Compress Info panel buttons to single row</li>
-<li>Delete button moved to top for image widget </li>
-<li>Move message bar to bottom of screen and style a bit nicer</li>
-<li>Travis CI testing for test suite</li>
-<li>Solid outline for selection</li>
-</ul>
-
-<h2>
-<a id="major-features-22" class="anchor" href="#major-features-22" aria-hidden="true"><span class="octicon octicon-link"></span></a>Major Features 2.2</h2>
-
-<p>Newest <a href="https://github.com/DMS-Aus/Roam/wiki/Features-2.2">features in 2.2 include:</a></p>
-
-<ul>
-<li>Built on QGIS 2.4</li>
-<li>Info2 and Info1 block support</li>
-<li>Support for enable/disable of capture, edit, edit geom modes on layers</li>
-<li>Plugin model for extra side pages</li>
-<li>Better link support in info panel</li>
-<li>Image file saving support</li>
-<li>New option row widget</li>
-<li>New multi select list</li>
-<li>New Number stepper widget</li>
-<li>Search in list widgets</li>
-</ul>
-
-<h2>
-<a id="getting-started" class="anchor" href="#getting-started" aria-hidden="true"><span class="octicon octicon-link"></span></a>Getting Started</h2>
-
-<p>See the <a href="https://github.com/DMS-Aus/Roam/wiki"><strong>wiki</strong></a> for information on how to create a project and user guides.</p>
-
-<h2>
-<a id="open-source-to-the-core" class="anchor" href="#open-source-to-the-core" aria-hidden="true"><span class="octicon octicon-link"></span></a>Open source to the core</h2>
-
-<p>IntraMaps Roam is built on Python and QGIS and is licensed under the GPL </p>
-
-<h2>
-<a id="created-and-supported-by-digital-mapping-solutions" class="anchor" href="#created-and-supported-by-digital-mapping-solutions" aria-hidden="true"><span class="octicon octicon-link"></span></a>Created and supported by <a href="http://www.mapsolutions.com.au">Digital Mapping Solutions</a>
-</h2>
-
-<p><img src="https://github.com/DMS-Aus/Roam/wiki/images/dms-small.png" alt="logo"></p>
-      </section>
-    </div>
-
-    <!-- FOOTER  -->
-    <div id="footer_wrap" class="outer">
-      <footer class="inner">
-        <p class="copyright">IntraMaps Roam maintained by <a href="https://github.com/DMS-Aus">DMS-Aus</a></p>
-        <p>Published with <a href="http://pages.github.com">GitHub Pages</a></p>
-      </footer>
-    </div>
-
-              <script type="text/javascript">
-            var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
-            document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
-          </script>
-          <script type="text/javascript">
-            try {
-              var pageTracker = _gat._getTracker("UA-5231515-9");
-            pageTracker._trackPageview();
-            } catch(err) {}
-          </script>
+  <div class="section get-help">
+	<div class="container">
+		  <div class="row">
+			<div class="one-third column value">
+			  <h5 class="value-heading">Powered by QGIS</h5>
+			  <p class="value-description">Using the full rendering and API power of QGIS but in a simple to use application.</p>
+			</div>
+			<div class="one-third column value">
+			  <h5 class="value-heading">Simple to use interface</h5>
+			  <p class="value-description">Simple touch friendly interface for ease of use in the field.</p>
+			</div>
+			<div class="one-third column value">
+			  <h5 class="value-heading">Open Source</h5>
+			  <p class="value-description">Just like QGIS Roam is fully open source under GPLv2</p>
+			</div>
+		  </div>
+		</div>
+  </div>
 
 
-  </body>
+
+
+<!-- End Document
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+</body>
 </html>
