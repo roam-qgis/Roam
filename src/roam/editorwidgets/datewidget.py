@@ -114,10 +114,13 @@ class DateWidget(EditorWidget):
             pickbutton.setText(string)
 
     def setvalue(self, value):
+        strvalue = value
         if value is None:
             value = DateWidget.DEFAULTDATE
         elif isinstance(value, basestring):
-            value = QDateTime.fromString(value, Qt.ISODate)
+            value = QDateTime.fromString(strvalue, Qt.ISODate)
+            if not value or (value and value.date().year() < 0):
+                value = QDateTime.fromString(strvalue, Qt.SystemLocaleShortDate)
 
         if isinstance(value, QDate):
             value = QDateTime(value)
