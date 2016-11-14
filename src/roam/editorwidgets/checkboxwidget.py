@@ -11,7 +11,7 @@ class CheckboxWidget(EditorWidget):
     def createWidget(self, parent):
         return QCheckBox(parent)
 
-    def initWidget(self, widget):
+    def initWidget(self, widget, config):
         widget.toggled.connect(self.emitvaluechanged)
         widget.toggled.connect(self.validate)
 

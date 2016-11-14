@@ -14,6 +14,7 @@ from configmanager.editorwidgets.attachmentwidget import AttachmentWidgetConfig
 widgetconfigs = {"Checkbox" : CheckboxWidgetConfig,
                  "Date": DateWidgetConfig,
                  "Image": ImageWidgetConfig,
+                 "MultiImage": ImageWidgetConfig,
                  "List":  ListWidgetConfig,
                  "MultiList" : ListWidgetConfig,
                  "Text" : TextWidgetConfig,

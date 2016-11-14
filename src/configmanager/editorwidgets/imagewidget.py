@@ -14,6 +14,10 @@ class ImageWidgetConfig(Ui_Form, ConfigWidget):
         self.imageStampText.textChanged.connect(self.widgetchanged)
         self.savetofileCheck.stateChanged.connect(self.widgetchanged)
         self.locatioButton.pressed.connect(self.openfilepicker)
+        self.saveToDBCheck.clicked.connect(self.widgetchanged)
+        self.externalDBLayer.textChanged.connect(self.widgetchanged)
+        self.externalDBText.textChanged.connect(self.widgetchanged)
+        self.maxPhotosSpin.valueChanged.connect(self.widgetchanged)
 
     def openfilepicker(self):
         startpath = self.defaultLocationText.text() or '/home'
@@ -25,10 +29,19 @@ class ImageWidgetConfig(Ui_Form, ConfigWidget):
         savetofile = self.savetofileCheck.isChecked()
         imagestamp = self.imageStampText.toPlainText()
         stamplocation = self.imageStampLocation.currentText()
-        return {"defaultlocation": location,
+        configdata = {"defaultlocation": location,
                 'savetofile': savetofile,
                 'stamp': dict(value=imagestamp,
                               position=stamplocation)}
+        if self.saveToDBCheck.isChecked():
+            configdata['savetodb'] = True
+            configdata['dboptions'] = {
+                "dbpath": self.externalDBText.text(),
+                "table": self.externalDBLayer.text(),
+                "maximages": self.maxPhotosSpin.value()
+            }
+        return configdata
+
 
     def setconfig(self, config):
         self.defaultLocationText.setText(config.get('defaultlocation', ''))
@@ -37,3 +50,11 @@ class ImageWidgetConfig(Ui_Form, ConfigWidget):
         self.imageStampText.setPlainText(stamp['value'])
         index = self.imageStampLocation.findText(stamp['position'])
         self.imageStampLocation.setCurrentIndex(index)
+        savetodb = config.get('savetodb', False)
+        self.saveToDBCheck.setChecked(savetodb)
+        if savetodb:
+            dboptions = config['dboptions']
+            self.externalDBLayer.setText(dboptions.get('table', ''))
+            self.externalDBText.setText(dboptions.get('dbpath', ''))
+            self.maxPhotosSpin.setValue(dboptions.get('maximages', 1))
+

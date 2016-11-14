@@ -104,8 +104,6 @@ class QMapImageWidget(ui_imagewidget.Ui_imagewidget, QWidget):
         self.editButton.setVisible(not value)
         if value:
             self.imageloaded.emit()
-        else:
-            self.imageremoved.emit()
 
     def getImage(self):
         """ Return the loaded image """

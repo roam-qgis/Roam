@@ -29,7 +29,7 @@ class BigListWidget(LargeEditorWidget):
     def createWidget(self, parent):
         return BigList(parent)
 
-    def initWidget(self, widget):
+    def initWidget(self, widget, config, **kwargs):
         widget.itemselected.connect(self.selectitems)
         widget.closewidget.connect(self.emit_cancel)
         widget.savewidget.connect(self.emit_finished)
@@ -161,7 +161,7 @@ class ListWidget(EditorWidget):
             item.setIcon(icon)
             self.listmodel.appendRow(item)
 
-    def initWidget(self, widget):
+    def initWidget(self, widget, config):
         if widget.isEditable():
             widget.editTextChanged.connect(self.emitvaluechanged)
 
@@ -252,7 +252,7 @@ class MultiList(ListWidget):
                                      self._biglistitem, dict(model=self.listmodel,
                                                              label=self.labeltext,
                                                              multi=True))
-    def initWidget(self, widget):
+    def initWidget(self, widget, config):
         widget.setEditable(True)
         self.widget.lineEdit().textChanged.connect(self.emitvaluechanged)
         widget.setModel(self.listmodel)

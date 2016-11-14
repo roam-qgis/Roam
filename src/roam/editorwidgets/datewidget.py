@@ -16,7 +16,7 @@ class BigDateWidget(LargeEditorWidget):
     def createWidget(self, parent):
         return DateTimePickerWidget(parent)
 
-    def initWidget(self, widget):
+    def initWidget(self, widget, config):
         widget.ok.connect(self.emit_finished)
         widget.cancel.connect(self.emit_cancel)
 
@@ -51,7 +51,7 @@ class DateWidget(EditorWidget):
     def createWidget(self, parent):
         return DateUiWidget(parent)
 
-    def initWidget(self, widget):
+    def initWidget(self, widget, config):
         pickbutton = widget.findChild(QPushButton)
 
         if not pickbutton is None:
