@@ -1,5 +1,8 @@
 import os
 import sys
+import uuid
+import functools
+import sqlite3
 
 try:
     import vidcap
@@ -11,19 +14,20 @@ except ImportError:
 
 from PyQt4.QtGui import QDialog, QGridLayout, QLabel, QLayout, QPixmap, QFileDialog, QAction, QToolButton, QIcon, \
     QToolBar, QPainter, QPen
-from PyQt4.QtGui import QWidget, QImage, QSizePolicy, QTextDocument
+from PyQt4.QtGui import QWidget, QImage, QSizePolicy, QTextDocument, QVBoxLayout
 from PyQt4.QtCore import QByteArray, pyqtSignal, QVariant, QTimer, Qt, QSize, QDateTime, QPointF
 
 from qgis.core import QgsExpression
 from PIL.ImageQt import ImageQt
 
-from roam.editorwidgets.core import EditorWidget, LargeEditorWidget, registerwidgets
+from roam.editorwidgets.core import EditorWidget, LargeEditorWidget, registerwidgets, createwidget, widgetwrapper
 from roam.editorwidgets.uifiles.imagewidget import QMapImageWidget
 from roam.editorwidgets.uifiles import drawingpad
 from roam.ui.uifiles import actionpicker_widget, actionpicker_base
 from roam.popupdialogs import PickActionDialog
 from roam import utils
 from roam.api import RoamEvents, GPS
+from roam.dataaccess.database import Database, DatabaseException
 
 import roam.config
 import roam.resources_rc
@@ -37,7 +41,6 @@ def stamp_from_config(image, config):
     stamp = config.get('stamp', None)
     form = config.get('formwidget', None)
     feature = None
-    print stamp
     if not stamp:
         return image
 
@@ -63,7 +66,6 @@ def stamp_image(image, expression_str, position, feature):
     doc.setDefaultStyleSheet(style)
     data = "<body>{}</body>".format(data)
     doc.setHtml(data)
-    print data
     point = QPointF(20, 20)
 
     # Wrap the text so we don't go crazy
@@ -92,8 +94,6 @@ def resize_image(image, size):
     :param size: The QSize of the result image. Will not resize if image is smaller.
     :return: The new sized image.
     """
-    print image.size()
-    print size
     if size and not size.isEmpty() and image.width() > size.width() and image.height() > size.height():
         return image.scaled(size, Qt.KeepAspectRatio)
     else:
@@ -204,7 +204,7 @@ class CameraWidget(LargeEditorWidget):
     def createWidget(self, parent):
         return _CameraWidget(parent)
 
-    def initWidget(self, widget):
+    def initWidget(self, widget, config):
         widget.imagecaptured.connect(self.image_captured)
         widget.done.connect(self.emit_finished)
 
@@ -238,7 +238,7 @@ class DrawingPadWidget(LargeEditorWidget):
         pad1 = drawingpad.DrawingPad(parent=parent)
         return pad1
 
-    def initWidget(self, widget):
+    def initWidget(self, widget, config):
         widget.toolStamp.pressed.connect(self.stamp_image)
         widget.actionSave.triggered.connect(self.emit_finished)
         widget.actionCancel.triggered.connect(self.emit_cancel)
@@ -255,6 +255,130 @@ class DrawingPadWidget(LargeEditorWidget):
     def setvalue(self, value):
         self.widget.pixmap = value
 
+class MultiImageWidget(EditorWidget):
+    widgettype = 'MultiImage'
+
+    def __init__(self, *args, **kwargs):
+        super(MultiImageWidget, self).__init__(*args, **kwargs)
+        self.widgets = []
+        self.linkid = None
+        self.modified = True
+
+    def createWidget(self, parent=None):
+        widget = QWidget(parent)
+        return widget
+
+    def initWidget(self, widget, config):
+        if not widget.layout():
+            widget.setLayout(QVBoxLayout())
+            widget.layout().setContentsMargins(0, 0, 0, 0)
+
+        dbconfig = config['dboptions']
+        for i in xrange(dbconfig['maximages']):
+            innerwidget = createwidget("Image")
+            wrapper = widgetwrapper("Image", innerwidget, config, self.layer, self.label, self.field, self.context)
+            wrapper.largewidgetrequest.connect(self.largewidgetrequest.emit)
+            wrapper.photo_id = None
+            widget.layout().addWidget(innerwidget)
+            self.widgets.append((innerwidget, wrapper))
+
+    def loadimages(self):
+        pass
+
+    def setvalue(self, value):
+        """
+        The multi image widget will take the ID to lookup in the external DB.
+        """
+        import uuid
+
+        if not value:
+            self.linkid = str(uuid.uuid4())
+        else:
+            self.linkid = value
+
+        table = self.DBConfig['table']
+        db = self.DB()
+        photos = db.execute("""
+        SELECT photo_id, photo
+        FROM '{0}'
+        WHERE linkid = '{1}'
+        """.format(table, self.linkid))
+        for count, row in enumerate(photos):
+            try:
+                widget, wrapper = self.widgets[count]
+                data = row[1]
+                photo_id = row[0]
+                wrapper.photo_id = photo_id
+                wrapper.setvalue(data)
+            except IndexError:
+                break
+
+        db.close()
+
+    def value(self):
+        """
+        The current ID of the image link.
+        """
+        if not self.linkid:
+            self.linkid = str(uuid.uuid4())
+
+        return self.linkid
+
+    def updatePhoto(self, db, photo_id, photo):
+        table = self.DBConfig['table']
+        sql = """UPDATE '{0}' SET photo = '{2}',
+                                  timestamp = '{4}'
+                                  WHERE photo_id = '{3}'
+                                  AND linkid = '{1}'""".format(table,
+                                                               self.linkid,
+                                                               photo,
+                                                               photo_id,
+                                                               QDateTime.currentDateTime().toLocalTime().toString())
+        db.execute(sql)
+
+    def DB(self):
+        dbconfig = self.config['dboptions']
+        dbpath = dbconfig['dbpath']
+        dbpath = os.path.join(self.config['context']['project'].datafolder(), dbpath)
+        table = dbconfig['table']
+        db = sqlite3.connect(dbpath)
+        db.enable_load_extension(True)
+        db.load_extension("spatialite4.dll")
+        return db
+
+    @property
+    def DBConfig(self):
+        dbconfig = self.config['dboptions']
+        return dbconfig
+
+    def insertPhoto(self, db, photo_id, photo):
+        table = self.DBConfig['table']
+        date = QDateTime.currentDateTime().toLocalTime().toString()
+        sql = "INSERT INTO '{0}' (linkid, photo, photo_id, timestamp) VALUES ('{1}', '{2}', '{3}', '{4}')".format(table, self.linkid, photo, photo_id, date)
+        db.execute(sql)
+
+    def save(self):
+        """
+        Save the images inside this widget to the linked DB.
+        """
+        db = self.DB()
+        for widget, wrapper in self.widgets:
+            value = wrapper.value()
+            if not wrapper.modified:
+                continue
+
+            if wrapper.photo_id is None:
+                if value:
+                    wrapper.photo_id = str(uuid.uuid4())
+                    self.insertPhoto(db, wrapper.photo_id, value)
+            else:
+                if not value:
+                    value = ''
+                self.updatePhoto(db, wrapper.photo_id, value)
+        db.commit()
+        db.close()
+        return True
+
 
 class ImageWidget(EditorWidget):
     widgettype = 'Image'
@@ -264,7 +388,6 @@ class ImageWidget(EditorWidget):
         self.tobase64 = False
         self.defaultlocation = ''
         self.savetofile = False
-        self.modified = False
         self.filename = None
 
         self.selectAction = QAction(QIcon(r":\widgets\folder"), "From folder", None)
@@ -283,10 +406,11 @@ class ImageWidget(EditorWidget):
     def createWidget(self, parent):
         return QMapImageWidget(parent)
 
-    def initWidget(self, widget):
+    def initWidget(self, widget, config):
         widget.openRequest.connect(self.showlargeimage)
         widget.imageloaded.connect(self.emitvaluechanged)
         widget.imageremoved.connect(self.emitvaluechanged)
+        widget.imageremoved.connect(self.imageremoved)
         widget.imageloadrequest.connect(self.showpicker)
         widget.annotateimage.connect(self._selectDrawing)
         self.image_size = roam.config.read_qsize("image_size")
@@ -295,6 +419,9 @@ class ImageWidget(EditorWidget):
         actionpicker = PickActionDialog(msg="Select image source")
         actionpicker.addactions(self.actions)
         actionpicker.exec_()
+
+    def imageremoved(self):
+        self.modified = True
 
     @property
     def actions(self):

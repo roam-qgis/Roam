@@ -1,4 +1,4 @@
-NUM_VERSION = (2, 5, 2, 0)
+NUM_VERSION = (2, 6, 0, "dev")
 
 import sip
 import os

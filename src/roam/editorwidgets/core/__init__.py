@@ -15,7 +15,7 @@ def registerwidgets(*widgetclasses):
 
 
 def registerallwidgets():
-    from roam.editorwidgets.imagewidget import ImageWidget
+    from roam.editorwidgets.imagewidget import ImageWidget, MultiImageWidget
     from roam.editorwidgets.listwidget import ListWidget, MultiList
     from roam.editorwidgets.checkboxwidget import CheckboxWidget
     from roam.editorwidgets.datewidget import DateWidget
@@ -26,7 +26,7 @@ def registerallwidgets():
     from roam.editorwidgets.attachmentwidget import AttachmentWidget
 
     registerwidgets(ImageWidget, ListWidget, MultiList, CheckboxWidget, DateWidget,
-                    NumberWidget, DoubleNumberWidget, TextWidget, TextBlockWidget, OptionWidget, AttachmentWidget)
+                    NumberWidget, DoubleNumberWidget, TextWidget, TextBlockWidget, OptionWidget, AttachmentWidget, MultiImageWidget)
 
 
 def supportedwidgets():
@@ -43,7 +43,8 @@ def widgetwrapper(widgettype, widget, config, layer, label, field, context=None,
 
     widgetwrapper = editorwidget.for_widget(widget, layer, label, field, parent)
     widgetwrapper.context = context
-    widgetwrapper.initWidget(widget)
+    config['context'] = context
+    widgetwrapper.initWidget(widget, config)
     widgetwrapper.config = config
     return widgetwrapper
 
@@ -67,6 +68,7 @@ class EditorWidget(QObject):
     def __init__(self, widget=None, layer=None, label=None, field=None, parent=None, *args, **kwargs):
         QObject.__init__(self, parent)
         self._config = {}
+        self.modified = False
         self.widget = widget
         self.layer = layer
         self.field = field
@@ -236,7 +238,7 @@ class EditorWidget(QObject):
     def createWidget(self, parent):
         pass
 
-    def initWidget(self, widget):
+    def initWidget(self, widget, config):
         pass
 
     def setEnabled(self, enabled):

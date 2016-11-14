@@ -74,7 +74,7 @@ class OptionWidget(EditorWidget):
                     self.widget.layout().addWidget(button, rowcount, column)
                 self.group.addButton(button)
 
-    def initWidget(self, widget):
+    def initWidget(self, widget, config):
         if not widget.layout():
             widget.setLayout(QGridLayout())
             widget.layout().setContentsMargins(0, 0, 0, 0)

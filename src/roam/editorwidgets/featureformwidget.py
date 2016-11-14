@@ -155,7 +155,7 @@ class FeatureFormWidgetEditor(LargeEditorWidget):
         formwidget.set_featureform(featureform)
         return formwidget
 
-    def initWidget(self, widget):
+    def initWidget(self, widget, config):
         widget.actionCancel.triggered.connect(self.cancelform)
         widget.canceled.connect(self.cancelform)
         widget.featuresaved.connect(self.emit_finished)

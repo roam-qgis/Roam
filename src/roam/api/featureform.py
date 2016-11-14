@@ -861,7 +861,12 @@ class FeatureForm(FeatureFormBase):
                         raise FeatureSaveException("Image Error",
                                                    "Could not save image for control {}".format(wrapper.label),
                                                    QgsMessageBar.CRITICAL)
-
+                elif hasattr(wrapper, "save") and wrapper.modified:
+                    saved = wrapper.save()
+                    if not saved:
+                        raise FeatureSaveException("Widget Save Error",
+                                                   "Could not save images for control {}".format(wrapper.label),
+                                                   QgsMessageBar.CRITICAL)
         if not self.accept():
             raise FeatureSaveException.not_accepted()
 

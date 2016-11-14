@@ -47,7 +47,7 @@ class NumberWidget(EditorWidget):
     def createWidget(self, parent):
         return Stepper(parent, Type=QSpinBox)
 
-    def initWidget(self, widget):
+    def initWidget(self, widget, config):
         widget.valueChanged.connect(self.emitvaluechanged)
         widget.installEventFilter(self)
 
@@ -109,8 +109,8 @@ class DoubleNumberWidget(NumberWidget):
     def createWidget(self, parent):
         return Stepper(parent, Type=QDoubleSpinBox)
 
-    def initWidget(self, widget):
-        super(DoubleNumberWidget, self).initWidget(widget)
+    def initWidget(self, widget, config):
+        super(DoubleNumberWidget, self).initWidget(widget, config)
 
     def updatefromconfig(self):
         super(DoubleNumberWidget, self).updatefromconfig()

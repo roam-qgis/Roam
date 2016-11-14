@@ -71,7 +71,7 @@ class DataEntryWidget(dataentry_widget, dataentry_base):
 
         largewidgetwrapper.finished.connect(callback)
 
-        largewidgetwrapper.initWidget(widget)
+        largewidgetwrapper.initWidget(widget, config)
         largewidgetwrapper.config = config
         if isinstance(lastvalue, QPixmap):
             lastvalue = QPixmap(lastvalue)

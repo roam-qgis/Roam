@@ -84,6 +84,23 @@ class Database(object):
         sql, values = self.form.get_query(name, values)
         return self.query(sql, **values)
 
+    def exec_(self, sql, values=None):
+        """
+        Executes a query with no return data
+        :param name:
+        :param values:
+        :return:
+        """
+        if not values:
+            values = {}
+        query = self._query(sql, **values)
+        if query.exec_():
+            return True
+        else:
+            if query.lastError().isValid():
+                print sql
+                raise DatabaseException(query.lastError().text())
+
     def exec_query(self, name, values):
         """
         Executes a query with no return data
@@ -127,7 +144,8 @@ class Database(object):
                 yield self._recordToDict(query.record())
 
         if query.lastError().isValid():
-            raise DatabaseException(query.lastError().text())
+            text = query.lastError().text()
+            raise DatabaseException(text)
 
     def querymodel(self, sql, **mappings):
         sql = sql.replace(r"\r\n", " ")

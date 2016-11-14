@@ -64,7 +64,7 @@ class TextWidget(EditorWidget):
     def createWidget(self, parent):
         return QLineEdit(parent)
 
-    def initWidget(self, widget):
+    def initWidget(self, widget, config):
         widget.textChanged.connect(self.emitvaluechanged)
         widget.installEventFilter(self)
         self.text_length = self.field.length()
@@ -130,7 +130,7 @@ class TextBlockWidget(TextWidget):
         self.widget.blockSignals(False)
         self.emitvaluechanged(self.widget.toPlainText())
 
-    def initWidget(self, widget):
+    def initWidget(self, widget, config):
         self.text_length = self.field.length()
         found, length = _get_sqlite_col_length(self.layer, self.field.name())
         if found:

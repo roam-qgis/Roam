@@ -114,7 +114,7 @@ class AttachmentWidget(EditorWidget):
     def createWidget(self, parent):
         return RoamAttachmentWidget(parent)
 
-    def initWidget(self, widget):
+    def initWidget(self, widget, config):
         widget.attachmentloaded.connect(self.emitvaluechanged)
         widget.attachmentremoved.connect(self.emitvaluechanged)
         widget.attachmentloadrequest.connect(self._select_attachment)
