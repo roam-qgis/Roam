@@ -16,6 +16,7 @@ class MultiImageWidgetConfig(ui_multiphotowidget_config.Ui_Form, ConfigWidget):
         self.externalDBLayer.textChanged.connect(self.widgetchanged)
         self.externalDBText.textChanged.connect(self.widgetchanged)
         self.maxPhotosSpin.valueChanged.connect(self.widgetchanged)
+        self.linkcodeText.textChanged.connect(self.widgetchanged)
 
     def openfilepicker(self):
         startpath = self.defaultLocationText.text() or '/home'
@@ -32,7 +33,8 @@ class MultiImageWidgetConfig(ui_multiphotowidget_config.Ui_Form, ConfigWidget):
         configdata['dboptions'] = {
             "dbpath": self.externalDBText.text(),
             "table": self.externalDBLayer.text(),
-            "maximages": self.maxPhotosSpin.value()
+            "maximages": self.maxPhotosSpin.value(),
+            "linkcode": self.linkcodeText.text()
         }
         return configdata
 
@@ -47,6 +49,7 @@ class MultiImageWidgetConfig(ui_multiphotowidget_config.Ui_Form, ConfigWidget):
         self.externalDBLayer.setText(dboptions.get('table', ''))
         self.externalDBText.setText(dboptions.get('dbpath', ''))
         self.maxPhotosSpin.setValue(dboptions.get('maximages', 1))
+        self.linkcodeText.setText(dboptions.get('linkcode','photo'))
 
 
 class ImageWidgetConfig(Ui_Form, ConfigWidget):

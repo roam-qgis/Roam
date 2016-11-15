@@ -352,8 +352,9 @@ class MultiImageWidget(EditorWidget):
 
     def insertPhoto(self, db, photo_id, photo, number):
         table = self.DBConfig['table']
+        linkcode = self.DBConfig['linkcode']
         date = QDateTime.currentDateTime().toLocalTime().toString()
-        sql = "INSERT INTO '{0}' (linkid, photo, photo_id, timestamp, photo_number) VALUES ('{1}', '{2}', '{3}', '{4}', {5})".format(table, self.linkid, photo, photo_id, date, number)
+        sql = "INSERT INTO '{0}' (linkid, photo, photo_id, timestamp, photo_number, linkname) VALUES ('{1}', '{2}', '{3}', '{4}', {5}, '{6}')".format(table, self.linkid, photo, photo_id, date, number, linkcode)
         db.execute(sql)
 
     def save(self):
