@@ -279,11 +279,9 @@ class MultiImageWidget(EditorWidget):
             wrapper = widgetwrapper("Image", innerwidget, config, self.layer, self.label, self.field, self.context)
             wrapper.largewidgetrequest.connect(self.largewidgetrequest.emit)
             wrapper.photo_id = None
+            wrapper.photo_number = i
             widget.layout().addWidget(innerwidget)
             self.widgets.append((innerwidget, wrapper))
-
-    def loadimages(self):
-        pass
 
     def setvalue(self, value):
         """
@@ -302,6 +300,7 @@ class MultiImageWidget(EditorWidget):
         SELECT photo_id, photo
         FROM '{0}'
         WHERE linkid = '{1}'
+        ORDER BY photo_number
         """.format(table, self.linkid))
         for count, row in enumerate(photos):
             try:
@@ -351,10 +350,10 @@ class MultiImageWidget(EditorWidget):
         dbconfig = self.config['dboptions']
         return dbconfig
 
-    def insertPhoto(self, db, photo_id, photo):
+    def insertPhoto(self, db, photo_id, photo, number):
         table = self.DBConfig['table']
         date = QDateTime.currentDateTime().toLocalTime().toString()
-        sql = "INSERT INTO '{0}' (linkid, photo, photo_id, timestamp) VALUES ('{1}', '{2}', '{3}', '{4}')".format(table, self.linkid, photo, photo_id, date)
+        sql = "INSERT INTO '{0}' (linkid, photo, photo_id, timestamp, photo_number) VALUES ('{1}', '{2}', '{3}', '{4}', {5})".format(table, self.linkid, photo, photo_id, date, number)
         db.execute(sql)
 
     def save(self):
@@ -370,7 +369,7 @@ class MultiImageWidget(EditorWidget):
             if wrapper.photo_id is None:
                 if value:
                     wrapper.photo_id = str(uuid.uuid4())
-                    self.insertPhoto(db, wrapper.photo_id, value)
+                    self.insertPhoto(db, wrapper.photo_id, value, wrapper.photo_number)
             else:
                 if not value:
                     value = ''
