@@ -82,7 +82,7 @@ def getfiles(folder, outpath, includebase=True):
 
 def get_data_files():
     utils = ['ogr2ogr.exe', 'ogrinfo.exe', 'gdalinfo.exe', 'NCSEcw.dll',
-             os.path.join('gdalplugins', 'gdal_ECW_JP2ECW.dll')]
+             os.path.join('gdalplugins', 'gdal_ECW_JP2ECW.dll', "spatialite4.dll")]
 
     extrafiles = [os.path.join(osgeobin, path) for path in utils]
 
