@@ -115,6 +115,7 @@ def _setup(apppath=None, logo='', title='', **kwargs):
     projectroot = os.path.join(apppath, "projects")
     profileroot = apppath
 
+    ## Setup default paths for profile location
     try:
         settingspath = kwargs['config']
     except KeyError:
@@ -137,6 +138,9 @@ def _setup(apppath=None, logo='', title='', **kwargs):
     if args.profile:
         profileroot = args.profile
         projectroot = os.path.join(args.profile, "projects")
+        settingspath = os.path.join(args.profile, "roam.config")
+    else:
+        settingspath = args.config
 
     # This will also make the higher level profile folder for use
     if not os.path.exists(projectroot):
@@ -151,13 +155,14 @@ def _setup(apppath=None, logo='', title='', **kwargs):
     if isinstance(args.config, dict):
         roam.config.settings = args.config
     else:
-        roam.config.load(args.config)
+        roam.config.load(settingspath)
 
     app = RoamApp(sys.argv, apppath, prefixpath, args.config, libspath, i18npath, projectroot).init(logo, title)
     app.sourcerun = RUNNING_FROM_FILE
     app.profileroot = profileroot
     print "Profile Root: {0}".format(app.profileroot)
     print "Project Root: {0}".format(app.projectsroot)
+    print "Settings file: {0}".format(settingspath)
     return app
 
 
