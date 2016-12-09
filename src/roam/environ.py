@@ -135,6 +135,7 @@ def _setup(apppath=None, logo='', title='', **kwargs):
     projectroot = args.projectsroot
 
     # Profile will override the projectroot
+
     if args.profile:
         profileroot = args.profile
         projectroot = os.path.join(args.profile, "projects")
@@ -157,7 +158,7 @@ def _setup(apppath=None, logo='', title='', **kwargs):
     else:
         roam.config.load(settingspath)
 
-    app = RoamApp(sys.argv, apppath, prefixpath, args.config, libspath, i18npath, projectroot).init(logo, title)
+    app = RoamApp(sys.argv, apppath, prefixpath, settingspath, libspath, i18npath, projectroot).init(logo, title)
     app.sourcerun = RUNNING_FROM_FILE
     app.profileroot = profileroot
     print "Profile Root: {0}".format(app.profileroot)

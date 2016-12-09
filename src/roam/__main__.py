@@ -45,8 +45,7 @@ with roam.environ.setup(srcpath) as roamapp:
     window.viewprojects()
     pluginpath = os.path.join(os.path.dirname(roamapp.settingspath), "plugins")
     apppluginpath = os.path.join(roamapp.apppath, "plugins")
-    profilepath = os.path.join(roamapp.profileroot, "plugins")
 
     import roam.api.plugins
-    roam.api.plugins.load_plugins_from([pluginpath, apppluginpath, profilepath])
+    roam.api.plugins.load_plugins_from([pluginpath, apppluginpath])
     window.show()
