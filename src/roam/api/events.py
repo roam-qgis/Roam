@@ -56,6 +56,10 @@ class _Events(QObject):
 
     featuresaved = pyqtSignal()
 
+    ## Raised when a form is saved in the application.
+    ## Args are: Form, QgsFeature
+    formSaved = pyqtSignal(object, object)
+
     sync_complete = pyqtSignal()
 
     def close_project(self, project=None):

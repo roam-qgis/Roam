@@ -822,6 +822,10 @@ class FeatureForm(FeatureFormBase):
         return True
 
     @property
+    def incompletewidgets(self):
+        return [w.labeltext for w in self.boundwidgets.itervalues() if not w.passing]
+
+    @property
     def missingfields(self):
         return [field for field, valid in self.requiredfields.iteritems() if valid == False]
 
@@ -848,7 +852,7 @@ class FeatureForm(FeatureFormBase):
         Override this method to handle saving things your own way if needed.
         """
         if not self.allpassing and not ignore_required:
-            raise MissingValuesException.missing_values()
+            raise MissingValuesException.missing_values(self.incompletewidgets)
 
         def save_images(values):
             for field, wrapper in self.boundwidgets.iteritems():
@@ -861,7 +865,9 @@ class FeatureForm(FeatureFormBase):
                         raise FeatureSaveException("Image Error",
                                                    "Could not save image for control {}".format(wrapper.label),
                                                    QgsMessageBar.CRITICAL)
-                elif hasattr(wrapper, "save") and wrapper.modified:
+                elif type(wrapper).__name__ == "MultiImageWidget" and wrapper.modified:
+                    ## This is a bit of a heck checking the widget name like this
+                    ## but this whole thing needs to be refactored out anyway.
                     saved = wrapper.save()
                     if not saved:
                         raise FeatureSaveException("Widget Save Error",
@@ -891,8 +897,13 @@ class FeatureForm(FeatureFormBase):
             errors = layer.commitErrors()
             raise FeatureSaveException.not_saved(errors)
 
+        feature = QgsFeature(self.feature)
+        form = self.form
+        RoamEvents.formSaved.emit(form, feature)
+
         self.featuresaved(self.feature, values)
         self.accepted.emit()
+
 
     def update_geometry(self, feature):
         if self.geomwidget and self.geomwidget.edited:
