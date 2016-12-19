@@ -1,7 +1,7 @@
 ﻿<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
   <?include roam.wxi ?>
 
-  <Product Id="fa375a30-2361-461e-ae3c-8c60fa964f34"
+  <Product Id="*"
            UpgradeCode="5de008f8-202f-4244-bc5e-69feeed005dc"
            Name="$(var.AppName)"
            Version="$(var.AppVersion)"
@@ -16,7 +16,7 @@
 
     <Icon Id="roam.ico" SourceFile="$(var.RoamIcon)" />
     <Property Id="ARPPRODUCTICON" Value="$(var.RoamIcon)" />
-    <Property Id="ARPHELPLINK" Value="http://www.qgis.com/" />
+    <Property Id="ARPHELPLINK" Value="https://github.com/DMS-Aus/Roam" />
     <Property Id="WIXUI_INSTALLDIR" Value="INSTALLLOCATION" />
 
     <WixVariable Id="WixUILicenseRtf" Value="resources\License.rtf" />
