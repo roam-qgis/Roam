@@ -1,0 +1,68 @@
+﻿<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+  <?include roam.wxi ?>
+
+  <Product Id="fa375a30-2361-461e-ae3c-8c60fa964f34"
+           UpgradeCode="5de008f8-202f-4244-bc5e-69feeed005dc"
+           Name="$(var.AppName)"
+           Version="$(var.AppVersion)"
+           Manufacturer=" TechnologyOne"
+           Language="1033">
+    <Package Platform="x64"
+             InstallerVersion="200"
+             Description=" $(var.AppVersion)"
+             Comments="MSI package created by TechnologyOne"
+             Compressed="yes"/>
+    <Media Id='1' Cabinet='data.cab' EmbedCab='yes'/>
+
+    <Icon Id="roam.ico" SourceFile="$(var.RoamIcon)" />
+    <Property Id="ARPPRODUCTICON" Value="$(var.RoamIcon)" />
+    <Property Id="ARPHELPLINK" Value="http://www.qgis.com/" />
+    <Property Id="WIXUI_INSTALLDIR" Value="INSTALLLOCATION" />
+
+    <WixVariable Id="WixUILicenseRtf" Value="resources\License.rtf" />
+    <!-- <WixVariable Id="WixUIBannerBmp" Value="resources\banner.bmp" /> -->
+    <!-- <WixVariable Id="WixUIDialogBmp" Value="resources\dialog.bmp" /> -->
+
+    <UIRef Id="WixUI_InstallDir" />
+
+    <Directory Id="TARGETDIR" Name="SourceDir">
+      <Directory Id="ProgramFilesFolder">
+        <Directory Id="INSTALLLOCATION" Name="$(var.AppRoot)" />
+      </Directory>
+
+      <Directory Id="ProgramMenuFolder">
+        <Directory Id="ApplicationProgramsFolder" Name="$(var.AppName)">
+          <Component Id="ApplicationShortcut" Guid="e93e6c89-2724-41d8-9d75-b749ee7ccdaf">
+            <Shortcut Id="ApplicationStartMenuShortcut"
+                      Name="IntraMaps Roam $(var.AppVersion)"
+                      Description="$(var.AppName)"
+                      Target="[INSTALLLOCATION]Roam.exe"
+                      WorkingDirectory="INSTALLLOCATION"
+                      Icon="roam.ico"/>
+            <RemoveFolder Id="ApplicationProgramsFolder" On="uninstall"/>
+            <RegistryValue Root="HKCU" Key="Software\DMS\$(var.AppName)" Name="installed" Type="integer" Value="1" KeyPath="yes"/>
+          </Component>
+        </Directory>
+      </Directory>
+
+      <Directory Id="DesktopFolder">
+        <Component Id="ApplicationShortcutDesktop" Guid="2d1e27cf-7ad2-42ad-97fa-59455dc7aa3e">
+          <Shortcut Id="DesktopShortcut"
+                    Name="IntraMaps Roam $(var.AppVersion)"
+                    Description="$(var.AppName)"
+                    Target="[INSTALLLOCATION]Roam.exe"
+                    WorkingDirectory="INSTALLLOCATION"
+                    Icon="roam.ico"/>
+          <RemoveFolder Id="ApplicationShortcutDesktop" On="uninstall"/>
+          <RegistryValue Root="HKCU" Key="Software\DMS\$(var.AppName)" Name="installed" Type="integer" Value="1" KeyPath="yes"/>
+        </Component>
+      </Directory>
+    </Directory>
+
+    <Feature Id="DefaultFeature" Level="1">
+      <ComponentGroupRef Id="bin" />    
+      <ComponentRef Id="ApplicationShortcutDesktop" />
+      <ComponentRef Id="ApplicationShortcut" />
+    </Feature>
+  </Product>
+</Wix>

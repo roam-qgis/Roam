@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?> 
+<Include>
+  <?define AppVersionMajor="2.5"?>
+  <?define AppVersion="2.5.1"?>
+  <?define AppName="IntraMaps Roam $(var.AppVersion)"?>
+  <?define AppRoot="IntraMaps Roam"?>
+  <?define ShortcutName=$(var.AppName)?>
+  <?define RoamIcon="resources\icon.ico" ?>
+</Include>
