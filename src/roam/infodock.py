@@ -374,7 +374,7 @@ class InfoDock(infodock_widget, QWidget):
         editgeom = 'edit_geom' in tools and hasform
         deletefeature = 'delete' in tools and hasform
         self.deleteFeatureButton.setVisible(deletefeature)
-        self.quickInspectButton.setVisible(editattributes)
+        self.quickInspectButton.setVisible('inspection' in tools)
         self.editButton.setVisible(editattributes)
         self.editGeomButton.setVisible(editgeom)
         self.featureupdated.emit(layer, feature, cursor.features)
