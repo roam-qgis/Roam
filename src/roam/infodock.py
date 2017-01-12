@@ -117,6 +117,9 @@ class InfoDock(infodock_widget, QWidget):
         self.deleteFeatureButton.pressed.connect(self.delete_feature)
         self.deleteFeatureButton.setCheckable(False)
 
+        self.quickInspectButton.hide()
+        self.quickInspectButton.pressed.connect(self.quick_inspect)
+
         self.nextButton.pressed.connect(self.pagenext)
         self.prevButton.pressed.connect(self.pageback)
 
@@ -228,6 +231,17 @@ class InfoDock(infodock_widget, QWidget):
             editmode = True
 
         RoamEvents.load_feature_form(form, feature, editmode)
+
+    def quick_inspect(self):
+        cursor = self.selection
+        tools = self.project.layer_tools(cursor.layer)
+        config = tools['inspection']
+        form, feature = self.get_inspection_config(cursor.feature, config)
+        editmode = False
+        form.suppressform = True
+        RoamEvents.load_feature_form(form, feature, editmode)
+        # Leaking state is leaking.  But this is what we have for now.
+        form.suppressform = False
 
     def get_inspection_config(self, current_feature, config):
         form = config['form']
@@ -354,10 +368,13 @@ class InfoDock(infodock_widget, QWidget):
         self.attributesView.setHtml(html, templates.baseurl)
         tools = self.project.layer_tools(layer)
         hasform = not form is None
-        editattributes = 'edit_attributes' in tools or 'inspection' in tools and hasform
+        print tools
+        editattributes = 'edit_attributes' in tools or 'inspection' in tools or hasform
+        print editattributes
         editgeom = 'edit_geom' in tools and hasform
         deletefeature = 'delete' in tools and hasform
         self.deleteFeatureButton.setVisible(deletefeature)
+        self.quickInspectButton.setVisible(editattributes)
         self.editButton.setVisible(editattributes)
         self.editGeomButton.setVisible(editgeom)
         self.featureupdated.emit(layer, feature, cursor.features)
