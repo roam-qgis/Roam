@@ -27,6 +27,7 @@ class OptionWidget(EditorWidget):
 
         items = listconfig['items']
         wrap = self.config.get('wrap', 0)
+        showcolor = self.config.get('always_color', False)
         if wrap > 0:
             rows = list(chunks(items, wrap))
         else:
@@ -49,12 +50,23 @@ class OptionWidget(EditorWidget):
                 try:
                     path = parts[2]
                     if path.startswith("#"):
-                        # Colour the button with the hex value
-                        style = """
-                            QPushButton:checked  {{
-                                border: 3px solid rgb(137, 175, 255);
-                            background-color: {colour};
-                            }}""".format(colour=path)
+                        # Colour the button with the hex value.
+                        # If show color is enabled we always show the color regardless of selection.
+                        print showcolor
+                        if not showcolor:
+                            style = """
+                                QPushButton::checked {{
+                                    border: 3px solid rgb(137, 175, 255);
+                                    background-color: {colour};
+                                }}""".format(colour=path)
+                        else:
+                            style = """
+                                QPushButton::checked {{
+                                    border: 3px solid rgb(137, 175, 255);
+                                }}
+                                QPushButton {{
+                                    background-color: {colour};
+                                }}""".format(colour=path)
                         button.setStyleSheet(style)
                     elif path.endswith("_icon"):
                         icon = QIcon(":/icons/{}".format(path))

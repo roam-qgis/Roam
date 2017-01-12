@@ -6,11 +6,14 @@ from scripts.fabricate import run
 import os
 from scripts import fabricate
 
+haspy2exe = False
 if os.name is 'nt':
     try:
         import py2exe
+        haspy2exe = True
     except ImportError:
         print "Can't import py2exe. Do you have it installed."
+        haspy2exe = False
 
 import glob
 
@@ -189,7 +192,7 @@ package_details = dict(
     cmdclass={'build': qtbuild},
 )
 
-if os.name is 'nt':
+if os.name is 'nt' and haspy2exe:
     origIsSystemDLL = py2exe.build_exe.isSystemDLL
 
     def isSystemDLL(pathname):

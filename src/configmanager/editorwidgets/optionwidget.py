@@ -24,6 +24,7 @@ class OptionWidgetConfig(Ui_Form, ConfigWidget):
         config['list']['items'] = [item for item in self.listText.toPlainText().split('\n')]
         config['multi'] = self.multiCheck.isChecked()
         config['wrap'] = self.wrapEdit.value()
+        config['always_color'] = self.alwaysColorCheck.isChecked()
         return config
 
     def setconfig(self, config):
@@ -31,10 +32,12 @@ class OptionWidgetConfig(Ui_Form, ConfigWidget):
         subconfig = config.get('list', {})
         multi = config.get('multi', False)
         wrap = config.get('wrap', 0)
+        alwayscolor = config.get('always_color', False)
         self.list = subconfig.get('items', [])
         itemtext = '\n'.join(self.list)
         self.listText.setPlainText(itemtext)
         self.multiCheck.setChecked(multi)
         self.wrapEdit.setValue(wrap)
+        self.alwaysColorCheck.setChecked(alwayscolor)
         self.blockSignals(False)
 
