@@ -12,3 +12,4 @@ CALL make_installer.bat
 cd ..\dist
 rm ..\release -rf
 python -m zipfile -c "..\release\IntraMaps Roam.zip" .
+popd
