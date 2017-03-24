@@ -1,5 +1,6 @@
 import os
-from qgis.core import QgsExpression, QgsMapLayerRegistry, QgsFeatureRequest, QGis, QgsPoint, QgsRectangle
+from qgis.core import QgsExpression, QgsMapLayerRegistry, QgsFeatureRequest, QGis, QgsPoint, QgsRectangle, QgsExpressionContext, \
+    QgsExpressionContextScope
 
 import roam.utils
 from roam.api import RoamEvents
@@ -94,14 +95,22 @@ def layer_value(feature, layer, defaultconfig):
         else:
             features = searchlayer.getFeatures()
 
+        expression = expression.replace("$roamgeometry", "@roamgeometry")
+
         exp = QgsExpression(expression)
         exp.prepare(searchlayer.pendingFields())
         if exp.hasParserError():
             error = exp.parserErrorString()
             roam.utils.warning(error)
 
+        context = QgsExpressionContext()
+        scope = QgsExpressionContextScope()
+        context.appendScope(scope)
+        scope.setVariable("roamgeometry", feature.geometry())
+
         for f in features:
-            value = exp.evaluate(f)
+            context.setFeature(f)
+            value = exp.evaluate(context)
             if exp.hasEvalError():
                 error = exp.evalErrorString()
                 roam.utils.warning(error)
