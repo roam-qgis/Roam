@@ -364,7 +364,11 @@ class FeatureFormBase(QWidget):
 
             widgetconfig = config.get('config', {})
             widgetconfig['formwidget'] = self
-            qgsfield = fields[field]
+            try:
+                qgsfield = fields[field]
+            except KeyError:
+                utils.log("No field for ({}) found".format(field))
+
             context = dict(project=self.form.project,
                            form=self.form,
                            featureform=self)
