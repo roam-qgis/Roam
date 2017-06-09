@@ -8,9 +8,12 @@ def bundle_project(project, outpath, options, as_install=False):
     root = project.folder
     basefolder = project.basefolder
     if as_install:
+        dataoptions = {"skip": ["index.db"]}
+        options = _startoptions.copy()
+        options.update(dataoptions)
         filename = "{}-Install.zip".format(basefolder)
     else:
-        dataoptions = {"skip": ["_data"]}
+        dataoptions = {"skip": ["_data", "index.db"]}
         options = _startoptions.copy()
         options.update(dataoptions)
         filename = "{}.zip".format(basefolder)
@@ -35,6 +38,8 @@ def zipper(dir, projectname, zip_file, options):
 
             archive_root = os.path.abspath(root)[root_len + 1:]
             for f in files:
+                if f in skipfolders:
+                    continue
                 fullpath = os.path.join(root, f)
                 archive_name = os.path.join(projectname, archive_root, f)
                 zip.write(fullpath, archive_name, zipfile.ZIP_DEFLATED)

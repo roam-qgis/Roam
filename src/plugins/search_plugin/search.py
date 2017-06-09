@@ -9,6 +9,7 @@ from PyQt4.uic import loadUiType
 from qgis.core import QgsMapLayer, QgsMapLayerRegistry, QgsFeatureRequest, QgsRectangle
 
 import roam.api.utils
+import roam.utils
 from roam.flickwidget import FlickCharm
 from roam.api.events import RoamEvents
 from roam.api.plugins import Page
@@ -196,7 +197,14 @@ class SearchPlugin(widget, base, Page):
             return
 
         self.indexthread = QThread()
-        self.indexbuilder = IndexBuilder(project.folder, settings)
+        path = os.path.join(os.environ['APPDATA'], "roam", project.name)
+
+        roam.utils.info("Search index path: {0}".format(path))
+
+        if not os.path.exists(path):
+            os.makedirs(path)
+
+        self.indexbuilder = IndexBuilder(path, settings)
         self.indexbuilder.moveToThread(self.indexthread)
 
         QgsMapLayerRegistry.instance().removeAll.connect(self.indexthread.quit)
