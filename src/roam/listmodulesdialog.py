@@ -1,6 +1,6 @@
 from PyQt4.QtNetwork import QNetworkRequest, QNetworkAccessManager
 from PyQt4.QtCore import pyqtSignal, QSize, QUrl, Qt
-from PyQt4.QtGui import QListWidgetItem, QPixmap, QWidget
+from PyQt4.QtGui import QListWidgetItem, QPixmap, QWidget, QBrush, QColor
 
 from functools import partial
 from roam.flickwidget import FlickCharm
@@ -44,6 +44,10 @@ class ProjectWidget(Ui_Form, QWidget):
 
         self.namelabel.setText(name)
         self.descriptionlabel.setText(desc)
+        if not self.project.valid:
+            self.namelabel.setText(name + " (Invalid)")
+            self.descriptionlabel.setText(self.project.error)
+
         pix = QPixmap(splash)
         self.imagelabel.setPixmap(pix)
         self.update_version_status()
@@ -119,10 +123,9 @@ class ProjectsWidget(Ui_ListModules, QWidget):
         self.projectitems.clear()
         for project in projects:
             if not project.valid:
-                roam.utils.warning("Project {} is invalid because {}".format(project.name, project.error))
-                continue
+                roam.utils.warning("Project {0} is invalid because {1}".format(project.name, project.error))
 
-            self.add_new_item(project.name, project, is_new=False)
+            self.add_new_item(project.name, project, is_new=False, is_valid=project.valid)
 
     def show_new_updateable(self, updateprojects, newprojects):
         print updateprojects, newprojects
@@ -143,14 +146,17 @@ class ProjectsWidget(Ui_ListModules, QWidget):
         widget = self.moduleList.itemWidget(item)
         widget.project = info
     
-    def add_new_item(self, name, project, is_new=False):
+    def add_new_item(self, name, project, is_new=False, is_valid=True):
         item = QListWidgetItem(self.moduleList, QListWidgetItem.UserType)
         item.setData(QListWidgetItem.UserType, project)
         item.setSizeHint(QSize(150, 150))
+        if not is_valid:
+            item.setFlags(item.flags() & ~Qt.ItemIsEnabled)
 
         projectwidget = ProjectWidget(self.moduleList, project, is_new=is_new)
         projectwidget.install_project.connect(self.projectInstall.emit)
         projectwidget.update_project.connect(self.projectUpdate.emit)
+        projectwidget.setEnabled(is_valid)
 
         self.moduleList.addItem(item)
         self.moduleList.setItemWidget(item, projectwidget)
@@ -164,6 +170,9 @@ class ProjectsWidget(Ui_ListModules, QWidget):
         # self.setDisabled(True)
         project = self.item_widget(item).project
         if isinstance(project, dict):
+            return
+
+        if not project.valid:
             return
 
         self.selectedProject = project

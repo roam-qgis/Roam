@@ -23,6 +23,8 @@ from roam.structs import OrderedDictYAMLLoader
 from roam.dataaccess.database import Database
 from roam.structs import CaseInsensitiveDict
 
+from yaml.scanner import ScannerError
+
 import roam.qgisfunctions
 import roam.utils
 import roam
@@ -44,6 +46,13 @@ class NoMapToolConfigured(Exception):
 class ErrorInMapTool(Exception):
     """
         Raised when there is an error in configuring the map tool  
+    """
+    pass
+
+
+class ProjectLoadError(Exception):
+    """
+        Raised when a project fails to load.
     """
     pass
 
@@ -150,7 +159,10 @@ def readfolderconfig(folder, configname):
 
     try:
         with open(settingspath, 'r') as f:
-            settings = yaml.load(f) or {}
+            try:
+                settings = yaml.load(f) or {}
+            except ScannerError as ex:
+                raise ProjectLoadError(str(ex))
         return settings
     except IOError as e:
         utils.warning(e)
@@ -446,15 +458,19 @@ class Project(QObject):
         self._splash = None
         self.settings = settings
         self._forms = []
-        self.error = ''
         self.basepath = os.path.join(rootfolder, "..")
         self.projectUpdated.connect(self.project_updated)
         self._missinglayers = []
+        self.configError = None
 
     @classmethod
     def from_folder(cls, rootfolder):
         project = cls(rootfolder, {})
-        project.settings = readfolderconfig(rootfolder, configname='project')
+        try:
+            project.settings = readfolderconfig(rootfolder, configname='project')
+        except ProjectLoadError as error:
+            roam.utils.error(error)
+            project.configError = error.message
         return project
 
     def reload(self):
@@ -503,6 +519,10 @@ class Project(QObject):
         except KeyError:
             return os.path.join(self.folder, "project.qgs")
 
+    @property
+    def error(self):
+        return "\n".join(list(self.validate()))
+
     def validate(self):
         """
         Yields messages for each error in the project.
@@ -519,6 +539,10 @@ class Project(QObject):
 
         if not checkversion(roam.__version__, self.roamversion):
             error = "Version mismatch"
+            yield error
+
+        if self.configError:
+            error = "Project has config error: {0}".format(self.configError)
             yield error
 
     @property
