@@ -1,5 +1,9 @@
+"""
+Config file loading logic for Roam.
+"""
 import os
-import yaml as yaml
+import yaml
+from yaml.reader import ReaderError
 from PyQt4.QtCore import QSize
 
 settings = {}
@@ -29,7 +33,10 @@ def read_qsize(key):
 def load(path):
     with open(path, 'r') as f:
         global settings
-        settings = yaml.load(f)
+        try:
+            settings = yaml.load(f)
+        except ReaderError:
+            settings = {}
         if settings is None:
             settings = {}
         global loaded_path

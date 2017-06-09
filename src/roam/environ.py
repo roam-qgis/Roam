@@ -157,6 +157,7 @@ def _setup(apppath=None, logo='', title='', **kwargs):
         roam.config.settings = args.config
     else:
         if not os.path.exists(settingspath):
+            ## Make a new setting file on load if it's not found.
             roam.config.save(settingspath)
         roam.config.load(settingspath)
 
@@ -185,7 +186,6 @@ def setup(apppath=None, logo='', title=''):
     roam.utils.info(app.dump_configinfo())
     yield app
     app.exec_()
-    roam.config.save()
     app.exit()
 
 
