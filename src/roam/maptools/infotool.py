@@ -4,7 +4,7 @@ from PyQt4.QtCore import pyqtSignal, QRect, Qt, QRectF
 from PyQt4.QtGui import QCursor, QPixmap, QColor
 from qgis.core import (QgsRectangle, QgsTolerance,
                        QgsFeatureRequest, QgsFeature,
-                       QgsVectorLayer, QGis, QgsMapLayer)
+                       QgsVectorLayer, QGis, QgsMapLayer, QgsRenderContext, QgsExpressionContextUtils)
 from qgis.gui import QgsMapTool, QgsRubberBand
 
 from roam.maptools.maptool import MapTool
@@ -40,8 +40,13 @@ class InfoTool(QgsMapTool):
             rq = QgsFeatureRequest().setFilterRect(rect) \
                 .setFlags(QgsFeatureRequest.ExactIntersect)
             features = []
+            context = QgsRenderContext.fromMapSettings( self.canvas.mapSettings())
+            context.expressionContext().appendScope(QgsExpressionContextUtils.layerScope( layer ))
+            renderer = layer.rendererV2()
+            renderer.startRender( context, layer.fields() )
             for feature in layer.getFeatures(rq):
-                if feature.isValid():
+                context.expressionContext().setFeature(feature)
+                if feature.isValid() and renderer.willRenderFeature(feature):
                     features.append(feature)
 
             yield layer, features

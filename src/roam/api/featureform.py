@@ -481,8 +481,10 @@ class FeatureFormBase(QWidget):
             if action.lower() == "hide":
                 widget.hidden = conditionexp.evaluate(context)
             if action == 'widget expression':
+                print context
                 if conditionexp.evaluate(context):
-                    newvalue = self.widget_default(field, feature=feature)
+                    newvalue = self.widget_default(widget.field.name(), feature=feature)
+                    print newvalue
                     widget.setvalue(newvalue)
             if action == 'set value':
                 if conditionexp.evaluate(context):
