@@ -12,6 +12,6 @@ REM ----------------------------------------------------------------------------
 
 CALL ..\setenv.bat
 
-SET PYCHARM="C:\Program Files (x86)\JetBrains\PyCharm 3.0\bin\pycharm.exe"
+SET PYCHARM="C:\Program Files\JetBrains\PyCharm Community Edition 2017.1.4\bin\pycharm64.exe"
 
 start "PyCharm aware of QGIS" /B %PYCHARM% %*
