@@ -1,0 +1,14 @@
+pyinstaller src\roam\__main__.py ^
+    -c ^
+    -p src ^
+    --log-level INFO ^
+    -F ^
+    -y ^
+    -w ^
+    -n test ^
+     --runtime-hook src\rthook_pyqt4.py ^
+     --add-data src\roam\version.txt;roam\ ^
+     --add-data src\roam\templates;roam\templates ^
+     --hidden-import qgis.PyQt4.Qsci ^
+     --add-data src\roam\resources_rc.py;. ^
+     --hidden-import PyQt4.Qsci

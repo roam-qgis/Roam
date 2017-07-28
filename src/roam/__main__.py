@@ -7,6 +7,8 @@ The MainWindow object handles everything from there on in.
 import os
 import sys
 
+import resources_rc
+
 
 srcpath = os.path.dirname(os.path.realpath(sys.argv[0]))
 sys.path.append(srcpath)
