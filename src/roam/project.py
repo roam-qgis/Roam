@@ -400,7 +400,10 @@ class Form(object):
             defaults = self.default_values(feature)
             for key, value in defaults.iteritems():
                 # Don't override fields we have already set.
-                if key in data:
+                utils.log("Default key {0}".format(key))
+                datakeys = [key.lower() for key in data.keys()]
+                if key.lower() in datakeys:
+                    utils.log("Skippping {0}".format(key))
                     continue
                 try:
                     feature[key] = value
