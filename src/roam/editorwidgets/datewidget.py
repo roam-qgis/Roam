@@ -8,6 +8,9 @@ from roam.editorwidgets.core import EditorWidget, registerwidgets, LargeEditorWi
 from roam.editorwidgets.uifiles import ui_datewidget
 from roam.datatimerpickerwidget import DateTimePickerWidget
 
+import roam.utils as logging
+import traceback
+
 
 class BigDateWidget(LargeEditorWidget):
     def __init__(self, *args, **kwargs):
@@ -114,6 +117,7 @@ class DateWidget(EditorWidget):
             pickbutton.setText(string)
 
     def setvalue(self, value):
+        logging.debug("SET VALUE IN: {0}".format(value))
         strvalue = value
         if value is None:
             value = DateWidget.DEFAULTDATE
@@ -125,12 +129,18 @@ class DateWidget(EditorWidget):
         if isinstance(value, QDate):
             value = QDateTime(value)
 
+        if value.date().year() == 1752:
+            raise Exception("Year is 1752 when it should not be.")
+
+
         if hasattr(self.datewidget, 'setDate'):
             self.datewidget.setDate(value.date())
 
         if hasattr(self.datewidget, 'setTime'):
             self.datewidget.setTime(value.time())
 
+        #traceback.print_stack()
+        logging.debug("SET VALUE FINAL: {0}".format(value))
         self.set_date(value)
 
     def value(self):
