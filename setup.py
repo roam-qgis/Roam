@@ -192,21 +192,35 @@ package_details = dict(
     cmdclass={'build': qtbuild},
 )
 
+dll_excludes = ["MSVFW32.dll",
+                 "AVIFIL32.dll",
+                 "AVICAP32.dll",
+                 "ADVAPI32.dll",
+                 "CRYPT32.dll",
+                 "WLDAP32.dll",
+                'msvcr80.dll', 'msvcp80.dll',
+                 'msvcr80d.dll', 'msvcp80d.dll',
+                 'powrprof.dll', 'mswsock.dll',
+                 'w9xpopen.exe', 'MSVCP90.dll']
+
+
 if os.name is 'nt' and haspy2exe:
     origIsSystemDLL = py2exe.build_exe.isSystemDLL
 
     def isSystemDLL(pathname):
+        if "api-ms-win-" in pathname:
+            print " -> Skip: {0}".format(pathname)
+            return True
+
         if os.path.basename(pathname).lower() in ("msvcp100.dll", "msvcr100.dll"):
-            return 0
+            return False
+
         return origIsSystemDLL(pathname)
 
     py2exe.build_exe.isSystemDLL = isSystemDLL
     package_details.update(
         options={'py2exe': {
-            'dll_excludes': ['msvcr80.dll', 'msvcp80.dll',
-                             'msvcr80d.dll', 'msvcp80d.dll',
-                             'powrprof.dll', 'mswsock.dll',
-                             'w9xpopen.exe', 'MSVCP90.dll'],
+            'dll_excludes': dll_excludes,
             'excludes': ['PyQt4.uic.port_v3'],
             'includes': ['PyQt4.QtNetwork', 'sip', 'PyQt4.QtSql', 'sqlite3', "Queue", 'PyQt4.Qsci'],
             'packages': ['raven'],
