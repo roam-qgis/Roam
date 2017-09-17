@@ -135,7 +135,7 @@ roam_target = dict(
     icon_resources=[(1, icon)])
 
 tests_target = dict(
-    script=r'tests\__main__.py',
+    script=r'roam.tests\__main__.py',
     dest_base='Roam_tests',
     icon_resources=[(1, icon)])
 
@@ -182,7 +182,7 @@ package_details = dict(
     name='roam',
     version=roam.__version__,
     packages=find_packages('./src'),
-    package_dir={'': 'src', 'tests': 'tests'},
+    package_dir={'': 'src', 'roam.tests': 'roam.tests'},
     url='',
     license='GPL',
     author='Digital Mapping Solutions',

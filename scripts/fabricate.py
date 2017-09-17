@@ -300,7 +300,7 @@ class AtimesRunner(Runner):
     def has_atimes(paths):
         """ Return whether a file created in each path supports atimes and mtimes.
             Return value is the same as used by file_has_atimes
-            Note: for speed, this only tests files created at the top directory
+            Note: for speed, this only roam.tests files created at the top directory
             of each path. A safe assumption in most build environments.
             In the unusual case that any sub-directories are mounted
             on alternate file systems that don't support atimes, the build may

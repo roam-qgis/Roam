@@ -7,7 +7,7 @@ def excepthook(errorhandler, exctype, value, traceback):
     errorhandler(exctype, value, traceback)
     logger.debug("Uncaught exception", exc_info=(exctype, value, traceback))
 
-LOG_FILENAME = 'roam-tests.log'
+LOG_FILENAME = 'roam-roam.tests.log'
 log_format = '%(levelname)s - %(asctime)s - %(module)s-%(funcName)s:%(lineno)d - %(message)s'
 console_format = '%(levelname)s %(module)s-%(funcName)s:%(lineno)d - %(message)s'
 formater = logging.Formatter(log_format)

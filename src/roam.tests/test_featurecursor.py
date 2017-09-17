@@ -1,12 +1,9 @@
 import pytest
-from mock import Mock
 
 from roam.infodock import FeatureCursor, NoFeature
 
-import tests.objects
-
-layer = tests.objects.newmemorylayer()
-layer = tests.objects.addfeaturestolayer(layer, 2)
+layer = objects.newmemorylayer()
+layer = objects.addfeaturestolayer(layer, 2)
 
 features = layer.getFeatures()
 featureone = features.next()

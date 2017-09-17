@@ -3,6 +3,6 @@ pushd %~dp0
 
 call scripts/setenv.bat
 
-make test
+py.test src/roam.tests
 
 if defined DOUBLECLICKED pause
