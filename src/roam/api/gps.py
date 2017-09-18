@@ -6,8 +6,9 @@ from PyQt4.QtCore import QObject, pyqtSignal, QDate, QDateTime, QTime, Qt, QTime
 from qgis.core import (QgsGPSDetector, QgsGPSConnectionRegistry, QgsPoint, \
                         QgsCoordinateTransform, QgsCoordinateReferenceSystem, \
                         QgsGPSInformation, QgsCsException)
-from roam.utils import log, info
-import roam.config
+
+from roam.utils import log, info, logger
+from roam.config import settings as config
 
 NMEA_FIX_BAD = 1
 NMEA_FIX_2D = 2
@@ -237,5 +238,14 @@ class FileGPSService(GPSService):
         self.gpsdisconnected.emit()
 
 
-GPS = GPSService()
+try:
+    filename = config["gpsfile"]
+    print filename
+    if os.path.exists(filename):
+        print "Using file name"
+        GPS = FileGPSService(filename=filename)
+    else:
+        GPS = GPSService()
+except KeyError:
+    GPS = GPSService()
 
