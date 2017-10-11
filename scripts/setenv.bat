@@ -20,7 +20,7 @@ ECHO %QGISNAME%
 SET QGIS=%OSGEO4W_ROOT%\apps\%QGISNAME%
 set QGIS_PREFIX_PATH=%QGIS%
 
-CALL %OSGEO4W_ROOT%\bin\o4w_env.bat
+CALL "%OSGEO4W_ROOT%\bin\o4w_env.bat"
 
 : Python Setup
 set PATH=%OSGEO4W_ROOT%\bin;%QGIS%\bin;%~dp0\..\src\;C:\Program Files (x86)\Git\bin;%PATH%;

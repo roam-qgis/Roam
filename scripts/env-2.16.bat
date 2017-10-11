@@ -1,0 +1,6 @@
+@ECHO OFF
+SET OSGEO4W_ROOT=C:\Program Files (x86)\QGIS 2.16
+SET QGISNAME=qgis
+ECHO Setup environment for
+ECHO %OSGEO4W_ROOT%
+ECHO %QGISNAME%
