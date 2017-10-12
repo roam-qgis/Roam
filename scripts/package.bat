@@ -13,8 +13,8 @@ pushd %~dp0
 IF NOT DEFINED QGISNAME SET QGISNAME=qgis
 call setenv.bat
 
->package.log (
-	make -C "%~dp0\.." package
+>..\build\package.log (
+    ..\build.bat package
 )
 popd
 
