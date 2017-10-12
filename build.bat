@@ -9,14 +9,14 @@ REM Change %OSGEO4W_ROOT% in setenv.bat to change in the location of QGIS.
 REM ---------------------------------------------------------------------------------------
 
 pushd %~dp0
-call scripts\setenv.bat
-IF "%1"=="" goto build
-IF "%1"=="package" goto package
 
-IF "%1"=="watch" (
-    python scripts\watchui.py
-    exit
-)
+call scripts\setenv.bat %1
+IF "%2"=="" goto build
+GOTO %2
+
+:watch
+python scripts\watchui.py
+exit
 
 :build
 ECHO Building..
@@ -29,6 +29,20 @@ ECHO Making package..
 python setup.py clean
 python setup.py build
 python setup.py py2exe
+GOTO END
+
+:release
+ECHO Building release
+python setup.py clean
+python setup.py build
+python setup.py py2exe
+IF NOT EXIST release MKDIR release
+pushd dist
+ECHO Making zip file..
+python -m zipfile -c "..\release\IntraMaps Roam.zip" .
+..\scripts\installer\makesfx.bat "..\release\IntraMaps Roam Installer" ..\dist\
+..\scripts\installer\makesfx.bat "..\release\IntraMaps Roam Installer - Silent" ..\dist\ -s
+popd
 GOTO END
 
 :END
