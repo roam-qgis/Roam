@@ -9,7 +9,7 @@ REM ----------------------------------------------------------------------------
 IF NOT EXIST "%VS90COMNTOOLS%" GOTO NOVS
 
 pushd %~dp0
-CALL setenv.bat
+CALL setenv.bat %1
 CALL "%OSGEO4W_ROOT%\bin\o4w_env.bat"
 
 pushd ..\libs\py2exe-0.6.9
