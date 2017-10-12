@@ -49,6 +49,12 @@ scripts\installer\makesfx.bat "release\IntraMaps Roam Installer - Silent" dist\ 
 popd
 GOTO END
 
+:test
+ECHO Running tests
+py.test src\roam.tests
+popd
+GOTO END
+
 :END
 popd
 if defined DOUBLECLICKED pause
