@@ -10,6 +10,12 @@ from qgis.core import QgsFeature, QgsPoint
 
 class _Events(QObject):
     # Emit when you need to open a image in the main window
+
+    INFO = 0
+    WARNING = 1
+    CRITICAL = 2
+    SUCCESS = 3
+
     openimage = pyqtSignal(object)
 
     #Emit to open a url

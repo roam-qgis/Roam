@@ -163,6 +163,8 @@ class GPSCaptureAction(BaseAction):
 class PolylineTool(QgsMapToolEdit):
     mouseClicked = pyqtSignal(QgsPoint)
     geometryComplete = pyqtSignal(QgsGeometry)
+    error = pyqtSignal(str)
+
 
     def __init__(self, canvas):
         super(PolylineTool, self).__init__(canvas)
@@ -181,6 +183,14 @@ class PolylineTool(QgsMapToolEdit):
         self.editcolour = QColor.fromRgb(0, 255, 0, 150)
         self.band = RubberBand(self.canvas, QGis.Line, width=5, iconsize=20)
         self.band.setColor(self.startcolour)
+
+        self.errorband = RubberBand(self.canvas, QGis.Line, width=5, iconsize=20)
+        self.errorband.setColor(QColor.fromRgb(153, 153, 153, 90))
+        self.errorlocations = QgsRubberBand(self.canvas, QGis.Point)
+        self.errorlocations.setColor(self.invalid_color)
+        self.errorlocations.setIconSize(20)
+        self.errorlocations.setIcon(QgsRubberBand.ICON_BOX)
+
         self.pointband = QgsRubberBand(self.canvas, QGis.Point)
         self.pointband.setColor(self.startcolour)
         self.pointband.setIconSize(20)
@@ -394,21 +404,28 @@ class PolylineTool(QgsMapToolEdit):
             return False
 
         # We need to remove errors that are "ok" and not really that bad
-        for error in errors:
-            if not is_safe(error.what()):
-                othererrors.append(error)
 
-        for error in othererrors:
-            print error.what()
+        ## We are harder on what is considered valid for polygons.
+        if isinstance(self, PolygonTool):
+            for error in errors:
+                if not is_safe(error.what()):
+                    othererrors.append(error)
 
-        invalid = len(othererrors) > 0
-        return invalid
+        if self.band.numberOfVertices() -1 < self.minpoints:
+            error = QgsGeometry.Error("Number of nodes < {0}".format(self.minpoints))
+            othererrors.append(error)
+
+        return othererrors
 
     def canvasReleaseEvent(self, event):
         if event.button() == Qt.RightButton:
-            if self.has_errors() and self.band.numberOfVertices() >= self.minpoints:
-                # TODO we need to handle invalid geometry case.
-                pass
+            errors = self.has_errors()
+            if errors:
+                self.error.emit("Invalid geometry. <br>"
+                                "Please recapture. Last capture shown in grey <br>"
+                                "<h2>Errors</h2> {0}".format("<br>".join(error.what() for error in errors)))
+                self.endinvalidcapture(errors)
+                return
             else:
                 self.endcapture()
             return
@@ -427,6 +444,20 @@ class PolylineTool(QgsMapToolEdit):
         self.capturing = True
         self.endcaptureaction.setEnabled(True)
 
+    def endinvalidcapture(self, errors):
+        geometry = self.band.asGeometry()
+        if geometry:
+            self.errorband.setToGeometry(geometry, None)
+        for error in errors:
+            if error.hasWhere():
+                self.errorlocations.addPoint(error.where())
+
+        self.capturing = False
+        self.set_tracking(False)
+        self.captureaction.setChecked(True)
+        self.endcaptureaction.setEnabled(False)
+        self.reset()
+
     def endcapture(self):
         self.capturing = False
         self.set_tracking(False)
@@ -438,7 +469,12 @@ class PolylineTool(QgsMapToolEdit):
         if not geometry:
             return
 
+        self.clearErrors()
         self.geometryComplete.emit(geometry)
+
+    def clearErrors(self):
+        self.errorband.reset(QGis.Line)
+        self.errorlocations.reset(QGis.Point)
 
     def clearBand(self):
         self.reset()
@@ -504,7 +540,7 @@ class PolygonTool(PolylineTool):
 
     def __init__(self, canvas):
         super(PolygonTool, self).__init__(canvas)
-        self.minpoints = 4
+        self.minpoints = 3
         self.captureaction = CaptureAction(self, "polygon", text="Digitize")
         self.captureaction.toggled.connect(self.update_state)
         self.reset()
@@ -520,6 +556,7 @@ class PointTool(TouchMapTool):
     point based actions.
     """
     geometryComplete = pyqtSignal(QgsGeometry)
+    error = pyqtSignal(str)
 
     def __init__(self, canvas):
         super(PointTool, self).__init__(canvas)

@@ -923,7 +923,11 @@ class MapWidget(Ui_CanvasWidget, QMainWindow):
             tool.geometryComplete.connect(add)
         else:
             tool.finished.connect(self.openForm)
-            tool.error.connect(partial(self.showUIMessage, form.label))
+
+        tool.error.connect(self.show_invalid_geometry_message)
+
+    def show_invalid_geometry_message(self, message):
+        RoamEvents.raisemessage("Invalid geometry capture", message, level=RoamEvents.CRITICAL)
 
     def add_new_feature(self, form, geometry):
         """
