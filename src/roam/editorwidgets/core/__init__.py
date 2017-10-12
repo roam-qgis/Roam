@@ -26,7 +26,7 @@ def registerallwidgets():
     from roam.editorwidgets.attachmentwidget import AttachmentWidget
 
     registerwidgets(ImageWidget, ListWidget, MultiList, CheckboxWidget, DateWidget,
-                    NumberWidget, DoubleNumberWidget, TextWidget, TextBlockWidget, OptionWidget, AttachmentWidget, MultiImageWidget)
+                    NumberWidget, DoubleNumberWidget, TextWidget, TextBlockWidget, OptionWidget, AttachmentWidget)
 
 
 def supportedwidgets():
