@@ -1,4 +1,5 @@
 import pytest
+import objects
 
 from roam.infodock import FeatureCursor, NoFeature
 
