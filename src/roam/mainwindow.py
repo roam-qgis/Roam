@@ -205,7 +205,7 @@ class MainWindow(ui_mainwindow.Ui_MainWindow, QMainWindow):
 
         self.currentselection = {}
 
-        iface = RoamInterface(RoamEvents, GPS, self, self.canvas_page)
+        iface = RoamInterface(RoamEvents, GPS, self, self.canvas_page, self)
         plugins.api = iface
 
     def delete_feature(self, form, feature):
@@ -462,7 +462,6 @@ class MainWindow(ui_mainwindow.Ui_MainWindow, QMainWindow):
         """
         Exit the application.
         """
-        self.projectupdater.quit()
         self.close()
 
     def showInfoResults(self, results):
