@@ -1,2 +1,0 @@
-CALL setenv.bat
-cmd
