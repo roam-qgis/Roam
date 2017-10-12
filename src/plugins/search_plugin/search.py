@@ -150,6 +150,7 @@ class SearchPlugin(widget, base, Page):
         self.flickcharm.activateOn(self.resultsView)
         self.searchbox.textChanged.connect(self.search)
         self.searchbox.installEventFilter(self)
+        self.clearButton.pressed.connect(self.searchbox.clear)
         self.resultsView.itemClicked.connect(self.jump_to)
         self.rebuildLabel.linkActivated.connect(self.rebuild_index)
         self.fuzzyCheck.stateChanged.connect(self.fuzzy_changed)
