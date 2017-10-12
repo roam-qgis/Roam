@@ -49,3 +49,6 @@ export/
 
 *.qm
 
+venv
+.cache
+
