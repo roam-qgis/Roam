@@ -187,7 +187,7 @@ class SearchPlugin(widget, base, Page):
     def build_index(self, project):
         self.searchbox.setEnabled(False)
         self.resultsView.setEnabled(False)
-        self.resultsView.addItem("Just let me build the search index first....")
+        self.resultsView.addItem("building search index...")
 
         validformat, settings = valid_search_settings(project.settings)
         if not validformat:
