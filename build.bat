@@ -57,4 +57,3 @@ GOTO END
 
 :END
 popd
-if defined DOUBLECLICKED pause
