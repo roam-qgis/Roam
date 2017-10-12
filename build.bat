@@ -37,14 +37,15 @@ python setup.py clean
 python setup.py build
 python setup.py py2exe
 IF NOT EXIST release MKDIR release
+del release\*.*
 pushd dist
 ECHO Making zip file..
 python -m zipfile -c "..\release\IntraMaps Roam.zip" .
 
 :installer
 ECHO Building installer
-scripts\installer\makesfx.bat "..\release\IntraMaps Roam Installer" ..\dist\
-scripts\installer\makesfx.bat "..\release\IntraMaps Roam Installer - Silent" ..\dist\ -s
+scripts\installer\makesfx.bat "release\IntraMaps Roam Installer" dist\
+scripts\installer\makesfx.bat "release\IntraMaps Roam Installer - Silent" dist\ -s
 popd
 GOTO END
 
