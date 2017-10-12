@@ -40,8 +40,11 @@ IF NOT EXIST release MKDIR release
 pushd dist
 ECHO Making zip file..
 python -m zipfile -c "..\release\IntraMaps Roam.zip" .
-..\scripts\installer\makesfx.bat "..\release\IntraMaps Roam Installer" ..\dist\
-..\scripts\installer\makesfx.bat "..\release\IntraMaps Roam Installer - Silent" ..\dist\ -s
+
+:installer
+ECHO Building installer
+scripts\installer\makesfx.bat "..\release\IntraMaps Roam Installer" ..\dist\
+scripts\installer\makesfx.bat "..\release\IntraMaps Roam Installer - Silent" ..\dist\ -s
 popd
 GOTO END
 
