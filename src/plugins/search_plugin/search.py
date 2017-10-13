@@ -261,6 +261,7 @@ class SearchPlugin(widget, base, Page):
         ymin -= 5
         ymax += 5
         box = QgsRectangle(xmin, ymin, xmax, ymax)
+        box.grow(20)
         self.api.mainwindow.canvas.setExtent(box)
         self.api.mainwindow.canvas.refresh()
         self.api.mainwindow.showmap()
