@@ -46,19 +46,17 @@ python -m zipfile -c "..\release\IntraMaps Roam.zip" .
 ECHO Building installer
 scripts\installer\makesfx.bat "release\IntraMaps Roam Installer" dist\
 scripts\installer\makesfx.bat "release\IntraMaps Roam Installer - Silent" dist\ -s
-popd
 GOTO END
 
 :test
+@ECHO ON
 ECHO Running tests
-py.test --cov=src\roam src\roam.tests
-popd
+py.test --cov=src\roam src\roam.tests --cov-report html --cov-report term
 GOTO END
 
 :test-only
 ECHO Running tests
 py.test src\roam.tests
-popd
 GOTO END
 
 
