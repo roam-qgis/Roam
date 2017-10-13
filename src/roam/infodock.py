@@ -186,11 +186,13 @@ class InfoDock(infodock_widget, QWidget):
         self.resize(self.parent().width() - 10, self.parent().height())
         self.move(10, 0)
         self.expaned = True
+        self.expandAction.setText("Collapse Panel")
 
     def _collapse(self):
         self.resize(self.startwidth, self.parent().height())
         self.move(self.parent().width() - self.startwidth, 0)
         self.expaned = False
+        self.expandAction.setText("Expand Panel")
 
     def eventFilter(self, object, event):
         if event.type() == QEvent.Resize:
