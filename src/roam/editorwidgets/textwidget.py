@@ -110,7 +110,7 @@ class TextBlockWidget(TextWidget):
     widgettype = 'TextBlock'
 
     def __init__(self, *args, **kwargs):
-        super(TextBlockWidget, self).__init__(*args)
+        super(TextBlockWidget, self).__init__(*args, **kwargs)
         self.text_length = 0
 
     def createWidget(self, parent):

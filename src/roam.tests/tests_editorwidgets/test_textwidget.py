@@ -33,3 +33,13 @@ def test_text_should_not_allow_longer_text_then_length():
     wrapper.initWidget(widget, {})
     wrapper.setvalue("TEST22222")
     assert wrapper.value() == 'TEST'
+
+
+def test_textblock_text_should_not_allow_longer_text_then_length():
+    field = objects.makefield("TestField", QVariant.String, length=4)
+    layer = objects.newmemorylayer()
+    widget = widget=TextBlockWidget().createWidget(None)
+    wrapper = TextBlockWidget(widget, field=field, layer=layer)
+    wrapper.initWidget(widget, {})
+    wrapper.setvalue("TEST22222")
+    assert wrapper.value() == 'TEST'
