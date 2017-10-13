@@ -45,7 +45,7 @@ def test_no_value_returns_none():
     # WAT?!
     widget = OptionWidget().createWidget()
     option = OptionWidget(widget=widget)
-    option.initWidget(widget)
+    option.initWidget(widget, {})
     option.config = config
     assert option.value() is None
 
@@ -54,7 +54,7 @@ def test_no_value_returns_none_multi():
     # WAT?!
     widget = OptionWidget().createWidget()
     option = OptionWidget(widget=widget)
-    option.initWidget(widget)
+    option.initWidget(widget, {})
     config['multi'] = True
     option.config = config
     assert option.value() is None
