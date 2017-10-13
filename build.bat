@@ -55,6 +55,12 @@ py.test --cov=src\roam src\roam.tests
 popd
 GOTO END
 
+:test-only
+ECHO Running tests
+py.test src\roam.tests
+popd
+GOTO END
+
 
 :END
 popd
