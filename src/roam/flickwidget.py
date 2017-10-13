@@ -164,8 +164,8 @@ lastvalue = 0
 
 def setScrollOffset(widget, current, press=None):
     up = current.y() > press.y()
-    up = current.y() > lastvalue
     global lastvalue
+    up = current.y() > lastvalue
     lastvalue = current.y()
 
     if isinstance(widget, QWebView):

@@ -500,8 +500,8 @@ class MapWidget(Ui_CanvasWidget, QMainWindow):
         """
         Toggle snapping on or off.
         """
-        snap = not snapping
         global snapping
+        snap = not snapping
         snapping = snap
         RoamEvents.snappingChanged.emit(snapping)
 
