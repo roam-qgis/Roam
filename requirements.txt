@@ -7,3 +7,4 @@ pyaml
 faulthandler
 raven
 markdown
+pytest-cov
