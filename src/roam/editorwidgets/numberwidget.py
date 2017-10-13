@@ -32,6 +32,14 @@ class Stepper(Ui_stepper, QWidget):
         self.stepUp.setIconSize(QSize(24, 24))
         self.stepDown.setIconSize(QSize(24, 24))
 
+    @property
+    def prefix(self):
+        return self.spinBox.prefix()
+
+    @property
+    def suffix(self):
+        return self.spinBox.suffix()
+
     def installEventFilter(self, object):
         self.spinBox.installEventFilter(object)
 
