@@ -24,7 +24,7 @@ python setup.py clean
 python setup.py build
 GOTO END
 
-:package
+:exe
 ECHO Making package..
 python setup.py clean
 python setup.py build
