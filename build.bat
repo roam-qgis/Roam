@@ -51,7 +51,7 @@ GOTO END
 
 :test
 ECHO Running tests
-py.test --cov=src\roam.tests src\roam.tests
+py.test --cov=src\roam src\roam.tests
 popd
 GOTO END
 
