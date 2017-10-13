@@ -12,7 +12,7 @@ from PyQt4.QtCore import (Qt, QUrl,
 from PyQt4.QtWebKit import QWebPage
 
 from qgis.core import (QgsExpression, QgsFeature,
-                       QgsMapLayer, QgsFeatureRequest, QgsGeometry)
+                       QgsMapLayer, QgsFeatureRequest, QgsGeometry, NULL)
 
 from roam import utils
 from roam.popupdialogs import PickActionDialog
@@ -512,6 +512,9 @@ def generate_rows(fields, attributes, **kwargs):
         if field == 'mapkey':
             continue
         name = "field_" + str(count)
+        print value
+        if value == NULL:
+            value = ""
         data[name] = value
         item = u"<tr><th>{0}</th> <td>${{{1}}}</td></tr>".format(field, name)
         items.append(item)
