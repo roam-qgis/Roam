@@ -44,8 +44,8 @@ python -m zipfile -c "..\release\IntraMaps Roam.zip" .
 
 :installer
 ECHO Building installer
-scripts\installer\makesfx.bat "release\IntraMaps Roam Installer" dist\
-scripts\installer\makesfx.bat "release\IntraMaps Roam Installer - Silent" dist\ -s
+CALL scripts\installer\makesfx.bat "%~dp0release\IntraMaps Roam Installer" dist
+CALL scripts\installer\makesfx.bat "%~dp0release\IntraMaps Roam Installer - Silent" dist -s
 GOTO END
 
 :test

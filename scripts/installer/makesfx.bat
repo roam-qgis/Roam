@@ -1,4 +1,4 @@
-@echo off
+@echo OFF
 
 REM MakeSFX
 REM Makes the Self-extracting archive for patching IntraMaps
@@ -20,7 +20,7 @@ ECHO !NAME!
 :RUN
 
 cd %2
-winrar a -r -sfx %1 -z"!NAME!" -iimg"%~dp0logo.bmp" -iicon"%~dp0icon.ico"
+winrar a -r -sfx %1 -z"%NAME%" -iimg"%~dp0logo.bmp" -iicon"%~dp0icon.ico"
 
 GOTO Exit
 
