@@ -22,7 +22,6 @@ def test_can_extract_projectinfo_from_config():
         description: Example dataset
     """
     versions = updater.parse_serverprojects(html)
-    print versions
     assert "Test_Project" in versions
     assert 1 in versions["Test_Project"]
     data = versions["Test_Project"][1]

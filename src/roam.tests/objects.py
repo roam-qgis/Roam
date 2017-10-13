@@ -1,4 +1,4 @@
-from qgis.core import QgsVectorLayer, QgsFeature, QgsProviderRegistry
+from qgis.core import QgsVectorLayer, QgsFeature, QgsProviderRegistry, QgsField
 
 def newmemorylayer():
     uri = "point?crs=epsg:4326&field=id:integer"
@@ -12,3 +12,9 @@ def addfeaturestolayer(layer, featurecount):
         layer.dataProvider().addFeatures([feature])
     return layer
 
+
+
+def makefield(name, type, length):
+    field = QgsField(name, type)
+    field.setLength(length)
+    return field

@@ -58,7 +58,7 @@ class TextWidget(EditorWidget):
     widgettype = 'Text'
 
     def __init__(self, *args, **kwargs):
-        super(TextWidget, self).__init__(*args)
+        super(TextWidget, self).__init__(*args, **kwargs)
         self.text_length = 0
 
     def createWidget(self, parent):
