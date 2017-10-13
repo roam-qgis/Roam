@@ -51,4 +51,6 @@ export/
 
 venv
 .cache
+htmlcov/
+release/
 
