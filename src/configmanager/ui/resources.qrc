@@ -1,7 +1,7 @@
 <RCC>
   <qresource prefix="icons">
     <file alias="List">..\editorwidgets\icons\list.svg</file>
-    <file>..\editorwidgets\icons\mutlilist.svg</file>
+    <file alias="MultiList">..\editorwidgets\icons\multilist.svg</file>
     <file alias="Image">..\editorwidgets\icons\picture.svg</file>
     <file alias="Section">..\editorwidgets\icons\section.svg</file>
     <file alias="Checkbox">..\editorwidgets\icons\check.svg</file>
@@ -10,6 +10,7 @@
     <file alias="Date">..\editorwidgets\icons\date.svg</file>
     <file alias="Number">..\editorwidgets\icons\number.svg</file>
     <file alias="Number(Double)">..\editorwidgets\icons\number.svg</file>
+    <file alias="Attachment">..\editorwidgets\icons\attachment.svg</file>
     <file alias="Option Row">..\editorwidgets\icons\row.svg</file>
     <file alias="LineLayer">mIconLineLayer.svg</file>
     <file alias="PointLayer">mIconPointLayer.svg</file>
