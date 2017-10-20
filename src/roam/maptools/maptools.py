@@ -419,15 +419,7 @@ class PolylineTool(QgsMapToolEdit):
 
     def canvasReleaseEvent(self, event):
         if event.button() == Qt.RightButton:
-            errors = self.has_errors()
-            if errors:
-                self.error.emit("Invalid geometry. <br>"
-                                "Please recapture. Last capture shown in grey <br>"
-                                "<h2>Errors</h2> {0}".format("<br>".join(error.what() for error in errors)))
-                self.endinvalidcapture(errors)
-                return
-            else:
-                self.endcapture()
+            self.endcapture()
             return
 
         if not self.editmode:
@@ -459,6 +451,14 @@ class PolylineTool(QgsMapToolEdit):
         self.reset()
 
     def endcapture(self):
+        errors = self.has_errors()
+        if errors:
+            self.error.emit("Invalid geometry. <br>"
+                            "Please recapture. Last capture shown in grey <br>"
+                            "<h2>Errors</h2> {0}".format("<br>".join(error.what() for error in errors)))
+            self.endinvalidcapture(errors)
+            return
+
         self.capturing = False
         self.set_tracking(False)
         self.captureaction.setChecked(True)
