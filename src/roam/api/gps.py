@@ -1,6 +1,8 @@
 import os
 import pynmea2
 
+from datetime import datetime
+
 from PyQt4.QtCore import QObject, pyqtSignal, QDate, QDateTime, QTime, Qt, QTimer
 
 from qgis.core import (QgsGPSDetector, QgsGPSConnectionRegistry, QgsPoint, \
@@ -50,6 +52,8 @@ class GPSService(QObject):
         self.wgs84CRS = QgsCoordinateReferenceSystem(4326)
         self.crs = None
         self.waypoint = None
+        self._gpsupdate_frequency = 1.0
+        self._gpsupdate_last = datetime.min
 
     def gpsinfo(self, attribute):
         """
@@ -202,7 +206,11 @@ class GPSService(QObject):
                 self.firstfix.emit(map_pos, gpsInfo)
 
             self.info = gpsInfo
-            self.gpsposition.emit(map_pos, gpsInfo)
+
+            if (datetime.now()-self._gpsupdate_last).total_seconds() > self._gpsupdate_frequency:
+                self.gpsposition.emit(map_pos, gpsInfo)
+                self._gpsupdate_last = datetime.now()
+
             self.postion = map_pos
             self.elevation = gpsInfo.elevation
 
@@ -248,4 +256,3 @@ try:
         GPS = GPSService()
 except KeyError:
     GPS = GPSService()
-
