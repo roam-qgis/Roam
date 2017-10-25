@@ -78,6 +78,7 @@
     <file alias="download">resources/images/download.svg</file>
     <file alias="record">resources/images/record.svg</file>
     <file alias="pause">resources/images/pause.svg</file>
+	<file alias="back">resources/images/back.svg</file>
   </qresource>
   <qresource prefix="branding">
       <file alias="config">resources/branding/config.ico</file>

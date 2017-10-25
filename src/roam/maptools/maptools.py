@@ -96,6 +96,15 @@ class BaseAction(QAction):
         self.isdefault = False
         self.ismaptool = False
 
+class UndoAction(BaseAction):
+    def __init__(self, tool, parent=None):
+        super(UndoAction, self).__init__(QIcon(":/icons/back"),
+                                                "Undo",
+                                                tool,
+                                                parent)
+        self.setObjectName("UndoAction")
+        self.setText(self.tr("Undo"))
+
 
 class EndCaptureAction(BaseAction):
     def __init__(self, tool, parent=None):
@@ -103,7 +112,7 @@ class EndCaptureAction(BaseAction):
                                                "End Capture",
                                                tool,
                                                parent)
-        self.setObjectName("EnaCaptureAction")
+        self.setObjectName("EndCaptureAction")
         self.setText(self.tr("End Capture"))
 
 
@@ -141,7 +150,6 @@ class GPSTrackingAction(BaseAction):
             self.setText(self.tr("Tracking"))
         else:
             self.setText(self.tr("Track"))
-
 
 class GPSCaptureAction(BaseAction):
     def __init__(self, tool, geomtype, parent=None):
@@ -222,6 +230,10 @@ class PolylineTool(QgsMapToolEdit):
         self.trackingaction = GPSTrackingAction(self)
         self.endcaptureaction = EndCaptureAction(self)
 
+        self.undoaction = UndoAction(self)
+        self.undoaction.setEnabled(False)
+        self.undoaction.triggered.connect(self.undo)
+
         self.trackingaction.setEnabled(False)
 
         self.trackingaction.toggled.connect(self.set_tracking)
@@ -259,6 +271,7 @@ class PolylineTool(QgsMapToolEdit):
     def update_end_capture_state(self, *args):
         if self.trackingaction.isChecked() and self.captureaction.isChecked():
             self.endcaptureaction.setEnabled(self.capturing)
+            self.undoaction.setEnabled(self.capturing)
 
     def update_tracking_button_disconnect(self):
         self.trackingaction.setEnabled(False)
@@ -329,13 +342,17 @@ class PolylineTool(QgsMapToolEdit):
 
     @property
     def actions(self):
-        return [self.captureaction, self.trackingaction, self.gpscapture, self.endcaptureaction]
+        return [self.captureaction, self.trackingaction, self.gpscapture, self.endcaptureaction, self.undoaction]
 
     def add_vertex(self):
         location = GPS.postion
         self.add_point(location)
         # Add an extra point for the move band
         self.band.addPoint(location)
+
+    def remove_last_vertex(self):
+        self.remove_last_point()
+        self.band.removeLastPoint(doUpdate=True)
 
     def canvasPressEvent(self, event):
         point = self.canvas.getCoordinateTransform().toMapCoordinates(event.pos())
@@ -435,6 +452,13 @@ class PolylineTool(QgsMapToolEdit):
         self.pointband.addPoint(point)
         self.capturing = True
         self.endcaptureaction.setEnabled(True)
+        self.undoaction.setEnabled(True)
+
+    def remove_last_point(self):
+        if len(self.points) > 1:
+            del self.points[-1]
+            self.band.removeLastPoint(doUpdate=True)
+            self.pointband.removeLastPoint(doUpdate=True)
 
     def endinvalidcapture(self, errors):
         geometry = self.band.asGeometry()
@@ -447,8 +471,12 @@ class PolylineTool(QgsMapToolEdit):
         self.capturing = False
         self.set_tracking(False)
         self.captureaction.setChecked(True)
+        self.undoaction.setEnabled(False)
         self.endcaptureaction.setEnabled(False)
         self.reset()
+
+    def undo(self):
+        self.remove_last_point()
 
     def endcapture(self):
         errors = self.has_errors()
@@ -462,6 +490,7 @@ class PolylineTool(QgsMapToolEdit):
         self.capturing = False
         self.set_tracking(False)
         self.captureaction.setChecked(True)
+        self.undoaction.setEnabled(False)
         self.endcaptureaction.setEnabled(False)
         if not self.editmode:
             self.band.removeLastPoint()
@@ -531,6 +560,7 @@ class PolylineTool(QgsMapToolEdit):
             self.pointband.setColor(self.startcolour)
 
         self.endcaptureaction.setEnabled(self.editmode)
+        self.undoaction.setEnabled(self.editmode)
         self.captureaction.setEditMode(enabled)
 
 
@@ -633,9 +663,9 @@ class PointTool(TouchMapTool):
 
     def activate(self):
         """
-        Set the tool as the active tool in the canvas. 
+        Set the tool as the active tool in the canvas.
 
-        @note: Should be moved out into qmap.py 
+        @note: Should be moved out into qmap.py
                and just expose a cursor to be used
         """
         self.canvas.setCursor(self.cursor)
