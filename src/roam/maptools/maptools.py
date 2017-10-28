@@ -560,7 +560,6 @@ class PolylineTool(QgsMapToolEdit):
             self.pointband.setColor(self.startcolour)
 
         self.endcaptureaction.setEnabled(self.editmode)
-        self.undoaction.setEnabled(self.editmode)
         self.captureaction.setEditMode(enabled)
 
 
