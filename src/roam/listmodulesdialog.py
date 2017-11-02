@@ -37,16 +37,17 @@ class ProjectWidget(Ui_Form, QWidget):
             name = self.project['title']
             desc = self.project['description']
             splash = ":icons/download"
+            self.namelabel.setText(name)
+            self.descriptionlabel.setText(desc)
         else:
             name = self.project.name
             desc = self.project.description
             splash = self.project.splash
-
-        self.namelabel.setText(name)
-        self.descriptionlabel.setText(desc)
-        if not self.project.valid:
-            self.namelabel.setText(name + " (Invalid)")
-            self.descriptionlabel.setText(self.project.error)
+            self.namelabel.setText(name)
+            self.descriptionlabel.setText(desc)
+            if not self.project.valid:
+                self.namelabel.setText(name + " (Invalid)")
+                self.descriptionlabel.setText(self.project.error)
 
         pix = QPixmap(splash)
         self.imagelabel.setPixmap(pix)
