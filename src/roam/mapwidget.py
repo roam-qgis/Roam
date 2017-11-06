@@ -443,10 +443,12 @@ class MapWidget(Ui_CanvasWidget, QMainWindow):
 
         self.positionlabel = QLabel('')
         self.gpslabel = QLabel("GPS: Not active")
+        self.gpslabelposition = QLabel("")
 
         self.statusbar.addWidget(self.snappingbutton)
         self.statusbar.addWidget(spacer2)
         self.statusbar.addWidget(self.gpslabel)
+        self.statusbar.addWidget(self.gpslabelposition)
         self.statusbar.addPermanentWidget(self.scalebutton)
 
         self.canvas.extentsChanged.connect(self.updatestatuslabel)
@@ -526,9 +528,14 @@ class MapWidget(Ui_CanvasWidget, QMainWindow):
         :param position: The current GPS position.
         :param gpsinfo: The current extra GPS information.
         """
-        self.gpslabel.setText("GPS: PDOP {0:.2f}   HDOP {1:.2f}    VDOP {2:.2f}".format(gpsinfo.pdop,
+        self.gpslabel.setText("GPS: PDOP <b>{0:.2f}</b> HDOP <b>{1:.2f}</b>    VDOP <b>{2:.2f}</b>".format(gpsinfo.pdop,
                                                                                         gpsinfo.hdop,
                                                                                         gpsinfo.vdop))
+
+        places = roam.config.settings.get("gpsplaces", 8)
+        self.gpslabelposition.setText("X <b>{x:.{places}f}</b> Y <b>{y:.{places}f}</b>".format(x = position.x(),
+                                                                                      y = position.y(),
+                                                                                      places=places))
 
     def gps_disconnected(self):
         """
@@ -536,6 +543,7 @@ class MapWidget(Ui_CanvasWidget, QMainWindow):
         :return:
         """
         self.gpslabel.setText("GPS Not Active")
+        self.gpslabelposition.setText("")
 
     def zoom_to_feature(self, feature):
         box = feature.geometry().boundingBox()
