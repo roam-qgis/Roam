@@ -326,6 +326,8 @@ class MapWidget(Ui_CanvasWidget, QMainWindow):
         icon = roam_style.iconsize()
         self.projecttoolbar.setIconSize(QSize(icon, icon))
 
+        self.current_form = None
+        self.last_form = None
         self.firstshow = True
         self.layerbuttons = []
         self.editfeaturestack = []
@@ -666,8 +668,15 @@ class MapWidget(Ui_CanvasWidget, QMainWindow):
                     break
 
         self.editfeaturestack.append((form, feature))
+        self.save_current_form()
         self.load_form(form)
         trigger_default_action()
+
+    def save_current_form(self):
+        self.last_form = self.current_form
+
+    def restore_last_form(self):
+        self.load_form(self.last_form)
 
     def clear_temp_objects(self):
         """
@@ -906,6 +915,7 @@ class MapWidget(Ui_CanvasWidget, QMainWindow):
         self.dataentryselection.setIcon(QIcon(form.icon))
         self.dataentryselection.setText(form.icontext)
         self.create_capture_buttons(form)
+        self.current_form = form
 
     def create_capture_buttons(self, form):
         """
@@ -970,6 +980,7 @@ class MapWidget(Ui_CanvasWidget, QMainWindow):
         self.currentfeatureband.setToGeometry(feature.geometry(), layer)
         RoamEvents.editgeometry_complete.emit(form, feature)
         self.canvas.mapTool().setEditMode(False, None)
+        self.restore_last_form()
 
     def clearCaptureTools(self):
         """
