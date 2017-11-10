@@ -341,9 +341,15 @@ class Form(object):
         """
         Return any widget configs that have default values needed
         """
-        for config in self.widgets:
+        for config in self.valid_widgets():
             if 'default' in config:
                 yield config['field'], config
+
+    def valid_widgets(self):
+        def is_valid(widget):
+            return widget['field'] is not None
+
+        return [widget for widget in self.widgets if is_valid(widget)]
 
     def widget_by_field(self, fieldname):
         widgets = [widget for widget in self.widgets if not widget['widget'].lower() == 'section']
@@ -398,8 +404,11 @@ class Form(object):
                 feature[index] = value
             # Update the feature with the defaults from the widget config
             defaults = self.default_values(feature)
+            utils.log(defaults)
             for key, value in defaults.iteritems():
                 # Don't override fields we have already set.
+                if key is None:
+                    continue
                 utils.log("Default key {0}".format(key))
                 datakeys = [key.lower() for key in data.keys()]
                 if key.lower() in datakeys:

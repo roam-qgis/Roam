@@ -51,6 +51,9 @@ def widget_default(widgetconfig, feature, layer):
 def default_values(widgets, feature, layer):
     defaultvalues = {}
     for field, config in widgets:
+        # Skip widgets that have no fields attached.
+        if field is None:
+            continue
         value = widget_default(config, feature, layer)
         defaultvalues[field] = value
 
