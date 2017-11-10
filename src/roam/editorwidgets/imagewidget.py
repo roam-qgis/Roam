@@ -480,6 +480,17 @@ class ImageWidget(EditorWidget):
     def validate(self, *args):
         return not self.widget.isDefault
 
+    @property
+    def saveable(self):
+        """
+        Is the image saveable by the caller.
+        Mainly just a default or Null check so we don't save empty images.
+        :return:
+        """
+        if self.widget.isDefault:
+            return False
+        return True
+
     def showlargeimage(self, pixmap):
         RoamEvents.openimage.emit(pixmap)
 
@@ -488,6 +499,9 @@ class ImageWidget(EditorWidget):
         return name
 
     def save(self, folder, filename):
+        if not self.validate():
+            return False, None
+
         saved, name = save_image(self.widget.getImage(), folder, filename)
         return saved
 

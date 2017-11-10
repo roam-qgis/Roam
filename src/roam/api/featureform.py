@@ -864,6 +864,9 @@ class FeatureForm(FeatureFormBase):
                 if hasattr(wrapper, 'savetofile') and wrapper.savetofile and wrapper.modified:
                     filename = values[field]
                     folder = self.form.project.image_folder
+                    if not wrapper.saveable:
+                        continue
+
                     saved = wrapper.save(folder, filename)
                     if not saved:
                         raise FeatureSaveException("Image Error",
