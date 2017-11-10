@@ -5,7 +5,7 @@ import traceback
 
 from datetime import datetime
 
-from PyQt4.QtGui import QDialog, QFont, QColor, QIcon, QMessageBox, QStandardItem, QStandardItemModel, QInputDialog
+from PyQt4.QtGui import QDialog, QFont, QColor, QIcon, QMessageBox, QStandardItem, QStandardItemModel, QInputDialog, QItemSelectionModel
 from PyQt4.QtCore import QAbstractItemModel, QModelIndex, Qt
 
 
@@ -16,6 +16,7 @@ import configmanager.logger as logger
 from roam import resources_rc
 
 import shutil
+from qgis.core import QgsMapLayerRegistry, QgsProject
 import roam.project
 import roam.messagebaritems
 
@@ -50,6 +51,15 @@ class ConfigManagerDialog(ui_configmanager.Ui_ProjectInstallerDialog, QDialog):
         self.setuprootitems()
 
         ConfigEvents.deleteForm.connect(self.delete_form)
+
+        # ## If all the layers are gone we need to reset back to the top state to get the widgets
+        # ## back into sync.
+        # QgsMapLayerRegistry.instance().removeAll.connect(self.reset_project)
+
+    # def reset_project(self):
+    #     print(QgsProject.instance().fileName())
+    #     print("ALL REMOVED")
+    #     node = self.projectsnode.find_by_filename(QgsProject.instance().fileName())
 
     def raiseerror(self, *exinfo):
         self.bar.pushError(*exinfo)
@@ -124,12 +134,18 @@ class ConfigManagerDialog(ui_configmanager.Ui_ProjectInstallerDialog, QDialog):
         self.projectList.setCurrentIndex(index)
         self.projectList.expand(index)
 
-    def nodeselected(self, index, _):
+    def nodeselected(self, index, _, refreshProject=True):
         node = index.data(Qt.UserRole)
         if node is None:
             return
 
         project = node.project
+
+        if node.nodetype == Treenode.ProjectNode:
+            print("Reloading project")
+            self.projectwidget.setproject(project)
+            node.create_children()
+
         if project and not self.projectwidget.project == project:
             # Only load the project if it's different the current one.
             self.projectwidget.setproject(project)
@@ -158,7 +174,10 @@ class ConfigManagerDialog(ui_configmanager.Ui_ProjectInstallerDialog, QDialog):
         self.projectwidget.projectbuttonframe.setVisible(not project is None)
         self.projectwidget.setpage(node.page, node)
 
-    def projectupdated(self):
-        index = self.projectList.currentIndex()
-        node = find_node(index)
-        node.refresh()
+    def projectupdated(self, project):
+        # index = self.projectList.currentIndex()
+        # node = find_node(index)
+        # node.refresh()
+        node = self.projectsnode.find_by_name(project.name)
+        self.projectList.selectionModel().select(node.index(), QItemSelectionModel.ClearAndSelect)
+        self.nodeselected(node.index(), None, refreshProject=True)

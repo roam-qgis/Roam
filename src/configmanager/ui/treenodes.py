@@ -140,7 +140,6 @@ class Treenode(QStandardItem):
             child.create_children()
 
     def refresh(self):
-        print "Refreshing child nodes"
         for child, row in self.walk():
             child.refresh()
 
@@ -461,6 +460,7 @@ class ProjectsNode(Treenode):
         self.addtext = 'Add new project'
         self._text = text
         self.hascount = True
+        self.projects = []
 
     def delete(self, index):
         nodes = self.takeRow(index)
@@ -471,6 +471,7 @@ class ProjectsNode(Treenode):
         try:
             archivefolder = os.path.join(project.basepath, "_archive")
             shutil.move(project.folder, archivefolder)
+            del self.projects[project.basefolder]
         except Exception as ex:
             logger.exception("Could not remove form folder")
 
@@ -488,6 +489,7 @@ class ProjectsNode(Treenode):
         item = ProjectNode(project)
         count = self.rowCount()
         self.insertRow(count - 1, item)
+        self.projects.append(item)
         return item
 
     def loadprojects(self, projects, projectsbase):
@@ -498,6 +500,12 @@ class ProjectsNode(Treenode):
         for project in projects:
             node = ProjectNode(project)
             self.appendRow(node)
+            self.projects.append(node)
+
+    def find_by_name(self, name):
+        for projectnode in self.projects:
+            if projectnode.project.name == name:
+                return projectnode
 
 
 def find_node(index, nodetype=Treenode.ProjectNode):

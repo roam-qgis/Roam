@@ -30,7 +30,7 @@ import roam
 import roam.project
 import roam.config
 import configmanager.logger as logger
-
+import configmanager.QGIS as QGIS
 
 def layer(name):
     """
@@ -63,7 +63,7 @@ class BadLayerHandler(QgsProjectBadLayerHandler):
 class ProjectWidget(Ui_Form, QWidget):
     SampleWidgetRole = Qt.UserRole + 1
     projectsaved = pyqtSignal()
-    projectupdated = pyqtSignal()
+    projectupdated = pyqtSignal(object)
     projectloaded = pyqtSignal(object)
     selectlayersupdated = pyqtSignal(list)
 
@@ -196,8 +196,8 @@ class ProjectWidget(Ui_Form, QWidget):
         Reload the project. At the moment this will drop any unsaved changes to the config.
         Note: Should look at making sure it doesn't do that because it's not really needed.
         """
-        self.setproject(self.project)
-        self.projectupdated.emit()
+        self.projectupdated.emit(self.project)
+        # self.setproject(self.project)
 
     def qgisprojectupdated(self, path):
         """
@@ -241,6 +241,7 @@ class ProjectWidget(Ui_Form, QWidget):
             self.projectloaded.emit(self.project)
 
     def loadqgisproject(self, project, projectfile):
+        print("Load QGIS Project!!")
         QDir.setCurrent(os.path.dirname(project.projectfile))
         fileinfo = QFileInfo(project.projectfile)
         # No idea why we have to set this each time.  Maybe QGIS deletes it for
@@ -259,7 +260,7 @@ class ProjectWidget(Ui_Form, QWidget):
         """
         Close the current QGIS project and clean up after..
         """
-        QgsMapLayerRegistry.instance().removeAllMapLayers()
+        QGIS.close_project()
 
     def _saveproject(self):
         """
