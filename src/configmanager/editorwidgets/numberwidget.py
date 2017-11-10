@@ -66,5 +66,7 @@ class DoubleNumberWidgetConfig(NumberWidgetConfig):
         self.blockSignals(True)
         places = config.get('places', 2)
         self.places_spin.setValue(places)
+        step = config.get('step', 1)
+        self.step_spin.setValue(step)
         self.blockSignals(False)
 
