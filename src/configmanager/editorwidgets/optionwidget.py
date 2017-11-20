@@ -17,6 +17,8 @@ class OptionWidgetConfig(Ui_Form, ConfigWidget):
         super(OptionWidgetConfig, self).__init__(parent)
         self.setupUi(self)
         self.multiCheck.stateChanged.connect(self.widgetchanged)
+        self.wrapEdit.valueChanged.connect(self.widgetchanged)
+        self.alwaysColorCheck.stateChanged.connect(self.widgetchanged)
 
     def getconfig(self):
         config = {}
