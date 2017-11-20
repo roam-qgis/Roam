@@ -314,34 +314,34 @@ class FormWidget(ui_formwidget.Ui_Form, WidgetBase):
         Called when the tab widget changes tab.  Normally used to control when to render the form preview on demand.
         :param index: The index of the new tab.
         """
-        def setformpreview(form):
-            """
-            Create the form preview to show to the user.
-            """
-            item = self.frame_2.layout().itemAt(0)
-            if item and item.widget():
-                item.widget().setParent(None)
-
-            featureform = FeatureForm.from_form(form, form.settings, None, {})
-            from roam import defaults
-            defaultwidgets = form.widgetswithdefaults()
-            layer = form.QGISLayer
-            try:
-                values = {}
-                feature = layer.getFeatures().next()
-                defaultvalues = defaults.default_values(defaultwidgets, feature, layer)
-                values.update(defaultvalues)
-                featureform.bindvalues(values)
-            except StopIteration:
-                pass
-
-            self.frame_2.layout().addWidget(featureform)
-
         # Don't generate the form preview if we are not on the preview tab.
         if index == 3:
-            form = self.form.copy()
-            form.settings['widgets'] = list(self.widgetmodel.widgets())
-            setformpreview(form)
+            self.generate_form_preview()
+
+    def generate_form_preview(self):
+        """
+        Create the form preview to show to the user.
+        """
+        form = self.form.copy()
+        form.settings['widgets'] = list(self.widgetmodel.widgets())
+        item = self.frame_2.layout().itemAt(0)
+        if item and item.widget():
+            item.widget().setParent(None)
+
+        featureform = FeatureForm.from_form(form, form.settings, None, {})
+        from roam import defaults
+        defaultwidgets = form.widgetswithdefaults()
+        layer = form.QGISLayer
+        try:
+            values = {}
+            feature = layer.getFeatures().next()
+            defaultvalues = defaults.default_values(defaultwidgets, feature, layer)
+            values.update(defaultvalues)
+            featureform.bindvalues(values)
+        except StopIteration:
+            pass
+
+        self.frame_2.layout().addWidget(featureform)
 
     def usedfields(self):
         """
@@ -551,6 +551,10 @@ class FormWidget(ui_formwidget.Ui_Form, WidgetBase):
 
         events = settings.get('events', [])
         self.load_events(events)
+
+        ## This has overhead so only do it when the tab is active.
+        if self.formtab.currentIndex() == 3:
+            self.generate_form_preview()
 
     def load_events(self, events):
         for event in events:

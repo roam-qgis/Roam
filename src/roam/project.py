@@ -347,7 +347,10 @@ class Form(object):
 
     def valid_widgets(self):
         def is_valid(widget):
-            return widget['field'] is not None
+            try:
+                return widget['field'] is not None
+            except KeyError:
+                return True
 
         return [widget for widget in self.widgets if is_valid(widget)]
 
