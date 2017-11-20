@@ -241,7 +241,7 @@ class Form(object):
 
     @property
     def layername(self):
-        return self.settings['layer']
+        return self.settings.get('layer', '')
 
     @property
     def events(self):

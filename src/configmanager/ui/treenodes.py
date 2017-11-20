@@ -309,7 +309,7 @@ class FormNode(Treenode):
 
     def data(self, role):
         if role == Qt.DisplayRole:
-            return self.form.label
+            return self.form.label + "\n" + "Layer: {0}".format(self.form.layername or "No Layer Set")
         elif role == Qt.DecorationRole:
             return QIcon(self.form.icon)
 
