@@ -95,7 +95,7 @@ class ProjectWidget(Ui_Form, QWidget):
 
         qgislocation = r'C:\OSGeo4W\bin\qgis.bat'
         qgislocation = roam.config.settings.setdefault('configmanager', {}) \
-            .setdefault('qgislocation', qgislocation)
+            .get('qgislocation', "")
 
         self.qgispathEdit.setText(qgislocation)
         self.qgispathEdit.textChanged.connect(self.save_qgis_path) 
