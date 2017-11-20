@@ -19,6 +19,9 @@ class NumberWidgetConfig(Ui_Form, ConfigWidget):
         self.maxEdit.textChanged.connect(self.widgetchanged)
         self.prefixEdit.textChanged.connect(self.widgetchanged)
         self.suffixEdit.textChanged.connect(self.widgetchanged)
+        self.places_spin.valueChanged.connect(self.widgetchanged)
+        self.step_spin.valueChanged.connect(self.widgetchanged)
+
         self.places_spin.setVisible(False)
         self.places_label.setVisible(False)
 
@@ -53,7 +56,6 @@ class DoubleNumberWidgetConfig(NumberWidgetConfig):
         super(DoubleNumberWidgetConfig, self).__init__(parent)
         self.places_spin.setVisible(True)
         self.places_label.setVisible(True)
-        self.places_spin.valueChanged.connect(self.widgetchanged)
 
     def getconfig(self):
         config = super(DoubleNumberWidgetConfig, self).getconfig()
