@@ -17,6 +17,7 @@ from PyQt4.QtCore import QObject, pyqtSignal, QUrl, QThread
 
 from qgis.core import QgsNetworkAccessManager
 
+from roam.api import  RoamEvents
 import roam.project
 
 
@@ -283,7 +284,9 @@ class ProjectUpdater(QObject):
             if updateable or new:
                 self.foundProjects.emit(updateable, new)
         else:
-            roam.utils.warning("Error in network request for projects: {}".format(reply.error()))
+            msg = "Error in network request for projects: {}".format(reply.errorString())
+            roam.utils.warning(msg)
+            RoamEvents.raisemessage("Project Server Message", msg, level=RoamEvents.WARNING)
 
     def update_project(self, project, version):
         self.projectUpdateStatus.emit(project.name, "Pending")
