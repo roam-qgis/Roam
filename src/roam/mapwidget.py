@@ -39,9 +39,6 @@ except ImportError:
     PanTool = QgsMapToolPan
 
 
-snapping = True
-
-
 class SnappingUtils(QgsMapCanvasSnappingUtils):
     def prepareIndexStarting(self, count):
         print count
@@ -322,6 +319,7 @@ class MapWidget(Ui_CanvasWidget, QMainWindow):
     def __init__(self, parent=None):
         super(MapWidget, self).__init__(parent)
         self.setupUi(self)
+        self.snapping = True
 
         icon = roam_style.iconsize()
         self.projecttoolbar.setIconSize(QSize(icon, icon))
@@ -347,9 +345,9 @@ class MapWidget(Ui_CanvasWidget, QMainWindow):
         self.canvas.enableAntiAliasing(True)
         self.canvas.setWheelAction(QgsMapCanvas.WheelZoomToMouseCursor)
 
-        self.snapping = SnappingUtils(self.canvas, self)
-        self.canvas.setSnappingUtils(self.snapping)
-        QgsProject.instance().readProject.connect(self.snapping.readConfigFromProject)
+        self.snappingutils = SnappingUtils(self.canvas, self)
+        self.canvas.setSnappingUtils(self.snappingutils)
+        QgsProject.instance().readProject.connect(self.snappingutils.readConfigFromProject)
 
         if hasattr(self.canvas, 'setParallelRenderingEnabled'):
             threadcount = QThread.idealThreadCount()
@@ -504,10 +502,13 @@ class MapWidget(Ui_CanvasWidget, QMainWindow):
         """
         Toggle snapping on or off.
         """
-        global snapping
-        snap = not snapping
-        snapping = snap
-        RoamEvents.snappingChanged.emit(snapping)
+        self.snapping = not self.snapping
+        try:
+            self.canvas.mapTool().toggle_snapping()
+        except AttributeError:
+            pass
+
+        RoamEvents.snappingChanged.emit(self.snapping)
 
     def selectscale(self):
         """
@@ -845,7 +846,7 @@ class MapWidget(Ui_CanvasWidget, QMainWindow):
             return
 
         if hasattr(tool, "setSnapping"):
-            tool.setSnapping(snapping)
+            tool.setSnapping(self.snapping)
         self.canvas.setMapTool(tool)
 
     def connectButtons(self):

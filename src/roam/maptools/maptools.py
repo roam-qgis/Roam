@@ -266,6 +266,13 @@ class PolylineTool(QgsMapToolEdit):
             self.reset()
         if event.key() == Qt.Key_S:
             self.toggle_snapping()
+            RoamEvents.snappingChanged.emit(self.snapping)
+
+    def setSnapping(self, snapping):
+        self.snapping = snapping
+
+    def toggle_snapping(self):
+        self.snapping = not self.snapping
 
     def selection_updated(self, *args):
         if self.editmode:
