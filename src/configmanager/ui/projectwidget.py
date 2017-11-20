@@ -172,7 +172,7 @@ class ProjectWidget(Ui_Form, QWidget):
         if not os.path.exists(path):
             os.makedirs(path)
 
-        self._saveproject()
+        self._saveproject(update_version=True, reset_save_point=True)
         options = {}
 
         bundle.bundle_project(self.project, path, options, as_install=with_data)
@@ -262,13 +262,13 @@ class ProjectWidget(Ui_Form, QWidget):
         """
         QGIS.close_project()
 
-    def _saveproject(self):
+    def _saveproject(self, update_version=False, reset_save_point=False):
         """
         Save the project config to disk.
         """
         self.write_config_currentwidget()
         # self.project.dump_settings()
-        self.project.save(update_version=True)
+        self.project.save(update_version=update_version, reset_save_point=reset_save_point)
         self.filewatcher.removePaths(self.filewatcher.files())
         QgsProject.instance().write()
         self.filewatcher.addPath(self.project.projectfile)

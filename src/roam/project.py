@@ -520,8 +520,22 @@ class Project(QObject):
     def version(self):
         return int(self.settings.setdefault("project_version", 1))
 
+    @property
+    def save_version(self):
+        return int(self.settings.setdefault("project_save_version", 0))
+
     def increament_version(self):
         self.settings['project_version'] = increment_version(self.version)
+
+    def increament_save_version(self):
+        self.settings['project_save_version'] = increment_version(self.save_version)
+
+    def reset_save_version(self):
+        """
+        Reset the save point version of this project back to 1
+        :return:
+        """
+        self.settings['project_save_version'] = 0
 
     @property
     def roamversion(self):
@@ -771,11 +785,19 @@ class Project(QObject):
             del self.settings['forms'][index]
         print self.settings['forms']
 
-    def save(self, update_version=True, save_forms=True):
+    def save(self, update_version=False, save_forms=True, reset_save_point=False):
         """
         Save the project config to disk.
+        :param update_version Updates the version in the project file.
         """
-        self.increament_version()
+        if update_version:
+            self.increament_version()
+
+        if reset_save_point:
+            self.reset_save_version()
+        else:
+            self.increament_save_version()
+
         writefolderconfig(self.settings, self.folder, configname='project')
         if save_forms:
             # Clear the form cache

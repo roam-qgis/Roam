@@ -841,6 +841,7 @@ class ProjectInfoWidget(ui_projectinfo.Ui_Form, WidgetBase):
         self.descriptionText.setPlainText(self.project.description)
         self.setsplash(self.project.splash)
         self.versionText.setText(str(self.project.version))
+        self.saveVersionText.setText(str(self.project.save_version))
 
     def set_project(self, project, treenode):
         """
