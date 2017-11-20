@@ -516,7 +516,7 @@ class FormWidget(ui_formwidget.Ui_Form, WidgetBase):
 
         formtype = settings.setdefault('type', 'auto')
         widgets = settings.setdefault('widgets', [])
-        newstyleform = settings.setdefault('newstyle', False)
+        newstyleform = settings.setdefault('newstyle', True)
         self.set_icon(form.icon)
 
         self.formLabelText.setText(label)
