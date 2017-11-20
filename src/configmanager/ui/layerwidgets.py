@@ -991,6 +991,7 @@ class LayerWidget(ui_layernode.Ui_Form, WidgetBase):
         self.inspection_check.setChecked(inspection)
         self.datasouce_label.setText(self.layer.publicSource())
 
+        self.inspection_fieldmappings.clear()
         if inspection:
             config = tools['inspection']
             formindex = self.inspection_form_combo.findText(config['form'])
