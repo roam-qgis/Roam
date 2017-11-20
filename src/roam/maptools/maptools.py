@@ -174,8 +174,12 @@ class PolylineTool(QgsMapToolEdit):
     error = pyqtSignal(str)
 
 
-    def __init__(self, canvas):
+    def __init__(self, canvas, config=None):
         super(PolylineTool, self).__init__(canvas)
+        if not config:
+            self.config = {}
+        else:
+            self.config = config
         self.minpoints = 2
         self.editmode = False
         self.editvertex = None
@@ -480,7 +484,7 @@ class PolylineTool(QgsMapToolEdit):
 
     def endcapture(self):
         errors = self.has_errors()
-        if errors:
+        if errors and self.config.get("geometry_validation", True):
             self.error.emit("Invalid geometry. <br>"
                             "Please recapture. Last capture shown in grey <br>"
                             "<h2>Errors</h2> {0}".format("<br>".join(error.what() for error in errors)))
@@ -567,8 +571,8 @@ class PolygonTool(PolylineTool):
     mouseClicked = pyqtSignal(QgsPoint)
     geometryComplete = pyqtSignal(QgsGeometry)
 
-    def __init__(self, canvas):
-        super(PolygonTool, self).__init__(canvas)
+    def __init__(self, canvas, config=None):
+        super(PolygonTool, self).__init__(canvas, config)
         self.minpoints = 3
         self.captureaction = CaptureAction(self, "polygon", text="Digitize")
         self.captureaction.toggled.connect(self.update_state)
@@ -587,8 +591,12 @@ class PointTool(TouchMapTool):
     geometryComplete = pyqtSignal(QgsGeometry)
     error = pyqtSignal(str)
 
-    def __init__(self, canvas):
+    def __init__(self, canvas, config = None):
         super(PointTool, self).__init__(canvas)
+        if not config:
+            self.config = {}
+        else:
+            self.config = config
         self.cursor = QCursor(QPixmap(["16 16 3 1",
                                        "      c None",
                                        ".     c #FF0000",

@@ -923,7 +923,7 @@ class MapWidget(Ui_CanvasWidget, QMainWindow):
         :param form: The active form.
         """
         layer = form.QGISLayer
-        tool = form.getMaptool()(self.canvas)
+        tool = form.getMaptool()(self.canvas, form.settings)
         for action in tool.actions:
             # Create the action here.
             if action.ismaptool:
