@@ -30,7 +30,7 @@ with roam.environ.setup(srcpath) as roamapp:
     import roam.mainwindow
     import roam.utils
 
-    roam.utils.setup_logging(roamapp.profileroot)
+    roam.utils.setup_logging(roamapp.profileroot, roam.config.settings)
 
     window = roam.mainwindow.MainWindow(roamapp)
 

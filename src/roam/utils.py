@@ -20,11 +20,14 @@ critical = logger.critical
 exception = logger.exception
 
 
-def setup_logging(approot):
+def setup_logging(approot, config=None):
     """
     Setup the roam logger relative to the given approot folder.
     :param approot: The folder to create the log folder in.
     """
+    if config is None:
+        config = {"loglevel": "INOF"}
+
     try:
         logpath = os.path.join(os.environ['ROAM_APPPATH'], 'log')
     except KeyError:
@@ -44,7 +47,10 @@ def setup_logging(approot):
                                                mode='at',
                                                maxBytes=1000000,
                                                backupCount=5)
-    filehandler.setLevel(logging.INFO)
+
+    levelname = config.get("loglevel", "INFO")
+    level = logging.getLevelName(levelname)
+    filehandler.setLevel(level)
     filehandler.setFormatter(formater)
 
     stream = logging.StreamHandler(stream=sys.stdout)
