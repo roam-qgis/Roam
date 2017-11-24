@@ -20,7 +20,10 @@ with roam.environ.setup(logo=':/branding/config', title="IntraMaps Roam Config M
     import roam
     import roam.config
     import configmanager.logger
+    import roam.utils
     from configmanager.ui.configmanagerdialog import ConfigManagerDialog
+
+    roam.utils.setup_logging(roamapp.profileroot)
 
     roamapp.app.setStyleSheet(roam.roam_style.appstyle())
     dialog = ConfigManagerDialog(roamapp)

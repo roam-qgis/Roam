@@ -29,6 +29,8 @@ from roam.utils import log
 from roam import roam_style
 
 from configmanager.utils import openqgis, render_tample, openfolder
+import roam.utils
+from PyQt4.QtCore import QObject
 
 
 class WidgetBase(QWidget):
@@ -54,6 +56,8 @@ defaultevents = [('Capture Only', ['capture']),
 
 
 import nodewidgets.ui_eventwidget
+
+from configmanager import QGIS
 
 
 class EventWidget(nodewidgets.ui_eventwidget.Ui_Form, QWidget):
@@ -210,8 +214,8 @@ class FormWidget(ui_formwidget.Ui_Form, WidgetBase):
         self.fieldList.currentIndexChanged.connect(self._save_current_widget)
         self.nameText.textChanged.connect(self._save_current_widget)
         self.sectionNameText.textChanged.connect(self._save_current_widget)
-
         self.useablewidgets.currentIndexChanged.connect(self._save_current_widget)
+
         self.useablewidgets.currentIndexChanged.connect(self.swapwidgetconfig)
 
         menu = QMenu("Field Actions")
@@ -465,11 +469,18 @@ class FormWidget(ui_formwidget.Ui_Form, WidgetBase):
         :param treenode: The current tree node.  Can be used to signel a update back to the tree for it to update it
         self.
         """
+        roam.utils.debug("FormWidget: Set Project")
+        self.fieldList.blockSignals(True)
+        self.nameText.blockSignals(True)
+        self.useablewidgets.blockSignals(True)
         super(FormWidget, self).set_project(project, treenode)
         self.formlayers.setSelectLayers(self.project.selectlayers)
         form = self.treenode.form
         self.form = form
         self.setform(self.form)
+        self.fieldList.blockSignals(False)
+        self.nameText.blockSignals(False)
+        self.useablewidgets.blockSignals(False)
 
     def updatefields(self, layer):
         """
@@ -541,7 +552,7 @@ class FormWidget(ui_formwidget.Ui_Form, WidgetBase):
         index = self.widgetmodel.index(0, 0)
         if index.isValid():
             self.userwidgets.setCurrentIndex(index)
-            self.load_widget(index, None)
+            # self.load_widget(index, None)
 
         for i in reversed(range(self.eventsLayout.count())):
             child = self.eventsLayout.itemAt(i)
@@ -586,6 +597,7 @@ class FormWidget(ui_formwidget.Ui_Form, WidgetBase):
         self.useablewidgets.blockSignals(True)
 
         if last:
+            roam.utils.debug("Saving last widget")
             self._save_widget(last)
 
         widget = index.data(Qt.UserRole)
@@ -595,6 +607,10 @@ class FormWidget(ui_formwidget.Ui_Form, WidgetBase):
             self.useablewidgets.blockSignals(False)
             return
 
+        try:
+            roam.utils.debug("Loading widget: {0}".format(widget['_id']))
+        except KeyError:
+            pass
         widgettype = widget['widget']
         if widgettype == "Section":
             self.propertiesStack.setCurrentIndex(1)
@@ -713,7 +729,12 @@ class FormWidget(ui_formwidget.Ui_Form, WidgetBase):
         self._save_widget(index)
 
     def _save_widget(self, index):
+        # roam.utils.debug("FormWidget: Save widget")
         widgetdata = self._get_widget_config()
+        try:
+            roam.utils.debug("Saving widget " + widgetdata['_id'])
+        except KeyError:
+            pass
         self.widgetmodel.setData(index, widgetdata, Qt.UserRole)
 
     def _get_default_config(self):
@@ -759,6 +780,7 @@ class FormWidget(ui_formwidget.Ui_Form, WidgetBase):
         return layer
 
     def write_config(self):
+        roam.utils.debug("Write form config")
         if not self.selected_layer:
             return
 
@@ -976,6 +998,7 @@ class LayerWidget(ui_layernode.Ui_Form, WidgetBase):
         Set the project for this widget. Updates the select layer config based on the project info
         for the layer.
         """
+        roam.utils.debug("LayerWidget: Set Project")
         super(LayerWidget, self).set_project(project, node)
         self.layer = node.layer
         forms = self.project.forms

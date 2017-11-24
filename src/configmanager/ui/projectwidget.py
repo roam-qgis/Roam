@@ -31,6 +31,7 @@ import roam.project
 import roam.config
 import configmanager.logger as logger
 import configmanager.QGIS as QGIS
+import roam.utils
 
 def layer(name):
     """
@@ -130,14 +131,17 @@ class ProjectWidget(Ui_Form, QWidget):
         roam.config.settings['configmanager'] = {'qgislocation': path}
         roam.config.save()
 
-    def setpage(self, page, node):
+    def setpage(self, page, node, refreshingProject=False):
         """
         Set the current page in the config manager.  We pass the project into the current
         page so that it knows what the project is.
         """
         self.currentnode = node
 
-        self.write_config_currentwidget()
+        if not refreshingProject:
+            self.write_config_currentwidget()
+        else:
+            roam.utils.info("Reloading project. Not saving current config values")
 
         self.stackedWidget.setCurrentIndex(page)
 

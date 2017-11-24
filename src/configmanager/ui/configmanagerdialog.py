@@ -134,7 +134,7 @@ class ConfigManagerDialog(ui_configmanager.Ui_ProjectInstallerDialog, QDialog):
         self.projectList.setCurrentIndex(index)
         self.projectList.expand(index)
 
-    def nodeselected(self, index, _, refreshProject=True):
+    def nodeselected(self, index, _, refreshProject=False):
         node = index.data(Qt.UserRole)
         if node is None:
             return
@@ -143,11 +143,13 @@ class ConfigManagerDialog(ui_configmanager.Ui_ProjectInstallerDialog, QDialog):
 
         if node.nodetype == Treenode.ProjectNode:
             print("Reloading project")
+            refreshProject = True
             self.projectwidget.setproject(project)
             node.create_children()
 
-        if project and not self.projectwidget.project == project:
+        if project and self.projectwidget.project != project:
             # Only load the project if it's different the current one.
+            refreshProject = True
             self.projectwidget.setproject(project)
             node.create_children()
 
@@ -172,7 +174,7 @@ class ConfigManagerDialog(ui_configmanager.Ui_ProjectInstallerDialog, QDialog):
             return
 
         self.projectwidget.projectbuttonframe.setVisible(not project is None)
-        self.projectwidget.setpage(node.page, node)
+        self.projectwidget.setpage(node.page, node, refreshingProject=refreshProject)
 
     def projectupdated(self, project):
         # index = self.projectList.currentIndex()
