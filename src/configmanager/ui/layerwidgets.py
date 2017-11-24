@@ -211,10 +211,26 @@ class FormWidget(ui_formwidget.Ui_Form, WidgetBase):
         self.newStyleCheck.stateChanged.connect(self.form_style_changed)
         self.layerCombo.currentIndexChanged.connect(self.layer_updated)
 
-        self.fieldList.currentIndexChanged.connect(self._save_current_widget)
-        self.nameText.textChanged.connect(self._save_current_widget)
-        self.sectionNameText.textChanged.connect(self._save_current_widget)
-        self.useablewidgets.currentIndexChanged.connect(self._save_current_widget)
+
+        # Gross but ok for now.
+        self.blockWidgets = [
+            self.fieldList,
+            self.nameText,
+            self.sectionNameText,
+            self.useablewidgets,
+            self.hiddenCheck,
+            self.requiredCheck,
+            self.readonlyCombo,
+            self.defaultEventsCombo,
+            self.defaultvalueText,
+            self.defaultLayerCombo,
+            self.defaultFieldCombo,
+            self.defaultValueExpression,
+            self.savevalueCheck
+        ]
+
+        for widget in self.blockWidgets:
+            self._connect_save_event(widget)
 
         self.useablewidgets.currentIndexChanged.connect(self.swapwidgetconfig)
 
@@ -228,6 +244,14 @@ class FormWidget(ui_formwidget.Ui_Form, WidgetBase):
         self.defaultLayerCombo.layerChanged.connect(self.defaultFieldCombo.setLayer)
         self.addEvent.pressed.connect(self.addEventItem)
         self.btnDeleteForm.pressed.connect(ConfigEvents.deleteForm.emit)
+
+    def _connect_save_event(self, widget):
+        if hasattr(widget, "textChanged"):
+            widget.textChanged.connect(self._save_current_widget)
+        if hasattr(widget, "currentIndexChanged"):
+            widget.currentIndexChanged.connect(self._save_current_widget)
+        if hasattr(widget, "stateChanged"):
+            widget.stateChanged.connect(self._save_current_widget)
 
     def change_icon(self, *args):
         """
@@ -319,6 +343,7 @@ class FormWidget(ui_formwidget.Ui_Form, WidgetBase):
         :param index: The index of the new tab.
         """
         # Don't generate the form preview if we are not on the preview tab.
+        self._save_current_widget()
         if index == 3:
             self.generate_form_preview()
 
@@ -470,17 +495,20 @@ class FormWidget(ui_formwidget.Ui_Form, WidgetBase):
         self.
         """
         roam.utils.debug("FormWidget: Set Project")
-        self.fieldList.blockSignals(True)
-        self.nameText.blockSignals(True)
-        self.useablewidgets.blockSignals(True)
+
+        self.blockWidgetSignels(True)
+
         super(FormWidget, self).set_project(project, treenode)
         self.formlayers.setSelectLayers(self.project.selectlayers)
         form = self.treenode.form
         self.form = form
         self.setform(self.form)
-        self.fieldList.blockSignals(False)
-        self.nameText.blockSignals(False)
-        self.useablewidgets.blockSignals(False)
+
+        self.blockWidgetSignels(False)
+
+    def blockWidgetSignels(self, blocking):
+        for widget in self.blockWidgets:
+            widget.blockSignals(blocking)
 
     def updatefields(self, layer):
         """
@@ -592,9 +620,7 @@ class FormWidget(ui_formwidget.Ui_Form, WidgetBase):
         """
         Update the UI with the config for the current selected widget.
         """
-        self.fieldList.blockSignals(True)
-        self.nameText.blockSignals(True)
-        self.useablewidgets.blockSignals(True)
+        self.blockWidgetSignels(True)
 
         if last:
             roam.utils.debug("Saving last widget")
@@ -602,9 +628,7 @@ class FormWidget(ui_formwidget.Ui_Form, WidgetBase):
 
         widget = index.data(Qt.UserRole)
         if not widget:
-            self.fieldList.blockSignals(False)
-            self.nameText.blockSignals(False)
-            self.useablewidgets.blockSignals(False)
+            self.blockWidgetSignels(False)
             return
 
         try:
@@ -684,9 +708,7 @@ class FormWidget(ui_formwidget.Ui_Form, WidgetBase):
         config = widget.get('config', {})
         self.updatewidgetconfig(config)
 
-        self.fieldList.blockSignals(False)
-        self.nameText.blockSignals(False)
-        self.useablewidgets.blockSignals(False)
+        self.blockWidgetSignels(False)
 
     @property
     def currentuserwidget(self):
