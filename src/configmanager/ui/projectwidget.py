@@ -145,16 +145,22 @@ class ProjectWidget(Ui_Form, QWidget):
         else:
             roam.utils.info("Reloading project. Not saving current config values")
 
+        self.unload_current_widget()
+
         # Set the new widget for the selected page
         self.stackedWidget.setCurrentIndex(page)
 
         widget = self.stackedWidget.currentWidget()
+        print "New widget {}".format(widget.objectName())
         if hasattr(widget, "set_project"):
             widget.set_project(self.project, self.currentnode)
 
-    def notify_current_widget(self):
+    def unload_current_widget(self):
+        print "NOTIFY!!"
         widget = self.stackedWidget.currentWidget()
-        widget.unload_project()
+        print widget
+        if hasattr(widget, "unload_project"):
+            widget.unload_project()
 
     def write_config_currentwidget(self):
         """
@@ -240,11 +246,15 @@ class ProjectWidget(Ui_Form, QWidget):
         """
         Set the widgets active project.
         """
-        if self.project and QMessageBox.question(self,
-                                "Save Current Project",
-                                "Save {}?".format(self.project.name),
-                                QMessageBox.Save | QMessageBox.No):
-            self._saveproject()
+        self.unload_current_widget()
+
+        if self.project:
+            savelast = QMessageBox.question(self,
+                                    "Save Current Project",
+                                    "Save {}?".format(self.project.name),
+                                    QMessageBox.Save | QMessageBox.No)
+            if savelast == QMessageBox.Accepted:
+                self._saveproject()
 
         self.filewatcher.removePaths(self.filewatcher.files())
         self.projectupdatedlabel.hide()

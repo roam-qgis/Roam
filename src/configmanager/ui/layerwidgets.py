@@ -240,6 +240,8 @@ class FormWidget(ui_formwidget.Ui_Form, WidgetBase):
         for widget in self.blockWidgets:
             self._connect_save_event(widget)
 
+        self.blockWidgetSignels(True)
+
         self.useablewidgets.currentIndexChanged.connect(self.swapwidgetconfig)
 
         menu = QMenu("Field Actions")
@@ -254,6 +256,7 @@ class FormWidget(ui_formwidget.Ui_Form, WidgetBase):
         self.btnDeleteForm.pressed.connect(ConfigEvents.deleteForm.emit)
 
     def unload_project(self):
+        print "UNLOAD PROJECT!!!"
         self.blockWidgetSignels(True)
 
     def _connect_save_event(self, widget):
@@ -354,7 +357,6 @@ class FormWidget(ui_formwidget.Ui_Form, WidgetBase):
         :param index: The index of the new tab.
         """
         # Don't generate the form preview if we are not on the preview tab.
-        self._save_current_widget()
         if index == 3:
             self.generate_form_preview()
 
@@ -696,7 +698,7 @@ class FormWidget(ui_formwidget.Ui_Form, WidgetBase):
                 expression = default['expression']
                 self.defaultValueExpression.setText(expression)
                 layer = roam.api.utils.layer_by_name(layer)
-                self.defaultLayerCombo.setLayer(layer)
+                # self.defaultLayerCombo.setLayer(layer)
                 self.defaultFieldCombo.setLayer(layer)
                 self.defaultFieldCombo.setField(defaultfield)
 
@@ -763,6 +765,7 @@ class FormWidget(ui_formwidget.Ui_Form, WidgetBase):
 
     def _save_widget(self, index):
         # roam.utils.debug("FormWidget: Save widget")
+        print("SENDER: {}".format(self.sender().objectName()))
         if not self.project:
             return
         widgetdata = self._get_widget_config()

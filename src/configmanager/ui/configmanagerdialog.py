@@ -142,7 +142,7 @@ class ConfigManagerDialog(ui_configmanager.Ui_ProjectInstallerDialog, QDialog):
         roam.utils.info("Project loaded: {}".format(project.name))
         node = self.projectsnode.find_by_name(project.name)
         node.create_children()
-        self.projectwidget.setpage(node.page, node, refreshingProject=self.reloadingProject)
+        self.projectwidget.setpage(node.page, node, refreshingProject=True)
         self.reloadingProject = False
         self.loadedProject = project
         self.projectList.setExpanded(node.index(), True )
@@ -172,11 +172,11 @@ class ConfigManagerDialog(ui_configmanager.Ui_ProjectInstallerDialog, QDialog):
         if project and self.loadedProject != project:
             # Only load the project if it's different the current one.
             roam.utils.info("Swapping to project: {}".format(project.name))
-            self.projectwidget.setproject(project)
             if self.loadedProject:
                 lastnode = self.projectsnode.find_by_name(self.loadedProject.name)
                 self.projectList.setExpanded(lastnode.index(), False )
             ## We are closing the open project at this point. Watch for null ref after this.
+            self.projectwidget.setproject(project)
             return
         else:
             roam.utils.debug("Setting page")
