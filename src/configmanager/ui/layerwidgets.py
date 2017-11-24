@@ -34,15 +34,23 @@ from PyQt4.QtCore import QObject
 
 
 class WidgetBase(QWidget):
+    def __init__(self, parent):
+        super(WidgetBase, self).__init__(parent)
+        self.project = None
+
     def set_project(self, project, treenode):
         self.project = project
         self.treenode = treenode
+
+    def unload_project(self):
+        pass
 
     def write_config(self):
         """
         Write the config back to the project settings.
         """
         pass
+
 
 
 readonlyvalues = [('Never', 'never'),
@@ -244,6 +252,9 @@ class FormWidget(ui_formwidget.Ui_Form, WidgetBase):
         self.defaultLayerCombo.layerChanged.connect(self.defaultFieldCombo.setLayer)
         self.addEvent.pressed.connect(self.addEventItem)
         self.btnDeleteForm.pressed.connect(ConfigEvents.deleteForm.emit)
+
+    def unload_project(self):
+        self.blockWidgetSignels(True)
 
     def _connect_save_event(self, widget):
         if hasattr(widget, "textChanged"):
@@ -752,9 +763,11 @@ class FormWidget(ui_formwidget.Ui_Form, WidgetBase):
 
     def _save_widget(self, index):
         # roam.utils.debug("FormWidget: Save widget")
+        if not self.project:
+            return
         widgetdata = self._get_widget_config()
         try:
-            roam.utils.debug("Saving widget " + widgetdata['_id'])
+            roam.utils.debug("Saving widget {} in project {}".format(widgetdata['_id'], self.project.name))
         except KeyError:
             pass
         self.widgetmodel.setData(index, widgetdata, Qt.UserRole)
@@ -1070,6 +1083,7 @@ class LayerWidget(ui_layernode.Ui_Form, WidgetBase):
         """
         Wrtie the config for the widget back to the project config
         """
+        roam.utils.debug("Layer Widget: Write config")
         config = self.project.settings.setdefault('selectlayerconfig', {})
         infoconfig = config.setdefault(self.layer.name(), {})
 

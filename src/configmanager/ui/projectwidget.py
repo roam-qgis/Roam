@@ -104,6 +104,8 @@ class ProjectWidget(Ui_Form, QWidget):
 
         self.connect_page_events()
 
+        QgsProject.instance().readProject.connect(self.projectLoaded)
+
     def connect_page_events(self):
         """
         Connect the events from all the pages back to here
@@ -138,16 +140,21 @@ class ProjectWidget(Ui_Form, QWidget):
         """
         self.currentnode = node
 
-        if not refreshingProject:
+        if not refreshingProject and self.project:
             self.write_config_currentwidget()
         else:
             roam.utils.info("Reloading project. Not saving current config values")
 
+        # Set the new widget for the selected page
         self.stackedWidget.setCurrentIndex(page)
 
         widget = self.stackedWidget.currentWidget()
         if hasattr(widget, "set_project"):
             widget.set_project(self.project, self.currentnode)
+
+    def notify_current_widget(self):
+        widget = self.stackedWidget.currentWidget()
+        widget.unload_project()
 
     def write_config_currentwidget(self):
         """
@@ -155,6 +162,7 @@ class ProjectWidget(Ui_Form, QWidget):
         """
         widget = self.stackedWidget.currentWidget()
         if hasattr(widget, "write_config"):
+            roam.utils.debug("Write config for {} in project {}".format(widget.objectName(), self.project.name))
             widget.write_config()
 
     def deploy_project(self, with_data=False):
@@ -228,10 +236,16 @@ class ProjectWidget(Ui_Form, QWidget):
         folder = self.project.folder
         openfolder(folder)
 
-    def setproject(self, project, loadqgis=True):
+    def setproject(self, project):
         """
         Set the widgets active project.
         """
+        if self.project and QMessageBox.question(self,
+                                "Save Current Project",
+                                "Save {}?".format(self.project.name),
+                                QMessageBox.Save | QMessageBox.No):
+            self._saveproject()
+
         self.filewatcher.removePaths(self.filewatcher.files())
         self.projectupdatedlabel.hide()
         self._closeqgisproject()
@@ -241,13 +255,15 @@ class ProjectWidget(Ui_Form, QWidget):
             self.project = project
             self.projectlabel.setText(project.name)
             self.loadqgisproject(project, self.project.projectfile)
-            self.filewatcher.addPath(self.project.projectfile)
-            self.projectloaded.emit(self.project)
+
+    def projectLoaded(self):
+        self.filewatcher.addPath(self.project.projectfile)
+        self.projectloaded.emit(self.project)
 
     def loadqgisproject(self, project, projectfile):
-        print("Load QGIS Project!!")
         QDir.setCurrent(os.path.dirname(project.projectfile))
         fileinfo = QFileInfo(project.projectfile)
+
         # No idea why we have to set this each time.  Maybe QGIS deletes it for
         # some reason.
         self.badLayerHandler = BadLayerHandler(callback=self.missing_layers)
@@ -270,6 +286,11 @@ class ProjectWidget(Ui_Form, QWidget):
         """
         Save the project config to disk.
         """
+        if not self.project:
+            return
+
+        roam.utils.info("Saving project: {}".format(self.project.name))
+
         self.write_config_currentwidget()
         # self.project.dump_settings()
         self.project.save(update_version=update_version, reset_save_point=reset_save_point)

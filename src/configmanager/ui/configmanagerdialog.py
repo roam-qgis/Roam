@@ -19,6 +19,7 @@ import shutil
 from qgis.core import QgsMapLayerRegistry, QgsProject
 import roam.project
 import roam.messagebaritems
+import roam.utils
 
 from configmanager.ui.treenodes import *
 
@@ -30,6 +31,8 @@ class ConfigManagerDialog(ui_configmanager.Ui_ProjectInstallerDialog, QDialog):
         self.bar = roam.messagebaritems.MessageBar(self)
 
         self.roamapp = roamapp
+        self.reloadingProject = False
+        self.loadedProject = None
 
         # Nope!
         self.projectwidget.roamapp = roamapp
@@ -45,6 +48,7 @@ class ConfigManagerDialog(ui_configmanager.Ui_ProjectInstallerDialog, QDialog):
         self.setWindowFlags(Qt.Window)
 
         self.projectwidget.projectupdated.connect(self.projectupdated)
+        self.projectwidget.projectloaded.connect(self.projectLoaded)
 
         self.projectwidget.setaboutinfo()
         self.projectwidget.projects_page.projectlocationchanged.connect(self.loadprojects)
@@ -134,25 +138,23 @@ class ConfigManagerDialog(ui_configmanager.Ui_ProjectInstallerDialog, QDialog):
         self.projectList.setCurrentIndex(index)
         self.projectList.expand(index)
 
-    def nodeselected(self, index, _, refreshProject=False):
+    def projectLoaded(self, project):
+        roam.utils.info("Project loaded: {}".format(project.name))
+        node = self.projectsnode.find_by_name(project.name)
+        node.create_children()
+        self.projectwidget.setpage(node.page, node, refreshingProject=self.reloadingProject)
+        self.reloadingProject = False
+        self.loadedProject = project
+        self.projectList.setExpanded(node.index(), True )
+
+    def nodeselected(self, index, last, reloadProject=False):
         node = index.data(Qt.UserRole)
         if node is None:
             return
 
         project = node.project
 
-        if node.nodetype == Treenode.ProjectNode:
-            print("Reloading project")
-            refreshProject = True
-            self.projectwidget.setproject(project)
-            node.create_children()
-
-        if project and self.projectwidget.project != project:
-            # Only load the project if it's different the current one.
-            refreshProject = True
-            self.projectwidget.setproject(project)
-            node.create_children()
-
+        if project:
             validateresults = list(project.validate())
             if validateresults:
                 text = "Here are some reasons we found: \n\n"
@@ -160,6 +162,25 @@ class ConfigManagerDialog(ui_configmanager.Ui_ProjectInstallerDialog, QDialog):
                     text += "- {} \n".format(message)
 
                 self.projectwidget.reasons_label.setText(text)
+                return
+
+        if node.nodetype == Treenode.ProjectNode and reloadProject:
+            self.reloadingProject = True
+            self.projectwidget.setproject(project)
+            return
+
+        if project and self.loadedProject != project:
+            # Only load the project if it's different the current one.
+            roam.utils.info("Swapping to project: {}".format(project.name))
+            self.projectwidget.setproject(project)
+            if self.loadedProject:
+                lastnode = self.projectsnode.find_by_name(self.loadedProject.name)
+                self.projectList.setExpanded(lastnode.index(), False )
+            ## We are closing the open project at this point. Watch for null ref after this.
+            return
+        else:
+            roam.utils.debug("Setting page")
+            self.projectwidget.setpage(node.page, node)
 
         if node.nodetype == Treenode.RoamNode:
             self.projectwidget.projectlabel.setText("IntraMaps Roam Config Manager")
@@ -174,12 +195,13 @@ class ConfigManagerDialog(ui_configmanager.Ui_ProjectInstallerDialog, QDialog):
             return
 
         self.projectwidget.projectbuttonframe.setVisible(not project is None)
-        self.projectwidget.setpage(node.page, node, refreshingProject=refreshProject)
+
 
     def projectupdated(self, project):
         # index = self.projectList.currentIndex()
         # node = find_node(index)
         # node.refresh()
+        print "PROJECT UPDATED"
         node = self.projectsnode.find_by_name(project.name)
         self.projectList.selectionModel().select(node.index(), QItemSelectionModel.ClearAndSelect)
-        self.nodeselected(node.index(), None, refreshProject=True)
+        self.nodeselected(node.index(), None, reloadProject=True)
