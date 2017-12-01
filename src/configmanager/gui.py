@@ -32,4 +32,5 @@ class ProjectsNode(Ui_projectsnode, QWidget):
 
     def update_deploy_path(self, text):
         roam.config.settings["publish"] = {"path": text}
+        roam.config.save()
 
