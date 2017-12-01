@@ -447,7 +447,7 @@ class ImageWidget(EditorWidget):
 
         image = QPixmap(image)
         image = resize_image(image, self.image_size)
-        self.widget.loadImage(image)
+        self.setvalue(image)
         self.modified = True
         self._updateImageGPSData()
 
@@ -511,12 +511,14 @@ class ImageWidget(EditorWidget):
 
         if isinstance(value, QPixmap):
             self.widget.loadImage(value, fromfile=self.savetofile)
+            self.emitvaluechanged()
             return
 
         if self.tobase64 and value:
             value = QByteArray.fromBase64(value)
 
         self.widget.loadImage(value, fromfile=self.savetofile)
+        self.emitvaluechanged()
 
     def value(self):
         image = self.widget.getImage()
