@@ -1,32 +1,51 @@
 BUILDING
 ===============================
 
+Setting up build
+------------------------------
+
+You only need to do this once.
+
 You need:
 
 - [Visual Studio C++ 2008](http://download.microsoft.com/download/A/5/4/A54BADB6-9C3F-478D-8657-93B3FC9FE62D/vcsetup.exe) (This is for the Python compiler for py2exe)
-- [QGIS 32bit OSGeo4W](http://download.osgeo.org/osgeo4w/osgeo4w-setup-x86.exe)
+- [QGIS 2.16] http://download.osgeo.org/qgis/windows/QGIS-OSGeo4W-2.16.3-1-Setup-x86.exe
 
-**NOTE: Build scripts assume OSGeo4W install path.**
+**Note: 2.18 is also supported however the current release is built with 2.16**
 
 **INSTALL NOTE:**  If you get a ValueError when running python setup.py install sometimes it can't run the visual studio batch
 file.  Simply run `C:\Program Files (x86)\Microsoft Visual Studio 9.0\Common7\Tools\vsvars32.bat` in the shell
 before running ``setupdev.bat``
 
 1. Download and install Visual Studio C++ Express
-2. Run ``setupdev.bat``
+2. Run cmd.exe as admin
+2. ``scripts\setupdev.bat 2.16``
 
-``setupdev.bat`` will download and install py2exe and anything else the project needs.  If that fails follow the instructions below.
+Building ui files
+-----------------------
 
-1. Download py2exe
-2. Extract
-3. Run OSGeo4W.bat in QGIS install folder
-4. CD to exracted folder
-5. run: python setup.py install
-6. CD back to source folder.
+1. cmd.exe
+2. ``build.bat 2.16 build``
 
-PACKAGING
-======================
+``build.bat`` is a make file with commands to build and package Roam
 
-1. Run `package.bat`
-2. Errors will be in the shell, everything else in package.log
-3. Output will be in `dist\`
+Following commands are supported:
+
+    - build
+    - exe
+    - release
+    - installer
+    - test
+    - test-only
+
+Creating Exe
+----------------------
+
+1. cmd.exe
+2. ``build.bat 2.16 exe``
+
+Making release package
+----------------------
+
+1. cmd.exe
+2. ``build.bat 2.16 release``
