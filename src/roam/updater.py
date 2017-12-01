@@ -286,7 +286,7 @@ class ProjectUpdater(QObject):
         else:
             msg = "Error in network request for projects: {}".format(reply.errorString())
             roam.utils.warning(msg)
-            RoamEvents.raisemessage("Project Server Message", msg, level=RoamEvents.WARNING)
+            # RoamEvents.raisemessage("Project Server Message", msg, level=RoamEvents.WARNING)
 
     def update_project(self, project, version):
         self.projectUpdateStatus.emit(project.name, "Pending")
