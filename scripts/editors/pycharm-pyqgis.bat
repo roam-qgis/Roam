@@ -10,8 +10,8 @@ REM Change %OSGEO4W_ROOT% in setenv.bat to change in the location of QGIS.
 REM ---------------------------------------------------------------------------------------
 
 
-CALL ..\setenv.bat
+CALL %~dp0..\setenv.bat %*
 
-SET PYCHARM="C:\Program Files\JetBrains\PyCharm Community Edition 2017.1.4\bin\pycharm64.exe"
+SET PYCHARM="C:\Program Files\JetBrains\PyCharm Community Edition 2017.2.2\bin\pycharm64.exe"
 
 start "PyCharm aware of QGIS" /B %PYCHARM% %*

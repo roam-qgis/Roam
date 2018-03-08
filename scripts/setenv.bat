@@ -14,6 +14,7 @@ for %%x in (%cmdcmdline%) do if /i "%%~x"=="/c" set DOUBLECLICKED=1
 
 REM Change OSGeo4W_ROOT to point to your install of QGIS.
 
+
 IF "%1"=="2.16" CALL %~dp0env-2.16.bat
 IF "%1"=="2.18" CALL %~dp0env-2.18.bat
 
