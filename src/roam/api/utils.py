@@ -181,7 +181,10 @@ def format_values(fieldnames, valuestore, with_char='\n'):
     """
     value = []
     for field in fieldnames:
-        if nullcheck(valuestore[field]):
-            value.append(valuestore[field])
+        try:
+            if nullcheck(valuestore[field]):
+                value.append(valuestore[field])
+        except KeyError:
+            continue
     return with_char.join(value)
 
