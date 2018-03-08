@@ -30,6 +30,9 @@ def safe_int(value):
     except (TypeError, ValueError):
         return 0
 
+GPSLOGFILENAME = config.get("gpslogfile", None)
+GPSLOGGING = not GPSLOGFILENAME is None
+
 
 class GPSService(QObject):
     gpsfixed = pyqtSignal(bool, object)
@@ -54,6 +57,21 @@ class GPSService(QObject):
         self.waypoint = None
         self._gpsupdate_frequency = 1.0
         self._gpsupdate_last = datetime.min
+        self.gpslogfile = None
+
+    def __del__(self):
+        if not self.gpslogfile is None:
+            self.gpslogfile.close()
+
+    def log_gps(self, line):
+        if not GPSLOGGING:
+            # No logging for you.
+            return
+
+        if self.gpslogfile is None:
+            self.gpslogfile = open(GPSLOGFILENAME, "w")
+
+        self.gpslogfile.write(line)
 
     def gpsinfo(self, attribute):
         """
@@ -115,6 +133,7 @@ class GPSService(QObject):
         QgsGPSConnectionRegistry.instance().registerConnection(self.gpsConn)
 
     def parse_data(self, datastring):
+        self.log_gps(datastring)
         try:
             data = pynmea2.parse(datastring)
         except AttributeError as er:
