@@ -439,11 +439,18 @@ class PolylineTool(QgsMapToolEdit):
                 if not is_safe(error.what()):
                     othererrors.append(error)
 
-        if self.band.numberOfVertices() -1 < self.minpoints:
+        if self.node_count < self.minpoints:
             error = QgsGeometry.Error("Number of nodes < {0}".format(self.minpoints))
             othererrors.append(error)
 
         return othererrors
+
+    @property
+    def node_count(self):
+        if self.editmode:
+            return self.band.numberOfVertices()
+        else:
+            return self.band.numberOfVertices() - 1
 
     def canvasReleaseEvent(self, event):
         if event.button() == Qt.RightButton:
