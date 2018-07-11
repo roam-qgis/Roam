@@ -135,6 +135,11 @@ def getProjects(paths):
                     # Ignore hidden folders.
                     continue
 
+            for folder in folders:
+                if os.path.basename(folder).startswith("."):
+                    # Ignore hidden folders.
+                    continue
+
                 if not initfound(folder):
                     createinifile(folder)
 
