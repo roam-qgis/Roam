@@ -77,6 +77,7 @@ class PickActionDialog(Ui_ActionPickerDialog, Dialogbase):
 
     def addAction(self, action, row, column):
         button = QToolButton(self)
+        button.setObjectName(action.objectName())
         button.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
         button.setProperty("action", True)
         button.setIconSize(QSize(64, 64))

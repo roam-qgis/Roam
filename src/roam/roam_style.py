@@ -29,7 +29,14 @@ def appstyle():
 
         $FONT
     }
-
+    
+    QToolButton#discard {
+        qproperty-icon: url(":/widgets/cancel");
+        background-color: rgb(255, 134, 125);
+        color: white;
+        font: 75 17pt "Segoe UI";
+    }
+    
     QToolButton {
         padding: 4px;
         color: #4f4f4f;

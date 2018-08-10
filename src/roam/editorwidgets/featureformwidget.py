@@ -1,8 +1,9 @@
 import functools
 
 from PyQt4.QtCore import pyqtSignal, QSize, Qt
-from PyQt4.QtGui import QToolBar, QWidget, QSizePolicy, QLabel, QIcon
+from PyQt4.QtGui import QToolBar, QWidget, QSizePolicy, QLabel, QIcon, QAction
 
+from roam.popupdialogs import PickActionDialog
 from roam.popupdialogs import DeleteFeatureDialog
 from roam.editorwidgets.core import LargeEditorWidget
 from roam.flickwidget import FlickCharm
@@ -42,7 +43,7 @@ class FeatureFormWidget(Ui_Form, QWidget):
 
         spacer = QWidget()
         spacer2 = QWidget()
-        spacer2.setMinimumWidth(20)
+        spacer2.setMinimumWidth(40)
         spacer.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
         spacer2.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
         toolbar.addWidget(spacer)
@@ -162,6 +163,16 @@ class FeatureFormWidgetEditor(LargeEditorWidget):
         widget.featuredeleted.connect(self.emit_finished)
 
     def cancelform(self, *args):
+        dlg = PickActionDialog(msg="Discard form changes?")
+        self.expandAction = QAction(QIcon(":/icons/expand"), "Expand Panel", self)
+        discardaction = QAction("Discard", self, triggered=self._cancel_form)
+        discardaction.setObjectName("discard")
+        noaction = QAction("No", self)
+
+        dlg.addactions([noaction, discardaction])
+        dlg.exec_()
+
+    def _cancel_form(self, *args):
         self.emit_cancel(*args)
 
     def updatefromconfig(self):
