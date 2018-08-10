@@ -79,6 +79,11 @@
     <file alias="record">resources/images/record.svg</file>
     <file alias="pause">resources/images/pause.svg</file>
 	<file alias="back">resources/images/back.svg</file>
+    <file alias="raster_0">resources/images/raster_0.png</file>
+    <file alias="raster_25">resources/images/raster_25.png</file>
+    <file alias="raster_50">resources/images/raster_50.png</file>
+    <file alias="raster_75">resources/images/raster_75.png</file>
+    <file alias="raster_100">resources/images/raster_100.png</file>
   </qresource>
   <qresource prefix="branding">
       <file alias="config">resources/branding/config.ico</file>

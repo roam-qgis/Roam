@@ -1002,18 +1002,28 @@ class MapWidget(Ui_CanvasWidget, QMainWindow):
         Toggle all raster layers on or off.
         """
         # Freeze the canvas to save on UI refresh
-        self.canvas.freeze()
+        dlg = PickActionDialog(msg="Raster visibility")
+        actions = [
+            QAction(QIcon(":/icons/raster_0"), "Off", self, triggered=partial(self._set_raster_layer_value, 0), objectName="photo_off"),
+            QAction(QIcon(":/icons/raster_25"), "25%", self, triggered=partial(self._set_raster_layer_value, .25), objectName="photo_25"),
+            QAction(QIcon(":/icons/raster_50"), "50%", self, triggered=partial(self._set_raster_layer_value, .50), objectName="photo_50"),
+            QAction(QIcon(":/icons/raster_75"), "75%", self, triggered=partial(self._set_raster_layer_value, .75), objectName="photo_75"),
+            QAction(QIcon(":/icons/raster_100"), "100%", self, triggered=partial(self._set_raster_layer_value, 1), objectName="photo_100")
+        ]
+
+        dlg.addactions(actions)
+        dlg.exec_()
+
+    def _set_raster_layer_value(self, value=0):
         tree = QgsProject.instance().layerTreeRoot()
         for node in tree.findLayers():
+            layer = node.layer()
             if node.layer().type() == QgsMapLayer.RasterLayer:
-                if node.isVisible() == Qt.Checked:
-                    state = Qt.Unchecked
-                else:
-                    state = Qt.Checked
-                node.setVisible(state)
+                renderer = layer.renderer()
+                renderer.setOpacity(value)
 
-        self.canvas.freeze(False)
         self.canvas.refresh()
+
 
     def cleanup(self):
         """
