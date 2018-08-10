@@ -9,6 +9,8 @@ IntraMaps Roam is built as a standalone fully packaged Python application with e
 
 See the [wiki](https://github.com/DMS-Aus/Roam/wiki) for information on how to create a project and user guides.
 
+See BUILDING on notes on getting starting for development.
+
 License
 --------------
 
