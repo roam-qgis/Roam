@@ -52,7 +52,6 @@ class OptionWidget(EditorWidget):
                     if path.startswith("#"):
                         # Colour the button with the hex value.
                         # If show color is enabled we always show the color regardless of selection.
-                        print showcolor
                         if not showcolor:
                             style = """
                                 QPushButton::checked {{

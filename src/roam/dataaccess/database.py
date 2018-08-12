@@ -7,10 +7,11 @@ import roam.utils
 import re
 
 class DatabaseException(Exception):
-    def __init__(self, msg):
+    def __init__(self, msg, sql=None):
         super(DatabaseException, self).__init__(msg)
         self.msg = msg
         roam.utils.error(msg)
+        roam.utils.info(sql)
 
 class Database(object):
     def __init__(self, sqldatabase):
@@ -98,8 +99,7 @@ class Database(object):
             return True
         else:
             if query.lastError().isValid():
-                print sql
-                raise DatabaseException(query.lastError().text())
+                raise DatabaseException(query.lastError().text(), sql)
 
     def exec_query(self, name, values):
         """
@@ -145,7 +145,7 @@ class Database(object):
 
         if query.lastError().isValid():
             text = query.lastError().text()
-            raise DatabaseException(text)
+            raise DatabaseException(text, sql)
 
     def querymodel(self, sql, **mappings):
         sql = sql.replace(r"\r\n", " ")
@@ -155,4 +155,4 @@ class Database(object):
             model.setQuery(query)
             return model
         else:
-            raise DatabaseException(query.lastError().text()) 
+            raise DatabaseException(query.lastError().text(), sql)
