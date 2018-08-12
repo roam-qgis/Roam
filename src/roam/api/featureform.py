@@ -286,16 +286,20 @@ class FeatureFormBase(QWidget):
         self.bindingvalues = CaseInsensitiveDict()
         self.editingmode = kwargs.get("editmode", False)
         self.widgetidlookup = {}
+        self._has_save_buttons = False
 
     def open_large_widget(self, widgettype, lastvalue, callback, config=None):
         self.showlargewidget.emit(widgettype, lastvalue, callback, config)
 
     def form_actions(self):
-        star_all = QAction(QIcon(":/icons/save_default_all"), "Star all", self, triggered=self.star_all)
+        builtin = []
+        if self._has_save_buttons:
+            star_all = QAction(QIcon(":/icons/save_default_all"), "Star all", self, triggered=self.star_all)
+            builtin.append(star_all)
         useractions = self.user_form_actions()
         if not useractions:
             useractions = []
-        return [star_all] + useractions
+        return builtin + useractions
 
     def star_all(self):
         buttons = self._field_save_buttons()
@@ -608,6 +612,7 @@ class FeatureFormBase(QWidget):
         button.setIconSize(QSize(24, 24))
         button.setChecked(field in self.defaults)
         button.setVisible(not self.editingmode)
+        self._has_save_buttons = True
 
     def createhelplinks(self):
         def createhelplink(label, folder):
