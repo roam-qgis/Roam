@@ -19,11 +19,11 @@
     <file alias="clipboard">resources/images/clipboard.svg</file>
     <file alias="search">resources/images/search.svg</file>
     <file alias="north">resources/images/north.svg</file>
-      <file alias="plus">resources/images/plus.svg</file>
+    <file alias="plus">resources/images/plus.svg</file>
     <file alias="minus">resources/images/minus.svg</file>
     <file alias="tick_icon">resources/images/tick.svg</file>
-      <file alias="expand">resources/images/expand.svg</file>
-      <file alias="cross_icon">resources/images/cross.svg</file>
+    <file alias="expand">resources/images/expand.svg</file>
+    <file alias="cross_icon">resources/images/cross.svg</file>
     <file alias="cancel">resources/images/cancel.svg</file>
     <file alias="delete">resources/images/delete.svg</file>
     <file alias="edit">resources/images/edit.svg</file>
@@ -43,6 +43,7 @@
     <file alias="calender">resources/images/calender.png</file>
     <file alias="map">resources/images/map.svg</file>
     <file alias="save_default">resources/images/save_default.svg</file>
+    <file alias="save_default_all">resources/images/save_default_all.svg</file>
     <file alias="move">resources/images/move.png</file>
     <file alias="gpsadd-point">resources/images/capturegps-point.svg</file>
     <file alias="gpsadd-line">resources/images/capturegps-line.svg</file>
@@ -53,8 +54,8 @@
     <file alias="sync">resources/images/sync.png</file>
     <file alias="help">resources/images/help.png</file>
     <file alias="warning">resources/images/warning.svg</file>
-      <file alias="info">resources/images/info.svg</file>
-      <file alias="error">resources/images/error.svg</file>
+    <file alias="info">resources/images/info.svg</file>
+    <file alias="error">resources/images/error.svg</file>
     <file alias="quit">resources/images/quit.svg</file>
     <file alias="config">resources/images/config.svg</file>
     <file alias="select">resources/images/select.svg</file>
@@ -86,7 +87,7 @@
     <file alias="raster_100">resources/images/raster_100.png</file>
   </qresource>
   <qresource prefix="branding">
-      <file alias="config">resources/branding/config.ico</file>
+    <file alias="config">resources/branding/config.ico</file>
     <file alias="logo">resources/branding/logo.png</file>
     <file alias="dms">resources/branding/dms.png</file>
     <file alias="qgis">resources/branding/qgis-icon.png</file>

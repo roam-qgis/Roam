@@ -52,7 +52,14 @@ class FeatureFormWidget(Ui_Form, QWidget):
         self.actionSave = toolbar.addAction(QIcon(":/icons/save"), "Save")
         self.actionSave.triggered.connect(self.save_feature)
 
+        self.layout().setContentsMargins(0,3, 0, 3)
         self.layout().insertWidget(0, toolbar)
+        self.actiontoolbar = QToolBar()
+        self.actiontoolbar.setToolButtonStyle(Qt.ToolButtonTextUnderIcon)
+        spacer = QWidget()
+        spacer.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
+        self.actiontoolbar.addWidget(spacer)
+        self.layout().insertWidget(1, self.actiontoolbar)
 
         self.flickwidget = FlickCharm()
         self.flickwidget.activateOn(self.scrollArea)
@@ -76,6 +83,14 @@ class FeatureFormWidget(Ui_Form, QWidget):
         self.featureform.rejected.connect(self.canceled.emit)
         self.featureform.accepted.connect(self.featuresaved)
 
+        actions = self.featureform.form_actions()
+        if actions:
+            for action in actions:
+                self.actiontoolbar.addAction(action)
+        else:
+            self.actiontoolbar.hide()
+
+        self.featureform.setContentsMargins(0,0,0,0)
         self.featureformarea.layout().addWidget(self.featureform)
 
     def delete_feature(self):

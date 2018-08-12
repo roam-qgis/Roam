@@ -12,6 +12,7 @@ from functools import partial
 from PyQt4 import uic
 from PyQt4.QtCore import pyqtSignal, QObject, QSize, QEvent, QProcess, Qt, QPyNullVariant, QRegExp
 from PyQt4.QtGui import (QWidget,
+                        QAction,
                          QDialogButtonBox,
                          QStackedWidget,
                          QStatusBar,
@@ -288,6 +289,18 @@ class FeatureFormBase(QWidget):
 
     def open_large_widget(self, widgettype, lastvalue, callback, config=None):
         self.showlargewidget.emit(widgettype, lastvalue, callback, config)
+
+    def form_actions(self):
+        star_all = QAction(QIcon(":/icons/save_default_all"), "Star all", self, triggered=self.star_all)
+        useractions = self.user_form_actions()
+        if not useractions:
+            useractions = []
+        return [star_all] + useractions
+
+    def star_all(self):
+        buttons = self._field_save_buttons()
+        for button in buttons:
+            button.setChecked(True)
 
     @property
     def is_capturing(self):
@@ -567,14 +580,22 @@ class FeatureFormBase(QWidget):
 
         return values, savedvalues
 
-    def findcontrol(self, name):
+    def findcontrol(self, name, all=False):
         regex = QRegExp("^{}$".format(QRegExp.escape(name)))
         regex.setCaseSensitivity(Qt.CaseInsensitive)
         try:
-            widget = self.findChildren(QWidget, regex)[0]
+            if all:
+                return self.findChildren(QWidget, regex)
+            else:
+                widget = self.findChildren(QWidget, regex)[0]
         except IndexError:
             widget = None
         return widget
+
+    def _field_save_buttons(self):
+        for field in self.boundwidgets.keys():
+            name = "{}_save".format(field)
+            yield self.findcontrol(name)
 
     def _bindsavebutton(self, field):
         name = "{}_save".format(field)
@@ -729,6 +750,13 @@ class FeatureForm(FeatureFormBase):
         featureform.uisetup()
 
         return featureform
+
+    def user_form_actions(self):
+        """
+        Override and return a list of QActions to provide custom actions for the form UI.
+        :return: None or a list-of-QActions
+        """
+        return None
 
     def toNone(self, value):
         """

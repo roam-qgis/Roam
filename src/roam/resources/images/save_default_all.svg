@@ -14,7 +14,7 @@
    height="64"
    viewBox="0 0 64 64"
    id="svg4601"
-   sodipodi:docname="save_default.svg"
+   sodipodi:docname="save_default_all.svg"
    inkscape:version="0.92.3 (2405546, 2018-03-11)">
   <metadata
      id="metadata4607">
@@ -24,6 +24,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -53,5 +54,6 @@
   <path
      d="M32 5.135l8.729 17.686 19.519 2.836-14.123 13.768 3.333 19.44-17.459-9.179-17.458 9.179 3.334-19.44-14.124-13.768 19.519-2.836z"
      id="path4599"
-     fill="#5b93c2" />
+     fill="#008000"
+     style="fill:#008000" />
 </svg>
