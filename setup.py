@@ -146,14 +146,43 @@ configmanager_target = dict(
 
 
 def buildqtfiles():
+    def _hashcheck(file):
+        import hashlib
+        hasher = hashlib.md5()
+        with open(file, 'rb') as f:
+            buf = f.read()
+            hasher.update(buf)
+        hash = hasher.hexdigest()
+        filehash = hashes.get(file, "")
+        hashes[file] = hash
+        if hash != filehash:
+            print("Hash changed for: {0}, Got {2} wanted {1}".format(file, hash, filehash))
+            return False
+        else:
+            return True
+
     pyuic4 = 'pyuic4'
     if platform == 'win32':
         pyuic4 += '.bat'
+
+    import json
+    hashes = {}
+    try:
+        with open(".roambuild.json") as f:
+            hashes = json.load(f)
+    except Exception:
+        hashes = {}
+
+    HASHFILES = [".ui", ".qrc", ".ts"]
     for folder in [appsrcopyFilesath, projectinstallerpath, configmangerpath]:
         for root, dirs, files in os.walk(folder):
             for file in files:
                 filepath = os.path.join(root, file)
                 file, ext = os.path.splitext(filepath)
+
+                if ext in HASHFILES and _hashcheck(filepath):
+                    continue
+
                 if ext == '.ui':
                     newfile = file + ".py"
                     run(pyuic4, '-o', newfile, filepath, shell=True)
@@ -171,6 +200,8 @@ def buildqtfiles():
                         print "Missing lrelease - skipping"
                         continue
 
+    with open(".roambuild.json", "w") as f:
+        json.dump(hashes, f)
 
 class qtbuild(build):
     def run(self):
