@@ -168,7 +168,7 @@ def buildqtfiles():
     import json
     hashes = {}
     try:
-        with open(".roambuild.json") as f:
+        with open(".roambuild") as f:
             hashes = json.load(f)
     except Exception:
         hashes = {}
@@ -200,7 +200,7 @@ def buildqtfiles():
                         print "Missing lrelease - skipping"
                         continue
 
-    with open(".roambuild.json", "w") as f:
+    with open(".roambuild", "w") as f:
         json.dump(hashes, f)
 
 class qtbuild(build):
