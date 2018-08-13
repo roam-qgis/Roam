@@ -56,6 +56,7 @@ def appstyle():
     QTreeView::item {
         margin-left: 0px;
         margin-top: 5px;
+        margin-bottom: 5px;
     }
 
     QTreeView::indicator {
