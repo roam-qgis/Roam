@@ -52,16 +52,25 @@ def appstyle():
         border: none;
         $FONT
     }
+    
+    QTreeView::item {
+        margin-left: 0px;
+        margin-top: 5px;
+    }
 
+    QTreeView::indicator {
+        width: 30px;
+        height: 30px;
+    }
 
     QStatusBar::item {
-                border: none;
+        border: none;
     }
 
     QCheckBox {
         color: #4f4f4f;
     }
-
+    
     QCheckBox::indicator {
         width: 40px;
         height: 40px;
@@ -78,7 +87,7 @@ def appstyle():
     QLabel[headerlabel="true"] {
         font: 75 17pt "Segoe UI";
     }
-
+    
     QComboBox {
         border: 1px solid #d3d3d3;
     }

@@ -144,7 +144,7 @@ class MainWindow(ui_mainwindow.Ui_MainWindow, QMainWindow):
         self.pluginactions = []
 
         self.actionQuit.triggered.connect(self.exit)
-        self.actionLegend.triggered.connect(self.updatelegend)
+        self.updatelegend()
 
         self.projectwidget.requestOpenProject.connect(self.loadProject)
         QgsProject.instance().readProject.connect(self._readProject)
@@ -267,7 +267,7 @@ class MainWindow(ui_mainwindow.Ui_MainWindow, QMainWindow):
         self.bar.pushMessage(label, message, level, duration=time, extrainfo=extra)
 
     def updatelegend(self):
-        self.legendpage.updatecanvas(self.canvas)
+        self.legendpage.init(self.canvas)
 
     def openkeyboard(self):
         if not roam.config.settings.get('keyboard', True):
@@ -549,7 +549,7 @@ class MainWindow(ui_mainwindow.Ui_MainWindow, QMainWindow):
         self.add_plugins(self.project.enabled_plugins)
 
         layers = self.project.legendlayersmapping().values()
-        self.legendpage.updateitems(layers)
+        self.legendpage.setRoot(QgsProject.instance().layerTreeRoot())
 
         gps_loglayer = self.project.gpslog_layer()
         if gps_loglayer:
