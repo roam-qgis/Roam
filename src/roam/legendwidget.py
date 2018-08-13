@@ -25,6 +25,8 @@ class LegendWidget(Ui_legendsWidget, QWidget):
         self.legendareapen.setWidth(0.5)
         self.previewImage.mousePressEvent = self.previewImagePressEvent
         self.previewImage.resizeEvent = self.update
+        self.btnExpand.pressed.connect(self.layerTree.expandAllNodes)
+        self.btnCollapse.pressed.connect(self.layerTree.collapseAllNodes)
         self.canvas = None
 
     def init(self, canvas):
