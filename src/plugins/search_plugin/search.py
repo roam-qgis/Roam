@@ -254,15 +254,6 @@ class SearchPlugin(widget, base, Page):
         layername, fid = data[0], data[1]
         layer = roam.api.utils.layer_by_name(layername)
         feature = layer.getFeatures(QgsFeatureRequest(fid)).next()
-        box = feature.geometry().boundingBox()
-        xmin, xmax, ymin, ymax = box.xMinimum(), box.xMaximum(), box.yMinimum(), box.yMaximum()
-        xmin -= 5
-        xmax += 5
-        ymin -= 5
-        ymax += 5
-        box = QgsRectangle(xmin, ymin, xmax, ymax)
-        box.grow(20)
-        self.api.mainwindow.canvas.setExtent(box)
-        self.api.mainwindow.canvas.refresh()
         self.api.mainwindow.showmap()
+        self.api.mainwindow.canvas.zoomToFeatureIds(layer, [fid])
         RoamEvents.selectionchanged.emit({layer: [feature]})
