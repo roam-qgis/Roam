@@ -62,6 +62,16 @@ ECHO Running tests
 py.test src\roam.tests
 GOTO END
 
+:help
+ECHO ===========================
+ECHO        OPTIONS
+ECHO ===========================
+ECHO build 2.18
+ECHO build 2.18 build
+ECHO build 2.18 exe
+ECHO build 2.18 release
+ECHO build 2.18 test
+ECHO build 2.18 test-only
 
 :END
 popd

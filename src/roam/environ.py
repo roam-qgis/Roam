@@ -94,10 +94,10 @@ def _setup(apppath=None, logo='', title='', **kwargs):
     if not apppath:
         apppath = os.path.dirname(os.path.realpath(sys.argv[0]))
 
+    import roam.utils
     if RUNNING_FROM_FILE:
-        print "Running from file"
-        print os.getcwd()
-        print apppath
+        roam.utils.debug("Running from file")
+        roam.utils.debug("App path {0}", apppath)
         i18npath = os.path.join(apppath, "i18n")
         if os.name == 'posix':
             prefixpath = os.environ.get('QGIS_PREFIX_PATH', '/usr/')
@@ -108,6 +108,7 @@ def _setup(apppath=None, logo='', title='', **kwargs):
         # Set the PATH and GDAL_DRIVER_PATH for gdal to find the plugins.
         # Not sure why we have to set these here but GDAL doesn't like it if we
         # don't
+        roam.utils.debug("Running from package")
         prefixpath = os.path.join(apppath, "libs", "qgis")
         libspath = os.path.join(apppath, "libs", "roam")
         i18npath = os.path.join(libspath, "i18n")
@@ -164,9 +165,9 @@ def _setup(apppath=None, logo='', title='', **kwargs):
     app = RoamApp(sys.argv, apppath, prefixpath, settingspath, libspath, i18npath, projectroot).init(logo, title)
     app.sourcerun = RUNNING_FROM_FILE
     app.profileroot = profileroot
-    print "Profile Root: {0}".format(app.profileroot)
-    print "Project Root: {0}".format(app.projectsroot)
-    print "Settings file: {0}".format(settingspath)
+    roam.utils.info("Profile Root: {0}".format(app.profileroot))
+    roam.utils.info("Project Root: {0}".format(app.projectsroot))
+    roam.utils.info("Settings file: {0}".format(settingspath))
     return app
 
 
