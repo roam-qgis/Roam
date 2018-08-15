@@ -8,6 +8,7 @@ import getpass
 from logging import handlers
 
 from PyQt4 import uic
+import gdal
 
 logger = logging.getLogger("roam")
 
@@ -26,14 +27,14 @@ def setup_logging(approot, config=None):
     :param approot: The folder to create the log folder in.
     """
     if config is None:
-        config = {"loglevel": "INOF"}
+        config = {"loglevel": "INFO"}
 
     try:
         logpath = os.path.join(os.environ['ROAM_APPPATH'], 'log')
     except KeyError:
         logpath = os.path.join(approot, 'log')
 
-    print "Logging into:{}".format(logpath)
+    print "Logging into: {}".format(logpath)
 
     if not os.path.exists(logpath):
         os.makedirs(logpath)
@@ -57,6 +58,7 @@ def setup_logging(approot, config=None):
     stream.setLevel(logging.DEBUG)
     stream.setFormatter(console_formater)
 
+    logger.handlers = []
     logger.addHandler(stream)
     logger.addHandler(filehandler)
     logger.setLevel(logging.DEBUG)
@@ -64,9 +66,11 @@ def setup_logging(approot, config=None):
     uic.uiparser.logger.setLevel(logging.INFO)
     uic.properties.logger.setLevel(logging.INFO)
     if levelname == "DEBUG":
-        import gdal
         gdal.SetConfigOption("CPL_LOG", os.path.join(logpath, "gdallog.log"))
         gdal.SetConfigOption("CPL_DEBUG", "ON")
+    else:
+        gdal.SetConfigOption("CPL_LOG", "")
+        gdal.SetConfigOption("CPL_DEBUG", "OFF")
 
     faulthandler.enable(file=open(os.path.join(logpath, "crashlog.log"), 'w'))
 

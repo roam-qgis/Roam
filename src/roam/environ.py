@@ -97,7 +97,7 @@ def _setup(apppath=None, logo='', title='', **kwargs):
     import roam.utils
     if RUNNING_FROM_FILE:
         roam.utils.debug("Running from file")
-        roam.utils.debug("App path {0}", apppath)
+        roam.utils.debug("App path {0}".format(apppath))
         i18npath = os.path.join(apppath, "i18n")
         if os.name == 'posix':
             prefixpath = os.environ.get('QGIS_PREFIX_PATH', '/usr/')
