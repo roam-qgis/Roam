@@ -18,6 +18,11 @@ GOTO %2
 python scripts\watchui.py
 exit
 
+:install-req
+ECHO Installing requirements
+python -m pip install -r requirements.txt
+GOTO END
+
 :build
 ECHO Building..
 python setup.py clean

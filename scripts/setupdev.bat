@@ -12,9 +12,6 @@ pushd %~dp0
 CALL setenv.bat %1
 CALL "%OSGEO4W_ROOT%\bin\o4w_env.bat"
 
-pushd ..\libs\py2exe-0.6.9
-python setup.py install
-popd
 python -m pip install -r ..\requirements.txt
 GOTO END
 
