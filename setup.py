@@ -245,7 +245,8 @@ dll_excludes = ["MSVFW32.dll",
                 'msvcr80.dll', 'msvcp80.dll',
                  'msvcr80d.dll', 'msvcp80d.dll',
                  'powrprof.dll', 'mswsock.dll',
-                 'w9xpopen.exe', 'MSVCP90.dll']
+                 'w9xpopen.exe', 'MSVCP90.dll',
+                'libiomp5md.dll']
 
 
 if os.name is 'nt' and haspy2exe:

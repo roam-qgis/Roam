@@ -14,6 +14,8 @@ sys.path.append(srcpath)
 frozen = getattr(sys, "frozen", False)
 RUNNING_FROM_FILE = not frozen
 
+import gdal
+
 if frozen:
     os.environ['PATH'] += ";{}".format(os.path.join(srcpath, 'libs'))
     os.environ['PATH'] += ";{}".format(srcpath)
@@ -21,6 +23,8 @@ if frozen:
     os.environ["GDAL_DATA"] = os.path.join(srcpath, 'libs', 'gdal')
     os.environ['OGR_SQLITE_PRAGMA'] = "journal_mode=delete"
 
+gdal.SetConfigOption("GDAL_DRIVER_PATH", os.environ['GDAL_DRIVER_PATH'])
+gdal.SetConfigOption("GDAL_DATA", os.environ['GDAL_DATA'])
 
 import roam.environ
 

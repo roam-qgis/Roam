@@ -63,6 +63,10 @@ def setup_logging(approot, config=None):
 
     uic.uiparser.logger.setLevel(logging.INFO)
     uic.properties.logger.setLevel(logging.INFO)
+    if levelname == "DEBUG":
+        import gdal
+        gdal.SetConfigOption("CPL_LOG", os.path.join(logpath, "gdallog.log"))
+        gdal.SetConfigOption("CPL_DEBUG", "ON")
 
     faulthandler.enable(file=open(os.path.join(logpath, "crashlog.log"), 'w'))
 
