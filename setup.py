@@ -1,6 +1,7 @@
 from setuptools import find_packages
 from distutils.core import setup
 from distutils.command.build import build
+from distutils.command.clean import clean
 from scripts.fabricate import run
 
 import os
@@ -209,6 +210,17 @@ class qtbuild(build):
         build.run(self)
 
 
+class roamclean(clean):
+    def run(self):
+        if os.environ.get("CLEAN", "YES").lower() ==  "no":
+            print("Skipping clean due to CLEAN == NO")
+            return
+        print("Removing .roambuild")
+        if os.path.exists(".roambuild"):
+            os.remove(".roambuild")
+        clean.run(self)
+
+
 package_details = dict(
     name='roam',
     version=roam.__version__,
@@ -220,7 +232,8 @@ package_details = dict(
     author_email='nathan.woodrow@mapsolutions.com.au',
     description='',
     data_files=get_data_files(),
-    cmdclass={'build': qtbuild},
+    cmdclass={'build': qtbuild,
+              'clean': roamclean},
 )
 
 dll_excludes = ["MSVFW32.dll",
