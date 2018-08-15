@@ -15,7 +15,7 @@ obj/
 *.user
 docs/*.html
 *.msi
-*.exe
+build\*.exe
 *_rc.py
 
 *.py[co]
