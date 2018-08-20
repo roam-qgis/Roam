@@ -294,17 +294,24 @@ class FeatureFormBase(QWidget):
     def form_actions(self):
         builtin = []
         if self._has_save_buttons:
-            star_all = QAction(QIcon(":/icons/save_default_all"), "Star all", self, triggered=self.star_all)
+            un_star_all = QAction(QIcon(":/icons/save_default_all"), "None", self, triggered=partial(self.star_all, False))
+            builtin.append(un_star_all)
+            star_all = QAction(QIcon(":/icons/save_default_all"), "All", self, triggered=partial(self.star_all, True))
             builtin.append(star_all)
         useractions = self.user_form_actions()
         if not useractions:
             useractions = []
         return builtin + useractions
 
-    def star_all(self):
+    def star_all(self, star_all=True):
+        """
+        Star or unstar all buttons on the form.
+        :param star_all: True to star all buttons on the form.
+        """
         buttons = self._field_save_buttons()
         for button in buttons:
-            button.setChecked(True)
+            print(button, star_all)
+            button.setChecked(star_all)
 
     @property
     def is_capturing(self):
