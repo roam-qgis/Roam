@@ -14,8 +14,8 @@ if frozen:
     os.environ['PATH'] = "{0};{1}".format(os.path.join(srcpath, 'libs'), srcpath)
     os.environ["GDAL_DRIVER_PATH"] = os.path.join(srcpath, 'libs')
     os.environ["GDAL_DATA"] = os.path.join(srcpath, 'libs', 'gdal')
-    os.environ['OGR_SQLITE_PRAGMA'] = "journal_mode=delete"
 
+os.environ['OGR_SQLITE_PRAGMA'] = "journal_mode=delete"
 gdal.SetConfigOption("GDAL_DRIVER_PATH", os.environ['GDAL_DRIVER_PATH'])
 gdal.SetConfigOption("GDAL_DATA", os.environ['GDAL_DATA'])
 gdal.SetConfigOption('OGR_SQLITE_PRAGMA', os.environ['OGR_SQLITE_PRAGMA'])
