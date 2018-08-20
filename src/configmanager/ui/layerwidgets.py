@@ -7,7 +7,7 @@ from string import Template
 from PyQt4.QtWebKit import QWebView
 from PyQt4.QtCore import Qt, QUrl, QVariant, pyqtSignal
 from PyQt4.QtGui import (QWidget, QPixmap, QStandardItem, QStandardItemModel, QIcon, QDesktopServices, QMenu, QToolButton,
-                         QFileDialog, QMessageBox)
+                         QFileDialog, QMessageBox, QColor)
 from PyQt4.QtGui import QTableWidgetItem, QComboBox, QGridLayout
 from PyQt4.Qsci import QsciLexerSQL, QsciScintilla
 
@@ -1224,6 +1224,11 @@ class MapWidget(ui_mapwidget.Ui_Form, WidgetBase):
             self.canvas.refresh()
 
     def set_project(self, project, treenode):
+        red = QgsProject.instance().readNumEntry("Gui", "/CanvasColorRedPart", 255)[0]
+        green = QgsProject.instance().readNumEntry("Gui", "/CanvasColorGreenPart", 255)[0]
+        blue = QgsProject.instance().readNumEntry("Gui", "/CanvasColorBluePart", 255)[0]
+        myColor = QColor(red, green, blue)
+        self.canvas.setCanvasColor(myColor)
         if hasattr(treenode, "layer"):
             layer = treenode.layer
             if layer.type() == QgsMapLayer.VectorLayer and layer.geometryType() == QGis.NoGeometry:
