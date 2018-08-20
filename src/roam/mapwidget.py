@@ -1019,11 +1019,14 @@ class MapWidget(Ui_CanvasWidget, QMainWindow):
         for node in tree.findLayers():
             layer = node.layer()
             if node.layer().type() == QgsMapLayer.RasterLayer:
-                renderer = layer.renderer()
-                renderer.setOpacity(value)
+                if value > 0:
+                    node.setVisible(Qt.Checked)
+                    renderer = layer.renderer()
+                    renderer.setOpacity(value)
+                if value == 0:
+                    node.setVisible(Qt.Unchecked)
 
         self.canvas.refresh()
-
 
     def cleanup(self):
         """
