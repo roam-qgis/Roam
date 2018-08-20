@@ -151,12 +151,10 @@ class ProjectWidget(Ui_Form, QWidget):
         self.stackedWidget.setCurrentIndex(page)
 
         widget = self.stackedWidget.currentWidget()
-        print "New widget {}".format(widget.objectName())
         if hasattr(widget, "set_project"):
             widget.set_project(self.project, self.currentnode)
 
     def unload_current_widget(self):
-        print "NOTIFY!!"
         widget = self.stackedWidget.currentWidget()
         print widget
         if hasattr(widget, "unload_project"):
