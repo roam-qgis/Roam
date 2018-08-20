@@ -287,6 +287,7 @@ class FeatureFormBase(QWidget):
         self.editingmode = kwargs.get("editmode", False)
         self.widgetidlookup = {}
         self._has_save_buttons = False
+        self.star_all_button = QAction(QIcon(":/icons/save_default_all"), "Star All", self, triggered=self.star_all)
 
     def open_large_widget(self, widgettype, lastvalue, callback, config=None):
         self.showlargewidget.emit(widgettype, lastvalue, callback, config)
@@ -294,24 +295,26 @@ class FeatureFormBase(QWidget):
     def form_actions(self):
         builtin = []
         if self._has_save_buttons:
-            un_star_all = QAction(QIcon(":/icons/save_default_all"), "None", self, triggered=partial(self.star_all, False))
-            builtin.append(un_star_all)
-            star_all = QAction(QIcon(":/icons/save_default_all"), "All", self, triggered=partial(self.star_all, True))
-            builtin.append(star_all)
+            builtin.append(self.star_all_button)
         useractions = self.user_form_actions()
         if not useractions:
             useractions = []
         return builtin + useractions
 
-    def star_all(self, star_all=True):
+    def star_all(self):
         """
         Star or unstar all buttons on the form.
         :param star_all: True to star all buttons on the form.
         """
+        checked = self.star_all_button.text() == "Star All"
         buttons = self._field_save_buttons()
         for button in buttons:
-            print(button, star_all)
-            button.setChecked(star_all)
+            button.setChecked(checked)
+
+        if checked:
+            self.star_all_button.setText("Star None")
+        else:
+            self.star_all_button.setText("Star All")
 
     @property
     def is_capturing(self):
