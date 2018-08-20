@@ -833,6 +833,12 @@ class MapWidget(Ui_CanvasWidget, QMainWindow):
         if self.scalebar_enabled:
             self.scalebar.update()
 
+        red = QgsProject.instance().readNumEntry("Gui", "/CanvasColorRedPart", 255)[0]
+        green = QgsProject.instance().readNumEntry("Gui", "/CanvasColorGreenPart", 255)[0]
+        blue = QgsProject.instance().readNumEntry("Gui", "/CanvasColorBluePart", 255)[0]
+        myColor = QColor(red, green, blue)
+        self.canvas.setCanvasColor(myColor)
+
         self.actionPan.toggle()
         self.clear_plugins()
         self.add_plugins(project.enabled_plugins)
