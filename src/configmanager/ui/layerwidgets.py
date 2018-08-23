@@ -5,10 +5,11 @@ import os
 import shutil
 from string import Template
 from PyQt4.QtWebKit import QWebView
-from PyQt4.QtCore import Qt, QUrl, QVariant, pyqtSignal
+from PyQt4.QtCore import Qt, QUrl, QVariant, pyqtSignal, QRegExp
 from PyQt4.QtGui import (QWidget, QPixmap, QStandardItem, QStandardItemModel, QIcon, QDesktopServices, QMenu, QToolButton,
                          QFileDialog, QMessageBox, QColor)
-from PyQt4.QtGui import QTableWidgetItem, QComboBox, QGridLayout
+from PyQt4.QtGui import QFileSystemModel
+from PyQt4.QtGui import QTableWidgetItem, QComboBox, QGridLayout, QSortFilterProxyModel
 from PyQt4.Qsci import QsciLexerSQL, QsciScintilla
 
 from qgis.core import QgsDataSourceURI, QgsPalLabeling, QgsMapLayerRegistry, QgsStyleV2, QgsMapLayer, QGis, QgsProject
@@ -16,7 +17,7 @@ from qgis.gui import QgsExpressionBuilderDialog, QgsMapCanvas, QgsRendererV2Prop
 from qgis.gui import QgsFieldModel as RealQgsFieldModel
 
 from configmanager.ui.nodewidgets import (ui_layersnode, ui_layernode, ui_infonode, ui_projectinfo, ui_formwidget,
-                                          ui_searchsnode, ui_searchnode, ui_mapwidget)
+                                          ui_searchsnode, ui_searchnode, ui_mapwidget, ui_publishwidget, ui_datawidget)
 from configmanager.models import (CaptureLayersModel, LayerTypeFilter, QgsFieldModel, WidgetsModel,
                                   QgsLayerModel, CaptureLayerFilter, widgeticon, SearchFieldsModel)
 
@@ -146,10 +147,45 @@ class EventWidget(nodewidgets.ui_eventwidget.Ui_Form, QWidget):
 
 
 import markdown
-    
+import re
+from qgis.core import QgsProviderRegistry
+
+
+class DataWidget(ui_datawidget.Ui_widget, WidgetBase):
+    def __init__(self, parent=None):
+        super(DataWidget, self).__init__(parent)
+        self.setupUi(self)
+        self.model = QFileSystemModel()
+        allfilters = []
+        filters = re.findall(r"\((.*?)\)", QgsProviderRegistry.instance().fileVectorFilters())[1:]
+        for filter in filters:
+            allfilters = allfilters + filter.split(" ")
+
+        filters += re.findall(r"\((.*?)\)", QgsProviderRegistry.instance().fileRasterFilters())[1:]
+        for filter in filters:
+            allfilters = allfilters + filter.split(" ")
+        print(allfilters)
+        self.model.setNameFilters(allfilters)
+        self.model.setNameFilterDisables(False)
+        self.listDataList.setModel(self.model)
+
+    def set_data(self, data):
+        root = data['data_root']
+        if not os.path.exists(root):
+            os.mkdir(root)
+        self.model.setRootPath(root)
+        self.listDataList.setRootIndex(self.model.index(root))
+
+class PublishWidget(ui_publishwidget.Ui_widget, WidgetBase):
+    def __init__(self, parent=None):
+        super(PublishWidget, self).__init__(parent)
+        self.setupUi(self)
+
+
 class PluginsWidget(WidgetBase):
     def __init__(self, parent=None):
         super(PluginsWidget, self).__init__(parent)
+
 
 class PluginWidget(WidgetBase):
     def __init__(self, parent=None):

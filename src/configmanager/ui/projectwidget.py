@@ -153,6 +153,15 @@ class ProjectWidget(Ui_Form, QWidget):
         widget = self.stackedWidget.currentWidget()
         if hasattr(widget, "set_project"):
             widget.set_project(self.project, self.currentnode)
+        if hasattr(widget, "set_data"):
+            widget.set_data({
+                "project": self.project,
+                "node": self.currentnode,
+                "app_root": self.roamapp.approot,
+                "data_root": self.roamapp.data_folder,
+                "projects_root": self.roamapp.projectsroot,
+                "profile_root": self.roamapp.profileroot
+            })
 
     def unload_current_widget(self):
         widget = self.stackedWidget.currentWidget()

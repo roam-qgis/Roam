@@ -75,8 +75,12 @@ class ConfigManagerDialog(ui_configmanager.Ui_ProjectInstallerDialog, QDialog):
         self.roamnode = RoamNode()
         rootitem.appendRow(self.roamnode)
 
+        self.datanode = DataNode(folder=None)
+        rootitem.appendRow(self.datanode)
         self.projectsnode = ProjectsNode(folder=None)
         rootitem.appendRow(self.projectsnode)
+        self.publishnode = PublishNode(folder=None)
+        rootitem.appendRow(self.publishnode)
 
         self.pluginsnode = PluginsNode()
         pluginpath = os.path.join(self.roamapp.apppath, "plugins")

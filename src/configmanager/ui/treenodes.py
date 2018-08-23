@@ -92,6 +92,8 @@ class Treenode(QStandardItem):
     LayerSearchConfigNode = QStandardItem.UserType + 12
     PluginsNode = QStandardItem.UserType + 13
     PluginNode = QStandardItem.UserType + 14
+    PublishNode = QStandardItem.UserType + 15
+    DataNode = QStandardItem.UserType + 16
     LayerNode = TreeNode
     AddNew = TreeNode
 
@@ -142,6 +144,38 @@ class Treenode(QStandardItem):
     def refresh(self):
         for child, row in self.walk():
             child.refresh()
+
+
+class PublishNode(Treenode):
+    nodetype = Treenode.PublishNode
+
+    def __init__(self, text="Publish", project=None, folder=None):
+        super(PublishNode, self).__init__(text, QIcon(":/icons/map"), project)
+        self._text = text
+        self.nodes = {}
+        self.hascount = True
+
+    def create_children(self):
+        super(PublishNode, self).create_children()
+
+    def refresh(self):
+        super(PublishNode, self).refresh()
+
+
+class DataNode(Treenode):
+    nodetype = Treenode.DataNode
+
+    def __init__(self, text="Data", project=None, folder=None):
+        super(DataNode, self).__init__(text, QIcon(":/icons/map"), project)
+        self._text = text
+        self.nodes = {}
+        self.hascount = True
+
+    def create_children(self):
+        super(DataNode, self).create_children()
+
+    def refresh(self):
+        super(DataNode, self).refresh()
 
 
 class SelectLayersNode(Treenode):

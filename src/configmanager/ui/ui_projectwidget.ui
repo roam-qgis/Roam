@@ -300,7 +300,7 @@ QLabel[warning=true]
       </sizepolicy>
      </property>
      <property name="currentIndex">
-      <number>14</number>
+      <number>15</number>
      </property>
      <widget class="ProjectInfoWidget" name="project_info_page">
       <layout class="QGridLayout" name="gridLayout_11"/>
@@ -644,11 +644,19 @@ p, li { white-space: pre-wrap; }
      <widget class="LayerSearchConfigWidget" name="searchconfigpage"/>
      <widget class="PluginsWidget" name="pluginspage"/>
      <widget class="PluginWidget" name="pluginpage"/>
+     <widget class="PublishWidget" name="publishpage"/>
+     <widget class="DataWidget" name="datapage"/>
     </widget>
    </item>
   </layout>
  </widget>
  <customwidgets>
+  <customwidget>
+   <class>MapWidget</class>
+   <extends>QWidget</extends>
+   <header>roam.gui</header>
+   <container>1</container>
+  </customwidget>
   <customwidget>
    <class>ProjectsNode</class>
    <extends>QWidget</extends>
@@ -698,12 +706,6 @@ p, li { white-space: pre-wrap; }
    <container>1</container>
   </customwidget>
   <customwidget>
-   <class>MapWidget</class>
-   <extends>QWidget</extends>
-   <header>configmanager.ui.layerwidgets</header>
-   <container>1</container>
-  </customwidget>
-  <customwidget>
    <class>PluginsWidget</class>
    <extends>QWidget</extends>
    <header>configmanager.ui.layerwidgets</header>
@@ -711,6 +713,18 @@ p, li { white-space: pre-wrap; }
   </customwidget>
   <customwidget>
    <class>PluginWidget</class>
+   <extends>QWidget</extends>
+   <header>configmanager.ui.layerwidgets</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>DataWidget</class>
+   <extends>QWidget</extends>
+   <header>configmanager.ui.layerwidgets</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>PublishWidget</class>
    <extends>QWidget</extends>
    <header>configmanager.ui.layerwidgets</header>
    <container>1</container>

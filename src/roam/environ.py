@@ -51,6 +51,10 @@ class RoamApp(object):
         import roam.qgisfunctions
         return self
 
+    @property
+    def data_folder(self):
+        return os.path.join(self.projectsroot, "_data")
+
     def set_error_handler(self, errorhandler, logger):
         sys.excepthook = functools.partial(self.excepthook, errorhandler)
         self.logger = logger
