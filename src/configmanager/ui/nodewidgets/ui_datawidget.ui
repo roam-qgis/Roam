@@ -14,7 +14,10 @@
    <string>Form</string>
   </property>
   <layout class="QGridLayout" name="gridLayout">
-   <item row="0" column="0">
+   <item row="2" column="0">
+    <widget class="QTreeView" name="listDataList"/>
+   </item>
+   <item row="1" column="0">
     <widget class="QPushButton" name="btnAddData">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Minimum" vsizetype="Maximum">
@@ -37,8 +40,15 @@
      </property>
     </widget>
    </item>
-   <item row="1" column="0">
-    <widget class="QTreeView" name="listDataList"/>
+   <item row="0" column="0">
+    <widget class="QLabel" name="label">
+     <property name="text">
+      <string>All data found in the shared data folder for all projects.  This folder can be used to share data between projects</string>
+     </property>
+     <property name="wordWrap">
+      <bool>true</bool>
+     </property>
+    </widget>
    </item>
   </layout>
  </widget>

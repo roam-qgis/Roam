@@ -156,6 +156,8 @@ class DataWidget(ui_datawidget.Ui_widget, WidgetBase):
         super(DataWidget, self).__init__(parent)
         self.setupUi(self)
         self.model = QFileSystemModel()
+        for col in range(self.model.columnCount(),1):
+            self.listDataList.hideColumn(col)
         allfilters = []
         filters = re.findall(r"\((.*?)\)", QgsProviderRegistry.instance().fileVectorFilters())[1:]
         for filter in filters:
@@ -164,13 +166,22 @@ class DataWidget(ui_datawidget.Ui_widget, WidgetBase):
         filters += re.findall(r"\((.*?)\)", QgsProviderRegistry.instance().fileRasterFilters())[1:]
         for filter in filters:
             allfilters = allfilters + filter.split(" ")
-        print(allfilters)
         self.model.setNameFilters(allfilters)
         self.model.setNameFilterDisables(False)
         self.listDataList.setModel(self.model)
+        self.btnAddData.pressed.connect(self.open_data_folder)
+        self.data = None
+
+    def open_data_folder(self):
+        """
+        Open the data folder of the project using the OS
+        """
+        path = os.path.join(self.data['data_root'])
+        openfolder(path)
 
     def set_data(self, data):
         root = data['data_root']
+        self.data = data
         if not os.path.exists(root):
             os.mkdir(root)
         self.model.setRootPath(root)
