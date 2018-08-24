@@ -163,6 +163,14 @@ class ProjectWidget(Ui_Form, QWidget):
                 "profile_root": self.roamapp.profileroot
             })
 
+        if node.title:
+            title = node.title
+        elif self.project:
+            title = self.project.name
+        else:
+            title = "No title set"
+        self.projectlabel.setText(title)
+
     def unload_current_widget(self):
         widget = self.stackedWidget.currentWidget()
         print widget
@@ -270,7 +278,6 @@ class ProjectWidget(Ui_Form, QWidget):
         if project.valid:
             self.startsettings = copy.deepcopy(project.settings)
             self.project = project
-            self.projectlabel.setText(project.name)
             self.loadqgisproject(project, self.project.projectfile)
 
     def projectLoaded(self):

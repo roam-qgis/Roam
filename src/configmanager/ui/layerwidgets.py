@@ -156,8 +156,6 @@ class DataWidget(ui_datawidget.Ui_widget, WidgetBase):
         super(DataWidget, self).__init__(parent)
         self.setupUi(self)
         self.model = QFileSystemModel()
-        for col in range(self.model.columnCount(),1):
-            self.listDataList.hideColumn(col)
         allfilters = []
         filters = re.findall(r"\((.*?)\)", QgsProviderRegistry.instance().fileVectorFilters())[1:]
         for filter in filters:
@@ -171,6 +169,8 @@ class DataWidget(ui_datawidget.Ui_widget, WidgetBase):
         self.listDataList.setModel(self.model)
         self.btnAddData.pressed.connect(self.open_data_folder)
         self.data = None
+        for col in range(self.model.columnCount())[1:]:
+            self.listDataList.hideColumn(col)
 
     def open_data_folder(self):
         """

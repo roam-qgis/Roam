@@ -186,9 +186,6 @@ class ConfigManagerDialog(ui_configmanager.Ui_ProjectInstallerDialog, QDialog):
             roam.utils.debug("Setting page")
             self.projectwidget.setpage(node.page, node)
 
-        if node.nodetype == Treenode.RoamNode:
-            self.projectwidget.projectlabel.setText("IntraMaps Roam Config Manager")
-
         if node.nodetype == Treenode.AddNew:
             try:
                 item = node.additem()

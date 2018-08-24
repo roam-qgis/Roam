@@ -98,6 +98,7 @@ class Treenode(QStandardItem):
     AddNew = TreeNode
 
     nodetype = TreeNode
+    title = None
 
     def __init__(self, text, icon, project=None):
         super(Treenode, self).__init__(QIcon(icon), text)
@@ -148,34 +149,24 @@ class Treenode(QStandardItem):
 
 class PublishNode(Treenode):
     nodetype = Treenode.PublishNode
+    title = "Project and Data Publish"
 
     def __init__(self, text="Publish", project=None, folder=None):
         super(PublishNode, self).__init__(text, QIcon(":/icons/map"), project)
         self._text = text
         self.nodes = {}
-        self.hascount = True
-
-    def create_children(self):
-        super(PublishNode, self).create_children()
-
-    def refresh(self):
-        super(PublishNode, self).refresh()
+        self.hascount = False
 
 
 class DataNode(Treenode):
     nodetype = Treenode.DataNode
+    title = "Shared Data"
 
     def __init__(self, text="Data", project=None, folder=None):
         super(DataNode, self).__init__(text, QIcon(":/icons/map"), project)
         self._text = text
         self.nodes = {}
-        self.hascount = True
-
-    def create_children(self):
-        super(DataNode, self).create_children()
-
-    def refresh(self):
-        super(DataNode, self).refresh()
+        self.hascount = False
 
 
 class SelectLayersNode(Treenode):
@@ -243,15 +234,12 @@ class SelectLayerNode(Treenode):
 
 class RoamNode(Treenode):
     nodetype = Treenode.RoamNode
+    title = "Roam Config Manager"
 
     def __init__(self, text="Roam", project=None):
         super(RoamNode, self).__init__(text, QIcon(":/icons/open"))
+        self.hascount = False
 
-    def data(self, role=None):
-        if role == Qt.DisplayRole:
-            return self._text
-
-        return super(RoamNode, self).data(role)
 
 class LayerSearchNode(Treenode):
     nodetype = Treenode.LayerSearchNode
@@ -461,6 +449,7 @@ class ProjectNode(Treenode):
 
 class PluginNode(Treenode):
     nodetype = Treenode.PluginNode
+    title = "Plugin"
 
     def __init__(self, text, pluginlocation):
         super(PluginNode, self).__init__(text, QIcon(":/icons/plugin"))
@@ -470,6 +459,7 @@ class PluginNode(Treenode):
 
 class PluginsNode(Treenode):
     nodetype = Treenode.PluginsNode
+    title = "Plugins"
 
     def __init__(self, text="Installed plugins"):
         super(PluginsNode, self).__init__(text, QIcon(":/icons/plugin"))
@@ -486,6 +476,7 @@ class PluginsNode(Treenode):
 
 class ProjectsNode(Treenode):
     nodetype = Treenode.ProjectsNode
+    title = "Projects"
 
     def __init__(self, text="Projects", folder=None):
         super(ProjectsNode, self).__init__(text, None)
