@@ -3,21 +3,18 @@ __author__ = 'Nathan.Woodrow'
 import uuid
 import os
 import shutil
-from string import Template
 from PyQt4.QtWebKit import QWebView
-from PyQt4.QtCore import Qt, QUrl, QVariant, pyqtSignal, QRegExp
+from PyQt4.QtCore import Qt, QUrl, QVariant, pyqtSignal
 from PyQt4.QtGui import (QWidget, QPixmap, QStandardItem, QStandardItemModel, QIcon, QDesktopServices, QMenu, QToolButton,
-                         QFileDialog, QMessageBox, QColor)
-from PyQt4.QtGui import QFileSystemModel
-from PyQt4.QtGui import QTableWidgetItem, QComboBox, QGridLayout, QSortFilterProxyModel
+                         QFileDialog, QColor)
+from PyQt4.QtGui import QComboBox, QGridLayout
 from PyQt4.Qsci import QsciLexerSQL, QsciScintilla
 
-from qgis.core import QgsDataSourceURI, QgsPalLabeling, QgsMapLayerRegistry, QgsStyleV2, QgsMapLayer, QGis, QgsProject
-from qgis.gui import QgsExpressionBuilderDialog, QgsMapCanvas, QgsRendererV2PropertiesDialog, QgsLayerTreeMapCanvasBridge, QgsRasterRendererWidget
-from qgis.gui import QgsFieldModel as RealQgsFieldModel
+from qgis.core import QgsPalLabeling, QgsMapLayerRegistry, QgsStyleV2, QgsMapLayer, QGis, QgsProject
+from qgis.gui import QgsExpressionBuilderDialog, QgsMapCanvas, QgsRendererV2PropertiesDialog, QgsLayerTreeMapCanvasBridge
 
 from configmanager.ui.nodewidgets import (ui_layersnode, ui_layernode, ui_infonode, ui_projectinfo, ui_formwidget,
-                                          ui_searchsnode, ui_searchnode, ui_mapwidget, ui_publishwidget, ui_datawidget)
+                                          ui_searchsnode, ui_searchnode, ui_mapwidget, ui_publishwidget)
 from configmanager.models import (CaptureLayersModel, LayerTypeFilter, QgsFieldModel, WidgetsModel,
                                   QgsLayerModel, CaptureLayerFilter, widgeticon, SearchFieldsModel)
 
@@ -27,32 +24,15 @@ import configmanager.editorwidgets
 import roam.projectparser
 from roam.api import FeatureForm, utils
 from roam.utils import log
-from roam import roam_style
 
 from configmanager.utils import openqgis, render_tample, openfolder
 import roam.utils
-from PyQt4.QtCore import QObject
 
+# ========= Imports to not break .ui widget files.
+from configmanager.ui.widgets.datawidget import DataWidget
+# ========= Imports to not break .ui widget files
 
-class WidgetBase(QWidget):
-    def __init__(self, parent):
-        super(WidgetBase, self).__init__(parent)
-        self.project = None
-
-    def set_project(self, project, treenode):
-        self.project = project
-        self.treenode = treenode
-
-    def unload_project(self):
-        pass
-
-    def write_config(self):
-        """
-        Write the config back to the project settings.
-        """
-        pass
-
-
+from configmanager.ui.widgets.widgetbase import WidgetBase
 
 readonlyvalues = [('Never', 'never'),
                   ('Always', 'always'),
@@ -147,45 +127,7 @@ class EventWidget(nodewidgets.ui_eventwidget.Ui_Form, QWidget):
 
 
 import markdown
-import re
-from qgis.core import QgsProviderRegistry
 
-
-class DataWidget(ui_datawidget.Ui_widget, WidgetBase):
-    def __init__(self, parent=None):
-        super(DataWidget, self).__init__(parent)
-        self.setupUi(self)
-        self.model = QFileSystemModel()
-        allfilters = []
-        filters = re.findall(r"\((.*?)\)", QgsProviderRegistry.instance().fileVectorFilters())[1:]
-        for filter in filters:
-            allfilters = allfilters + filter.split(" ")
-
-        filters += re.findall(r"\((.*?)\)", QgsProviderRegistry.instance().fileRasterFilters())[1:]
-        for filter in filters:
-            allfilters = allfilters + filter.split(" ")
-        self.model.setNameFilters(allfilters)
-        self.model.setNameFilterDisables(False)
-        self.listDataList.setModel(self.model)
-        self.btnAddData.pressed.connect(self.open_data_folder)
-        self.data = None
-        for col in range(self.model.columnCount())[1:]:
-            self.listDataList.hideColumn(col)
-
-    def open_data_folder(self):
-        """
-        Open the data folder of the project using the OS
-        """
-        path = os.path.join(self.data['data_root'])
-        openfolder(path)
-
-    def set_data(self, data):
-        root = data['data_root']
-        self.data = data
-        if not os.path.exists(root):
-            os.mkdir(root)
-        self.model.setRootPath(root)
-        self.listDataList.setRootIndex(self.model.index(root))
 
 class PublishWidget(ui_publishwidget.Ui_widget, WidgetBase):
     def __init__(self, parent=None):

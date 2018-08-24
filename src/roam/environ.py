@@ -21,6 +21,7 @@ class RoamApp(object):
         self.projectsroot = projectsroot
         self._oldhook = sys.excepthook
         self.sourcerun = False
+        self.config = None
 
     def init(self, logo, title):
         from qgis.core import QgsApplication

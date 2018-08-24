@@ -148,64 +148,6 @@ QLabel[warning=true]
          <number>0</number>
         </property>
         <item>
-         <widget class="QToolButton" name="depolyInstallProjectButton">
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-          <property name="text">
-           <string>Publish Install</string>
-          </property>
-          <property name="icon">
-           <iconset resource="../../roam/resources.qrc">
-            <normaloff>:/icons/sync</normaloff>:/icons/sync</iconset>
-          </property>
-          <property name="iconSize">
-           <size>
-            <width>24</width>
-            <height>24</height>
-           </size>
-          </property>
-          <property name="toolButtonStyle">
-           <enum>Qt::ToolButtonTextUnderIcon</enum>
-          </property>
-          <property name="autoRaise">
-           <bool>true</bool>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QToolButton" name="depolyProjectButton">
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-          <property name="text">
-           <string>Publish Update</string>
-          </property>
-          <property name="icon">
-           <iconset resource="../../roam/resources.qrc">
-            <normaloff>:/icons/sync</normaloff>:/icons/sync</iconset>
-          </property>
-          <property name="iconSize">
-           <size>
-            <width>24</width>
-            <height>24</height>
-           </size>
-          </property>
-          <property name="toolButtonStyle">
-           <enum>Qt::ToolButtonTextUnderIcon</enum>
-          </property>
-          <property name="autoRaise">
-           <bool>true</bool>
-          </property>
-         </widget>
-        </item>
-        <item>
          <widget class="QToolButton" name="openProjectFolderButton">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
@@ -264,9 +206,9 @@ QLabel[warning=true]
          </widget>
         </item>
         <item>
-         <widget class="QToolButton" name="toolButton_6">
+         <widget class="QToolButton" name="savePageButton">
           <property name="text">
-           <string>Save Project</string>
+           <string>Save</string>
           </property>
           <property name="icon">
            <iconset resource="../../roam/resources.qrc">
@@ -300,7 +242,7 @@ QLabel[warning=true]
       </sizepolicy>
      </property>
      <property name="currentIndex">
-      <number>15</number>
+      <number>16</number>
      </property>
      <widget class="ProjectInfoWidget" name="project_info_page">
       <layout class="QGridLayout" name="gridLayout_11"/>
@@ -746,24 +688,7 @@ p, li { white-space: pre-wrap; }
   <include location="../../roam/resources.qrc"/>
   <include location="../../roam/resources.qrc"/>
  </resources>
- <connections>
-  <connection>
-   <sender>toolButton_6</sender>
-   <signal>pressed()</signal>
-   <receiver>Form</receiver>
-   <slot>_saveproject()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>773</x>
-     <y>11</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>279</x>
-     <y>0</y>
-    </hint>
-   </hints>
-  </connection>
- </connections>
+ <connections/>
  <slots>
   <slot>_saveproject()</slot>
  </slots>

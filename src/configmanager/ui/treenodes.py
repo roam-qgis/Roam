@@ -99,6 +99,7 @@ class Treenode(QStandardItem):
 
     nodetype = TreeNode
     title = None
+    saveable = True
 
     def __init__(self, text, icon, project=None):
         super(Treenode, self).__init__(QIcon(icon), text)
@@ -161,6 +162,7 @@ class PublishNode(Treenode):
 class DataNode(Treenode):
     nodetype = Treenode.DataNode
     title = "Shared Data"
+    saveable = True
 
     def __init__(self, text="Data", project=None, folder=None):
         super(DataNode, self).__init__(text, QIcon(":/icons/map"), project)
@@ -235,6 +237,7 @@ class SelectLayerNode(Treenode):
 class RoamNode(Treenode):
     nodetype = Treenode.RoamNode
     title = "Roam Config Manager"
+    saveable = False
 
     def __init__(self, text="Roam", project=None):
         super(RoamNode, self).__init__(text, QIcon(":/icons/open"))
@@ -460,6 +463,7 @@ class PluginNode(Treenode):
 class PluginsNode(Treenode):
     nodetype = Treenode.PluginsNode
     title = "Plugins"
+    saveable = False
 
     def __init__(self, text="Installed plugins"):
         super(PluginsNode, self).__init__(text, QIcon(":/icons/plugin"))
@@ -477,6 +481,7 @@ class PluginsNode(Treenode):
 class ProjectsNode(Treenode):
     nodetype = Treenode.ProjectsNode
     title = "Projects"
+    saveable = False
 
     def __init__(self, text="Projects", folder=None):
         super(ProjectsNode, self).__init__(text, None)

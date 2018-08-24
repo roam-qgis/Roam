@@ -74,6 +74,7 @@ class ProjectWidget(Ui_Form, QWidget):
         self.project = None
         self.bar = None
         self.roamapp = None
+        self.logger = roam.utils.logger
 
         menu = QMenu()
 
@@ -81,8 +82,11 @@ class ProjectWidget(Ui_Form, QWidget):
 
         self.openProjectFolderButton.pressed.connect(self.openprojectfolder)
         self.openinQGISButton.pressed.connect(self.openinqgis)
-        self.depolyProjectButton.pressed.connect(self.deploy_project)
-        self.depolyInstallProjectButton.pressed.connect(functools.partial(self.deploy_project, True))
+        # TODO Move these to the publish page
+
+        # self.depolyProjectButton.pressed.connect(self.deploy_project)
+        # self.depolyInstallProjectButton.pressed.connect(functools.partial(self.deploy_project, True))
+        self.savePageButton.pressed.connect(self.savePage)
 
         self.filewatcher = QFileSystemWatcher()
         self.filewatcher.fileChanged.connect(self.qgisprojectupdated)
@@ -150,12 +154,15 @@ class ProjectWidget(Ui_Form, QWidget):
         # Set the new widget for the selected page
         self.stackedWidget.setCurrentIndex(page)
 
+        self.project = node.project
+
         widget = self.stackedWidget.currentWidget()
         if hasattr(widget, "set_project"):
             widget.set_project(self.project, self.currentnode)
         if hasattr(widget, "set_data"):
             widget.set_data({
-                "project": self.project,
+                "project": node.project,
+                "config": self.roamapp.config,
                 "node": self.currentnode,
                 "app_root": self.roamapp.approot,
                 "data_root": self.roamapp.data_folder,
@@ -171,9 +178,24 @@ class ProjectWidget(Ui_Form, QWidget):
             title = "No title set"
         self.projectlabel.setText(title)
 
+        if node.project:
+            self.openProjectFolderButton.show()
+            self.openinQGISButton.show()
+        else:
+            self.openProjectFolderButton.hide()
+            self.openinQGISButton.hide()
+
+        self.savePageButton.setVisible(node.saveable)
+
+    @property
+    def widget(self):
+        """
+        :return: The current widget that is set.
+        """
+        return self.stackedWidget.currentWidget()
+
     def unload_current_widget(self):
         widget = self.stackedWidget.currentWidget()
-        print widget
         if hasattr(widget, "unload_project"):
             widget.unload_project()
 
@@ -306,6 +328,17 @@ class ProjectWidget(Ui_Form, QWidget):
         """
         QGIS.close_project()
 
+    def savePage(self):
+        """
+        Save the current page settings.
+        """
+        print(self.project)
+        if self.project:
+            self._saveproject()
+            return
+        self.logger.debug("Saving widget")
+        self.widget.write_config()
+
     def _saveproject(self, update_version=False, reset_save_point=False):
         """
         Save the project config to disk.
@@ -313,7 +346,7 @@ class ProjectWidget(Ui_Form, QWidget):
         if not self.project:
             return
 
-        roam.utils.info("Saving project: {}".format(self.project.name))
+        self.logger.info("Saving project: {}".format(self.project.name))
 
         self.write_config_currentwidget()
         # self.project.dump_settings()

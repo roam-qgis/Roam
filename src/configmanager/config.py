@@ -5,6 +5,8 @@ defaults = {
 
 }
 
+import roam.utils
+
 
 class Config:
     """
@@ -13,6 +15,7 @@ class Config:
     def __init__(self, settings, location):
         self.settings = settings
         self.location = location
+        self.logger = roam.utils.logger
 
     @classmethod
     def from_file(cls, file):
@@ -22,11 +25,11 @@ class Config:
                 _settings = yaml.load(f)
         return Config(_settings, file)
 
-    def get(self, key):
-        pass
+    def get(self, key, default=None):
+        self.settings.get(key, default)
 
     def set(self, key, value):
-        pass
+        self.settings[key] = value
 
     def __setitem__(self, key, value):
         self.set(key, value)
@@ -36,4 +39,5 @@ class Config:
 
     def save(self):
         with open(self.location, 'w') as f:
-            yaml.dump(data=self.settings, stream=f, default_flow_style=False)
+            yaml.safe_dump(data=self.settings, stream=f, default_flow_style=False)
+            self.logger.debug(self.settings)
