@@ -175,15 +175,14 @@ class ConfigManagerDialog(ui_configmanager.Ui_ProjectInstallerDialog, QDialog):
 
         if project and self.loadedProject != project:
             # Only load the project if it's different the current one.
-            roam.utils.info("Swapping to project: {}".format(project.name))
             if self.loadedProject:
                 lastnode = self.projectsnode.find_by_name(self.loadedProject.name)
                 self.projectList.setExpanded(lastnode.index(), False )
             ## We are closing the open project at this point. Watch for null ref after this.
             self.projectwidget.setproject(project)
+            self.projectwidget.setpage(node.page, node)
             return
         else:
-            roam.utils.debug("Setting page")
             self.projectwidget.setpage(node.page, node)
 
         if node.nodetype == Treenode.AddNew:
@@ -195,7 +194,7 @@ class ConfigManagerDialog(ui_configmanager.Ui_ProjectInstallerDialog, QDialog):
             self.projectList.setCurrentIndex(newindex)
             return
 
-        self.projectwidget.projectbuttonframe.setVisible(not project is None)
+        # self.projectwidget.projectbuttonframe.setVisible(not project is None)
 
 
     def projectupdated(self, project):

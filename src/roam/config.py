@@ -55,4 +55,3 @@ def save(path=None):
     with open(path, 'w') as f:
         yaml.dump(data=settings, stream=f, default_flow_style=False)
 
-

@@ -14,54 +14,123 @@
    <string>Form</string>
   </property>
   <layout class="QGridLayout" name="gridLayout">
-   <item row="0" column="0">
-    <widget class="QGroupBox" name="groupBox">
-     <property name="title">
-      <string>Project Publishing</string>
+   <item row="1" column="0">
+    <widget class="QTableWidget" name="tableWidget">
+     <property name="wordWrap">
+      <bool>true</bool>
      </property>
-     <layout class="QFormLayout" name="formLayout">
-      <property name="fieldGrowthPolicy">
-       <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
+     <row>
+      <property name="text">
+       <string>Test Project</string>
       </property>
-      <item row="0" column="0">
-       <widget class="QLabel" name="label">
-        <property name="text">
-         <string>Deploy folder</string>
-        </property>
-       </widget>
-      </item>
-      <item row="0" column="1">
-       <layout class="QHBoxLayout" name="horizontalLayout">
-        <item>
-         <widget class="QLineEdit" name="deployLocationText"/>
-        </item>
-        <item>
-         <widget class="QToolButton" name="filePickerButton">
-          <property name="text">
-           <string>...</string>
-          </property>
-          <property name="icon">
-           <iconset resource="../../../roam/resources.qrc">
-            <normaloff>:/icons/folder</normaloff>:/icons/folder</iconset>
-          </property>
-          <property name="iconSize">
-           <size>
-            <width>24</width>
-            <height>24</height>
-           </size>
-          </property>
-          <property name="autoRaise">
-           <bool>true</bool>
-          </property>
-         </widget>
-        </item>
-       </layout>
-      </item>
-     </layout>
+     </row>
+     <row>
+      <property name="text">
+       <string>Project 2</string>
+      </property>
+     </row>
+     <column>
+      <property name="text">
+       <string>Publish Path</string>
+      </property>
+     </column>
+     <column>
+      <property name="text">
+       <string>Project Version</string>
+      </property>
+     </column>
+     <column>
+      <property name="text">
+       <string>Publish Version</string>
+      </property>
+     </column>
+     <column>
+      <property name="text">
+       <string>Publish?</string>
+      </property>
+     </column>
+     <item row="0" column="0">
+      <property name="text">
+       <string>C:\temp</string>
+      </property>
+     </item>
+     <item row="0" column="1">
+      <property name="text">
+       <string>5</string>
+      </property>
+     </item>
+     <item row="0" column="2">
+      <property name="text">
+       <string>1</string>
+      </property>
+     </item>
+     <item row="0" column="3">
+      <property name="text">
+       <string>{Button}</string>
+      </property>
+     </item>
+     <item row="1" column="0">
+      <property name="text">
+       <string>C:\otherpath</string>
+      </property>
+     </item>
+     <item row="1" column="1">
+      <property name="text">
+       <string>5</string>
+      </property>
+     </item>
+     <item row="1" column="2">
+      <property name="text">
+       <string>5</string>
+      </property>
+     </item>
+     <item row="1" column="3">
+      <property name="text">
+       <string>{Button}</string>
+      </property>
+     </item>
     </widget>
    </item>
-   <item row="1" column="0">
-    <widget class="QTableWidget" name="tableWidget"/>
+   <item row="0" column="0">
+    <layout class="QHBoxLayout" name="horizontalLayout">
+     <item>
+      <widget class="QLabel" name="label">
+       <property name="text">
+        <string>Global Deploy Folder</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLineEdit" name="deployLocationText"/>
+     </item>
+     <item>
+      <widget class="QToolButton" name="filePickerButton">
+       <property name="text">
+        <string>...</string>
+       </property>
+       <property name="icon">
+        <iconset resource="../../../roam/resources.qrc">
+         <normaloff>:/icons/folder</normaloff>:/icons/folder</iconset>
+       </property>
+       <property name="iconSize">
+        <size>
+         <width>24</width>
+         <height>24</height>
+        </size>
+       </property>
+       <property name="autoRaise">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="pushButton_2">
+       <property name="text">
+        <string>Update all paths</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
    </item>
   </layout>
  </widget>
