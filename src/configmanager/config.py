@@ -23,6 +23,9 @@ class Config:
         if os.path.exists(file):
             with open(file) as f:
                 _settings = yaml.load(f)
+                if _settings is None:
+                    roam.utils.warning("Setting settings to default")
+                    _settings = defaults
         return Config(_settings, file)
 
     def get(self, key, default=None):
@@ -35,9 +38,14 @@ class Config:
         self.set(key, value)
 
     def __getitem__(self, item):
-        return self.get(item)
+        return self.settings[item]
 
     def save(self):
+        import pprint
+        pprint.pprint(self.settings)
+        self.logger.debug(self.settings)
+        if self.settings is None:
+            raise Exception("Settings are null. Not saving. Might have happened due to a error.")
+
         with open(self.location, 'w') as f:
             yaml.safe_dump(data=self.settings, stream=f, default_flow_style=False)
-            self.logger.debug(self.settings)

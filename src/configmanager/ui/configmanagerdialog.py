@@ -33,6 +33,7 @@ class ConfigManagerDialog(ui_configmanager.Ui_ProjectInstallerDialog, QDialog):
         self.roamapp = roamapp
         self.reloadingProject = False
         self.loadedProject = None
+        self.projectpath = None
 
         # Nope!
         self.projectwidget.roamapp = roamapp
@@ -134,7 +135,18 @@ class ConfigManagerDialog(ui_configmanager.Ui_ProjectInstallerDialog, QDialog):
     def addprojectfolders(self, folders):
         self.projectwidget.projects_page.setprojectfolders(folders)
 
+    @property
+    def active_project_folder(self):
+        return self.projectpath
+
+    @active_project_folder.setter
+    def active_project_folder(self, value):
+        self.projectpath = value
+        pass
+
     def loadprojects(self, projectpath):
+        self.active_project_folder = projectpath
+
         projects = roam.project.getProjects([projectpath])
         self.projectsnode.loadprojects(projects, projectsbase=projectpath)
 

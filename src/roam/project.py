@@ -508,6 +508,10 @@ class Project(QObject):
         return os.path.basename(self.folder)
 
     @property
+    def id(self):
+        return self.basefolder
+
+    @property
     def name(self):
         default = os.path.basename(self.folder)
         return self.settings.setdefault("title", default)

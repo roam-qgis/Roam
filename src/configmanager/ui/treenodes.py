@@ -157,6 +157,15 @@ class PublishNode(Treenode):
         self._text = text
         self.nodes = {}
         self.hascount = False
+        self._projects = []
+
+    @property
+    def projects(self):
+        return self._projects
+
+    @projects.setter
+    def projects(self, projects):
+        self._projects = projects
 
 
 class DataNode(Treenode):

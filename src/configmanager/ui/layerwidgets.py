@@ -30,6 +30,7 @@ import roam.utils
 
 # ========= Imports to not break .ui widget files.
 from configmanager.ui.widgets.datawidget import DataWidget
+from configmanager.ui.widgets.publishwidget import PublishWidget
 # ========= Imports to not break .ui widget files
 
 from configmanager.ui.widgets.widgetbase import WidgetBase
@@ -127,12 +128,6 @@ class EventWidget(nodewidgets.ui_eventwidget.Ui_Form, QWidget):
 
 
 import markdown
-
-
-class PublishWidget(ui_publishwidget.Ui_widget, WidgetBase):
-    def __init__(self, parent=None):
-        super(PublishWidget, self).__init__(parent)
-        self.setupUi(self)
 
 
 class PluginsWidget(WidgetBase):

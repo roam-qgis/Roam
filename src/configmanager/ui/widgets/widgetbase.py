@@ -1,6 +1,7 @@
 from PyQt4.QtGui import QWidget
 
 import roam.utils
+import pprint
 
 class WidgetBase(QWidget):
     def __init__(self, parent):
@@ -24,5 +25,6 @@ class WidgetBase(QWidget):
         pass
 
     def set_data(self, data):
+        pprint.pprint(data)
         self.config = data['config']
         self.data = data
