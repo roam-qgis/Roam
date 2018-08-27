@@ -32,6 +32,8 @@ def checkversion(toversion, fromversion):
 
 
 def parse_serverprojects(configdata):
+    roam.utils.info("Project server data")
+    roam.utils.info(configdata)
     if not configdata:
         return {}
 
@@ -39,6 +41,7 @@ def parse_serverprojects(configdata):
         configdata = yaml.load(configdata)
 
     versions = defaultdict(dict)
+    datadate = configdata.get('data_date', None)
     for project, data in configdata['projects'].iteritems():
         version = int(data["version"])
         path = project + ".zip"
@@ -49,7 +52,8 @@ def parse_serverprojects(configdata):
                     version=version,
                     name=name,
                     title=title,
-                    description=desc)
+                    description=desc,
+                    data_date=datadate)
         versions[project][version] = data
     return dict(versions)
 
@@ -93,10 +97,12 @@ def download_file(url, fileout):
 
     Will open and write to fileout
     """
+    roam.utils.debug("Opening URL: {}".format(url))
     result = urllib2.urlopen(url)
     length = result.headers['content-length']
 
     length = int(length) / 1024 / 1024
+    roam.utils.debug("Length: {}".format(length))
     yield "Downloading 0/{}MB".format(length)
     bytes_done = 0
     with open(fileout, "wb") as f:
@@ -112,6 +118,32 @@ def download_file(url, fileout):
             so_far = bytes_done / 1024 / 1024
             yield "Downloading {}/{}MB".format(so_far, length)
 
+
+def fetch_data(rootfolder, filename, serverurl):
+    """
+    Download the update zip file for the project from the server
+    """
+    serverurl = add_slash(serverurl)
+
+    tempfolder = os.path.join(rootfolder, "_updates")
+    if not os.path.exists(tempfolder):
+        os.mkdir(tempfolder)
+
+    filename = "{}.zip".format(filename)
+    url = urlparse.urljoin(serverurl, "projects/{}".format(filename))
+    zippath = os.path.join(tempfolder, filename)
+    roam.utils.info("Downloading project zip {}".format(url))
+    for status in download_file(url, zippath):
+        yield status
+
+    yield "Extracting data.."
+    with zipfile.ZipFile(zippath, "r") as z:
+        members = z.infolist()
+        for i, member in enumerate(members):
+            z.extract(member, rootfolder)
+            roam.utils.debug("Extracting: {}".format(member.filename))
+
+    yield "Done"
 
 def update_project(project, serverurl):
     """
@@ -208,10 +240,21 @@ class UpdateWorker(QObject):
         super(UpdateWorker, self).__init__()
         self.server = None
         self.basefolder = basefolder
+        self.projectUpdateStatus.connect(self.status_updated)
+
+    def status_updated(self, project, status):
+        roam.utils.debug(project + ": " + status)
 
     def run(self):
         while True:
             project, version, server, is_new = forupdate.get()
+            ## TODO Check _data date
+            ## If old, download data first.
+            datadate = project["data_date"]
+            self.projectUpdateStatus.emit("Data", "Downloading Data..")
+            for status in fetch_data(self.basefolder, "_data", server):
+                self.projectUpdateStatus.emit("Data", status)
+            self.projectUpdateStatus.emit("Data", "Installed")
             if is_new:
                 name = project['name']
                 self.projectUpdateStatus.emit(name, "Installing")
