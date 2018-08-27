@@ -38,7 +38,9 @@ class PublishWidget(ui_publishwidget.Ui_widget, WidgetBase):
         self.cache = {}
 
     def update_all_paths(self):
-        pass
+        for row in range(self.tableWidget.rowCount()):
+            item = self.tableWidget.item(row, 2)
+            item.setText(self.deployLocationText.text())
 
     def pick_folder(self):
         path = QFileDialog().getExistingDirectory(self, "Select project publish location",
