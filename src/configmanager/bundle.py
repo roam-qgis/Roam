@@ -59,6 +59,7 @@ def update_project_details(project, outpath):
     config = get_config(outpath)
     projectsnode = config.get("projects", {})
     projectsnode[project.id] = {"version": project.version,
+                                "id": project.id,
                                 "name": project.basefolder,
                                 "title": project.name,
                                 "description": project.description}

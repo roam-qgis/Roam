@@ -167,7 +167,7 @@
      </column>
      <column>
       <property name="text">
-       <string>Version</string>
+       <string>Last Save Count</string>
       </property>
      </column>
      <column>

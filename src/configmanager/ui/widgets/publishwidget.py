@@ -46,7 +46,10 @@ class PublishWidget(ui_publishwidget.Ui_widget, WidgetBase):
 
     def set_data(self, data):
         super(PublishWidget, self).set_data(data)
-        projects = list(roam.project.getProjects([data['projects_root']]))
+        self.reload_projects()
+
+    def reload_projects(self):
+        projects = list(roam.project.getProjects([self.data['projects_root']]))
         self.logger.debug(projects)
         self.projects = {}
         # Because we need a delete method anyway
@@ -76,9 +79,13 @@ class PublishWidget(ui_publishwidget.Ui_widget, WidgetBase):
         for projectconfig in self.get_project_depoly_settings(all_projects=all_projects).itervalues():
             ## Gross but quicker then threading at the moment.
             QApplication.instance().processEvents()
+            ## Save first to bump to version up.
+            self.projects[projectconfig['id']].save(update_version=True, reset_save_point=True)
             self.deploy_data(projectconfig, dataoptions)
             self.deploy_project(projectconfig)
+            self.logger.info("Updating project.config")
         self.progressBar.hide()
+        self.reload_projects()
 
     def get_project_depoly_settings(self, all_projects):
         projects = {}
