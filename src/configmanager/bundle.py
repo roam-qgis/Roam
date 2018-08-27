@@ -2,6 +2,15 @@ import yaml
 import os
 import zipfile
 
+from configmanager.config import Config
+
+
+def get_config(outpath):
+    configpath = os.path.join(outpath, "roam.txt")
+    defaults = {}
+    config = Config.from_file(configpath, defaults)
+    return config
+
 
 def bundle_project(project, outpath, options, as_install=False):
     _startoptions = options
@@ -47,23 +56,12 @@ def zipper(dir, projectname, zip_file, options):
 
 
 def update_project_details(project, outpath):
-    configpath = os.path.join(outpath, "roam.txt")
-    if not os.path.exists(configpath):
-        open(configpath, "a").close()
+    config = get_config(outpath)
+    projectsnode = config.get("projects", {})
+    projectsnode[project.id] = {"version": project.version,
+                                "name": project.basefolder,
+                                "title": project.name,
+                                "description": project.description}
 
-    with open(configpath, 'r+') as f:
-        config = yaml.load(f)
-        if not config:
-            config = {}
-        projectsnode = config.setdefault("projects", {})
-        projectsnode[project.basefolder] = {"version": project.version,
-                                            "name": project.basefolder,
-                                            "title": project.name,
-                                            "description": project.description}
-
-        config['projects'] = projectsnode
-        f.seek(0)
-        yaml.dump(data=config, stream=f, default_flow_style=False)
-        f.truncate()
-
-
+    config['projects'] = projectsnode
+    config.save()

@@ -1,14 +1,17 @@
+import shutil
 import os
 import functools
+import tempfile
 
 from configmanager.ui.nodewidgets import ui_publishwidget
 from configmanager.ui.widgets.widgetbase import WidgetBase
 from PyQt4.QtGui import QTableWidgetItem, QHeaderView, QApplication
 
-import roam.bundle
+import configmanager.bundle
 import roam.project
 
 from configmanager.utils import openfolder
+
 
 def make_item(data):
     return QTableWidgetItem(str(data))
@@ -28,6 +31,7 @@ class PublishWidget(ui_publishwidget.Ui_widget, WidgetBase):
         self.openFoldersButton.pressed.connect(self.open_folders)
         self.progressBar.hide()
         self.projects = {}
+        self.cache = {}
 
     def open_folders(self):
         projects = self.get_project_depoly_settings(all_projects=False).itervalues()
@@ -66,9 +70,13 @@ class PublishWidget(ui_publishwidget.Ui_widget, WidgetBase):
         self.write_config()
 
         self.progressBar.show()
+        dataoptions = {
+            "data_date": self.config['data_save_date']
+        }
         for projectconfig in self.get_project_depoly_settings(all_projects=all_projects).itervalues():
             ## Gross but quicker then threading at the moment.
             QApplication.instance().processEvents()
+            self.deploy_data(projectconfig, dataoptions)
             self.deploy_project(projectconfig)
         self.progressBar.hide()
 
@@ -78,7 +86,7 @@ class PublishWidget(ui_publishwidget.Ui_widget, WidgetBase):
         for row in range(self.tableWidget.rowCount()):
             item = self.tableWidget.item(row, 0)
             if not all_projects and not item.isSelected():
-                    continue
+                continue
             id = self.tableWidget.item(row, 0).data(0)
             name = self.tableWidget.item(row, 1).data(0)
             path = self.tableWidget.item(row, 2).data(0)
@@ -106,4 +114,41 @@ class PublishWidget(ui_publishwidget.Ui_widget, WidgetBase):
         # TODO Update project metadata
         options = {}
 
-        roam.bundle.bundle_project(project, path, options, as_install=True)
+        configmanager.bundle.bundle_project(project, path, options, as_install=True)
+
+    def deploy_data(self, projectconfig, dataoptions):
+        def make_zip():
+            self.logger.info("Zipping data folder to temp folder")
+            datazip = os.path.join(tempfile.gettempdir(), "_data.zip")
+            configmanager.bundle.zipper(self.data['data_root'], "_data", datazip, {})
+            self.cache["data_zip"] = datazip
+            self.cache["data_date"] = datadate
+            return datazip
+
+        path = os.path.join(projectconfig['path'], "projects")
+
+        if not os.path.exists(path):
+            os.makedirs(path)
+
+        self.logger.info("Published config from: {}".format(path))
+        publishedconfig = configmanager.bundle.get_config(path)
+
+        publihseddatadata = publishedconfig.get('data_date', None)
+        datadate = dataoptions['data_date']
+        if publihseddatadata != datadate:
+            self.logger.info(
+                "Updating _data.zip file to latest data. Publish date {} vs {}".format(publihseddatadata, datadate))
+
+            if self.cache.get('data_date', None) == datadate and "data_zip" in self.cache:
+                datazip = self.cache['data_zip']
+                self.logger.info("Got data zip path from cache {}".format(datazip))
+            else:
+                datazip = make_zip()
+
+            shutil.copy(datazip, path)
+
+            self.logger.info("Updating project data metadata")
+            publishedconfig['data_date'] = datadate
+            publishedconfig.save()
+        else:
+            self.logger.info("Data already on latest version")

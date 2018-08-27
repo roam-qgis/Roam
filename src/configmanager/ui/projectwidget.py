@@ -1,35 +1,23 @@
-import sys
 import os
 import copy
-import subprocess
-import shutil
-import functools
 
-from datetime import datetime
+from PyQt4.QtCore import Qt, QDir, QFileInfo, pyqtSignal, QFileSystemWatcher
+from PyQt4.QtGui import (QWidget, QMessageBox, QMenu,
+                         QFileDialog)
 
-from PyQt4.QtCore import Qt, QDir, QFileInfo, pyqtSignal, QModelIndex, QFileSystemWatcher, QUrl
-from PyQt4.QtGui import (QWidget, QStandardItemModel, QStandardItem, QIcon, QMessageBox, QPixmap, QDesktopServices, QMenu,
-                         QToolButton, QFileDialog)
-
-from qgis.core import QgsProject, QgsMapLayerRegistry, QgsPalLabeling, QGis, QgsProjectBadLayerHandler
-from qgis.gui import QgsMapCanvas, QgsExpressionBuilderDialog, QgsMessageBar
+from qgis.core import QgsProject, QgsMapLayerRegistry, QGis, QgsProjectBadLayerHandler
+from qgis.gui import QgsMessageBar
 
 from configmanager.ui.ui_projectwidget import Ui_Form
-from configmanager.models import widgeticon, WidgetItem, WidgetsModel, QgsLayerModel, QgsFieldModel, LayerTypeFilter, \
-    CaptureLayerFilter, CaptureLayersModel
 from configmanager.utils import openqgis, openfolder
 
-from roam.api import FeatureForm
-from roam import bundle
+from configmanager import bundle
 
-import configmanager.editorwidgets
 import roam.editorwidgets
 import roam.projectparser
-import yaml
 import roam
 import roam.project
 import roam.config
-import configmanager.logger as logger
 import configmanager.QGIS as QGIS
 import roam.utils
 

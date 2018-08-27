@@ -1,10 +1,6 @@
 import yaml
 import os
 
-defaults = {
-
-}
-
 import roam.utils
 
 
@@ -18,7 +14,10 @@ class Config:
         self.logger = roam.utils.logger
 
     @classmethod
-    def from_file(cls, file):
+    def from_file(cls, file, defaults=None):
+        if not defaults:
+            defaults = {}
+
         _settings = defaults
         if os.path.exists(file):
             with open(file) as f:
@@ -29,7 +28,7 @@ class Config:
         return Config(_settings, file)
 
     def get(self, key, default=None):
-        self.settings.get(key, default)
+        return self.settings.get(key, default)
 
     def set(self, key, value):
         self.settings[key] = value
