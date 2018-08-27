@@ -9,6 +9,7 @@ from qgis.core import QgsProviderRegistry
 from configmanager.ui.nodewidgets import ui_datawidget
 from configmanager.ui.widgets.widgetbase import WidgetBase
 from configmanager.utils import openfolder
+from configmanager.services.dataservice import DataService
 
 
 class DataWidget(ui_datawidget.Ui_widget, WidgetBase):
@@ -50,5 +51,4 @@ class DataWidget(ui_datawidget.Ui_widget, WidgetBase):
 
     def write_config(self):
         self.logger.info("Data write config")
-        self.config.set("data_save_date", QDateTime.currentDateTimeUtc().toString(Qt.ISODate))
-        self.config.save()
+        DataService(self.config).update_date_to_latest()

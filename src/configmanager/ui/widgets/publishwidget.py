@@ -5,6 +5,8 @@ import tempfile
 
 from configmanager.ui.nodewidgets import ui_publishwidget
 from configmanager.ui.widgets.widgetbase import WidgetBase
+from configmanager.services.dataservice import DataService
+
 from PyQt4.QtGui import QTableWidgetItem, QHeaderView, QApplication
 
 import configmanager.bundle
@@ -74,7 +76,7 @@ class PublishWidget(ui_publishwidget.Ui_widget, WidgetBase):
 
         self.progressBar.show()
         dataoptions = {
-            "data_date": self.config['data_save_date']
+            "data_date": DataService(self.config).read()['data_save_date']
         }
         for projectconfig in self.get_project_depoly_settings(all_projects=all_projects).itervalues():
             ## Gross but quicker then threading at the moment.
@@ -141,7 +143,10 @@ class PublishWidget(ui_publishwidget.Ui_widget, WidgetBase):
         publishedconfig = configmanager.bundle.get_config(path)
 
         publihseddatadata = publishedconfig.get('data_date', None)
-        datadate = dataoptions['data_date']
+        datadate = dataoptions.get('data_date', None)
+        if datadate is None:
+            DataService(self.config).update_date_to_latest()
+
         if publihseddatadata != datadate:
             self.logger.info(
                 "Updating _data.zip file to latest data. Publish date {} vs {}".format(publihseddatadata, datadate))
