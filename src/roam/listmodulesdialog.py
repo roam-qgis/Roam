@@ -115,7 +115,7 @@ class ProjectsWidget(Ui_ListModules, QWidget):
         self.moduleList.itemClicked.connect(self.openProject)
         self.projectitems = {}
         self.project_base = None
-        self.statusLabel.hide()
+        self.progressFrame.hide()
 
     def showEvent(self, event):
         self.search_for_updates.emit()
@@ -200,13 +200,15 @@ class ProjectsWidget(Ui_ListModules, QWidget):
         widget.update_status("installed")
 
     def update_project_status(self, projectname, status):
+        if status.lower() in ["complete", 'installed']:
+            self.progressFrame.hide()
+        else:
+            self.progressFrame.show()
+            self.statusLabel.setText("({}..) {}".format(status, projectname))
+
         try:
             item = self.projectitems[projectname]
             widget = self.item_widget(item)
             widget.update_status(status)
         except KeyError:
-            if status.lower() in ["complete", 'installed']:
-                self.statusLabel.hide()
-            else:
-                self.statusLabel.show()
-                self.statusLabel.setText("({}..) {}".format(status, projectname))
+            pass

@@ -14,6 +14,7 @@ import roam.utils
 from collections import defaultdict
 from PyQt4.QtNetwork import QNetworkRequest, QNetworkAccessManager, QNetworkReply
 from PyQt4.QtCore import QObject, pyqtSignal, QUrl, QThread
+from PyQt4.QtGui import QApplication
 
 from qgis.core import QgsNetworkAccessManager
 
@@ -85,11 +86,6 @@ def install_project(info, basefolder, serverurl):
     os.chdir(project.folder)
     yield "Running update scripts.."
     run_install_script(project.settings, "after_update")
-
-    # Update the project after install because it might be out of date.
-    for status in update_project(project, serverurl):
-        yield status
-
 
 def download_file(url, fileout):
     """
@@ -246,6 +242,7 @@ class UpdateWorker(QObject):
         roam.utils.debug(project + ": " + status)
 
     def run(self):
+        print("RUN FOREST RUN!")
         while True:
             project, version, server, is_new = forupdate.get()
             ## TODO Check _data date
@@ -324,6 +321,8 @@ class ProjectUpdater(QObject):
             serverversions = parse_serverprojects(content)
             updateable = list(updateable_projects(installedprojects, serverversions))
             new = list(new_projects(installedprojects, serverversions))
+            print(updateable)
+            print(new)
             if updateable or new:
                 self.foundProjects.emit(updateable, new)
         else:
@@ -332,13 +331,13 @@ class ProjectUpdater(QObject):
             # RoamEvents.raisemessage("Project Server Message", msg, level=RoamEvents.WARNING)
 
     def update_project(self, project, version):
+        self.updatethread.start()
         self.projectUpdateStatus.emit(project.name, "Pending")
         forupdate.put((project, version, self.server, False))
-        self.updatethread.start()
 
     def install_project(self, projectinfo):
+        self.updatethread.start()
         self.projectUpdateStatus.emit(projectinfo['name'], "Pending")
         is_new = True
         forupdate.put((projectinfo, projectinfo['version'], self.server, is_new))
-        self.updatethread.start()
 
