@@ -55,31 +55,6 @@
      </item>
     </layout>
    </item>
-   <item row="3" column="0">
-    <widget class="QProgressBar" name="progressBar">
-     <property name="minimum">
-      <number>0</number>
-     </property>
-     <property name="maximum">
-      <number>0</number>
-     </property>
-     <property name="value">
-      <number>-1</number>
-     </property>
-     <property name="textVisible">
-      <bool>false</bool>
-     </property>
-     <property name="orientation">
-      <enum>Qt::Horizontal</enum>
-     </property>
-     <property name="invertedAppearance">
-      <bool>false</bool>
-     </property>
-     <property name="format">
-      <string/>
-     </property>
-    </widget>
-   </item>
    <item row="1" column="0">
     <layout class="QHBoxLayout" name="horizontalLayout_2">
      <item>
@@ -118,7 +93,7 @@
      </item>
     </layout>
    </item>
-   <item row="4" column="0">
+   <item row="3" column="0">
     <widget class="QTableWidget" name="tableWidget">
      <property name="editTriggers">
       <set>QAbstractItemView::DoubleClicked</set>
@@ -175,6 +150,13 @@
        <string>Publish Version</string>
       </property>
      </column>
+    </widget>
+   </item>
+   <item row="2" column="0">
+    <widget class="QLabel" name="progressLabel">
+     <property name="text">
+      <string>Depolying projects...</string>
+     </property>
     </widget>
    </item>
   </layout>

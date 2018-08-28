@@ -31,7 +31,7 @@ class PublishWidget(ui_publishwidget.Ui_widget, WidgetBase):
         self.publishProjectsButtons.pressed.connect(functools.partial(self.deploy_projects, False))
         self.publishProjectsAllButton.pressed.connect(functools.partial(self.deploy_projects, True))
         self.openFoldersButton.pressed.connect(self.open_folders)
-        self.progressBar.hide()
+        self.progressLabel.hide()
         self.projects = {}
         self.cache = {}
 
@@ -74,7 +74,7 @@ class PublishWidget(ui_publishwidget.Ui_widget, WidgetBase):
     def deploy_projects(self, all_projects=False):
         self.write_config()
 
-        self.progressBar.show()
+        self.progressLabel.show()
         dataoptions = {
             "data_date": DataService(self.config).read()['data_save_date']
         }
@@ -86,7 +86,7 @@ class PublishWidget(ui_publishwidget.Ui_widget, WidgetBase):
             self.deploy_data(projectconfig, dataoptions)
             self.deploy_project(projectconfig)
             self.logger.info("Updating project.config")
-        self.progressBar.hide()
+        self.progressLabel.hide()
         self.reload_projects()
 
     def get_project_depoly_settings(self, all_projects):
