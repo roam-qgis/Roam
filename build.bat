@@ -67,6 +67,11 @@ ECHO Running tests
 py.test src\roam.tests
 GOTO END
 
+:design
+ECHO Opening desinger
+START designer.exe
+GOTO END
+
 :help
 ECHO ===========================
 ECHO        OPTIONS
@@ -77,6 +82,7 @@ ECHO build 2.18 exe
 ECHO build 2.18 release
 ECHO build 2.18 test
 ECHO build 2.18 test-only
+ECHO build 2.18 design
 GOTO END
 
 :END
