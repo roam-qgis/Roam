@@ -32,6 +32,7 @@ class DataWidget(ui_datawidget.Ui_widget, WidgetBase):
         self.btnAddData.pressed.connect(self.open_data_folder)
         for col in range(self.model.columnCount())[1:]:
             self.listDataList.hideColumn(col)
+        self.service = None
 
     def open_data_folder(self):
         """
@@ -42,13 +43,20 @@ class DataWidget(ui_datawidget.Ui_widget, WidgetBase):
 
     def set_data(self, data):
         super(DataWidget, self).set_data(data)
+        self.service = DataService(self.config)
+
         root = data['data_root']
 
         if not os.path.exists(root):
             os.mkdir(root)
         self.model.setRootPath(root)
         self.listDataList.setRootIndex(self.model.index(root))
+        self.refresh()
 
     def write_config(self):
         self.logger.info("Data write config")
         DataService(self.config).update_date_to_latest()
+        super(DataWidget, self).write_config()
+
+    def refresh(self):
+        self.lastSaveLabel.setText("Last save date: {}".format(self.service.last_save_date))

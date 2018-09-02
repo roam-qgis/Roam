@@ -25,3 +25,6 @@ class DataService(BaseService):
             "data_save_date": self.config.get("data_save_date", None)
         }
 
+    @property
+    def last_save_date(self):
+        return QDateTime.fromString(self.read()["data_save_date"], Qt.ISODate).toString()

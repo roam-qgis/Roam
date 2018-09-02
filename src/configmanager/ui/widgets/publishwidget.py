@@ -34,6 +34,7 @@ class PublishWidget(ui_publishwidget.Ui_widget, WidgetBase):
         self.progressLabel.hide()
         self.projects = {}
         self.cache = {}
+        self.dataservice = None
 
     def open_folders(self):
         projects = self.get_project_depoly_settings(all_projects=False).itervalues()
@@ -48,7 +49,9 @@ class PublishWidget(ui_publishwidget.Ui_widget, WidgetBase):
 
     def set_data(self, data):
         super(PublishWidget, self).set_data(data)
+        self.dataservice = DataService(self.config)
         self.reload_projects()
+        self.refresh()
 
     def reload_projects(self):
         projects = list(roam.project.getProjects([self.data['projects_root']]))
@@ -70,6 +73,10 @@ class PublishWidget(ui_publishwidget.Ui_widget, WidgetBase):
         projects = self.get_project_depoly_settings(True)
         self.config['projects'] = projects
         self.config.save()
+        super(PublishWidget, self).write_config()
+
+    def refresh(self):
+        self.lastSaveLabel.setText(self.dataservice.last_save_date)
 
     def deploy_projects(self, all_projects=False):
         self.write_config()
@@ -88,6 +95,8 @@ class PublishWidget(ui_publishwidget.Ui_widget, WidgetBase):
             self.logger.info("Updating project.config")
         self.progressLabel.hide()
         self.reload_projects()
+
+        self.write_config()
 
     def get_project_depoly_settings(self, all_projects):
         projects = {}

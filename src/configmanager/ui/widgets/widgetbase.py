@@ -22,6 +22,9 @@ class WidgetBase(QWidget):
         """
         Write the config back to the project settings.
         """
+        self.refresh()
+
+    def refresh(self):
         pass
 
     def set_data(self, data):
