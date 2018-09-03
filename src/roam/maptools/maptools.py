@@ -571,7 +571,10 @@ class PolylineTool(QgsMapToolEdit):
             if geomtype == QGis.Polygon:
                 nodes = geom.asPolygon()[0]
             else:
-                nodes = geom.asPolyline()
+                if geom.isMultipart():
+                    nodes = [item for sublist in geom.asMultiPolyline() for item in sublist]
+                else:
+                    nodes = geom.asPolyline()
             for node in nodes:
                 self.pointband.addPoint(node)
             self.band.setToGeometry(geom, None)
