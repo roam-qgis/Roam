@@ -9,6 +9,7 @@ from roam.api import GPS, RoamEvents
 import roam.config
 
 import roam.resources_rc
+import roam.utils
 
 
 class RubberBand(QgsRubberBand):
@@ -176,6 +177,7 @@ class PolylineTool(QgsMapToolEdit):
 
     def __init__(self, canvas, config=None):
         super(PolylineTool, self).__init__(canvas)
+        self.logger = roam.utils.logger
         if not config:
             self.config = {}
         else:
@@ -529,7 +531,10 @@ class PolylineTool(QgsMapToolEdit):
     def reset(self, *args):
         self.band.reset(QGis.Line)
         self.pointband.reset(QGis.Point)
-        self.points = []
+        self.capturing = False
+        self.set_tracking(False)
+        self.undoaction.setEnabled(False)
+        self.endcaptureaction.setEnabled(False)
 
     def activate(self):
         self.canvas.setCursor(self.cursor)
@@ -548,9 +553,6 @@ class PolylineTool(QgsMapToolEdit):
 
     def isEditTool(self):
         return True
-
-    def cadCanvasMoveEvent(self, e):
-        print e
 
     def snappoint(self, event):
         if not self.snapping:
