@@ -493,6 +493,7 @@ class MapWidget(Ui_CanvasWidget, QMainWindow):
         Called when the snapping settings have changed. Updates the label in the status bar.
         :param snapping:
         """
+        self.snapping = snapping
         if snapping:
             self.snappingbutton.setText("Snapping: On")
         else:
