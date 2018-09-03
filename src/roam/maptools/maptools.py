@@ -497,6 +497,8 @@ class PolylineTool(QgsMapToolEdit):
         self.remove_last_point()
 
     def endcapture(self):
+        if not self.editmode:
+            self.band.removeLastPoint()
         errors = self.has_errors()
         if errors and self.config.get("geometry_validation", True):
             self.error.emit("Invalid geometry. <br>"
@@ -510,8 +512,6 @@ class PolylineTool(QgsMapToolEdit):
         self.captureaction.setChecked(True)
         self.undoaction.setEnabled(False)
         self.endcaptureaction.setEnabled(False)
-        if not self.editmode:
-            self.band.removeLastPoint()
         geometry = self.band.asGeometry()
         if not geometry:
             return
