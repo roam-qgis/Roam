@@ -6,6 +6,12 @@ class BaseService(object):
         import roam.utils
         self.logger = roam.utils.logger
 
+    def save(self):
+        pass
+
+    def read(self):
+        pass
+
 
 class DataService(BaseService):
     def __init__(self, config):
@@ -27,4 +33,8 @@ class DataService(BaseService):
 
     @property
     def last_save_date(self):
+        """
+        Return the last save date for the _data folder.
+        :return:
+        """
         return QDateTime.fromString(self.read()["data_save_date"], Qt.ISODate).toString()
