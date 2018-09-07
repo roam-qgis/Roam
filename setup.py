@@ -212,12 +212,15 @@ class qtbuild(build):
 
 class roamclean(clean):
     def run(self):
-        if os.environ.get("CLEAN", "YES").lower() ==  "no":
+        if os.environ.get("CLEAN", "YES").lower() == "no":
             print("Skipping clean due to CLEAN == NO")
             return
         print("Removing .roambuild")
         if os.path.exists(".roambuild"):
             os.remove(".roambuild")
+        print("Removing .dist")
+        if os.path.exists("dist"):
+            shutil.rmtree("dist")
         clean.run(self)
 
 
@@ -242,7 +245,7 @@ dll_excludes = ["MSVFW32.dll",
                  "ADVAPI32.dll",
                  "CRYPT32.dll",
                  "WLDAP32.dll",
-                "Secur32.dll",
+                "SECUR32.dll",
                 'msvcr80.dll', 'msvcp80.dll',
                  'msvcr80d.dll', 'msvcp80d.dll',
                  'powrprof.dll', 'mswsock.dll',

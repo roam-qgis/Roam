@@ -36,6 +36,13 @@ python setup.py build
 python setup.py py2exe
 GOTO END
 
+:clean
+SET OLD_CLEAN=%CLEAN%
+SET CLEAN=YES
+python setup.py clean
+SET CLEAN=%OLD_CLEAN%
+GOTO END
+
 :release
 ECHO Building release
 python setup.py clean
