@@ -153,7 +153,7 @@ class PublishNode(Treenode):
     title = "Project and Data Publish"
 
     def __init__(self, text="Publish", project=None, folder=None):
-        super(PublishNode, self).__init__(text, QIcon(":/icons/map"), project)
+        super(PublishNode, self).__init__(text, QIcon(":/icons/syncinfo"), project)
         self._text = text
         self.nodes = {}
         self.hascount = False
