@@ -51,7 +51,7 @@ class PublishWidget(ui_publishwidget.Ui_widget, WidgetBase):
     def open_folders(self):
         projects = self.get_project_depoly_settings(all_projects=False).itervalues()
         for project in projects:
-            openfolder(project['path'])
+            openfolder(self.resolve_path(project['path']))
 
     def get_project_deploy_path(self, id):
         try:
@@ -90,6 +90,13 @@ class PublishWidget(ui_publishwidget.Ui_widget, WidgetBase):
     def refresh(self):
         self.lastSaveLabel.setText(self.dataservice.last_save_date)
 
+    def resolve_path(self, path):
+        if not path:
+            path = self.deployLocationText.text()
+        if not path:
+            path = os.path.join(self.roamapp.profileroot, "roam_serv")
+        return path
+
     def deploy_projects(self, all_projects=False):
         self.write_config()
 
@@ -100,7 +107,8 @@ class PublishWidget(ui_publishwidget.Ui_widget, WidgetBase):
         for projectconfig in self.get_project_depoly_settings(all_projects=all_projects).itervalues():
             ## Gross but quicker then threading at the moment.
             QApplication.instance().processEvents()
-            ## Save first to bump to version up.
+            ## Fix the path to use the global location, or the roam_srv if that isn't set.
+            projectconfig['path'] = self.resolve_path(projectconfig['path'])
             self.projects[projectconfig['id']].save(update_version=True, reset_save_point=True)
             self.deploy_data(projectconfig, dataoptions)
             self.deploy_project(projectconfig)
@@ -120,6 +128,7 @@ class PublishWidget(ui_publishwidget.Ui_widget, WidgetBase):
             id = self.tableWidget.item(row, 0).data(0)
             name = self.tableWidget.item(row, 1).data(0)
             path = self.tableWidget.item(row, 2).data(0)
+
             if name not in seen:
                 projects[id] = {
                     "id": id,

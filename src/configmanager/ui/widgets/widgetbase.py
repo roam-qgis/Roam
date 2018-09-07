@@ -10,6 +10,7 @@ class WidgetBase(QWidget):
         self.logger = roam.utils.logger
         self.config = None
         self.data = None
+        self.roamapp = None
 
     def set_project(self, project, treenode):
         self.project = project

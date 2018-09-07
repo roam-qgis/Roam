@@ -145,6 +145,7 @@ class ProjectWidget(Ui_Form, QWidget):
         self.project = node.project
 
         widget = self.stackedWidget.currentWidget()
+        widget.roamapp = self.roamapp
         if hasattr(widget, "set_project"):
             widget.set_project(self.project, self.currentnode)
         if hasattr(widget, "set_data"):
