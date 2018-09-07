@@ -8,6 +8,7 @@ from PyQt4.QtGui import QWidget
 
 from qgis.core import QgsFeature, QgsPoint
 
+
 class _Events(QObject):
     # Emit when you need to open a image in the main window
 
@@ -19,27 +20,15 @@ class _Events(QObject):
 
     openimage = pyqtSignal(object)
 
-    #Emit to open a url
+    # Emit to open a url
     openurl = pyqtSignal(QUrl)
 
     # Emit when requesting to open a feature form.
     openfeatureform = pyqtSignal(object, QgsFeature, bool, bool, object, object)
+
     deletefeature = pyqtSignal(object, QgsFeature)
 
     snappingChanged = pyqtSignal(bool)
-
-    def delete_feature(self, form, feature):
-        self.deletefeature.emit(form, feature)
-
-    def load_feature_form(self, form, feature, editmode, clearcurrent=True, callback=None, cancel_callback=None):
-        """
-        Load a form into the data entry tab.
-        :param form: The Form to load. See roam.project.Form
-        :param feature: Feature to load
-        :param editmode: Open in edit mode
-        :param clearcurrent: Clear the current stack of open widgets.
-        """
-        self.openfeatureform.emit(form, feature, editmode, clearcurrent, callback, cancel_callback)
 
     editgeometry = pyqtSignal(object, QgsFeature)
 
@@ -53,8 +42,11 @@ class _Events(QObject):
     activeselectionchanged = pyqtSignal(object, QgsFeature, list)
 
     projectloaded = pyqtSignal(object)
+
     closeProject = pyqtSignal(object)
+
     projectClosing = pyqtSignal()
+
     projectClosed = pyqtSignal(object)
 
     helprequest = pyqtSignal(QWidget, str)
@@ -70,6 +62,20 @@ class _Events(QObject):
     sync_complete = pyqtSignal()
 
     refresh_map = pyqtSignal()
+    show_widget = pyqtSignal(object, object, object, dict)
+
+    def delete_feature(self, form, feature):
+        self.deletefeature.emit(form, feature)
+
+    def load_feature_form(self, form, feature, editmode, clearcurrent=True, callback=None, cancel_callback=None):
+        """
+        Load a form into the data entry tab.
+        :param form: The Form to load. See roam.project.Form
+        :param feature: Feature to load
+        :param editmode: Open in edit mode
+        :param clearcurrent: Clear the current stack of open widgets.
+        """
+        self.openfeatureform.emit(form, feature, editmode, clearcurrent, callback, cancel_callback)
 
     def close_project(self, project=None):
         self.closeProject.emit(project)
@@ -84,8 +90,6 @@ class _Events(QObject):
         :param extra: Any extra information to show the user on click.
         """
         self.onShowMessage.emit(title, message, level, duration, extra)
-
-    show_widget = pyqtSignal(object, object, object, dict)
 
 
 RoamEvents = _Events()
