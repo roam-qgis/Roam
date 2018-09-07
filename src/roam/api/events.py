@@ -69,6 +69,8 @@ class _Events(QObject):
 
     sync_complete = pyqtSignal()
 
+    refresh_map = pyqtSignal()
+
     def close_project(self, project=None):
         self.closeProject.emit(project)
 

@@ -408,6 +408,7 @@ class MapWidget(Ui_CanvasWidget, QMainWindow):
         self.gpsband.setColor(QColor(165, 111, 212, 75))
         self.gpsband.setWidth(5)
 
+        RoamEvents.refresh_map.connect(self.refresh_map)
         RoamEvents.editgeometry.connect(self.queue_feature_for_edit)
         RoamEvents.selectioncleared.connect(self.clear_selection)
         RoamEvents.selectionchanged.connect(self.highlight_selection)
