@@ -7,7 +7,7 @@ from configmanager.ui.nodewidgets import ui_publishwidget
 from configmanager.ui.widgets.widgetbase import WidgetBase
 from configmanager.services.dataservice import DataService
 
-from PyQt4.QtGui import QTableWidgetItem, QHeaderView, QApplication
+from PyQt4.QtGui import QTableWidgetItem, QHeaderView, QApplication, QFileDialog
 
 import configmanager.bundle
 import roam.project
@@ -32,9 +32,21 @@ class PublishWidget(ui_publishwidget.Ui_widget, WidgetBase):
         self.publishProjectsAllButton.pressed.connect(functools.partial(self.deploy_projects, True))
         self.openFoldersButton.pressed.connect(self.open_folders)
         self.progressLabel.hide()
+        self.filePickerButton.pressed.connect(self.pick_folder)
+        self.updatePathsButton.pressed.connect(self.update_all_paths)
         self.projects = {}
         self.cache = {}
         self.dataservice = None
+
+    def update_all_paths(self):
+        for row in range(self.tableWidget.rowCount()):
+            item = self.tableWidget.item(row, 2)
+            item.setText(self.deployLocationText.text())
+
+    def pick_folder(self):
+        path = QFileDialog().getExistingDirectory(self, "Select project publish location",
+                                                  self.deployLocationText.text())
+        self.deployLocationText.setText(path)
 
     def open_folders(self):
         projects = self.get_project_depoly_settings(all_projects=False).itervalues()

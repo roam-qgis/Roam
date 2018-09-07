@@ -15,7 +15,7 @@ import roam.updater
 
 
 class ProjectWidget(Ui_Form, QWidget):
-    update_project = pyqtSignal(object, object)
+    update_project = pyqtSignal(dict)
     install_project = pyqtSignal(dict)
 
     def __init__(self, parent, project, is_new=False):
@@ -23,6 +23,7 @@ class ProjectWidget(Ui_Form, QWidget):
         self.setupUi(self)
         self._serverversion = None
         self.project = project
+        self.serverinfo = {}
         self.is_new = is_new
         if self.is_new:
             self.updateButton.setText("Install project")
@@ -95,14 +96,14 @@ class ProjectWidget(Ui_Form, QWidget):
 
     def request_update(self):
         if self.is_new:
-            self.install_project.emit(self.project)
+            self.install_project.emit(self.serverinfo)
         else:
-            self.update_project.emit(self.project, self.serverversion)
+            self.update_project.emit(self.serverinfo)
 
 
 class ProjectsWidget(Ui_ListModules, QWidget):
     requestOpenProject = pyqtSignal(object)
-    projectUpdate = pyqtSignal(object, object)
+    projectUpdate = pyqtSignal(object)
     search_for_updates = pyqtSignal()
     projectInstall = pyqtSignal(dict)
 
@@ -115,6 +116,7 @@ class ProjectsWidget(Ui_ListModules, QWidget):
         self.moduleList.itemClicked.connect(self.openProject)
         self.projectitems = {}
         self.project_base = None
+        self.progressFrame.hide()
 
     def showEvent(self, event):
         self.search_for_updates.emit()
@@ -126,28 +128,32 @@ class ProjectsWidget(Ui_ListModules, QWidget):
             if not project.valid:
                 roam.utils.warning("Project {0} is invalid because {1}".format(project.name, project.error))
 
-            self.add_new_item(project.name, project, is_new=False, is_valid=project.valid)
+            self.add_new_item(project.id, project, is_new=False, is_valid=project.valid)
 
     def show_new_updateable(self, updateprojects, newprojects):
         print updateprojects, newprojects
-        for project, info in updateprojects:
-            item = self.projectitems[project.name]
+        for info in updateprojects:
+            projectid = info['projectid']
+            item = self.projectitems[projectid]
             widget = self.item_widget(item)
             widget.serverversion = info['version']
+            widget.serverinfo = info
 
         for info in newprojects:
+            projectid = info['projectid']
             if info['name'] in self.projectitems:
-                self.update_item(info['name'], info)
+                self.update_item(projectid, info)
             else:
-                self.add_new_item(info['name'], info, is_new=True)
+                self.add_new_item(projectid, info, is_new=True)
 
-    def update_item(self, name, info):
-        item = self.projectitems[name]
+    def update_item(self, projectid, info):
+        item = self.projectitems[projectid]
         item.setData(QListWidgetItem.UserType, info)
         widget = self.moduleList.itemWidget(item)
         widget.project = info
-    
-    def add_new_item(self, name, project, is_new=False, is_valid=True):
+        widget.serverinfo = info
+
+    def add_new_item(self, projectid, project, is_new=False, is_valid=True):
         item = QListWidgetItem(self.moduleList, QListWidgetItem.UserType)
         item.setData(QListWidgetItem.UserType, project)
         item.setSizeHint(QSize(150, 150))
@@ -158,11 +164,12 @@ class ProjectsWidget(Ui_ListModules, QWidget):
         projectwidget.install_project.connect(self.projectInstall.emit)
         projectwidget.update_project.connect(self.projectUpdate.emit)
         projectwidget.setEnabled(is_valid)
+        projectwidget.serverinfo = project
 
         self.moduleList.addItem(item)
         self.moduleList.setItemWidget(item, projectwidget)
 
-        self.projectitems[name] = item
+        self.projectitems[projectid] = item
 
     def item_widget(self, item):
         return self.moduleList.itemWidget(item)
@@ -181,14 +188,16 @@ class ProjectsWidget(Ui_ListModules, QWidget):
         self.set_open_project(project)
 
     def set_open_project(self, currentproject):
-        for project, item in self.projectitems.iteritems():
+        for projectid, item in self.projectitems.iteritems():
             widget = self.item_widget(item)
+            if widget.is_new:
+                continue
+
             project = widget.project
-            if currentproject and not isinstance(project, dict):
-                showclose = currentproject.basefolder == project.basefolder
+            if currentproject is None:
+                widget.show_close(False)
             else:
-                showclose = False
-            widget.show_close(showclose)
+                widget.show_close(currentproject.id == project.id)
 
     def project_installed(self, projectname):
         project = roam.project.Project.from_folder(os.path.join(self.project_base, projectname))
@@ -199,6 +208,15 @@ class ProjectsWidget(Ui_ListModules, QWidget):
         widget.update_status("installed")
 
     def update_project_status(self, projectname, status):
-        item = self.projectitems[projectname]
-        widget = self.item_widget(item)
-        widget.update_status(status)
+        if status.lower() in ["complete", 'installed']:
+            self.progressFrame.hide()
+        else:
+            self.progressFrame.show()
+            self.statusLabel.setText("{}: {}".format(projectname, status))
+
+        try:
+            item = self.projectitems[projectname]
+            widget = self.item_widget(item)
+            widget.update_status(status)
+        except KeyError:
+            pass

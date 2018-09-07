@@ -14,11 +14,13 @@ import roam.utils
 from collections import defaultdict
 from PyQt4.QtNetwork import QNetworkRequest, QNetworkAccessManager, QNetworkReply
 from PyQt4.QtCore import QObject, pyqtSignal, QUrl, QThread
+from PyQt4.QtGui import QApplication
 
 from qgis.core import QgsNetworkAccessManager
 
-from roam.api import  RoamEvents
+from roam.api import RoamEvents
 import roam.project
+import roam.config
 
 
 def add_slash(url):
@@ -32,6 +34,8 @@ def checkversion(toversion, fromversion):
 
 
 def parse_serverprojects(configdata):
+    roam.utils.info("Project server data")
+    roam.utils.info(configdata)
     if not configdata:
         return {}
 
@@ -39,28 +43,36 @@ def parse_serverprojects(configdata):
         configdata = yaml.load(configdata)
 
     versions = defaultdict(dict)
+    datadate = configdata.get('data_date', None)
     for project, data in configdata['projects'].iteritems():
         version = int(data["version"])
         path = project + ".zip"
         title = data['title']
+        projectid = data.get('id', data['name'])
         name = project
         desc = data["description"]
         data = dict(path=path,
                     version=version,
                     name=name,
                     title=title,
-                    description=desc)
+                    description=desc,
+                    projectid=projectid,
+                    data_date=datadate)
         versions[project][version] = data
     return dict(versions)
 
 
-def install_project(info, basefolder, serverurl):
+def install_project(info, basefolder, serverurl, updateMode=False):
     if not serverurl:
         roam.utils.warning("No server url set for update")
         raise ValueError("No server url given")
 
     roam.utils.info("Downloading project zip")
-    filename = "{}-Install.zip".format(info['name'])
+    if updateMode:
+        filename = "{}.zip".format(info['name'])
+    else:
+        filename = "{}-Install.zip".format(info['name'])
+
     serverurl = add_slash(serverurl)
     url = urlparse.urljoin(serverurl, "projects/{}".format(filename))
 
@@ -81,10 +93,7 @@ def install_project(info, basefolder, serverurl):
     os.chdir(project.folder)
     yield "Running update scripts.."
     run_install_script(project.settings, "after_update")
-
-    # Update the project after install because it might be out of date.
-    for status in update_project(project, serverurl):
-        yield status
+    project.projectUpdated.emit(project)
 
 
 def download_file(url, fileout):
@@ -93,10 +102,12 @@ def download_file(url, fileout):
 
     Will open and write to fileout
     """
+    roam.utils.debug("Opening URL: {}".format(url))
     result = urllib2.urlopen(url)
     length = result.headers['content-length']
 
     length = int(length) / 1024 / 1024
+    roam.utils.debug("Length: {}".format(length))
     yield "Downloading 0/{}MB".format(length)
     bytes_done = 0
     with open(fileout, "wb") as f:
@@ -111,43 +122,6 @@ def download_file(url, fileout):
             f.write(data)
             so_far = bytes_done / 1024 / 1024
             yield "Downloading {}/{}MB".format(so_far, length)
-
-
-def update_project(project, serverurl):
-    """
-    Download the update zip file for the project from the server
-    """
-    if not serverurl:
-        roam.utils.warning("No server url set for update")
-        raise ValueError("No server url given")
-
-    roam.utils.info("Downloading project zip")
-    serverurl = add_slash(serverurl)
-
-    rootfolder = os.path.join(project.folder, "..")
-    tempfolder = os.path.join(rootfolder, "_updates")
-    if not os.path.exists(tempfolder):
-        os.mkdir(tempfolder)
-
-    os.chdir(project.folder)
-    yield "Running pre update scripts.."
-    run_install_script(project.settings, "before_update")
-
-    filename = "{}.zip".format(project.basefolder)
-    url = urlparse.urljoin(serverurl, "projects/{}".format(filename))
-    zippath = os.path.join(tempfolder, filename)
-    for status in download_file(url, zippath):
-        yield status
-
-    yield "Installing"
-    with zipfile.ZipFile(zippath, "r") as z:
-        z.extractall(rootfolder)
-
-    os.chdir(project.folder)
-    yield "Running update scripts.."
-    run_install_script(project.settings, "after_update")
-
-    project.projectUpdated.emit(project)
 
 
 def run_install_script(settings, section):
@@ -186,7 +160,7 @@ def updateable_projects(projects, serverprojects):
         canupdate = can_update(project.basefolder, project.version, serverprojects)
         if canupdate:
             info = get_project_info(project.basefolder, serverprojects)
-            yield project, info
+            yield info
 
 
 def new_projects(projects, serverprojects):
@@ -208,10 +182,52 @@ class UpdateWorker(QObject):
         super(UpdateWorker, self).__init__()
         self.server = None
         self.basefolder = basefolder
+        self.projectUpdateStatus.connect(self.status_updated)
+
+    def fetch_data(self, rootfolder, filename, serverurl):
+        """
+        Download the update zip file for the project from the server
+        """
+        serverurl = add_slash(serverurl)
+
+        tempfolder = os.path.join(rootfolder, "_updates")
+        if not os.path.exists(tempfolder):
+            os.mkdir(tempfolder)
+
+        filename = "{}.zip".format(filename)
+        url = urlparse.urljoin(serverurl, "projects/{}".format(filename))
+        zippath = os.path.join(tempfolder, filename)
+        roam.utils.info("Downloading project zip {}".format(url))
+        for status in download_file(url, zippath):
+            yield status
+
+        yield "Extracting data.."
+        with zipfile.ZipFile(zippath, "r") as z:
+            members = z.infolist()
+            for i, member in enumerate(members):
+                z.extract(member, rootfolder)
+                roam.utils.debug("Extracting: {}".format(member.filename))
+
+        yield "Done"
+
+    def status_updated(self, project, status):
+        roam.utils.debug(project + ": " + status)
 
     def run(self):
         while True:
             project, version, server, is_new = forupdate.get()
+            datadate = project["data_date"]
+            datafolder = os.path.join(self.basefolder, "_data")
+            if datadate != roam.config.settings.get("data_date", None) or not os.path.exists(datafolder):
+                self.projectUpdateStatus.emit("Data", "Downloading Data..")
+                for status in self.fetch_data(self.basefolder, "_data", server):
+                    self.projectUpdateStatus.emit("Data", status)
+                self.projectUpdateStatus.emit("Data", "Installed")
+                roam.config.settings["data_date"] = datadate
+                roam.config.save()
+            else:
+                roam.utils.info("Data download skipped. Already up to date.")
+
             if is_new:
                 name = project['name']
                 self.projectUpdateStatus.emit(name, "Installing")
@@ -220,9 +236,9 @@ class UpdateWorker(QObject):
                 self.projectUpdateStatus.emit(name, "Installed")
                 self.projectInstalled.emit(name)
             else:
-                name = project.name
+                name = project['name']
                 self.projectUpdateStatus.emit(name, "Updating")
-                for status in update_project(project, server):
+                for status in install_project(project, self.basefolder, server, updateMode=True):
                     self.projectUpdateStatus.emit(name, status)
                 self.projectUpdateStatus.emit(name, "Complete")
 
@@ -281,16 +297,17 @@ class ProjectUpdater(QObject):
             serverversions = parse_serverprojects(content)
             updateable = list(updateable_projects(installedprojects, serverversions))
             new = list(new_projects(installedprojects, serverversions))
+            print(updateable)
+            print(new)
             if updateable or new:
                 self.foundProjects.emit(updateable, new)
         else:
             msg = "Error in network request for projects: {}".format(reply.errorString())
             roam.utils.warning(msg)
-            # RoamEvents.raisemessage("Project Server Message", msg, level=RoamEvents.WARNING)
 
-    def update_project(self, project, version):
-        self.projectUpdateStatus.emit(project.name, "Pending")
-        forupdate.put((project, version, self.server, False))
+    def update_project(self, projectinfo):
+        self.projectUpdateStatus.emit(projectinfo['name'], "Pending")
+        forupdate.put((projectinfo, projectinfo['version'], self.server, False))
         self.updatethread.start()
 
     def install_project(self, projectinfo):
