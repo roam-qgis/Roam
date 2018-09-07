@@ -942,12 +942,24 @@ class InfoNode(ui_infonode.Ui_Form, WidgetBase):
 
         source = layer.source()
         name = layer.dataProvider().name()
+
+        keys = layer.pkAttributeList()
+        fields = layer.pendingFields()
+        if keys:
+            fieldnames = " + ".join(fields[key].name() for key in keys)
+        else:
+            fieldnames = fields.at(0).name()
+
+        self.keyColumnLabel.setText(fieldnames)
+
         if ".sqlite" in source or name == "mssql":
             self.queryframe.setEnabled(True)
             return True
         else:
             self.queryframe.setEnabled(False)
             return False
+
+
 
     def set_project(self, project, node):
         """
