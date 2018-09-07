@@ -15,6 +15,7 @@ class _Events(QObject):
     WARNING = 1
     CRITICAL = 2
     SUCCESS = 3
+    ERROR = CRITICAL
 
     openimage = pyqtSignal(object)
 

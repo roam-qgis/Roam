@@ -10,7 +10,7 @@ from PyQt4.QtGui import (QWidget, QPixmap, QStandardItem, QStandardItemModel, QI
 from PyQt4.QtGui import QComboBox, QGridLayout
 from PyQt4.Qsci import QsciLexerSQL, QsciScintilla
 
-from qgis.core import QgsPalLabeling, QgsMapLayerRegistry, QgsStyleV2, QgsMapLayer, QGis, QgsProject
+from qgis.core import QgsPalLabeling, QgsMapLayerRegistry, QgsStyleV2, QgsMapLayer, QGis, QgsProject,  QgsExpression, QgsFeatureRequest
 from qgis.gui import QgsExpressionBuilderDialog, QgsMapCanvas, QgsRendererV2PropertiesDialog, QgsLayerTreeMapCanvasBridge
 
 from configmanager.ui.nodewidgets import (ui_layersnode, ui_layernode, ui_infonode, ui_projectinfo, ui_formwidget,
@@ -22,11 +22,12 @@ from configmanager.events import ConfigEvents
 import roam.editorwidgets
 import configmanager.editorwidgets
 import roam.projectparser
-from roam.api import FeatureForm, utils
+from roam.api import FeatureForm, utils, RoamEvents
 from roam.utils import log
 
 from configmanager.utils import openqgis, render_tample, openfolder
 import roam.utils
+from roam.dataaccess.database import Database
 
 # ========= Imports to not break .ui widget files.
 from configmanager.ui.widgets.datawidget import DataWidget
@@ -924,6 +925,8 @@ class InfoNode(ui_infonode.Ui_Form, WidgetBase):
         self.fromlayer_radio.toggled.connect(self.update_panel_status)
         self.thislayer_radio.toggled.connect(self.update_panel_status)
         self.connectionCombo.blockSignals(True)
+        self.testButton.pressed.connect(self.test_query)
+        self.layer = None
 
     def update_panel_status(self, *args):
         """
@@ -939,6 +942,8 @@ class InfoNode(ui_infonode.Ui_Form, WidgetBase):
         if not layer:
             self.queryframe.setEnabled(False)
             return False
+
+        self.layer = layer
 
         source = layer.source()
         name = layer.dataProvider().name()
@@ -959,7 +964,40 @@ class InfoNode(ui_infonode.Ui_Form, WidgetBase):
             self.queryframe.setEnabled(False)
             return False
 
+    def test_query(self):
+        if not self.layer:
+            return
 
+        layer = self.layer
+        db = Database.fromLayer(layer)
+        if not self.mapKeyEdit.text():
+            feature = layer.getFeatures().next()
+            self.mapKeyEdit.setText(str(feature.id()))
+        else:
+            try:
+                mapkey = int(self.mapKeyEdit.text())
+                rq = QgsFeatureRequest().setFilterFid(mapkey)
+                feature = layer.getFeatures(rq).next()
+            except ValueError:
+                RoamEvents.raisemessage("Error in mapkey", "Map key is invalid. Should be a valid number", RoamEvents.ERROR)
+                return
+            except StopIteration:
+                RoamEvents.raisemessage("No feature found", "Feature with map key {} was not found".format(self.mapKeyEdit.text()), RoamEvents.ERROR)
+                return
+
+
+        attributes = utils.values_from_feature(feature, safe_names=True)
+        attributes['mapkey'] = feature.id()
+        # Run the SQL text though the QGIS expression engine first.
+        sql = self.Editor.text()
+        sql = QgsExpression.replaceExpressionText(sql, feature, layer)
+        results = db.querymodel(sql, **attributes)
+        self.previewGrid.setModel(results)
+        labelText = ""
+        for key, value in attributes.iteritems():
+            labelText += "<br> {}: {}".format(key, value)
+        print labelText
+        self.attributesLabel.setText("Feature Attributes Used:<br>" + labelText)
 
     def set_project(self, project, node):
         """
