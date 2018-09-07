@@ -7,6 +7,7 @@ from configmanager.ui.nodewidgets import ui_publishwidget
 from configmanager.ui.widgets.widgetbase import WidgetBase
 from configmanager.services.dataservice import DataService
 
+from PyQt4.QtCore import Qt
 from PyQt4.QtGui import QTableWidgetItem, QHeaderView, QApplication, QFileDialog
 
 import configmanager.bundle
@@ -15,8 +16,11 @@ import roam.project
 from configmanager.utils import openfolder
 
 
-def make_item(data):
-    return QTableWidgetItem(str(data))
+def make_item(data, readonly=True):
+    item = QTableWidgetItem(str(data))
+    if readonly:
+        item.setFlags(item.flags() ^ Qt.ItemIsEditable)
+    return item
 
 
 class PublishWidget(ui_publishwidget.Ui_widget, WidgetBase):
@@ -76,7 +80,7 @@ class PublishWidget(ui_publishwidget.Ui_widget, WidgetBase):
             self.tableWidget.insertRow(rowno)
             self.tableWidget.setItem(rowno, 0, make_item(project.id))
             self.tableWidget.setItem(rowno, 1, make_item(project.name))
-            self.tableWidget.setItem(rowno, 2, make_item(self.get_project_deploy_path(project.id)))
+            self.tableWidget.setItem(rowno, 2, make_item(self.get_project_deploy_path(project.id), readonly=False))
             self.tableWidget.setItem(rowno, 3, make_item(project.save_version))
             self.tableWidget.setItem(rowno, 4, make_item(project.version))
             self.projects[project.id] = project
