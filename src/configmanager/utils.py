@@ -22,11 +22,11 @@ def openqgis(project):
     """
     programfiles = os.environ["ProgramFiles"]
     programfilesW6432 = os.environ["ProgramW6432"]
-    def checkpath(programfiles, version):
-        qgispath = os.path.join(programfiles, version, "bin", "qgis.bat")
+    def checkpath(programfiles, version, name="qgis"):
+        qgispath = os.path.join(programfiles, version, "bin", "{}.bat".format(name))
         return os.path.exists(qgispath), qgispath
 
-    if "2.18" in QGis.QGIS_VERSION:
+    if "2.16" in QGis.QGIS_VERSION:
         # Try 32 bit first so we can match Roam version even though it doesn't really
         # matter
         found, path = checkpath(programfiles, "QGIS 2.16")
@@ -39,11 +39,11 @@ def openqgis(project):
     elif "2.18" in QGis.QGIS_VERSION:
         # Try 32 bit first so we can match Roam version even though it doesn't really
         # matter
-        found, path = checkpath(programfiles, "QGIS 2.18")
+        found, path = checkpath(programfiles, "QGIS 2.18", "qgis-ltr")
         if found:
             qgislocation = path
         else:
-            found, path = checkpath(programfilesW6432, "QGIS 2.18")
+            found, path = checkpath(programfilesW6432, "QGIS 2.18", "qgis-ltr")
             if found:
                 qgislocation = path
     else:
