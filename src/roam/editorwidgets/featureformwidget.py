@@ -172,20 +172,24 @@ class FeatureFormWidgetEditor(LargeEditorWidget):
         return formwidget
 
     def initWidget(self, widget, config):
-        widget.actionCancel.triggered.connect(self.cancelform)
+        widget.actionCancel.triggered.connect(functools.partial(self.cancelform, showDialog=True))
         widget.canceled.connect(self.cancelform)
         widget.featuresaved.connect(self.emit_finished)
         widget.featuredeleted.connect(self.emit_finished)
 
-    def cancelform(self, *args):
-        dlg = PickActionDialog(msg="Discard form changes?")
-        self.expandAction = QAction(QIcon(":/icons/expand"), "Expand Panel", self)
-        discardaction = QAction("Discard", self, triggered=self._cancel_form)
-        discardaction.setObjectName("discard")
-        noaction = QAction("No", self)
+    def cancelform(self, *args, **kwargs):
+        showDialog = kwargs.get("showDialog", False)
+        if showDialog:
+            dlg = PickActionDialog(msg="Discard form changes?")
+            self.expandAction = QAction(QIcon(":/icons/expand"), "Expand Panel", self)
+            discardaction = QAction("Discard", self, triggered=self._cancel_form)
+            discardaction.setObjectName("discard")
+            noaction = QAction("No", self)
 
-        dlg.addactions([noaction, discardaction])
-        dlg.exec_()
+            dlg.addactions([noaction, discardaction])
+            dlg.exec_()
+        else:
+            self._cancel_form()
 
     def _cancel_form(self, *args):
         self.emit_cancel(*args)
