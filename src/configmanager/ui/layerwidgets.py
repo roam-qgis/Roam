@@ -959,16 +959,6 @@ class InfoNode(ui_infonode.Ui_Form, WidgetBase):
             self.queryframe.setEnabled(False)
             return False
 
-    def test_query(self):
-        db = database.Database.fromLayer(layer)
-        mapkey = get_key()
-        attributes = values_from_feature(feature, safe_names=True)
-        attributes['mapkey'] = mapkey
-        # Run the SQL text though the QGIS expression engine first.
-        sql = QgsExpression.replaceExpressionText(sql, feature, layer)
-        results = db.query(sql, **attributes)
-        results = list(results)
-
 
 
     def set_project(self, project, node):
