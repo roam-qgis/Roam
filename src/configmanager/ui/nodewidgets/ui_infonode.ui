@@ -96,7 +96,24 @@
          </widget>
         </item>
         <item>
-         <widget class="QLineEdit" name="mapKeyEdit"/>
+         <widget class="QLineEdit" name="mapKeyEdit">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLabel" name="label_7">
+          <property name="text">
+           <string>DB Key</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLineEdit" name="dbKeyEdit"/>
         </item>
         <item>
          <spacer name="horizontalSpacer">

@@ -985,9 +985,11 @@ class InfoNode(ui_infonode.Ui_Form, WidgetBase):
                 RoamEvents.raisemessage("No feature found", "Feature with map key {} was not found".format(self.mapKeyEdit.text()), RoamEvents.ERROR)
                 return
 
+        dbkey = self.dbKeyEdit.text()
 
         attributes = utils.values_from_feature(feature, safe_names=True)
         attributes['mapkey'] = feature.id()
+        attributes['dbkey'] = dbkey
         # Run the SQL text though the QGIS expression engine first.
         sql = self.Editor.text()
         sql = QgsExpression.replaceExpressionText(sql, feature, layer)
