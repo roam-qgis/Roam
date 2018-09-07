@@ -189,7 +189,7 @@ class FeatureFormWidgetEditor(LargeEditorWidget):
             dlg.addactions([noaction, discardaction])
             dlg.exec_()
         else:
-            self._cancel_form()
+            self._cancel_form(*args)
 
     def _cancel_form(self, *args):
         self.emit_cancel(*args)
