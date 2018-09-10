@@ -16,13 +16,7 @@ class LegendWidget(Ui_legendsWidget, QWidget):
     def __init__(self, parent=None):
         super(LegendWidget, self).__init__(parent)
         self.setupUi(self)
-        self.canvasimage = QImage()
-        self.items = {}
-        self.framerect = QRect()
 
-        self.legendareabrush = QBrush(QColor(255,255,255,200))
-        self.legendareapen = QPen(QColor(255,255,255,20))
-        self.legendareapen.setWidth(0.5)
         self.previewImage.mousePressEvent = self.previewImagePressEvent
         self.previewImage.resizeEvent = self.update
         self.btnExpand.pressed.connect(self.layerTree.expandAllNodes)
@@ -31,6 +25,13 @@ class LegendWidget(Ui_legendsWidget, QWidget):
 
     def init(self, canvas):
         self.canvas = canvas
+        self.canvas.extentsChanged.connect(self.update_legend_map_data)
+
+    def update_legend_map_data(self):
+        if not self.layerTree.layerTreeModel():
+            return
+        self.layerTree.layerTreeModel().setLegendMapViewData(
+            self.canvas.mapUnitsPerPixel(), self.canvas.mapSettings().outputDpi(), self.canvas.scale())
 
     def previewImagePressEvent(self, event):
         self.showmap.emit()
