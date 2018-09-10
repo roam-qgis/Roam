@@ -1,5 +1,6 @@
 from functools import partial
 
+from qgis.core import NULL
 from PyQt4.QtGui import QPushButton, QDateTimeEdit, QIcon, QDateEdit, QWidget
 from PyQt4.QtCore import QDateTime, Qt, QSize, QDate, QEvent
 
@@ -47,6 +48,7 @@ class DateWidget(EditorWidget):
 
     def __init__(self, *args, **kwargs):
         super(DateWidget, self).__init__(*args)
+        self._is_valid = False
 
     def createWidget(self, parent):
         return DateUiWidget(parent)
@@ -115,15 +117,21 @@ class DateWidget(EditorWidget):
 
     def setvalue(self, value):
         strvalue = value
-        if value is None:
+        if value in [None, "", NULL]:
             value = DateWidget.DEFAULTDATE
+            self._is_valid = value.isValid()
         elif isinstance(value, basestring):
             value = QDateTime.fromString(strvalue, Qt.ISODate)
             if not value or (value and value.date().year() < 0):
                 value = QDateTime.fromString(strvalue, Qt.SystemLocaleShortDate)
 
+            self._is_valid = value.isValid()
+            if not self._is_valid:
+                raise ValueError("Unable to parse date string {}".format(strvalue))
+
         if isinstance(value, QDate):
             value = QDateTime(value)
+            self._is_valid = value.isValid()
 
         if hasattr(self.datewidget, 'setDate'):
             self.datewidget.setDate(value.date())
