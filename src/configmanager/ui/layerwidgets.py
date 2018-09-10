@@ -153,6 +153,7 @@ class PluginWidget(WidgetBase):
                 data = f.read()
                 self.webpage.setHtml(markdown.markdown(data))
 
+from configmanager.widgetconfig import WidgetConfig
 
 class FormWidget(ui_formwidget.Ui_Form, WidgetBase):
     def __init__(self, parent=None):
@@ -645,6 +646,7 @@ class FormWidget(ui_formwidget.Ui_Form, WidgetBase):
             self.propertiesStack.setCurrentIndex(0)
 
 
+        widgetconfig = WidgetConfig.from_config(widget)
 
         field = widget['field']
         self._currentwidgetid = widget.setdefault('_id', str(uuid.uuid4()))
@@ -667,25 +669,31 @@ class FormWidget(ui_formwidget.Ui_Form, WidgetBase):
         index = self.defaultEventsCombo.findData(defaultevents)
         self.defaultEventsCombo.setCurrentIndex(index)
 
-        if not isinstance(default, dict):
-            self.defaultTab.setCurrentIndex(0)
-            self.defaultvalueText.setText(default)
-        else:
+        self.defaultValueExpression.setText("")
+        self.defaultFieldCombo.setLayer(None)
+        self.defaultFieldCombo.setLayer(None)
+
+        if widgetconfig.default_type == WidgetConfig.DEFAULT_LAYER_VALUE:
             self.defaultTab.setCurrentIndex(1)
             layer = default['layer']
             # TODO Handle the case of many layer fall though with defaults
             # Not sure how to handle this in the UI just yet
             if isinstance(layer, list):
                 layer = layer[0]
-
-            if isinstance(layer, basestring):
+            else:
                 defaultfield = default['field']
                 expression = default['expression']
+                self.logger.info(defaultfield)
                 self.defaultValueExpression.setText(expression)
+                self.logger.debug("Layer from name: {}".format(layer))
                 layer = roam.api.utils.layer_by_name(layer)
-                # self.defaultLayerCombo.setLayer(layer)
+                self.logger.debug(layer)
+                self.defaultLayerCombo.setLayer(layer)
                 self.defaultFieldCombo.setLayer(layer)
                 self.defaultFieldCombo.setField(defaultfield)
+        else:
+            self.defaultTab.setCurrentIndex(0)
+            self.defaultvalueText.setText(default)
 
         self.nameText.setText(name)
         self.requiredCheck.setChecked(required)
@@ -784,6 +792,7 @@ class FormWidget(ui_formwidget.Ui_Form, WidgetBase):
 
         widget = {}
         widget['field'] = current_field()
+        widget['default-type'] = WidgetConfig.DEFAULT_SIMPLE if self.defaultTab.currentIndex() == 0 else WidgetConfig.DEFAULT_LAYER_VALUE
         widget['default'] = self._get_default_config()
         widget['widget'] = widgettype
         widget['required'] = self.requiredCheck.isChecked()

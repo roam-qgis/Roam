@@ -57,14 +57,9 @@ class ConfigManagerDialog(ui_configmanager.Ui_ProjectInstallerDialog, QDialog):
 
         ConfigEvents.deleteForm.connect(self.delete_form)
 
-        # ## If all the layers are gone we need to reset back to the top state to get the widgets
-        # ## back into sync.
-        # QgsMapLayerRegistry.instance().removeAll.connect(self.reset_project)
-
-    # def reset_project(self):
-    #     print(QgsProject.instance().fileName())
-    #     print("ALL REMOVED")
-    #     node = self.projectsnode.find_by_filename(QgsProject.instance().fileName())
+    def closeEvent(self, closeevent):
+        self.save_page_config()
+        closeevent.accept()
 
     def raiseerror(self, *exinfo):
         self.bar.pushError(*exinfo)
@@ -206,13 +201,13 @@ class ConfigManagerDialog(ui_configmanager.Ui_ProjectInstallerDialog, QDialog):
             self.projectList.setCurrentIndex(newindex)
             return
 
-        # self.projectwidget.projectbuttonframe.setVisible(not project is None)
-
+    def save_page_config(self):
+        """
+        Save the current page config
+        """
+        self.projectwidget.savePage(closing=True)
 
     def projectupdated(self, project):
-        # index = self.projectList.currentIndex()
-        # node = find_node(index)
-        # node.refresh()
         print "PROJECT UPDATED"
         node = self.projectsnode.find_by_name(project.name)
         self.projectList.selectionModel().select(node.index(), QItemSelectionModel.ClearAndSelect)

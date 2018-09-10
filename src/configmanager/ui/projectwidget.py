@@ -317,16 +317,21 @@ class ProjectWidget(Ui_Form, QWidget):
         """
         QGIS.close_project()
 
-    def savePage(self):
+    def savePage(self, closing=False):
         """
         Save the current page settings.
         """
-        print(self.project)
+        if hasattr(self.widget, "write_config"):
+            self.logger.debug("Saving widget")
+            if closing:
+                self.widget.on_closing()
+            self.widget.write_config()
+        else:
+            self.logger.debug("Missing write_config for {}".format(self.widget.__class__.__name__))
+
         if self.project:
             self._saveproject()
             return
-        self.logger.debug("Saving widget")
-        self.widget.write_config()
 
     def _saveproject(self, update_version=False, reset_save_point=False):
         """
