@@ -15,10 +15,12 @@ def test_can_extract_projectinfo_from_config():
       Test_Project:
         version: 1
         title: Test title
+        name: Test_Project
         description: Example dataset
       Test_Project 2:
         version: 1
         title: Test title
+        name: Test_Project_2
         description: Example dataset
     """
     versions = updater.parse_serverprojects(html)
