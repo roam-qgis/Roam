@@ -241,8 +241,10 @@ class FormWidget(ui_formwidget.Ui_Form, WidgetBase):
         self.addEvent.pressed.connect(self.addEventItem)
         self.btnDeleteForm.pressed.connect(ConfigEvents.deleteForm.emit)
 
+    def on_closing(self):
+        self.blockWidgetSignels(True)
+
     def unload_project(self):
-        print "UNLOAD PROJECT!!!"
         self.blockWidgetSignels(True)
 
     def _connect_save_event(self, widget):
