@@ -473,7 +473,7 @@ class FormWidget(ui_formwidget.Ui_Form, WidgetBase):
         """
         used = list(self.usedfields())
         for field in self.selected_layer.pendingFields():
-            if field.name() in used:
+            if field.name().lower() in used:
                 continue
 
             self.newwidget(field)
@@ -498,6 +498,7 @@ class FormWidget(ui_formwidget.Ui_Form, WidgetBase):
         roam.utils.debug("FormWidget: Set Project")
 
         self.blockWidgetSignels(True)
+
 
         super(FormWidget, self).set_project(project, treenode)
         self.formlayers.setSelectLayers(self.project.selectlayers)
