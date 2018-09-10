@@ -760,7 +760,6 @@ class FormWidget(ui_formwidget.Ui_Form, WidgetBase):
 
     def _save_widget(self, index):
         # roam.utils.debug("FormWidget: Save widget")
-        print("SENDER: {}".format(self.sender().objectName()))
         if not self.project:
             return
         widgetdata = self._get_widget_config()
