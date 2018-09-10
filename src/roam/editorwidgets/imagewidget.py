@@ -502,7 +502,11 @@ class ImageWidget(EditorWidget):
         if not self.validate():
             return False, None
 
-        saved, name = save_image(self.widget.getImage(), folder, filename)
+        value = self.value()
+        if not value:
+            return
+
+        saved, name = save_image(value, folder, filename)
         return saved
 
     def setvalue(self, value):

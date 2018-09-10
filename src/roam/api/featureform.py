@@ -569,7 +569,7 @@ class FeatureFormBase(QWidget):
 
             # TODO this should put pulled out and unit tested. MOVE ME!
             # NOTE: This is photo widget stuff and really really doesn't belong here.
-            if hasattr(wrapper, 'savetofile') and wrapper.savetofile:
+            if hasattr(wrapper, 'savetofile') and wrapper.savetofile and wrapper.saveable:
                 if wrapper.filename and self.editingmode:
                     name = os.path.basename(wrapper.filename)
                     name, extension = os.path.splitext(name)

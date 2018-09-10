@@ -23,6 +23,7 @@ class QMapImageWidget(ui_imagewidget.Ui_imagewidget, QWidget):
     def __init__(self, parent=None):
         super(QMapImageWidget, self).__init__(parent)
         self.setupUi(self)
+        self.logger = roam.utils.logger
 
         self._orignalimage = None
         self.setStyleSheet(":hover {background-color: #dddddd;}")

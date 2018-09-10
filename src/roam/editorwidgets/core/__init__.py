@@ -2,6 +2,8 @@ from PyQt4.QtGui import QWidget
 from PyQt4.QtCore import QObject, pyqtSignal
 from collections import OrderedDict
 
+import roam.utils
+
 
 widgets = OrderedDict()
 
@@ -67,6 +69,7 @@ class EditorWidget(QObject):
 
     def __init__(self, widget=None, layer=None, label=None, field=None, parent=None, *args, **kwargs):
         QObject.__init__(self, parent)
+        self.logger = roam.utils
         self._config = {}
         self.modified = False
         self.widget = widget
