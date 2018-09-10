@@ -23,6 +23,11 @@ ECHO Installing requirements
 python -m pip install -r requirements.txt
 GOTO END
 
+:install-req-build-server
+ECHO Installing requirements
+python -m pip install -r requirements-tcbuild.txt
+GOTO END
+
 :build
 ECHO Building..
 python setup.py clean
