@@ -607,9 +607,15 @@ class FeatureFormBase(QWidget):
         return widget
 
     def _field_save_buttons(self):
+        """
+        Return all the save buttons for the form.
+        :return:
+        """
         for field in self.boundwidgets.keys():
             name = "{}_save".format(field)
-            yield self.findcontrol(name)
+            savebutton = self.findcontrol(name)
+            if savebutton:
+                yield savebutton
 
     def _bindsavebutton(self, field):
         name = "{}_save".format(field)
