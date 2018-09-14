@@ -82,7 +82,10 @@ class EditorWidget(QObject):
         self._readonly = True
         self.initconfig = kwargs.get('initconfig', {})
         self.newstyleform = False
-        self.starttext = ''
+        if self.label:
+            self.starttext = self.label.text()
+        else:
+            self.starttext = ""
         self.id = ''
         self.default_events = ['capture']
         self.valuechanged.connect(self.updatecontrolstate)
@@ -153,8 +156,8 @@ class EditorWidget(QObject):
         self.widget.setVisible(not value)
         self.buddywidget.setVisible(not value)
 
-    def updatecontrolstate(self, value):
-        if self.label is None or not self.required:
+    def updatecontrolstate(self, value=None):
+        if self.label is None:
             return
 
         if self.passing:
@@ -172,14 +175,8 @@ class EditorWidget(QObject):
 
     @required.setter
     def required(self, state):
-        if not self.starttext and state:
-            self.starttext = self.labeltext
-
-        if state and self.label:
-            requiredtext = "required" if self.newstyleform else "*"
-            self.label.setText("{} <b style='color:red'>({})</b>".format(self.starttext, requiredtext))
-
         self._required = state
+        self.updatecontrolstate()
 
     @property
     def buddywidget(self):
@@ -187,6 +184,14 @@ class EditorWidget(QObject):
             return self.label
         else:
             return self.widget
+
+    @property
+    def unformatted_label(self):
+        """
+        The original label text with any UI formatting.
+        :return:
+        """
+        return self.starttext
 
     @property
     def labeltext(self):

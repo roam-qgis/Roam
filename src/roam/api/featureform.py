@@ -876,7 +876,7 @@ class FeatureForm(FeatureFormBase):
 
     @property
     def incompletewidgets(self):
-        return [w.labeltext for w in self.boundwidgets.itervalues() if not w.passing]
+        return [w.unformatted_label for w in self.boundwidgets.itervalues() if not w.passing]
 
     @property
     def missingfields(self):

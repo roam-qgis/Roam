@@ -156,7 +156,7 @@ class ConfigManagerDialog(ui_configmanager.Ui_ProjectInstallerDialog, QDialog):
         self.projectwidget.setpage(node.page, node, refreshingProject=True)
         self.reloadingProject = False
         self.loadedProject = project
-        self.projectList.setExpanded(node.index(), True )
+        self.projectList.setExpanded(node.index(), True)
 
     def nodeselected(self, index, last, reloadProject=False):
         node = index.data(Qt.UserRole)

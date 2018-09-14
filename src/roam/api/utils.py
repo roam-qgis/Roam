@@ -114,8 +114,10 @@ class FeatureSaveException(Exception):
 class MissingValuesException(FeatureSaveException):
     @classmethod
     def missing_values(cls, fields):
-        html = "<br>".join(fields)
-        print html
+        html = "<ul>"
+        for field in fields:
+            html += "<li>{}</li>".format(field)
+        html += "</ul>"
         return cls("Missing fields", "Some fields are still required. <br> {}".format(html), QgsMessageBar.WARNING, 2)
 
 
