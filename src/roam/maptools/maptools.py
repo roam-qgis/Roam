@@ -97,12 +97,13 @@ class BaseAction(QAction):
         self.isdefault = False
         self.ismaptool = False
 
+
 class UndoAction(BaseAction):
     def __init__(self, tool, parent=None):
         super(UndoAction, self).__init__(QIcon(":/icons/back"),
-                                                "Undo",
-                                                tool,
-                                                parent)
+                                         "Undo",
+                                         tool,
+                                         parent)
         self.setObjectName("UndoAction")
         self.setText(self.tr("Undo"))
 
@@ -152,6 +153,7 @@ class GPSTrackingAction(BaseAction):
         else:
             self.setText(self.tr("Track"))
 
+
 class GPSCaptureAction(BaseAction):
     def __init__(self, tool, geomtype, parent=None):
         super(GPSCaptureAction, self).__init__(QIcon(":/icons/gpsadd-{}".format(geomtype)),
@@ -173,7 +175,6 @@ class PolylineTool(QgsMapToolEdit):
     mouseClicked = pyqtSignal(QgsPoint)
     geometryComplete = pyqtSignal(QgsGeometry)
     error = pyqtSignal(str)
-
 
     def __init__(self, canvas, config=None):
         super(PolylineTool, self).__init__(canvas)
@@ -613,7 +614,7 @@ class PointTool(TouchMapTool):
     geometryComplete = pyqtSignal(QgsGeometry)
     error = pyqtSignal(str)
 
-    def __init__(self, canvas, config = None):
+    def __init__(self, canvas, config=None):
         super(PointTool, self).__init__(canvas)
         if not config:
             self.config = {}
@@ -648,7 +649,7 @@ class PointTool(TouchMapTool):
         self.startcolour = QColor.fromRgb(0, 0, 255, 100)
         self.pointband.setColor(self.startcolour)
         self.pointband.setIconSize(20)
-        self.pointband.addPoint(QgsPoint(0,0))
+        self.pointband.addPoint(QgsPoint(0, 0))
         self.pointband.hide()
 
     @property

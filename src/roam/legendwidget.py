@@ -1,7 +1,8 @@
 import math
 import functools
 from PyQt4.QtCore import Qt, QSize, QRect, QPoint, pyqtSignal, QRectF
-from PyQt4.QtGui import  QWidget, QPixmap, QPainter, QLabel, QBrush, QColor, QPen, QTextOption, QFontMetrics, QImage, QFont
+from PyQt4.QtGui import QWidget, QPixmap, QPainter, QLabel, QBrush, QColor, QPen, QTextOption, QFontMetrics, QImage, \
+    QFont
 
 from qgis.core import QgsLayerTreeModel, QgsLayerTreeNode
 from qgis.core import QgsMapRendererParallelJob
@@ -9,6 +10,7 @@ from qgis.core import QgsMapRendererParallelJob
 from ui.ui_legend import Ui_legendsWidget
 
 ICON_SIZE = QSize(32, 32)
+
 
 class LegendWidget(Ui_legendsWidget, QWidget):
     showmap = pyqtSignal()

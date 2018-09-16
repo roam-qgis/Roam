@@ -123,6 +123,7 @@ class DataEntryWidget(dataentry_widget, dataentry_base):
         """
         Opens the form for the given feature.
         """
+
         def _sink(_):
             pass
 

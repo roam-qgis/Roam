@@ -16,13 +16,14 @@ import templates
 images = {}
 supportedformats = []
 
+
 def image_handler(key, value, **kwargs):
     imageblock = '''
                     <a href="{}" class="thumbnail">
                       <img width="100%" height="100%" src="{}"\>
                     </a>'''
 
-    imagetype = kwargs.get('imagetype', 'base64' )
+    imagetype = kwargs.get('imagetype', 'base64')
     keyid = "image_{key}_{count}".format(key=key, count=len(images) + 1)
     images[keyid] = (value, imagetype)
     if imagetype == 'base64':
@@ -85,6 +86,7 @@ def none_handler(key, value, **kwargs):
 def clear_image_cache():
     images = {}
 
+
 def updateTemplate(data, template, **kwargs):
     data = dict(data)
     for key, value in data.iteritems():
@@ -140,7 +142,7 @@ class HtmlViewerWidget(QWidget):
         self.anim.setDuration(2000)
         self.anim.setStartValue(1.0)
         self.anim.setEndValue(0.0)
-        self.anim.setEasingCurve(QEasingCurve.OutQuad )
+        self.anim.setEasingCurve(QEasingCurve.OutQuad)
 
     def copy_text(self):
         self.label.setText("Copied to clipboard")
@@ -152,4 +154,3 @@ class HtmlViewerWidget(QWidget):
     def showHTML(self, template, level, **data):
         html = templates.render_tample(template, **data)
         self.view.setHtml(html, templates.baseurl)
-

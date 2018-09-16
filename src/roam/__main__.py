@@ -25,6 +25,7 @@ gdal.SetConfigOption("GDAL_DRIVER_PATH", os.environ['GDAL_DRIVER_PATH'])
 gdal.SetConfigOption("GDAL_DATA", os.environ['GDAL_DATA'])
 
 from roam import utils, environ
+
 config = {"loglevel": "DEBUG"}
 
 utils.setup_logging(srcpath, config)
@@ -43,6 +44,7 @@ with environ.setup(srcpath) as roamapp:
     roam.utils.debug(os.environ["PATH"])
 
     from qgis.core import QgsProviderRegistry
+
     ecwsupport = 'ecw' in QgsProviderRegistry.instance().fileRasterFilters()
     roam.utils.info("ECW Support: {0}".format(ecwsupport))
 
@@ -61,5 +63,6 @@ with environ.setup(srcpath) as roamapp:
     apppluginpath = os.path.join(roamapp.apppath, "plugins")
 
     import roam.api.plugins
+
     roam.api.plugins.load_plugins_from([pluginpath, apppluginpath])
     window.show()

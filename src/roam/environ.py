@@ -93,6 +93,7 @@ class RoamApp(object):
         config.append(u"QGIS Version: {}".format(unicode(QGis.QGIS_VERSION)))
         return '\n'.join(config)
 
+
 def _setup(apppath=None, logo='', title='', **kwargs):
     frozen = getattr(sys, "frozen", False)
     RUNNING_FROM_FILE = not frozen
@@ -132,8 +133,9 @@ def _setup(apppath=None, logo='', title='', **kwargs):
     parser = argparse.ArgumentParser(description="IntraMaps Roam")
 
     parser.add_argument('--config', metavar='c', type=str, default=settingspath, help='Path to Roam.config')
-    parser.add_argument('--profile', metavar='p', type=str, default=profileroot, help='Root folder for roam.config, and roam settings'
-                                                                                       'including plugins and projects')
+    parser.add_argument('--profile', metavar='p', type=str, default=profileroot,
+                        help='Root folder for roam.config, and roam settings'
+                             'including plugins and projects')
     parser.add_argument('projectsroot', nargs='?', default=projectroot, help="Root location of projects. Will override"
                                                                              "default projects folder path")
     args, unknown = parser.parse_known_args()

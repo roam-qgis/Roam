@@ -59,6 +59,7 @@ class BigListWidget(LargeEditorWidget):
 
 class ListWidget(EditorWidget):
     widgettype = 'List'
+
     def __init__(self, *args, **kwargs):
         super(ListWidget, self).__init__(*args)
         self.listmodel = QStandardItemModel()
@@ -113,7 +114,7 @@ class ListWidget(EditorWidget):
             self.listmodel.appendRow(item)
 
         attributes = {keyfieldindex, valuefieldindex}
-        iconfieldindex =  layer.fieldNameIndex('icon')
+        iconfieldindex = layer.fieldNameIndex('icon')
         if iconfieldindex > -1:
             attributes.add(iconfieldindex)
 
@@ -168,10 +169,10 @@ class ListWidget(EditorWidget):
         widget.currentIndexChanged.connect(self.emitvaluechanged)
         widget.setModel(self.listmodel)
         widget.showPopup = self.showpopup
-        widget.setIconSize(QSize(24,24))
-        widget.setStyleSheet("QComboBox::drop-down {border-width: 0px;} QComboBox::down-arrow {image: url(noimg); border-width: 0px;}")
+        widget.setIconSize(QSize(24, 24))
+        widget.setStyleSheet(
+            "QComboBox::drop-down {border-width: 0px;} QComboBox::down-arrow {image: url(noimg); border-width: 0px;}")
         widget.setSizeAdjustPolicy(QComboBox.AdjustToMinimumContentsLength)
-
 
     def showpopup(self):
         if self.listmodel.rowCount() == 0:
@@ -231,6 +232,7 @@ class ListWidget(EditorWidget):
 
 class MultiList(ListWidget):
     widgettype = 'MultiList'
+
     def __init__(self, *args, **kwargs):
         super(MultiList, self).__init__(*args)
         self.multi = True
@@ -252,18 +254,20 @@ class MultiList(ListWidget):
                                      self._biglistitem, dict(model=self.listmodel,
                                                              label=self.labeltext,
                                                              multi=True))
+
     def initWidget(self, widget, config):
         widget.setEditable(True)
         self.widget.lineEdit().textChanged.connect(self.emitvaluechanged)
         widget.setModel(self.listmodel)
         widget.focusInEvent = self.showpopup
-        widget.setIconSize(QSize(24,24))
-        widget.setStyleSheet("QComboBox::drop-down {border-width: 0px;} QComboBox::down-arrow {image: url(noimg); border-width: 0px;}")
+        widget.setIconSize(QSize(24, 24))
+        widget.setStyleSheet(
+            "QComboBox::drop-down {border-width: 0px;} QComboBox::down-arrow {image: url(noimg); border-width: 0px;}")
 
     def _biglistitem(self, index):
         value = self.value()
         self.widget.lineEdit().setText(value)
-        #self.widget.setEdit(self.value())
+        # self.widget.setEdit(self.value())
 
     def setvalue(self, value):
         value = nullconvert(value)
@@ -275,7 +279,7 @@ class MultiList(ListWidget):
 
         for splitvalue in values:
             try:
-                matched = self.listmodel.match(self.listmodel.index(0,0),
+                matched = self.listmodel.match(self.listmodel.index(0, 0),
                                                Qt.UserRole,
                                                splitvalue)[0]
             except IndexError:

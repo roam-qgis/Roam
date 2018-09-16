@@ -25,7 +25,7 @@ class OrderedDictYAMLLoader(yaml.Loader):
             self.flatten_mapping(node)
         else:
             raise yaml.constructor.ConstructorError(None, None,
-                'expected a mapping node, but found %s' % node.id, node.start_mark)
+                                                    'expected a mapping node, but found %s' % node.id, node.start_mark)
 
         mapping = OrderedDict()
         for key_node, value_node in node.value:
@@ -34,7 +34,8 @@ class OrderedDictYAMLLoader(yaml.Loader):
                 hash(key)
             except TypeError, exc:
                 raise yaml.constructor.ConstructorError('while constructing a mapping',
-                    node.start_mark, 'found unacceptable key (%s)' % exc, key_node.start_mark)
+                                                        node.start_mark, 'found unacceptable key (%s)' % exc,
+                                                        key_node.start_mark)
             value = self.construct_object(value_node, deep=deep)
             mapping[key] = value
         return mapping
@@ -64,6 +65,7 @@ class CaseInsensitiveDict(MutableMapping):
     operations are given keys that have equal ``.lower()``s, the
     behavior is undefined.
     """
+
     def __init__(self, data=None, **kwargs):
         self._store = dict()
         if data is None:
@@ -109,4 +111,3 @@ class CaseInsensitiveDict(MutableMapping):
 
     def __repr__(self):
         return str(dict(self.items()))
-

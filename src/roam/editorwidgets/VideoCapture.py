@@ -9,9 +9,10 @@ import vidcap
 from PIL import Image, ImageFont, ImageDraw
 import time, string
 
-default_textpos = 'bl' # t=top, b=bottom;   l=left, c=center, r=right
+default_textpos = 'bl'  # t=top, b=bottom;   l=left, c=center, r=right
 textcolor = 0xffffff
 shadowcolor = 0x000000
+
 
 def now():
     """Returns a string containing the current date and time.
@@ -21,10 +22,12 @@ def now():
 
     """
     weekday = ('Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun')
-    #weekday = ('Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa', 'So')
-    #weekday = ('-', '-', '-', '-', '-', '-', '-')
+    # weekday = ('Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa', 'So')
+    # weekday = ('-', '-', '-', '-', '-', '-', '-')
     y, m, d, hr, min, sec, wd, jd, dst = time.localtime(time.time())
-    return '%s:%s:%s %s %s.%s.%s' % (string.zfill(hr, 2), string.zfill(min, 2), string.zfill(sec, 2), weekday[wd], d, m, y)
+    return '%s:%s:%s %s %s.%s.%s' % (
+    string.zfill(hr, 2), string.zfill(min, 2), string.zfill(sec, 2), weekday[wd], d, m, y)
+
 
 class Device:
     """Create instances of this class which will then represent video devices.
@@ -35,6 +38,7 @@ class Device:
     the instance first (e.g. del cam).
 
     """
+
     def __init__(self, devnum=0, showVideoWindow=0):
         """devnum:  VideoCapture enumerates the available video capture devices
                     on your system.  If you have more than one device, specify
@@ -132,7 +136,7 @@ class Device:
 
         """
         if timestamp:
-            #text = now()
+            # text = now()
             text = time.asctime(time.localtime(time.time()))
         buffer, width, height = self.getBuffer()
         if buffer:
@@ -163,21 +167,21 @@ class Device:
                 else:
                     raise ValueError, "textpos must contain exactly one out of 'l', 'c', 'r'"
                 draw = ImageDraw.Draw(im)
-                if timestamp == 2: # shadow
-                    draw.text((x+1, y), text, font=self.font, fill=shadowcolor)
-                    draw.text((x, y+1), text, font=self.font, fill=shadowcolor)
-                    draw.text((x+1, y+1), text, font=self.font, fill=shadowcolor)
+                if timestamp == 2:  # shadow
+                    draw.text((x + 1, y), text, font=self.font, fill=shadowcolor)
+                    draw.text((x, y + 1), text, font=self.font, fill=shadowcolor)
+                    draw.text((x + 1, y + 1), text, font=self.font, fill=shadowcolor)
                 else:
-                    if timestamp >= 3: # thin border
-                        draw.text((x-1, y), text, font=self.font, fill=shadowcolor)
-                        draw.text((x+1, y), text, font=self.font, fill=shadowcolor)
-                        draw.text((x, y-1), text, font=self.font, fill=shadowcolor)
-                        draw.text((x, y+1), text, font=self.font, fill=shadowcolor)
-                    if timestamp == 4: # thick border
-                        draw.text((x-1, y-1), text, font=self.font, fill=shadowcolor)
-                        draw.text((x+1, y-1), text, font=self.font, fill=shadowcolor)
-                        draw.text((x-1, y+1), text, font=self.font, fill=shadowcolor)
-                        draw.text((x+1, y+1), text, font=self.font, fill=shadowcolor)
+                    if timestamp >= 3:  # thin border
+                        draw.text((x - 1, y), text, font=self.font, fill=shadowcolor)
+                        draw.text((x + 1, y), text, font=self.font, fill=shadowcolor)
+                        draw.text((x, y - 1), text, font=self.font, fill=shadowcolor)
+                        draw.text((x, y + 1), text, font=self.font, fill=shadowcolor)
+                    if timestamp == 4:  # thick border
+                        draw.text((x - 1, y - 1), text, font=self.font, fill=shadowcolor)
+                        draw.text((x + 1, y - 1), text, font=self.font, fill=shadowcolor)
+                        draw.text((x - 1, y + 1), text, font=self.font, fill=shadowcolor)
+                        draw.text((x + 1, y + 1), text, font=self.font, fill=shadowcolor)
                 draw.text((x, y), text, font=self.font, fill=textcolor)
             return im
 
@@ -203,19 +207,21 @@ class Device:
         """
         self.getImage(timestamp, boldfont, textpos).save(filename, **keywords)
 
+
 if __name__ == '__main__':
     import shutil
-    #shutil.copy('VideoCapture.py', 'C:\Python20\Lib')
-    #shutil.copy('VideoCapture.py', 'C:\Python21\Lib')
-    #shutil.copy('VideoCapture.py', 'C:\Python22\Lib')
-    #shutil.copy('VideoCapture.py', 'C:\Python23\Lib')
-    #shutil.copy('VideoCapture.py', 'C:\Python24\Lib')
-    #shutil.copy('VideoCapture.py', 'C:\Python25\Lib')
+
+    # shutil.copy('VideoCapture.py', 'C:\Python20\Lib')
+    # shutil.copy('VideoCapture.py', 'C:\Python21\Lib')
+    # shutil.copy('VideoCapture.py', 'C:\Python22\Lib')
+    # shutil.copy('VideoCapture.py', 'C:\Python23\Lib')
+    # shutil.copy('VideoCapture.py', 'C:\Python24\Lib')
+    # shutil.copy('VideoCapture.py', 'C:\Python25\Lib')
     cam = Device(devnum=0)
-    #~ #cam.displayPropertyPage() ## deprecated
-    #~ #cam.displayCaptureFilterProperties()
-    #~ #cam.displayCapturePinProperties()
-    #~ #cam.setResolution(768, 576) ## PAL
-    #~ #cam.setResolution(352, 288) ## CIF
-    #~ cam.saveSnapshot('test.jpg', quality=75, timestamp=3, boldfont=1)
+    # ~ #cam.displayPropertyPage() ## deprecated
+    # ~ #cam.displayCaptureFilterProperties()
+    # ~ #cam.displayCapturePinProperties()
+    # ~ #cam.setResolution(768, 576) ## PAL
+    # ~ #cam.setResolution(352, 288) ## CIF
+    # ~ cam.saveSnapshot('test.jpg', quality=75, timestamp=3, boldfont=1)
     print "Friendly name: ", cam.getDisplayName()

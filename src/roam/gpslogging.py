@@ -3,6 +3,7 @@ import getpass
 from PyQt4.QtCore import Qt, pyqtSignal, QObject, QDateTime
 from qgis.core import QgsFeature, QgsGeometry
 
+
 class GPSLogging(QObject):
     trackingchanged = pyqtSignal(bool)
 

@@ -9,6 +9,7 @@ from roam.api import RoamEvents, GPS
 loaded_plugins = {}
 api = None
 
+
 # from roam.gui import HideableToolbar
 
 class HideableToolbar(QToolBar):
@@ -114,10 +115,12 @@ def find_plugins(pluginfolders=None):
             sys.path.append(loader.path)
             yield name
 
+
 def load_plugin(pluginname):
     mod = importlib.import_module(pluginname)
     loaded_plugins[pluginname] = mod
     return pluginname, mod
+
 
 def load_plugins_from(pluginfolders=None):
     """
@@ -129,4 +132,3 @@ def load_plugins_from(pluginfolders=None):
     for plugin in find_plugins(pluginfolders):
         loadedplugins[plugin] = load_plugin(plugin)
     return loadedplugins
-

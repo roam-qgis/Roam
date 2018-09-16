@@ -7,38 +7,36 @@ import os
 import sys
 import faulthandler
 
-
 from PyQt4.QtCore import Qt, QFileInfo, QDir, QSize
 from PyQt4.QtGui import (QActionGroup,
-                        QApplication,
-                        QWidget,
-                        QSizePolicy,
-                        QLabel,
-                        QApplication,
-                        QPixmap,
-                        QColor,
-                        QStandardItemModel,
-                        QStandardItem,
-                        QIcon,
-                        QComboBox,
-                        QAction,
-                        QCursor, QFrame, QDesktopServices, QToolButton, QPushButton)
+                         QApplication,
+                         QWidget,
+                         QSizePolicy,
+                         QLabel,
+                         QApplication,
+                         QPixmap,
+                         QColor,
+                         QStandardItemModel,
+                         QStandardItem,
+                         QIcon,
+                         QComboBox,
+                         QAction,
+                         QCursor, QFrame, QDesktopServices, QToolButton, QPushButton)
 from qgis.core import (QgsProjectBadLayerHandler,
-                        QgsPalLabeling,
-                        QgsMapLayerRegistry,
-                        QgsProject,
-                        QgsMapLayer,
-                        QgsFeature,
-                        QgsFields,
-                        QgsGeometry,
-                        QgsRectangle,
-                        QGis,
-                        QgsApplication)
+                       QgsPalLabeling,
+                       QgsMapLayerRegistry,
+                       QgsProject,
+                       QgsMapLayer,
+                       QgsFeature,
+                       QgsFields,
+                       QgsGeometry,
+                       QgsRectangle,
+                       QGis,
+                       QgsApplication)
 from qgis.gui import (QgsMessageBar,
-                        QgsMapToolZoom,
-                        QgsRubberBand,
-                        QgsMapCanvas, QgsScaleComboBox)
-
+                      QgsMapToolZoom,
+                      QgsRubberBand,
+                      QgsMapCanvas, QgsScaleComboBox)
 
 from roam.popupdialogs import DeleteFeatureDialog
 from roam.api.featureform import DeleteFeatureException
@@ -56,7 +54,6 @@ from roam.api import RoamEvents, GPS, RoamInterface, plugins
 from roam.ui import ui_mainwindow
 from PyQt4.QtGui import QMainWindow
 from roam.gpslogging import GPSLogging
-
 
 import roam.messagebaritems
 import roam.utils
@@ -431,7 +428,7 @@ class MainWindow(ui_mainwindow.Ui_MainWindow, QMainWindow):
         self.canvas.refresh()
 
     def featureSaved(self, *args):
-        #self.reloadselection(layer, deleted=[featureid])
+        # self.reloadselection(layer, deleted=[featureid])
         self.canvas.refresh()
 
     def cleartempobjects(self):
@@ -631,7 +628,7 @@ class MainWindow(ui_mainwindow.Ui_MainWindow, QMainWindow):
         pixmap = QPixmap(project.splash)
         w = self.projectimage.width()
         h = self.projectimage.height()
-        self.projectimage.setPixmap(pixmap.scaled(w,h, Qt.KeepAspectRatio))
+        self.projectimage.setPixmap(pixmap.scaled(w, h, Qt.KeepAspectRatio))
         QApplication.processEvents()
 
         QDir.setCurrent(os.path.dirname(project.projectfile))
@@ -664,4 +661,3 @@ class MainWindow(ui_mainwindow.Ui_MainWindow, QMainWindow):
         RoamEvents.selectioncleared.emit()
         RoamEvents.projectClosed.emit(oldproject)
         self.projectwidget.set_open_project(None)
-

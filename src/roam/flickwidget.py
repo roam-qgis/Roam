@@ -6,6 +6,7 @@ from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 from PyQt4.QtWebKit import *
 
+
 class FlickData:
     Steady = 0
     Pressed = 1
@@ -32,7 +33,7 @@ class FlickCharmPrivate:
 
 class FlickCharm(QObject):
 
-    def __init__(self, parent = None):
+    def __init__(self, parent=None):
         QObject.__init__(self, parent)
         self.d = FlickCharmPrivate()
         self.lastvalue = 0
@@ -59,13 +60,12 @@ class FlickCharm(QObject):
     def deactivateFrom(self, widget):
         if isinstance(widget, QWebView):
             widget.removeEventFilter(self)
-            del(self.d.flickData[widget])
+            del (self.d.flickData[widget])
         else:
             viewport = widget.viewport()
             viewport.removeEventFilter(self)
             widget.removeEventFilter(self)
-            del(self.d.flickData[viewport])
-
+            del (self.d.flickData[viewport])
 
     def eventFilter(self, object, event):
         if not object.isWidgetType():
@@ -73,8 +73,8 @@ class FlickCharm(QObject):
 
         eventType = event.type()
         if eventType != QEvent.MouseButtonPress and \
-           eventType != QEvent.MouseButtonRelease and \
-           eventType != QEvent.MouseMove:
+                eventType != QEvent.MouseButtonRelease and \
+                eventType != QEvent.MouseMove:
             return False
 
         if event.modifiers() != Qt.NoModifier:
@@ -161,6 +161,7 @@ def scrollOffset(widget):
 
 
 lastvalue = 0
+
 
 def setScrollOffset(widget, current, press=None):
     up = current.y() > press.y()

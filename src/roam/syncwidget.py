@@ -13,6 +13,7 @@ import roam.syncing
 
 class SyncWidget(Ui_Form, QWidget):
     syncqueue = []
+
     def __init__(self, parent=None):
         super(SyncWidget, self).__init__(parent)
         self.setupUi(self)
@@ -39,7 +40,7 @@ class SyncWidget(Ui_Form, QWidget):
         self.syncwidgets.layout().addWidget(actionwidget)
 
     def loadprojects(self, projects):
-        #root = self.synctree.invisibleRootItem()
+        # root = self.synctree.invisibleRootItem()
         self.load_application_sync()
         for project in projects:
             providers = list(project.syncprovders())

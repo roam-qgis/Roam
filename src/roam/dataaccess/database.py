@@ -6,12 +6,14 @@ import roam.utils
 
 import re
 
+
 class DatabaseException(Exception):
     def __init__(self, msg, sql=None):
         super(DatabaseException, self).__init__(msg)
         self.msg = msg
         roam.utils.error(msg)
         roam.utils.info(sql)
+
 
 class Database(object):
     def __init__(self, sqldatabase):

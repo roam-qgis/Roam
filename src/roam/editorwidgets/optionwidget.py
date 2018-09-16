@@ -23,7 +23,7 @@ class OptionWidget(EditorWidget):
             """ Yield successive n-sized chunks from l.
             """
             for i in xrange(0, len(l), n):
-                yield l[i:i+n]
+                yield l[i:i + n]
 
         items = listconfig['items']
         wrap = self.config.get('wrap', 0)
@@ -169,5 +169,3 @@ class OptionWidget(EditorWidget):
             returnvalue = None
 
         return returnvalue
-
-

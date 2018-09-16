@@ -12,10 +12,11 @@ from roam.api import RoamEvents
 snapping = True
 
 try:
-      from qgis.gui import QgsMapToolTouch
-      maptooltype = QgsMapToolTouch
+    from qgis.gui import QgsMapToolTouch
+
+    maptooltype = QgsMapToolTouch
 except ImportError:
-      maptooltype = QgsMapToolPan
+    maptooltype = QgsMapToolPan
 
 
 class TouchMapTool(maptooltype):
@@ -70,5 +71,3 @@ class TouchMapTool(maptooltype):
 
     def setSnapping(self, enabled):
         self.snapping = enabled
-
-

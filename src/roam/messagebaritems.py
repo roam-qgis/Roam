@@ -129,6 +129,7 @@ class ExceptionItem(ClickableMessage):
         self.data['title'] = message
         self.data['error'] = error
 
+
 class UndoMessageItem(ClickableMessage):
     undo = pyqtSignal(object, object)
 

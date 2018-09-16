@@ -9,13 +9,14 @@ class Where(object):
     """
         Object to filter result set by a where expression or function
     """
+
     def __init__(self, layer, filterfunc):
         """
             filterfunc : A QgsExpression string, or Python callable.
         """
         self.filterfunc = filterfunc
         self.layer = layer
-        
+
     def __call__(self, features):
         """
             Each feature is evaluated against filterfunc and if true will 
@@ -68,14 +69,14 @@ class Query(object):
         
         layer: A vector layer
     """
-    
+
     @classmethod
     def from_layer_name(cls, name, *args, **kwargs):
         args = list(args)
         # Dig into the registry to find the layer of the same name
         args[0] = QgsMapLayerRegistry.instance().mapLayersByName(name)[0]
         return cls(*args, **kwargs)
-    
+
     def __init__(self, layer, DEBUG=False):
         self.layer = layer
         self.wheres = []
@@ -84,7 +85,7 @@ class Query(object):
         self.limit = None
         self.selectstatment = None
         self.DEBUG = DEBUG
-    
+
     def _project(self, feature, *cols, **namedcols):
         """
             Project the given feature into a dict of colname : value. 
@@ -95,13 +96,14 @@ class Query(object):
             respectively.
         """
         result = {}
+
         def _getValue(col):
             if hasattr(col, '__call__'):
                 value = col(feature)
             else:
                 value = feature[col]
             return value
-            
+
         if not cols and not namedcols is None:
             fields = [field.name() for field in feature.fields()]
             result = dict(zip(fields, feature.attributes()))
@@ -114,13 +116,12 @@ class Query(object):
                     # If the col has __name__ we will use that
                     name = col.__name__
                 result[name] = _getValue(col)
-                
+
             for name, col in namedcols.iteritems():
                 result[name] = _getValue(col)
-        
+
         return result
 
-        
     def where(self, filterexp):
         """
             Add a filter condition to the current query.
@@ -137,28 +138,28 @@ class Query(object):
         """
         self.wheres.append(Where(self.layer, filterexp))
         return self
-        
+
     def restict_to(self, rect):
         """
             Restrict the query to featues within a given QgsRectangle
         """
         self.rect = rect
         return self
-        
+
     def top(self, limit):
         """
             Only return the given number of features.
         """
         self.limit = limit
         return self
-    
+
     def with_index(self, index):
         """
             Note: Not used yet
         """
         self.index = index
         return self
-        
+
     def select(self, *cols, **namedcols):
         """
             Add a custom output mapping for final result.  
@@ -172,7 +173,7 @@ class Query(object):
         """
         self.selectstatment = (cols, namedcols)
         return self
-        
+
     def __call__(self):
         if self.rect:
             rq = QgsFeatureRequest()
@@ -180,7 +181,7 @@ class Query(object):
             features = self.layer.getFeatures(rq)
         else:
             features = self.layer.getFeatures()
-        
+
         for where in self.wheres:
             if self.DEBUG: "Has filter"
             features = where(features)
@@ -188,17 +189,16 @@ class Query(object):
         if self.limit:
             if self.DEBUG: print "Has Limit"
             features = itertools.islice(features, 0, self.limit)
-        
+
         if self.selectstatment:
             cols = self.selectstatment[0]
             namedcols = self.selectstatment[1]
             features = (self._project(f, *cols, **namedcols) for f in features)
         else:
             features = (self._project(f) for f in features)
-        
+
         return features
 
-if __name__ == "__main__":
-    pass    
 
-    
+if __name__ == "__main__":
+    pass

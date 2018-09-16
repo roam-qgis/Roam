@@ -59,13 +59,11 @@ class ProjectParser(object):
         layerid = layerfile.attribute('layerid')
         visible = int(layerfile.attribute('visible'))
         return layerid, bool(visible)
-    
+
     def maplayers(self):
         layernodes = self.doc.elementsByTagName("maplayer")
         return (self._createLayer(elm) for elm in iternodes(layernodes))
-        
+
     def layers(self):
         legendnodes = self.doc.elementsByTagName("legendlayer")
         return (self._getLayers(elm) for elm in iternodes(legendnodes))
-
-

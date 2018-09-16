@@ -1,10 +1,11 @@
-from PyQt4.QtGui import  QCheckBox
+from PyQt4.QtGui import QCheckBox
 
 from roam.editorwidgets.core import EditorWidget, registerwidgets
 
 
 class CheckboxWidget(EditorWidget):
     widgettype = 'Checkbox'
+
     def __init__(self, *args, **kwargs):
         super(CheckboxWidget, self).__init__(*args, **kwargs)
 

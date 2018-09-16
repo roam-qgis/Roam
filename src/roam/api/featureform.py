@@ -12,7 +12,7 @@ from functools import partial
 from PyQt4 import uic
 from PyQt4.QtCore import pyqtSignal, QObject, QSize, QEvent, QProcess, Qt, QPyNullVariant, QRegExp
 from PyQt4.QtGui import (QWidget,
-                        QAction,
+                         QAction,
                          QDialogButtonBox,
                          QStackedWidget,
                          QStatusBar,
@@ -30,8 +30,8 @@ from PyQt4.QtGui import (QWidget,
                          QSpinBox,
                          QDoubleSpinBox,
                          QVBoxLayout,
-                        QSizePolicy,
-                        QTabWidget)
+                         QSizePolicy,
+                         QTabWidget)
 
 from qgis.core import QgsFields, QgsFeature, QgsGPSConnectionRegistry, QGis, QgsGeometry, QgsPoint
 from qgis.gui import QgsMessageBar
@@ -59,6 +59,7 @@ import contextlib
 import time
 
 totals = collections.defaultdict(int)
+
 
 @contextlib.contextmanager
 def timed(title):
@@ -161,7 +162,7 @@ def buildfromauto(formconfig, base):
         outwidget = QTabWidget(base)
         outlayout = None
         base.setLayout(QVBoxLayout())
-        base.layout().setContentsMargins(0,0,0,0)
+        base.layout().setContentsMargins(0, 0, 0, 0)
         base.layout().addWidget(outwidget)
     else:
         outwidget = base
@@ -209,14 +210,14 @@ def buildfromauto(formconfig, base):
         labelwidget = QWidget()
         labelwidget.setLayout(QBoxLayout(QBoxLayout.LeftToRight))
         labelwidget.layout().addWidget(label)
-        labelwidget.layout().setContentsMargins(0,0,0,0)
+        labelwidget.layout().setContentsMargins(0, 0, 0, 0)
 
         widget = roam.editorwidgets.core.createwidget(widgettype, parent=base)
         widget.setObjectName(field)
         layoutwidget = QWidget()
         layoutwidget.setLayout(QBoxLayout(QBoxLayout.LeftToRight))
         layoutwidget.layout().addWidget(widget)
-        layoutwidget.layout().setContentsMargins(0,0,0,10)
+        layoutwidget.layout().setContentsMargins(0, 0, 0, 10)
 
         if config.get('rememberlastvalue', False):
             savebutton = QToolButton()
@@ -253,11 +254,12 @@ def installflickcharm(widget):
         widget.charm.activateOn(child)
     return widget
 
-RejectedException = roam.editorwidgets.core.RejectedException
 
+RejectedException = roam.editorwidgets.core.RejectedException
 
 FeatureSaveException = qgisutils.FeatureSaveException
 MissingValuesException = qgisutils.MissingValuesException
+
 
 class DeleteFeatureException(FeatureSaveException):
     pass
@@ -349,7 +351,7 @@ class FeatureFormBase(QWidget):
         layer = self.form.QGISLayer
         # Crash in QGIS if you lookup a field that isn't found.
         # We just make a dict with all fields lower because QgsFields is case sensitive.
-        fields = {field.name().lower():field for field in layer.pendingFields().toList()}
+        fields = {field.name().lower(): field for field in layer.pendingFields().toList()}
 
         # Build a lookup for events
         self.events = collections.defaultdict(list)
@@ -833,7 +835,6 @@ class FeatureForm(FeatureFormBase):
     def featuredeleted(self, feature):
         pass
 
-
     def loaded(self):
         pass
 
@@ -929,6 +930,7 @@ class FeatureForm(FeatureFormBase):
                         raise FeatureSaveException("Widget Save Error",
                                                    "Could not save images for control {}".format(wrapper.label),
                                                    QgsMessageBar.CRITICAL)
+
         if not self.accept():
             raise FeatureSaveException.not_accepted()
 
@@ -960,7 +962,6 @@ class FeatureForm(FeatureFormBase):
         self.featuresaved(self.feature, values)
         self.accepted.emit()
 
-
     def update_geometry(self, feature):
         if self.geomwidget and self.geomwidget.edited:
             geometry = self.geomwidget.geometry()
@@ -986,6 +987,3 @@ class FeatureForm(FeatureFormBase):
             if not saved:
                 errors = layer.commitErrors()
                 raise DeleteFeatureException.not_saved(errors)
-
-
-

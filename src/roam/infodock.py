@@ -3,7 +3,7 @@ import os
 from string import Template
 from collections import OrderedDict
 
-from PyQt4.QtGui import ( QWidget, QIcon, QListWidgetItem, QMouseEvent, QApplication, QKeySequence, QAction)
+from PyQt4.QtGui import (QWidget, QIcon, QListWidgetItem, QMouseEvent, QApplication, QKeySequence, QAction)
 
 from PyQt4.QtCore import (Qt, QUrl,
                           QEvent, pyqtSignal
@@ -22,7 +22,6 @@ from roam.ui.uifiles import (infodock_widget)
 from roam.api import RoamEvents, GPS
 from roam.dataaccess import database
 from roam.api.utils import layer_by_name, values_from_feature
-
 
 import templates
 
@@ -43,6 +42,7 @@ class FeatureCursor(object):
     HACK: This could be a lot nicer and cleaner but it works
     for now
     """
+
     def __init__(self, layer, features, form=None, index=0):
         self.layer = layer
         self.features = features
@@ -345,7 +345,6 @@ class InfoDock(infodock_widget, QWidget):
             utils.exception(ex)
             return
 
-
         form = cursor.form
         layer = cursor.layer
 
@@ -354,7 +353,7 @@ class InfoDock(infodock_widget, QWidget):
         self.countLabel.setText(str(cursor))
 
         info1, results = self.generate_info("info1", self.project, layer, feature.id(), feature, countlabel=str(cursor))
-        info2, _= self.generate_info("info2", self.project, layer, feature.id(), feature, lastresults=results[0])
+        info2, _ = self.generate_info("info2", self.project, layer, feature.id(), feature, lastresults=results[0])
 
         if form:
             name = "{}".format(layer.name(), form.label)
@@ -524,4 +523,3 @@ def generate_rows(fields, attributes, **kwargs):
     rowtemple = Template(''.join(items))
     rowshtml = updateTemplate(data, rowtemple, **kwargs)
     return rowshtml
-

@@ -11,6 +11,7 @@ class DateTimePickerWidget(datepicker_widget, QWidget):
     """
     A custom date picker with a time and date picker
     """
+
     def __init__(self, parent=None, mode="DateTime"):
         super(DateTimePickerWidget, self).__init__(parent)
 
@@ -45,16 +46,16 @@ class DateTimePickerWidget(datepicker_widget, QWidget):
     def isDirty(self, *args):
         date = self.getSelectedDate()
         time = self.getSelectedTime()
-        
+
         datetime = QDateTime(date, time)
-        
+
         if self.mode == "Date":
             value = datetime.toString("ddd d MMM yyyy")
         elif self.mode == "Time":
             value = datetime.toString("hh:mm ap")
-        else:   
+        else:
             value = datetime.toString("ddd d MMM yyyy 'at' hh:mm ap")
-            
+
         self.label.setText("Set as: {}".format(value))
 
     def setDateTime(self, datetime):
@@ -149,4 +150,3 @@ class DateTimePickerWidget(datepicker_widget, QWidget):
 
         self.setDate(value.date())
         self.setTime(value.time())
-

@@ -119,7 +119,6 @@ class GPSMarker(QgsMapCanvasItem):
         self.pointpen.setWidth(2)
         self.pointbrush.setColor(color)
 
-
         painter.setBrush(self.pointbrush)
         painter.setPen(self.pointpen)
         y = 0 - halfSize
@@ -190,4 +189,3 @@ class GPSMarker(QgsMapCanvasItem):
 
     def updatePosition(self):
         self.setCenter(self.map_pos, self._gpsinfo)
-

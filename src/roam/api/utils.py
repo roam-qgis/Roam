@@ -46,6 +46,7 @@ def open_keyboard():
         cmd = 'onboard'
         subprocess.Popen(cmd)
 
+
 def layers(layertype=None):
     _layers = QgsMapLayerRegistry.instance().mapLayers().values()
     if layertype is None:
@@ -62,6 +63,7 @@ def layer_by_name(name):
     """
     return layers_by_name(name)[0]
 
+
 def layers_by_name(name):
     """
     Return any layers from QGIS using a name.
@@ -69,6 +71,7 @@ def layers_by_name(name):
     :return: A list of layers with the given layer name
     """
     return QgsMapLayerRegistry.instance().mapLayersByName(name)
+
 
 def feature_by_key(layer, key):
     """
@@ -111,6 +114,7 @@ class FeatureSaveException(Exception):
         """
         return (self.title, self.message, self.level, self.timout, self.moreinfo)
 
+
 class MissingValuesException(FeatureSaveException):
     @classmethod
     def missing_values(cls, fields):
@@ -131,6 +135,7 @@ def editing(layer):
         errors = layer.commitErrors()
         raise FeatureSaveException.not_saved(errors)
 
+
 def values_from_feature(feature, safe_names=False):
     def escape(value):
         if safe_names:
@@ -138,10 +143,12 @@ def values_from_feature(feature, safe_names=False):
             return value
         else:
             return value
+
     attributes = feature.attributes()
     fields = [escape(field.name().lower()) for field in feature.fields()]
     values = CaseInsensitiveDict(zip(fields, attributes))
     return values
+
 
 def copy_feature_values(from_feature, to_feature, include_geom=False):
     """
@@ -175,6 +182,7 @@ def nullcheck(value):
     else:
         return value
 
+
 def format_values(fieldnames, valuestore, with_char='\n'):
     """
     Format the given fields with with_char for each.
@@ -189,4 +197,3 @@ def format_values(fieldnames, valuestore, with_char='\n'):
         except KeyError:
             continue
     return with_char.join(value)
-

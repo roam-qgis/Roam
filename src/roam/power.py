@@ -19,7 +19,7 @@ class PowerState(QObject):
         QObject.__init__(self)
         self.widget = widget
         self.__oldProc = win32gui.SetWindowLong(self.widget.winId(), \
-                                                win32con.GWL_WNDPROC,\
+                                                win32con.GWL_WNDPROC, \
                                                 self.__WndProc)
 
     def __WndProc(self, hWnd, msg, wParam, lParam):
@@ -32,10 +32,11 @@ class PowerState(QObject):
                 self.poweron.emit()
         else:
             win32api.SetWindowLong(self.widget.winId(),
-                                    win32con.GWL_WNDPROC,
-                                    self.__oldProc)
+                                   win32con.GWL_WNDPROC,
+                                   self.__oldProc)
 
         return win32gui.CallWindowProc(self.__oldProc, hWnd, msg, wParam, lParam)
+
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)

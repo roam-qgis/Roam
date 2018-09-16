@@ -96,7 +96,7 @@ class SettingsWidget(Ui_settingsWidget, QWidget):
 
     def refreshPortsButton_pressed(self):
         self.updateCOMPorts()
-        
+
     def updateCOMPorts(self):
         # First item is the local gpsd so skip that.
         self.portfinder.start()
@@ -178,11 +178,10 @@ class SettingsWidget(Ui_settingsWidget, QWidget):
         roam.config.settings['gps'] = gpssettings
         self.notifysettingsupdate()
 
-
     def populateControls(self):
         if self.populated:
             return
-        
+
         self.updateCOMPorts()
         # Read version
 

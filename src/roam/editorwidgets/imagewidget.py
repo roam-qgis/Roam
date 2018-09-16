@@ -255,6 +255,7 @@ class DrawingPadWidget(LargeEditorWidget):
     def setvalue(self, value):
         self.widget.pixmap = value
 
+
 class MultiImageWidget(EditorWidget):
     widgettype = 'MultiImage'
 
@@ -354,7 +355,8 @@ class MultiImageWidget(EditorWidget):
         table = self.DBConfig['table']
         linkcode = self.DBConfig['linkcode']
         date = QDateTime.currentDateTime().toLocalTime().toString()
-        sql = "INSERT INTO '{0}' (linkid, photo, photo_id, timestamp, photo_number, linkname) VALUES ('{1}', '{2}', '{3}', '{4}', {5}, '{6}')".format(table, self.linkid, photo, photo_id, date, number, linkcode)
+        sql = "INSERT INTO '{0}' (linkid, photo, photo_id, timestamp, photo_number, linkname) VALUES ('{1}', '{2}', '{3}', '{4}', {5}, '{6}')".format(
+            table, self.linkid, photo, photo_id, date, number, linkcode)
         db.execute(sql)
 
     def save(self):
@@ -531,4 +533,3 @@ class ImageWidget(EditorWidget):
             return image.data()
 
         return image
-

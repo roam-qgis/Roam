@@ -1,11 +1,13 @@
 import os
-from qgis.core import QgsExpression, QgsMapLayerRegistry, QgsFeatureRequest, QGis, QgsPoint, QgsRectangle, QgsExpressionContext, \
+from qgis.core import QgsExpression, QgsMapLayerRegistry, QgsFeatureRequest, QGis, QgsPoint, QgsRectangle, \
+    QgsExpressionContext, \
     QgsExpressionContextScope
 
 import roam.utils
 from roam.api import RoamEvents
 
 canvas = None
+
 
 class DefaultError(Exception):
     pass
@@ -59,6 +61,7 @@ def default_values(widgets, feature, layer):
 
     return defaultvalues
 
+
 def layer_value(feature, layer, defaultconfig):
     if not canvas:
         roam.utils.warning("No canvas set for using layer_values default function")
@@ -92,8 +95,8 @@ def layer_value(feature, layer, defaultconfig):
             rect.scale(20)
 
             rect = canvas.mapRenderer().mapToLayerCoordinates(layer, rect)
-            rq = QgsFeatureRequest().setFilterRect(rect)\
-                                    .setFlags(QgsFeatureRequest.ExactIntersect)
+            rq = QgsFeatureRequest().setFilterRect(rect) \
+                .setFlags(QgsFeatureRequest.ExactIntersect)
             features = searchlayer.getFeatures(rq)
         else:
             features = searchlayer.getFeatures()
@@ -122,6 +125,6 @@ def layer_value(feature, layer, defaultconfig):
 
     raise DefaultError('No features found')
 
+
 defaultproviders = {'spatial-query': layer_value,
                     'layer-value': layer_value}
-

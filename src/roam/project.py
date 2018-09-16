@@ -847,5 +847,3 @@ class Project(QObject):
     @missing_layers.setter
     def missing_layers(self, layers):
         self._missinglayers = layers
-
-

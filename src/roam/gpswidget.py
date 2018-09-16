@@ -47,4 +47,3 @@ class GPSWidget(Ui_gpsWidget, QWidget):
         self.activeLabel.setText("GPS Not Active")
         self.activeLabel.setProperty("active", False)
         self.activeLabel.style().polish(self.activeLabel)
-

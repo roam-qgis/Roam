@@ -1,5 +1,6 @@
 from PyQt4.QtCore import QObject
 
+
 class RoamInterface(QObject):
     def __init__(self, events, gps, mainwindow, mapwindow, parent):
         super(RoamInterface, self).__init__(parent)

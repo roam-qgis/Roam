@@ -8,11 +8,11 @@ import roam.utils
 errorreporting = False
 try:
     from raven import Client
+
     errorreporting = True
 except ImportError:
     errorreporting = False
     roam.utils.warning("Error reporting disabled due to import error")
-
 
 
 def can_send():
@@ -31,4 +31,3 @@ def send_exception(exinfo):
         )
         roam.utils.info("Sending error report.")
         client.captureException(exinfo)
-

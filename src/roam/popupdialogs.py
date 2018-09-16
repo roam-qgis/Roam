@@ -94,7 +94,7 @@ class PickActionDialog(Ui_ActionPickerDialog, Dialogbase):
             """ Yield successive n-sized chunks from l.
             """
             for i in xrange(0, len(l), n):
-                yield l[i:i+n]
+                yield l[i:i + n]
 
         if self.wrap > 0:
             rows = list(chunks(actions, self.wrap))
@@ -103,5 +103,4 @@ class PickActionDialog(Ui_ActionPickerDialog, Dialogbase):
 
         for rowcount, row in enumerate(rows):
             for column, action in enumerate(row):
-
                 self.addAction(action, rowcount, column)

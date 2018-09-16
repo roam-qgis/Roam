@@ -3,6 +3,7 @@ from roam.api import GPS, utils
 
 capturegeometry = None
 
+
 def qgsfunction(args, group, **kwargs):
     """
     Decorator function used to define a user expression function.
@@ -33,6 +34,7 @@ def qgsfunction(args, group, **kwargs):
         pass
     """
     helptemplate = ''
+
     class QgsExpressionFunction(QgsExpression.Function):
         def __init__(self, name, args, group, helptext=''):
             QgsExpression.Function.__init__(self, name, args, group, helptext)
@@ -53,6 +55,7 @@ def qgsfunction(args, group, **kwargs):
         if register:
             QgsExpression.registerFunction(f)
         return f
+
     return wrapper
 
 
@@ -70,13 +73,16 @@ def roam_geomvertex(values, feature, parent):
             return node
     return None
 
+
 @qgsfunction(0, 'Roam')
 def roamgeometry(values, feature, parent):
     return capturegeometry
 
+
 @qgsfunction(0, "Roam")
 def gps_z(values, feature, parent):
     return gps(values, feature, parent)
+
 
 @qgsfunction(1, "Roam")
 def gps(values, feature, parent):
@@ -87,6 +93,7 @@ def gps(values, feature, parent):
         return GPS.gpsinfo(values[0])
     else:
         return None
+
 
 @qgsfunction(2, "Roam")
 def max_value(values, feature, parent):

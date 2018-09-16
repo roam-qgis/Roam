@@ -27,4 +27,3 @@ class TableWidget(Ui_tablewidget, QWidget):
 
     def setModel(self, model):
         self.table.setModel(model)
-

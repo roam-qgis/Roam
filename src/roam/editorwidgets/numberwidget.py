@@ -49,6 +49,7 @@ class Stepper(Ui_stepper, QWidget):
 
 class NumberWidget(EditorWidget):
     widgettype = 'Number'
+
     def __init__(self, *args, **kwargs):
         super(NumberWidget, self).__init__(*args, **kwargs)
 
@@ -111,6 +112,7 @@ class NumberWidget(EditorWidget):
 
 class DoubleNumberWidget(NumberWidget):
     widgettype = 'Number(Double)'
+
     def __init__(self, *args, **kwargs):
         super(DoubleNumberWidget, self).__init__(*args, **kwargs)
 
@@ -142,11 +144,9 @@ class DoubleNumberWidget(NumberWidget):
 
         return max, min
 
-
     def setvalue(self, value):
         if not value:
             value = 0.00
 
         value = float(value)
         self.widget.setValue(value)
-

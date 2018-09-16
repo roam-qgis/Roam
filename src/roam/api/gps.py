@@ -6,8 +6,8 @@ from datetime import datetime
 from PyQt4.QtCore import QObject, pyqtSignal, QDate, QDateTime, QTime, Qt, QTimer
 
 from qgis.core import (QgsGPSDetector, QgsGPSConnectionRegistry, QgsPoint, \
-                        QgsCoordinateTransform, QgsCoordinateReferenceSystem, \
-                        QgsGPSInformation, QgsCsException)
+                       QgsCoordinateTransform, QgsCoordinateReferenceSystem, \
+                       QgsGPSInformation, QgsCsException)
 
 from roam.utils import log, info, logger
 from roam.config import settings as config
@@ -18,17 +18,20 @@ NMEA_FIX_3D = 3
 
 KNOTS_TO_KM = 1.852
 
+
 def safe_float(value):
     try:
         return float(value)
     except (TypeError, ValueError):
         return 0.0
 
+
 def safe_int(value):
     try:
         return int(value)
     except (TypeError, ValueError):
         return 0
+
 
 GPSLOGFILENAME = config.get("gpslogfile", None)
 GPSLOGGING = not GPSLOGFILENAME is None
@@ -42,7 +45,6 @@ class GPSService(QObject):
     # Connect to listen to GPS status updates.
     gpsposition = pyqtSignal(QgsPoint, object)
     firstfix = pyqtSignal(QgsPoint, object)
-
 
     def __init__(self):
         super(GPSService, self).__init__()
@@ -200,7 +202,6 @@ class GPSService(QObject):
             self.info.utcDateTime.setTime(time)
         return self.info
 
-
     def gpsStateChanged(self, gpsInfo):
         if gpsInfo.fixType == NMEA_FIX_BAD or gpsInfo.status == 0 or gpsInfo.quality == 0:
             self.gpsfixed.emit(False, gpsInfo)
@@ -208,7 +209,6 @@ class GPSService(QObject):
 
         elif gpsInfo.fixType == NMEA_FIX_3D or NMEA_FIX_2D:
             self.gpsfixed.emit(True, gpsInfo)
-
 
         map_pos = QgsPoint(gpsInfo.longitude, gpsInfo.latitude)
         self.latlong_position = map_pos
@@ -226,12 +226,13 @@ class GPSService(QObject):
 
             self.info = gpsInfo
 
-            if (datetime.now()-self._gpsupdate_last).total_seconds() > self._gpsupdate_frequency:
+            if (datetime.now() - self._gpsupdate_last).total_seconds() > self._gpsupdate_frequency:
                 self.gpsposition.emit(map_pos, gpsInfo)
                 self._gpsupdate_last = datetime.now()
 
             self.postion = map_pos
             self.elevation = gpsInfo.elevation
+
 
 class FileGPSService(GPSService):
     def __init__(self, filename):

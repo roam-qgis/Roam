@@ -5,6 +5,7 @@ from roam.api.utils import layer_by_name, feature_by_key
 
 import roam.project
 
+
 class InspectionForm(FeatureForm):
     def __init__(self, *args, **kwargs):
         super(InspectionForm, self).__init__(*args, **kwargs)
@@ -131,4 +132,3 @@ class InspectionForm(FeatureForm):
         # Save all sub forms
         for subform in self.inspectionforms:
             subform.save()
-

@@ -15,12 +15,12 @@ from roam.utils import log
 
 
 class InfoTool(QgsMapTool):
-    def __init__(self, canvas, snapradius = 2):
+    def __init__(self, canvas, snapradius=2):
         super(InfoTool, self).__init__(canvas)
         self.canvas = canvas
         self.radius = snapradius
 
-        self.selectband = QgsRubberBand(self.canvas, QGis.Polygon )
+        self.selectband = QgsRubberBand(self.canvas, QGis.Polygon)
         self.selectrect = QRect()
         self.dragging = False
         self.selectionlayers = []
@@ -65,8 +65,8 @@ class InfoTool(QgsMapTool):
         self.dragging = False
         self.selectrect.setRect(0, 0, 0, 0)
 
-        self.selectband = QgsRubberBand(self.canvas, QGis.Polygon )
-        self.selectband.setColor(QColor.fromRgb(0,0,255, 65))
+        self.selectband = QgsRubberBand(self.canvas, QGis.Polygon)
+        self.selectband.setColor(QColor.fromRgb(0, 0, 255, 65))
         self.selectband.setWidth(5)
 
     def canvasMoveEvent(self, event):
@@ -95,7 +95,7 @@ class InfoTool(QgsMapTool):
         self.dragging = False
         self.selectband.reset()
 
-        results = OrderedDict((l,f) for l, f in self.getFeatures(rect))
+        results = OrderedDict((l, f) for l, f in self.getFeatures(rect))
 
         RoamEvents.selectioncleared.emit()
         RoamEvents.selectionchanged.emit(results)

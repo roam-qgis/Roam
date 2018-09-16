@@ -10,8 +10,9 @@ from PyQt4.QtGui import QActionGroup, QFrame, QWidget, QSizePolicy, \
 
 from PyQt4.QtSvg import QGraphicsSvgItem
 
-from qgis.gui import QgsMapCanvas, QgsMapToolZoom, QgsRubberBand, QgsMapCanvasItem, QgsScaleComboBox, QgsLayerTreeMapCanvasBridge, \
-                     QgsMapCanvasSnappingUtils
+from qgis.gui import QgsMapCanvas, QgsMapToolZoom, QgsRubberBand, QgsMapCanvasItem, QgsScaleComboBox, \
+    QgsLayerTreeMapCanvasBridge, \
+    QgsMapCanvasSnappingUtils
 from qgis.core import QgsPalLabeling, QgsMapLayerRegistry, QgsMapLayer, QGis, QgsRectangle, QgsProject, QgsApplication, \
     QgsComposerScaleBar, \
     QgsCoordinateReferenceSystem, QgsCoordinateTransform, QgsPoint, QgsCsException, QgsDistanceArea
@@ -374,7 +375,6 @@ class MapWidget(Ui_CanvasWidget, QMainWindow):
             self.northarrow.setPos(10, 10)
             self.canvas.scene().addItem(self.northarrow)
 
-
         smallmode = roam.config.settings.get("smallmode", False)
         self.projecttoolbar.setSmallMode(smallmode)
 
@@ -534,13 +534,13 @@ class MapWidget(Ui_CanvasWidget, QMainWindow):
         :param gpsinfo: The current extra GPS information.
         """
         self.gpslabel.setText("GPS: PDOP <b>{0:.2f}</b> HDOP <b>{1:.2f}</b>    VDOP <b>{2:.2f}</b>".format(gpsinfo.pdop,
-                                                                                        gpsinfo.hdop,
-                                                                                        gpsinfo.vdop))
+                                                                                                           gpsinfo.hdop,
+                                                                                                           gpsinfo.vdop))
 
         places = roam.config.settings.get("gpsplaces", 8)
-        self.gpslabelposition.setText("X <b>{x:.{places}f}</b> Y <b>{y:.{places}f}</b>".format(x = position.x(),
-                                                                                      y = position.y(),
-                                                                                      places=places))
+        self.gpslabelposition.setText("X <b>{x:.{places}f}</b> Y <b>{y:.{places}f}</b>".format(x=position.x(),
+                                                                                               y=position.y(),
+                                                                                               places=places))
 
     def gps_disconnected(self):
         """
@@ -663,6 +663,7 @@ class MapWidget(Ui_CanvasWidget, QMainWindow):
         :param form: The form for the current feature
         :param feature: The active feature.
         """
+
         def trigger_default_action():
             for action in self.projecttoolbar.actions():
                 if action.property('dataentry') and action.isdefault:
@@ -686,6 +687,7 @@ class MapWidget(Ui_CanvasWidget, QMainWindow):
         Clear all temp objects from the canvas.
         :return:
         """
+
         def clear_tool_band():
             """
             Clear the rubber band of the active tool if it has one
@@ -774,6 +776,7 @@ class MapWidget(Ui_CanvasWidget, QMainWindow):
         """
         Open the form selection widget to allow the user to pick the active capture form.
         """
+
         def showformerror(form):
             pass
 
@@ -861,6 +864,7 @@ class MapWidget(Ui_CanvasWidget, QMainWindow):
         """
         Connect the default buttons in the interface. Zoom, pan, etc
         """
+
         def connectAction(action, tool):
             action.toggled.connect(partial(self.setMapTool, tool))
 
@@ -1012,11 +1016,16 @@ class MapWidget(Ui_CanvasWidget, QMainWindow):
         # Freeze the canvas to save on UI refresh
         dlg = PickActionDialog(msg="Raster visibility")
         actions = [
-            QAction(QIcon(":/icons/raster_0"), "Off", self, triggered=partial(self._set_raster_layer_value, 0), objectName="photo_off"),
-            QAction(QIcon(":/icons/raster_25"), "25%", self, triggered=partial(self._set_raster_layer_value, .25), objectName="photo_25"),
-            QAction(QIcon(":/icons/raster_50"), "50%", self, triggered=partial(self._set_raster_layer_value, .50), objectName="photo_50"),
-            QAction(QIcon(":/icons/raster_75"), "75%", self, triggered=partial(self._set_raster_layer_value, .75), objectName="photo_75"),
-            QAction(QIcon(":/icons/raster_100"), "100%", self, triggered=partial(self._set_raster_layer_value, 1), objectName="photo_100")
+            QAction(QIcon(":/icons/raster_0"), "Off", self, triggered=partial(self._set_raster_layer_value, 0),
+                    objectName="photo_off"),
+            QAction(QIcon(":/icons/raster_25"), "25%", self, triggered=partial(self._set_raster_layer_value, .25),
+                    objectName="photo_25"),
+            QAction(QIcon(":/icons/raster_50"), "50%", self, triggered=partial(self._set_raster_layer_value, .50),
+                    objectName="photo_50"),
+            QAction(QIcon(":/icons/raster_75"), "75%", self, triggered=partial(self._set_raster_layer_value, .75),
+                    objectName="photo_75"),
+            QAction(QIcon(":/icons/raster_100"), "100%", self, triggered=partial(self._set_raster_layer_value, 1),
+                    objectName="photo_100")
         ]
 
         dlg.addactions(actions)

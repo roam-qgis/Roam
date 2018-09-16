@@ -102,6 +102,4 @@ def timeit(method):
 
 
 def _pluralstring(text='', num=0):
-    return "%d %s%s" % (num, text, "s" [num == 1:])
-
-
+    return "%d %s%s" % (num, text, "s"[num == 1:])

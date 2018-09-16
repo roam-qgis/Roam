@@ -1,15 +1,18 @@
 from PyQt4.QtGui import QDesktopWidget
 from string import Template
 
+
 def width():
     widget = QDesktopWidget()
     rec = widget.availableGeometry(widget.primaryScreen())
     return rec.width()
 
+
 def height():
     widget = QDesktopWidget()
     rec = widget.availableGeometry(widget.primaryScreen())
     return rec.height()
+
 
 def font():
     if width() == 1024 and height() == 728:
@@ -17,11 +20,13 @@ def font():
     else:
         return 'font: 14pt "Segoe UI" ;'
 
+
 def iconsize():
     iconsize = 48
     if width() == 1024 and height() == 728:
         iconsize = 24
     return iconsize
+
 
 def appstyle():
     return Template("""
@@ -292,6 +297,7 @@ def menubarstyle():
     }
     """).substitute(FONT=font())
 
+
 def featureform():
     return Template("""
     * {
@@ -398,4 +404,3 @@ def featureform():
         background-color: rgb(211, 228, 255);
     }
     """).substitute(FONT=font())
-

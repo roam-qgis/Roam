@@ -60,5 +60,4 @@ class BigList(Ui_BigList, QWidget):
             width = self.parent().width()
             height = self.parent().height()
             self.move(width / 4, 0)
-            self.resize(QSize(width /2, height))
-
+            self.resize(QSize(width / 2, height))

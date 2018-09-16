@@ -315,4 +315,3 @@ class ProjectUpdater(QObject):
         is_new = True
         forupdate.put((projectinfo, projectinfo['version'], self.server, is_new))
         self.updatethread.start()
-
