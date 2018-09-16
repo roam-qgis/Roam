@@ -7,7 +7,7 @@ from configmanager.ui.nodewidgets import ui_publishwidget
 from configmanager.ui.widgets.widgetbase import WidgetBase
 from configmanager.services.dataservice import DataService
 
-from PyQt4.QtCore import Qt
+from PyQt4.QtCore import Qt, QDateTime
 from PyQt4.QtGui import QTableWidgetItem, QHeaderView, QApplication, QFileDialog
 
 import configmanager.bundle
@@ -67,7 +67,7 @@ class PublishWidget(ui_publishwidget.Ui_widget, WidgetBase):
         super(PublishWidget, self).set_data(data)
         self.dataservice = DataService(self.config)
         self.reload_projects()
-        self.deployLocationText.setText(self.config.get('global_publish_path',""))
+        self.deployLocationText.setText(self.config.get('global_publish_path', ""))
         self.refresh()
 
     def reload_projects(self):
@@ -94,7 +94,7 @@ class PublishWidget(ui_publishwidget.Ui_widget, WidgetBase):
         super(PublishWidget, self).write_config()
 
     def refresh(self):
-        self.lastSaveLabel.setText(self.dataservice.last_save_date)
+        pass
 
     def resolve_path(self, path):
         if not path:
@@ -107,16 +107,25 @@ class PublishWidget(ui_publishwidget.Ui_widget, WidgetBase):
         self.write_config()
 
         self.progressLabel.show()
-        dataoptions = {
-            "data_date": DataService(self.config).read()['data_save_date']
-        }
+
+        datazipfile = None
+
+        self.data_depolyed_folders = []
         for projectconfig in self.get_project_depoly_settings(all_projects=all_projects).itervalues():
             ## Gross but quicker then threading at the moment.
             QApplication.instance().processEvents()
             ## Fix the path to use the global location, or the roam_srv if that isn't set.
             projectconfig['path'] = self.resolve_path(projectconfig['path'])
             self.projects[projectconfig['id']].save(update_version=True, reset_save_point=True)
-            self.deploy_data(projectconfig, dataoptions)
+            if projectconfig['path'] not in self.data_depolyed_folders and self.includeDataCheck.isChecked():
+                if not datazipfile:
+                    datazipfile = self.make_zip()
+
+                self.logger.info("DEPLOYYYY!!")
+                self.logger.info("Deploying data for location {}".format(projectconfig['path']))
+                self.deploy_data(projectconfig, datazipfile)
+                self.data_depolyed_folders.append(projectconfig['path'])
+
             self.deploy_project(projectconfig)
             self.logger.info("Updating project.config")
         self.progressLabel.hide()
@@ -161,14 +170,15 @@ class PublishWidget(ui_publishwidget.Ui_widget, WidgetBase):
 
         configmanager.bundle.bundle_project(project, path, options, as_install=True)
 
-    def deploy_data(self, projectconfig, dataoptions):
-        def make_zip():
-            self.logger.info("Zipping data folder to temp folder")
-            datazip = os.path.join(tempfile.gettempdir(), "_data.zip")
-            configmanager.bundle.zipper(self.data['data_root'], "_data", datazip, {})
-            self.cache["data_zip"] = datazip
-            self.cache["data_date"] = datadate
-            return datazip
+    def make_zip(self):
+        self.logger.info("ZIP IT. ZIP IT GOOD!")
+        self.logger.info("Zipping data folder to temp folder")
+        datazip = os.path.join(tempfile.gettempdir(), "_data.zip")
+        configmanager.bundle.zipper(self.data['data_root'], "_data", datazip, {})
+        return datazip
+
+    def deploy_data(self, projectconfig, datazip):
+        date = QDateTime.currentDateTimeUtc().toString(Qt.ISODate)
 
         path = os.path.join(projectconfig['path'], "projects")
 
@@ -178,25 +188,8 @@ class PublishWidget(ui_publishwidget.Ui_widget, WidgetBase):
         self.logger.info("Published config from: {}".format(path))
         publishedconfig = configmanager.bundle.get_config(path)
 
-        publihseddatadata = publishedconfig.get('data_date', None)
-        datadate = dataoptions.get('data_date', None)
-        if datadate is None:
-            DataService(self.config).update_date_to_latest()
+        shutil.copy(datazip, path)
 
-        if publihseddatadata != datadate:
-            self.logger.info(
-                "Updating _data.zip file to latest data. Publish date {} vs {}".format(publihseddatadata, datadate))
-
-            if self.cache.get('data_date', None) == datadate and "data_zip" in self.cache:
-                datazip = self.cache['data_zip']
-                self.logger.info("Got data zip path from cache {}".format(datazip))
-            else:
-                datazip = make_zip()
-
-            shutil.copy(datazip, path)
-
-            self.logger.info("Updating project data metadata")
-            publishedconfig['data_date'] = datadate
-            publishedconfig.save()
-        else:
-            self.logger.info("Data already on latest version")
+        self.logger.info("Updating project data metadata")
+        publishedconfig['data_date'] = date
+        publishedconfig.save()
