@@ -711,6 +711,9 @@ class MapWidget(Ui_CanvasWidget, QMainWindow):
         gpslogging = settings.get('gpslogging', True)
         if self.gpslogging:
             self.gpslogging.logging = gpslogging
+        smallmode = settings.get("smallmode", False)
+        self.projecttoolbar.setSmallMode(smallmode)
+
 
     def set_gps(self, gps, logging):
         """

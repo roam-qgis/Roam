@@ -347,6 +347,8 @@ class MainWindow(ui_mainwindow.Ui_MainWindow, QMainWindow):
     def settingsupdated(self, settings):
         self.settings = settings
         self.show()
+        smallmode = self.settings.get("smallmode", False)
+        self.menutoolbar.setSmallMode(smallmode)
         self.canvas_page.settings_updated(settings)
 
     def on_geometryedit(self, form, feature):

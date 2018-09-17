@@ -38,6 +38,7 @@ class SettingsWidget(Ui_settingsWidget, QWidget):
         self.updateServerEdit.textChanged.connect(self.updateServerEdit_edited)
         self.distanceCheck.toggled.connect(self.distanceCheck_toggled)
         self.errorReportCheck.toggled.connect(self.errorReportCheck_toggled)
+        self.smallModeCheck.toggled.connect(self.smallMode_toggled)
         self.portfinder = PortFinder()
         self.portfinder.portsfound.connect(self._addports)
         self.gpstiming_edit.valueChanged.connect(self.update_tracking)
@@ -54,6 +55,10 @@ class SettingsWidget(Ui_settingsWidget, QWidget):
     def notifysettingsupdate(self):
         roam.config.save()
         self.settingsupdated.emit(self.settings)
+
+    def smallMode_toggled(self, checked):
+        self.settings['smallmode'] = checked
+        self.notifysettingsupdate()
 
     def errorReportCheck_toggled(self, checked):
         self.settings['online_error_reporting'] = checked
@@ -154,6 +159,7 @@ class SettingsWidget(Ui_settingsWidget, QWidget):
         updateserver = self.settings.get('updateserver', None)
         distance = self.settings.get('draw_distance', True)
         reporterror = self.settings.get('online_error_reporting', False)
+        smallmode = self.settings.get('smallmode', False)
 
         self.fullScreenCheck.setChecked(fullscreen)
         self.gpslocationCheck.setChecked(gpszoom)
@@ -163,6 +169,7 @@ class SettingsWidget(Ui_settingsWidget, QWidget):
         self.updateServerEdit.setText(updateserver)
         self.distanceCheck.setChecked(distance)
         self.errorReportCheck.setChecked(reporterror)
+        self.smallModeCheck.setChecked(smallmode)
 
         self._setgpsport()
         self.set_gps_settings()
