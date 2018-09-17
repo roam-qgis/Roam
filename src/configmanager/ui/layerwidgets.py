@@ -942,12 +942,7 @@ class InfoNode(ui_infonode.Ui_Form, WidgetBase):
         """
         Update if the SQL panel is enabled or disable if the source is SQL Server or SQLite.
         """
-        layer = None
-        if self.fromlayer_radio.isChecked():
-            layer = self.connectionCombo.currentLayer()
-
-        if self.thislayer_radio.isChecked():
-            layer = self.treenode.layer
+        layer = self.layer
 
         if not layer:
             self.queryframe.setEnabled(False)
@@ -975,6 +970,16 @@ class InfoNode(ui_infonode.Ui_Form, WidgetBase):
             self.queryframe.setEnabled(False)
             self.queryframe.hide()
             return False
+
+    @property
+    def layer(self):
+        if self.fromlayer_radio.isChecked():
+            return self.connectionCombo.currentLayer()
+
+        if self.thislayer_radio.isChecked():
+            return self.treenode.layer
+
+        return None
 
     def test_query(self):
         if not self.layer:
