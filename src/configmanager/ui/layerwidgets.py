@@ -987,20 +987,27 @@ class InfoNode(ui_infonode.Ui_Form, WidgetBase):
 
         layer = self.layer
         db = Database.fromLayer(layer)
-        if not self.mapKeyEdit.text():
-            feature = layer.getFeatures().next()
-            self.mapKeyEdit.setText(str(feature.id()))
-        else:
-            try:
-                mapkey = int(self.mapKeyEdit.text())
-                rq = QgsFeatureRequest().setFilterFid(mapkey)
-                feature = layer.getFeatures(rq).next()
-            except ValueError:
-                RoamEvents.raisemessage("Error in mapkey", "Map key is invalid. Should be a valid number", RoamEvents.ERROR)
-                return
-            except StopIteration:
-                RoamEvents.raisemessage("No feature found", "Feature with map key {} was not found".format(self.mapKeyEdit.text()), RoamEvents.ERROR)
-                return
+        try:
+            if not self.mapKeyEdit.text():
+                feature = layer.getFeatures().next()
+                self.mapKeyEdit.setText(str(feature.id()))
+            else:
+                try:
+                    mapkey = int(self.mapKeyEdit.text())
+                    rq = QgsFeatureRequest().setFilterFid(mapkey)
+                    feature = layer.getFeatures(rq).next()
+                except ValueError:
+                    self.attributesLabel.setText("")
+                    self.previewGrid.setModel(None)
+                    self.resultsLabel.setText("Error in mapkey. Map key is invalid. Should be a valid number")
+                    return
+        except StopIteration:
+            self.attributesLabel.setText("")
+            self.previewGrid.setModel(None)
+            self.resultsLabel.setText("No features found. No results or map key not found in layer")
+            return
+
+        self.resultsLabel.setText("")
 
         dbkey = self.dbKeyEdit.text()
 
@@ -1043,6 +1050,7 @@ class InfoNode(ui_infonode.Ui_Form, WidgetBase):
         self.Editor.setText(query)
         self.attributesLabel.setText("")
         self.previewGrid.setModel(None)
+        self.resultsLabel.setText("")
 
         if not self.update_panel_status():
             pass

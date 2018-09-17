@@ -215,7 +215,7 @@
              <x>0</x>
              <y>0</y>
              <width>284</width>
-             <height>190</height>
+             <height>161</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_2">
@@ -256,6 +256,21 @@
         </item>
         <item row="0" column="0">
          <widget class="QTableView" name="previewGrid"/>
+        </item>
+        <item row="1" column="0" colspan="2">
+         <widget class="QLabel" name="resultsLabel">
+          <property name="font">
+           <font>
+            <pointsize>14</pointsize>
+           </font>
+          </property>
+          <property name="styleSheet">
+           <string notr="true">color: rgb(255, 59, 41);</string>
+          </property>
+          <property name="text">
+           <string/>
+          </property>
+         </widget>
         </item>
        </layout>
       </item>
