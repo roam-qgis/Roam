@@ -6,7 +6,7 @@ from PyQt4.QtCore import (QUrl, QByteArray, QDate, QDateTime, QTime, QSize, QEve
                           QEasingCurve, QAbstractAnimation)
 from PyQt4.QtGui import (QDialog, QWidget, QGridLayout, QPixmap, QFrame,
                          QImageReader, QDesktopServices, QApplication, QToolBar,
-                         QSizePolicy, QIcon, QLabel, QGraphicsOpacityEffect)
+                         QSizePolicy, QIcon, QLabel, QGraphicsOpacityEffect, QAction, QPushButton)
 from PyQt4.QtWebKit import QWebView, QWebPage
 
 from roam import utils
@@ -127,14 +127,15 @@ class HtmlViewerWidget(QWidget):
         self.spacer.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
         self.copyAction = self.toolbar.addAction(QIcon(":/icons/clipboard"), "Copy Text")
         self.label = QLabel()
-        self.closeAction = self.toolbar.addAction(QIcon(":/icons/cancel"), "Close")
-        self.spaceraction = self.toolbar.insertWidget(self.closeAction, self.spacer)
+        self.closeAction = QPushButton(QIcon(":/icons/cancel"), "Close", self)
+        self.spaceraction = self.toolbar.insertWidget(None, self.spacer)
         self.labelaction = self.toolbar.insertWidget(self.spaceraction, self.label)
-        self.closeAction.triggered.connect(self.close)
+        self.closeAction.pressed.connect(self.close)
         self.copyAction.triggered.connect(self.copy_text)
         self.layout().addWidget(self.frame)
         self.frame.layout().addWidget(self.toolbar)
         self.frame.layout().addWidget(self.view)
+        self.frame.layout().addWidget(self.closeAction)
 
         self.effect = QGraphicsOpacityEffect()
         self.label.setGraphicsEffect(self.effect)
