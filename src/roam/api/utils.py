@@ -1,6 +1,7 @@
 import sys
 import os
 import subprocess
+import collections
 from contextlib import contextmanager
 from qgis.core import QgsMapLayerRegistry, QgsFeatureRequest, QgsGeometry, QgsMapLayer, QgsExpression
 from qgis.gui import QgsMessageBar
@@ -136,7 +137,7 @@ def editing(layer):
         raise FeatureSaveException.not_saved(errors)
 
 
-def values_from_feature(feature, safe_names=False):
+def values_from_feature(feature, safe_names=False, ordered=False):
     def escape(value):
         if safe_names:
             value = value.replace(" ", "_")
@@ -146,8 +147,10 @@ def values_from_feature(feature, safe_names=False):
 
     attributes = feature.attributes()
     fields = [escape(field.name().lower()) for field in feature.fields()]
-    values = CaseInsensitiveDict(zip(fields, attributes))
-    return values
+    if ordered:
+        return collections.OrderedDict(zip(fields, attributes))
+    else:
+        return CaseInsensitiveDict(zip(fields, attributes))
 
 
 def copy_feature_values(from_feature, to_feature, include_geom=False):

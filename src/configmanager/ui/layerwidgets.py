@@ -998,7 +998,7 @@ class InfoNode(ui_infonode.Ui_Form, WidgetBase):
 
         dbkey = self.dbKeyEdit.text()
 
-        attributes = utils.values_from_feature(feature, safe_names=True)
+        attributes = utils.values_from_feature(feature, safe_names=True, ordered=True)
         attributes['mapkey'] = feature.id()
         attributes['dbkey'] = dbkey
         # Run the SQL text though the QGIS expression engine first.
