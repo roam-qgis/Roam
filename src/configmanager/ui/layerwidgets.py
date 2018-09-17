@@ -925,19 +925,18 @@ class InfoNode(ui_infonode.Ui_Form, WidgetBase):
     """
     Info query node for a layer. Allows setting the SQL query if a layer is SQL Server or SQLite.
     """
+
     def __init__(self, parent=None):
         super(InfoNode, self).__init__(parent)
         self.setupUi(self)
         self.Editor.setLexer(QsciLexerSQL())
         self.Editor.setMarginWidth(0, 0)
         self.Editor.setWrapMode(QsciScintilla.WrapWord)
-        self.layer = None
         self.connectionCombo.currentIndexChanged.connect(self.update_panel_status)
         self.fromlayer_radio.toggled.connect(self.update_panel_status)
         self.thislayer_radio.toggled.connect(self.update_panel_status)
         self.connectionCombo.blockSignals(True)
         self.testButton.pressed.connect(self.test_query)
-        self.layer = None
 
     def update_panel_status(self, *args):
         """
@@ -954,25 +953,27 @@ class InfoNode(ui_infonode.Ui_Form, WidgetBase):
             self.queryframe.setEnabled(False)
             return False
 
-        self.layer = layer
-
         source = layer.source()
         name = layer.dataProvider().name()
 
-        keys = layer.pkAttributeList()
-        fields = layer.pendingFields()
-        if keys:
-            fieldnames = " + ".join(fields[key].name() for key in keys)
-        else:
-            fieldnames = fields.at(0).name()
+        if ".sqlite" in source or name == "mssql" and layer.isValid():
+            keys = layer.pkAttributeList()
+            fields = layer.pendingFields()
+            if keys:
+                fieldnames = " + ".join(fields[key].name() for key in keys)
+            elif fields.count() > 0:
+                fieldnames = fields.at(0).name()
+            else:
+                fieldnames = ""
 
-        self.keyColumnLabel.setText(fieldnames)
-
-        if ".sqlite" in source or name == "mssql":
+            self.keyColumnLabel.setText(fieldnames)
             self.queryframe.setEnabled(True)
+            self.queryframe.show()
             return True
         else:
+            self.keyColumnLabel.setText("")
             self.queryframe.setEnabled(False)
+            self.queryframe.hide()
             return False
 
     def test_query(self):
@@ -1018,10 +1019,7 @@ class InfoNode(ui_infonode.Ui_Form, WidgetBase):
         """
         self.connectionCombo.blockSignals(False)
         super(InfoNode, self).set_project(project, node)
-        self.layer = self.treenode.layer
         # uri = QgsDataSourceURI(self.layer.dataProvider().dataSourceUri())
-        if not self.update_panel_status():
-            pass
 
         infoblock = self.project.info_query(node.key, node.layer.name())
         caption = infoblock.get("caption", node.text())
@@ -1041,41 +1039,43 @@ class InfoNode(ui_infonode.Ui_Form, WidgetBase):
         self.attributesLabel.setText("")
         self.previewGrid.setModel(None)
 
+        if not self.update_panel_status():
+            pass
+
     def write_config(self):
         """
         Wrtie the config for the widget back to the project config
         """
-        config = self.project.settings.setdefault('selectlayerconfig', {})
-        infoconfig = config.setdefault(self.layer.name(), {})
+        nodelayer = self.treenode.layer.name()
+        self.project.settings.setdefault('selectlayerconfig', {}).setdefault(nodelayer, {})
 
         if self.fromlayer_radio.isChecked():
             layer = self.connectionCombo.currentLayer()
+
             connection = {"layer": layer.name()}
         else:
             connection = "from_layer"
 
-
         if self.Editor.text():
-            infoconfig[self.treenode.key] = {
+            config = {
                 "caption": self.caption_edit.text(),
                 "query": self.Editor.text(),
                 "connection": connection,
                 "type": "sql"
             }
+            self.project.settings['selectlayerconfig'][nodelayer][self.treenode.key] = config
         else:
             try:
-                del infoconfig[self.treenode.key]
+                del self.project.settings['selectlayerconfig'][nodelayer][self.treenode.key]
             except KeyError:
                 pass
-
-        config[self.layer.name()] = infoconfig
-        self.project.settings['selectlayerconfig'] = config
 
 
 class LayerWidget(ui_layernode.Ui_Form, WidgetBase):
     """
     Select layer widget.
     """
+
     def __init__(self, parent=None):
         super(LayerWidget, self).__init__(parent)
         self.setupUi(self)
