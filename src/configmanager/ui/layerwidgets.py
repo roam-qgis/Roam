@@ -1038,6 +1038,8 @@ class InfoNode(ui_infonode.Ui_Form, WidgetBase):
 
         self.caption_edit.setText(caption)
         self.Editor.setText(query)
+        self.attributesLabel.setText("")
+        self.previewGrid.setModel(None)
 
     def write_config(self):
         """
