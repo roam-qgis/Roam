@@ -12,7 +12,7 @@ from PyQt4.QtCore import (Qt, QUrl,
 from PyQt4.QtWebKit import QWebPage
 
 from qgis.core import (QgsExpression, QgsFeature,
-                       QgsMapLayer, QgsFeatureRequest, QgsGeometry, NULL)
+                       QgsMapLayer, QgsFeatureRequest, QgsGeometry, NULL, QGis)
 
 from roam import utils
 from roam.popupdialogs import PickActionDialog
@@ -377,6 +377,10 @@ class InfoDock(infodock_widget, QWidget):
         self.deleteFeatureButton.setVisible(deletefeature)
         self.quickInspectButton.setVisible('inspection' in tools)
         self.editButton.setVisible(editattributes)
+        geom = cursor.feature.geometry()
+        geomtype = geom.type()
+        if geomtype == QGis.Polygon and geom.isMultipart():
+            editgeom = False
         self.editGeomButton.setVisible(editgeom)
         self.featureupdated.emit(layer, feature, cursor.features)
 
