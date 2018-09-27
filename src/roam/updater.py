@@ -23,6 +23,10 @@ import roam.project
 import roam.config
 
 
+class UpdateExpection(Exception):
+    pass
+
+
 def add_slash(url):
     if not url.endswith("/"):
         url += "/"
@@ -103,7 +107,16 @@ def download_file(url, fileout):
     Will open and write to fileout
     """
     roam.utils.debug("Opening URL: {}".format(url))
-    result = urllib2.urlopen(url)
+    try:
+        result = urllib2.urlopen(url)
+    except urllib2.HTTPError as ex:
+        if ex.code == 404:
+            roam.utils.warning("Can't find URL: {}".format(url))
+        else:
+            roam.utils.exception("HTTP Error: {}".format(ex))
+        yield "Error in download"
+        raise UpdateExpection("Error in downloading file.")
+
     length = result.headers['content-length']
 
     length = int(length) / 1024 / 1024
@@ -184,6 +197,13 @@ class UpdateWorker(QObject):
         self.basefolder = basefolder
         self.projectUpdateStatus.connect(self.status_updated)
 
+    def check_url_found(self, url):
+        try:
+            result = urllib2.urlopen(url)
+            return result.code == 200
+        except urllib2.HTTPError as ex:
+            return False
+
     def fetch_data(self, rootfolder, filename, serverurl):
         """
         Download the update zip file for the project from the server
@@ -197,9 +217,19 @@ class UpdateWorker(QObject):
         filename = "{}.zip".format(filename)
         url = urlparse.urljoin(serverurl, "projects/{}".format(filename))
         zippath = os.path.join(tempfolder, filename)
-        roam.utils.info("Downloading project zip {}".format(url))
-        for status in download_file(url, zippath):
-            yield status
+        if not self.check_url_found(url):
+            yield "Skipping data download"
+            yield "Done"
+            return
+
+        roam.utils.info("Downloading data zip from {}".format(url))
+        try:
+            for status in download_file(url, zippath):
+                yield status
+        except UpdateExpection as ex:
+            roam.utils.exception("Error in update for project")
+            yield "Error in downloading data"
+            return
 
         yield "Extracting data.."
         with zipfile.ZipFile(zippath, "r") as z:
