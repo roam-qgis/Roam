@@ -377,7 +377,8 @@ class InfoDock(infodock_widget, QWidget):
         self.deleteFeatureButton.setVisible(deletefeature)
         self.quickInspectButton.setVisible('inspection' in tools)
         self.editButton.setVisible(editattributes)
-        geom = cursor.feature.geometry()
+        feature = cursor.feature
+        geom = feature.geometry()
         geomtype = geom.type()
         if geomtype == QGis.Polygon and geom.isMultipart():
             editgeom = False
