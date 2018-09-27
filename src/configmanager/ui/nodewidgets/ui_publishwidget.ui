@@ -25,7 +25,7 @@
         <string>Include the projects_data folder when doing a publish</string>
        </property>
        <property name="text">
-        <string>Inlcude data folder</string>
+        <string>Include data folder</string>
        </property>
        <property name="checked">
         <bool>true</bool>
