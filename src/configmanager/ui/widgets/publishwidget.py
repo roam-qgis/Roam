@@ -68,6 +68,7 @@ class PublishWidget(ui_publishwidget.Ui_widget, WidgetBase):
         self.dataservice = DataService(self.config)
         self.reload_projects()
         self.deployLocationText.setText(self.config.get('global_publish_path', ""))
+        self.includeDataCheck.setChecked(self.config.get('include_data', True))
         self.refresh()
 
     def reload_projects(self):
@@ -90,6 +91,7 @@ class PublishWidget(ui_publishwidget.Ui_widget, WidgetBase):
         projects = self.get_project_depoly_settings(True)
         self.config['global_publish_path'] = self.deployLocationText.text()
         self.config['projects'] = projects
+        self.config['include_data'] = self.includeDataCheck.isChecked()
         self.config.save()
         super(PublishWidget, self).write_config()
 
