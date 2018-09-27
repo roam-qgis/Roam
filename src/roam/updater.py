@@ -4,6 +4,7 @@ import os
 import re
 import zipfile
 import urlparse
+import urllib
 import urllib2
 import Queue
 import logging
@@ -25,6 +26,10 @@ import roam.config
 
 class UpdateExpection(Exception):
     pass
+
+
+def quote_url(url):
+    return urllib.quote(url, safe="%/:=&?~#+!$,;'@()*[]")
 
 
 def add_slash(url):
@@ -106,6 +111,8 @@ def download_file(url, fileout):
 
     Will open and write to fileout
     """
+    url = quote_url(url)
+
     roam.utils.debug("Opening URL: {}".format(url))
     try:
         result = urllib2.urlopen(url)
@@ -198,6 +205,7 @@ class UpdateWorker(QObject):
         self.projectUpdateStatus.connect(self.status_updated)
 
     def check_url_found(self, url):
+        url = quote_url(url)
         try:
             result = urllib2.urlopen(url)
             return result.code == 200
