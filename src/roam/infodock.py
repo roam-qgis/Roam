@@ -369,13 +369,11 @@ class InfoDock(infodock_widget, QWidget):
         self.attributesView.setHtml(html, templates.baseurl)
         tools = self.project.layer_tools(layer)
         hasform = not form is None
-        print tools
         editattributes = 'edit_attributes' in tools or 'inspection' in tools or hasform
-        print editattributes
         editgeom = 'edit_geom' in tools and hasform
         deletefeature = 'delete' in tools and hasform
         self.deleteFeatureButton.setVisible(deletefeature)
-        self.quickInspectButton.setVisible('inspection' in tools)
+        self.quickInspectButton.setVisible('inspection' in tools and tools['inspection'].get('quick_inspection', True))
         self.editButton.setVisible(editattributes)
         feature = cursor.feature
         geom = feature.geometry()
