@@ -1112,6 +1112,8 @@ class LayerWidget(ui_layernode.Ui_Form, WidgetBase):
         edit_attr = 'edit_attributes' in tools
         edit_geom = 'edit_geom' in tools
         inspection = 'inspection' in tools
+        quick_inspection = False
+
         self.capture_check.setChecked(capture)
         self.delete_check.setChecked(delete)
         self.editattr_check.setChecked(edit_attr)
@@ -1126,9 +1128,12 @@ class LayerWidget(ui_layernode.Ui_Form, WidgetBase):
             self.inspection_form_combo.setCurrentIndex(formindex)
             for key, value in config['field_mapping'].iteritems():
                 self.inspection_fieldmappings.appendPlainText("{}, {}".format(key, value))
+            quick_inspection = config.get("quick_inspection", True)
         else:
             self.inspection_form_combo.setCurrentIndex(0)
             self.inspection_fieldmappings.setPlainText("")
+
+        self.quickinspection_check.setChecked(quick_inspection)
 
 
     def inspection_mappings(self):
@@ -1172,7 +1177,8 @@ class LayerWidget(ui_layernode.Ui_Form, WidgetBase):
             inspectionitem = dict(inspection=dict(
                 mode="Copy",
                 form=self.inspection_form_combo.currentText(),
-                field_mapping= self.inspection_mappings()
+                field_mapping= self.inspection_mappings(),
+                quick_inspection = self.quickinspection_check.isChecked()
             ))
             tools.append(inspectionitem)
 

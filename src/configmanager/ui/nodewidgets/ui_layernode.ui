@@ -75,6 +75,16 @@
        </widget>
       </item>
       <item>
+       <widget class="QCheckBox" name="quickinspection_check">
+        <property name="toolTip">
+         <string/>
+        </property>
+        <property name="text">
+         <string>Quick Inspection Mode Enabled</string>
+        </property>
+       </widget>
+      </item>
+      <item>
        <widget class="QFrame" name="formFrame">
         <property name="enabled">
          <bool>false</bool>
@@ -214,6 +224,22 @@
     <hint type="destinationlabel">
      <x>52</x>
      <y>296</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>inspection_check</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>quickinspection_check</receiver>
+   <slot>setChecked(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>113</x>
+     <y>192</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>132</x>
+     <y>205</y>
     </hint>
    </hints>
   </connection>
