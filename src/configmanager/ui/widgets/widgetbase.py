@@ -14,6 +14,7 @@ class WidgetBase(QWidget):
         self.closing = False
 
     def set_project(self, project, treenode):
+        self.logger.debug("set_project for widget {}".format(self.__class__.__name__))
         self.project = project
         self.treenode = treenode
 
