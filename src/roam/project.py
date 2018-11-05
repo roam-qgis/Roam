@@ -713,6 +713,9 @@ class Project(QObject):
 
         return self._forms
 
+    def userd_form_layers(self):
+        return [form.layername for form in self.forms]
+
     @property
     def selectlayers(self):
         return self.settings.get('selectlayers', [])

@@ -1231,6 +1231,7 @@ class LayersWidget(ui_layersnode.Ui_Form, WidgetBase):
         """
         super(LayersWidget, self).set_project(project, node)
         self.selectlayermodel.config = project.settings
+        self.selectlayermodel.formlayers = project.userd_form_layers()
         self.selectlayermodel.refresh()
 
 

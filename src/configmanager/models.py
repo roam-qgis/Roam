@@ -170,6 +170,7 @@ class CaptureLayersModel(QgsLayerModel):
     def __init__(self, watchregistry=True, parent=None):
         super(CaptureLayersModel, self).__init__(watchregistry, parent)
         self.config = {}
+        self.formlayers = []
 
     def setData(self, index, value, role=None):
         if role == Qt.CheckStateRole:
@@ -182,7 +183,10 @@ class CaptureLayersModel(QgsLayerModel):
             if value == Qt.Checked:
                 selectlayers.append(layername)
             else:
-                selectlayers.remove(layername)
+                if layername in self.formlayers:
+                    return False
+                else:
+                    selectlayers.remove(layername)
             self.dataChanged.emit(index, index)
 
         return super(CaptureLayersModel, self).setData(index, value, role)
@@ -197,6 +201,11 @@ class CaptureLayersModel(QgsLayerModel):
                 return Qt.Checked
             else:
                 return Qt.Unchecked
+        elif role == Qt.DisplayRole:
+            if layer.name() in self.formlayers:
+                return layer.name() + " (forms defined)"
+            else:
+                return super(CaptureLayersModel, self).data(index, role)
         else:
             return super(CaptureLayersModel, self).data(index, role)
 
