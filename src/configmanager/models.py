@@ -217,7 +217,11 @@ class QgsFieldModel(QAbstractItemModel):
     def setLayer(self, layer):
         self.layer = layer
         self.beginResetModel()
-        self.fields = layer.pendingFields().toList()
+        if not layer:
+            self.fields = []
+        else:
+            self.fields = layer.pendingFields().toList()
+
         self.endResetModel()
 
     def flags(self, index):
