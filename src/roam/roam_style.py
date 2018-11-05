@@ -198,7 +198,7 @@ def appstyle():
         background-color: rgb(255, 255, 255);
     }
 
-    QPushButton#deleteButton {
+    QPushButton#deleteButton, QPushButton[deleteButton="true"] {
         background-color: rgb(255, 134, 125);
         color: white;
         font: 75 17pt "Segoe UI";
