@@ -181,6 +181,9 @@ class FormWidget(ui_formwidget.Ui_Form, WidgetBase):
         self.widgetmodel.rowsInserted.connect(self.set_widget_config_state)
         self.widgetmodel.modelReset.connect(self.set_widget_config_state)
 
+        self.widgetmodel.rowsRemoved.connect(self.update_layer_field_state)
+        self.widgetmodel.rowsInserted.connect(self.update_layer_field_state)
+
         self.addWidgetButton.pressed.connect(self.newwidget)
         self.addSectionButton.pressed.connect(self.add_section)
         self.removeWidgetButton.pressed.connect(self.removewidget)
@@ -282,10 +285,17 @@ class FormWidget(ui_formwidget.Ui_Form, WidgetBase):
         Called when the forms layer has changed.
         :param index: The index of the new layer.
         """
-        if not self.selected_layer:
+        if not self.selected_layer and not self.has_fields_defined():
             return
 
         self.updatefields(self.selected_layer)
+
+    def has_fields_defined(self):
+        """
+        Return true if any fields have been defined for this for form.
+        :return: True if fields are defined.
+        """
+        return self.widgetmodel.rowCount() > 0
 
     def form_style_changed(self, newstyle):
         """
@@ -410,6 +420,12 @@ class FormWidget(ui_formwidget.Ui_Form, WidgetBase):
             self.useablewidgets.model().appendRow(item)
             self.widgetstack.addWidget(configwidget)
         self.useablewidgets.blockSignals(False)
+
+    def update_layer_field_state(self):
+        if self.has_fields_defined():
+            self.layerCombo.setEnabled(False)
+        else:
+            self.layerCombo.setEnabled(True)
 
     def set_widget_config_state(self, *args):
         """
