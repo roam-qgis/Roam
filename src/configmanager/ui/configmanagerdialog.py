@@ -58,8 +58,11 @@ class ConfigManagerDialog(ui_configmanager.Ui_ProjectInstallerDialog, QDialog):
         ConfigEvents.deleteForm.connect(self.delete_form)
 
     def closeEvent(self, closeevent):
-        self.save_page_config()
-        closeevent.accept()
+        result = QMessageBox.warning(self, "Close Config Manager", "Close Config Manager? Changes won't be saved ", QMessageBox.Ok | QMessageBox.Cancel)
+        if result == QMessageBox.Ok:
+            closeevent.accept()
+        else:
+            closeevent.ignore()
 
     def raiseerror(self, *exinfo):
         self.bar.pushError(*exinfo)
