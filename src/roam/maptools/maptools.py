@@ -453,10 +453,7 @@ class PolylineTool(QgsMapToolEdit):
 
     @property
     def node_count(self):
-        if self.editmode:
-            return self.band.numberOfVertices()
-        else:
-            return self.band.numberOfVertices() - 1
+        return self.band.numberOfVertices()
 
     def canvasReleaseEvent(self, event):
         if event.button() == Qt.RightButton:
