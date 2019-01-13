@@ -30,7 +30,7 @@ CALL "%OSGEO4W_ROOT%\bin\o4w_env.bat"
 
 : Python Setup
 SET BASE=%~dp0..\
-set PATH=%OSGEO4W_ROOT%\bin;%QGIS%\bin;%BASE%\src\;C:\Program Files (x86)\Git\bin;%PATH%;
+set PATH=%OSGEO4W_ROOT%\bin;%QGIS%\bin;%BASE%\src\;C:\Program Files\Git\bin;%PATH%;
 SET PYTHONHOME=%OSGEO4W_ROOT%\apps\Python27
 set PYTHONPATH=%BASE%\src;%QGIS%\python;%BASE%\libs
 
