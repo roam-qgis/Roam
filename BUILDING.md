@@ -4,51 +4,61 @@ BUILDING
 Setting up build
 ------------------------------
 
-You only need to do this once.
+You only need to do this step once.
 
 You need:
 
-- [Visual Studio C++ 2008](http://download.microsoft.com/download/A/5/4/A54BADB6-9C3F-478D-8657-93B3FC9FE62D/vcsetup.exe) (This is for the Python compiler for py2exe)
 - [QGIS 2.18] http://qgis.org/downloads/QGIS-OSGeo4W-2.18.22-1-Setup-x86.exe
 
-**INSTALL NOTE:**  If you get a ValueError when running python setup.py install sometimes it can't run the visual studio batch
-file.  Simply run `C:\Program Files (x86)\Microsoft Visual Studio 9.0\Common7\Tools\vsvars32.bat` in the shell
-before running ``setupdev.bat``
-
-1. Download and install Visual Studio C++ Express
-2. Run cmd.exe as admin
-2. ``scripts\setupdev.bat 2.18``
+1. Run cmd.exe as admin
+2. ``build.bat 2.18 install-req``
 
 PyCharm
 -------------------------
 
-PyCharm can be started with the right environment using .\scripts\editors\pycharm-pyqgis.bat 2.18
+PyCharm can be started with the right environment using `.\scripts\editors\pycharm-pyqgis.bat`.
 
-Building ui files
------------------------
+The path to PyCharm is hard coded in this batch file so might have to copy and adjust for your setup.
 
-1. cmd.exe
-2. ``build.bat 2.18 build``
+Building
+---------
 
-``build.bat`` is a make file with commands to build and package Roam
+`build.bat` is the main build script.
 
 Following commands are supported:
 
+    - install-req
     - build
+    - clean
+    - design
     - exe
     - release
     - installer
     - test
     - test-only
 
+Building ui files
+-----------------------
+
+If you change any of the .ui files you need to run the following command to regenerate the generated ui files.
+
+2. ``build.bat 2.18 build``
+
+``build.bat`` is a make file with commands to build and package Roam
+
 Creating Exe
 ----------------------
 
-1. cmd.exe
+Only supported on Windows.  Uses Py2Exe to build the final exe and bundle all files together.
+
+Creates the  `Roam.exe` file in the `\dist` folder.
+
 2. ``build.bat 2.18 exe``
 
 Making release package
 ----------------------
 
-1. cmd.exe
+A release package can be made using the `release` command. Will create a installer exe and zip file for release.
+
 2. ``build.bat 2.18 release``
+
