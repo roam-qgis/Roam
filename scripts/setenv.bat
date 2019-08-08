@@ -1,25 +1,27 @@
 @ECHO OFF
 REM ---------------------------------------------------------------------------------------
 
-REM Script to setup the environment for building Roam with QGIS 2.x.
+REM Script to setup the environment for building Roam with QGIS 3.x.
 REM This script sets the base folder that is used though out the build process
 REM and sets the location to Python.
 
-REM Change %OSGEO4W_ROOT% in setenv.bat to change in the location of QGIS.
-
 REM ---------------------------------------------------------------------------------------
-
 
 for %%x in (%cmdcmdline%) do if /i "%%~x"=="/c" set DOUBLECLICKED=1
 
-REM Change OSGeo4W_ROOT to point to your install of QGIS.
+FOR /D %%p in ("C:\Program Files\QGIS 3.*","C:\Program Files (x86)\QGIS 3.*") DO (
+    SET OSGEO4W_ROOT=%%p
+)
 
-
-IF "%1"=="2.16" CALL %~dp0env-2.16.bat
-IF "%1"=="2.18" CALL %~dp0env-2.18.bat
-
+REM Change OSGeo4W_ROOT here to point to your install of QGIS if it is not in the standard directories.
 IF NOT DEFINED OSGEO4W_ROOT SET OSGEO4W_ROOT=C:\OSGeo4W
-IF NOT DEFINED QGISNAME SET QGISNAME=qgis
+
+IF EXIST %OSGEO4W_ROOT%\bin\qgis-ltr.bat (
+    SET QGISNAME=qgis-ltr
+) ELSE (
+    SET QGISNAME=qgis
+)
+
 ECHO Setup environment for
 ECHO ROOT: %OSGEO4W_ROOT%
 ECHO QGIS: %QGISNAME%
