@@ -8,10 +8,11 @@ You only need to do this step once.
 
 You need:
 
-- [QGIS 2.18] http://qgis.org/downloads/QGIS-OSGeo4W-2.18.22-1-Setup-x86.exe
+- [QGIS 3.*] http://qgis.org/downloads/QGIS-OSGeo4W-3.8.1-1-Setup-x86.exe
+- On installation ensure python3-pip is selected to be installed
 
 1. Run cmd.exe as admin
-2. ``build.bat 2.18 install-req``
+2. ``build.bat install-req``
 
 PyCharm
 -------------------------
@@ -42,7 +43,7 @@ Building ui files
 
 If you change any of the .ui files you need to run the following command to regenerate the generated ui files.
 
-2. ``build.bat 2.18 build``
+2. ``build.bat build``
 
 ``build.bat`` is a make file with commands to build and package Roam
 
@@ -53,12 +54,11 @@ Only supported on Windows.  Uses Py2Exe to build the final exe and bundle all fi
 
 Creates the  `Roam.exe` file in the `\dist` folder.
 
-2. ``build.bat 2.18 exe``
+2. ``build.bat exe``
 
 Making release package
 ----------------------
 
 A release package can be made using the `release` command. Will create a installer exe and zip file for release.
 
-2. ``build.bat 2.18 release``
-
+2. ``build.bat release``
