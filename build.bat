@@ -19,12 +19,12 @@ python scripts\watchui.py
 exit
 
 :install-req
-ECHO Installing requirements
+ECHO Installing requirements (python3-pip is required and can be installed using OSGEO4W)
 python -m pip install -r requirements.txt
 GOTO END
 
 :install-req-build-server
-ECHO Installing requirements
+ECHO Installing requirements (python3-pip is required and can be installed using OSGEO4W)
 python -m pip install -r requirements-tcbuild.txt
 GOTO END
 
