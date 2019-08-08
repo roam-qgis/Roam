@@ -4,15 +4,15 @@ REM ----------------------------------------------------------------------------
 REM Script to build the resource and UI files. You only really need to run this if you are
 REM running from source.  Package.bat will build all the resources before it creates the package
 
-REM Change %OSGEO4W_ROOT% in setenv.bat to change in the location of QGIS.
+REM Change %OSGEO4W_ROOT% in setenv.bat to change in the location of QGIS, if necessary.
 
 REM ---------------------------------------------------------------------------------------
 
 pushd %~dp0
 
-call scripts\setenv.bat %1
-IF "%2"=="" goto build
-GOTO %2
+call scripts\setenv.bat
+IF "%1"=="" goto build
+GOTO %1
 
 :watch
 python scripts\watchui.py
@@ -57,13 +57,13 @@ IF NOT EXIST release MKDIR release
 del release\*.* /Q /F
 pushd dist
 ECHO Making zip file..
-SET NAME=%3
+SET NAME=%2
 python -m zipfile -c "..\release\IntraMaps Roam%NAME%.zip" .
 GOTO END
 
 :installer
 ECHO Building installer
-SET NAME=%3
+SET NAME=%2
 CALL scripts\installer\makesfx.bat "%~dp0release\IntraMaps Roam%NAME% Installer " dist
 CALL scripts\installer\makesfx.bat "%~dp0release\IntraMaps Roam%NAME% Installer - Silent" dist -s
 GOTO END
@@ -88,13 +88,14 @@ GOTO END
 ECHO ===========================
 ECHO        OPTIONS
 ECHO ===========================
-ECHO build 2.18
-ECHO build 2.18 build
-ECHO build 2.18 exe
-ECHO build 2.18 release
-ECHO build 2.18 test
-ECHO build 2.18 test-only
-ECHO build 2.18 design
+ECHO build
+ECHO build build
+ECHO build exe
+ECHO build release
+ECHO build test
+ECHO build test-only
+ECHO build design
+ECHO build release 2.7.2
 GOTO END
 
 :END
