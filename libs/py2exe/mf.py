@@ -99,10 +99,10 @@ class ModuleFinder:
     def msg(self, level, str, *args):
         if level <= self.debug:
             for i in range(self.indent):
-                print "   ",
-            print str,
+                print("   ",)
+            print(str,)
             for arg in args:
-                print repr(arg),
+                print(repr(arg),)
             print
 
     def msgin(self, *args):
@@ -500,37 +500,37 @@ class ModuleFinder:
         paths, as well as modules that are missing, or seem to be missing.
         """
         print
-        print "  %-25s %s" % ("Name", "File")
-        print "  %-25s %s" % ("----", "----")
+        print("  %-25s %s" % ("Name", "File"))
+        print("  %-25s %s" % ("----", "----"))
         # Print modules found
         keys = self.modules.keys()
         keys.sort()
         for key in keys:
             m = self.modules[key]
             if m.__path__:
-                print "P",
+                print("P",)
             else:
-                print "m",
-            print "%-25s" % key, m.__file__ or ""
+                print("m",)
+            print("%-25s" % key, m.__file__ or "")
 
         # Print missing modules
         missing, maybe = self.any_missing_maybe()
         if missing:
             print
-            print "Missing modules:"
+            print("Missing modules:")
             for name in missing:
                 mods = self.badmodules[name].keys()
                 mods.sort()
-                print "?", name, "imported from", ', '.join(mods)
+                print("?", name, "imported from", ', '.join(mods))
         # Print modules that may be missing, but then again, maybe not...
         if maybe:
             print
-            print "Submodules thay appear to be missing, but could also be",
-            print "global names in the parent package:"
+            print("Submodules thay appear to be missing, but could also be",)
+            print("global names in the parent package:")
             for name in maybe:
                 mods = self.badmodules[name].keys()
                 mods.sort()
-                print "?", name, "imported from", ', '.join(mods)
+                print("?", name, "imported from", ', '.join(mods))
 
     def any_missing(self):
         """Return a list of modules that appear to be missing. Use
@@ -620,7 +620,7 @@ def test():
     try:
         opts, args = getopt.getopt(sys.argv[1:], "dmp:qx:")
     except getopt.error, msg:
-        print msg
+        print(msg)
         return
 
     # Process options
@@ -651,9 +651,9 @@ def test():
     path[0] = os.path.dirname(script)
     path = addpath + path
     if debug > 1:
-        print "path:"
+        print("path:")
         for item in path:
-            print "   ", repr(item)
+            print("   ", repr(item))
 
     # Create the module finder and turn its crank
     mf = ModuleFinder(path, debug, exclude)
@@ -677,7 +677,7 @@ if __name__ == '__main__':
     try:
         mf = test()
     except KeyboardInterrupt:
-        print "\n[interrupt]"
+        print("\n[interrupt]")
 
 
 
@@ -747,48 +747,48 @@ class ModuleFinder(Base):
         fd, htmlfile = tempfile.mkstemp(".html")
         ofi = open(htmlfile, "w")
         os.close(fd)
-        print >> ofi, "<html><title>py2exe cross reference for %s</title><body>" % sys.argv[0]
+        print("<html><title>py2exe cross reference for %s</title><body>" % sys.argv[0], file=ofi)
 
-        print >> ofi, "<h1>py2exe cross reference for %s</h1>" % sys.argv[0]
+        print("<h1>py2exe cross reference for %s</h1>" % sys.argv[0], file=ofi)
 
         for name in names:
             if self._types[name] in (imp.PY_SOURCE, imp.PKG_DIRECTORY):
-                print >> ofi, '<a name="%s"><b><tt>%s</tt></b></a>' % (name, name)
+                print('<a name="%s"><b><tt>%s</tt></b></a>' % (name, name), file=ofi)
                 if name == "__main__":
                     for fname in self._scripts:
                         path = urllib.pathname2url(os.path.abspath(fname))
-                        print >> ofi, '<a target="code" href="%s" type="text/plain"><tt>%s</tt></a> ' \
-                              % (path, fname)
-                    print >> ofi, '<br>imports:'
+                        print('<a target="code" href="%s" type="text/plain"><tt>%s</tt></a> ' \
+                              % (path, fname), file=ofi)
+                    print('<br>imports:', file=ofi)
                 else:
                     fname = urllib.pathname2url(self.modules[name].__file__)
-                    print >> ofi, '<a target="code" href="%s" type="text/plain"><tt>%s</tt></a><br>imports:' \
-                          % (fname, self.modules[name].__file__)
+                    print('<a target="code" href="%s" type="text/plain"><tt>%s</tt></a><br>imports:' \
+                          % (fname, self.modules[name].__file__), file=ofi)
             else:
                 fname = self.modules[name].__file__
                 if fname:
-                    print >> ofi, '<a name="%s"><b><tt>%s</tt></b></a> <tt>%s</tt><br>imports:' \
-                          % (name, name, fname)
+                    print('<a name="%s"><b><tt>%s</tt></b></a> <tt>%s</tt><br>imports:' \
+                          % (name, name, fname), file=ofi)
                 else:
-                    print >> ofi, '<a name="%s"><b><tt>%s</tt></b></a> <i>%s</i><br>imports:' \
-                          % (name, name, TYPES[self._types[name]])
+                    print('<a name="%s"><b><tt>%s</tt></b></a> <i>%s</i><br>imports:' \
+                          % (name, name, TYPES[self._types[name]]), file=ofi)
 
             if name in depgraph:
                 needs = depgraph[name]
                 for n in needs:
-                    print >>  ofi, '<a href="#%s"><tt>%s</tt></a> ' % (n, n)
-            print >> ofi, "<br>\n"
+                    print('<a href="#%s"><tt>%s</tt></a> ' % (n, n), file=ofi)
+            print("<br>\n", file=ofi)
 
-            print >> ofi, 'imported by:'
+            print('imported by:', file=ofi)
             if name in importedby:
                 for i in importedby[name]:
-                    print >> ofi, '<a href="#%s"><tt>%s</tt></a> ' % (i, i)
+                    print('<a href="#%s"><tt>%s</tt></a> ' % (i, i), file=ofi)
 
-            print >> ofi, "<br>\n"
+            print("<br>\n", file=ofi)
 
-            print >> ofi, "<br>\n"
+            print("<br>\n", file=ofi)
 
-        print >> ofi, "</body></html>"
+        print("</body></html>", file=ofi)
         ofi.close()
         os.startfile(htmlfile)
         # how long does it take to start the browser?

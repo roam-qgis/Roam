@@ -28,13 +28,13 @@
 # import sys
 # sys.stderr = open("out.log", "w")
 # for i in range(10000):
-#     print i
+#     print(i)
 #
 # and open the 'out.log' file.  It contains this:
 #
 # Traceback (most recent call last):
 #   File "out.py", line 6, in ?
-#     print i
+#     print(i)
 # IOError: [Errno 9] Bad file descriptor
 #
 # In other words, after printing a certain number of bytes to the

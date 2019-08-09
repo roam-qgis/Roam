@@ -103,7 +103,7 @@ except ImportError:
 
 def printerr(message):
     """ Print given message to stderr with a line feed. """
-    print >>sys.stderr, message
+    print(message, file=sys.stderr)
 
 class PathError(Exception):
     pass
@@ -929,7 +929,7 @@ class Builder(object):
     def echo(self, message):
         """ Print message, but only if builder is not in quiet mode. """
         if not self.quiet:
-            print message
+            print(message)
 
     def echo_command(self, command, echo=None):
         """ Show a command being executed. Also passed run's "echo" arg
@@ -949,7 +949,7 @@ class Builder(object):
     def echo_debug(self, message):
         """ Print message, but only if builder is in debug mode. """
         if self.debug:
-            print 'DEBUG:', message
+            print('DEBUG:', message)
 
     def run(self, *args, **kwargs):
         """ Run command given in args with kwargs per shell(), but only if its
@@ -1377,7 +1377,7 @@ def main(globals_dict=None, build_dir=None, extra_options=None, builder=None,
                 build_dir = os.path.dirname(build_file)
     if build_dir:
         if not options.quiet and os.path.abspath(build_dir) != original_path:
-            print "Entering directory '%s'" % build_dir
+            print("Entering directory '%s'" % build_dir)
         os.chdir(build_dir)
     if _pool is None and jobs > 1:
         _pool = multiprocessing.Pool(jobs)
@@ -1412,7 +1412,7 @@ def main(globals_dict=None, build_dir=None, extra_options=None, builder=None,
     finally:
         _stop_results.set() # stop the results gatherer so I don't hang
         if not options.quiet and os.path.abspath(build_dir) != original_path:
-            print "Leaving directory '%s' back to '%s'" % (build_dir, original_path)
+            print("Leaving directory '%s' back to '%s'" % (build_dir, original_path))
         os.chdir(original_path)
     sys.exit(status)
 

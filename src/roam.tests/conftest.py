@@ -3,7 +3,7 @@ import pytest
 import sys
 import roam.environ
 
-print sys.argv
+print(sys.argv)
 config = {}
 roamapp = roam.environ._setup(os.getcwd(), config=config)
 

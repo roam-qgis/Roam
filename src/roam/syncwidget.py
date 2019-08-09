@@ -24,7 +24,7 @@ class SyncWidget(Ui_Form, QWidget):
         self.flickcharm.activateOn(self.syncstatus)
 
     def load_application_sync(self):
-        print "Load application sync"
+        print("Load application sync")
         providers = list(roam.syncing.syncprovders())
         if not providers:
             return

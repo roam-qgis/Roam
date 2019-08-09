@@ -61,7 +61,7 @@ class BatchFileSync(SyncProvider):
         module = imp.find_module(name, [self.rootfolder])
         module = imp.load_module(name, *module)
         self.parsermodule = module
-        print self.parsermodule
+        print(self.parsermodule)
 
     def start(self):
         if not self.parsermodule and self.parser:

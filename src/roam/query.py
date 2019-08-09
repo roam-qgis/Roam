@@ -46,7 +46,7 @@ def query(*args, **kwargs):
 
         >>> q = query(layer).where('ABC = 1').top(20)
         >>> for f in q():
-        ...    print f
+        ...    print(f)
 
         >>> q = (query(layer).where('ABC = 1')
                              .select("ABC", 
@@ -55,7 +55,7 @@ def query(*args, **kwargs):
                              .top(20)
                 )
         >>> for f in q():
-        ...    print f
+        ...    print(f)
     """
     if isinstance(args[0], basestring):
         return Query.from_layer_name(args[0], *args, **kwargs)
@@ -187,7 +187,7 @@ class Query(object):
             features = where(features)
 
         if self.limit:
-            if self.DEBUG: print "Has Limit"
+            if self.DEBUG: print("Has Limit")
             features = itertools.islice(features, 0, self.limit)
 
         if self.selectstatment:

@@ -213,7 +213,7 @@ class Form(object):
     @classmethod
     def from_folder(cls, name, folder):
         config = readfolderconfig(folder, "form")
-        print config
+        print(config)
         return Form.from_config(name, config, folder)
 
     @property
@@ -384,7 +384,7 @@ class Form(object):
         fields = layer.pendingFields()
         feature = QgsFeature(fields)
         if data:
-            print "Loading data"
+            print("Loading data")
             for key, value in data.iteritems():
                 feature[key] = value
         else:
@@ -649,11 +649,11 @@ class Project(QObject):
             return module.onProjectLoad()
         except ImportError as err:
             log(err)
-            print err
+            print(err)
             return True, None
         except AttributeError as err:
             log("No onProjectLoad attribute found")
-            print "No onProjectLoad attribute found"
+            print("No onProjectLoad attribute found")
             return True, None
 
     def formsforlayer(self, layername):
@@ -689,7 +689,7 @@ class Project(QObject):
             elif isinstance(tool, dict):
                 _tools[tool.keys()[0]] = tool.values()[0]
 
-        print "TOOLS", _tools
+        print("TOOLS", _tools)
         return _tools
 
     @property
@@ -780,14 +780,14 @@ class Project(QObject):
         return form
 
     def removeform(self, name):
-        print "Removing {0}".format(name)
+        print("Removing {0}".format(name))
         forms = self.settings.setdefault("forms", [])
         if hasattr(forms, 'iteritems'):
             del self.settings['forms'][name]
         else:
             index = forms.index(name)
             del self.settings['forms'][index]
-        print self.settings['forms']
+        print(self.settings['forms'])
 
     def save(self, update_version=False, save_forms=True, reset_save_point=False):
         """

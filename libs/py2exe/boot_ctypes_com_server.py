@@ -42,7 +42,7 @@ else:
 try:
     com_module_names
 except NameError:
-    print "This script is designed to be run from inside py2exe % s" % str(details)
+    print("This script is designed to be run from inside py2exe % s" % str(details))
     sys.exit(1)
     
 com_modules = []

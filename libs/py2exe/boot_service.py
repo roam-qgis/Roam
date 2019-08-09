@@ -11,7 +11,7 @@ service_klasses = []
 try:
     service_module_names
 except NameError:
-    print "This script is designed to be run from inside py2exe"
+    print("This script is designed to be run from inside py2exe")
     sys.exit(1)
 
 for name in service_module_names:
@@ -95,19 +95,19 @@ if cmdline_style == "py2exe":
     options = "help install remove auto disabled interactive user: password:".split()
     
     def usage():
-        print "Services are supposed to be run by the system after they have been installed."
-        print "These command line options are available for (de)installation:"
+        print("Services are supposed to be run by the system after they have been installed.")
+        print("These command line options are available for (de)installation:")
         for opt in options:
             if opt.endswith(":"):
-                print "\t-%s <arg>" % opt
+                print("\t-%s <arg>" % opt)
             else:
-                print "\t-%s" % opt
+                print("\t-%s" % opt)
         print
     
     try:
         opts, args = w_getopt(sys.argv[1:], options)
     except GetoptError, detail:
-        print detail
+        print(detail)
         usage()
         sys.exit(1)
     
@@ -169,7 +169,7 @@ if cmdline_style == "py2exe":
     else:
         usage()
         
-    print "Connecting to the Service Control Manager"
+    print("Connecting to the Service Control Manager")
     servicemanager.StartServiceCtrlDispatcher()
 
 elif cmdline_style == "pywin32":

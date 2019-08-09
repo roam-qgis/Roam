@@ -1022,7 +1022,7 @@ class InfoNode(ui_infonode.Ui_Form, WidgetBase):
         labelText = ""
         for key, value in attributes.iteritems():
             labelText += "<br> {}: {}".format(key, value)
-        print labelText
+        print(labelText)
         self.attributesLabel.setText("Feature Attributes Used:<br>" + labelText)
 
     def set_project(self, project, node):

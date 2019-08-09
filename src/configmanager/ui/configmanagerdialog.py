@@ -95,7 +95,7 @@ class ConfigManagerDialog(ui_configmanager.Ui_ProjectInstallerDialog, QDialog):
             button = QMessageBox.warning(self, title, removemessage, QMessageBox.Yes | QMessageBox.No)
             delete = button == QMessageBox.Yes
 
-        print "Delete"
+        print("Delete")
         if delete:
             parentindex = index.parent()
             newindex = self.treemodel.index(index.row(), 0, parentindex)
@@ -103,7 +103,7 @@ class ConfigManagerDialog(ui_configmanager.Ui_ProjectInstallerDialog, QDialog):
                 parent = parentindex.data(Qt.UserRole)
                 parent.delete(index.row())
 
-            print parentindex
+            print(parentindex)
             self.projectList.setCurrentIndex(parentindex)
 
     def delete_project(self):
@@ -208,7 +208,7 @@ class ConfigManagerDialog(ui_configmanager.Ui_ProjectInstallerDialog, QDialog):
         self.projectwidget.savePage(closing=True)
 
     def projectupdated(self, project):
-        print "PROJECT UPDATED"
+        print("PROJECT UPDATED")
         node = self.projectsnode.find_by_name(project.name)
         self.projectList.selectionModel().select(node.index(), QItemSelectionModel.ClearAndSelect)
         self.nodeselected(node.index(), None, reloadProject=True)

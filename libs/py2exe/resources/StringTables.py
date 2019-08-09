@@ -116,5 +116,5 @@ if __name__ == '__main__':
     from hexdump import hexdump
 
     for sectnum, data in st.binary():
-        print "ID", sectnum
+        print("ID", sectnum)
         hexdump(data)

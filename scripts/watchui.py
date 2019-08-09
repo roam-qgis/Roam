@@ -25,7 +25,7 @@ def checkfiles():
         hash2 = hasher.hexdigest()
         if not hash2 == hash1:
             hash1 = hash2
-            print "Files changed. Rebuilding..."
+            print("Files changed. Rebuilding...")
             os.system('python setup.py build')
 
         time.sleep(2)

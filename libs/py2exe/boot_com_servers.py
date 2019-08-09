@@ -44,7 +44,7 @@ try:
         __import__(name)
         com_modules.append(sys.modules[name])
 except NameError:
-    print "This script is designed to be run from inside py2exe"
+    print("This script is designed to be run from inside py2exe")
     sys.exit(1)
 del name
 

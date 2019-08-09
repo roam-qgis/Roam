@@ -71,7 +71,7 @@ class IndexBuilder(QObject):
             for layername, config in self.indexconfig.iteritems():
                 if layername == "_all":
                     layers = roam.api.utils.layers(layertype=QgsMapLayer.VectorLayer)
-                    print layers
+                    print(layers)
                     for layer in layers:
                         for count, layer, fid, data in get_data(layer, config, rowid):
                             rowid = count
@@ -164,7 +164,7 @@ class SearchPlugin(widget, base, Page):
         self.dbpath = dbpath
         self.resultsView.clear()
         self.searchbox.setEnabled(True)
-        print "Index built in: {} seconds".format(timing)
+        print("Index built in: {} seconds".format(timing))
 
     def eventFilter(self, object, event):
         if event.type() == QEvent.FocusIn:

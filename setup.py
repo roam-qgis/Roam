@@ -13,7 +13,7 @@ if os.name is 'nt':
         import py2exe
         haspy2exe = True
     except ImportError:
-        print "Can't import py2exe. Do you have it installed."
+        print("Can't import py2exe. Do you have it installed.")
         haspy2exe = False
 
 import glob
@@ -198,7 +198,7 @@ def buildqtfiles():
                         else:
                             run('lrelease-qt4', filepath, '-qm', newfile)
                     except:
-                        print "Missing lrelease - skipping"
+                        print("Missing lrelease - skipping")
                         continue
 
     with open(".roambuild", "w") as f:
@@ -258,7 +258,7 @@ if os.name is 'nt' and haspy2exe:
 
     def isSystemDLL(pathname):
         if "api-ms-win-" in pathname:
-            print " -> Skip: {0}".format(pathname)
+            print(" -> Skip: {0}".format(pathname))
             return True
 
         if os.path.basename(pathname).lower() in ("msvcp100.dll", "msvcr100.dll"):

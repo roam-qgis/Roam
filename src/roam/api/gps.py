@@ -268,9 +268,9 @@ class FileGPSService(GPSService):
 
 try:
     filename = config["gpsfile"]
-    print filename
+    print(filename)
     if os.path.exists(filename):
-        print "Using file name"
+        print("Using file name")
         GPS = FileGPSService(filename=filename)
     else:
         GPS = GPSService()

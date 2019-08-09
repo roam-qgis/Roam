@@ -314,7 +314,7 @@ class ProjectUpdater(QObject):
     @property
     def configurl(self):
         url = urlparse.urljoin(add_slash(self.server), "projects/roam.txt")
-        print "URL", url
+        print("URL", url)
         return url
 
     def check_updates(self, server, installedprojects):

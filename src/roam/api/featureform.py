@@ -69,7 +69,7 @@ def timed(title):
     took = th - ts
     totals[title] += took
     message = "{} {}".format(title, took)
-    print message
+    print(message)
 
 
 class GeomWidget(Ui_GeomWidget, QStackedWidget):
@@ -870,7 +870,7 @@ class FeatureForm(FeatureFormBase):
         Checks all widgets to see if they are in a pass state or not
         """
         for wrapper in self.boundwidgets.itervalues():
-            # print wrapper.labeltext, wrapper.passing
+            # print(wrapper.labeltext, wrapper.passing)
             if not wrapper.passing:
                 return False
         return True

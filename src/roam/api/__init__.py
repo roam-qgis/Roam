@@ -5,7 +5,7 @@ import roam.config
 import os
 # portname = roam.config.settings.get('gpsport', '')
 # if os.path.exists(portname):
-#     print "Setting fake GPS"
+#     print("Setting fake GPS")
 #     GPS = gps.FileGPSService(portname)
 
 from roam.api.gps import GPS

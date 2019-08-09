@@ -131,7 +131,7 @@ class ProjectsWidget(Ui_ListModules, QWidget):
             self.add_new_item(project.id, project, is_new=False, is_valid=project.valid)
 
     def show_new_updateable(self, updateprojects, newprojects):
-        print updateprojects, newprojects
+        print(updateprojects, newprojects)
         for info in updateprojects:
             projectid = info['projectid']
             item = self.projectitems[projectid]
