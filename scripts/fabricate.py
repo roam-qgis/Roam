@@ -176,7 +176,7 @@ def _shell(args, input=None, silent=True, shell=False, ignore_status=False, **kw
     try:
         proc = subprocess.Popen(command, stdin=stdin, stdout=stdout,
                                 stderr=subprocess.STDOUT, shell=shell, **kwargs)
-    except OSError, e:
+    except OSError as e:
         # Work around the problem that Windows Popen doesn't say what file it couldn't find
         if platform.system() == 'Windows' and e.errno == 2 and e.filename is None:
             e.filename = arglist[0]
@@ -366,7 +366,7 @@ class AtimesRunner(Runner):
         """ Call os.utime but ignore permission errors """
         try:
             os.utime(filename, (atime, mtime))
-        except OSError, e:
+        except OSError as e:
             # ignore permission errors -- we can't build with files
             # that we can't access anyway
             if e.errno != 1:
@@ -801,7 +801,7 @@ def _results_handler( builder, delay=0.01):
                     if r.results is None and r.async.ready():
                         try:
                             d, o = r.async.get()
-                        except Exception, e:
+                        except Exception as e:
                             r.results = e
                             _groups.set_ok(False)
                         else:
@@ -1043,7 +1043,7 @@ class Builder(object):
         try:
             self.run(args, **kwargs)
             return 0
-        except ExecutionError, exc:
+        except ExecutionError as exc:
             message, data, status = exc
             return status
 
@@ -1107,7 +1107,7 @@ class Builder(object):
         for output in outputs:
             try:
                 os.remove(output)
-            except OSError, e:
+            except OSError as e:
                 self.echo_delete(output, e)
             else:
                 self.echo_delete(output)
@@ -1406,7 +1406,7 @@ def main(globals_dict=None, build_dir=None, extra_options=None, builder=None,
                 printerr('%r command not defined!' % action)
                 sys.exit(1)
         after() # wait till the build commands are finished
-    except ExecutionError, exc:
+    except ExecutionError as exc:
         message, data, status = exc
         printerr('fabricate: ' + message)
     finally:

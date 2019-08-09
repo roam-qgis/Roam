@@ -286,7 +286,7 @@ class py2exe(Command):
         def my_compile(source, filename, *args):
             try:
                 result = orig_compile(source, filename, *args)
-            except Exception, details:
+            except Exception as details:
                 raise DistutilsError, "compiling '%s' failed\n    %s: %s" % \
                       (filename, details.__class__.__name__, details)
             return result
@@ -816,7 +816,7 @@ class py2exe(Command):
         try:
             f = open(exe_path, "a+b")
             f.close()
-        except IOError, why:
+        except IOError as why:
             print("WARNING: File %s could not be opened - %s" % (exe_path, why))
 
         # We create a list of code objects, and write it as a marshaled
@@ -961,7 +961,7 @@ class py2exe(Command):
                           product_version = get("product_version") or version)
         try:
             bytes = version.resource_bytes()
-        except VersionError, detail:
+        except VersionError as detail:
             self.warn("Version Info will not be included:\n  %s" % detail)
             return
 
@@ -987,7 +987,7 @@ class py2exe(Command):
         try:
             f = open(dll_name, "a+b")
             f.close()
-        except IOError, why:
+        except IOError as why:
             print("WARNING: File %s could not be opened - %s" % (dll_name, why))
         # We aren't smart enough to update string resources in place, so we need
         # to persist other resources we care about.
@@ -1702,7 +1702,7 @@ def force_remove_tree (directory, verbose=0, dry_run=0):
             abspath = os.path.abspath(cmd[1])
             if _path_created.has_key(abspath):
                 del _path_created[abspath]
-        except (IOError, OSError), exc:
+        except (IOError, OSError) as exc:
             if verbose:
                 print(grok_environment_error(
                     exc, "error removing %s: " % directory))

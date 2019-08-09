@@ -106,7 +106,7 @@ if cmdline_style == "py2exe":
     
     try:
         opts, args = w_getopt(sys.argv[1:], options)
-    except GetoptError, detail:
+    except GetoptError as detail:
         print(detail)
         usage()
         sys.exit(1)
@@ -178,7 +178,7 @@ elif cmdline_style == "pywin32":
     if len(sys.argv) == 1:
         try:
             servicemanager.StartServiceCtrlDispatcher()
-        except win32service.error, details:
+        except win32service.error as details:
             if details[0] == winerror.ERROR_FAILED_SERVICE_CONTROLLER_CONNECT:
                 win32serviceutil.usage()
     else:
@@ -191,7 +191,7 @@ elif cmdline_style == "custom":
     if len(sys.argv) == 1:
         try:
             servicemanager.StartServiceCtrlDispatcher()
-        except win32service.error, details:
+        except win32service.error as details:
             if details[0] == winerror.ERROR_FAILED_SERVICE_CONTROLLER_CONNECT:
                 win32serviceutil.usage()
     else:
