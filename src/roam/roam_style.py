@@ -184,39 +184,34 @@ def appstyle():
     }
     
     QCalendarWidget QWidget#qt_calendar_navigationbar { 
-        background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop: 0 #cccccc, stop: 1 #333333); 
+        background-color: rgb(211, 228, 255); 
     }
 
     QCalendarWidget QToolButton {
         height: 60px;
         width: 150px;
-        color: white;
+        color: black;
         font-size: 24px;
+        font-weight: bold;
         icon-size: 56px, 56px;
-        background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop: 0 #cccccc, stop: 1 #333333);
+        background-color: rgb(211, 228, 255); 
     }
 
     QCalendarWidget QMenu {
-        width: 150px;
+        width: 210px;
         left: 20px;
-        color: white;
-        font-size: 18px;
-        background-color: rgb(100, 100, 100);
+        font-size: 32px;
     }
 
     QCalendarWidget QSpinBox { 
         width: 150px; 
-        font-size:24px; 
-        color: white; 
-        background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop: 0 #cccccc, stop: 1 #333333); 
-        selection-background-color: rgb(136, 136, 136);
-        selection-color: rgb(255, 255, 255);
+        font-size: 24px; 
     }
 
     QCalendarWidget QSpinBox::up-button { 
         subcontrol-origin: border;  
         subcontrol-position: top right;  
-        width:65px; 
+        width: 65px; 
     }
 
     QCalendarWidget QSpinBox::down-button {
@@ -237,21 +232,26 @@ def appstyle():
     
     /* header row */
     QCalendarWidget QWidget {
-        alternate-background-color: rgb(128, 128, 128);
+        alternate-background-color: rgb(211, 228, 255);
     }
     
     /* normal days */
     QCalendarWidget QAbstractItemView:enabled {
-        font-size:24px;  
-        color: rgb(180, 180, 180);  
-        background-color: black;  
-        selection-background-color: rgb(64, 64, 64); 
-        selection-color: rgb(0, 255, 0); 
+        font-size: 24px;  
+        /* color: rgb(180, 180, 180);   */
+        /* background-color: black;   */
+        /* selection-background-color: rgb(64, 64, 64);  */
+        /* selection-color: rgb(0, 255, 0);  */
+    }
+    
+    /* normal days */
+    QCalendarWidget QAbstractItemView Qt::Saturday {
+        color: rgb(0, 255, 0);
     }
     
     /* days in other months */
     QCalendarWidget QAbstractItemView:disabled { 
-        color: rgb(64, 64, 64);
+        color: rgb(200, 200, 200);
     }
 
     QWidget#featureformarea {
