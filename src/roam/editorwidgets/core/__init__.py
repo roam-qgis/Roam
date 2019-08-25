@@ -1,4 +1,4 @@
-from PyQt5.QtGui import QWidget
+from PyQt5.QtWidgets import QWidget
 from PyQt5.QtCore import QObject, pyqtSignal
 from collections import OrderedDict
 

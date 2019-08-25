@@ -1,4 +1,4 @@
-from PyQt5.QtGui import QDialog
+from PyQt5.QtWidgets import QDialog
 from PyQt5.QtCore import QUrl, QEvent, Qt
 from PyQt5.QtWebKit import QWebPage
 

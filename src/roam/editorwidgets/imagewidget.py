@@ -12,9 +12,9 @@ try:
 except ImportError:
     hascamera = False
 
-from PyQt5.QtGui import QDialog, QGridLayout, QLabel, QLayout, QPixmap, QFileDialog, QAction, QToolButton, QIcon, \
-    QToolBar, QPainter, QPen
-from PyQt5.QtGui import QWidget, QImage, QSizePolicy, QTextDocument, QVBoxLayout
+from PyQt5.QtWidgets import QWidget, QDialog, QGridLayout, QLabel, QLayout, QFileDialog, QAction, QToolButton, \
+    QToolBar, QVBoxLayout, QSizePolicy
+from PyQt5.QtGui import QPixmap, QImage, QIcon, QTextDocument, QPainter, QPen
 from PyQt5.QtCore import QByteArray, pyqtSignal, QVariant, QTimer, Qt, QSize, QDateTime, QPointF
 
 from qgis.core import QgsExpression

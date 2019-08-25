@@ -1,4 +1,4 @@
-from PyQt5.QtGui import QWidget, QApplication, QButtonGroup
+from PyQt5.QtWidgets import QWidget, QApplication, QButtonGroup
 from PyQt5.QtCore import QTime, Qt, QDateTime, pyqtSignal
 
 from roam import utils

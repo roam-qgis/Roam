@@ -1,6 +1,7 @@
 from PyQt5.QtNetwork import QNetworkRequest, QNetworkAccessManager
 from PyQt5.QtCore import pyqtSignal, QSize, QUrl, Qt
-from PyQt5.QtGui import QListWidgetItem, QPixmap, QWidget, QBrush, QColor
+from PyQt5.QtWidgets import QListWidgetItem, QWidget
+from PyQt5.QtGui import QPixmap, QBrush, QColor
 
 from functools import partial
 from roam.flickwidget import FlickCharm

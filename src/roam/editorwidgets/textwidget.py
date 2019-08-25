@@ -1,5 +1,5 @@
 from roam.api import RoamEvents
-from PyQt5.QtGui import QLineEdit, QPlainTextEdit
+from PyQt5.QtWidgets import QLineEdit, QPlainTextEdit
 from PyQt5.QtCore import QEvent
 
 from qgis.core import QgsDataSourceURI

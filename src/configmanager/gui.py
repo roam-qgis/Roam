@@ -1,4 +1,4 @@
-from PyQt5.QtGui import QWidget, QFileDialog
+from PyQt5.QtWidgets import QWidget, QFileDialog
 from PyQt5.QtCore import pyqtSignal
 
 

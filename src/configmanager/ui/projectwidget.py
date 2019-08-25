@@ -2,8 +2,7 @@ import os
 import copy
 
 from PyQt5.QtCore import Qt, QDir, QFileInfo, pyqtSignal, QFileSystemWatcher
-from PyQt5.QtGui import (QWidget, QMessageBox, QMenu,
-                         QFileDialog)
+from PyQt5.QtWidgets import QWidget, QMessageBox, QMenu, QFileDialog
 
 from qgis.core import QgsProject, QgsMapLayerRegistry, QGis, QgsProjectBadLayerHandler
 from qgis.gui import QgsMessageBar

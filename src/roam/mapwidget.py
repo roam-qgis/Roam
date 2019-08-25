@@ -4,9 +4,10 @@ from collections import defaultdict
 
 from PyQt5.QtCore import Qt, pyqtSignal, QSize, QPropertyAnimation, QObject, pyqtProperty, QEasingCurve, QThread, \
     QRectF, QLocale, QPointF, QPoint
-from PyQt5.QtGui import QActionGroup, QFrame, QWidget, QSizePolicy, \
-    QAction, QPixmap, QCursor, QIcon, QColor, QMainWindow, QPen, QGraphicsItem, QPolygon, QFont, QFontMetrics, QBrush, \
-    QPainterPath, QPainter, QToolButton, QLabel, QToolBar
+from PyQt5.QtWidgets import QActionGroup, QFrame, QWidget, QSizePolicy, \
+    QAction, QMainWindow, QGraphicsItem, QToolButton, QLabel, QToolBar
+from PyQt5.QtGui import QPixmap, QCursor, QIcon, QColor, QPen, QPolygon, QFont, QFontMetrics, QBrush, \
+    QPainterPath, QPainter
 
 from PyQt5.QtSvg import QGraphicsSvgItem
 

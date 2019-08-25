@@ -7,7 +7,8 @@ from datetime import datetime
 
 from qgis.core import QgsMapLayerRegistry, QgsMapLayer, QGis
 
-from PyQt5.QtGui import QDialog, QFont, QColor, QIcon, QMessageBox, QStandardItem, QStandardItemModel, QInputDialog
+from PyQt5.QtWidgets import QDialog, QMessageBox, QInputDialog
+from PyQt5.QtGui import QFont, QColor, QIcon, QStandardItem, QStandardItemModel
 from PyQt5.QtCore import QAbstractItemModel, QModelIndex, Qt
 
 from configmanager.ui import ui_configmanager

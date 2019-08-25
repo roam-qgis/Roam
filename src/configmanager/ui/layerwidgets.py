@@ -5,9 +5,8 @@ import os
 import shutil
 from PyQt5.QtWebKit import QWebView
 from PyQt5.QtCore import Qt, QUrl, QVariant, pyqtSignal
-from PyQt5.QtGui import (QWidget, QPixmap, QStandardItem, QStandardItemModel, QIcon, QDesktopServices, QMenu, QToolButton,
-                         QFileDialog, QColor)
-from PyQt5.QtGui import QComboBox, QGridLayout
+from PyQt5.QtWidgets import QWidget, QComboBox, QGridLayout, QMenu, QToolButton, QFileDialog
+from PyQt5.QtGui import QPixmap, QStandardItem, QStandardItemModel, QIcon, QDesktopServices, QColor
 from PyQt5.Qsci import QsciLexerSQL, QsciScintilla
 
 from qgis.core import QgsPalLabeling, QgsMapLayerRegistry, QgsStyleV2, QgsMapLayer, QGis, QgsProject,  QgsExpression, QgsFeatureRequest

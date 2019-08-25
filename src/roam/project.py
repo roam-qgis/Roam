@@ -12,7 +12,8 @@ from datetime import datetime
 from collections import OrderedDict
 
 from PyQt5.QtCore import pyqtSignal, QObject
-from PyQt5.QtGui import QAction, QIcon
+from PyQt5.QtWidgets import QAction
+from PyQt5.QtGui import QIcon
 
 from qgis.core import QgsMapLayerRegistry, QGis, QgsTolerance, QgsVectorLayer, QgsMapLayer, QgsFeature
 

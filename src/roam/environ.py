@@ -25,7 +25,8 @@ class RoamApp(object):
 
     def init(self, logo, title):
         from qgis.core import QgsApplication
-        from PyQt5.QtGui import QApplication, QFont, QIcon
+        from PyQt5.QtWidgets import QApplication
+        from PyQt5.QtGui import QFont, QIcon
         from PyQt5.QtCore import QLocale, QTranslator
         try:
             import PyQt5.QtSql

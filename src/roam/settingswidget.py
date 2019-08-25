@@ -1,5 +1,5 @@
 from PyQt5.QtCore import pyqtSignal, QThread, QObject
-from PyQt5.QtGui import QWidget
+from PyQt5.QtWidgets import QWidget
 from qgis.core import QgsGPSDetector, QGis, QgsProviderRegistry
 
 import roam

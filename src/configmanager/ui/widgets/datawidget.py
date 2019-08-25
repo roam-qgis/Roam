@@ -1,7 +1,7 @@
 import re
 import os
 
-from PyQt5.QtGui import QFileSystemModel
+from PyQt5.QtWidgets import QFileSystemModel
 from PyQt5.QtCore import QDateTime, Qt
 
 from qgis.core import QgsProviderRegistry

@@ -4,9 +4,9 @@ from string import Template
 
 from PyQt5.QtCore import (QUrl, QByteArray, QDate, QDateTime, QTime, QSize, QEvent, QPropertyAnimation,
                           QEasingCurve, QAbstractAnimation)
-from PyQt5.QtGui import (QDialog, QWidget, QGridLayout, QPixmap, QFrame,
-                         QImageReader, QDesktopServices, QApplication, QToolBar,
-                         QSizePolicy, QIcon, QLabel, QGraphicsOpacityEffect, QAction, QPushButton)
+from PyQt5.QtWidgets import (QDialog, QWidget, QGridLayout, QFrame, QApplication, QToolBar,
+                         QSizePolicy, QLabel, QGraphicsOpacityEffect, QAction, QPushButton)
+from PyQt5.QtGui import QPixmap, QImageReader, QDesktopServices, QIcon
 from PyQt5.QtWebKit import QWebView, QWebPage
 
 from roam import utils

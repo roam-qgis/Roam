@@ -1,4 +1,4 @@
-from PyQt5.QtGui import QTableView, QHeaderView, QWidget, QToolBar
+from PyQt5.QtWidgets import QTableView, QHeaderView, QWidget, QToolBar
 from PyQt5.QtCore import pyqtSignal
 
 from roam.editorwidgets.uifiles.ui_tablewidget import Ui_tablewidget
