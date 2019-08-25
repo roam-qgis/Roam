@@ -1,7 +1,7 @@
 import functools
 
-from PyQt4.QtCore import pyqtSignal, QSize, Qt
-from PyQt4.QtGui import QToolBar, QWidget, QSizePolicy, QLabel, QIcon, QAction
+from PyQt5.QtCore import pyqtSignal, QSize, Qt
+from PyQt5.QtGui import QToolBar, QWidget, QSizePolicy, QLabel, QIcon, QAction
 
 from roam.popupdialogs import PickActionDialog
 from roam.popupdialogs import DeleteFeatureDialog

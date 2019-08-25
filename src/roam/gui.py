@@ -1,5 +1,5 @@
-from PyQt4.QtGui import QToolBar
-from PyQt4.QtCore import Qt, pyqtSignal
+from PyQt5.QtGui import QToolBar
+from PyQt5.QtCore import Qt, pyqtSignal
 
 from roam.legendwidget import LegendWidget
 from roam.gpswidget import GPSWidget

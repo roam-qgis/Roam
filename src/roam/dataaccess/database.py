@@ -1,5 +1,5 @@
-from PyQt4.QtSql import (QSqlDatabase, QSqlQuery, QSqlQueryModel)
-from PyQt4.QtCore import Qt
+from PyQt5.QtSql import (QSqlDatabase, QSqlQuery, QSqlQueryModel)
+from PyQt5.QtCore import Qt
 from qgis.core import QgsDataSourceURI
 from roam.structs import OrderedDict
 import roam.utils

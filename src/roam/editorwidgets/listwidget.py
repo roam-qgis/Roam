@@ -1,5 +1,5 @@
-from PyQt4.QtGui import QComboBox, QStandardItem, QStandardItemModel, QIcon, QListView, QColor, QBrush
-from PyQt4.QtCore import QSize, Qt, QEvent
+from PyQt5.QtGui import QComboBox, QStandardItem, QStandardItemModel, QIcon, QListView, QColor, QBrush
+from PyQt5.QtCore import QSize, Qt, QEvent
 from qgis.core import QgsMessageLog, QgsMapLayerRegistry, QgsExpression, QgsFeatureRequest
 import qgis.core
 

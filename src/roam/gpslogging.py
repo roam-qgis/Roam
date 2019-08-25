@@ -1,6 +1,6 @@
 import getpass
 
-from PyQt4.QtCore import Qt, pyqtSignal, QObject, QDateTime
+from PyQt5.QtCore import Qt, pyqtSignal, QObject, QDateTime
 from qgis.core import QgsFeature, QgsGeometry
 
 

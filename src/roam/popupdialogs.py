@@ -1,5 +1,5 @@
-from PyQt4.QtCore import Qt, QSize, QEvent
-from PyQt4.QtGui import QDialog, QToolButton, QApplication, QWidget, QSizePolicy
+from PyQt5.QtCore import Qt, QSize, QEvent
+from PyQt5.QtGui import QDialog, QToolButton, QApplication, QWidget, QSizePolicy
 
 from roam.ui.ui_deletefeature import Ui_DeleteFeatureDialog
 from roam.ui.ui_actionpicker import Ui_ActionPickerDialog

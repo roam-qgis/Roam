@@ -1,6 +1,6 @@
-from PyQt4.QtGui import QDialog
-from PyQt4.QtCore import QUrl, QEvent, Qt
-from PyQt4.QtWebKit import QWebPage
+from PyQt5.QtGui import QDialog
+from PyQt5.QtCore import QUrl, QEvent, Qt
+from PyQt5.QtWebKit import QWebPage
 
 from roam.flickwidget import FlickCharm
 from roam.api.events import RoamEvents

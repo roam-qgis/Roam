@@ -1,4 +1,4 @@
-from PyQt4.QtGui import QIcon, QPushButton, QTabWidget
+from PyQt5.QtGui import QIcon, QPushButton, QTabWidget
 
 from roam.api import FeatureForm
 from roam.api.utils import layer_by_name, feature_by_key

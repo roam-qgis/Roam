@@ -1,8 +1,8 @@
 import pkgutil
 import sys
 import importlib
-from PyQt4.QtCore import QSize, pyqtSignal, Qt
-from PyQt4.QtGui import QToolBar
+from PyQt5.QtCore import QSize, pyqtSignal, Qt
+from PyQt5.QtGui import QToolBar
 
 from roam.api import RoamEvents, GPS
 

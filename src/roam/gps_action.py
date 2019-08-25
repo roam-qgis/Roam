@@ -1,8 +1,8 @@
 import os
 
-from PyQt4.QtCore import *
-from PyQt4.QtGui import *
-from PyQt4.QtSvg import QSvgRenderer
+from PyQt5.QtCore import *
+from PyQt5.QtGui import *
+from PyQt5.QtSvg import QSvgRenderer
 
 from qgis.core import *
 from qgis.gui import *

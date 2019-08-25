@@ -1,4 +1,4 @@
-from PyQt4.QtGui import QFileDialog
+from PyQt5.QtGui import QFileDialog
 
 from configmanager.editorwidgets.core import ConfigWidget
 from configmanager.editorwidgets.uifiles.ui_photowidget_config import Ui_Form

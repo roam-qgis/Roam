@@ -3,13 +3,13 @@ import os
 from string import Template
 from collections import OrderedDict
 
-from PyQt4.QtGui import (QWidget, QIcon, QListWidgetItem, QMouseEvent, QApplication, QKeySequence, QAction)
+from PyQt5.QtGui import (QWidget, QIcon, QListWidgetItem, QMouseEvent, QApplication, QKeySequence, QAction)
 
-from PyQt4.QtCore import (Qt, QUrl,
+from PyQt5.QtCore import (Qt, QUrl,
                           QEvent, pyqtSignal
                           )
 
-from PyQt4.QtWebKit import QWebPage
+from PyQt5.QtWebKit import QWebPage
 
 from qgis.core import (QgsExpression, QgsFeature,
                        QgsMapLayer, QgsFeatureRequest, QgsGeometry, NULL, QGis)

@@ -1,6 +1,6 @@
 import math
-from PyQt4.QtCore import QSize
-from PyQt4.QtGui import QIcon, QPushButton, QWidget, QHBoxLayout, QButtonGroup, QVBoxLayout, QGridLayout, QBoxLayout
+from PyQt5.QtCore import QSize
+from PyQt5.QtGui import QIcon, QPushButton, QWidget, QHBoxLayout, QButtonGroup, QVBoxLayout, QGridLayout, QBoxLayout
 
 from roam.editorwidgets.core import EditorWidget
 

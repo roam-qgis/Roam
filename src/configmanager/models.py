@@ -1,5 +1,5 @@
-from PyQt4.QtCore import QAbstractItemModel, QModelIndex, Qt, pyqtSignal, QMimeData, QByteArray
-from PyQt4.QtGui import (QComboBox, QListView, QDialog, QGridLayout, QIcon, QFont, QTextBlockUserData,
+from PyQt5.QtCore import QAbstractItemModel, QModelIndex, Qt, pyqtSignal, QMimeData, QByteArray
+from PyQt5.QtGui import (QComboBox, QListView, QDialog, QGridLayout, QIcon, QFont, QTextBlockUserData,
                          QItemDelegate, QSortFilterProxyModel, QStandardItem, QStandardItemModel)
 
 from qgis.core import QGis, QgsMapLayerRegistry, QgsMessageLog, QgsMapLayer

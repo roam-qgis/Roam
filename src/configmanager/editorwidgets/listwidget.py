@@ -2,8 +2,8 @@ import os
 
 from functools import partial
 
-from PyQt4.QtGui import QWidget
-from PyQt4.QtCore import Qt
+from PyQt5.QtGui import QWidget
+from PyQt5.QtCore import Qt
 from qgis.core import QgsMapLayer
 from qgis.gui import QgsExpressionBuilderDialog
 

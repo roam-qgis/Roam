@@ -9,9 +9,9 @@ import copy
 
 from functools import partial
 
-from PyQt4 import uic
-from PyQt4.QtCore import pyqtSignal, QObject, QSize, QEvent, QProcess, Qt, QPyNullVariant, QRegExp
-from PyQt4.QtGui import (QWidget,
+from PyQt5 import uic
+from PyQt5.QtCore import pyqtSignal, QObject, QSize, QEvent, QProcess, Qt, QPyNullVariant, QRegExp
+from PyQt5.QtGui import (QWidget,
                          QAction,
                          QDialogButtonBox,
                          QStackedWidget,

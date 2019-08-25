@@ -1,5 +1,5 @@
-from PyQt4.QtGui import QWidget, QFileDialog
-from PyQt4.QtCore import pyqtSignal
+from PyQt5.QtGui import QWidget, QFileDialog
+from PyQt5.QtCore import pyqtSignal
 
 
 import roam.config

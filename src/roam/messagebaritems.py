@@ -1,14 +1,14 @@
 import os
 import traceback
 
-from PyQt4.QtGui import (QApplication,
+from PyQt5.QtGui import (QApplication,
                          QPushButton,
                          QIcon,
                          QWidget,
                          QDialog,
                          QToolButton,
                          QFont)
-from PyQt4.QtCore import QEvent, QObject, Qt, QSize, pyqtSignal
+from PyQt5.QtCore import QEvent, QObject, Qt, QSize, pyqtSignal
 
 from qgis.gui import QgsMessageBarItem, QgsMessageBar
 

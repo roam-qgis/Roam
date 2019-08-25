@@ -7,8 +7,8 @@ from configmanager.ui.nodewidgets import ui_publishwidget
 from configmanager.ui.widgets.widgetbase import WidgetBase
 from configmanager.services.dataservice import DataService
 
-from PyQt4.QtCore import Qt, QDateTime
-from PyQt4.QtGui import QTableWidgetItem, QHeaderView, QApplication, QFileDialog
+from PyQt5.QtCore import Qt, QDateTime
+from PyQt5.QtGui import QTableWidgetItem, QHeaderView, QApplication, QFileDialog
 
 import configmanager.bundle
 import roam.project

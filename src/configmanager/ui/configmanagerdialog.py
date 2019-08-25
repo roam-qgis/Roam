@@ -5,8 +5,8 @@ import traceback
 
 from datetime import datetime
 
-from PyQt4.QtGui import QDialog, QFont, QColor, QIcon, QMessageBox, QStandardItem, QStandardItemModel, QInputDialog, QItemSelectionModel
-from PyQt4.QtCore import QAbstractItemModel, QModelIndex, Qt
+from PyQt5.QtGui import QDialog, QFont, QColor, QIcon, QMessageBox, QStandardItem, QStandardItemModel, QInputDialog, QItemSelectionModel
+from PyQt5.QtCore import QAbstractItemModel, QModelIndex, Qt
 
 
 from configmanager.events import ConfigEvents

@@ -1,7 +1,7 @@
 from collections import OrderedDict
 
-from PyQt4.QtCore import pyqtSignal, QRect, Qt, QRectF
-from PyQt4.QtGui import QCursor, QPixmap, QColor
+from PyQt5.QtCore import pyqtSignal, QRect, Qt, QRectF
+from PyQt5.QtGui import QCursor, QPixmap, QColor
 from qgis.core import (QgsRectangle, QgsTolerance,
                        QgsFeatureRequest, QgsFeature,
                        QgsVectorLayer, QGis, QgsMapLayer)

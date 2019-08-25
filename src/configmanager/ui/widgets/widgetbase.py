@@ -1,4 +1,4 @@
-from PyQt4.QtGui import QWidget
+from PyQt5.QtGui import QWidget
 
 import roam.utils
 import pprint

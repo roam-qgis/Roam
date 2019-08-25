@@ -1,6 +1,6 @@
 from roam.api import RoamEvents
-from PyQt4.QtGui import QLineEdit, QPlainTextEdit
-from PyQt4.QtCore import QEvent
+from PyQt5.QtGui import QLineEdit, QPlainTextEdit
+from PyQt5.QtCore import QEvent
 
 from qgis.core import QgsDataSourceURI
 from roam.dataaccess.database import Database, DatabaseException

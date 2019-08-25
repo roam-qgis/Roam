@@ -1,5 +1,5 @@
-from PyQt4.QtGui import QWidget, QApplication, QButtonGroup
-from PyQt4.QtCore import QTime, Qt, QDateTime, pyqtSignal
+from PyQt5.QtGui import QWidget, QApplication, QButtonGroup
+from PyQt5.QtCore import QTime, Qt, QDateTime, pyqtSignal
 
 from roam import utils
 from roam.ui.uifiles import datepicker_widget

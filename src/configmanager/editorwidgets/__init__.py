@@ -1,5 +1,5 @@
-from PyQt4.QtCore import pyqtSignal
-from PyQt4.QtGui import QWidget
+from PyQt5.QtCore import pyqtSignal
+from PyQt5.QtGui import QWidget
 
 from configmanager.editorwidgets.checkwidget import CheckboxWidgetConfig
 from configmanager.editorwidgets.datewidget import DateWidgetConfig

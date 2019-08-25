@@ -1,7 +1,7 @@
 import math
 import functools
-from PyQt4.QtCore import Qt, QSize, QRect, QPoint, pyqtSignal, QRectF
-from PyQt4.QtGui import QWidget, QPixmap, QPainter, QLabel, QBrush, QColor, QPen, QTextOption, QFontMetrics, QImage, \
+from PyQt5.QtCore import Qt, QSize, QRect, QPoint, pyqtSignal, QRectF
+from PyQt5.QtGui import QWidget, QPixmap, QPainter, QLabel, QBrush, QColor, QPen, QTextOption, QFontMetrics, QImage, \
     QFont
 
 from qgis.core import QgsLayerTreeModel, QgsLayerTreeNode

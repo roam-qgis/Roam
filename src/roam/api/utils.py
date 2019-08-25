@@ -5,8 +5,8 @@ import collections
 from contextlib import contextmanager
 from qgis.core import QgsMapLayerRegistry, QgsFeatureRequest, QgsGeometry, QgsMapLayer, QgsExpression
 from qgis.gui import QgsMessageBar
-from PyQt4.QtGui import QTextDocument, QPainter
-from PyQt4.QtCore import QPyNullVariant, QPointF
+from PyQt5.QtGui import QTextDocument, QPainter
+from PyQt5.QtCore import QPyNullVariant, QPointF
 from roam.structs import CaseInsensitiveDict
 
 

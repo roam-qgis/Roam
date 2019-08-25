@@ -2,13 +2,13 @@ import math
 from functools import partial
 from collections import defaultdict
 
-from PyQt4.QtCore import Qt, pyqtSignal, QSize, QPropertyAnimation, QObject, pyqtProperty, QEasingCurve, QThread, \
+from PyQt5.QtCore import Qt, pyqtSignal, QSize, QPropertyAnimation, QObject, pyqtProperty, QEasingCurve, QThread, \
     QRectF, QLocale, QPointF, QPoint
-from PyQt4.QtGui import QActionGroup, QFrame, QWidget, QSizePolicy, \
+from PyQt5.QtGui import QActionGroup, QFrame, QWidget, QSizePolicy, \
     QAction, QPixmap, QCursor, QIcon, QColor, QMainWindow, QPen, QGraphicsItem, QPolygon, QFont, QFontMetrics, QBrush, \
     QPainterPath, QPainter, QToolButton, QLabel, QToolBar
 
-from PyQt4.QtSvg import QGraphicsSvgItem
+from PyQt5.QtSvg import QGraphicsSvgItem
 
 from qgis.gui import QgsMapCanvas, QgsMapToolZoom, QgsRubberBand, QgsMapCanvasItem, QgsScaleComboBox, \
     QgsLayerTreeMapCanvasBridge, \

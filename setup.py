@@ -270,8 +270,8 @@ if os.name is 'nt' and haspy2exe:
     package_details.update(
         options={'py2exe': {
             'dll_excludes': dll_excludes,
-            'excludes': ['PyQt4.uic.port_v3'],
-            'includes': ['PyQt4.QtNetwork', 'sip', 'PyQt4.Q tSql', 'sqlite3', "Queue", 'PyQt4.Qsci'],
+            'excludes': ['PyQt5.uic.port_v3'],
+            'includes': ['PyQt5.QtNetwork', 'sip', 'PyQt5.Q tSql', 'sqlite3', "Queue", 'PyQt5.Qsci'],
             'packages': ['raven'],
             'skip_archive': True,
         }},

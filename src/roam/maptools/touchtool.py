@@ -1,5 +1,5 @@
-from PyQt4.QtCore import Qt, QRect
-from PyQt4.QtGui import QColor
+from PyQt5.QtCore import Qt, QRect
+from PyQt5.QtGui import QColor
 
 from qgis.core import QGis
 from qgis.gui import QgsRubberBand, QgsMapToolPan

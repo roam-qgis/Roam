@@ -1,5 +1,5 @@
-from PyQt4.QtCore import QModelIndex, pyqtSignal, QSize, Qt
-from PyQt4.QtGui import QWidget, QDialog, QSortFilterProxyModel
+from PyQt5.QtCore import QModelIndex, pyqtSignal, QSize, Qt
+from PyQt5.QtGui import QWidget, QDialog, QSortFilterProxyModel
 
 from roam.flickwidget import FlickCharm
 from roam.ui.ui_list import Ui_BigList

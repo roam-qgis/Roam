@@ -1,9 +1,9 @@
 import os
 
-from PyQt4.QtGui import (QLabel, QDialog, QFileDialog,
+from PyQt5.QtGui import (QLabel, QDialog, QFileDialog,
                         QPixmap, QGridLayout, QLayout,
                         QWidget)
-from PyQt4.QtCore import (QByteArray, QBuffer,
+from PyQt5.QtCore import (QByteArray, QBuffer,
                         QIODevice, QEvent, QObject, pyqtSignal, Qt)
 
 

@@ -1,8 +1,8 @@
 from functools import partial
 
 from qgis.core import NULL
-from PyQt4.QtGui import QPushButton, QDateTimeEdit, QIcon, QDateEdit, QWidget
-from PyQt4.QtCore import QDateTime, Qt, QSize, QDate, QEvent
+from PyQt5.QtGui import QPushButton, QDateTimeEdit, QIcon, QDateEdit, QWidget
+from PyQt5.QtCore import QDateTime, Qt, QSize, QDate, QEvent
 
 from roam.api import RoamEvents
 from roam.editorwidgets.core import EditorWidget, registerwidgets, LargeEditorWidget

@@ -1,5 +1,5 @@
-from PyQt4.QtCore import pyqtSignal, Qt
-from PyQt4.QtGui import QCursor, QPixmap, QColor
+from PyQt5.QtCore import pyqtSignal, Qt
+from PyQt5.QtGui import QCursor, QPixmap, QColor
 from qgis.core import (QgsPoint, QgsRectangle, QgsTolerance,
                        QgsFeatureRequest, QgsFeature, QgsGeometry,
                        QgsVectorLayer, QGis)

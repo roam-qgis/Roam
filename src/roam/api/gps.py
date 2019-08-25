@@ -3,7 +3,7 @@ import pynmea2
 
 from datetime import datetime
 
-from PyQt4.QtCore import QObject, pyqtSignal, QDate, QDateTime, QTime, Qt, QTimer
+from PyQt5.QtCore import QObject, pyqtSignal, QDate, QDateTime, QTime, Qt, QTimer
 
 from qgis.core import (QgsGPSDetector, QgsGPSConnectionRegistry, QgsPoint, \
                        QgsCoordinateTransform, QgsCoordinateReferenceSystem, \

@@ -1,10 +1,10 @@
 import os.path
 import functools
 
-from PyQt4 import QtCore, QtGui
+from PyQt5 import QtCore, QtGui
 
-from PyQt4.QtGui import QWidget, QPixmap, QPainter, QColorDialog
-from PyQt4.QtCore import Qt
+from PyQt5.QtGui import QWidget, QPixmap, QPainter, QColorDialog
+from PyQt5.QtCore import Qt
 from qgis.core import QGis, QgsMapRendererParallelJob, QgsVectorLayer, QgsMapLayerRegistry, QgsPoint, \
     QgsGeometry, QgsFeature, QgsMarkerSymbolV2
 
