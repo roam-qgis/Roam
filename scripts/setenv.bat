@@ -45,8 +45,11 @@ set PATH=%OSGEO4W_ROOT%\bin;%QGIS%\bin;%BASE%\src\;%GIT%\bin;;%WINDIR%\system32;
 
 : Python Setup
 CALL %OSGEO4W_ROOT%\bin\py3_env.bat
+CALL %OSGEO4W_ROOT%\bin\qt5_env.bat
+SET PYTHONPATH=%BASE%\src;%QGIS%\python;%BASE%\libs
 
 ECHO OSGeo path is: %OSGEO4W_ROOT%
 ECHO Getting QGIS libs from: %QGIS%
 ECHO Python loaded from: %PYTHONHOME%
 ECHO PATH is: %PATH%
+ECHO Python libs from: %PYTHONPATH%
