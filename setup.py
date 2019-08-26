@@ -41,8 +41,8 @@ except KeyError:
     qgisname = 'qgis'
 
 osgeobin = os.path.join(osgeopath, 'bin')
-qtimageforms = os.path.join(osgeopath, r'apps\qt4\plugins\imageformats\*')
-qtsqldrivers = os.path.join(osgeopath, r'apps\qt4\plugins\sqldrivers\*')
+qtimageforms = os.path.join(osgeopath, r'apps\qt5\plugins\imageformats\*')
+qtsqldrivers = os.path.join(osgeopath, r'apps\qt5\plugins\sqldrivers\*')
 qgisresources = os.path.join(osgeopath, "apps", qgisname, "resources")
 svgs = os.path.join(osgeopath, "apps", qgisname, "svg")
 qgispluginpath = os.path.join(osgeopath, "apps", qgisname, "plugins", "*provider.dll")
@@ -162,9 +162,11 @@ def buildqtfiles():
         else:
             return True
 
-    pyuic4 = 'pyuic4'
+    pyuic5 = 'pyuic5'
+    pyrcc5 = 'pyrcc5'
     if platform == 'win32':
-        pyuic4 += '.bat'
+        pyuic5 += '.bat'
+        pyrcc5 += '.bat'
 
     import json
     hashes = {}
@@ -186,17 +188,17 @@ def buildqtfiles():
 
                 if ext == '.ui':
                     newfile = file + ".py"
-                    run(pyuic4, '-o', newfile, filepath, shell=True)
+                    run(pyuic5, '-o', newfile, filepath, shell=True)
                 elif ext == '.qrc':
                     newfile = file + "_rc.py"
-                    run('pyrcc4', '-o', newfile, filepath)
+                    run(pyrcc5, '-o', newfile, filepath)
                 elif ext == '.ts':
                     newfile = file + '.qm'
                     try:
                         if os.name is 'nt':
                             run('lrelease', filepath, '-qm', newfile)
                         else:
-                            run('lrelease-qt4', filepath, '-qm', newfile)
+                            run('lrelease-qt5', filepath, '-qm', newfile)
                     except:
                         print("Missing lrelease - skipping")
                         continue
