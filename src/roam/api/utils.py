@@ -3,10 +3,8 @@ import os
 import subprocess
 import collections
 from contextlib import contextmanager
-from qgis.core import QgsMapLayerRegistry, QgsFeatureRequest, QgsGeometry, QgsMapLayer, QgsExpression
+from qgis.core import QgsProject, QgsFeatureRequest, QgsGeometry, NULL
 from qgis.gui import QgsMessageBar
-from PyQt5.QtGui import QTextDocument, QPainter
-from PyQt5.QtCore import QPyNullVariant, QPointF
 from roam.structs import CaseInsensitiveDict
 
 
@@ -49,7 +47,7 @@ def open_keyboard():
 
 
 def layers(layertype=None):
-    _layers = QgsMapLayerRegistry.instance().mapLayers().values()
+    _layers = QgsProject.instance().mapLayers().values()
     if layertype is None:
         return _layers
     else:
@@ -71,7 +69,7 @@ def layers_by_name(name):
     :param name: The name of the layer
     :return: A list of layers with the given layer name
     """
-    return QgsMapLayerRegistry.instance().mapLayersByName(name)
+    return QgsProject.instance().mapLayersByName(name)
 
 
 def feature_by_key(layer, key):
@@ -175,15 +173,13 @@ def copy_feature_values(from_feature, to_feature, include_geom=False):
 
 def nullcheck(value):
     """
-    SIP 2.0 has this gross QPyNullVariant type that we have to convert to None for better handling in our
-    calling code.  Most QGIS None values return as QPyNullVariant.
-    :param value:
-    :return:
+    Checks if the value is a null type from QGIS ( NOTE: NULL != null for QgsFeature values).
+    :param value: The value from the QgsFeature which might be a qgis.core.NULL value
+    :return: None or the value if the value isn't qgis.core.NULL
     """
-    if isinstance(value, QPyNullVariant):
+    if value == NULL:
         return None
-    else:
-        return value
+    return value
 
 
 def format_values(fieldnames, valuestore, with_char='\n'):
