@@ -10,6 +10,8 @@ REM ----------------------------------------------------------------------------
 
 pushd %~dp0
 
+SET BASE=%~dp0
+
 call scripts\setenv.bat
 IF "%1"=="" goto build
 GOTO %1
@@ -72,12 +74,12 @@ GOTO END
 :test
 @ECHO ON
 ECHO Running tests
-py.test --cov=src\roam src\roam.tests --cov-report html --cov-report term
+pytest --cov=src\roam src\roam.tests --cov-report html --cov-report term
 GOTO END
 
 :test-only
 ECHO Running tests
-py.test src\roam.tests
+pytest src\roam.tests
 GOTO END
 
 :design
