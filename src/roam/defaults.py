@@ -23,7 +23,6 @@ def default_value(defaultconfig, feature, layer):
         try:
             defaultprovider = defaultproviders[defaulttype]
         except KeyError as ex:
-            log(ex)
             raise DefaultError("No default provider found for {}".format(defaulttype))
 
         try:
@@ -37,9 +36,24 @@ def default_value(defaultconfig, feature, layer):
         value = os.path.expandvars(defaultconfig)
         if '[%' in defaultconfig and '%]' in defaultconfig:
             # TODO Use regex
-            value = QgsExpression.replaceExpressionText(value, feature, layer)
+            value = QgsExpression.replaceExpressionText(value, context_for_feature(feature))
 
     return value
+
+
+def context_for_feature(feature):
+    """
+    Create a new expression context for the given feature.
+    :param feature:
+    :return:
+    """
+    context = QgsExpressionContext()
+    scope = QgsExpressionContextScope()
+    context.appendScope(scope)
+    if feature is not None:
+        scope.setVariable("roamgeometry", feature.geometry())
+        context.setFeature(feature)
+    return context
 
 
 def widget_default(widgetconfig, feature, layer):

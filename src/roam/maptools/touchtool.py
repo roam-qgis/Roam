@@ -1,11 +1,6 @@
-from PyQt5.QtCore import Qt, QRect
-from PyQt5.QtGui import QColor
+from PyQt5.QtCore import Qt
 
-from qgis.core import QGis
-from qgis.gui import QgsRubberBand, QgsMapToolPan
-
-from roam.utils import log
-from roam.maptools import maptoolutils
+from qgis.gui import QgsMapToolPan
 
 from roam.api import RoamEvents
 

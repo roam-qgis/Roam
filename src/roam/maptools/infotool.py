@@ -1,17 +1,12 @@
 from collections import OrderedDict
 
-from PyQt5.QtCore import pyqtSignal, QRect, Qt, QRectF
-from PyQt5.QtGui import QCursor, QPixmap, QColor
-from qgis.core import (QgsRectangle, QgsTolerance,
-                       QgsFeatureRequest, QgsFeature,
-                       QgsVectorLayer, QGis, QgsMapLayer)
+from PyQt5.QtCore import QRect, Qt, QRectF
+from PyQt5.QtGui import QColor
+from qgis.core import (QgsRectangle, QgsFeatureRequest, QgsWkbTypes, QgsMapLayer)
 from qgis.gui import QgsMapTool, QgsRubberBand
 
-from roam.maptools.maptool import MapTool
-from roam.maptools.touchtool import TouchMapTool
-from roam.maptools import maptoolutils
 from roam.api.events import RoamEvents
-from roam.utils import log
+from roam.maptools import maptoolutils
 
 
 class InfoTool(QgsMapTool):
@@ -20,7 +15,7 @@ class InfoTool(QgsMapTool):
         self.canvas = canvas
         self.radius = snapradius
 
-        self.selectband = QgsRubberBand(self.canvas, QGis.Polygon)
+        self.selectband = QgsRubberBand(self.canvas, QgsWkbTypes.PolygonGeometry)
         self.selectrect = QRect()
         self.dragging = False
         self.selectionlayers = []
@@ -31,9 +26,9 @@ class InfoTool(QgsMapTool):
         if rect.isEmpty():
             return
 
-        for layer in self.selectionlayers.itervalues():
+        for layer in self.selectionlayers.values():
             if (not layer.type() == QgsMapLayer.VectorLayer or
-                    layer.geometryType() == QGis.NoGeometry):
+                    layer.geometryType() == QgsWkbTypes.NoGeometry):
                 continue
 
             rect = self.toLayerCoordinates(layer, rect)
@@ -65,7 +60,7 @@ class InfoTool(QgsMapTool):
         self.dragging = False
         self.selectrect.setRect(0, 0, 0, 0)
 
-        self.selectband = QgsRubberBand(self.canvas, QGis.Polygon)
+        self.selectband = QgsRubberBand(self.canvas, QgsWkbTypes.PolygonGeometry)
         self.selectband.setColor(QColor.fromRgb(0, 0, 255, 65))
         self.selectband.setWidth(5)
 

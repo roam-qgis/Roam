@@ -1,4 +1,4 @@
-from qgis.core import QGis, QgsPoint
+from qgis.core import QgsWkbTypes, QgsPoint
 
 
 def setRubberBand(canvas, selectRect, rubberBand):
@@ -7,7 +7,7 @@ def setRubberBand(canvas, selectRect, rubberBand):
     upperright = transform.toMapCoordinates(selectRect.right(), selectRect.top())
 
     if rubberBand:
-        rubberBand.reset(QGis.Polygon);
+        rubberBand.reset(QgsWkbTypes.PolygonGeometry);
         rubberBand.addPoint(lowerleft, False);
         rubberBand.addPoint(QgsPoint(upperright.x(), lowerleft.y()), False);
         rubberBand.addPoint(upperright, False);

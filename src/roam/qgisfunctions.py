@@ -1,4 +1,7 @@
-from qgis.core import QgsExpression, QGis, QgsGeometry
+"""
+Module contains custom QGIS expression functions that can be used by Roam.
+"""
+from qgis.core import QgsExpression, QgsGeometry, QgsWkbTypes, QgsExpressionFunction
 from roam.api import GPS, utils
 
 capturegeometry = None
@@ -35,9 +38,9 @@ def qgsfunction(args, group, **kwargs):
     """
     helptemplate = ''
 
-    class QgsExpressionFunction(QgsExpression.Function):
+    class RoamExpressionFunction(QgsExpressionFunction):
         def __init__(self, name, args, group, helptext=''):
-            QgsExpression.Function.__init__(self, name, args, group, helptext)
+            QgsExpressionFunction.__init__(self, name, args, group, helptext)
 
         def func(self, values, feature, parent):
             pass
@@ -49,7 +52,7 @@ def qgsfunction(args, group, **kwargs):
         if args == 0 and not name[0] == '$':
             name = '${0}'.format(name)
         func.__name__ = name
-        f = QgsExpressionFunction(name, args, group, help)
+        f = RoamExpressionFunction(name, args, group, help)
         f.func = func
         register = kwargs.get('register', True)
         if register:
@@ -63,13 +66,13 @@ def qgsfunction(args, group, **kwargs):
 def roam_geomvertex(values, feature, parent):
     if capturegeometry:
         nodeindex = values[0]
-        if capturegeometry.type() == QGis.Line:
+        if capturegeometry.type() == QgsWkbTypes.LineGeometry:
             line = capturegeometry.asPolyline()
             try:
                 node = line[nodeindex]
             except IndexError:
                 return None
-            node = QgsGeometry.fromPoint(node)
+            node = QgsGeometry.fromPointXY(node)
             return node
     return None
 

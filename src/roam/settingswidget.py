@@ -1,6 +1,6 @@
 from PyQt5.QtCore import pyqtSignal, QThread, QObject
 from PyQt5.QtWidgets import QWidget
-from qgis.core import QgsGPSDetector, QGis, QgsProviderRegistry
+from qgis.core import QgsGpsDetector, Qgis, QgsProviderRegistry
 
 import roam
 import roam.utils as utils
@@ -15,7 +15,7 @@ class PortFinder(QThread):
     def run(self):
         # NOTE: This is not the correct way, however it works and the
         # correct way still blocked the UI :S
-        ports = QgsGPSDetector.availablePorts()[1:]
+        ports = QgsGpsDetector.availablePorts()[1:]
         self.portsfound.emit(ports)
         self.finished.emit()
 
@@ -192,7 +192,7 @@ class SettingsWidget(Ui_settingsWidget, QWidget):
         self.updateCOMPorts()
         # Read version
 
-        self.versionLabel.setText(unicode(roam.__version__))
-        self.qgisapiLabel.setText(unicode(QGis.QGIS_VERSION))
+        self.versionLabel.setText(roam.__version__)
+        self.qgisapiLabel.setText(Qgis.QGIS_VERSION)
         ecwsupport = 'ecw' in QgsProviderRegistry.instance().fileRasterFilters()
         self.ecwlabel.setText("Yes" if ecwsupport else "No")

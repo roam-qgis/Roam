@@ -1,8 +1,8 @@
-from PyQt5.QtCore import pyqtSignal, Qt
+from PyQt5.QtCore import pyqtSignal
 from PyQt5.QtGui import QCursor, QPixmap, QColor
-from qgis.core import (QgsPoint, QgsRectangle, QgsTolerance,
+from qgis.core import (QgsRectangle, QgsTolerance,
                        QgsFeatureRequest, QgsFeature, QgsGeometry,
-                       QgsVectorLayer, QGis)
+                       QgsVectorLayer, QgsWkbTypes)
 from qgis.gui import QgsMapTool, QgsRubberBand
 
 
@@ -26,7 +26,7 @@ class InspectionTool(QgsMapTool):
         self.layerto = layerto
         self.fields = mapping
         self.validation_method = validation_method
-        self.band = QgsRubberBand(canvas, QGis.Polygon)
+        self.band = QgsRubberBand(canvas, QgsWkbTypes.PolygonGeometry)
         self.band.setColor(QColor.fromRgb(255, 0, 0, 65))
         self.band.setWidth(5)
 
@@ -76,8 +76,8 @@ class InspectionTool(QgsMapTool):
 
             fields = self.layerto.pendingFields()
             newfeature = QgsFeature(fields)
-            if self.layerto.geometryType() == QGis.Point:
-                newfeature.setGeometry(QgsGeometry.fromPoint(point))
+            if self.layerto.geometryType() == QgsWkbTypes.PointGeometry:
+                newfeature.setGeometry(QgsGeometry.fromPointXY(point))
             else:
                 newfeature.setGeometry(QgsGeometry(feature.geometry()))
 

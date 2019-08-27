@@ -1,9 +1,9 @@
 from PyQt5.QtCore import pyqtSignal, QRect, Qt
 from PyQt5.QtGui import QCursor, QPixmap, QColor
-from qgis.core import (QgsRectangle, QgsTolerance,
+from qgis.core import (QgsRectangle,
                        QgsFeatureRequest, QgsFeature,
-                       QgsVectorLayer, QGis)
-from qgis.gui import QgsMapTool, QgsRubberBand
+                       QgsWkbTypes)
+from qgis.gui import QgsRubberBand
 
 from roam.maptools.maptool import MapTool
 from roam.maptools import maptoolutils
@@ -99,7 +99,7 @@ class EditTool(MapTool):
     def canvasPressEvent(self, event):
         self.selectrect.setRect(0, 0, 0, 0)
 
-        self.selectband = QgsRubberBand(self.canvas, QGis.Polygon)
+        self.selectband = QgsRubberBand(self.canvas, QgsWkbTypes.PolygonGeometry)
         self.selectband.setColor(QColor.fromRgb(0, 0, 255, 65))
         self.selectband.setWidth(5)
 

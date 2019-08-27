@@ -11,7 +11,7 @@ import roam.environ
 
 print(sys.argv)
 config = {}
-roamapp = roam.environ._setup(os.getcwd(), config=config)
+roamapp = roam.environ._setup(os.getcwd(), config=config, register_widgets=False)
 
 
 def tear_down():

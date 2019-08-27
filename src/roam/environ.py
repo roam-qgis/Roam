@@ -23,7 +23,7 @@ class RoamApp(object):
         self.sourcerun = False
         self.config = None
 
-    def init(self, logo, title):
+    def init(self, logo, title, **kwargs):
         from qgis.core import QgsApplication
         from PyQt5.QtWidgets import QApplication
         from PyQt5.QtGui import QFont, QIcon
@@ -56,7 +56,13 @@ class RoamApp(object):
         QApplication.setApplicationName(title)
 
         import roam.editorwidgets.core
-        roam.editorwidgets.core.registerallwidgets()
+        if "register_widgets" not in kwargs:
+            register_widgets = True
+        else:
+            register_widgets = False
+
+        if register_widgets:
+            roam.editorwidgets.core.registerallwidgets()
         import roam.qgisfunctions
         return self
 
@@ -177,7 +183,7 @@ def _setup(apppath=None, logo='', title='', **kwargs):
             roam.config.save(settingspath)
         roam.config.load(settingspath)
 
-    app = RoamApp(sys.argv, apppath, prefixpath, settingspath, libspath, i18npath, projectroot).init(logo, title)
+    app = RoamApp(sys.argv, apppath, prefixpath, settingspath, libspath, i18npath, projectroot).init(logo, title, **kwargs)
     app.sourcerun = RUNNING_FROM_FILE
     app.profileroot = profileroot
     roam.utils.info("Profile Root: {0}".format(app.profileroot))

@@ -2,7 +2,7 @@ from qgis.core import *
 from qgis.gui import *
 from PyQt5.QtCore import Qt, pyqtSignal
 from PyQt5.QtGui import QColor
-from maptool import MapTool
+from roam.maptools.maptool import MapTool
 
 
 class MoveTool(MapTool):
