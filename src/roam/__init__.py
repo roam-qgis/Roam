@@ -7,14 +7,6 @@ import sys
 curpath = os.path.dirname(__file__)
 sys.path.append(curpath)
 
-try:
-    types = ["QDate", "QDateTime", "QString", "QTextStream", "QTime", "QUrl", "QVariant"]
-    for qtype in types:
-        sip.setapi(qtype, 2)
-except ValueError:
-    # API has already been set so we can't set it again.
-    pass
-
 
 def get_git_changeset():
     """Returns the SHA of the current HEAD
