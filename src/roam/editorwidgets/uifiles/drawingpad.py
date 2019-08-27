@@ -6,8 +6,8 @@ from PyQt5 import QtCore, QtGui
 from PyQt5.QtWidgets import QWidget, QColorDialog
 from PyQt5.QtGui import QPixmap, QPainter
 from PyQt5.QtCore import Qt
-from qgis.core import QGis, QgsMapRendererParallelJob, QgsVectorLayer, QgsMapLayerRegistry, QgsPoint, \
-    QgsGeometry, QgsFeature, QgsMarkerSymbolV2
+from qgis.core import QgsMapRendererParallelJob, QgsVectorLayer, QgsProject, QgsPoint, \
+    QgsGeometry, QgsFeature, QgsMarkerSymbol
 
 from roam.editorwidgets.uifiles.ui_drawingpad import Ui_DrawingWindow
 from roam.api import GPS
@@ -174,7 +174,7 @@ class DrawingPad(Ui_DrawingWindow, QWidget):
         image = self.renderjob.renderedImage()
         self.scribbleArea.addMapImage(image)
         try:
-            gpslayer = QgsMapLayerRegistry.instance().mapLayersByName("__gps_layer")[0]
+            gpslayer = QgsProject.instance().mapLayersByName("__gps_layer")[0]
             gpslayer.rollBack()
         except IndexError:
             pass
@@ -185,12 +185,12 @@ class DrawingPad(Ui_DrawingWindow, QWidget):
             layers = settings.layers()
             if GPS.isConnected:
                 try:
-                    gpslayer = QgsMapLayerRegistry.instance().mapLayersByName("__gps_layer")[0]
+                    gpslayer = QgsProject.instance().mapLayersByName("__gps_layer")[0]
                 except IndexError:
                     gpslayer = QgsVectorLayer("Point", "__gps_layer", "memory")
-                    symbol = QgsMarkerSymbolV2.createSimple({'name': 'circle', 'color': 'blue', "size": '5'})
+                    symbol = QgsMarkerSymbol.createSimple({'name': 'circle', 'color': 'blue', "size": '5'})
                     gpslayer.rendererV2().setSymbol(symbol)
-                    QgsMapLayerRegistry.instance().addMapLayer(gpslayer, False)
+                    QgsProject.instance().addMapLayer(gpslayer, False)
 
                 layers.append(gpslayer.id())
                 settings.setLayers(layers)

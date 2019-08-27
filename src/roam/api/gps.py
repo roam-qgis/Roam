@@ -5,9 +5,9 @@ from datetime import datetime
 
 from PyQt5.QtCore import QObject, pyqtSignal, QDate, QDateTime, QTime, Qt, QTimer
 
-from qgis.core import (QgsGPSDetector, QgsGPSConnectionRegistry, QgsPoint, \
+from qgis.core import (QgsGpsDetector, QgsGpsConnectionRegistry, QgsPoint, \
                        QgsCoordinateTransform, QgsCoordinateReferenceSystem, \
-                       QgsGPSInformation, QgsCsException)
+                       QgsGpsInformation, QgsCsException)
 
 from roam.utils import log, info, logger
 from roam.config import settings as config
@@ -53,7 +53,7 @@ class GPSService(QObject):
         self.postion = None
         self.latlong_position = None
         self.elevation = None
-        self.info = QgsGPSInformation()
+        self.info = QgsGpsInformation()
         self.wgs84CRS = QgsCoordinateReferenceSystem(4326)
         self.crs = None
         self.waypoint = None
@@ -107,7 +107,7 @@ class GPSService(QObject):
                 log("Auto scanning for GPS port")
                 portname = ''
 
-            self.detector = QgsGPSDetector(portname)
+            self.detector = QgsGpsDetector(portname)
             log("Connecting to:{}".format(portname or 'scan'))
             self.detector.detected.connect(self._gpsfound)
             self.detector.detectionFailed.connect(self.gpsfailed)
@@ -123,7 +123,7 @@ class GPSService(QObject):
         log("GPS disconnect")
         self.isConnected = False
         self.postion = None
-        QgsGPSConnectionRegistry.instance().unregisterConnection(self.gpsConn)
+        QgsGpsConnectionRegistry.instance().unregisterConnection(self.gpsConn)
         self.gpsdisconnected.emit()
 
     def _gpsfound(self, gpsConnection):
@@ -132,7 +132,7 @@ class GPSService(QObject):
         self.gpsConn.nmeaSentenceReceived.connect(self.parse_data)
         # self.gpsConn.stateChanged.connect(self.gpsStateChanged)
         self.isConnected = True
-        QgsGPSConnectionRegistry.instance().registerConnection(self.gpsConn)
+        QgsGpsConnectionRegistry.instance().registerConnection(self.gpsConn)
 
     def parse_data(self, datastring):
         self.log_gps(datastring)
