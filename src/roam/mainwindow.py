@@ -3,15 +3,13 @@ from functools import partial
 
 from qgis.PyQt.QtCore import Qt, QFileInfo, QDir, QSize
 from qgis.PyQt.QtGui import QPixmap, QIcon, QDesktopServices
-from qgis.PyQt.QtWidgets import (QActionGroup, QWidget, QSizePolicy, QApplication,
-                             QAction)
+from qgis.PyQt.QtWidgets import (QActionGroup, QWidget, QSizePolicy, QApplication, QAction)
 from qgis.PyQt.QtWidgets import QMainWindow
 from qgis.core import (QgsProjectBadLayerHandler,
                        QgsProject,
                        QgsMapLayer,
                        Qgis,
                        QgsApplication)
-from qgis.gui import (QgsMessageBar)
 
 import roam.api.featureform
 import roam.api.utils
