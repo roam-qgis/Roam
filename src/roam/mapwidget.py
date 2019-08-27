@@ -533,14 +533,30 @@ class MapWidget(Ui_CanvasWidget, QMainWindow):
         :param position: The current GPS position.
         :param gpsinfo: The current extra GPS information.
         """
-        self.gpslabel.setText("GPS: PDOP <b>{0:.2f}</b> HDOP <b>{1:.2f}</b>    VDOP <b>{2:.2f}</b>".format(gpsinfo.pdop,
-                                                                                                           gpsinfo.hdop,
-                                                                                                           gpsinfo.vdop))
+        gps_fix = 'None'
+        if gpsinfo.quality == 1:
+            gps_fix = 'GPS'
+        elif gpsinfo.quality == 2:
+            gps_fix = 'DGPS'
+        elif gpsinfo.quality == 3:
+            gps_fix = 'PPS'
+        elif gpsinfo.quality == 4:
+            gps_fix = 'RTK Fixed'
+        elif gpsinfo.quality == 5:
+            gps_fix = 'RTK Float'
 
-        places = roam.config.settings.get("gpsplaces", 8)
-        self.gpslabelposition.setText("X <b>{x:.{places}f}</b> Y <b>{y:.{places}f}</b>".format(x=position.x(),
+        self.gpslabel.setText("GPS: PDOP <b>{0:.2f}</b> HDOP <b>{1:.2f}</b> VDOP <b>{2:.2f}</b>  FIX <b>{3}</b> ".format(gpsinfo.pdop,
+                                                                                                           gpsinfo.hdop,
+                                                                                                           gpsinfo.vdop,
+                                                                                                           gps_fix))
+
+        places = roam.config.settings.get("gpsplaces", 6)
+        placesHeight = roam.config.settings.get("gpsplaces", 3)
+        self.gpslabelposition.setText("X <b>{x:.{places}f}</b> Y <b>{y:.{places}f}</b> Z <b>{z:.{placesHeight}f}</b>".format(x=position.x(),
                                                                                                y=position.y(),
-                                                                                               places=places))
+                                                                                               z=gpsinfo.elevation,
+                                                                                               places=places,
+                                                                                               placesHeight=placesHeight))
 
     def gps_disconnected(self):
         """
@@ -739,7 +755,7 @@ class MapWidget(Ui_CanvasWidget, QMainWindow):
 
         if roam.config.settings.get('gpscenter', True):
             if not self.lastgpsposition == position:
-                self.lastposition = position
+                self.lastgpsposition = position
                 rect = QgsRectangle(position, position)
                 extentlimt = QgsRectangle(self.canvas.extent())
                 extentlimt.scale(0.95)

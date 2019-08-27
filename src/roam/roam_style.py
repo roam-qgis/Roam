@@ -182,6 +182,77 @@ def appstyle():
         padding: 6px;
         color: #4f4f4f;
     }
+    
+    QCalendarWidget QWidget#qt_calendar_navigationbar { 
+        background-color: rgb(211, 228, 255); 
+    }
+
+    QCalendarWidget QToolButton {
+        height: 60px;
+        width: 150px;
+        color: black;
+        font-size: 24px;
+        font-weight: bold;
+        icon-size: 56px, 56px;
+        background-color: rgb(211, 228, 255); 
+    }
+
+    QCalendarWidget QMenu {
+        width: 210px;
+        left: 20px;
+        font-size: 32px;
+    }
+
+    QCalendarWidget QSpinBox { 
+        width: 150px; 
+        font-size: 24px; 
+    }
+
+    QCalendarWidget QSpinBox::up-button { 
+        subcontrol-origin: border;  
+        subcontrol-position: top right;  
+        width: 65px; 
+    }
+
+    QCalendarWidget QSpinBox::down-button {
+        subcontrol-origin: border; 
+        subcontrol-position: bottom right;  
+        width:65px;
+    }
+
+    QCalendarWidget QSpinBox::up-arrow { 
+        width:56px;  
+        height:56px; 
+    }
+
+    QCalendarWidget QSpinBox::down-arrow {
+        width:56px;  
+        height:56px; 
+    }
+    
+    /* header row */
+    QCalendarWidget QWidget {
+        alternate-background-color: rgb(211, 228, 255);
+    }
+    
+    /* normal days */
+    QCalendarWidget QAbstractItemView:enabled {
+        font-size: 24px;  
+        /* color: rgb(180, 180, 180);   */
+        /* background-color: black;   */
+        /* selection-background-color: rgb(64, 64, 64);  */
+        /* selection-color: rgb(0, 255, 0);  */
+    }
+    
+    /* normal days */
+    QCalendarWidget QAbstractItemView Qt::Saturday {
+        color: rgb(0, 255, 0);
+    }
+    
+    /* days in other months */
+    QCalendarWidget QAbstractItemView:disabled { 
+        color: rgb(200, 200, 200);
+    }
 
     QWidget#featureformarea {
         background-color: white;

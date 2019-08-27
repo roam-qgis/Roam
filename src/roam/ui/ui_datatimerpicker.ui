@@ -138,6 +138,9 @@
        <bold>false</bold>
       </font>
      </property>
+     <property name="verticalHeaderFormat">
+      <enum>QCalendarWidget::NoVerticalHeader</enum>
+     </property>
     </widget>
    </item>
    <item row="4" column="1">
