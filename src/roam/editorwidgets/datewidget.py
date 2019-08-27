@@ -121,7 +121,7 @@ class DateWidget(EditorWidget):
         if value in [None, "", NULL]:
             value = DateWidget.DEFAULTDATE
             self._is_valid = value.isValid()
-        elif isinstance(value, basestring):
+        elif isinstance(value, str):
             value = QDateTime.fromString(strvalue, Qt.ISODate)
             if not value or (value and value.date().year() < 0):
                 value = QDateTime.fromString(strvalue, Qt.SystemLocaleShortDate)

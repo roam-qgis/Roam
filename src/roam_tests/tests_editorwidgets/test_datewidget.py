@@ -1,14 +1,16 @@
 import pytest
 from PyQt5.QtCore import QDate, QTime
 
-from PyQt5.QtWidgets import QCheckBox
 
-from roam.editorwidgets.datewidget import DateWidget, DateUiWidget
-from roam.editorwidgets.core import createwidget, widgetwrapper
+from roam.editorwidgets.core import createwidget, widgetwrapper, registerallwidgets
 
 config = {}
 
 TYPE = "Date"
+
+
+def setup():
+    registerallwidgets()
 
 
 def test_should_set_return_none_on_none():
@@ -47,7 +49,7 @@ def test_widget_date_returns_correctly():
     qtwidget = createwidget(TYPE)
     wrapper = widgetwrapper(TYPE, qtwidget, config, layer=None, label=None, field=None)
     assert wrapper.validate() is False
-    wrapper.datewidget.setDate(QDate(2017, 07, 24))
+    wrapper.datewidget.setDate(QDate(2017, 7, 24))
     wrapper.datewidget.setTime(QTime(15, 46, 29))
     expected = "2017-07-24T15:46:29"
     assert wrapper.value() == expected

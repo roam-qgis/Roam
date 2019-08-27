@@ -1,4 +1,3 @@
-from PyQt5.QtWidgets import QWidget
 from PyQt5.QtCore import QObject, pyqtSignal
 from collections import OrderedDict
 
@@ -23,7 +22,6 @@ def registerallwidgets():
     from roam.editorwidgets.datewidget import DateWidget
     from roam.editorwidgets.numberwidget import NumberWidget, DoubleNumberWidget
     from roam.editorwidgets.textwidget import TextWidget, TextBlockWidget
-    from roam.editorwidgets.tablewidget import TableWidget
     from roam.editorwidgets.optionwidget import OptionWidget
     from roam.editorwidgets.attachmentwidget import AttachmentWidget
 

@@ -1,9 +1,11 @@
 import os
 
 import roam.api.utils as utils
-from PyQt5.QtCore import QVariant, QPyNullVariant
+from qgis.core import NULL
+from PyQt5.QtCore import QVariant
 
-from objects import make_feature
+from roam_tests.objects import make_feature
+
 
 def test_copy_feature_values():
     fields = [
@@ -21,7 +23,7 @@ def test_copy_feature_values():
 
 
 def test_null_check():
-    null = QPyNullVariant("QString")
+    null = NULL
     assert utils.nullcheck(null) is None
     assert utils.nullcheck("Test") is "Test"
 
@@ -34,11 +36,12 @@ def test_format_values():
     assert utils.format_values(fields, values, with_char=",") == "Hello,world"
     assert utils.format_values(fields, values, with_char="\n") == "Hello\nworld"
 
-    null = QPyNullVariant("QString")
+    null = NULL
     values = dict(field1=null,
                   field2='world')
 
     assert utils.format_values(fields, values, with_char="|") == "world"
+
 
 def test_format_values_skips_missing_fields():
     fields = ['field1', 'field2', "missingfield"]

@@ -160,7 +160,7 @@ def copy_feature_values(from_feature, to_feature, include_geom=False):
     :return: A reference to the to_feature
     """
     values = values_from_feature(from_feature)
-    for field, value in values.iteritems():
+    for field, value in values.items():
         try:
             to_feature[field] = value
         except KeyError:

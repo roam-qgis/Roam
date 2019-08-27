@@ -1,7 +1,7 @@
 from PyQt5.QtWidgets import QComboBox, QListView
 from PyQt5.QtGui import QStandardItem, QStandardItemModel, QIcon, QColor, QBrush
 from PyQt5.QtCore import QSize, Qt, QEvent
-from qgis.core import QgsMessageLog, QgsMapLayerRegistry, QgsExpression, QgsFeatureRequest
+from qgis.core import QgsMessageLog, QgsProject, QgsExpression, QgsFeatureRequest
 import qgis.core
 
 import roam.utils
@@ -98,7 +98,7 @@ class ListWidget(EditorWidget):
         filterexp = layerconfig.get('filter', None)
 
         try:
-            layer = QgsMapLayerRegistry.instance().mapLayersByName(layername)[0]
+            layer = QgsProject.instance().mapLayersByName(layername)[0]
         except IndexError:
             roam.utils.warning("Can't find layer {} in project".format(layername))
             return

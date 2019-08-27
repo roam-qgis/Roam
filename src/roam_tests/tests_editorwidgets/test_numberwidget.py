@@ -1,33 +1,32 @@
 import pytest
-import objects
+from roam.editorwidgets.numberwidget import NumberWidget, DoubleNumberWidget
 
-from PyQt5.QtCore import QVariant
-
-from roam.editorwidgets.numberwidget import NumberWidget, DoubleNumberWidget, Stepper
-
-config =  {
+config = {
     "prefix": "test_pre",
     "suffix": "test_suf",
     "max": 100,
     "min": 0
 }
 
+
 def test_should_return_same_value():
-    widget = widget=NumberWidget().createWidget(None)
+    widget = NumberWidget().createWidget(None)
     wrapper = NumberWidget(widget=widget)
     wrapper.setvalue(1)
     assert wrapper.value() == 1
     wrapper.setvalue(None)
     assert wrapper.value() == 0
 
+
 def test_non_int_should_error():
-    widget = widget=NumberWidget().createWidget(None)
+    widget = NumberWidget().createWidget(None)
     wrapper = NumberWidget(widget=widget)
     with pytest.raises(ValueError):
         wrapper.setvalue("Test")
 
+
 def test_should_return_value_within_range():
-    widget = widget=NumberWidget().createWidget(None)
+    widget = NumberWidget().createWidget(None)
     wrapper = NumberWidget(widget)
     wrapper.initWidget(widget, {})
     wrapper.config = config
@@ -38,30 +37,34 @@ def test_should_return_value_within_range():
     wrapper.setvalue(1)
     assert wrapper.value() == 1
 
+
 def test_sets_prfeix_suffix_on_widget():
-    widget = widget=NumberWidget().createWidget(None)
+    widget = NumberWidget().createWidget(None)
     wrapper = NumberWidget(widget)
     wrapper.initWidget(widget, {})
     wrapper.config = config
     assert widget.prefix == config['prefix']
     assert widget.suffix == config['suffix']
 
+
 def test_should_return_same_value_doublewidget():
-    widget = widget=DoubleNumberWidget().createWidget(None)
+    widget = DoubleNumberWidget().createWidget(None)
     wrapper = NumberWidget(widget=widget)
     wrapper.setvalue(1)
     assert wrapper.value() == 1
     wrapper.setvalue(None)
     assert wrapper.value() == 0
 
+
 def test_non_int_should_error():
-    widget = widget=NumberWidget().createWidget(None)
+    widget = widget = NumberWidget().createWidget(None)
     wrapper = NumberWidget(widget=widget)
     with pytest.raises(ValueError):
         wrapper.setvalue("Test")
 
+
 def test_should_return_value_within_range():
-    widget = widget=NumberWidget().createWidget(None)
+    widget = widget = NumberWidget().createWidget(None)
     wrapper = NumberWidget(widget)
     wrapper.initWidget(widget, {})
     wrapper.config = config
@@ -72,8 +75,9 @@ def test_should_return_value_within_range():
     wrapper.setvalue(1)
     assert wrapper.value() == 1
 
+
 def test_sets_prfeix_suffix_on_widget():
-    widget = widget=NumberWidget().createWidget(None)
+    widget = widget = NumberWidget().createWidget(None)
     wrapper = NumberWidget(widget)
     wrapper.initWidget(widget, {})
     wrapper.config = config

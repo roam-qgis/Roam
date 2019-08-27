@@ -2,9 +2,8 @@ from roam.api import RoamEvents
 from PyQt5.QtWidgets import QLineEdit, QPlainTextEdit
 from PyQt5.QtCore import QEvent
 
-from qgis.core import QgsDataSourceURI
 from roam.dataaccess.database import Database, DatabaseException
-from roam.editorwidgets.core import EditorWidget, registerwidgets
+from roam.editorwidgets.core import EditorWidget
 
 
 def _get_sqlite_col_length(layer, fieldname):
@@ -93,7 +92,6 @@ class TextWidget(EditorWidget):
         # Not the best way but should cover most use cases
         # for now
         value = value or ''
-        value = unicode(value)
         try:
             self.widget.setPlainText(value)
         except AttributeError:

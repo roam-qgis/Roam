@@ -51,7 +51,7 @@ def parse_serverprojects(configdata):
 
     versions = defaultdict(dict)
     datadate = configdata.get('data_date', None)
-    for project, data in configdata['projects'].iteritems():
+    for project, data in configdata['projects'].items():
         version = int(data["version"])
         path = project + ".zip"
         title = data['title']
