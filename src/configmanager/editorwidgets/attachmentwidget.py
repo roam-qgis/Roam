@@ -1,7 +1,7 @@
 import functools
 
-from PyQt4.QtGui import QFileDialog
-from PyQt4.QtCore import QDir
+from PyQt5.QtWidgets import QFileDialog
+from PyQt5.QtCore import QDir
 
 from qgis.gui import QgsExpressionBuilderDialog
 

@@ -10,7 +10,7 @@ REM Change %OSGEO4W_ROOT% in setenv.bat to change in the location of QGIS.
 REM ---------------------------------------------------------------------------------------
 
 
-CALL %~dp0..\setenv.bat 2.18 %*
+CALL %~dp0..\setenv.bat %*
 
 SET PYCHARM="C:\Program Files\JetBrains\PyCharm Community Edition 2018.2.1\bin\pycharm64.exe"
 

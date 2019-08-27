@@ -3,8 +3,8 @@ RoamEvents is an event sink for common signals used though out Roam.
 
 These can be raised and handled anywhere in the application.
 """
-from PyQt4.QtCore import pyqtSignal, QObject, QUrl
-from PyQt4.QtGui import QWidget
+from PyQt5.QtCore import pyqtSignal, QObject, QUrl
+from PyQt5.QtWidgets import QWidget
 
 from qgis.core import QgsFeature, QgsPoint
 

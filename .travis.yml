@@ -2,12 +2,12 @@ language: python
 virtualenv:
   system_site_packages: true
 python:
-  - "2.7"
+  - "3.7"
 cache: apt
 before_install:
     - sudo add-apt-repository ppa:ubuntugis/ppa -y
     - sudo apt-get update
-    - sudo apt-get install qgis libqt4-dev python-qt4 python-qt4-dev python-qgis python-sip pyqt4-dev-tools python-qt4-sql
+    - sudo apt-get install qgis libqt5-dev python-qt5 python-qt5-dev python-qgis python-sip pyqt5-dev-tools python-qt5-sql
 before_script:
     - echo "Build starting on " `date`
     - export QGIS_PREFIX_PATH=/usr

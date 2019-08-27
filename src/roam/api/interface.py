@@ -1,4 +1,4 @@
-from PyQt4.QtCore import QObject
+from PyQt5.QtCore import QObject
 
 
 class RoamInterface(QObject):

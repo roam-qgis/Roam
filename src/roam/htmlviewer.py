@@ -2,12 +2,12 @@ import os
 from types import NoneType
 from string import Template
 
-from PyQt4.QtCore import (QUrl, QByteArray, QDate, QDateTime, QTime, QSize, QEvent, QPropertyAnimation,
+from PyQt5.QtCore import (QUrl, QByteArray, QDate, QDateTime, QTime, QSize, QEvent, QPropertyAnimation,
                           QEasingCurve, QAbstractAnimation)
-from PyQt4.QtGui import (QDialog, QWidget, QGridLayout, QPixmap, QFrame,
-                         QImageReader, QDesktopServices, QApplication, QToolBar,
-                         QSizePolicy, QIcon, QLabel, QGraphicsOpacityEffect, QAction, QPushButton)
-from PyQt4.QtWebKit import QWebView, QWebPage
+from PyQt5.QtWidgets import (QDialog, QWidget, QGridLayout, QFrame, QApplication, QToolBar,
+                         QSizePolicy, QLabel, QGraphicsOpacityEffect, QAction, QPushButton)
+from PyQt5.QtGui import QPixmap, QImageReader, QDesktopServices, QIcon
+from PyQt5.QtWebKit import QWebView, QWebPage
 
 from roam import utils
 

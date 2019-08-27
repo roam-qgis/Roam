@@ -2,9 +2,10 @@ import sqlite3
 import time
 import os
 import struct
-from PyQt4.QtCore import Qt, QObject, pyqtSignal, QThread, QEvent
-from PyQt4.QtGui import QWidget, QGridLayout, QLabel, QListWidgetItem, QStyledItemDelegate, QFontMetricsF, QTextOption
-from PyQt4.uic import loadUiType
+from PyQt5.QtCore import Qt, QObject, pyqtSignal, QThread, QEvent
+from PyQt5.QtWidgets import QWidget, QGridLayout, QLabel, QListWidgetItem, QStyledItemDelegate
+from PyQt5.QtGui import QFontMetricsF, QTextOption
+from PyQt5.uic import loadUiType
 
 from qgis.core import QgsMapLayer, QgsMapLayerRegistry, QgsFeatureRequest, QgsRectangle
 
@@ -71,7 +72,7 @@ class IndexBuilder(QObject):
             for layername, config in self.indexconfig.iteritems():
                 if layername == "_all":
                     layers = roam.api.utils.layers(layertype=QgsMapLayer.VectorLayer)
-                    print layers
+                    print(layers)
                     for layer in layers:
                         for count, layer, fid, data in get_data(layer, config, rowid):
                             rowid = count
@@ -164,7 +165,7 @@ class SearchPlugin(widget, base, Page):
         self.dbpath = dbpath
         self.resultsView.clear()
         self.searchbox.setEnabled(True)
-        print "Index built in: {} seconds".format(timing)
+        print("Index built in: {} seconds".format(timing))
 
     def eventFilter(self, object, event):
         if event.type() == QEvent.FocusIn:

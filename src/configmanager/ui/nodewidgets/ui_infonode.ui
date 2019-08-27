@@ -295,7 +295,7 @@
   <customwidget>
    <class>QsciScintilla</class>
    <extends>QWidget</extends>
-   <header>PyQt4.Qsci</header>
+   <header>PyQt5.Qsci</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

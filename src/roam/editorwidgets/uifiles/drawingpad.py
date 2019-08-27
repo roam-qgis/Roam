@@ -1,10 +1,11 @@
 import os.path
 import functools
 
-from PyQt4 import QtCore, QtGui
+from PyQt5 import QtCore, QtGui
 
-from PyQt4.QtGui import QWidget, QPixmap, QPainter, QColorDialog
-from PyQt4.QtCore import Qt
+from PyQt5.QtWidgets import QWidget, QColorDialog
+from PyQt5.QtGui import QPixmap, QPainter
+from PyQt5.QtCore import Qt
 from qgis.core import QGis, QgsMapRendererParallelJob, QgsVectorLayer, QgsMapLayerRegistry, QgsPoint, \
     QgsGeometry, QgsFeature, QgsMarkerSymbolV2
 
@@ -247,7 +248,7 @@ class DrawingPad(Ui_DrawingWindow, QWidget):
 if __name__ == "__main__":
     import sys
 
-    app = QtGui.QApplication(sys.argv)
+    app = QtWidgets.QApplication(sys.argv)
     window = DrawingPad()
     window.show()
     sys.exit(app.exec_())

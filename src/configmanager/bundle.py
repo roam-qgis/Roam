@@ -27,7 +27,7 @@ def bundle_project(project, outpath, options, as_install=False):
         options.update(dataoptions)
         filename = "{}.zip".format(basefolder)
 
-    print filename
+    print(filename)
     filename = os.path.join(outpath, filename)
     zipper(root, basefolder, filename, options)
     update_project_details(project, outpath)

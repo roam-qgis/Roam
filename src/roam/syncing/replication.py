@@ -1,7 +1,7 @@
 import imp
 import os
 
-from PyQt4.QtCore import pyqtSignal, QProcess, QObject, QProcessEnvironment
+from PyQt5.QtCore import pyqtSignal, QProcess, QObject, QProcessEnvironment
 
 
 class SyncProvider(QObject):
@@ -61,7 +61,7 @@ class BatchFileSync(SyncProvider):
         module = imp.find_module(name, [self.rootfolder])
         module = imp.load_module(name, *module)
         self.parsermodule = module
-        print self.parsermodule
+        print(self.parsermodule)
 
     def start(self):
         if not self.parsermodule and self.parser:

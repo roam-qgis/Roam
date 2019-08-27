@@ -25,10 +25,11 @@ class RoamApp(object):
 
     def init(self, logo, title):
         from qgis.core import QgsApplication
-        from PyQt4.QtGui import QApplication, QFont, QIcon
-        from PyQt4.QtCore import QLocale, QTranslator
+        from PyQt5.QtWidgets import QApplication
+        from PyQt5.QtGui import QFont, QIcon
+        from PyQt5.QtCore import QLocale, QTranslator
         try:
-            import PyQt4.QtSql
+            import PyQt5.QtSql
         except ImportError:
             pass
 
@@ -78,7 +79,7 @@ class RoamApp(object):
 
     def dump_configinfo(self):
         from qgis.core import QgsApplication, QgsProviderRegistry
-        from PyQt4.QtGui import QImageReader, QImageWriter
+        from PyQt5.QtGui import QImageReader, QImageWriter
         import roam
         from qgis.core import QGis
 

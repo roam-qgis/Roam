@@ -7,21 +7,10 @@ import os
 import sys
 import faulthandler
 
-from PyQt4.QtCore import Qt, QFileInfo, QDir, QSize
-from PyQt4.QtGui import (QActionGroup,
-                         QApplication,
-                         QWidget,
-                         QSizePolicy,
-                         QLabel,
-                         QApplication,
-                         QPixmap,
-                         QColor,
-                         QStandardItemModel,
-                         QStandardItem,
-                         QIcon,
-                         QComboBox,
-                         QAction,
-                         QCursor, QFrame, QDesktopServices, QToolButton, QPushButton)
+from PyQt5.QtCore import Qt, QFileInfo, QDir, QSize
+from PyQt5.QtWidgets import (QActionGroup, QApplication, QWidget, QSizePolicy, QLabel, QApplication,
+                         QComboBox, QAction, QFrame, QToolButton, QPushButton)
+from PyQt5.QtGui import QPixmap, QColor, QStandardItemModel, QStandardItem, QIcon, QCursor, QDesktopServices
 from qgis.core import (QgsProjectBadLayerHandler,
                        QgsPalLabeling,
                        QgsMapLayerRegistry,
@@ -52,7 +41,7 @@ from roam.gpswidget import GPSWidget
 from roam.updater import ProjectUpdater
 from roam.api import RoamEvents, GPS, RoamInterface, plugins
 from roam.ui import ui_mainwindow
-from PyQt4.QtGui import QMainWindow
+from PyQt5.QtWidgets import QMainWindow
 from roam.gpslogging import GPSLogging
 
 import roam.messagebaritems

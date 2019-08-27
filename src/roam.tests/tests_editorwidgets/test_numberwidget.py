@@ -1,7 +1,7 @@
 import pytest
 import objects
 
-from PyQt4.QtCore import QVariant
+from PyQt5.QtCore import QVariant
 
 from roam.editorwidgets.numberwidget import NumberWidget, DoubleNumberWidget, Stepper
 

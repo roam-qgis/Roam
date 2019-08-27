@@ -1,6 +1,6 @@
 import os
 
-from PyQt4.QtGui import QWidget, QDialog, QMainWindow
+from PyQt5.QtWidgets import QWidget, QDialog, QMainWindow
 
 from roam import resources_rc
 

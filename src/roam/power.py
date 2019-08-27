@@ -5,8 +5,8 @@ import win32gui
 import win32con
 import win32api
 
-from PyQt4.QtGui import QApplication, QWidget
-from PyQt4.QtCore import QObject, pyqtSignal
+from PyQt5.QtWidgets import QApplication, QWidget
+from PyQt5.QtCore import QObject, pyqtSignal
 
 from roam.utils import log
 

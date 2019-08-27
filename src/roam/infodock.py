@@ -3,13 +3,10 @@ import os
 from string import Template
 from collections import OrderedDict
 
-from PyQt4.QtGui import (QWidget, QIcon, QListWidgetItem, QMouseEvent, QApplication, QKeySequence, QAction)
-
-from PyQt4.QtCore import (Qt, QUrl,
-                          QEvent, pyqtSignal
-                          )
-
-from PyQt4.QtWebKit import QWebPage
+from PyQt5.QtWidgets import QWidget, QListWidgetItem, QApplication, QAction
+from PyQt5.QtGui import QIcon, QMouseEvent, QKeySequence
+from PyQt5.QtCore import Qt, QUrl, QEvent, pyqtSignal
+from PyQt5.QtWebKit import QWebPage
 
 from qgis.core import (QgsExpression, QgsFeature,
                        QgsMapLayer, QgsFeatureRequest, QgsGeometry, NULL, QGis)
@@ -369,9 +366,9 @@ class InfoDock(infodock_widget, QWidget):
         self.attributesView.setHtml(html, templates.baseurl)
         tools = self.project.layer_tools(layer)
         hasform = not form is None
-        print tools
+        print(tools)
         editattributes = 'edit_attributes' in tools or 'inspection' in tools or hasform
-        print editattributes
+        print(editattributes)
         editgeom = 'edit_geom' in tools and hasform
         deletefeature = 'delete' in tools and hasform
         self.deleteFeatureButton.setVisible(deletefeature)
@@ -518,7 +515,7 @@ def generate_rows(fields, attributes, **kwargs):
         if field == 'mapkey':
             continue
         name = "field_" + str(count)
-        print value
+        print(value)
         if value == NULL:
             value = ""
         data[name] = value

@@ -1,3 +1,0 @@
-@ECHO OFF
-SET OSGEO4W_ROOT=C:\Program Files (x86)\QGIS 2.18
-SET QGISNAME=qgis-ltr

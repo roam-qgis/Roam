@@ -1,4 +1,4 @@
-from PyQt4.QtGui import QDateTimeEdit
+from PyQt5.QtWidgets import QDateTimeEdit
 
 from configmanager.editorwidgets.core import ConfigWidget
 from configmanager.editorwidgets.uifiles.ui_datewidget_config import Ui_Form

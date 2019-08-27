@@ -1,6 +1,7 @@
-from PyQt4.QtNetwork import QNetworkRequest, QNetworkAccessManager
-from PyQt4.QtCore import pyqtSignal, QSize, QUrl, Qt
-from PyQt4.QtGui import QListWidgetItem, QPixmap, QWidget, QBrush, QColor
+from PyQt5.QtNetwork import QNetworkRequest, QNetworkAccessManager
+from PyQt5.QtCore import pyqtSignal, QSize, QUrl, Qt
+from PyQt5.QtWidgets import QListWidgetItem, QWidget
+from PyQt5.QtGui import QPixmap, QBrush, QColor
 
 from functools import partial
 from roam.flickwidget import FlickCharm
@@ -131,7 +132,7 @@ class ProjectsWidget(Ui_ListModules, QWidget):
             self.add_new_item(project.id, project, is_new=False, is_valid=project.valid)
 
     def show_new_updateable(self, updateprojects, newprojects):
-        print updateprojects, newprojects
+        print(updateprojects, newprojects)
         for info in updateprojects:
             projectid = info['projectid']
             item = self.projectitems[projectid]

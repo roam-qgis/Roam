@@ -2,13 +2,14 @@ import math
 from functools import partial
 from collections import defaultdict
 
-from PyQt4.QtCore import Qt, pyqtSignal, QSize, QPropertyAnimation, QObject, pyqtProperty, QEasingCurve, QThread, \
+from PyQt5.QtCore import Qt, pyqtSignal, QSize, QPropertyAnimation, QObject, pyqtProperty, QEasingCurve, QThread, \
     QRectF, QLocale, QPointF, QPoint
-from PyQt4.QtGui import QActionGroup, QFrame, QWidget, QSizePolicy, \
-    QAction, QPixmap, QCursor, QIcon, QColor, QMainWindow, QPen, QGraphicsItem, QPolygon, QFont, QFontMetrics, QBrush, \
-    QPainterPath, QPainter, QToolButton, QLabel, QToolBar
+from PyQt5.QtWidgets import QActionGroup, QFrame, QWidget, QSizePolicy, \
+    QAction, QMainWindow, QGraphicsItem, QToolButton, QLabel, QToolBar
+from PyQt5.QtGui import QPixmap, QCursor, QIcon, QColor, QPen, QPolygon, QFont, QFontMetrics, QBrush, \
+    QPainterPath, QPainter
 
-from PyQt4.QtSvg import QGraphicsSvgItem
+from PyQt5.QtSvg import QGraphicsSvgItem
 
 from qgis.gui import QgsMapCanvas, QgsMapToolZoom, QgsRubberBand, QgsMapCanvasItem, QgsScaleComboBox, \
     QgsLayerTreeMapCanvasBridge, \
@@ -42,10 +43,10 @@ except ImportError:
 
 class SnappingUtils(QgsMapCanvasSnappingUtils):
     def prepareIndexStarting(self, count):
-        print count
+        print(count)
 
     def prepareIndexProgress(self, index):
-        print index
+        print(index)
 
 
 class NorthArrow(QGraphicsSvgItem):
@@ -63,7 +64,7 @@ class NorthArrow(QGraphicsSvgItem):
     def _calc_north(self):
         extent = self.canvas.extent()
         if self.canvas.layerCount() == 0 or extent.isEmpty():
-            print "No layers or extent"
+            print("No layers or extent")
             return 0
 
         outcrs = self.canvas.mapSettings().destinationCrs()
@@ -230,7 +231,7 @@ class ScaleBarItem(QGraphicsItem):
             else:
                 return "m", currentsize
         elif unit == QGis.Feet:
-            print currentsize
+            print(currentsize)
             if currentsize > 5280.0:
                 return "miles", currentsize / 5000
             elif currentsize == 5280.0:

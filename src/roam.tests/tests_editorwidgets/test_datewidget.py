@@ -1,7 +1,7 @@
 import pytest
-from PyQt4.QtCore import QDate, QTime
+from PyQt5.QtCore import QDate, QTime
 
-from PyQt4.QtGui import QCheckBox
+from PyQt5.QtWidgets import QCheckBox
 
 from roam.editorwidgets.datewidget import DateWidget, DateUiWidget
 from roam.editorwidgets.core import createwidget, widgetwrapper

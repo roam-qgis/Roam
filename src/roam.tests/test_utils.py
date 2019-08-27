@@ -1,7 +1,7 @@
 import os
 
 import roam.api.utils as utils
-from PyQt4.QtCore import QVariant, QPyNullVariant
+from PyQt5.QtCore import QVariant, QPyNullVariant
 
 from objects import make_feature
 

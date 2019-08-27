@@ -1,7 +1,7 @@
 import os
 
-from PyQt4.QtCore import pyqtSignal
-from PyQt4.QtGui import QComboBox
+from PyQt5.QtCore import pyqtSignal
+from PyQt5.QtWidgets import QComboBox
 
 from configmanager.editorwidgets.core import ConfigWidget
 from configmanager.editorwidgets.uifiles.ui_checkwidget_config import Ui_Form

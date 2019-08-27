@@ -9,9 +9,9 @@ import copy
 
 from functools import partial
 
-from PyQt4 import uic
-from PyQt4.QtCore import pyqtSignal, QObject, QSize, QEvent, QProcess, Qt, QPyNullVariant, QRegExp
-from PyQt4.QtGui import (QWidget,
+from PyQt5 import uic
+from PyQt5.QtCore import pyqtSignal, QObject, QSize, QEvent, QProcess, Qt, QPyNullVariant, QRegExp
+from PyQt5.QtWidgets import (QWidget,
                          QAction,
                          QDialogButtonBox,
                          QStackedWidget,
@@ -19,7 +19,6 @@ from PyQt4.QtGui import (QWidget,
                          QLabel,
                          QGridLayout,
                          QToolButton,
-                         QIcon,
                          QLineEdit,
                          QPlainTextEdit,
                          QComboBox,
@@ -32,6 +31,8 @@ from PyQt4.QtGui import (QWidget,
                          QVBoxLayout,
                          QSizePolicy,
                          QTabWidget)
+                         
+from PyQt5.QtGui import QIcon
 
 from qgis.core import QgsFields, QgsFeature, QgsGPSConnectionRegistry, QGis, QgsGeometry, QgsPoint
 from qgis.gui import QgsMessageBar
@@ -69,7 +70,7 @@ def timed(title):
     took = th - ts
     totals[title] += took
     message = "{} {}".format(title, took)
-    print message
+    print(message)
 
 
 class GeomWidget(Ui_GeomWidget, QStackedWidget):
@@ -870,7 +871,7 @@ class FeatureForm(FeatureFormBase):
         Checks all widgets to see if they are in a pass state or not
         """
         for wrapper in self.boundwidgets.itervalues():
-            # print wrapper.labeltext, wrapper.passing
+            # print(wrapper.labeltext, wrapper.passing)
             if not wrapper.passing:
                 return False
         return True

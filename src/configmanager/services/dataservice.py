@@ -1,4 +1,4 @@
-from PyQt4.QtCore import QDateTime, Qt
+from PyQt5.QtCore import QDateTime, Qt
 
 
 class BaseService(object):

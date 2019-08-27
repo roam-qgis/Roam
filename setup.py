@@ -13,7 +13,7 @@ if os.name is 'nt':
         import py2exe
         haspy2exe = True
     except ImportError:
-        print "Can't import py2exe. Do you have it installed."
+        print("Can't import py2exe. Do you have it installed.")
         haspy2exe = False
 
 import glob
@@ -41,8 +41,8 @@ except KeyError:
     qgisname = 'qgis'
 
 osgeobin = os.path.join(osgeopath, 'bin')
-qtimageforms = os.path.join(osgeopath, r'apps\qt4\plugins\imageformats\*')
-qtsqldrivers = os.path.join(osgeopath, r'apps\qt4\plugins\sqldrivers\*')
+qtimageforms = os.path.join(osgeopath, r'apps\qt5\plugins\imageformats\*')
+qtsqldrivers = os.path.join(osgeopath, r'apps\qt5\plugins\sqldrivers\*')
 qgisresources = os.path.join(osgeopath, "apps", qgisname, "resources")
 svgs = os.path.join(osgeopath, "apps", qgisname, "svg")
 qgispluginpath = os.path.join(osgeopath, "apps", qgisname, "plugins", "*provider.dll")
@@ -162,9 +162,11 @@ def buildqtfiles():
         else:
             return True
 
-    pyuic4 = 'pyuic4'
+    pyuic5 = 'pyuic5'
+    pyrcc5 = 'pyrcc5'
     if platform == 'win32':
-        pyuic4 += '.bat'
+        pyuic5 += '.bat'
+        pyrcc5 += '.bat'
 
     import json
     hashes = {}
@@ -186,19 +188,19 @@ def buildqtfiles():
 
                 if ext == '.ui':
                     newfile = file + ".py"
-                    run(pyuic4, '-o', newfile, filepath, shell=True)
+                    run(pyuic5, '-o', newfile, filepath, shell=True)
                 elif ext == '.qrc':
                     newfile = file + "_rc.py"
-                    run('pyrcc4', '-o', newfile, filepath)
+                    run(pyrcc5, '-o', newfile, filepath)
                 elif ext == '.ts':
                     newfile = file + '.qm'
                     try:
                         if os.name is 'nt':
                             run('lrelease', filepath, '-qm', newfile)
                         else:
-                            run('lrelease-qt4', filepath, '-qm', newfile)
+                            run('lrelease-qt5', filepath, '-qm', newfile)
                     except:
-                        print "Missing lrelease - skipping"
+                        print("Missing lrelease - skipping")
                         continue
 
     with open(".roambuild", "w") as f:
@@ -258,7 +260,7 @@ if os.name is 'nt' and haspy2exe:
 
     def isSystemDLL(pathname):
         if "api-ms-win-" in pathname:
-            print " -> Skip: {0}".format(pathname)
+            print(" -> Skip: {0}".format(pathname))
             return True
 
         if os.path.basename(pathname).lower() in ("msvcp100.dll", "msvcr100.dll"):
@@ -270,8 +272,8 @@ if os.name is 'nt' and haspy2exe:
     package_details.update(
         options={'py2exe': {
             'dll_excludes': dll_excludes,
-            'excludes': ['PyQt4.uic.port_v3'],
-            'includes': ['PyQt4.QtNetwork', 'sip', 'PyQt4.QtSql', 'sqlite3', "Queue", 'PyQt4.Qsci'],
+            'excludes': ['PyQt5.uic.port_v3'],
+            'includes': ['PyQt5.QtNetwork', 'sip', 'PyQt5.Q tSql', 'sqlite3', "Queue", 'PyQt5.Qsci'],
             'packages': ['raven'],
             'skip_archive': True,
         }},

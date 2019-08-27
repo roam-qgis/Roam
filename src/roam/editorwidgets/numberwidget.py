@@ -1,6 +1,6 @@
 import sys
-from PyQt4.QtCore import QEvent, QSize
-from PyQt4.QtGui import QDoubleSpinBox, QSpinBox, QWidget
+from PyQt5.QtCore import QEvent, QSize
+from PyQt5.QtWidgets import QDoubleSpinBox, QSpinBox, QWidget
 import functools
 
 from roam.api import RoamEvents

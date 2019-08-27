@@ -7,7 +7,7 @@ import getpass
 
 from logging import handlers
 
-from PyQt4 import uic
+from PyQt5 import uic
 import gdal
 
 logger = logging.getLogger("roam")
@@ -34,7 +34,7 @@ def setup_logging(approot, config=None):
     except KeyError:
         logpath = os.path.join(approot, 'log')
 
-    print "Logging into: {}".format(logpath)
+    print("Logging into: {}".format(logpath))
 
     if not os.path.exists(logpath):
         os.makedirs(logpath)

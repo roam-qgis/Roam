@@ -1,8 +1,9 @@
 import shutil
 import os
 from qgis.core import QgsExpression
-from PyQt4.QtCore import pyqtSignal, QUrl
-from PyQt4.QtGui import QWidget, QAction, QIcon, QFileDialog, QPixmap, QDesktopServices
+from PyQt5.QtCore import pyqtSignal, QUrl
+from PyQt5.QtWidgets import QWidget, QAction, QFileDialog
+from PyQt5.QtGui import QIcon, QPixmap, QDesktopServices
 
 from roam.editorwidgets.core import EditorWidget, registerwidgets
 from roam.editorwidgets.uifiles import ui_attachmentwidget

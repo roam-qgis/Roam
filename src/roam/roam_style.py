@@ -1,4 +1,4 @@
-from PyQt4.QtGui import QDesktopWidget
+from PyQt5.QtWidgets import QDesktopWidget
 from string import Template
 
 
