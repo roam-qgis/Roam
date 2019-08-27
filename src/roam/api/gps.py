@@ -5,11 +5,11 @@ from datetime import datetime
 
 from PyQt5.QtCore import QObject, pyqtSignal, QDate, QDateTime, QTime, Qt, QTimer
 
-from qgis.core import (QgsGpsDetector, QgsGpsConnectionRegistry, QgsPoint, \
+from qgis.core import (QgsGpsDetector, QgsGpsConnectionRegistry, QgsPoint, QgsPointXY, \
                        QgsCoordinateTransform, QgsCoordinateReferenceSystem, \
-                       QgsGpsInformation, QgsCsException)
+                       QgsGpsInformation, QgsCsException, QgsProject)
 
-from roam.utils import log, info, logger
+from roam.utils import log
 from roam.config import settings as config
 
 NMEA_FIX_BAD = 1
@@ -43,8 +43,8 @@ class GPSService(QObject):
     gpsdisconnected = pyqtSignal()
 
     # Connect to listen to GPS status updates.
-    gpsposition = pyqtSignal(QgsPoint, object)
-    firstfix = pyqtSignal(QgsPoint, object)
+    gpsposition = pyqtSignal(QgsPointXY, object)
+    firstfix = pyqtSignal(QgsPointXY, object)
 
     def __init__(self):
         super(GPSService, self).__init__()
@@ -191,7 +191,7 @@ class GPSService(QObject):
         self.info.latitude = data.latitude
         self.info.longitude = data.longitude
         self.info.speed = KNOTS_TO_KM * safe_float(data.spd_over_grnd)
-        self.info.status = data.data_validity
+        self.info.status = data.status
         self.info.direction = safe_float(data.true_course)
         if data.datestamp and data.timestamp:
             date = QDate(data.datestamp.year, data.datestamp.month, data.datestamp.day)
@@ -210,11 +210,11 @@ class GPSService(QObject):
         elif gpsInfo.fixType == NMEA_FIX_3D or NMEA_FIX_2D:
             self.gpsfixed.emit(True, gpsInfo)
 
-        map_pos = QgsPoint(gpsInfo.longitude, gpsInfo.latitude)
+        map_pos = QgsPointXY(gpsInfo.longitude, gpsInfo.latitude)
         self.latlong_position = map_pos
 
         if self.crs:
-            transform = QgsCoordinateTransform(self.wgs84CRS, self.crs)
+            transform = QgsCoordinateTransform(self.wgs84CRS, self.crs, QgsProject.instance())
             try:
                 map_pos = transform.transform(map_pos)
             except QgsCsException:
