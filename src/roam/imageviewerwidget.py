@@ -1,8 +1,8 @@
 import tempfile
 import os
 
-from PyQt5.QtGui import QDesktopServices, QImage
-from PyQt5.QtCore import Qt, QUrl
+from qgis.PyQt.QtGui import QDesktopServices, QImage
+from qgis.PyQt.QtCore import Qt, QUrl
 from roam.ui.uifiles import imageviewer_widget, imageviewer_base
 
 

@@ -2,12 +2,12 @@ import math
 from collections import defaultdict
 from functools import partial
 
-from PyQt5.QtCore import Qt, QSize, QPropertyAnimation, QObject, QThread, \
+from qgis.PyQt.QtCore import Qt, QSize, QPropertyAnimation, QObject, QThread, \
     QRectF, QLocale, QPointF
-from PyQt5.QtGui import QPixmap, QCursor, QIcon, QColor, QPen, QPolygon, QFont, QFontMetrics, QBrush, \
+from qgis.PyQt.QtGui import QPixmap, QCursor, QIcon, QColor, QPen, QPolygon, QFont, QFontMetrics, QBrush, \
     QPainterPath, QPainter
-from PyQt5.QtSvg import QGraphicsSvgItem
-from PyQt5.QtWidgets import QActionGroup, QFrame, QWidget, QSizePolicy, \
+from qgis.PyQt.QtSvg import QGraphicsSvgItem
+from qgis.PyQt.QtWidgets import QActionGroup, QFrame, QWidget, QSizePolicy, \
     QAction, QMainWindow, QGraphicsItem, QToolButton, QLabel, QToolBar
 from qgis.core import QgsPalLabeling, QgsMapLayer, Qgis, QgsRectangle, QgsProject, QgsApplication, \
     QgsCoordinateReferenceSystem, QgsCoordinateTransform, QgsPoint, QgsCsException, QgsDistanceArea, QgsWkbTypes

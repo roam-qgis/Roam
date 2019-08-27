@@ -1,5 +1,5 @@
-from PyQt5.QtGui import QIcon
-from PyQt5.QtWidgets import QPushButton, QTabWidget
+from qgis.PyQt.QtGui import QIcon
+from qgis.PyQt.QtWidgets import QPushButton, QTabWidget
 
 from roam.api import FeatureForm
 from roam.api.utils import layer_by_name, feature_by_key

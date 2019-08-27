@@ -1,4 +1,4 @@
-from PyQt5.QtCore import QObject
+from qgis.PyQt.QtCore import QObject
 
 
 class RoamInterface(QObject):

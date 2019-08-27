@@ -1,4 +1,4 @@
-from PyQt5.QtWidgets import QCheckBox
+from qgis.PyQt.QtWidgets import QCheckBox
 
 from roam.editorwidgets.core import EditorWidget, registerwidgets
 

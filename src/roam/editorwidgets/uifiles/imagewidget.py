@@ -1,8 +1,8 @@
 import os
 
-from PyQt5.QtWidgets import QLabel, QDialog, QFileDialog, QGridLayout, QLayout, QWidget
-from PyQt5.QtGui import QPixmap
-from PyQt5.QtCore import QByteArray, QBuffer, QIODevice, QEvent, QObject, pyqtSignal, Qt
+from qgis.PyQt.QtWidgets import QLabel, QDialog, QFileDialog, QGridLayout, QLayout, QWidget
+from qgis.PyQt.QtGui import QPixmap
+from qgis.PyQt.QtCore import QByteArray, QBuffer, QIODevice, QEvent, QObject, pyqtSignal, Qt
 
 
 from roam.editorwidgets.uifiles import ui_imagewidget

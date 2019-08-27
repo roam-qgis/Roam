@@ -4,7 +4,7 @@ Module for doing database access using the layer as the source.
 Provides methods to run a query against a data source (mainly SQLITE) and return
 the results as a dictionary.
 """
-from PyQt5.QtSql import (QSqlDatabase, QSqlQuery, QSqlQueryModel)
+from qgis.PyQt.QtSql import (QSqlDatabase, QSqlQuery, QSqlQueryModel)
 from qgis.core import QgsDataSourceUri
 from roam.structs import OrderedDict
 import roam.utils

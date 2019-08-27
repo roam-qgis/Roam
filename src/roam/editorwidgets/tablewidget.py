@@ -1,5 +1,5 @@
-from PyQt5.QtWidgets import QTableView, QHeaderView, QWidget, QToolBar
-from PyQt5.QtCore import pyqtSignal
+from qgis.PyQt.QtWidgets import QTableView, QHeaderView, QWidget, QToolBar
+from qgis.PyQt.QtCore import pyqtSignal
 
 from roam.editorwidgets.uifiles.ui_tablewidget import Ui_tablewidget
 

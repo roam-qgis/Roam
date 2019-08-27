@@ -1,4 +1,4 @@
-from PyQt5.QtXml import QDomDocument
+from qgis.PyQt.QtXml import QDomDocument
 
 from qgis.gui import QgsMapCanvasLayer
 from qgis.core import QgsVectorLayer, QgsRasterLayer, QgsProject

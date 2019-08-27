@@ -3,8 +3,8 @@ import os
 import subprocess
 import roam.config
 
-from PyQt5.QtCore import QUrl
-from PyQt5.QtGui import QDesktopServices
+from qgis.PyQt.QtCore import QUrl
+from qgis.PyQt.QtGui import QDesktopServices
 
 from jinja2 import Environment, FileSystemLoader
 from qgis.core import Qgis

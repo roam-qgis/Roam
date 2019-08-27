@@ -1,7 +1,7 @@
 import imp
 import os
 
-from PyQt5.QtCore import pyqtSignal, QProcess, QObject, QProcessEnvironment
+from qgis.PyQt.QtCore import pyqtSignal, QProcess, QObject, QProcessEnvironment
 
 
 class SyncProvider(QObject):

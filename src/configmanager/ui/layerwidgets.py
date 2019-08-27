@@ -3,11 +3,11 @@ __author__ = 'Nathan.Woodrow'
 import uuid
 import os
 import shutil
-from PyQt5.QtWebKit import QWebView
-from PyQt5.QtCore import Qt, QUrl, QVariant, pyqtSignal
-from PyQt5.QtWidgets import QWidget, QComboBox, QGridLayout, QMenu, QToolButton, QFileDialog
-from PyQt5.QtGui import QPixmap, QStandardItem, QStandardItemModel, QIcon, QDesktopServices, QColor
-from PyQt5.Qsci import QsciLexerSQL, QsciScintilla
+from qgis.PyQt.QtWebKit import QWebView
+from qgis.PyQt.QtCore import Qt, QUrl, QVariant, pyqtSignal
+from qgis.PyQt.QtWidgets import QWidget, QComboBox, QGridLayout, QMenu, QToolButton, QFileDialog
+from qgis.PyQt.QtGui import QPixmap, QStandardItem, QStandardItemModel, QIcon, QDesktopServices, QColor
+from qgis.PyQt.Qsci import QsciLexerSQL, QsciScintilla
 
 from qgis.core import QgsPalLabeling, QgsMapLayerRegistry, QgsStyleV2, QgsMapLayer, Qgis, QgsProject,  QgsExpression, QgsFeatureRequest
 from qgis.gui import QgsExpressionBuilderDialog, QgsMapCanvas, QgsRendererV2PropertiesDialog, QgsLayerTreeMapCanvasBridge

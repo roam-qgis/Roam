@@ -1,9 +1,9 @@
 import os
 
-from PyQt5.QtCore import (QByteArray, QDate, QDateTime, QTime, QPropertyAnimation,
+from qgis.PyQt.QtCore import (QByteArray, QDate, QDateTime, QTime, QPropertyAnimation,
                           QEasingCurve)
-from PyQt5.QtGui import QPixmap, QImageReader, QIcon
-from PyQt5.QtWidgets import (QWidget, QGridLayout, QFrame, QApplication, QToolBar,
+from qgis.PyQt.QtGui import QPixmap, QImageReader, QIcon
+from qgis.PyQt.QtWidgets import (QWidget, QGridLayout, QFrame, QApplication, QToolBar,
                              QSizePolicy, QLabel, QGraphicsOpacityEffect, QPushButton)
 from qgis.PyQt.QtWebKitWidgets import QWebView, QWebPage
 

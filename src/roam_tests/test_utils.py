@@ -2,7 +2,7 @@ import os
 
 import roam.api.utils as utils
 from qgis.core import NULL
-from PyQt5.QtCore import QVariant
+from qgis.PyQt.QtCore import QVariant
 
 from roam_tests.objects import make_feature
 

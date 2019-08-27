@@ -13,8 +13,8 @@ import subprocess
 import roam.utils
 
 from collections import defaultdict
-from PyQt5.QtNetwork import QNetworkRequest, QNetworkReply
-from PyQt5.QtCore import QObject, pyqtSignal, QUrl, QThread
+from qgis.PyQt.QtNetwork import QNetworkRequest, QNetworkReply
+from qgis.PyQt.QtCore import QObject, pyqtSignal, QUrl, QThread
 
 from qgis.core import QgsNetworkAccessManager
 

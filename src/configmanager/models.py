@@ -1,5 +1,5 @@
-from PyQt5.QtCore import QAbstractItemModel, QModelIndex, Qt, pyqtSignal, QMimeData, QByteArray, QSortFilterProxyModel
-from PyQt5.QtGui import QIcon, QFont, QTextBlockUserData, QStandardItem, QStandardItemModel
+from qgis.PyQt.QtCore import QAbstractItemModel, QModelIndex, Qt, pyqtSignal, QMimeData, QByteArray, QSortFilterProxyModel
+from qgis.PyQt.QtGui import QIcon, QFont, QTextBlockUserData, QStandardItem, QStandardItemModel
 
 from qgis.core import Qgis, QgsProject, QgsMapLayer
 

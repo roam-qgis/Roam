@@ -1,8 +1,8 @@
 import os
 import traceback
 
-from PyQt5.QtWidgets import QPushButton
-from PyQt5.QtCore import QEvent, pyqtSignal
+from qgis.PyQt.QtWidgets import QPushButton
+from qgis.PyQt.QtCore import QEvent, pyqtSignal
 
 from qgis.core import Qgis
 from qgis.gui import QgsMessageBar

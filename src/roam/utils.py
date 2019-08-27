@@ -7,7 +7,7 @@ import getpass
 
 from logging import handlers
 
-from PyQt5 import uic
+from qgis.PyQt import uic
 import gdal
 
 logger = logging.getLogger("roam")

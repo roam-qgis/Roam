@@ -1,4 +1,4 @@
-from PyQt5.QtCore import pyqtSignal
+from qgis.PyQt.QtCore import pyqtSignal
 from roam.maptools.touchtool import TouchMapTool
 
 

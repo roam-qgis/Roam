@@ -11,9 +11,9 @@ import sys
 from datetime import datetime
 from collections import OrderedDict
 
-from PyQt5.QtCore import pyqtSignal, QObject
-from PyQt5.QtWidgets import QAction
-from PyQt5.QtGui import QIcon
+from qgis.PyQt.QtCore import pyqtSignal, QObject
+from qgis.PyQt.QtWidgets import QAction
+from qgis.PyQt.QtGui import QIcon
 
 from qgis.core import QgsWkbTypes, QgsMapLayer, QgsFeature
 

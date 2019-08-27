@@ -1,8 +1,8 @@
 import os
 
-from PyQt5.QtCore import pyqtSignal
-from PyQt5.QtWidgets import QComboBox
-from PyQt5.QtGui import QDoubleValidator
+from qgis.PyQt.QtCore import pyqtSignal
+from qgis.PyQt.QtWidgets import QComboBox
+from qgis.PyQt.QtGui import QDoubleValidator
 
 from configmanager.editorwidgets.core import ConfigWidget
 from configmanager.editorwidgets.uifiles.ui_numberwidget_config import Ui_Form

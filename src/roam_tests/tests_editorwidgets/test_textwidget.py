@@ -1,5 +1,5 @@
 from roam_tests import objects
-from PyQt5.QtCore import QVariant
+from qgis.PyQt.QtCore import QVariant
 
 from roam.editorwidgets.textwidget import TextWidget, TextBlockWidget
 

@@ -1,11 +1,11 @@
 import os
 from functools import partial
 
-from PyQt5.QtCore import Qt, QFileInfo, QDir, QSize
-from PyQt5.QtGui import QPixmap, QIcon, QDesktopServices
-from PyQt5.QtWidgets import (QActionGroup, QWidget, QSizePolicy, QApplication,
+from qgis.PyQt.QtCore import Qt, QFileInfo, QDir, QSize
+from qgis.PyQt.QtGui import QPixmap, QIcon, QDesktopServices
+from qgis.PyQt.QtWidgets import (QActionGroup, QWidget, QSizePolicy, QApplication,
                              QAction)
-from PyQt5.QtWidgets import QMainWindow
+from qgis.PyQt.QtWidgets import QMainWindow
 from qgis.core import (QgsProjectBadLayerHandler,
                        QgsProject,
                        QgsMapLayer,

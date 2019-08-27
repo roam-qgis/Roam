@@ -4,7 +4,7 @@ Config file loading logic for Roam.
 import os
 import yaml
 from yaml.reader import ReaderError
-from PyQt5.QtCore import QSize
+from qgis.PyQt.QtCore import QSize
 
 settings = {}
 

@@ -25,11 +25,11 @@ class RoamApp(object):
 
     def init(self, logo, title, **kwargs):
         from qgis.core import QgsApplication
-        from PyQt5.QtWidgets import QApplication
-        from PyQt5.QtGui import QFont, QIcon
-        from PyQt5.QtCore import QLocale, QTranslator
+        from qgis.PyQt.QtWidgets import QApplication
+        from qgis.PyQt.QtGui import QFont, QIcon
+        from qgis.PyQt.QtCore import QLocale, QTranslator
         try:
-            import PyQt5.QtSql
+            import qgis.PyQt.QtSql
         except ImportError:
             pass
 

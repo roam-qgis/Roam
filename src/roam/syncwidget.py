@@ -1,7 +1,7 @@
 from functools import partial
 
-from PyQt5.QtWidgets import QTreeWidgetItem, QPushButton, QWidget, QAction, QSpacerItem, QSizePolicy
-from PyQt5.QtGui import QIcon
+from qgis.PyQt.QtWidgets import QTreeWidgetItem, QPushButton, QWidget, QAction, QSpacerItem, QSizePolicy
+from qgis.PyQt.QtGui import QIcon
 from roam.api.events import RoamEvents
 
 from ui.ui_sync import Ui_Form

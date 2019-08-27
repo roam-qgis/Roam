@@ -1,6 +1,6 @@
 import pytest
 
-from PyQt5.QtWidgets import QCheckBox
+from qgis.PyQt.QtWidgets import QCheckBox
 
 from roam.editorwidgets.checkboxwidget import CheckboxWidget
 

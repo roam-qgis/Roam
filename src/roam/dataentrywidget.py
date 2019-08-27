@@ -4,9 +4,9 @@ import os
 import getpass
 import inspect
 
-from PyQt5.QtCore import *
-from PyQt5.QtWidgets import *
-from PyQt5.QtGui import *
+from qgis.PyQt.QtCore import *
+from qgis.PyQt.QtWidgets import *
+from qgis.PyQt.QtGui import *
 
 from qgis.core import QgsProject, QgsFeatureRequest, QgsFeature, QgsExpression, Qgis, QgsGeometry
 

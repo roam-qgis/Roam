@@ -1,7 +1,7 @@
 from collections import OrderedDict
 
-from PyQt5.QtCore import QRect, Qt, QRectF
-from PyQt5.QtGui import QColor
+from qgis.PyQt.QtCore import QRect, Qt, QRectF
+from qgis.PyQt.QtGui import QColor
 from qgis.core import (QgsRectangle, QgsFeatureRequest, QgsWkbTypes, QgsMapLayer)
 from qgis.gui import QgsMapTool, QgsRubberBand
 

@@ -4,7 +4,7 @@ import pytest
 
 import roam.api.gps as gps
 
-from PyQt5.QtCore import QDateTime, Qt
+from qgis.PyQt.QtCore import QDateTime, Qt
 from roam.api.gps import GPSService
 from qgis.core import QgsPoint, QgsGpsInformation, QgsCoordinateReferenceSystem
 

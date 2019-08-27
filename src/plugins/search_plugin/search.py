@@ -2,10 +2,10 @@ import sqlite3
 import time
 import os
 import struct
-from PyQt5.QtCore import Qt, QObject, pyqtSignal, QThread, QEvent
-from PyQt5.QtWidgets import QWidget, QGridLayout, QLabel, QListWidgetItem, QStyledItemDelegate
-from PyQt5.QtGui import QFontMetricsF, QTextOption
-from PyQt5.uic import loadUiType
+from qgis.PyQt.QtCore import Qt, QObject, pyqtSignal, QThread, QEvent
+from qgis.PyQt.QtWidgets import QWidget, QGridLayout, QLabel, QListWidgetItem, QStyledItemDelegate
+from qgis.PyQt.QtGui import QFontMetricsF, QTextOption
+from qgis.PyQt.uic import loadUiType
 
 from qgis.core import QgsMapLayer, QgsProject, QgsFeatureRequest, QgsRectangle
 

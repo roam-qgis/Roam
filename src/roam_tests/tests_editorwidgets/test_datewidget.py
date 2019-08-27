@@ -1,5 +1,5 @@
 import pytest
-from PyQt5.QtCore import QDate, QTime
+from qgis.PyQt.QtCore import QDate, QTime
 
 
 from roam.editorwidgets.core import createwidget, widgetwrapper, registerallwidgets

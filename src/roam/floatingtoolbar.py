@@ -1,5 +1,5 @@
-from PyQt5.QtWidgets import QToolBar, QActionGroup
-from PyQt5.QtCore import Qt, QPoint
+from qgis.PyQt.QtWidgets import QToolBar, QActionGroup
+from qgis.PyQt.QtCore import Qt, QPoint
 
 from roam.utils import log
 

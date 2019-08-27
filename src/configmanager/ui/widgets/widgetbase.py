@@ -1,4 +1,4 @@
-from PyQt5.QtWidgets import QWidget
+from qgis.PyQt.QtWidgets import QWidget
 
 import roam.utils
 import pprint

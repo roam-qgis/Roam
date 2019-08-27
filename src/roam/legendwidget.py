@@ -1,8 +1,8 @@
 import math
 import functools
-from PyQt5.QtCore import Qt, QSize, QRect, QPoint, pyqtSignal, QRectF
-from PyQt5.QtWidgets import QWidget, QLabel
-from PyQt5.QtGui import QPixmap, QPainter, QBrush, QColor, QPen, QTextOption, QFontMetrics, QImage, QFont
+from qgis.PyQt.QtCore import Qt, QSize, QRect, QPoint, pyqtSignal, QRectF
+from qgis.PyQt.QtWidgets import QWidget, QLabel
+from qgis.PyQt.QtGui import QPixmap, QPainter, QBrush, QColor, QPen, QTextOption, QFontMetrics, QImage, QFont
 
 from qgis.core import QgsLayerTreeModel, QgsLayerTreeNode
 from qgis.core import QgsMapRendererParallelJob

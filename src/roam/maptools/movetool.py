@@ -1,7 +1,7 @@
 from qgis.core import *
 from qgis.gui import *
-from PyQt5.QtCore import Qt, pyqtSignal
-from PyQt5.QtGui import QColor
+from qgis.PyQt.QtCore import Qt, pyqtSignal
+from qgis.PyQt.QtGui import QColor
 from roam.maptools.maptool import MapTool
 
 

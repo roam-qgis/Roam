@@ -1,4 +1,4 @@
-from PyQt5.QtWidgets import QWidget
+from qgis.PyQt.QtWidgets import QWidget
 from ui.ui_gps import Ui_gpsWidget
 
 import roam.config

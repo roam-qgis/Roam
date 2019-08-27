@@ -1,6 +1,6 @@
 import os
 from string import Template
-from PyQt5.QtCore import QUrl
+from qgis.PyQt.QtCore import QUrl
 
 from jinja2 import Environment, FileSystemLoader
 path = os.path.join(os.path.dirname(__file__))

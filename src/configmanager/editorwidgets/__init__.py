@@ -1,5 +1,5 @@
-from PyQt5.QtCore import pyqtSignal
-from PyQt5.QtWidgets import QWidget
+from qgis.PyQt.QtCore import pyqtSignal
+from qgis.PyQt.QtWidgets import QWidget
 
 from configmanager.editorwidgets.checkwidget import CheckboxWidgetConfig
 from configmanager.editorwidgets.datewidget import DateWidgetConfig

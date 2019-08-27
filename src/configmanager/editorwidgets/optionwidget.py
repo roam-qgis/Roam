@@ -2,8 +2,8 @@ import os
 
 from functools import partial
 
-from PyQt5.QtWidgets import QWidget
-from PyQt5.QtCore import Qt
+from qgis.PyQt.QtWidgets import QWidget
+from qgis.PyQt.QtCore import Qt
 from qgis.core import QgsMapLayer
 
 from configmanager.editorwidgets.core import ConfigWidget

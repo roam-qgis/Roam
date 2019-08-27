@@ -1,6 +1,6 @@
 __author__ = 'Nathan.Woodrow'
 
-from PyQt5.QtWidgets import QWidget
+from qgis.PyQt.QtWidgets import QWidget
 
 from configmanager.ui.ui_formwidget import Ui_FormWidget
 

@@ -1,7 +1,7 @@
-from PyQt5.QtNetwork import QNetworkRequest, QNetworkAccessManager
-from PyQt5.QtCore import pyqtSignal, QSize, QUrl, Qt
-from PyQt5.QtWidgets import QListWidgetItem, QWidget
-from PyQt5.QtGui import QPixmap, QBrush, QColor
+from qgis.PyQt.QtNetwork import QNetworkRequest, QNetworkAccessManager
+from qgis.PyQt.QtCore import pyqtSignal, QSize, QUrl, Qt
+from qgis.PyQt.QtWidgets import QListWidgetItem, QWidget
+from qgis.PyQt.QtGui import QPixmap, QBrush, QColor
 
 from functools import partial
 from roam.flickwidget import FlickCharm

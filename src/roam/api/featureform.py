@@ -6,9 +6,9 @@ import copy
 
 from functools import partial
 
-from PyQt5 import uic
-from PyQt5.QtCore import pyqtSignal, QSize, Qt, QRegExp
-from PyQt5.QtWidgets import (QWidget,
+from qgis.PyQt import uic
+from qgis.PyQt.QtCore import pyqtSignal, QSize, Qt, QRegExp
+from qgis.PyQt.QtWidgets import (QWidget,
                          QAction,
                          QStackedWidget,
                          QLabel,
@@ -20,7 +20,7 @@ from PyQt5.QtWidgets import (QWidget,
                          QSizePolicy,
                          QTabWidget)
                          
-from PyQt5.QtGui import QIcon
+from qgis.PyQt.QtGui import QIcon
 
 from qgis.core import QgsFeature, QgsGpsConnectionRegistry, QgsGeometry, QgsPoint, NULL, QgsWkbTypes, Qgis
 from qgis.gui import QgsMessageBar
