@@ -1,3 +1,12 @@
+Update to QGIS 3 API
+--------------------
+
+The update for Roam to use the QGIS 3 APIs is currently underway.  This is quite a major
+change so things will be unstable for a while until the API is fully moved over and tested.
+
+About Roam
+--------------------
+
 [![Build Status](https://travis-ci.org/DMS-Aus/Roam.svg?branch=master)](https://travis-ci.org/DMS-Aus/Roam)
 
 IntraMaps Roam is a field data collection application built using the QGIS libraries and Python. It was built to be easy to use on (windows) based tablet devices, with Android planned for the future.
