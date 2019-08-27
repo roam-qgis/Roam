@@ -1,57 +1,37 @@
-from functools import partial
-from collections import defaultdict
-from subprocess import Popen
-import getpass
-import traceback
 import os
-import sys
-import faulthandler
+from functools import partial
 
 from PyQt5.QtCore import Qt, QFileInfo, QDir, QSize
-from PyQt5.QtWidgets import (QActionGroup, QApplication, QWidget, QSizePolicy, QLabel, QApplication,
-                         QComboBox, QAction, QFrame, QToolButton, QPushButton)
-from PyQt5.QtGui import QPixmap, QColor, QStandardItemModel, QStandardItem, QIcon, QCursor, QDesktopServices
+from PyQt5.QtGui import QPixmap, QIcon, QDesktopServices
+from PyQt5.QtWidgets import (QActionGroup, QWidget, QSizePolicy, QApplication,
+                             QAction)
+from PyQt5.QtWidgets import QMainWindow
 from qgis.core import (QgsProjectBadLayerHandler,
-                       QgsPalLabeling,
-                       QgsMapLayerRegistry,
                        QgsProject,
                        QgsMapLayer,
-                       QgsFeature,
-                       QgsFields,
-                       QgsGeometry,
-                       QgsRectangle,
                        Qgis,
                        QgsApplication)
-from qgis.gui import (QgsMessageBar,
-                      QgsMapToolZoom,
-                      QgsRubberBand,
-                      QgsMapCanvas, QgsScaleComboBox)
+from qgis.gui import (QgsMessageBar)
 
-from roam.popupdialogs import DeleteFeatureDialog
-from roam.api.featureform import DeleteFeatureException
-from roam.dataentrywidget import DataEntryWidget
-from roam.listmodulesdialog import ProjectsWidget
-from roam.settingswidget import SettingsWidget
-from roam.project import Project, NoMapToolConfigured, ErrorInMapTool
-from roam.infodock import InfoDock
-from roam.syncwidget import SyncWidget
-from roam.helpviewdialog import HelpPage
-from roam.imageviewerwidget import ImageViewer
-from roam.gpswidget import GPSWidget
-from roam.updater import ProjectUpdater
-from roam.api import RoamEvents, GPS, RoamInterface, plugins
-from roam.ui import ui_mainwindow
-from PyQt5.QtWidgets import QMainWindow
-from roam.gpslogging import GPSLogging
-
-import roam.messagebaritems
-import roam.utils
-import roam.htmlviewer
 import roam.api.featureform
+import roam.api.utils
 import roam.config
 import roam.defaults
-import roam.api.utils
+import roam.htmlviewer
+import roam.messagebaritems
 import roam.roam_style
+import roam.utils
+from roam.api import RoamEvents, GPS, RoamInterface, plugins
+from roam.api.featureform import DeleteFeatureException
+from roam.dataentrywidget import DataEntryWidget
+from roam.gpslogging import GPSLogging
+from roam.helpviewdialog import HelpPage
+from roam.imageviewerwidget import ImageViewer
+from roam.infodock import InfoDock
+from roam.popupdialogs import DeleteFeatureDialog
+from roam.project import Project
+from roam.ui import ui_mainwindow
+from roam.updater import ProjectUpdater
 
 
 class BadLayerHandler(QgsProjectBadLayerHandler):
@@ -249,7 +229,7 @@ class MainWindow(ui_mainwindow.Ui_MainWindow, QMainWindow):
             self.pluginactions.append(action)
             self.menuGroup.addAction(action)
 
-    def showUIMessage(self, label, message, level=QgsMessageBar.INFO, time=0, extra=''):
+    def showUIMessage(self, label, message, level=Qgis.Info, time=0, extra=''):
         self.bar.pushMessage(label, message, level, duration=time, extrainfo=extra)
 
     def updatelegend(self):
@@ -414,7 +394,7 @@ class MainWindow(ui_mainwindow.Ui_MainWindow, QMainWindow):
         self.infodock.refreshcurrent()
 
     def featuresdeleted(self, layerid, featureids):
-        layer = QgsMapLayerRegistry.instance().mapLayer(layerid)
+        layer = QgsProject.instance().mapLayer(layerid)
         self.reloadselection(layer, deleted=featureids)
         self.canvas.refresh()
 
@@ -601,7 +581,7 @@ class MainWindow(ui_mainwindow.Ui_MainWindow, QMainWindow):
         if not passed:
             self.bar.pushMessage("Project load rejected", "Sorry this project couldn't"
                                                           "be loaded.  Click for me details.",
-                                 QgsMessageBar.WARNING, extrainfo=message)
+                                 Qgis.Warning, extrainfo=message)
             return
 
         self.actionMap.trigger()
@@ -637,7 +617,7 @@ class MainWindow(ui_mainwindow.Ui_MainWindow, QMainWindow):
         self.tracking.clear_logging()
         self.dataentrywidget.clear()
         self.canvas_page.cleanup()
-        QgsMapLayerRegistry.instance().removeAllMapLayers()
+        QgsProject.instance().removeAllMapLayers()
         for panel in self.panels:
             self.removeDockWidget(panel)
             del panel

@@ -1,5 +1,5 @@
-from PyQt5.QtWidgets import QToolBar
-from PyQt5.QtCore import Qt, pyqtSignal
+from qgis.PyQt.QtWidgets import QToolBar
+from qgis.PyQt.QtCore import Qt, pyqtSignal
 
 
 class HideableToolbar(QToolBar):
@@ -30,3 +30,12 @@ class HideableToolbar(QToolBar):
 
     def setToolButtonStyle(self, style):
         super(HideableToolbar, self).setToolButtonStyle(style)
+
+from roam.legendwidget import LegendWidget
+from roam.gpswidget import GPSWidget
+from roam.syncwidget import SyncWidget
+from roam.settingswidget import SettingsWidget
+from roam.listmodulesdialog import ProjectsWidget
+from roam.mapwidget import MapWidget
+
+

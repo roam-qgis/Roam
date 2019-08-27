@@ -7,7 +7,7 @@ from PyQt5.QtWidgets import QWidget, QGridLayout, QLabel, QListWidgetItem, QStyl
 from PyQt5.QtGui import QFontMetricsF, QTextOption
 from PyQt5.uic import loadUiType
 
-from qgis.core import QgsMapLayer, QgsMapLayerRegistry, QgsFeatureRequest, QgsRectangle
+from qgis.core import QgsMapLayer, QgsProject, QgsFeatureRequest, QgsRectangle
 
 import roam.api.utils
 import roam.utils
@@ -209,7 +209,7 @@ class SearchPlugin(widget, base, Page):
         self.indexbuilder = IndexBuilder(path, settings)
         self.indexbuilder.moveToThread(self.indexthread)
 
-        QgsMapLayerRegistry.instance().removeAll.connect(self.indexthread.quit)
+        QgsProject.instance().removeAll.connect(self.indexthread.quit)
 
         self.indexbuilder.indexBuilt.connect(self.index_built)
         self.indexbuilder.finished.connect(self.indexthread.quit)

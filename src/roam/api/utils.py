@@ -3,7 +3,7 @@ import os
 import subprocess
 import collections
 from contextlib import contextmanager
-from qgis.core import QgsProject, QgsFeatureRequest, QgsGeometry, NULL
+from qgis.core import QgsProject, QgsFeatureRequest, QgsGeometry, NULL, Qgis
 from qgis.gui import QgsMessageBar
 from roam.structs import CaseInsensitiveDict
 
@@ -97,13 +97,13 @@ class FeatureSaveException(Exception):
 
     @classmethod
     def not_accepted(cls):
-        return cls("Form was not accepted", "The form could not be accepted", QgsMessageBar.WARNING)
+        return cls("Form was not accepted", "The form could not be accepted", Qgis.Warning)
 
     @classmethod
     def not_saved(cls, errors):
         return cls("Error in saving feature",
                    "There seems to be a error trying to save the feature",
-                   QgsMessageBar.CRITICAL,
+                   Qgis.Critical,
                    moreinfo='\n'.join(errors))
 
     @property
@@ -121,7 +121,7 @@ class MissingValuesException(FeatureSaveException):
         for field in fields:
             html += "<li>{}</li>".format(field)
         html += "</ul>"
-        return cls("Missing fields", "Some fields are still required. <br> {}".format(html), QgsMessageBar.WARNING, 2)
+        return cls("Missing fields", "Some fields are still required. <br> {}".format(html), Qgis.Warning, 2)
 
 
 @contextmanager

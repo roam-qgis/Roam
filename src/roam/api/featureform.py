@@ -22,7 +22,7 @@ from PyQt5.QtWidgets import (QWidget,
                          
 from PyQt5.QtGui import QIcon
 
-from qgis.core import QgsFeature, QgsGpsConnectionRegistry, QgsGeometry, QgsPoint, NULL, QgsWkbTypes
+from qgis.core import QgsFeature, QgsGpsConnectionRegistry, QgsGeometry, QgsPoint, NULL, QgsWkbTypes, Qgis
 from qgis.gui import QgsMessageBar
 
 from roam.editorwidgets.core import EditorWidgetException
@@ -910,7 +910,7 @@ class FeatureForm(FeatureFormBase):
                     if not saved:
                         raise FeatureSaveException("Image Error",
                                                    "Could not save image for control {}".format(wrapper.label),
-                                                   QgsMessageBar.CRITICAL)
+                                                   Qgis.Critical)
                 elif type(wrapper).__name__ == "MultiImageWidget" and wrapper.modified:
                     ## This is a bit of a heck checking the widget name like this
                     ## but this whole thing needs to be refactored out anyway.
@@ -918,7 +918,7 @@ class FeatureForm(FeatureFormBase):
                     if not saved:
                         raise FeatureSaveException("Widget Save Error",
                                                    "Could not save images for control {}".format(wrapper.label),
-                                                   QgsMessageBar.CRITICAL)
+                                                   Qgis.Critical)
 
         if not self.accept():
             raise FeatureSaveException.not_accepted()

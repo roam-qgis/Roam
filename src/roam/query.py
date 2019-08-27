@@ -2,7 +2,7 @@ import sys
 import os
 import itertools
 
-from qgis.core import QgsExpression, QgsFeatureRequest, QgsMapLayerRegistry
+from qgis.core import QgsExpression, QgsFeatureRequest, QgsProject
 
 
 class Where(object):
@@ -74,7 +74,7 @@ class Query(object):
     def from_layer_name(cls, name, *args, **kwargs):
         args = list(args)
         # Dig into the registry to find the layer of the same name
-        args[0] = QgsMapLayerRegistry.instance().mapLayersByName(name)[0]
+        args[0] = QgsProject.instance().mapLayersByName(name)[0]
         return cls(*args, **kwargs)
 
     def __init__(self, layer, DEBUG=False):

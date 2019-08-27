@@ -92,7 +92,6 @@ class RoamApp(object):
 
     def dump_configinfo(self):
         from qgis.core import QgsApplication, QgsProviderRegistry
-        from PyQt5.QtGui import QImageReader, QImageWriter
         import roam
         from qgis.core import Qgis
 

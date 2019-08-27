@@ -858,7 +858,7 @@ class ProjectInfoWidget(ui_projectinfo.Ui_Form, WidgetBase):
             openqgis(self.project.projectfile)
         except OSError:
             self.bar.pushMessage("Looks like I couldn't find QGIS",
-                                 "Check qgislocation in roam.config", QgsMessageBar.WARNING)
+                                 "Check qgislocation in roam.config", Qgis.Warning)
 
     def change_splash(self, event):
         """

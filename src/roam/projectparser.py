@@ -1,11 +1,11 @@
 from PyQt5.QtXml import QDomDocument
 
 from qgis.gui import QgsMapCanvasLayer
-from qgis.core import QgsVectorLayer, QgsRasterLayer, QgsMapLayerRegistry
+from qgis.core import QgsVectorLayer, QgsRasterLayer, QgsProject
 
 
 def iternodes(nodes):
-    for index in xrange(nodes.length()):
+    for index in range(nodes.length()):
         yield nodes.at(index).toElement()
 
 
@@ -35,7 +35,7 @@ class ProjectParser(object):
         """
         Get all configured canvas layers in the project
         """
-        layers = QgsMapLayerRegistry.instance().mapLayers()
+        layers = QgsProject.instance().mapLayers()
 
         def makelayer(layerid, visible):
             try:

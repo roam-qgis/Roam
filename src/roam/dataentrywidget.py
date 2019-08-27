@@ -8,7 +8,7 @@ from PyQt5.QtCore import *
 from PyQt5.QtWidgets import *
 from PyQt5.QtGui import *
 
-from qgis.core import QgsMapLayerRegistry, QgsFeatureRequest, QgsFeature, QgsExpression, Qgis, QgsGeometry
+from qgis.core import QgsProject, QgsFeatureRequest, QgsFeature, QgsExpression, Qgis, QgsGeometry
 
 from roam.editorwidgets.featureformwidget import FeatureFormWidgetEditor
 from roam.utils import log, error
@@ -169,7 +169,7 @@ class DataEntryWidget(dataentry_widget, dataentry_base):
                           feature=feature)
 
         config = dict(editmode=editmode,
-                      layers=QgsMapLayerRegistry.instance().mapLayers(),
+                      layers=QgsProject.instance().mapLayers(),
                       feature=feature)
 
         if self.project:

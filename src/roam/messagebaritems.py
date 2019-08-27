@@ -1,16 +1,13 @@
 import os
 import traceback
 
-from PyQt5.QtWidgets import QApplication, QPushButton, QWidget, QDialog, QToolButton
-from PyQt5.QtGui import QIcon, QFont
-from PyQt5.QtCore import QEvent, QObject, Qt, QSize, pyqtSignal
+from PyQt5.QtWidgets import QPushButton
+from PyQt5.QtCore import QEvent, pyqtSignal
 
-from qgis.gui import QgsMessageBarItem, QgsMessageBar
-
-import roam_style
+from qgis.core import Qgis
+from qgis.gui import QgsMessageBar
 
 import roam.htmlviewer
-import roam.utils
 import roam.resources_rc
 
 
@@ -20,7 +17,7 @@ class MessageBar():
         self.items = []
         self.messagestack = []
 
-    def pushMessage(self, title, text=None, level=QgsMessageBar.INFO, duration=0, extrainfo=None):
+    def pushMessage(self, title, text=None, level=Qgis.Info, duration=0, extrainfo=None):
         item = ClickableMessage(title, text, level, duration, extrainfo)
         self.pushItem(item)
 
@@ -42,12 +39,12 @@ class MessageBar():
 
 
 class ClickableMessage(roam.htmlviewer.HtmlViewerWidget):
-    def __init__(self, title=None, text=None, level=QgsMessageBar.INFO, duration=0, extrainfo=None, parent=None):
+    def __init__(self, title=None, text=None, level=Qgis.Info, duration=0, extrainfo=None, parent=None):
         super(ClickableMessage, self).__init__(parent)
         self.extrainfo = extrainfo
         self.template = "notice"
         self.level = level
-        if level == QgsMessageBar.CRITICAL:
+        if level == Qgis.Critical:
             self.template = "error"
 
         self.data = {}
@@ -106,7 +103,7 @@ class ClickableMessage(roam.htmlviewer.HtmlViewerWidget):
 
 class MissingLayerItem(ClickableMessage):
     def __init__(self, layers, parent=None):
-        super(MissingLayerItem, self).__init__(level=QgsMessageBar.WARNING, parent=parent)
+        super(MissingLayerItem, self).__init__(level=Qgis.Warning, parent=parent)
         self.template = "missing_layers"
         self.data["missinglayers"] = layers
         self.data['title'] = "Layers failed to load"
@@ -114,7 +111,7 @@ class MissingLayerItem(ClickableMessage):
 
 class ExceptionItem(ClickableMessage):
     def __init__(self, *exinfo):
-        super(ExceptionItem, self).__init__(level=QgsMessageBar.CRITICAL)
+        super(ExceptionItem, self).__init__(level=Qgis.Critical)
         message = "Something has gone wrong."
         self.template = "exception"
         self.data["message"] = message
@@ -130,7 +127,7 @@ class UndoMessageItem(ClickableMessage):
 
     def __init__(self, title, message, form, feature, parent=None):
         super(UndoMessageItem, self).__init__(parent=parent)
-        self.setLevel(QgsMessageBar.INFO)
+        self.setLevel(Qgis.Info)
         self.setDuration(3)
         self.setTitle(title)
         self.button = QPushButton(message)

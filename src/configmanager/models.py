@@ -1,8 +1,7 @@
 from PyQt5.QtCore import QAbstractItemModel, QModelIndex, Qt, pyqtSignal, QMimeData, QByteArray, QSortFilterProxyModel
-from PyQt5.QtWidgets import QComboBox, QListView, QDialog, QGridLayout, QItemDelegate
-from PyQt5.QtGui import QIcon, QFont, QTextBlockUserData, QStandardItem, QStandardItemModel)
+from PyQt5.QtGui import QIcon, QFont, QTextBlockUserData, QStandardItem, QStandardItemModel
 
-from qgis.core import Qgis, QgsMapLayerRegistry, QgsMessageLog, QgsMapLayer
+from qgis.core import Qgis, QgsProject, QgsMapLayer
 
 import os
 
@@ -80,8 +79,8 @@ class QgsLayerModel(QAbstractItemModel):
         self.layers = []
 
         if watchregistry:
-            QgsMapLayerRegistry.instance().layerWasAdded.connect(self.addlayer)
-            QgsMapLayerRegistry.instance().removeAll.connect(self.removeall)
+            QgsProject.instance().layerWasAdded.connect(self.addlayer)
+            QgsProject.instance().removeAll.connect(self.removeall)
 
     def findlayer(self, name):
         """
