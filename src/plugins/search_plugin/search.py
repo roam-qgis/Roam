@@ -98,8 +98,8 @@ class IndexBuilder(QObject):
             for feature in layer.getFeatures():
                 data = {}
                 for field in fields:
-                    value = unicode(feature[field])
-                    data['"{}"'.format(field)] = unicode("{}: {}").format(field, value)
+                    value = str(feature[field])
+                    data['"{}"'.format(field)] = str("{}: {}").format(field, value)
                 if not data:
                     continue
                 fid = feature.id()

@@ -104,7 +104,7 @@ class RoamApp(object):
         config.append("====Translation File===")
         config.append(self.translationFile)
         config.append("Roam Version: {}".format(roam.__version__))
-        config.append(u"QGIS Version: {}".format(unicode(Qgis.QGIS_VERSION)))
+        config.append(u"QGIS Version: {}".format(str(Qgis.QGIS_VERSION)))
         return '\n'.join(config)
 
 

@@ -158,8 +158,8 @@ class ListWidget(EditorWidget):
             except KeyError:
                 icon = QIcon()
 
-            item = QStandardItem(unicode(keyvalue))
-            item.setData(unicode(valuvalue), Qt.UserRole)
+            item = QStandardItem((keyvalue))
+            item.setData(str(valuvalue), Qt.UserRole)
             item.setIcon(icon)
             self.listmodel.appendRow(item)
 

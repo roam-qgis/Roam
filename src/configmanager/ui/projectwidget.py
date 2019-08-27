@@ -225,7 +225,7 @@ class ProjectWidget(Ui_Form, QWidget):
         Set the current about info on the widget
         """
         self.versionLabel.setText(roam.__version__)
-        self.qgisapiLabel.setText(unicode(Qgis.QGIS_VERSION))
+        self.qgisapiLabel.setText(str(Qgis.QGIS_VERSION))
 
     def selectlayerschanged(self, *args):
         """

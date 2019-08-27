@@ -177,7 +177,7 @@ class CaptureLayersModel(QgsLayerModel):
             self.config['selectlayers'] = selectlayers
 
             layer = index.internalPointer()
-            layername = unicode(layer.name())
+            layername = str(layer.name())
 
             if value == Qt.Checked:
                 selectlayers.append(layername)
@@ -463,7 +463,7 @@ class SearchFieldsModel(QgsFieldModel):
     def setData(self, index, value, role=None):
         if role == Qt.CheckStateRole:
             field = index.internalPointer()
-            fieldname = unicode(field.name())
+            fieldname = str(field.name())
 
             if value == Qt.Checked:
                 self.layerconfig.append(fieldname)
