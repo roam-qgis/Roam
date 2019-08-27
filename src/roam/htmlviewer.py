@@ -135,7 +135,7 @@ class HtmlViewerWidget(QWidget):
 
         self.effect = QGraphicsOpacityEffect()
         self.label.setGraphicsEffect(self.effect)
-        self.anim = QPropertyAnimation(self.effect, "opacity")
+        self.anim = QPropertyAnimation(self.effect, "opacity".encode("utf-8"))
         self.anim.setDuration(2000)
         self.anim.setStartValue(1.0)
         self.anim.setEndValue(0.0)

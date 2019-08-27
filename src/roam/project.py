@@ -131,7 +131,7 @@ def getProjects(paths):
     for projectpath in paths:
         try:
             folders = (sorted([os.path.join(projectpath, item)
-                               for item in os.walk(projectpath).next()[1]]))
+                               for item in next(os.walk(projectpath))[1]]))
 
             for folder in folders:
                 if os.path.basename(folder).startswith("_"):
@@ -388,7 +388,7 @@ class Form(object):
         feature = QgsFeature(fields)
         if data:
             print("Loading data")
-            for key, value in data.iteritems():
+            for key, value in data.items():
                 feature[key] = value
         else:
             data = {}
@@ -411,7 +411,7 @@ class Form(object):
             # Update the feature with the defaults from the widget config
             defaults = self.default_values(feature)
             utils.log(defaults)
-            for key, value in defaults.iteritems():
+            for key, value in defaults.items():
                 # Don't override fields we have already set.
                 if key is None:
                     continue
@@ -459,7 +459,7 @@ class Form(object):
             # Why am I doing this here?  We don't even need it
             mappings = self.settings['query'][name]['mappings']
             newvalues = copy.deepcopy(mappings)
-            for key_name, key_column in mappings.iteritems():
+            for key_name, key_column in mappings.items():
                 newvalues[key_name] = values[key_column]
         except KeyError:
             newvalues = copy.deepcopy(values)
@@ -615,7 +615,7 @@ class Project(QObject):
     def syncprovders(self):
         providers = self.settings.get("providers", {})
         variables = {}
-        for name, config in providers.iteritems():
+        for name, config in providers.items():
             if name == "variables":
                 variables.update(config)
                 continue
@@ -698,8 +698,8 @@ class Project(QObject):
     @property
     def forms(self):
         def mapformconfig(forms):
-            if hasattr(forms, 'iteritems'):
-                for formname, config in forms.iteritems():
+            if hasattr(forms, 'items'):
+                for formname, config in forms.items():
                     yield formname, config
             else:
                 for formname in forms:
@@ -770,7 +770,7 @@ class Project(QObject):
         forms = self.settings.setdefault("forms", [])
         folder = os.path.join(self.folder, name)
 
-        if hasattr(forms, 'iteritems'):
+        if hasattr(forms, 'items'):
             forms[name] = config
         else:
             forms.append(name)
@@ -785,7 +785,7 @@ class Project(QObject):
     def removeform(self, name):
         print("Removing {0}".format(name))
         forms = self.settings.setdefault("forms", [])
-        if hasattr(forms, 'iteritems'):
+        if hasattr(forms, 'iteme'):
             del self.settings['forms'][name]
         else:
             index = forms.index(name)
@@ -809,7 +809,7 @@ class Project(QObject):
         if save_forms:
             # Clear the form cache
             formsstorage = self.settings.setdefault("forms", [])
-            if not hasattr(formsstorage, 'iteritems'):
+            if not hasattr(formsstorage, 'items'):
                 for form in self.forms:
                     debug("Saving {}".format(form.name))
                     debug(form.settings)
@@ -819,7 +819,7 @@ class Project(QObject):
     @property
     def oldformconfigstlye(self):
         formsstorage = self.settings.get("forms", [])
-        return hasattr(formsstorage, 'iteritems')
+        return hasattr(formsstorage, 'items')
 
     def hascapturelayers(self):
         layers = roam.api.utils.layers()

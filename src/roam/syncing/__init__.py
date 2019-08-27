@@ -20,7 +20,7 @@ def syncprovders():
     settings = load(os.path.join(path, 'sync.config'))
     providers = settings.get("providers", {})
     variables = {}
-    for name, config in providers.iteritems():
+    for name, config in providers.items():
         if name == "variables":
             variables.update(config)
             continue

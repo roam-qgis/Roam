@@ -281,7 +281,7 @@ class CurrentSelection(QgsRubberBand):
         self.outline.setWidth(5)
         self.outline.setIconSize(30)
         self.aniobject = CurrentSelection.AniObject(self)
-        self.anim = QPropertyAnimation(self.aniobject, "alpha")
+        self.anim = QPropertyAnimation(self.aniobject, "alpha".encode("utf-8"))
         self.anim.setDuration(500)
         self.anim.setStartValue(50)
         self.anim.setEndValue(100)
@@ -335,17 +335,16 @@ class MapWidget(Ui_CanvasWidget, QMainWindow):
 
         self.bridge = QgsLayerTreeMapCanvasBridge(QgsProject.instance().layerTreeRoot(), self.canvas)
         self.bridge.setAutoSetupOnFirstLayer(False)
-        QgsProject.instance().writeProject.connect(self.bridge.writeProject)
-        QgsProject.instance().readProject.connect(self.bridge.readProject)
+        # QgsProject.instance().writeProject.connect(self.bridge.writeProject)
+        # QgsProject.instance().readProject.connect(self.bridge.readProject)
 
-        # self.canvas.setInteractive(False)
         self.canvas.setCanvasColor(Qt.white)
         self.canvas.enableAntiAliasing(True)
-        self.canvas.setWheelAction(QgsMapCanvas.WheelZoomToMouseCursor)
+        # self.canvas.setWheelAction(QgsMapCanvas.WheelZoomToMouseCursor)
 
         self.snappingutils = SnappingUtils(self.canvas, self)
         self.canvas.setSnappingUtils(self.snappingutils)
-        QgsProject.instance().readProject.connect(self.snappingutils.readConfigFromProject)
+        # QgsProject.instance().readProject.connect(self.snappingutils.readConfigFromProject)
 
         if hasattr(self.canvas, 'setParallelRenderingEnabled'):
             threadcount = QThread.idealThreadCount()
@@ -354,7 +353,7 @@ class MapWidget(Ui_CanvasWidget, QMainWindow):
             self.canvas.setParallelRenderingEnabled(True)
 
         pal = QgsPalLabeling()
-        self.canvas.mapRenderer().setLabelingEngine(pal)
+        # self.canvas.mapRenderer().setLabelingEngine(pal)
         self.canvas.setFrameStyle(QFrame.NoFrame)
 
         self.editgroup = QActionGroup(self)

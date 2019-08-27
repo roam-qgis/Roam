@@ -30,7 +30,7 @@ search:
             - assetno
 
 """
-import search
+from plugins.search_plugin import search
 
 
 def pages():

@@ -3,14 +3,13 @@ import os
 from PyQt5.QtCore import *
 from PyQt5.QtWidgets import *
 from PyQt5.QtGui import *
-from PyQt5.QtSvg import QSvgRenderer
 
 from qgis.core import *
 from qgis.gui import *
 
 from roam import resources_rc, utils
 from roam.utils import log
-from roam.api import RoamEvents, GPS
+from roam.api import GPS
 
 import roam.config
 
@@ -29,8 +28,7 @@ class GPSAction(QAction):
 
     def __init__(self, icon, canvas, parent):
         super(GPSAction, self).__init__(QIcon(icon),
-                                        QApplication.translate("GPSAction", "Enable GPS", None,
-                                                               QApplication.UnicodeUTF8),
+                                        QApplication.translate("GPSAction", "Enable GPS"),
                                         parent)
         self.canvas = canvas
         self.triggered.connect(self.connectGPS)
@@ -91,7 +89,7 @@ class GPSMarker(QgsMapCanvasItem):
         self.red = Qt.darkRed
         self.blue = QColor(129, 173, 210)
         self.green = Qt.darkGreen
-        self._gpsinfo = QgsGPSInformation()
+        self._gpsinfo = QgsGpsInformation()
 
         self.pointbrush = QBrush(self.red)
         self.pointpen = QPen(Qt.black)
