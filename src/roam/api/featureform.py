@@ -1,8 +1,5 @@
 import os
-import sys
-import subprocess
 import collections
-import types
 import tempfile
 import json
 import copy
@@ -10,31 +7,22 @@ import copy
 from functools import partial
 
 from PyQt5 import uic
-from PyQt5.QtCore import pyqtSignal, QObject, QSize, QEvent, QProcess, Qt, QPyNullVariant, QRegExp
+from PyQt5.QtCore import pyqtSignal, QSize, Qt, QRegExp
 from PyQt5.QtWidgets import (QWidget,
                          QAction,
-                         QDialogButtonBox,
                          QStackedWidget,
-                         QStatusBar,
                          QLabel,
-                         QGridLayout,
                          QToolButton,
-                         QLineEdit,
-                         QPlainTextEdit,
-                         QComboBox,
-                         QDateTimeEdit,
                          QBoxLayout,
                          QSpacerItem,
                          QFormLayout,
-                         QSpinBox,
-                         QDoubleSpinBox,
                          QVBoxLayout,
                          QSizePolicy,
                          QTabWidget)
                          
 from PyQt5.QtGui import QIcon
 
-from qgis.core import QgsFields, QgsFeature, QgsGPSConnectionRegistry, QGis, QgsGeometry, QgsPoint
+from qgis.core import QgsFeature, QgsGpsConnectionRegistry, QgsGeometry, QgsPoint, NULL, QgsWkbTypes
 from qgis.gui import QgsMessageBar
 
 from roam.editorwidgets.core import EditorWidgetException
@@ -85,7 +73,7 @@ class GeomWidget(Ui_GeomWidget, QStackedWidget):
             return
 
         self.geom = geom
-        if self.geom.type() == QGis.Point:
+        if self.geom.type() == QgsWkbTypes.PointGeometry:
             self.setCurrentIndex(0)
             point = geom.asPoint()
             self.xedit.setText(str(point.x()))
@@ -96,10 +84,10 @@ class GeomWidget(Ui_GeomWidget, QStackedWidget):
             self.setCurrentIndex(1)
 
     def geometry(self):
-        if self.geom.type() == QGis.Point:
+        if self.geom.type() == QgsWkbTypes.PointGeometry:
             x = float(self.xedit.text())
             y = float(self.yedit.text())
-            return QgsGeometry.fromPoint(QgsPoint(x, y))
+            return QgsGeometry.fromPointXY(QgsPoint(x, y))
 
     def mark_edited(self):
         self.edited = True
@@ -845,7 +833,7 @@ class FeatureForm(FeatureFormBase):
     @property
     def gpsconnection(self):
         try:
-            return QgsGPSConnectionRegistry.instance().connectionList()[0]
+            return QgsGpsConnectionRegistry.instance().connectionList()[0]
         except IndexError:
             return None
 
@@ -888,8 +876,8 @@ class FeatureForm(FeatureFormBase):
         def field_or_null(v):
             if v == '' \
                     or v is None \
-                    or isinstance(v, QPyNullVariant):
-                return QPyNullVariant(str)
+                    or v == NULL:
+                return None
             return v
 
         for key, value in values.iteritems():
