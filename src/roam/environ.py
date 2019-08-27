@@ -33,7 +33,14 @@ class RoamApp(object):
         except ImportError:
             pass
 
-        self.app = QgsApplication(self.sysargv, True)
+        # In python3 we need to convert to a bytes object (or should
+        # QgsApplication accept a QString instead of const char* ?)
+        try:
+            argvb = list(map(os.fsencode, sys.argv))
+        except AttributeError:
+            argvb = sys.argv
+
+        self.app = QgsApplication(argvb, True)
         QgsApplication.setPrefixPath(self.prefixpath, True)
         QgsApplication.initQgis()
 
