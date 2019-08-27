@@ -20,7 +20,7 @@ from qgis.core import (QgsProjectBadLayerHandler,
                        QgsFields,
                        QgsGeometry,
                        QgsRectangle,
-                       QGis,
+                       Qgis,
                        QgsApplication)
 from qgis.gui import (QgsMessageBar,
                       QgsMapToolZoom,

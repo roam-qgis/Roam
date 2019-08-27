@@ -8,7 +8,7 @@ from PyQt5.QtCore import *
 from PyQt5.QtWidgets import *
 from PyQt5.QtGui import *
 
-from qgis.core import QgsMapLayerRegistry, QgsFeatureRequest, QgsFeature, QgsExpression, QGis, QgsGeometry
+from qgis.core import QgsMapLayerRegistry, QgsFeatureRequest, QgsFeature, QgsExpression, Qgis, QgsGeometry
 
 from roam.editorwidgets.featureformwidget import FeatureFormWidgetEditor
 from roam.utils import log, error

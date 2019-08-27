@@ -102,7 +102,7 @@ def layer_value(feature, layer, defaultconfig):
             return
         if feature.geometry():
             rect = feature.geometry().boundingBox()
-            if layer.geometryType() == QGis.Point:
+            if layer.geometryType() == Qgis.Point:
                 point = feature.geometry().asPoint()
                 rect = QgsRectangle(point.x(), point.y(), point.x() + 10, point.y() + 10)
 

@@ -7,7 +7,7 @@ from PyQt5.QtCore import QUrl
 from PyQt5.QtGui import QDesktopServices
 
 from jinja2 import Environment, FileSystemLoader
-from qgis.core import QGis
+from qgis.core import Qgis
 
 path = os.path.join(os.path.dirname(__file__), "templates", "html")
 

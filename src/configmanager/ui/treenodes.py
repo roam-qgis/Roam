@@ -5,7 +5,7 @@ import traceback
 
 from datetime import datetime
 
-from qgis.core import QgsMapLayerRegistry, QgsMapLayer, QGis
+from qgis.core import QgsMapLayerRegistry, QgsMapLayer, Qgis
 
 from PyQt5.QtWidgets import QDialog, QMessageBox, QInputDialog
 from PyQt5.QtGui import QFont, QColor, QIcon, QStandardItem, QStandardItemModel
@@ -302,7 +302,7 @@ class MapNode(Treenode):
         self.removeRows(0, self.rowCount())
         layers = QgsMapLayerRegistry.instance().mapLayers().values()
         for layer in layers:
-            if layer.type() == QgsMapLayer.VectorLayer and layer.geometryType() == QGis.NoGeometry:
+            if layer.type() == QgsMapLayer.VectorLayer and layer.geometryType() == Qgis.NoGeometry:
                 continue
 
             node = LayerNode(layer, self.project)

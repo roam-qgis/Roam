@@ -94,7 +94,7 @@ class RoamApp(object):
         from qgis.core import QgsApplication, QgsProviderRegistry
         from PyQt5.QtGui import QImageReader, QImageWriter
         import roam
-        from qgis.core import QGis
+        from qgis.core import Qgis
 
         config = []
         config.append("====Providers===")
@@ -104,7 +104,7 @@ class RoamApp(object):
         config.append("====Translation File===")
         config.append(self.translationFile)
         config.append("Roam Version: {}".format(roam.__version__))
-        config.append(u"QGIS Version: {}".format(unicode(QGis.QGIS_VERSION)))
+        config.append(u"QGIS Version: {}".format(unicode(Qgis.QGIS_VERSION)))
         return '\n'.join(config)
 
 

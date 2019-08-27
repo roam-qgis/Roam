@@ -9,7 +9,7 @@ from PyQt5.QtWidgets import QWidget, QComboBox, QGridLayout, QMenu, QToolButton,
 from PyQt5.QtGui import QPixmap, QStandardItem, QStandardItemModel, QIcon, QDesktopServices, QColor
 from PyQt5.Qsci import QsciLexerSQL, QsciScintilla
 
-from qgis.core import QgsPalLabeling, QgsMapLayerRegistry, QgsStyleV2, QgsMapLayer, QGis, QgsProject,  QgsExpression, QgsFeatureRequest
+from qgis.core import QgsPalLabeling, QgsMapLayerRegistry, QgsStyleV2, QgsMapLayer, Qgis, QgsProject,  QgsExpression, QgsFeatureRequest
 from qgis.gui import QgsExpressionBuilderDialog, QgsMapCanvas, QgsRendererV2PropertiesDialog, QgsLayerTreeMapCanvasBridge
 
 from configmanager.ui.nodewidgets import (ui_layersnode, ui_layernode, ui_infonode, ui_projectinfo, ui_formwidget,
@@ -1292,7 +1292,7 @@ class MapWidget(ui_mapwidget.Ui_Form, WidgetBase):
         self.canvas.setCanvasColor(myColor)
         if hasattr(treenode, "layer"):
             layer = treenode.layer
-            if layer.type() == QgsMapLayer.VectorLayer and layer.geometryType() == QGis.NoGeometry:
+            if layer.type() == QgsMapLayer.VectorLayer and layer.geometryType() == Qgis.NoGeometry:
                 self.stackedWidget.setCurrentIndex(0)
             self.set_style_widget(treenode.layer)
             self.stackedWidget.setCurrentIndex(1)

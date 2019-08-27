@@ -2,7 +2,7 @@ from PyQt5.QtCore import QAbstractItemModel, QModelIndex, Qt, pyqtSignal, QMimeD
 from PyQt5.QtWidgets import QComboBox, QListView, QDialog, QGridLayout, QItemDelegate
 from PyQt5.QtGui import QIcon, QFont, QTextBlockUserData, QStandardItem, QStandardItemModel)
 
-from qgis.core import QGis, QgsMapLayerRegistry, QgsMessageLog, QgsMapLayer
+from qgis.core import Qgis, QgsMapLayerRegistry, QgsMessageLog, QgsMapLayer
 
 import os
 
@@ -13,10 +13,10 @@ import configmanager.ui.resources_rc
 plugin_path = os.path.dirname(os.path.realpath(__file__))
 
 icons = {
-    QGis.Point: ":/icons/PointLayer",
-    QGis.Polygon: ":/icons/PolygonLayer",
-    QGis.Line: ":/icons/LineLayer",
-    QGis.NoGeometry: ":/icons/TableLayer"
+    Qgis.Point: ":/icons/PointLayer",
+    Qgis.Polygon: ":/icons/PolygonLayer",
+    Qgis.Line: ":/icons/LineLayer",
+    Qgis.NoGeometry: ":/icons/TableLayer"
 }
 
 
@@ -51,7 +51,7 @@ class LayerTypeFilter(QSortFilterProxyModel):
     Filter a model to hide the given types of layers
     """
 
-    def __init__(self, geomtypes=[QGis.NoGeometry], parent=None):
+    def __init__(self, geomtypes=[Qgis.NoGeometry], parent=None):
         super(LayerTypeFilter, self).__init__(parent)
         self.geomtypes = geomtypes
         self.setDynamicSortFilter(True)

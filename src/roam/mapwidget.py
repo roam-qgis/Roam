@@ -183,8 +183,8 @@ class ScaleBarItem(QGraphicsItem):
         mapunitsperpixel = abs(self.canvas.mapUnitsPerPixel())
         mapunits = self.canvas.mapUnits()
         prefered_units = roam.config.settings.get("prefer_units", "meters")
-        newunits = QGis.fromLiteral(prefered_units, QGis.Meters)
-        mapunitsperpixel *= QGis.fromUnitToUnitFactor(mapunits, newunits)
+        newunits = Qgis.fromLiteral(prefered_units, Qgis.Meters)
+        mapunitsperpixel *= Qgis.fromUnitToUnitFactor(mapunits, newunits)
         mapunits = newunits
 
         # Convert the real distance into pixels
@@ -217,7 +217,7 @@ class ScaleBarItem(QGraphicsItem):
         return barwidth, realSize, sizelabel, (fontwidth, fontheight)
 
     def _label_size(self, unit, currentsize):
-        if unit == QGis.Meters:
+        if unit == Qgis.Meters:
             if currentsize > 1000:
                 return "km", currentsize / 1000
             elif currentsize < 0.01:
@@ -226,7 +226,7 @@ class ScaleBarItem(QGraphicsItem):
                 return "cm", currentsize * 100
             else:
                 return "m", currentsize
-        elif unit == QGis.Feet:
+        elif unit == Qgis.Feet:
             print(currentsize)
             if currentsize > 5280.0:
                 return "miles", currentsize / 5000
@@ -238,7 +238,7 @@ class ScaleBarItem(QGraphicsItem):
                 return "foot", currentsize
             else:
                 return "feet", currentsize
-        elif unit == QGis.Degrees:
+        elif unit == Qgis.Degrees:
             if currentsize == 1.0:
                 return "degree", currentsize
             else:
@@ -247,7 +247,7 @@ class ScaleBarItem(QGraphicsItem):
             return str(unit), currentsize
 
     def _adjust_bar_size(self, barsize, unit):
-        if unit == QGis.Feet:
+        if unit == Qgis.Feet:
             if barsize > 5280.0 or barsize == 5280.0:
                 return (barsize * 5290) / 5000
             elif barsize < 1:

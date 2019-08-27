@@ -4,7 +4,7 @@ import copy
 from PyQt5.QtCore import Qt, QDir, QFileInfo, pyqtSignal, QFileSystemWatcher
 from PyQt5.QtWidgets import QWidget, QMessageBox, QMenu, QFileDialog
 
-from qgis.core import QgsProject, QgsMapLayerRegistry, QGis, QgsProjectBadLayerHandler
+from qgis.core import QgsProject, QgsMapLayerRegistry, Qgis, QgsProjectBadLayerHandler
 from qgis.gui import QgsMessageBar
 
 from configmanager.ui.ui_projectwidget import Ui_Form
@@ -225,7 +225,7 @@ class ProjectWidget(Ui_Form, QWidget):
         Set the current about info on the widget
         """
         self.versionLabel.setText(roam.__version__)
-        self.qgisapiLabel.setText(unicode(QGis.QGIS_VERSION))
+        self.qgisapiLabel.setText(unicode(Qgis.QGIS_VERSION))
 
     def selectlayerschanged(self, *args):
         """
