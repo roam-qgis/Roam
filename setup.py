@@ -11,7 +11,8 @@ haspy2exe = False
 if os.name is 'nt':
     try:
         import py2exe
-        haspy2exe = True
+        # TODO Uncomment out once py2exe is working.  In the meantime allows build without error.
+        # haspy2exe = True
     except ImportError:
         print("Can't import py2exe. Do you have it installed.")
         haspy2exe = False
