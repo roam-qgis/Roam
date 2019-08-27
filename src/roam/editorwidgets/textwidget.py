@@ -114,24 +114,33 @@ class TextBlockWidget(TextWidget):
     def createWidget(self, parent):
         return QPlainTextEdit(parent)
 
-    def limit_text(self):
-        text = self.widget.toPlainText()
-        if 0 < self.text_length < text:
-            text = text[:self.text_length]
-            self.widget.blockSignals(True)
-            self.setvalue(text)
-
-            cursor = self.widget.textCursor()
-            cursor.setPosition(self.widget.document().characterCount() - 1)
-            self.widget.setTextCursor(cursor)
-
-        self.widget.blockSignals(False)
-        self.emitvaluechanged(self.widget.toPlainText())
+    # def limit_text(self):
+    #     text = self.widget.toPlainText()
+    #     if 0 < self.text_length < text:
+    #         text = text[:self.text_length]
+    #         self.widget.blockSignals(True)
+    #         # self.setvalue(text)
+    #         #
+    #         # cursor = self.widget.textCursor()
+    #         # cursor.setPosition(self.widget.document().characterCount() - 1)
+    #         # self.widget.setTextCursor(cursor)
+    #
+    #     self.widget.blockSignals(False)
+    #     self.emitvaluechanged(self.widget.toPlainText())
 
     def initWidget(self, widget, config):
         self.text_length = self.field.length()
         found, length = _get_sqlite_col_length(self.layer, self.field.name())
         if found:
             self.text_length = length
-        widget.textChanged.connect(self.limit_text)
+        # TODO Restore text truncate on change.
+        # widget.textChanged.connect(self.limit_text)
         widget.installEventFilter(self)
+
+    def setvalue(self, value):
+        # Not the best way but should cover most use cases
+        # for now
+        value = value or ''
+        value = value[:self.text_length]
+        self.widget.setPlainText(value)
+
