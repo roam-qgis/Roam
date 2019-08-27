@@ -1,6 +1,11 @@
+"""
+Module for doing database access using the layer as the source.
+
+Provides methods to run a query against a data source (mainly SQLITE) and return
+the results as a dictionary.
+"""
 from PyQt5.QtSql import (QSqlDatabase, QSqlQuery, QSqlQueryModel)
-from PyQt5.QtCore import Qt
-from qgis.core import QgsDataSourceURI
+from qgis.core import QgsDataSourceUri
 from roam.structs import OrderedDict
 import roam.utils
 
@@ -26,7 +31,7 @@ class Database(object):
     @classmethod
     def fromLayer(cls, layer):
         source = layer.source()
-        uri = QgsDataSourceURI(layer.dataProvider().dataSourceUri())
+        uri = QgsDataSourceUri(layer.dataProvider().dataSourceUri())
         if ".sqlite" in source:
             try:
                 index = source.index("|")
@@ -39,7 +44,7 @@ class Database(object):
             connectioninfo = {"type": "QSQLITE",
                               "database": source}
         else:
-            uri = QgsDataSourceURI(layer.dataProvider().dataSourceUri())
+            uri = QgsDataSourceUri(layer.dataProvider().dataSourceUri())
             connectioninfo = {
                 "host": uri.host(),
                 "database": uri.database(),

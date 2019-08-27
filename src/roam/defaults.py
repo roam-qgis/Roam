@@ -1,5 +1,5 @@
 import os
-from qgis.core import QgsExpression, QgsMapLayerRegistry, QgsFeatureRequest, QGis, QgsPoint, QgsRectangle, \
+from qgis.core import QgsExpression, QgsProject, QgsFeatureRequest, QgsRectangle, \
     QgsExpressionContext, \
     QgsExpressionContextScope
 
@@ -69,7 +69,7 @@ def layer_value(feature, layer, defaultconfig):
     layers = []
     # layer name can also be a list of layers to search
     layername = defaultconfig['layer']
-    if isinstance(layername, basestring):
+    if isinstance(layername, str):
         layers.append(layername)
     else:
         layers = layername
@@ -79,7 +79,7 @@ def layer_value(feature, layer, defaultconfig):
 
     for searchlayer in layers:
         try:
-            searchlayer = QgsMapLayerRegistry.instance().mapLayersByName(searchlayer)[0]
+            searchlayer = QgsProject.instance().mapLayersByName(searchlayer)[0]
         except IndexError:
             RoamEvents.raisemessage("Missing layer",
                                     "Unable to find layer used in widget expression {}".format(searchlayer),

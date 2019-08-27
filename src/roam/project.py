@@ -15,12 +15,11 @@ from PyQt5.QtCore import pyqtSignal, QObject
 from PyQt5.QtWidgets import QAction
 from PyQt5.QtGui import QIcon
 
-from qgis.core import QgsMapLayerRegistry, QGis, QgsTolerance, QgsVectorLayer, QgsMapLayer, QgsFeature
+from qgis.core import QgsWkbTypes, QgsMapLayer, QgsFeature
 
 from roam.utils import log, debug
 from roam.syncing import replication
 from roam.api import FeatureForm
-from roam.structs import OrderedDictYAMLLoader
 from roam.dataaccess.database import Database
 from roam.structs import CaseInsensitiveDict
 
@@ -33,7 +32,10 @@ import roam.maptools
 import roam.api.utils
 import roam.defaults as defaults
 
-supportedgeometry = [QGis.Point, QGis.Polygon, QGis.Line]
+# This of supported geometry types for the forms.
+supportedgeometry = [QgsWkbTypes.PointGeometry,
+                     QgsWkbTypes.PolygonGeometry,
+                     QgsWkbTypes.LineGeometry]
 
 
 class NoMapToolConfigured(Exception):
@@ -80,7 +82,7 @@ def layersfromlist(layerlist):
     :param layerlist:
     :return:
     """
-    qgislayers = QgsMapLayerRegistry.instance().mapLayers().values()
+    qgislayers = roam.api.utils.layers()
     qgislayers = {layer.name(): layer for layer in qgislayers if layer.type() == QgsMapLayer.VectorLayer}
     if not layerlist:
         return qgislayers
@@ -820,7 +822,7 @@ class Project(QObject):
         return hasattr(formsstorage, 'iteritems')
 
     def hascapturelayers(self):
-        layers = QgsMapLayerRegistry.instance().mapLayers().values()
+        layers = roam.api.utils.layers()
         layers = (layer for layer in layers if layer.type() == QgsMapLayer.VectorLayer)
         layers = [layer.name() for layer in layers if layer.geometryType() in supportedgeometry]
         for layer in self.selectlayers:
