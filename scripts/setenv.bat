@@ -9,13 +9,8 @@ REM ----------------------------------------------------------------------------
 
 for %%x in (%cmdcmdline%) do if /i "%%~x"=="/c" set DOUBLECLICKED=1
 
-SET OSGEO4W_ROOT=
-FOR /D %%p in ("%PROGRAMFILES%\QGIS 3.*","%PROGRAMFILES(X86)%\QGIS 3.*") DO (
-    SET OSGEO4W_ROOT="%%~fsp"
-)
-
 REM Change OSGeo4W_ROOT here to point to your install of QGIS if it is not in the standard directories.
-IF NOT DEFINED OSGEO4W_ROOT SET OSGEO4W_ROOT=C:\OSGeo4W
+IF NOT DEFINED OSGEO4W_ROOT SET OSGEO4W_ROOT="C:\PROGRA~1\QGIS3~1.4"
 SET OSGEO4W_ROOT=%OSGEO4W_ROOT:"=%
 
 IF EXIST "%OSGEO4W_ROOT%\bin\qgis-ltr.bat" (
@@ -32,6 +27,7 @@ IF EXIST "%PROGRAMFILES%\Git\bin" (
 SET GIT=%GIT:"=%
 
 ECHO Setup environment for
+ECHO BASE: %BASE%
 ECHO ROOT: %OSGEO4W_ROOT%
 ECHO QGIS: %QGISNAME%
 SET QGIS=%OSGEO4W_ROOT%\apps\%QGISNAME%
