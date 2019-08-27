@@ -3,10 +3,11 @@ import functools
 import os
 import re
 import zipfile
-import urlparse
+from urllib.parse import urlparse
+from urllib.request import urlopen
+import urllib.parse
 import urllib
-import urllib2
-import Queue
+from queue import Queue
 import subprocess
 
 import roam.utils
@@ -26,7 +27,7 @@ class UpdateExpection(Exception):
 
 
 def quote_url(url):
-    return urllib.quote(url, safe="%/:=&?~#+!$,;'@()*[]")
+    return urllib.parse.quote(url, safe="%/:=&?~#+!$,;'@()*[]")
 
 
 def add_slash(url):
@@ -45,7 +46,7 @@ def parse_serverprojects(configdata):
     if not configdata:
         return {}
 
-    if isinstance(configdata, basestring):
+    if isinstance(configdata, str):
         configdata = yaml.load(configdata)
 
     versions = defaultdict(dict)
@@ -112,8 +113,8 @@ def download_file(url, fileout):
 
     roam.utils.debug("Opening URL: {}".format(url))
     try:
-        result = urllib2.urlopen(url)
-    except urllib2.HTTPError as ex:
+        result = urlopen(url)
+    except urllib.error.HTTPError as ex:
         if ex.code == 404:
             roam.utils.warning("Can't find URL: {}".format(url))
         else:
@@ -188,7 +189,7 @@ def new_projects(projects, serverprojects):
             yield info
 
 
-forupdate = Queue.Queue()
+forupdate = Queue()
 
 
 class UpdateWorker(QObject):
@@ -204,9 +205,9 @@ class UpdateWorker(QObject):
     def check_url_found(self, url):
         url = quote_url(url)
         try:
-            result = urllib2.urlopen(url)
+            result = urlopen(url)
             return result.code == 200
-        except urllib2.HTTPError as ex:
+        except urllib.error.HTTPError as ex:
             return False
 
     def fetch_data(self, rootfolder, filename, serverurl):

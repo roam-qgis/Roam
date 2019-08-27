@@ -3,13 +3,13 @@ import os
 from string import Template
 from collections import OrderedDict
 
-from PyQt5.QtWidgets import QWidget, QListWidgetItem, QApplication, QAction
+from PyQt5.QtWidgets import QWidget, QListWidgetItem, QAction
 from PyQt5.QtGui import QIcon, QMouseEvent, QKeySequence
 from PyQt5.QtCore import Qt, QUrl, QEvent, pyqtSignal
-from PyQt5.QtWebKit import QWebPage
+from qgis.PyQt.QtWebKitWidgets import QWebPage
 
-from qgis.core import (QgsExpression, QgsFeature,
-                       QgsMapLayer, QgsFeatureRequest, QgsGeometry, NULL, QGis)
+from qgis.core import (QgsExpression,
+                       QgsFeatureRequest, QgsGeometry, NULL, QgsWkbTypes)
 
 from roam import utils
 from roam.popupdialogs import PickActionDialog
@@ -20,7 +20,7 @@ from roam.api import RoamEvents, GPS
 from roam.dataaccess import database
 from roam.api.utils import layer_by_name, values_from_feature
 
-import templates
+from roam import templates
 
 infotemplate = templates.get_template("info")
 infoblocktemplate = templates.get_template("infoblock")
@@ -63,7 +63,7 @@ class FeatureCursor(object):
         try:
             feature = self.features[self.index]
             rq = QgsFeatureRequest(feature.id())
-            return self.layer.getFeatures(rq).next()
+            return next(self.layer.getFeatures(rq))
         except IndexError:
             raise NoFeature("No feature in selection at postion".format(self.index))
         except StopIteration:
@@ -377,7 +377,7 @@ class InfoDock(infodock_widget, QWidget):
         feature = cursor.feature
         geom = feature.geometry()
         geomtype = geom.type()
-        if geomtype == QGis.Polygon and geom.isMultipart():
+        if geomtype == QgsWkbTypes.PolygonGeometry and geom.isMultipart():
             editgeom = False
         self.editGeomButton.setVisible(editgeom)
         self.featureupdated.emit(layer, feature, cursor.features)

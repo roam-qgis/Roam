@@ -1,13 +1,6 @@
 from PyQt5.QtWidgets import QToolBar
 from PyQt5.QtCore import Qt, pyqtSignal
 
-from roam.legendwidget import LegendWidget
-from roam.gpswidget import GPSWidget
-from roam.syncwidget import SyncWidget
-from roam.settingswidget import SettingsWidget
-from roam.listmodulesdialog import ProjectsWidget
-from roam.mapwidget import MapWidget
-
 
 class HideableToolbar(QToolBar):
     stateChanged = pyqtSignal(bool)

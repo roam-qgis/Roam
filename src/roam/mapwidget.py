@@ -1,35 +1,31 @@
 import math
-from functools import partial
 from collections import defaultdict
+from functools import partial
 
-from PyQt5.QtCore import Qt, pyqtSignal, QSize, QPropertyAnimation, QObject, pyqtProperty, QEasingCurve, QThread, \
-    QRectF, QLocale, QPointF, QPoint
-from PyQt5.QtWidgets import QActionGroup, QFrame, QWidget, QSizePolicy, \
-    QAction, QMainWindow, QGraphicsItem, QToolButton, QLabel, QToolBar
+from PyQt5.QtCore import Qt, QSize, QPropertyAnimation, QObject, QThread, \
+    QRectF, QLocale, QPointF
 from PyQt5.QtGui import QPixmap, QCursor, QIcon, QColor, QPen, QPolygon, QFont, QFontMetrics, QBrush, \
     QPainterPath, QPainter
-
 from PyQt5.QtSvg import QGraphicsSvgItem
-
-from qgis.gui import QgsMapCanvas, QgsMapToolZoom, QgsRubberBand, QgsMapCanvasItem, QgsScaleComboBox, \
+from PyQt5.QtWidgets import QActionGroup, QFrame, QWidget, QSizePolicy, \
+    QAction, QMainWindow, QGraphicsItem, QToolButton, QLabel, QToolBar
+from qgis.core import QgsPalLabeling, QgsMapLayer, Qgis, QgsRectangle, QgsProject, QgsApplication, \
+    QgsCoordinateReferenceSystem, QgsCoordinateTransform, QgsPoint, QgsCsException, QgsDistanceArea, QgsWkbTypes
+from qgis.gui import QgsMapCanvas, QgsMapToolZoom, QgsRubberBand, QgsScaleComboBox, \
     QgsLayerTreeMapCanvasBridge, \
     QgsMapCanvasSnappingUtils
-from qgis.core import QgsPalLabeling, QgsMapLayerRegistry, QgsMapLayer, QGis, QgsRectangle, QgsProject, QgsApplication, \
-    QgsComposerScaleBar, \
-    QgsCoordinateReferenceSystem, QgsCoordinateTransform, QgsPoint, QgsCsException, QgsDistanceArea
 
-from roam.gps_action import GPSAction, GPSMarker
-from roam.projectparser import ProjectParser
-from roam.maptools import MoveTool, InfoTool, EditTool, PointTool, TouchMapTool
-from roam.api.events import RoamEvents
-from roam.popupdialogs import PickActionDialog
-from biglist import BigList
-from roam.api import GPS, plugins
+from roam import roam_style
+from roam.biglist import BigList
 
-import roam.utils
 import roam.config
-
-import roam_style
+import roam.utils
+import roam.api.utils
+from roam.api import GPS, plugins
+from roam.api.events import RoamEvents
+from roam.gps_action import GPSAction, GPSMarker
+from roam.maptools import InfoTool, TouchMapTool
+from roam.popupdialogs import PickActionDialog
 
 try:
     from qgis.gui import QgsMapToolTouch
@@ -270,7 +266,7 @@ class CurrentSelection(QgsRubberBand):
             super(CurrentSelection.AniObject, self).__init__()
             self.color = QColor()
 
-        @pyqtProperty(int)
+        @property
         def alpha(self):
             return self.color.alpha()
 
@@ -300,7 +296,7 @@ class CurrentSelection(QgsRubberBand):
         self.anim.stop()
         self.anim.start()
 
-    def reset(self, geomtype=QGis.Line):
+    def reset(self, geomtype=QgsWkbTypes.LineGeometry):
         super(CurrentSelection, self).reset(geomtype)
         self.outline.reset(geomtype)
         self.anim.stop()
@@ -598,7 +594,7 @@ class MapWidget(Ui_CanvasWidget, QMainWindow):
         """
         Handle the show event of the of the map widget. We have to do a little hack here to make the QGIS map refresh.
         """
-        if QGis.QGIS_VERSION_INT == 20200 and self.firstshow:
+        if Qgis.QGIS_VERSION_INT == 20200 and self.firstshow:
             self.canvas.refresh()
             self.canvas.repaint()
             self.firstshow = False
@@ -818,7 +814,7 @@ class MapWidget(Ui_CanvasWidget, QMainWindow):
             self.dataentryselection.setVisible(False)
 
         # Enable the raster layers button only if the project contains a raster layer.
-        layers = QgsMapLayerRegistry.instance().mapLayers().values()
+        layers = roam.api.utils.layers()
         hasrasters = any(layer.type() == QgsMapLayer.RasterLayer for layer in layers)
         self.actionRaster.setEnabled(hasrasters)
         self.defaultextent = self.canvas.extent()
@@ -971,7 +967,7 @@ class MapWidget(Ui_CanvasWidget, QMainWindow):
         # TODO Extract into function.
         # NOTE This function is doing too much, acts as add and also edit.
         layer = form.QGISLayer
-        if layer.geometryType() in [QGis.WKBMultiLineString, QGis.WKBMultiPoint, QGis.WKBMultiPolygon]:
+        if layer.isMultipart():
             geometry.convertToMultiType()
 
         try:

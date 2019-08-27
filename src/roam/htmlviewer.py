@@ -1,27 +1,24 @@
 import os
-from types import NoneType
-from string import Template
 
-from PyQt5.QtCore import (QUrl, QByteArray, QDate, QDateTime, QTime, QSize, QEvent, QPropertyAnimation,
-                          QEasingCurve, QAbstractAnimation)
-from PyQt5.QtWidgets import (QDialog, QWidget, QGridLayout, QFrame, QApplication, QToolBar,
-                         QSizePolicy, QLabel, QGraphicsOpacityEffect, QAction, QPushButton)
-from PyQt5.QtGui import QPixmap, QImageReader, QDesktopServices, QIcon
-from PyQt5.QtWebKit import QWebView, QWebPage
+from PyQt5.QtCore import (QByteArray, QDate, QDateTime, QTime, QPropertyAnimation,
+                          QEasingCurve)
+from PyQt5.QtGui import QPixmap, QImageReader, QIcon
+from PyQt5.QtWidgets import (QWidget, QGridLayout, QFrame, QApplication, QToolBar,
+                             QSizePolicy, QLabel, QGraphicsOpacityEffect, QPushButton)
+from qgis.PyQt.QtWebKitWidgets import QWebView, QWebPage
 
-from roam import utils
-
-import templates
+from roam import templates
 
 images = {}
 supportedformats = []
 
 
 def image_handler(key, value, **kwargs):
-    imageblock = '''
+    imageblock = r"""
                     <a href="{}" class="thumbnail">
                       <img width="100%" height="100%" src="{}"\>
-                    </a>'''
+                    </a>
+                    """
 
     imagetype = kwargs.get('imagetype', 'base64')
     keyid = "image_{key}_{count}".format(key=key, count=len(images) + 1)
@@ -101,8 +98,7 @@ blocks = {QByteArray: image_handler,
           QDateTime: date_handler,
           QTime: date_handler,
           str: string_handler,
-          unicode: string_handler,
-          NoneType: none_handler}
+          lambda: None: none_handler}
 
 
 def showHTMLReport(template, data={}, parent=None, level=0):

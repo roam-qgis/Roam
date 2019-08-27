@@ -1,5 +1,5 @@
 import pytest
-import objects
+from roam_tests import objects
 
 from roam.infodock import FeatureCursor, NoFeature
 
@@ -7,8 +7,8 @@ layer = objects.newmemorylayer()
 layer = objects.addfeaturestolayer(layer, 2)
 
 features = layer.getFeatures()
-featureone = features.next()
-featuretwo = features.next()
+featureone = next(features)
+featuretwo = next(features)
 
 @pytest.fixture
 def cursor():
