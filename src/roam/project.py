@@ -722,7 +722,7 @@ class Project(QObject):
         tools = selectconfig.get('tools', ['delete', 'capture', 'edit_attributes', 'edit_geom'])
         _tools = {}
         for tool in tools:
-            if isinstance(tool, basestring):
+            if isinstance(tool, str):
                 _tools[tool] = {}
             elif isinstance(tool, dict):
                 _tools[tool.keys()[0]] = tool.values()[0]

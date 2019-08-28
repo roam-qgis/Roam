@@ -71,6 +71,8 @@ class ActionPickerWidget(Ui_actionpicker, QWidget):
 class PickActionDialog(Ui_ActionPickerDialog, Dialogbase):
     def __init__(self, msg=None, parent=None, wrap=None):
         super(PickActionDialog, self).__init__(parent)
+        if not wrap:
+            wrap = 0
         self.wrap = wrap
         if msg:
             self.label.setText(msg)
