@@ -241,7 +241,7 @@ class MultiList(ListWidget):
     def updatefromconfig(self):
         super(MultiList, self).updatefromconfig()
 
-        for row in xrange(self.listmodel.rowCount()):
+        for row in range(self.listmodel.rowCount()):
             item = self.listmodel.item(row)
             item.setEditable(False)
             item.setCheckable(True)
@@ -293,7 +293,7 @@ class MultiList(ListWidget):
 
     def value(self):
         items = []
-        for row in xrange(self.listmodel.rowCount()):
+        for row in range(self.listmodel.rowCount()):
             item = self.listmodel.item(row)
             if item.checkState() == Qt.Checked:
                 value = item.data(Qt.UserRole)

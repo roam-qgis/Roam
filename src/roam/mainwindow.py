@@ -136,7 +136,6 @@ class MainWindow(ui_mainwindow.Ui_MainWindow, QMainWindow):
             widget.setMinimumHeight(height)
             return widget
 
-        gpsspacewidget = createSpacer(30)
         sidespacewidget = createSpacer(30)
         sidespacewidget2 = createSpacer(height=20)
 

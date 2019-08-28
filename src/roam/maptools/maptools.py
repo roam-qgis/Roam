@@ -50,7 +50,7 @@ class RubberBand(QgsRubberBand):
 
         offset = QPointF(5, 5)
         nodescount = self.numberOfVertices()
-        for index in xrange(nodescount, -1, -1):
+        for index in range(nodescount, -1, -1):
             if index == 0:
                 return
 

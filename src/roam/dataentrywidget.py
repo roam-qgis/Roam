@@ -105,7 +105,7 @@ class DataEntryWidget(dataentry_widget, dataentry_base):
                 self.lastwidgetremoved.emit()
 
     def clear(self, dontemit=False):
-        for i in xrange(self.stackedWidget.count()):
+        for i in range(self.stackedWidget.count()):
             self.clearwidget(i, dontemit)
 
     def clearwidget(self, position=0, dontemit=False):

@@ -357,7 +357,7 @@ class WidgetItem(QStandardItem):
             # If this is a group then loop over all the sub items.
             rows = self.rowCount()
             widgets = self.widget['config']['widgets'] = []
-            for row in xrange(rows):
+            for row in range(rows):
                 item = self.child(row, 0)
                 widgets.append(item.getwidget())
 
@@ -372,7 +372,7 @@ class WidgetsModel(QStandardItemModel):
         """
         Return the widgets in the model in a list.
         """
-        for row in xrange(self.rowCount()):
+        for row in range(self.rowCount()):
             item = self.item(row, 0)
             yield item.getwidget()
 
@@ -402,7 +402,7 @@ class WidgetsModel(QStandardItemModel):
         return item.id
 
     def indexFromId(self, id):
-        for row in xrange(self.rowCount()):
+        for row in range(self.rowCount()):
             item = self.item(row, 0)
             if item.id == id:
                 return row

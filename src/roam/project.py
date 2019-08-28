@@ -397,7 +397,7 @@ class Form(object):
             feature.setGeometry(geometry)
 
         if set_defaults:
-            for index in xrange(fields.count()):
+            for index in range(fields.count()):
                 pkindexes = layer.dataProvider().pkAttributeIndexes()
                 if index in pkindexes and layer.dataProvider().name() == 'spatialite':
                     continue

@@ -93,7 +93,7 @@ class PickActionDialog(Ui_ActionPickerDialog, Dialogbase):
         def chunks(l, n):
             """ Yield successive n-sized chunks from l.
             """
-            for i in xrange(0, len(l), n):
+            for i in range(0, len(l), n):
                 yield l[i:i + n]
 
         if self.wrap > 0:

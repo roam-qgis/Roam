@@ -82,7 +82,7 @@ class InspectionTool(QgsMapTool):
                 newfeature.setGeometry(QgsGeometry(feature.geometry()))
 
             # Set the default values
-            for indx in xrange(fields.count()):
+            for indx in range(fields.count()):
                 newfeature[indx] = self.layerto.dataProvider().defaultValue(indx)
 
             # Assign the old values to the new feature

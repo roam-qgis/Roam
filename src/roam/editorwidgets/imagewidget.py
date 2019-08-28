@@ -275,7 +275,7 @@ class MultiImageWidget(EditorWidget):
             widget.layout().setContentsMargins(0, 0, 0, 0)
 
         dbconfig = config['dboptions']
-        for i in xrange(dbconfig['maximages']):
+        for i in range(dbconfig['maximages']):
             innerwidget = createwidget("Image")
             wrapper = widgetwrapper("Image", innerwidget, config, self.layer, self.label, self.field, self.context)
             wrapper.largewidgetrequest.connect(self.largewidgetrequest.emit)

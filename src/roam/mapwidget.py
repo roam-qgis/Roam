@@ -2,6 +2,7 @@ import math
 from collections import defaultdict
 from functools import partial
 
+from PyQt5.QtCore import pyqtProperty
 from qgis.PyQt.QtCore import Qt, QSize, QPropertyAnimation, QObject, QThread, \
     QRectF, QLocale, QPointF
 from qgis.PyQt.QtGui import QPixmap, QCursor, QIcon, QColor, QPen, QPolygon, QFont, QFontMetrics, QBrush, \
@@ -11,7 +12,7 @@ from qgis.PyQt.QtWidgets import QActionGroup, QFrame, QWidget, QSizePolicy, \
     QAction, QMainWindow, QGraphicsItem, QToolButton, QLabel, QToolBar
 from qgis.core import QgsPalLabeling, QgsMapLayer, Qgis, QgsRectangle, QgsProject, QgsApplication, \
     QgsCoordinateReferenceSystem, QgsCoordinateTransform, QgsPoint, QgsCsException, QgsDistanceArea, QgsWkbTypes
-from qgis.gui import QgsMapCanvas, QgsMapToolZoom, QgsRubberBand, QgsScaleComboBox, \
+from qgis.gui import QgsMapToolZoom, QgsRubberBand, QgsScaleComboBox, \
     QgsLayerTreeMapCanvasBridge, \
     QgsMapCanvasSnappingUtils
 
@@ -266,7 +267,7 @@ class CurrentSelection(QgsRubberBand):
             super(CurrentSelection.AniObject, self).__init__()
             self.color = QColor()
 
-        @property
+        @pyqtProperty(float)
         def alpha(self):
             return self.color.alpha()
 

@@ -32,14 +32,17 @@ class FlickCharmPrivate:
         self.ticker = QBasicTimer()
 
 
+## TODO This is disabled for now until the move to QGIS 3
 class FlickCharm(QObject):
 
     def __init__(self, parent=None):
         QObject.__init__(self, parent)
+        return
         self.d = FlickCharmPrivate()
         self.lastvalue = 0
 
     def activateOn(self, widget):
+        return
         if isinstance(widget, QWebView):
             frame = widget.page().mainFrame()
             widget.installEventFilter(self)
@@ -59,6 +62,7 @@ class FlickCharm(QObject):
             widget.setVerticalScrollMode(QAbstractItemView.ScrollPerPixel)
 
     def deactivateFrom(self, widget):
+        return
         if isinstance(widget, QWebView):
             widget.removeEventFilter(self)
             del (self.d.flickData[widget])

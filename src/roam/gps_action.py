@@ -1,11 +1,11 @@
 import os
 
-from qgis.PyQt.QtCore import *
-from qgis.PyQt.QtWidgets import *
-from qgis.PyQt.QtGui import *
+from qgis.PyQt.QtCore import pyqtSignal, Qt, QRectF, QLine, QPoint
+from qgis.PyQt.QtWidgets import QAction, QApplication
+from qgis.PyQt.QtGui import QIcon, QColor, QBrush, QPen, QPainter, QPainterPath, QPolygonF
 
-from qgis.core import *
-from qgis.gui import *
+from qgis.core import QgsGpsInformation, QgsPoint, QgsPointXY
+from qgis.gui import QgsMapCanvasItem
 
 from roam import resources_rc, utils
 from roam.utils import log
@@ -183,7 +183,7 @@ class GPSMarker(QgsMapCanvasItem):
     def setCenter(self, map_pos, gpsinfo):
         self._heading = gpsinfo.direction
         self._gpsinfo = gpsinfo
-        self.map_pos = map_pos
+        self.map_pos = QgsPointXY(map_pos)
         self.setPos(self.toCanvasCoordinates(self.map_pos))
 
     def updatePosition(self):
