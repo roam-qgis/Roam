@@ -320,7 +320,7 @@ class FeatureFormBase(QWidget):
         self.formvalidation.emit(passed)
 
     def validateall(self):
-        widgetwrappers = self.boundwidgets.itervalues()
+        widgetwrappers = self.boundwidgets.values()
         for wrapper in widgetwrappers:
             wrapper.validate()
 
@@ -858,7 +858,7 @@ class FeatureForm(FeatureFormBase):
         """
         Checks all widgets to see if they are in a pass state or not
         """
-        for wrapper in self.boundwidgets.itervalues():
+        for wrapper in self.boundwidgets.values():
             # print(wrapper.labeltext, wrapper.passing)
             if not wrapper.passing:
                 return False
@@ -866,7 +866,7 @@ class FeatureForm(FeatureFormBase):
 
     @property
     def incompletewidgets(self):
-        return [w.unformatted_label for w in self.boundwidgets.itervalues() if not w.passing]
+        return [w.unformatted_label for w in self.boundwidgets.values() if not w.passing]
 
     @property
     def missingfields(self):

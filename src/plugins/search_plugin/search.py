@@ -59,7 +59,7 @@ class IndexBuilder(QObject):
 
         def get_columns():
             columns = set()
-            for config in self.indexconfig.itervalues():
+            for config in self.indexconfig.values():
                 for c in config['columns']:
                     columns.add('"{}"'.format(c))
             return columns
@@ -130,7 +130,7 @@ class IndexBuilder(QObject):
 def valid_search_settings(settings):
     try:
         settings = settings['search']
-        for layerconfig in settings.itervalues():
+        for layerconfig in settings.values():
             columns = layerconfig['columns']
         return True, settings
     except KeyError:

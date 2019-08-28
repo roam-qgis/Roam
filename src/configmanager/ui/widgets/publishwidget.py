@@ -53,7 +53,7 @@ class PublishWidget(ui_publishwidget.Ui_widget, WidgetBase):
         self.deployLocationText.setText(path)
 
     def open_folders(self):
-        projects = self.get_project_depoly_settings(all_projects=False).itervalues()
+        projects = self.get_project_depoly_settings(all_projects=False).values()
         for project in projects:
             openfolder(self.resolve_path(project['path']))
 
@@ -113,7 +113,7 @@ class PublishWidget(ui_publishwidget.Ui_widget, WidgetBase):
         datazipfile = None
 
         self.data_depolyed_folders = []
-        for projectconfig in self.get_project_depoly_settings(all_projects=all_projects).itervalues():
+        for projectconfig in self.get_project_depoly_settings(all_projects=all_projects).values():
             ## Gross but quicker then threading at the moment.
             QApplication.instance().processEvents()
             ## Fix the path to use the global location, or the roam_srv if that isn't set.

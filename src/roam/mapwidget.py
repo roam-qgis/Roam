@@ -647,7 +647,7 @@ class MapWidget(Ui_CanvasWidget, QMainWindow):
         self.canvas.scene().update()
         self.currentfeatureband.reset()
         # Clear the rest
-        for band in self.selectionbands.itervalues():
+        for band in self.selectionbands.values():
             band.reset()
 
         self.canvas.update()
