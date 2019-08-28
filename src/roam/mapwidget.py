@@ -1057,8 +1057,5 @@ class MapWidget(Ui_CanvasWidget, QMainWindow):
         self.clear_selection()
         self.clear_temp_objects()
         self.clearCaptureTools()
-        self.canvas.freeze()
-        self.canvas.clear()
-        self.canvas.freeze(False)
         for action in self.layerbuttons:
             self.editgroup.removeAction(action)

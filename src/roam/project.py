@@ -3,19 +3,15 @@ import copy
 import glob
 import utils
 import yaml
-import functools
 import imp
-import importlib
-import sys
 
-from datetime import datetime
 from collections import OrderedDict
 
 from qgis.PyQt.QtCore import pyqtSignal, QObject
 from qgis.PyQt.QtWidgets import QAction
 from qgis.PyQt.QtGui import QIcon
 
-from qgis.core import QgsWkbTypes, QgsMapLayer, QgsFeature
+from qgis.core import QgsWkbTypes, QgsMapLayer, QgsFeature, QgsProject
 
 from roam.utils import log, debug
 from roam.syncing import replication
@@ -37,6 +33,11 @@ supportedgeometry = [QgsWkbTypes.PointGeometry,
                      QgsWkbTypes.PolygonGeometry,
                      QgsWkbTypes.LineGeometry]
 
+class ProjectExpection(Exception):
+    """
+    Raised when there is a issue with a project.
+    """
+    pass
 
 class NoMapToolConfigured(Exception):
     """ 
@@ -483,6 +484,11 @@ class Project(QObject):
 
     @classmethod
     def from_folder(cls, rootfolder):
+        """
+        Create a Project object wrapper from a given folder on the file system
+        :param rootfolder:
+        :return:
+        """
         project = cls(rootfolder, {})
         try:
             project.settings = readfolderconfig(rootfolder, configname='project')
@@ -546,17 +552,46 @@ class Project(QObject):
 
     @property
     def roamversion(self):
+        """
+        Returns the Roam version this roam project was built with.
+        :return:
+        """
         return str(self.settings.setdefault("version", roam.__version__))
 
     @property
     def projectfile(self):
+        """
+        Return the QGIS project file for the project.  Checks the following in order:
+        - settings: projectfile
+        - project.qgs
+        - project.qgs
+
+        :return: The path to the QGIS project file.
+        """
         try:
             return os.path.abspath(self.settings['projectfile'])
         except KeyError:
-            return os.path.join(self.folder, "project.qgs")
+            qgz = os.path.join(self.folder, "project.qgs.qgz")
+            if os.path.exists(qgz):
+                return qgz
+            else:
+                return os.path.join(self.folder, "project.qgs")
+
+    def load_project(self):
+        """
+        Loads the current project into the QGIS session.
+        :return:
+        """
+        was_read = QgsProject.instance().read(self.projectfile)
+        if not was_read:
+            raise ProjectExpection(QgsProject.instance().error())
 
     @property
     def error(self):
+        """
+        Return a list of errors if this project isn't valid.
+        :return:
+        """
         return "\n".join(list(self.validate()))
 
     def validate(self):

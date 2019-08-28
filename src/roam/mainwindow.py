@@ -600,8 +600,8 @@ class MainWindow(ui_mainwindow.Ui_MainWindow, QMainWindow):
         QApplication.processEvents()
 
         QDir.setCurrent(os.path.dirname(project.projectfile))
-        fileinfo = QFileInfo(project.projectfile)
-        QgsProject.instance().read(fileinfo)
+        project.load_project()
+
 
     def close_project(self, project=None):
         """
