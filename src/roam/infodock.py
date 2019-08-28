@@ -366,9 +366,7 @@ class InfoDock(infodock_widget, QWidget):
         self.attributesView.setHtml(html, templates.baseurl)
         tools = self.project.layer_tools(layer)
         hasform = not form is None
-        print(tools)
         editattributes = 'edit_attributes' in tools or 'inspection' in tools or hasform
-        print(editattributes)
         editgeom = 'edit_geom' in tools and hasform
         deletefeature = 'delete' in tools and hasform
         self.deleteFeatureButton.setVisible(deletefeature)
@@ -515,7 +513,6 @@ def generate_rows(fields, attributes, **kwargs):
         if field == 'mapkey':
             continue
         name = "field_" + str(count)
-        print(value)
         if value == NULL:
             value = ""
         data[name] = value
