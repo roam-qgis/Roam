@@ -1,13 +1,32 @@
-import os
-
-from qgis.PyQt.QtWidgets import QLabel, QDialog, QFileDialog, QGridLayout, QLayout, QWidget
+from PyQt5.QtMultimediaWidgets import  QCameraViewfinder
+from PyQt5.QtMultimedia import QCamera, QCameraInfo
+from qgis.PyQt.QtCore import QByteArray, QBuffer, QIODevice, QEvent, pyqtSignal, Qt
 from qgis.PyQt.QtGui import QPixmap
-from qgis.PyQt.QtCore import QByteArray, QBuffer, QIODevice, QEvent, QObject, pyqtSignal, Qt
+from qgis.PyQt.QtWidgets import QWidget
 
-
-from roam.editorwidgets.uifiles import ui_imagewidget
-import roam.utils
 import roam.resources_rc
+import roam.utils
+from roam.editorwidgets.uifiles import ui_imagewidget
+
+
+# TODO Use Qt5 camera logic now
+# print("Start Camera")
+# print(QCameraInfo.availableCameras())
+#
+# for info in QCameraInfo.availableCameras():
+#     print(info.deviceName())
+#
+# self.camera = QCamera(QCameraInfo.availableCameras()[0])
+# from qgis.PyQt.QtWidgets import QDialog, QGridLayout
+# self.camerawindow = QCameraViewfinder()
+# self.camera.setViewfinder(self.camerawindow)
+# self.dialog = QDialog()
+# self.dialog.setLayout(QGridLayout())
+# self.dialog.layout().addWidget(self.camerawindow)
+# self.camerawindow.show()
+# self.camera.start()
+#
+# self.dialog.exec_()
 
 
 class QMapImageWidget(ui_imagewidget.Ui_imagewidget, QWidget):
