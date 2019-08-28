@@ -117,7 +117,7 @@ class Query(object):
                     name = col.__name__
                 result[name] = _getValue(col)
 
-            for name, col in namedcols.iteritems():
+            for name, col in namedcols.items():
                 result[name] = _getValue(col)
 
         return result

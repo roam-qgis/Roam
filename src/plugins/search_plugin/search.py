@@ -69,7 +69,7 @@ class IndexBuilder(QObject):
 
         def get_features():
             rowid = 0
-            for layername, config in self.indexconfig.iteritems():
+            for layername, config in self.indexconfig.items():
                 if layername == "_all":
                     layers = roam.api.utils.layers(layertype=QgsMapLayer.VectorLayer)
                     print(layers)

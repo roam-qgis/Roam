@@ -86,7 +86,7 @@ class InspectionTool(QgsMapTool):
                 newfeature[indx] = self.layerto.dataProvider().defaultValue(indx)
 
             # Assign the old values to the new feature
-            for fieldfrom, fieldto in self.fields.iteritems():
+            for fieldfrom, fieldto in self.fields.items():
                 newfeature[fieldto] = feature[fieldfrom]
 
             passed, message = self.validation_method(feature=newfeature,

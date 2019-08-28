@@ -249,7 +249,7 @@ class InfoDock(infodock_widget, QWidget):
             geom = current_feature.geometry()
             mappings = config.get('field_mapping', {})
             data = {}
-            for fieldfrom, fieldto in mappings.iteritems():
+            for fieldfrom, fieldto in mappings.items():
                 data[fieldto] = current_feature[fieldfrom]
 
             newgeom = QgsGeometry(geom)
@@ -292,7 +292,7 @@ class InfoDock(infodock_widget, QWidget):
         self.forms = forms
         self.project = project
 
-        for layer, features in results.iteritems():
+        for layer, features in results.items():
             if features:
                 self._addResult(layer, features)
 

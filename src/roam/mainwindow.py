@@ -334,7 +334,7 @@ class MainWindow(ui_mainwindow.Ui_MainWindow, QMainWindow):
         :return:
         """
         selectedfeatures = []
-        for selection_layer, features in self.currentselection.iteritems():
+        for selection_layer, features in self.currentselection.items():
             if layer.name() == selection_layer.name():
                 selectedfeatures = features
                 layer = selection_layer

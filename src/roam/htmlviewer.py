@@ -86,7 +86,7 @@ def clear_image_cache():
 
 def updateTemplate(data, template, **kwargs):
     data = dict(data)
-    for key, value in data.iteritems():
+    for key, value in data.items():
         handler = blocks.get(type(value), default_handler)
         block = handler(key, value, **kwargs)
         data[key] = block

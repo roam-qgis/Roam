@@ -189,7 +189,7 @@ class ProjectsWidget(Ui_ListModules, QWidget):
         self.set_open_project(project)
 
     def set_open_project(self, currentproject):
-        for projectid, item in self.projectitems.iteritems():
+        for projectid, item in self.projectitems.items():
             widget = self.item_widget(item)
             if widget.is_new:
                 continue

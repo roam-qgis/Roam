@@ -514,13 +514,13 @@ class FeatureFormBase(QWidget):
         if not update:
             self.bindingvalues = CaseInsensitiveDict(values)
         else:
-            for key, value in values.iteritems():
+            for key, value in values.items():
                 try:
                     self.bindingvalues[key] = value
                 except KeyError:
                     continue
 
-        for field, value in values.iteritems():
+        for field, value in values.items():
             value = nullcheck(value)
             try:
                 wrapper = self.boundwidgets[field]
@@ -550,7 +550,7 @@ class FeatureFormBase(QWidget):
 
         savedvalues = {}
         values = CaseInsensitiveDict(self.bindingvalues)
-        for field, wrapper in self.boundwidgets.iteritems():
+        for field, wrapper in self.boundwidgets.items():
             if not no_defaults and wrapper.get_default_value_on_save:
                 value = self.widget_default(field)
             else:
@@ -870,7 +870,7 @@ class FeatureForm(FeatureFormBase):
 
     @property
     def missingfields(self):
-        return [field for field, valid in self.requiredfields.iteritems() if valid == False]
+        return [field for field, valid in self.requiredfields.items() if valid == False]
 
     def updatefeautrefields(self, feature, values):
         def field_or_null(v):
@@ -880,7 +880,7 @@ class FeatureForm(FeatureFormBase):
                 return None
             return v
 
-        for key, value in values.iteritems():
+        for key, value in values.items():
             try:
                 feature[key] = field_or_null(value)
             except KeyError:
@@ -898,7 +898,7 @@ class FeatureForm(FeatureFormBase):
             raise MissingValuesException.missing_values(self.incompletewidgets)
 
         def save_images(values):
-            for field, wrapper in self.boundwidgets.iteritems():
+            for field, wrapper in self.boundwidgets.items():
                 # HACK. Fix me. This is pretty messy
                 if hasattr(wrapper, 'savetofile') and wrapper.savetofile and wrapper.modified:
                     filename = values[field]

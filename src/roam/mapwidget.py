@@ -613,7 +613,7 @@ class MapWidget(Ui_CanvasWidget, QMainWindow):
         :param results: A dict-of-list of layer-features.
         """
         self.clear_selection()
-        for layer, features in results.iteritems():
+        for layer, features in results.items():
             band = self.selectionbands[layer]
             band.setColor(QColor(255, 0, 0))
             band.setIconSize(25)
@@ -1050,7 +1050,8 @@ class MapWidget(Ui_CanvasWidget, QMainWindow):
         Clean up when the project has changed.
         :return:
         """
-        self.bridge.clear()
+        # TODO Review cleanup
+        # self.bridge.clear()
         self.gpsband.reset()
         self.gpsband.hide()
         self.clear_selection()

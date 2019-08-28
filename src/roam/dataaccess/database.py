@@ -127,7 +127,7 @@ class Database(object):
         querystring = querystring.replace(r"\r\n", " ")
         query = QSqlQuery(self.db)
         query.prepare(querystring)
-        for key, value in mappings.iteritems():
+        for key, value in mappings.items():
             bindvalue = ":{}".format(key)
             if re.search(r"{}\b".format(bindvalue), querystring):
                 query.bindValue(bindvalue, value)

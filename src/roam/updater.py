@@ -183,7 +183,7 @@ def updateable_projects(projects, serverprojects):
 
 def new_projects(projects, serverprojects):
     names = [project.basefolder for project in projects]
-    for projectname, versions in serverprojects.iteritems():
+    for projectname, versions in serverprojects.items():
         if projectname not in names:
             info = get_project_info(projectname, serverprojects)
             yield info

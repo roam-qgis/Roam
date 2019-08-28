@@ -1019,7 +1019,7 @@ class InfoNode(ui_infonode.Ui_Form, WidgetBase):
         results = db.querymodel(sql, **attributes)
         self.previewGrid.setModel(results)
         labelText = ""
-        for key, value in attributes.iteritems():
+        for key, value in attributes.items():
             labelText += "<br> {}: {}".format(key, value)
         print(labelText)
         self.attributesLabel.setText("Feature Attributes Used:<br>" + labelText)
@@ -1123,7 +1123,7 @@ class LayerWidget(ui_layernode.Ui_Form, WidgetBase):
             config = tools['inspection']
             formindex = self.inspection_form_combo.findText(config['form'])
             self.inspection_form_combo.setCurrentIndex(formindex)
-            for key, value in config['field_mapping'].iteritems():
+            for key, value in config['field_mapping'].items():
                 self.inspection_fieldmappings.appendPlainText("{}, {}".format(key, value))
         else:
             self.inspection_form_combo.setCurrentIndex(0)
