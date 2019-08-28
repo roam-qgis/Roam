@@ -365,8 +365,8 @@ class InfoDock(infodock_widget, QWidget):
 
         self.attributesView.setHtml(html, templates.baseurl)
         tools = self.project.layer_tools(layer)
-        hasform = not form is None
-        editattributes = 'edit_attributes' in tools or 'inspection' in tools or hasform
+        hasform = form is not None
+        editattributes = ('edit_attributes' in tools or 'inspection' in tools) and hasform
         editgeom = 'edit_geom' in tools and hasform
         deletefeature = 'delete' in tools and hasform
         self.deleteFeatureButton.setVisible(deletefeature)
