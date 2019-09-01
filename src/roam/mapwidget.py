@@ -1037,11 +1037,11 @@ class MapWidget(Ui_CanvasWidget, QMainWindow):
             layer = node.layer()
             if node.layer().type() == QgsMapLayer.RasterLayer:
                 if value > 0:
-                    node.setVisible(Qt.Checked)
+                    node.setItemVisibilityChecked(Qt.Checked)
                     renderer = layer.renderer()
                     renderer.setOpacity(value)
                 if value == 0:
-                    node.setVisible(Qt.Unchecked)
+                    node.setItemVisibilityChecked(Qt.Unchecked)
 
         self.canvas.refresh()
 
