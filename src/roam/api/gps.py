@@ -5,9 +5,9 @@ from datetime import datetime
 
 from qgis.PyQt.QtCore import QObject, pyqtSignal, QDate, QDateTime, QTime, Qt, QTimer
 
-from qgis.core import (QgsGpsDetector, QgsGpsConnectionRegistry, QgsPoint, QgsPointXY, \
+from qgis.core import (QgsGpsDetector, QgsGpsConnection, QgsPointXY, \
                        QgsCoordinateTransform, QgsCoordinateReferenceSystem, \
-                       QgsGpsInformation, QgsCsException, QgsProject)
+                       QgsGpsInformation, QgsCsException, QgsProject, QgsApplication)
 
 from roam.utils import log
 from roam.config import settings as config
@@ -116,23 +116,25 @@ class GPSService(QObject):
 
     def disconnectGPS(self):
         if self.isConnected:
-            self.gpsConn.nmeaSentenceReceived.disconnect(self.parse_data)
-            # self.gpsConn.stateChanged.disconnect(self.gpsStateChanged)
             self.gpsConn.close()
-
-        log("GPS disconnect")
+            self.gpsConn.stateChanged.disconnect(self.gpsStateChanged)
+            # TODO: This doesn't fire for some reason anymore.  Do we need it still?
+            # self.gpsConn.nmeaSentenceReceived.disconnect(self.parse_data)
+            
         self.isConnected = False
         self.postion = None
-        QgsGpsConnectionRegistry.instance().unregisterConnection(self.gpsConn)
         self.gpsdisconnected.emit()
 
     def _gpsfound(self, gpsConnection):
-        log("GPS found")
+        import sip
+        gpsConnection = sip.cast(gpsConnection, QgsGpsConnection)
         self.gpsConn = gpsConnection
-        self.gpsConn.nmeaSentenceReceived.connect(self.parse_data)
-        # self.gpsConn.stateChanged.connect(self.gpsStateChanged)
+        print(self.gpsConn.status())
+        self.gpsConn.stateChanged.connect(self.gpsStateChanged)
         self.isConnected = True
-        QgsGpsConnectionRegistry.instance().registerConnection(self.gpsConn)
+
+        # TODO: This doesn't fire for some reason anymore.  Do we need it still?
+        # self.gpsConn.nmeaSentenceReceived.connect(self.parse_data)
 
     def parse_data(self, datastring):
         self.log_gps(datastring)
@@ -202,7 +204,7 @@ class GPSService(QObject):
             self.info.utcDateTime.setTime(time)
         return self.info
 
-    def gpsStateChanged(self, gpsInfo):
+    def gpsStateChanged(self, gpsInfo: QgsGpsInformation):
         if gpsInfo.fixType == NMEA_FIX_BAD or gpsInfo.status == 0 or gpsInfo.quality == 0:
             self.gpsfixed.emit(False, gpsInfo)
             return
