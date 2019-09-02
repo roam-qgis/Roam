@@ -7,25 +7,6 @@ import roam.utils
 from roam.editorwidgets.uifiles import ui_imagewidget
 
 
-# TODO Use Qt5 camera logic now
-# print("Start Camera")
-# print(QCameraInfo.availableCameras())
-#
-# for info in QCameraInfo.availableCameras():
-#     print(info.deviceName())
-#
-# self.camera = QCamera(QCameraInfo.availableCameras()[0])
-# from qgis.PyQt.QtWidgets import QDialog, QGridLayout
-# self.camerawindow = QCameraViewfinder()
-# self.camera.setViewfinder(self.camerawindow)
-# self.dialog = QDialog()
-# self.dialog.setLayout(QGridLayout())
-# self.dialog.layout().addWidget(self.camerawindow)
-# self.camerawindow.show()
-# self.camera.start()
-#
-# self.dialog.exec_()
-
 
 class QMapImageWidget(ui_imagewidget.Ui_imagewidget, QWidget):
     openRequest = pyqtSignal(QPixmap)
@@ -96,8 +77,8 @@ class QMapImageWidget(ui_imagewidget.Ui_imagewidget, QWidget):
         else:
             pix = QPixmap()
             r = pix.loadFromData(data, 'JPG')
-            if not r:
-                pix = QPixmap(data)
+            # if not r:
+            #     pix = QPixmap(data)
 
         self._orignalimage = QPixmap(pix)
 

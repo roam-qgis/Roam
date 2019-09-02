@@ -2,14 +2,8 @@ import os
 import sqlite3
 import uuid
 
-try:
-    import vidcap
-    from roam.editorwidgets import VideoCapture as vc
-
-    hascamera = True
-except ImportError:
-    hascamera = False
-
+from PyQt5.QtMultimedia import QCamera, QCameraInfo, QCameraViewfinderSettings, QCameraImageCapture
+from PyQt5.QtMultimediaWidgets import QCameraViewfinder
 from qgis.PyQt.QtWidgets import QWidget, QGridLayout, QLabel, QFileDialog, QAction, QToolBar, QVBoxLayout, QSizePolicy
 from qgis.PyQt.QtGui import QPixmap, QImage, QIcon, QTextDocument, QPainter
 from qgis.PyQt.QtCore import QByteArray, pyqtSignal, QVariant, QTimer, Qt, QSize, QDateTime, QPointF
@@ -114,8 +108,6 @@ class _CameraWidget(QWidget):
 
     def __init__(self, parent=None):
         super(_CameraWidget, self).__init__(parent)
-        self.cameralabel = QLabel()
-        self.cameralabel.setScaledContents(True)
         self.setLayout(QGridLayout())
         self.toolbar = QToolBar()
         spacer = QWidget()
@@ -125,41 +117,30 @@ class _CameraWidget(QWidget):
         self.toolbar.addWidget(spacer)
         self.swapaction = self.toolbar.addAction(QIcon(":/widgets/cameraswap"), "Swap Camera")
         self.swapaction.triggered.connect(self.swapcamera)
-        self.cameralabel.mouseReleaseEvent = self.takeimage
         self.layout().setContentsMargins(0, 0, 0, 0)
         self.layout().addWidget(self.toolbar)
-        self.layout().addWidget(self.cameralabel)
-        self.timer = QTimer()
-        self.timer.setInterval(20)
-        self.timer.timeout.connect(self.showimage)
-        self.cam = None
-        self.pixmap = None
-        self.currentdevice = 1
+
+        self.current_camera_index = 0
+        self.camera = None
+        self.viewfinder = QCameraViewfinder()
+        self.layout().addWidget(self.viewfinder)
+        self.viewfinder.mousePressEvent = self.capture
+        self.viewfinder.show()
+        self.viewfinder.setAspectRatioMode(Qt.KeepAspectRatioByExpanding)
+
+    def capture(self, *args):
+        self.camera.searchAndLock()
+        self.imageCapture.capture(r"C:\temp\wat.jpg")
+        self.camera.unlock()
 
     def swapcamera(self):
-        self.stop()
-        if self.currentdevice == 0:
-            self.start(1)
+        cameras = QCameraInfo.availableCameras()
+        if self.current_camera_index + 1 == len(cameras):
+            self.current_camera_index = 0
         else:
-            self.start(0)
+            self.current_camera_index += 1
 
-    def showimage(self):
-        if self.cam is None:
-            return
-
-        img = self.cam.getImage()
-        self.image = ImageQt(img)
-        pixmap = QPixmap.fromImage(self.image)
-        self.cameralabel.setPixmap(pixmap)
-
-    def takeimage(self, *args):
-        self.timer.stop()
-        img = self.cam.getImage()
-        self.image = ImageQt(img)
-        self.pixmap = QPixmap.fromImage(self.image)
-        self.cameralabel.setPixmap(self.pixmap)
-        self.imagecaptured.emit(self.pixmap)
-        self.done.emit()
+        self.start(self.current_camera_index)
 
     @property
     def camera_res(self):
@@ -167,28 +148,18 @@ class _CameraWidget(QWidget):
         return width, height
 
     def start(self, dev=1):
-        try:
-            self.cam = vc.Device(dev)
-            try:
-                width, height = self.camera_res
-                self.cam.setResolution(int(width), int(height))
-            except KeyError:
-                pass
-            self.currentdevice = dev
-        except vidcap.error:
-            if dev == 0:
-                utils.error("Could not start camera")
-                raise CameraError("Could not start camera")
-            self.start(dev=0)
-            return
-
-        roam.config.settings['camera'] = self.currentdevice
-        self.timer.start()
-
-    def stop(self):
-        self.timer.stop()
-        del self.cam
-        self.cam = None
+        if self.camera:
+            self.camera.stop()
+        cameras = QCameraInfo.availableCameras()
+        self.camera = QCamera(cameras[dev])
+        self.camera.setViewfinder(self.viewfinder)
+        self.camera.setCaptureMode(QCamera.CaptureStillImage)
+        self.imageCapture = QCameraImageCapture(self.camera)
+        self.camera.start()
+        # settings = QCameraViewfinderSettings()
+        # settings.setResolution(QSize(1280, 720))
+        # self.camera.setViewfinderSettings(settings)
+        # print(self.camera.supportedViewfinderFrameRateRanges(settings)[0].maximumFrameRate)
 
 
 class CameraWidget(LargeEditorWidget):
@@ -209,7 +180,7 @@ class CameraWidget(LargeEditorWidget):
         self.emitvaluechanged(self._value)
 
     def after_load(self):
-        camera = roam.config.settings.get('camera', 1)
+        camera = roam.config.settings.get('camera', 0)
         try:
             self.widget.start(dev=camera)
         except CameraError as ex:
@@ -423,8 +394,7 @@ class ImageWidget(EditorWidget):
     @property
     def actions(self):
         yield self.selectAction
-        if hascamera:
-            yield self.cameraAction
+        yield self.cameraAction
         yield self.drawingAction
 
     def _updateImageGPSData(self):
@@ -507,7 +477,7 @@ class ImageWidget(EditorWidget):
         return saved
 
     def setvalue(self, value):
-        if self.savetofile and isinstance(value, basestring):
+        if self.savetofile and isinstance(value, str):
             self.filename = value
 
         if isinstance(value, QPixmap):
@@ -516,7 +486,7 @@ class ImageWidget(EditorWidget):
             return
 
         if self.tobase64 and value:
-            value = QByteArray.fromBase64(value)
+            value = QByteArray.fromBase64(value.encode("utf-8"))
 
         self.widget.loadImage(value, fromfile=self.savetofile)
         self.emitvaluechanged()
