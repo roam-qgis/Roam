@@ -111,7 +111,7 @@ class MainWindow(ui_mainwindow.Ui_MainWindow, QMainWindow):
         self.updatelegend()
 
         self.projectwidget.requestOpenProject.connect(self.loadProject)
-        QgsProject.instance().readProject.connect(self._readProject)
+        QgsProject.instance().readProject.connect(self.projectOpened)
 
         self.gpswidget.setgps(GPS)
         self.gpswidget.settracking(self.tracking)
@@ -482,25 +482,21 @@ class MainWindow(ui_mainwindow.Ui_MainWindow, QMainWindow):
     def viewprojects(self):
         self.stackedWidget.setCurrentIndex(1)
 
-    @roam.utils.timeit
-    def _readProject(self, doc):
-        """
-        readProject is called by QgsProject once the map layer has been
-        populated with all the layers
-        """
-        print("READ PROJECT. GET CRS")
-        self.projectOpened()
-        GPS.crs = self.canvas_page.crs
-
     @property
-    def enabled_plugins(self):
+    def enabled_plugins(self) -> list:
+        """
+        Return the names of the enabled plugins
+        :return: List of plugin names that should be enabled.
+        """
         return self.settings.get('plugins', [])
 
     @roam.utils.timeit
-    def projectOpened(self):
+    def projectOpened(self, doc):
         """
-            Called when a new project is opened in QGIS.
+        Called when a new project is opened in QGIS.
+        :param: doc The project document that was opened in QGIS.
         """
+        GPS.crs = self.canvas_page.crs
         projectpath = QgsProject.instance().fileName()
         self.project = Project.from_folder(os.path.dirname(projectpath))
 
@@ -533,7 +529,10 @@ class MainWindow(ui_mainwindow.Ui_MainWindow, QMainWindow):
         self.dataentrywidget.project = self.project
         RoamEvents.projectloaded.emit(self.project)
 
-    def clear_plugins(self):
+    def clear_plugins(self) -> None:
+        """
+        Clear the loaded plugins.
+        """
         self.projectbuttons = []
         self.projectbuttons.append(self.actionMap)
         self.projectbuttons.append(self.actionLegend)
@@ -547,7 +546,12 @@ class MainWindow(ui_mainwindow.Ui_MainWindow, QMainWindow):
             self.menutoolbar.removeAction(action)
         self.pluginactions = []
 
-    def add_plugins(self, pluginnames):
+    def add_plugins(self, pluginnames) -> None:
+        """
+        Add loaded plugins panels to the main interface.
+        :param pluginnames: The names of the plugins to load into the interface
+        :return:
+        """
         for name in pluginnames:
             # Get the plugin
             try:
