@@ -445,15 +445,18 @@ class MapWidget(Ui_CanvasWidget, QMainWindow):
         self.statusbar.addWidget(self.gpslabelposition)
         self.statusbar.addPermanentWidget(self.scalebutton)
 
-        self.canvas.extentsChanged.connect(self.updatestatuslabel)
-        self.canvas.scaleChanged.connect(self.updatestatuslabel)
+        self.canvas.extentsChanged.connect(self.update_status_label)
+        self.canvas.scaleChanged.connect(self.update_status_label)
 
         GPS.gpsposition.connect(self.update_gps_label)
         GPS.gpsdisconnected.connect(self.gps_disconnected)
 
         self.connectButtons()
 
-    def clear_plugins(self):
+    def clear_plugins(self) -> None:
+        """
+        Clear all the plugin added toolbars from the map interface.
+        """
         toolbars = self.findChildren(QToolBar)
         for toolbar in toolbars:
             if toolbar.property("plugin_toolbar"):
@@ -461,7 +464,14 @@ class MapWidget(Ui_CanvasWidget, QMainWindow):
                 self.removeToolBar(toolbar)
                 toolbar.deleteLater()
 
-    def add_plugins(self, pluginnames):
+    def add_plugins(self, pluginnames) -> None:
+        """
+        Add the given plugins to to the mapping interface.
+
+        Adds the toolbars the plugin exposes as new toolbars for the user.
+        :param pluginnames: The names of the plugins to load.  Must already be loaded
+                            by the plugin loader
+        """
         for name in pluginnames:
             # Get the plugin
             try:
@@ -477,6 +487,11 @@ class MapWidget(Ui_CanvasWidget, QMainWindow):
             self.load_plugin_toolbars(toolbars)
 
     def load_plugin_toolbars(self, toolbars):
+        """
+        Load the plugin toolbars into the mapping interface.
+        :param toolbars: The list of toolbars class objects to load.
+        :return:
+        """
         for ToolBarClass in toolbars:
             toolbar = ToolBarClass(plugins.api, self)
             self.addToolBar(Qt.BottomToolBarArea, toolbar)
@@ -544,6 +559,11 @@ class MapWidget(Ui_CanvasWidget, QMainWindow):
         self.gpslabelposition.setText("")
 
     def zoom_to_feature(self, feature):
+        """
+        Zoom to the given feature in the map.
+        :param feature:
+        :return:
+        """
         box = feature.geometry().boundingBox()
         xmin, xmax, ymin, ymax = box.xMinimum(), box.xMaximum(), box.yMinimum(), box.yMaximum()
         xmin -= 5
@@ -554,7 +574,7 @@ class MapWidget(Ui_CanvasWidget, QMainWindow):
         self.canvas.setExtent(box)
         self.canvas.refresh()
 
-    def updatestatuslabel(self, *args):
+    def update_status_label(self, *args) -> None:
         """
         Update the status bar labels when the information has changed.
         """
@@ -564,27 +584,27 @@ class MapWidget(Ui_CanvasWidget, QMainWindow):
         scale = self.scalewidget.toString(scale)
         self.scalebutton.setText(scale)
 
-    def refresh_map(self):
+    def refresh_map(self) -> None:
         """
         Refresh the map
         """
         self.canvas.refresh()
 
-    def updatescale(self):
+    def updatescale(self) -> None:
         """
         Update the scale of the map with the current scale from the scale widget
         :return:
         """
         self.canvas.zoomScale(1.0 / self.scalewidget.scale())
 
-    def init_qgisproject(self, doc):
+    @property
+    def crs(self) -> QgsCoordinateReferenceSystem:
         """
-        Called when the project file is read for the firs time.
-        :param doc: The XML doc.
-        :return: The current canvas CRS
-        :note: This method is old and needs to be refactored into something else.
+        Get the CRS used that is being used in the canvas
+        :return: The QgsCoordinateReferenceSystem that is used by the canvas
         """
         return self.canvas.mapSettings().destinationCrs()
+
 
     def showEvent(self, *args, **kwargs):
         """
