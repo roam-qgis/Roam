@@ -325,7 +325,6 @@ class MapWidget(Ui_CanvasWidget, QMainWindow):
 
         self.current_form = None
         self.last_form = None
-        self.firstshow = True
         self.layerbuttons = []
         self.editfeaturestack = []
         self.lastgpsposition = None
@@ -604,16 +603,6 @@ class MapWidget(Ui_CanvasWidget, QMainWindow):
         :return: The QgsCoordinateReferenceSystem that is used by the canvas
         """
         return self.canvas.mapSettings().destinationCrs()
-
-
-    def showEvent(self, *args, **kwargs):
-        """
-        Handle the show event of the of the map widget. We have to do a little hack here to make the QGIS map refresh.
-        """
-        if Qgis.QGIS_VERSION_INT == 20200 and self.firstshow:
-            self.canvas.refresh()
-            self.canvas.repaint()
-            self.firstshow = False
 
     def feature_form_loaded(self, form, feature, *args):
         """

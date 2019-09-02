@@ -605,7 +605,6 @@ class MainWindow(ui_mainwindow.Ui_MainWindow, QMainWindow):
         QDir.setCurrent(os.path.dirname(project.projectfile))
         project.load_project()
 
-
     def close_project(self, project=None):
         """
         Close the current open project
