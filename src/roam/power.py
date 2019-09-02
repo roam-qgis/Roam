@@ -1,5 +1,6 @@
-#! /usr/bin/python
-
+"""
+TODO This is a SUPER SUPER OLD module and might not be needed anymore
+"""
 import sys
 import win32gui
 import win32con

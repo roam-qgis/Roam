@@ -1,11 +1,8 @@
-import os
 import traceback
 
-from qgis.PyQt.QtWidgets import QPushButton
 from qgis.PyQt.QtCore import QEvent, pyqtSignal
-
+from qgis.PyQt.QtWidgets import QPushButton
 from qgis.core import Qgis
-from qgis.gui import QgsMessageBar
 
 import roam.htmlviewer
 import roam.resources_rc

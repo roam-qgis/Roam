@@ -1,5 +1,5 @@
 from qgis.PyQt.QtCore import QModelIndex, pyqtSignal, QSize, Qt, QSortFilterProxyModel
-from qgis.PyQt.QtWidgets import QWidget, QDialog
+from qgis.PyQt.QtWidgets import QWidget
 
 from roam.flickwidget import FlickCharm
 from roam.ui.ui_list import Ui_BigList

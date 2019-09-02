@@ -1,10 +1,9 @@
 """
 Config file loading logic for Roam.
 """
-import os
 import yaml
-from yaml.reader import ReaderError
 from qgis.PyQt.QtCore import QSize
+from yaml.reader import ReaderError
 
 settings = {}
 

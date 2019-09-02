@@ -1,15 +1,14 @@
 from functools import partial
 
-from qgis.PyQt.QtWidgets import QTreeWidgetItem, QPushButton, QWidget, QAction, QSpacerItem, QSizePolicy
 from qgis.PyQt.QtGui import QIcon
-from roam.api.events import RoamEvents
-
-from ui.ui_sync import Ui_Form
-from popupdialogs import ActionPickerWidget
-from roam.flickwidget import FlickCharm
+from qgis.PyQt.QtWidgets import QWidget, QAction, QSpacerItem, QSizePolicy
 
 import roam.config
 import roam.syncing
+from roam.api.events import RoamEvents
+from roam.flickwidget import FlickCharm
+from roam.popupdialogs import ActionPickerWidget
+from roam.ui.ui_sync import Ui_Form
 
 
 class SyncWidget(Ui_Form, QWidget):

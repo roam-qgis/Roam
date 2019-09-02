@@ -1,18 +1,16 @@
-from qgis.PyQt.QtNetwork import QNetworkRequest, QNetworkAccessManager
-from qgis.PyQt.QtCore import pyqtSignal, QSize, QUrl, Qt
-from qgis.PyQt.QtWidgets import QListWidgetItem, QWidget
-from qgis.PyQt.QtGui import QPixmap, QBrush, QColor
-
-from functools import partial
-from roam.flickwidget import FlickCharm
-from roam.ui.ui_projectwidget import Ui_Form
-from roam.ui.ui_listmodules import Ui_ListModules
-
 import os
+
+from qgis.PyQt.QtCore import pyqtSignal, QSize, Qt
+from qgis.PyQt.QtGui import QPixmap
+from qgis.PyQt.QtWidgets import QListWidgetItem, QWidget
+
 import roam.api
 import roam.project
-import roam.utils
 import roam.updater
+import roam.utils
+from roam.flickwidget import FlickCharm
+from roam.ui.ui_listmodules import Ui_ListModules
+from roam.ui.ui_projectwidget import Ui_Form
 
 
 class ProjectWidget(Ui_Form, QWidget):

@@ -1,7 +1,7 @@
 import os
 from functools import partial
 
-from qgis.PyQt.QtCore import Qt, QFileInfo, QDir, QSize, QUrl
+from qgis.PyQt.QtCore import Qt, QDir, QSize, QUrl
 from qgis.PyQt.QtGui import QPixmap, QIcon, QDesktopServices
 from qgis.PyQt.QtWidgets import (QActionGroup, QWidget, QSizePolicy, QApplication, QAction)
 from qgis.PyQt.QtWidgets import QMainWindow
@@ -20,7 +20,6 @@ import roam.messagebaritems
 import roam.roam_style
 import roam.utils
 from roam.api import RoamEvents, GPS, RoamInterface, plugins
-from roam.api.featureform import DeleteFeatureException
 from roam.dataentrywidget import DataEntryWidget
 from roam.gpslogging import GPSLogging
 from roam.helpviewdialog import HelpPage

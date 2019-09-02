@@ -1,4 +1,4 @@
-from qgis.PyQt.QtWidgets import QWidget, QApplication, QButtonGroup
+from qgis.PyQt.QtWidgets import QWidget, QButtonGroup
 from qgis.PyQt.QtCore import QTime, Qt, QDateTime, pyqtSignal
 
 from roam import utils

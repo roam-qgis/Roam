@@ -1,5 +1,3 @@
-import sys
-import os
 import itertools
 
 from qgis.core import QgsExpression, QgsFeatureRequest, QgsProject

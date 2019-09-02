@@ -1,26 +1,22 @@
-import os
-
-from string import Template
 from collections import OrderedDict
+from string import Template
 
-from qgis.PyQt.QtWidgets import QWidget, QListWidgetItem, QAction
+from qgis.PyQt.QtCore import Qt, QEvent, pyqtSignal
 from qgis.PyQt.QtGui import QIcon, QMouseEvent, QKeySequence
-from qgis.PyQt.QtCore import Qt, QUrl, QEvent, pyqtSignal
 from qgis.PyQt.QtWebKitWidgets import QWebPage
-
+from qgis.PyQt.QtWidgets import QWidget, QListWidgetItem, QAction
 from qgis.core import (QgsExpression,
                        QgsFeatureRequest, QgsGeometry, NULL, QgsWkbTypes)
 
+from roam import templates
 from roam import utils
-from roam.popupdialogs import PickActionDialog
+from roam.api import RoamEvents, GPS
+from roam.api.utils import layer_by_name, values_from_feature
+from roam.dataaccess import database
 from roam.flickwidget import FlickCharm
 from roam.htmlviewer import updateTemplate, clear_image_cache
+from roam.popupdialogs import PickActionDialog
 from roam.ui.uifiles import (infodock_widget)
-from roam.api import RoamEvents, GPS
-from roam.dataaccess import database
-from roam.api.utils import layer_by_name, values_from_feature
-
-from roam import templates
 
 infotemplate = templates.get_template("info")
 infoblocktemplate = templates.get_template("infoblock")

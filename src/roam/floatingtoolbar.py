@@ -1,8 +1,6 @@
 from qgis.PyQt.QtWidgets import QToolBar, QActionGroup
 from qgis.PyQt.QtCore import Qt, QPoint
 
-from roam.utils import log
-
 
 class FloatingToolBar(QToolBar):
     """

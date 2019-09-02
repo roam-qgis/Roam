@@ -1,23 +1,15 @@
 import functools
-import os.path
-import os
-import getpass
 import inspect
 
 from qgis.PyQt.QtCore import *
-from qgis.PyQt.QtWidgets import *
 from qgis.PyQt.QtGui import *
+from qgis.core import QgsProject
 
-from qgis.core import QgsProject, QgsFeatureRequest, QgsFeature, QgsExpression, Qgis, QgsGeometry
-
-from roam.editorwidgets.featureformwidget import FeatureFormWidgetEditor
-from roam.utils import log, error
-from roam.api import featureform, RoamEvents
-from roam.ui.uifiles import dataentry_widget, dataentry_base
-from roam.structs import CaseInsensitiveDict
-
-import roam.defaults as defaults
 import roam.editorwidgets.core
+from roam.api import featureform, RoamEvents
+from roam.editorwidgets.featureformwidget import FeatureFormWidgetEditor
+from roam.structs import CaseInsensitiveDict
+from roam.ui.uifiles import dataentry_widget, dataentry_base
 
 
 class DataEntryWidget(dataentry_widget, dataentry_base):

@@ -1,11 +1,11 @@
 import os
 
 from qgis.PyQt.QtCore import (QByteArray, QDate, QDateTime, QTime, QPropertyAnimation,
-                          QEasingCurve)
+                              QEasingCurve)
 from qgis.PyQt.QtGui import QPixmap, QImageReader, QIcon
-from qgis.PyQt.QtWidgets import (QWidget, QGridLayout, QFrame, QApplication, QToolBar,
-                             QSizePolicy, QLabel, QGraphicsOpacityEffect, QPushButton)
 from qgis.PyQt.QtWebKitWidgets import QWebView, QWebPage
+from qgis.PyQt.QtWidgets import (QWidget, QGridLayout, QFrame, QApplication, QToolBar,
+                                 QSizePolicy, QLabel, QGraphicsOpacityEffect, QPushButton)
 
 from roam import templates
 

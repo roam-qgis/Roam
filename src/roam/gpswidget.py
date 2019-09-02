@@ -1,7 +1,5 @@
 from qgis.PyQt.QtWidgets import QWidget
-from ui.ui_gps import Ui_gpsWidget
-
-import roam.config
+from roam.ui.ui_gps import Ui_gpsWidget
 
 
 class GPSWidget(Ui_gpsWidget, QWidget):

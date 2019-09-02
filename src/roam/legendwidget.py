@@ -1,13 +1,9 @@
-import math
-import functools
-from qgis.PyQt.QtCore import Qt, QSize, QRect, QPoint, pyqtSignal, QRectF
-from qgis.PyQt.QtWidgets import QWidget, QLabel
-from qgis.PyQt.QtGui import QPixmap, QPainter, QBrush, QColor, QPen, QTextOption, QFontMetrics, QImage, QFont
-
+from qgis.PyQt.QtCore import QSize, pyqtSignal
+from qgis.PyQt.QtGui import QPixmap, QFont
+from qgis.PyQt.QtWidgets import QWidget
 from qgis.core import QgsLayerTreeModel, QgsLayerTreeNode
 from qgis.core import QgsMapRendererParallelJob
-
-from ui.ui_legend import Ui_legendsWidget
+from roam.ui.ui_legend import Ui_legendsWidget
 
 ICON_SIZE = QSize(32, 32)
 

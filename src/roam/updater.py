@@ -1,25 +1,22 @@
-import yaml
 import functools
 import os
-import re
+import subprocess
+import urllib
+import urllib.parse
 import zipfile
+from collections import defaultdict
+from queue import Queue
 from urllib.parse import urlparse
 from urllib.request import urlopen
-import urllib.parse
-import urllib
-from queue import Queue
-import subprocess
 
-import roam.utils
-
-from collections import defaultdict
-from qgis.PyQt.QtNetwork import QNetworkRequest, QNetworkReply
+import yaml
 from qgis.PyQt.QtCore import QObject, pyqtSignal, QUrl, QThread
-
+from qgis.PyQt.QtNetwork import QNetworkRequest, QNetworkReply
 from qgis.core import QgsNetworkAccessManager
 
-import roam.project
 import roam.config
+import roam.project
+import roam.utils
 
 
 class UpdateExpection(Exception):

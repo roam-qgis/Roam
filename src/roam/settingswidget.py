@@ -1,4 +1,4 @@
-from qgis.PyQt.QtCore import pyqtSignal, QThread, QObject
+from qgis.PyQt.QtCore import pyqtSignal, QThread
 from qgis.PyQt.QtWidgets import QWidget
 from qgis.core import QgsGpsDetector, Qgis, QgsProviderRegistry
 
