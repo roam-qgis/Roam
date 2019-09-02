@@ -311,7 +311,7 @@ class CurrentSelection(QgsRubberBand):
         super(CurrentSelection, self).setColor(color)
 
 
-from ui.ui_mapwidget import Ui_CanvasWidget
+from roam.ui.ui_mapwidget import Ui_CanvasWidget
 
 
 class MapWidget(Ui_CanvasWidget, QMainWindow):
@@ -336,8 +336,6 @@ class MapWidget(Ui_CanvasWidget, QMainWindow):
 
         self.bridge = QgsLayerTreeMapCanvasBridge(QgsProject.instance().layerTreeRoot(), self.canvas)
         self.bridge.setAutoSetupOnFirstLayer(False)
-        # QgsProject.instance().writeProject.connect(self.bridge.writeProject)
-        # QgsProject.instance().readProject.connect(self.bridge.readProject)
 
         self.canvas.setCanvasColor(Qt.white)
         self.canvas.enableAntiAliasing(True)
@@ -353,8 +351,6 @@ class MapWidget(Ui_CanvasWidget, QMainWindow):
             QgsApplication.setMaxThreads(threadcount)
             self.canvas.setParallelRenderingEnabled(True)
 
-        pal = QgsPalLabeling()
-        # self.canvas.mapRenderer().setLabelingEngine(pal)
         self.canvas.setFrameStyle(QFrame.NoFrame)
 
         self.editgroup = QActionGroup(self)
@@ -364,7 +360,7 @@ class MapWidget(Ui_CanvasWidget, QMainWindow):
         self.editgroup.addAction(self.actionZoom_Out)
         self.editgroup.addAction(self.actionInfo)
 
-        self.actionGPS = GPSAction(":/icons/gps", self.canvas, self)
+        self.actionGPS = GPSAction(self.canvas, self)
         self.projecttoolbar.addAction(self.actionGPS)
 
         if roam.config.settings.get('north_arrow', False):

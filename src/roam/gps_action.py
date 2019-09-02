@@ -26,7 +26,8 @@ if os.name == 'nt':
 class GPSAction(QAction):
     gpsfixed = pyqtSignal(bool)
 
-    def __init__(self, icon, canvas, parent):
+    def __init__(self, canvas, parent):
+        icon = ":/icons/gps"
         super(GPSAction, self).__init__(QIcon(icon),
                                         QApplication.translate("GPSAction", "Enable GPS"),
                                         parent)
