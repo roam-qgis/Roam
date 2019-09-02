@@ -102,7 +102,7 @@ def layer_value(feature, layer, defaultconfig):
             return
         if feature.geometry():
             rect = feature.geometry().boundingBox()
-            if layer.geometryType() == Qgis.Point:
+            if layer.geometryType() == QgsWkbTypes.PointGeometry:
                 point = feature.geometry().asPoint()
                 rect = QgsRectangle(point.x(), point.y(), point.x() + 10, point.y() + 10)
 
@@ -118,7 +118,7 @@ def layer_value(feature, layer, defaultconfig):
         expression = expression.replace("$roamgeometry", "@roamgeometry")
 
         exp = QgsExpression(expression)
-        exp.prepare(searchlayer.pendingFields())
+        exp.prepare(searchlayer.fields())
         if exp.hasParserError():
             error = exp.parserErrorString()
             roam.utils.warning(error)

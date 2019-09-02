@@ -133,7 +133,7 @@ class ListWidget(EditorWidget):
         expression = None
         if filterexp:
             expression = QgsExpression(filterexp)
-            expression.prepare(layer.pendingFields())
+            expression.prepare(layer.fields())
             if expression.hasParserError():
                 roam.utils.warning("Expression has parser error: {}".format(expression.parserErrorString()))
                 return

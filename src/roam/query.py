@@ -27,7 +27,7 @@ class Where(object):
         func = self.filterfunc
         if not hasattr(self.filterfunc, '__call__'):
             exp = QgsExpression(self.filterfunc)
-            fields = self.layer.pendingFields()
+            fields = self.layer.fields()
             exp.prepare(fields)
             func = exp.evaluate
         # Return a generator of features that match the given where check.

@@ -471,7 +471,7 @@ class FormWidget(ui_formwidget.Ui_Form, WidgetBase):
         Auto add all fields to the form config. Any missing fields will be added.
         """
         used = list(self.usedfields())
-        for field in self.selected_layer.pendingFields():
+        for field in self.selected_layer.fields():
             if field.name().lower() in used:
                 continue
 
@@ -952,7 +952,7 @@ class InfoNode(ui_infonode.Ui_Form, WidgetBase):
 
         if ".sqlite" in source or name == "mssql" and layer.isValid():
             keys = layer.pkAttributeList()
-            fields = layer.pendingFields()
+            fields = layer.fields()
             if keys:
                 fieldnames = " + ".join(fields[key].name() for key in keys)
             elif fields.count() > 0:

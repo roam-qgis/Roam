@@ -4,6 +4,7 @@ from qgis.PyQt.QtGui import *
 from qgis.core import *
 from qgis.gui import *
 
+from qgis.core import QgsWkbTypes
 from roam.maptools.touchtool import TouchMapTool
 from roam.api import GPS, RoamEvents
 
@@ -28,21 +29,20 @@ class RubberBand(QgsRubberBand):
         self.blackpen = QPen(Qt.black)
         self.blackpen.setWidth(0.5)
         self.whitebrush = QBrush(Qt.white)
-        self.distancearea = QgsDistanceArea()
-        self.createdistancearea()
-        self.unit = self.canvas.mapRenderer().destinationCrs().mapUnits()
+        self.unit = self.canvas.mapUnits()
+
+        self.distancearea = self.createdistancearea()
 
     def createdistancearea(self):
-        self.distancearea.setSourceCrs(self.canvas.mapRenderer().destinationCrs().srsid())
+        distancearea = QgsDistanceArea()
+        dest = self.canvas.mapSettings().destinationCrs()
+        distancearea.setSourceCrs(dest, QgsProject.instance().transformContext())
         ellispoid = QgsProject.instance().readEntry("Measure", "/Ellipsoid", GEO_NONE)
-        self.distancearea.setEllipsoid(ellispoid[0])
-        # mode = self.canvas.mapRenderer().hasCrsTransformEnabled()
-        # self.distancearea.setEllipsoidalMode(ellispoidemode)
+        distancearea.setEllipsoid(ellispoid[0])
+        return distancearea
 
     def paint(self, p, *args):
         super(RubberBand, self).paint(p)
-
-        # Enable to debug the render area
 
         # p.drawRect(self.boundingRect())
         if not roam.config.settings.get("draw_distance", True):
@@ -197,20 +197,20 @@ class PolylineTool(QgsMapToolEdit):
 
         self.startcolour = self.valid_color
         self.editcolour = QColor.fromRgb(0, 255, 0, 150)
-        self.band = RubberBand(self.canvas, Qgis.Line, width=5, iconsize=20)
+        self.band = RubberBand(self.canvas, QgsWkbTypes.LineGeometry, width=5, iconsize=20)
         self.band.setColor(self.startcolour)
 
-        self.errorband = RubberBand(self.canvas, Qgis.Line, width=5, iconsize=20)
+        self.errorband = RubberBand(self.canvas, QgsWkbTypes.LineGeometry, width=5, iconsize=20)
         self.errorband.setColor(QColor.fromRgb(153, 153, 153, 90))
-        self.errorlocations = QgsRubberBand(self.canvas, Qgis.Point)
+        self.errorlocations = QgsRubberBand(self.canvas, QgsWkbTypes.PointGeometry)
         self.errorlocations.setColor(self.invalid_color)
         self.errorlocations.setIconSize(20)
         self.errorlocations.setIcon(QgsRubberBand.ICON_BOX)
 
-        self.pointband = QgsRubberBand(self.canvas, Qgis.Point)
+        self.pointband = QgsRubberBand(self.canvas, QgsWkbTypes.PointGeometry)
         self.pointband.setColor(self.startcolour)
         self.pointband.setIconSize(20)
-        self.snapper = QgsMapCanvasSnapper(self.canvas)
+        self.snapper = self.canvas.snappingUtils()
         self.capturing = False
         self.cursor = QCursor(QPixmap(["16 16 3 1",
                                        "      c None",
@@ -527,15 +527,15 @@ class PolylineTool(QgsMapToolEdit):
         self.geometryComplete.emit(geometry)
 
     def clearErrors(self):
-        self.errorband.reset(Qgis.Line)
-        self.errorlocations.reset(Qgis.Point)
+        self.errorband.reset(QgsWkbTypes.LineGeometry)
+        self.errorlocations.reset(QgsWkbTypes.PointGeometry)
 
     def clearBand(self):
         self.reset()
 
     def reset(self, *args):
-        self.band.reset(Qgis.Line)
-        self.pointband.reset(Qgis.Point)
+        self.band.reset(QgsWkbTypes.LineGeometry)
+        self.pointband.reset(QgsWkbTypes.PointGeometry)
         self.capturing = False
         self.set_tracking(False)
         self.undoaction.setEnabled(False)
@@ -573,7 +573,7 @@ class PolylineTool(QgsMapToolEdit):
             self.band.setColor(self.editcolour)
             self.pointband.setColor(self.editcolour)
             geomtype = geom.type()
-            if geomtype == Qgis.Polygon:
+            if geomtype == QgsWkbTypes.PolygonGeometry:
                 nodes = geom.asPolygon()[0]
             else:
                 if geom.isMultipart():
@@ -604,7 +604,7 @@ class PolygonTool(PolylineTool):
 
     def reset(self):
         super(PolygonTool, self).reset()
-        self.band.reset(Qgis.Polygon)
+        self.band.reset(QgsWkbTypes.PolygonGeometry)
 
 
 class PointTool(TouchMapTool):
@@ -646,7 +646,7 @@ class PointTool(TouchMapTool):
         self.gpscapture = GPSCaptureAction(self, 'point')
         self.gpscapture.triggered.connect(self.addatgps)
         self.snapper = QgsMapCanvasSnapper(self.canvas)
-        self.pointband = RubberBand(self.canvas, Qgis.Point)
+        self.pointband = RubberBand(self.canvas, QgsWkbTypes.PointGeometry)
         self.startcolour = QColor.fromRgb(0, 0, 255, 100)
         self.pointband.setColor(self.startcolour)
         self.pointband.setIconSize(20)

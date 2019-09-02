@@ -1,7 +1,7 @@
 from qgis.PyQt.QtCore import QAbstractItemModel, QModelIndex, Qt, pyqtSignal, QMimeData, QByteArray, QSortFilterProxyModel
 from qgis.PyQt.QtGui import QIcon, QFont, QTextBlockUserData, QStandardItem, QStandardItemModel
 
-from qgis.core import Qgis, QgsProject, QgsMapLayer
+from qgis.core import Qgis, QgsProject, QgsMapLayer, QgsWkbTypes
 
 import os
 
@@ -12,10 +12,10 @@ import configmanager.ui.resources_rc
 plugin_path = os.path.dirname(os.path.realpath(__file__))
 
 icons = {
-    Qgis.Point: ":/icons/PointLayer",
-    Qgis.Polygon: ":/icons/PolygonLayer",
-    Qgis.Line: ":/icons/LineLayer",
-    Qgis.NoGeometry: ":/icons/TableLayer"
+    QgsWkbTypes.PointGeometry: ":/icons/PointLayer",
+    QgsWkbTypes.PolygonGeometry: ":/icons/PolygonLayer",
+    QgsWkbTypes.LineGeometry: ":/icons/LineLayer",
+    QgsWkbTypes.NoGeometry: ":/icons/TableLayer"
 }
 
 
@@ -216,7 +216,7 @@ class QgsFieldModel(QAbstractItemModel):
     def setLayer(self, layer):
         self.layer = layer
         self.beginResetModel()
-        self.fields = layer.pendingFields().toList()
+        self.fields = layer.fields().toList()
         self.endResetModel()
 
     def flags(self, index):

@@ -3,6 +3,7 @@ import copy
 import glob
 import yaml
 import importlib
+import importlib.util
 
 from collections import OrderedDict
 
@@ -364,9 +365,17 @@ class Form(object):
         return [widget for widget in widgets if widget['field'] == fieldname][0]
 
     def _loadmodule(self):
-        projectfolder = os.path.abspath(os.path.join(self.folder, '..'))
-        module = imp.find_module(self.name, [projectfolder])
-        self._module = imp.load_module(self.name, *module)
+        """
+        Load the forms python module
+        :return:
+        """
+
+        location = os.path.join(self.folder, "__init__.py")
+        spec = importlib.util.spec_from_file_location(self.project.id + "." + self.name, location)
+        module = importlib.util.module_from_spec(spec)
+        print(module)
+        spec.loader.exec_module(module)
+        self._module = module
 
     @property
     def module(self):
@@ -386,10 +395,9 @@ class Form(object):
         """
 
         layer = self.QGISLayer
-        fields = layer.pendingFields()
+        fields = layer.fields()
         feature = QgsFeature(fields)
         if data:
-            print("Loading data")
             for key, value in data.items():
                 feature[key] = value
         else:
@@ -664,11 +672,22 @@ class Project(QObject):
                 config.update(variables)
                 yield replication.BatchFileSync(name, self, **config)
 
+    @property
+    def module(self):
+        name = os.path.basename(self.folder)
+        location = os.path.join(self.folder, "__init__.py")
+        spec = importlib.util.spec_from_file_location(name, location)
+        module = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(module)
+        return module
+
     def getPanels(self):
+        raise NotImplementedError("Panel support not migrated in Roam 3")
+
         for module in glob.iglob(os.path.join(self.folder, "_panels", '*.py')):
             modulename = os.path.splitext(os.path.basename(module))[0]
             try:
-                panelmod = imp.load_source(modulename, module)
+                panelmod = self.module.load_source(modulename, module)
                 yield panelmod.createPanel()
             except ImportError as err:
                 log("Panel import error {}".format(err))
@@ -681,18 +700,12 @@ class Project(QObject):
             Returns True if the user is able to load the project, else False
         """
         try:
-            rootfolder = os.path.abspath(os.path.join(self.folder, '..'))
-            name = os.path.basename(self.folder)
-            module = imp.find_module(name, [rootfolder])
-            module = imp.load_module(name, *module)
-            return module.onProjectLoad()
+            if hasattr(self.module, "onProjectLoad"):
+                return self.module.onProjectLoad()
+            else:
+                return True, None
         except ImportError as err:
             log(err)
-            print(err)
-            return True, None
-        except AttributeError as err:
-            log("No onProjectLoad attribute found")
-            print("No onProjectLoad attribute found")
             return True, None
 
     def formsforlayer(self, layername):

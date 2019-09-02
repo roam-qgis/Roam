@@ -141,7 +141,7 @@ class DataEntryWidget(dataentry_widget, dataentry_base):
         layer = form.QGISLayer
         attributes = feature.attributes()
 
-        fields = [field.name().lower() for field in layer.pendingFields()]
+        fields = [field.name().lower() for field in layer.fields()]
         # Something is strange with default values and spatilite. Just delete them for now.
         if layer.dataProvider().name() == 'spatialite':
             pkindexes = layer.dataProvider().pkAttributeIndexes()

@@ -544,9 +544,14 @@ class MainWindow(ui_mainwindow.Ui_MainWindow, QMainWindow):
         self.project = Project.from_folder(os.path.dirname(projectpath))
 
         # Show panels
-        for panel in self.project.getPanels():
-            self.mainwindow.addDockWidget(Qt.BottomDockWidgetArea, panel)
-            self.panels.append(panel)
+        try:
+            ## TODO Port this logic or drop in Roam 3
+            for panel in self.project.getPanels():
+                self.mainwindow.addDockWidget(Qt.BottomDockWidgetArea, panel)
+                self.panels.append(panel)
+        except NotImplementedError:
+            pass
+
 
         self.clear_plugins()
         self.add_plugins(self.project.enabled_plugins)

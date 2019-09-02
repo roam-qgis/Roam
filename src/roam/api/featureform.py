@@ -340,7 +340,7 @@ class FeatureFormBase(QWidget):
         layer = self.form.QGISLayer
         # Crash in QGIS if you lookup a field that isn't found.
         # We just make a dict with all fields lower because QgsFields is case sensitive.
-        fields = {field.name().lower(): field for field in layer.pendingFields().toList()}
+        fields = {field.name().lower(): field for field in layer.fields().toList()}
 
         # Build a lookup for events
         self.events = collections.defaultdict(list)

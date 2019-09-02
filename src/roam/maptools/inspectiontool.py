@@ -74,7 +74,7 @@ class InspectionTool(QgsMapTool):
             feature = self.layerfrom.getFeatures(rq).next()
             self.band.setToGeometry(feature.geometry(), self.layerfrom)
 
-            fields = self.layerto.pendingFields()
+            fields = self.layerto.fields()
             newfeature = QgsFeature(fields)
             if self.layerto.geometryType() == QgsWkbTypes.PointGeometry:
                 newfeature.setGeometry(QgsGeometry.fromPointXY(point))

@@ -87,7 +87,7 @@ class IndexBuilder(QObject):
                         yield count, layer, fid, data
 
         def get_data(layer, config, rowid):
-            layerfields = [field.name() for field in layer.pendingFields()]
+            layerfields = [field.name() for field in layer.fields()]
             configfields = config['columns']
             # Pull out the fields that match on the layer and the config:
             fields = set(layerfields) & set(configfields)
