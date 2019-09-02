@@ -1,7 +1,7 @@
 import os
 from functools import partial
 
-from qgis.PyQt.QtCore import Qt, QFileInfo, QDir, QSize
+from qgis.PyQt.QtCore import Qt, QFileInfo, QDir, QSize, QUrl
 from qgis.PyQt.QtGui import QPixmap, QIcon, QDesktopServices
 from qgis.PyQt.QtWidgets import (QActionGroup, QWidget, QSizePolicy, QApplication, QAction)
 from qgis.PyQt.QtWidgets import QMainWindow
@@ -108,10 +108,10 @@ class MainWindow(ui_mainwindow.Ui_MainWindow, QMainWindow):
         self.pluginactions = []
 
         self.actionQuit.triggered.connect(self.exit)
-        self.updatelegend()
+        self.init_legend()
 
-        self.projectwidget.requestOpenProject.connect(self.loadProject)
-        QgsProject.instance().readProject.connect(self.projectOpened)
+        self.projectwidget.requestOpenProject.connect(self.load_roam_project)
+        QgsProject.instance().readProject.connect(self.project_opened)
 
         self.gpswidget.setgps(GPS)
         self.gpswidget.settracking(self.tracking)
@@ -159,8 +159,8 @@ class MainWindow(ui_mainwindow.Ui_MainWindow, QMainWindow):
         RoamEvents.openfeatureform.connect(self.openForm)
         RoamEvents.openkeyboard.connect(self.openkeyboard)
         RoamEvents.editgeometry_complete.connect(self.on_geometryedit)
-        RoamEvents.onShowMessage.connect(self.showUIMessage)
-        RoamEvents.selectionchanged.connect(self.showInfoResults)
+        RoamEvents.onShowMessage.connect(self.show_ui_message)
+        RoamEvents.selectionchanged.connect(self.show_info_results)
         RoamEvents.show_widget.connect(self.dataentrywidget.add_widget)
         RoamEvents.closeProject.connect(self.close_project)
 
@@ -171,7 +171,12 @@ class MainWindow(ui_mainwindow.Ui_MainWindow, QMainWindow):
         iface = RoamInterface(RoamEvents, GPS, self, self.canvas_page, self)
         plugins.api = iface
 
-    def delete_feature(self, form, feature):
+    def delete_feature(self, form, feature) -> None:
+        """
+        Slot called when a feature needs to be deleted.
+        :param form: The form to use when deleting the feature.
+        :param feature: The feature to delete.
+        """
         featureform = form.create_featureform(feature)
 
         try:
@@ -192,11 +197,20 @@ class MainWindow(ui_mainwindow.Ui_MainWindow, QMainWindow):
 
         featureform.featuredeleted(feature)
 
-    def set_projectbuttons(self, visible):
+    def show_project_menu_buttons(self, visible: bool) -> None:
+        """
+        Show/Hide the the project side menu buttons.
+        :param visible: The visible state for the menu buttons.
+        """
         for action in self.projectbuttons:
             action.setVisible(visible)
 
-    def loadpages(self, pages):
+    def add_plugin_pages(self, pages) -> None:
+        """
+        Add pages from the plugin to the side pabel.
+        :param pages: List of plugin page classes to create and attach to the side panel.
+        """
+
         def safe_connect(method, to):
             try:
                 method.connect(to)
@@ -226,22 +240,40 @@ class MainWindow(ui_mainwindow.Ui_MainWindow, QMainWindow):
             self.pluginactions.append(action)
             self.menuGroup.addAction(action)
 
-    def showUIMessage(self, label, message, level=Qgis.Info, time=0, extra=''):
+    def show_ui_message(self, label, message, level=Qgis.Info, time=0, extra='') -> None:
+        """
+        Show a message to the user in the message bar.
+        :param label: The label used as the message header.
+        :param message: The main message.
+        :param level: The level of the message. Default Qgis.Info
+        :param time: The length of time in seconds to show the message.
+        :param extra: An extra data to show the user.
+        :return:
+        """
         self.bar.pushMessage(label, message, level, duration=time, extrainfo=extra)
 
-    def updatelegend(self):
+    def init_legend(self) -> None:
+        """
+        Init the legend object with the canvas.
+        :return:
+        """
         self.legendpage.init(self.canvas)
 
-    def openkeyboard(self):
+    def openkeyboard(self) -> None:
+        """
+        Open the on screen keyboard
+        :return:
+        """
         if not roam.config.settings.get('keyboard', True):
             return
 
+        # TODO Use the Qt keyboard
         roam.api.utils.open_keyboard()
 
-    def viewurl(self, url):
+    def viewurl(self, url: QUrl) -> None:
         """
         Open a URL in Roam
-        :param url:
+        :param url: The URL to view. bb
         :return:
         """
         key = url.toString().lstrip('file://')
@@ -262,43 +294,27 @@ class MainWindow(ui_mainwindow.Ui_MainWindow, QMainWindow):
                 return
             self.openimage(pix)
 
-    def openimage(self, pixmap):
+    def openimage(self, pixmap: QPixmap) -> None:
+        """
+        Open the image viewer for the given pixmap
+        :param pixmap: The pixmap to open in the viewer
+        """
         viewer = ImageViewer(self.stackedWidget)
         viewer.resize(self.stackedWidget.size())
         viewer.openimage(pixmap)
-
-    def delete_featue(self, form, feature):
-        """
-        Delete the selected feature
-        """
-        # We have to make the feature form because the user might have setup logic
-        # to handle the delete case
-
-        featureform = form.create_featureform(feature)
-        try:
-            msg = featureform.deletemessage
-        except AttributeError:
-            msg = 'Do you really want to delete this feature?'
-
-        if not DeleteFeatureDialog(msg).exec_():
-            return
-
-        try:
-            featureform.delete()
-        except DeleteFeatureException as ex:
-            RoamEvents.raisemessage(*ex.error)
-
-        featureform.featuredeleted(feature)
-
-        # TODO Fix undo delete stuff
-        # self.show_undo("Feature deleted", "Undo Delete", form, feature)
 
     def show_undo(self, title, message, form, feature):
         item = roam.messagebaritems.UndoMessageItem(title, message, form, feature)
         item.undo.connect(self.undo_delete)
         self.bar.pushItem(item)
 
-    def undo_delete(self, form, feature):
+    def undo_delete(self, form, feature) -> None:
+        """
+        Undo a delete of a feature.
+        :param form:
+        :param feature:
+        :return:
+        """
         # Add the feature back to the layer
         self.bar.popWidget()
         layer = form.QGISLayer
@@ -306,18 +322,31 @@ class MainWindow(ui_mainwindow.Ui_MainWindow, QMainWindow):
         layer.addFeature(feature)
         layer.commitChanges()
 
-    def search_for_projects(self):
+    def search_for_projects(self) -> None:
+        """
+        Search for plugins from the update server.
+        """
         server = roam.config.settings.get('updateserver', '')
         self.projectupdater.update_server(server, self.projects)
 
-    def settingsupdated(self, settings):
+    def settingsupdated(self, settings) -> None:
+        """
+        Called when the settings have been updated. Used to keep the UI in sync with any settings
+        changes.
+        :param settings: The new settings.
+        """
         self.settings = settings
         self.show()
         smallmode = self.settings.get("smallmode", False)
         self.menutoolbar.setSmallMode(smallmode)
         self.canvas_page.settings_updated(settings)
 
-    def on_geometryedit(self, form, feature):
+    def on_geometryedit(self, form, feature) -> None:
+        """
+        Called when a features geometry has been edited.
+        :param form: The form to pull the QGIS layer from.
+        :param feature: The feature that had it's geometry updated.
+        """
         layer = form.QGISLayer
         self.reloadselection(layer, updated=[feature])
 
@@ -375,11 +404,17 @@ class MainWindow(ui_mainwindow.Ui_MainWindow, QMainWindow):
         self.actionDataEntry.trigger()
 
     def raiseerror(self, *exinfo):
-        import errors
         info = self.bar.pushError(*exinfo)
-        errors.send_exception(exinfo)
+        # import roam.errors
+        # errors.send_exception(exinfo)
 
     def showhelp(self, parent, url):
+        """
+        Show the help page in the UI.
+        :param parent:
+        :param url:
+        :return:
+        """
         help = HelpPage(parent)
         help.setHelpPage(url)
         help.show()
@@ -423,13 +458,17 @@ class MainWindow(ui_mainwindow.Ui_MainWindow, QMainWindow):
         self.canvas.refresh()
         RoamEvents.editgeometry_complete.emit(form, feature)
 
-    def exit(self):
+    def exit(self) -> None:
         """
         Exit the application.
         """
         self.close()
 
-    def showInfoResults(self, results):
+    def show_info_results(self, results) -> None:
+        """
+        Show the info panel with the given results
+        :param results: The results to show in the info panel.
+        """
         forms = {}
         for layer in results.keys():
             layername = layer.name()
@@ -440,7 +479,7 @@ class MainWindow(ui_mainwindow.Ui_MainWindow, QMainWindow):
         self.infodock.setResults(results, forms, self.project)
         self.infodock.show()
 
-    def missingLayers(self, layers):
+    def missing_layers_handler(self, layers):
         """
         Called when layers have failed to load from the current project
         """
@@ -449,7 +488,7 @@ class MainWindow(ui_mainwindow.Ui_MainWindow, QMainWindow):
         missinglayers = roam.messagebaritems.MissingLayerItem(layers)
         self.bar.pushItem(missinglayers)
 
-    def loadprojects(self, projects):
+    def load_projects(self, projects):
         """
         Load the given projects into the project
         list
@@ -479,7 +518,11 @@ class MainWindow(ui_mainwindow.Ui_MainWindow, QMainWindow):
         else:
             self.showMaximized()
 
-    def viewprojects(self):
+    def show_project_list(self):
+        """
+        Show the project list as the current page in the app.
+        :return:
+        """
         self.stackedWidget.setCurrentIndex(1)
 
     @property
@@ -491,7 +534,7 @@ class MainWindow(ui_mainwindow.Ui_MainWindow, QMainWindow):
         return self.settings.get('plugins', [])
 
     @roam.utils.timeit
-    def projectOpened(self, doc):
+    def project_opened(self, doc):
         """
         Called when a new project is opened in QGIS.
         :param: doc The project document that was opened in QGIS.
@@ -525,7 +568,7 @@ class MainWindow(ui_mainwindow.Ui_MainWindow, QMainWindow):
 
         self.canvas_page.project_loaded(self.project)
         self.showmap()
-        self.set_projectbuttons(True)
+        self.show_project_menu_buttons(True)
         self.dataentrywidget.project = self.project
         RoamEvents.projectloaded.emit(self.project)
 
@@ -564,10 +607,10 @@ class MainWindow(ui_mainwindow.Ui_MainWindow, QMainWindow):
                 continue
 
             pages = plugin_mod.pages()
-            self.loadpages(pages)
+            self.add_plugin_pages(pages)
 
     @roam.utils.timeit
-    def loadProject(self, project):
+    def load_roam_project(self, project):
         """
         Load a project into the application.
         """
@@ -590,7 +633,7 @@ class MainWindow(ui_mainwindow.Ui_MainWindow, QMainWindow):
 
         # No idea why we have to set this each time.  Maybe QGIS deletes it for
         # some reason.
-        self.badLayerHandler = BadLayerHandler(callback=self.missingLayers)
+        self.badLayerHandler = BadLayerHandler(callback=self.missing_layers_handler)
         QgsProject.instance().setBadLayerHandler(self.badLayerHandler)
 
         # Project loading screen
@@ -609,7 +652,7 @@ class MainWindow(ui_mainwindow.Ui_MainWindow, QMainWindow):
         """
         Close the current open project
         """
-        if not project is None and not project == self.project:
+        if project is not None and not project == self.project:
             return
 
         RoamEvents.projectClosing.emit()
@@ -625,7 +668,7 @@ class MainWindow(ui_mainwindow.Ui_MainWindow, QMainWindow):
         self.panels = []
         oldproject = self.project
         self.project = None
-        self.set_projectbuttons(False)
+        self.show_project_menu_buttons(False)
         self.hidedataentry()
         self.infodock.close()
         RoamEvents.selectioncleared.emit()
