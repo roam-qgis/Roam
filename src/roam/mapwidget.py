@@ -645,7 +645,7 @@ class MapWidget(Ui_CanvasWidget, QMainWindow):
 
     def clear_selection(self):
         """
-        Clear the selection from the canvas.   Resets all selection rubbber bands.
+        Clear the selection from the canvas. Resets all selection rubber bands.
         :return:
         """
         # Clear the main selection rubber band
@@ -716,7 +716,6 @@ class MapWidget(Ui_CanvasWidget, QMainWindow):
         smallmode = settings.get("smallmode", False)
         self.projecttoolbar.setSmallMode(smallmode)
 
-
     def set_gps(self, gps, logging):
         """
         Set the GPS for the map widget.  Connects GPS signals
@@ -781,7 +780,6 @@ class MapWidget(Ui_CanvasWidget, QMainWindow):
         """
         Open the form selection widget to allow the user to pick the active capture form.
         """
-
         def showformerror(form):
             pass
 
@@ -869,7 +867,6 @@ class MapWidget(Ui_CanvasWidget, QMainWindow):
         """
         Connect the default buttons in the interface. Zoom, pan, etc
         """
-
         def connectAction(action, tool):
             action.toggled.connect(partial(self.setMapTool, tool))
 
@@ -897,7 +894,7 @@ class MapWidget(Ui_CanvasWidget, QMainWindow):
         self.zoomOutTool.setCursor(cursor(':/icons/out'))
         self.infoTool.setCursor(cursor(':/icons/select'))
 
-        self.actionRaster.triggered.connect(self.toggleRasterLayers)
+        self.actionRaster.triggered.connect(self.toggle_raster_layers)
         self.actionHome.triggered.connect(self.homeview)
 
     def homeview(self):
@@ -929,7 +926,7 @@ class MapWidget(Ui_CanvasWidget, QMainWindow):
         Load the given form so it's the active one for capture
         :param form: The form to load
         """
-        self.clearCaptureTools()
+        self.clear_capture_tools()
         self.dataentryselection.setIcon(QIcon(form.icon))
         self.dataentryselection.setText(form.icontext)
         self.create_capture_buttons(form)
@@ -940,7 +937,6 @@ class MapWidget(Ui_CanvasWidget, QMainWindow):
         Create the capture buttons in the toolbar for the given form.
         :param form: The active form.
         """
-        layer = form.QGISLayer
         tool = form.getMaptool()(self.canvas, form.settings)
         for action in tool.actions:
             # Create the action here.
@@ -962,12 +958,18 @@ class MapWidget(Ui_CanvasWidget, QMainWindow):
 
         tool.error.connect(self.show_invalid_geometry_message)
 
-    def show_invalid_geometry_message(self, message):
+    def show_invalid_geometry_message(self, message) -> None:
+        """
+        Shows the message to the user if the there is a invalid geometry capture.
+        :param message: The message to show the user.
+        """
         RoamEvents.raisemessage("Invalid geometry capture", message, level=RoamEvents.CRITICAL)
 
     def add_new_feature(self, form, geometry):
         """
         Add a new new feature to the given layer
+        :param form:  The form to use for the new feature.
+        :param geometry: The new geometry to create the feature for.
         """
         # TODO Extract into function.
         # NOTE This function is doing too much, acts as add and also edit.
@@ -1000,7 +1002,7 @@ class MapWidget(Ui_CanvasWidget, QMainWindow):
         self.canvas.mapTool().setEditMode(False, None)
         self.restore_last_form()
 
-    def clearCaptureTools(self):
+    def clear_capture_tools(self):
         """
         Clear the capture tools from the toolbar.
         :return: True if the capture button was active at the time of clearing.
@@ -1014,18 +1016,18 @@ class MapWidget(Ui_CanvasWidget, QMainWindow):
                 self.projecttoolbar.removeAction(action)
         return captureselected
 
-    def toggleRasterLayers(self):
+    def toggle_raster_layers(self) -> None:
         """
         Toggle all raster layers on or off.
         """
         # Freeze the canvas to save on UI refresh
         dlg = PickActionDialog(msg="Raster visibility")
         actions = [
-            (":/icons/raster_0", "Off", partial(self._set_raster_layer_value, 0), "photo_off"),
-            (":/icons/raster_25", "25%", partial(self._set_raster_layer_value, .25), "photo_25"),
-            (":/icons/raster_50", "50%", partial(self._set_raster_layer_value, .50), "photo_50"),
-            (":/icons/raster_75", "75%", partial(self._set_raster_layer_value, .75), "photo_75"),
-            (":/icons/raster_100", "100%", partial(self._set_raster_layer_value, 1), "photo_100"),
+            (":/icons/raster_0", "Off", partial(self._set_basemaps_opacity, 0), "photo_off"),
+            (":/icons/raster_25", "25%", partial(self._set_basemaps_opacity, .25), "photo_25"),
+            (":/icons/raster_50", "50%", partial(self._set_basemaps_opacity, .50), "photo_50"),
+            (":/icons/raster_75", "75%", partial(self._set_basemaps_opacity, .75), "photo_75"),
+            (":/icons/raster_100", "100%", partial(self._set_basemaps_opacity, 1), "photo_100"),
         ]
 
         # ":/icons/raster_100"), "100%", self, triggered=partial(self._set_raster_layer_value, 1),
@@ -1039,7 +1041,11 @@ class MapWidget(Ui_CanvasWidget, QMainWindow):
         dlg.addactions(dialog_actions)
         dlg.exec_()
 
-    def _set_raster_layer_value(self, value=0):
+    def _set_basemaps_opacity(self, value=0) -> None:
+        """
+        Set the opacity for all basemap raster layers.
+        :param value: The opacity value betwen 0 and 1
+        """
         tree = QgsProject.instance().layerTreeRoot()
         for node in tree.findLayers():
             layer = node.layer()
@@ -1064,6 +1070,6 @@ class MapWidget(Ui_CanvasWidget, QMainWindow):
         self.gpsband.hide()
         self.clear_selection()
         self.clear_temp_objects()
-        self.clearCaptureTools()
+        self.clear_capture_tools()
         for action in self.layerbuttons:
             self.editgroup.removeAction(action)
