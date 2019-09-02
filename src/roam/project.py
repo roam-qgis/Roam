@@ -1,9 +1,8 @@
 import os
 import copy
 import glob
-import utils
 import yaml
-import imp
+import importlib
 
 from collections import OrderedDict
 
@@ -33,11 +32,13 @@ supportedgeometry = [QgsWkbTypes.PointGeometry,
                      QgsWkbTypes.PolygonGeometry,
                      QgsWkbTypes.LineGeometry]
 
+
 class ProjectExpection(Exception):
     """
     Raised when there is a issue with a project.
     """
     pass
+
 
 class NoMapToolConfigured(Exception):
     """ 
@@ -169,8 +170,8 @@ def readfolderconfig(folder, configname):
                 raise ProjectLoadError(str(ex))
         return settings
     except IOError as e:
-        utils.warning(e)
-        utils.warning("Returning empty settings for settings.config")
+        roam.utils.warning(e)
+        roam.utils.warning("Returning empty settings for settings.config")
         return {}
 
 
@@ -269,7 +270,7 @@ class Form(object):
             try:
                 return roam.api.utils.layer_by_name(name)
             except IndexError as e:
-                utils.log(e)
+                roam.utils.log(e)
                 return None
 
         if self._qgislayer is None:
@@ -294,7 +295,7 @@ class Form(object):
         """
         default = ['capture', 'edit', 'move']
         capabilities = self.settings.get("capabilities", default)
-        utils.log(capabilities)
+        roam.utils.log(capabilities)
         return capabilities
 
     @property
@@ -411,15 +412,15 @@ class Form(object):
                 feature[index] = value
             # Update the feature with the defaults from the widget config
             defaults = self.default_values(feature)
-            utils.log(defaults)
+            roam.utils.log(defaults)
             for key, value in defaults.items():
                 # Don't override fields we have already set.
                 if key is None:
                     continue
-                utils.log("Default key {0}".format(key))
+                roam.utils.log("Default key {0}".format(key))
                 datakeys = [key.lower() for key in data.keys()]
                 if key.lower() in datakeys:
-                    utils.log("Skippping {0}".format(key))
+                    roam.utils.log("Skippping {0}".format(key))
                     continue
                 try:
                     feature[key] = value
