@@ -2,9 +2,7 @@ from qgis.PyQt.QtGui import QIcon
 from qgis.PyQt.QtWidgets import QPushButton, QTabWidget
 
 from roam.api import FeatureForm
-from roam.api.utils import layer_by_name, feature_by_key
-
-import roam.project
+from roam.api.utils import feature_by_key
 
 
 class InspectionForm(FeatureForm):

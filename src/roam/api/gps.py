@@ -1,16 +1,14 @@
 import os
-import pynmea2
-
 from datetime import datetime
 
+import pynmea2
 from qgis.PyQt.QtCore import QObject, pyqtSignal, QDate, QDateTime, QTime, Qt, QTimer
-
 from qgis.core import (QgsGpsDetector, QgsGpsConnection, QgsPointXY, \
                        QgsCoordinateTransform, QgsCoordinateReferenceSystem, \
-                       QgsGpsInformation, QgsCsException, QgsProject, QgsApplication)
+                       QgsGpsInformation, QgsCsException, QgsProject)
 
-from roam.utils import log
 from roam.config import settings as config
+from roam.utils import log
 
 NMEA_FIX_BAD = 1
 NMEA_FIX_2D = 2

@@ -1,13 +1,13 @@
-from qgis.PyQt.QtWidgets import QComboBox, QListView
-from qgis.PyQt.QtGui import QStandardItem, QStandardItemModel, QIcon, QColor, QBrush
-from qgis.PyQt.QtCore import QSize, Qt, QEvent
-from qgis.core import QgsMessageLog, QgsProject, QgsExpression, QgsFeatureRequest
 import qgis.core
+from qgis.PyQt.QtCore import QSize, Qt, QEvent
+from qgis.PyQt.QtGui import QStandardItem, QStandardItemModel, QIcon
+from qgis.PyQt.QtWidgets import QComboBox
+from qgis.core import QgsProject, QgsExpression, QgsFeatureRequest
 
 import roam.utils
 from roam.api import RoamEvents
-from roam.editorwidgets.core import EditorWidget, registerwidgets, LargeEditorWidget
 from roam.biglist import BigList
+from roam.editorwidgets.core import EditorWidget, LargeEditorWidget
 
 
 def nullconvert(value):

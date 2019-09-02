@@ -1,43 +1,37 @@
-import os
 import collections
-import tempfile
-import json
 import copy
-
+import json
+import os
+import tempfile
 from functools import partial
 
 from qgis.PyQt import uic
 from qgis.PyQt.QtCore import pyqtSignal, QSize, Qt, QRegExp
-from qgis.PyQt.QtWidgets import (QWidget,
-                         QAction,
-                         QStackedWidget,
-                         QLabel,
-                         QToolButton,
-                         QBoxLayout,
-                         QSpacerItem,
-                         QFormLayout,
-                         QVBoxLayout,
-                         QSizePolicy,
-                         QTabWidget)
-                         
 from qgis.PyQt.QtGui import QIcon
-
+from qgis.PyQt.QtWidgets import (QWidget,
+                                 QAction,
+                                 QStackedWidget,
+                                 QLabel,
+                                 QToolButton,
+                                 QBoxLayout,
+                                 QSpacerItem,
+                                 QFormLayout,
+                                 QVBoxLayout,
+                                 QSizePolicy,
+                                 QTabWidget)
 from qgis.core import QgsFeature, QgsGpsConnectionRegistry, QgsGeometry, QgsPoint, NULL, QgsWkbTypes, Qgis
-from qgis.gui import QgsMessageBar
 
-from roam.editorwidgets.core import EditorWidgetException
-from roam import utils
-from roam.flickwidget import FlickCharm
-from roam.structs import CaseInsensitiveDict
-from roam.api import RoamEvents, GPS
-from roam.api import utils as qgisutils
-
-import roam.editorwidgets.core
+import roam.config
 import roam.defaults as defaults
+import roam.editorwidgets.core
 import roam.roam_style
 import roam.utils
-import roam.config
-
+from roam import utils
+from roam.api import RoamEvents, GPS
+from roam.api import utils as qgisutils
+from roam.editorwidgets.core import EditorWidgetException
+from roam.flickwidget import FlickCharm
+from roam.structs import CaseInsensitiveDict
 from roam.ui.ui_geomwidget import Ui_GeomWidget
 
 values_file = os.path.join(tempfile.gettempdir(), "Roam")

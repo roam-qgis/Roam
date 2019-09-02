@@ -1,6 +1,6 @@
 from qgis.PyQt.QtWidgets import QCheckBox
 
-from roam.editorwidgets.core import EditorWidget, registerwidgets
+from roam.editorwidgets.core import EditorWidget
 
 
 class CheckboxWidget(EditorWidget):

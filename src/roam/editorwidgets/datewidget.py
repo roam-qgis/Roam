@@ -1,14 +1,12 @@
-from functools import partial
-
-from qgis.core import NULL
-from qgis.PyQt.QtWidgets import QPushButton, QDateTimeEdit, QDateEdit, QWidget
-from qgis.PyQt.QtGui import QIcon
 from qgis.PyQt.QtCore import QDateTime, Qt, QSize, QDate, QEvent
+from qgis.PyQt.QtGui import QIcon
+from qgis.PyQt.QtWidgets import QPushButton, QDateTimeEdit, QDateEdit, QWidget
+from qgis.core import NULL
 
 from roam.api import RoamEvents
-from roam.editorwidgets.core import EditorWidget, registerwidgets, LargeEditorWidget
-from roam.editorwidgets.uifiles import ui_datewidget
 from roam.datatimerpickerwidget import DateTimePickerWidget
+from roam.editorwidgets.core import EditorWidget, LargeEditorWidget
+from roam.editorwidgets.uifiles import ui_datewidget
 
 
 class BigDateWidget(LargeEditorWidget):

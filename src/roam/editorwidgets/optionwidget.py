@@ -1,7 +1,7 @@
-import math
 from qgis.PyQt.QtCore import QSize
-from qgis.PyQt.QtWidgets import QPushButton, QWidget, QHBoxLayout, QButtonGroup, QVBoxLayout, QGridLayout, QBoxLayout
+from qgis.PyQt.QtCore import QSize
 from qgis.PyQt.QtGui import QIcon
+from qgis.PyQt.QtWidgets import QPushButton, QWidget, QButtonGroup, QGridLayout, QBoxLayout
 
 from roam.editorwidgets.core import EditorWidget
 

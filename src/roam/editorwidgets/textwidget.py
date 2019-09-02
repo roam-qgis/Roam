@@ -143,4 +143,3 @@ class TextBlockWidget(TextWidget):
         value = value or ''
         value = value[:self.text_length]
         self.widget.setPlainText(value)
-

@@ -1,10 +1,11 @@
+import importlib
 import pkgutil
 import sys
-import importlib
+
 from qgis.PyQt.QtCore import QSize, pyqtSignal, Qt
 from qgis.PyQt.QtWidgets import QToolBar
 
-from roam.api import RoamEvents, GPS
+from roam.api import RoamEvents
 
 loaded_plugins = {}
 api = None

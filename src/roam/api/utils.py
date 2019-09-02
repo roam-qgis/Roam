@@ -1,10 +1,11 @@
-import sys
+import collections
 import os
 import subprocess
-import collections
+import sys
 from contextlib import contextmanager
+
 from qgis.core import QgsProject, QgsFeatureRequest, QgsGeometry, NULL, Qgis
-from qgis.gui import QgsMessageBar
+
 from roam.structs import CaseInsensitiveDict
 
 

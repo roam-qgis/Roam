@@ -1,15 +1,14 @@
-import shutil
 import os
-from qgis.core import QgsExpression
-from qgis.PyQt.QtCore import pyqtSignal, QUrl
-from qgis.PyQt.QtWidgets import QWidget, QAction, QFileDialog
-from qgis.PyQt.QtGui import QIcon, QPixmap, QDesktopServices
+import shutil
 
-from roam.editorwidgets.core import EditorWidget, registerwidgets
+from qgis.PyQt.QtCore import pyqtSignal, QUrl
+from qgis.PyQt.QtGui import QPixmap, QDesktopServices
+from qgis.PyQt.QtWidgets import QWidget, QFileDialog
+from qgis.core import QgsExpression
+
+from roam.editorwidgets.core import EditorWidget
 from roam.editorwidgets.uifiles import ui_attachmentwidget
 from roam.popupdialogs import PickActionDialog
-
-import roam.utils
 
 
 def copy_attachment(attachment, dest, filename=None):

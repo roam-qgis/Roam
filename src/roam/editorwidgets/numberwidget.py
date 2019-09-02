@@ -1,12 +1,11 @@
 import sys
+
 from qgis.PyQt.QtCore import QEvent, QSize
 from qgis.PyQt.QtWidgets import QDoubleSpinBox, QSpinBox, QWidget
-import functools
 
 from roam.api import RoamEvents
-from roam.editorwidgets.core import EditorWidget, registerwidgets
+from roam.editorwidgets.core import EditorWidget
 from roam.editorwidgets.uifiles.ui_singlestepper import Ui_stepper
-
 from roam.roam_style import iconsize
 
 

@@ -1,8 +1,6 @@
 import os
-import sys
-import uuid
-import functools
 import sqlite3
+import uuid
 
 try:
     import vidcap
@@ -12,22 +10,19 @@ try:
 except ImportError:
     hascamera = False
 
-from qgis.PyQt.QtWidgets import QWidget, QDialog, QGridLayout, QLabel, QLayout, QFileDialog, QAction, QToolButton, \
-    QToolBar, QVBoxLayout, QSizePolicy
-from qgis.PyQt.QtGui import QPixmap, QImage, QIcon, QTextDocument, QPainter, QPen
+from qgis.PyQt.QtWidgets import QWidget, QGridLayout, QLabel, QFileDialog, QAction, QToolBar, QVBoxLayout, QSizePolicy
+from qgis.PyQt.QtGui import QPixmap, QImage, QIcon, QTextDocument, QPainter
 from qgis.PyQt.QtCore import QByteArray, pyqtSignal, QVariant, QTimer, Qt, QSize, QDateTime, QPointF
 
 from qgis.core import QgsExpression
 from PIL.ImageQt import ImageQt
 
-from roam.editorwidgets.core import EditorWidget, LargeEditorWidget, registerwidgets, createwidget, widgetwrapper
+from roam.editorwidgets.core import EditorWidget, LargeEditorWidget, createwidget, widgetwrapper
 from roam.editorwidgets.uifiles.imagewidget import QMapImageWidget
 from roam.editorwidgets.uifiles import drawingpad
-from roam.ui.uifiles import actionpicker_widget, actionpicker_base
 from roam.popupdialogs import PickActionDialog
 from roam import utils
 from roam.api import RoamEvents, GPS
-from roam.dataaccess.database import Database, DatabaseException
 
 import roam.config
 import roam.resources_rc

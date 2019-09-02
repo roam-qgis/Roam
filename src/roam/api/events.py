@@ -6,7 +6,7 @@ These can be raised and handled anywhere in the application.
 from qgis.PyQt.QtCore import pyqtSignal, QObject, QUrl
 from qgis.PyQt.QtWidgets import QWidget
 
-from qgis.core import QgsFeature, QgsPoint
+from qgis.core import QgsFeature
 
 
 class _Events(QObject):

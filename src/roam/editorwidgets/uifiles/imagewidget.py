@@ -1,5 +1,3 @@
-from PyQt5.QtMultimediaWidgets import  QCameraViewfinder
-from PyQt5.QtMultimedia import QCamera, QCameraInfo
 from qgis.PyQt.QtCore import QByteArray, QBuffer, QIODevice, QEvent, pyqtSignal, Qt
 from qgis.PyQt.QtGui import QPixmap
 from qgis.PyQt.QtWidgets import QWidget

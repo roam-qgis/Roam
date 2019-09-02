@@ -3,8 +3,8 @@ from collections import OrderedDict
 
 import roam.utils
 
-
 widgets = OrderedDict()
+
 
 class EditorWidgetException(Exception):
     pass
@@ -26,7 +26,8 @@ def registerallwidgets():
     from roam.editorwidgets.attachmentwidget import AttachmentWidget
 
     registerwidgets(ImageWidget, ListWidget, MultiList, CheckboxWidget, DateWidget,
-                    NumberWidget, DoubleNumberWidget, TextWidget, TextBlockWidget, OptionWidget, AttachmentWidget, MultiImageWidget)
+                    NumberWidget, DoubleNumberWidget, TextWidget, TextBlockWidget, OptionWidget, AttachmentWidget,
+                    MultiImageWidget)
 
 
 def supportedwidgets():
@@ -268,6 +269,7 @@ class EditorWidget(QObject):
         """
         return {}
 
+
 class RejectedException(Exception):
     WARNING = 1
     ERROR = 2
@@ -275,6 +277,7 @@ class RejectedException(Exception):
     def __init__(self, message, level=WARNING):
         super(RejectedException, self).__init__(message)
         self.level = level
+
 
 class LargeEditorWidget(EditorWidget):
     """
