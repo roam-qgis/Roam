@@ -1016,19 +1016,22 @@ class MapWidget(Ui_CanvasWidget, QMainWindow):
         # Freeze the canvas to save on UI refresh
         dlg = PickActionDialog(msg="Raster visibility")
         actions = [
-            QAction(QIcon(":/icons/raster_0"), "Off", self, triggered=partial(self._set_raster_layer_value, 0),
-                    objectName="photo_off"),
-            QAction(QIcon(":/icons/raster_25"), "25%", self, triggered=partial(self._set_raster_layer_value, .25),
-                    objectName="photo_25"),
-            QAction(QIcon(":/icons/raster_50"), "50%", self, triggered=partial(self._set_raster_layer_value, .50),
-                    objectName="photo_50"),
-            QAction(QIcon(":/icons/raster_75"), "75%", self, triggered=partial(self._set_raster_layer_value, .75),
-                    objectName="photo_75"),
-            QAction(QIcon(":/icons/raster_100"), "100%", self, triggered=partial(self._set_raster_layer_value, 1),
-                    objectName="photo_100")
+            (":/icons/raster_0", "Off", partial(self._set_raster_layer_value, 0), "photo_off"),
+            (":/icons/raster_25", "25%", partial(self._set_raster_layer_value, .25), "photo_25"),
+            (":/icons/raster_50", "50%", partial(self._set_raster_layer_value, .50), "photo_50"),
+            (":/icons/raster_75", "75%", partial(self._set_raster_layer_value, .75), "photo_75"),
+            (":/icons/raster_100", "100%", partial(self._set_raster_layer_value, 1), "photo_100"),
         ]
 
-        dlg.addactions(actions)
+        # ":/icons/raster_100"), "100%", self, triggered=partial(self._set_raster_layer_value, 1),
+        #                                                objectName="photo_100")
+        dialog_actions = []
+        for action in actions:
+            icon = QIcon(action[0])
+            qaction = QAction(icon, action[1], self, triggered=action[2], objectName=action[3])
+            dialog_actions.append(qaction)
+
+        dlg.addactions(dialog_actions)
         dlg.exec_()
 
     def _set_raster_layer_value(self, value=0):
