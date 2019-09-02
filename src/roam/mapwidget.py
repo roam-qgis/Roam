@@ -780,6 +780,7 @@ class MapWidget(Ui_CanvasWidget, QMainWindow):
         """
         Open the form selection widget to allow the user to pick the active capture form.
         """
+
         def showformerror(form):
             pass
 
@@ -867,6 +868,7 @@ class MapWidget(Ui_CanvasWidget, QMainWindow):
         """
         Connect the default buttons in the interface. Zoom, pan, etc
         """
+
         def connectAction(action, tool):
             action.toggled.connect(partial(self.setMapTool, tool))
 
