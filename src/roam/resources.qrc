@@ -12,6 +12,8 @@
     <file alias="blue">resources/widgets/blue.svg</file>
   </qresource>
   <qresource prefix="icons">
+    <file>resources/images/qcheckbox-checked.svg</file>
+    <file>resources/images/qcheckbox-unchecked.svg</file>
     <file alias="menu">resources/images/menu.svg</file>
     <file alias="navigate">resources/images/navigate.svg</file>
     <file alias="attachment">resources/images/attachment.svg</file>
@@ -79,7 +81,7 @@
     <file alias="download">resources/images/download.svg</file>
     <file alias="record">resources/images/record.svg</file>
     <file alias="pause">resources/images/pause.svg</file>
-	<file alias="back">resources/images/back.svg</file>
+    <file alias="back">resources/images/back.svg</file>
     <file alias="raster_0">resources/images/raster_0.png</file>
     <file alias="raster_25">resources/images/raster_25.png</file>
     <file alias="raster_50">resources/images/raster_50.png</file>
@@ -89,7 +91,6 @@
   <qresource prefix="branding">
     <file alias="config">resources/branding/config.ico</file>
     <file alias="logo">resources/branding/logo.png</file>
-    <file alias="dms">resources/branding/dms.png</file>
     <file alias="qgis">resources/branding/qgis-icon.png</file>
   </qresource>
 </RCC>

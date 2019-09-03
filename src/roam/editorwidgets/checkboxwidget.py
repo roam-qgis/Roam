@@ -1,3 +1,6 @@
+"""
+Checkbox editor widget
+"""
 from qgis.PyQt.QtWidgets import QCheckBox
 
 from roam.editorwidgets.core import EditorWidget

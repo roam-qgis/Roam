@@ -68,6 +68,14 @@ def appstyle():
         width: 30px;
         height: 30px;
     }
+    
+    QTreeView::indicator:checked {
+        image: url(:/icons/resources/images/qcheckbox-checked.svg);
+    }
+    
+    QTreeView::indicator:unchecked {
+        image: url(:/icons/resources/images/qcheckbox-unchecked.svg);
+    }
 
     QStatusBar::item {
         border: none;
@@ -80,6 +88,14 @@ def appstyle():
     QCheckBox::indicator {
         width: 40px;
         height: 40px;
+    }
+    
+    QCheckBox::indicator:checked {
+        image: url(:/icons/resources/images/qcheckbox-checked.svg);
+    }
+    
+    QCheckBox::indicator:unchecked {
+        image: url(:/icons/resources/images/qcheckbox-unchecked.svg);
     }
 
     QLabel {
@@ -218,29 +234,30 @@ def appstyle():
     }
 
     QScrollBar:vertical {
-    border: 2px solid grey;
-    background: rgba(80, 80, 80, 20);
-    width: 40px;
-    margin: 22px 0 22px 0;
+        border: 2px solid grey;
+        background: rgba(80, 80, 80, 20);
+        width: 40px;
+        margin: 22px 0 22px 0;
     }
     QScrollBar::handle:vertical {
-    background: #678fb2;
-    min-height: 20px;
+        background: #678fb2;
+        min-height: 20px;
     }
     QScrollBar::add-line:vertical {
-    border: 2px solid grey;
-    background: rgba(80, 80, 80, 20);
-    height: 20px;
-    subcontrol-position: bottom;
-    subcontrol-origin: margin;
+        border: 2px solid grey;
+        
+        background: rgba(80, 80, 80, 20);
+        height: 20px;
+        subcontrol-position: bottom;
+        subcontrol-origin: margin;
     }
 
     QScrollBar::sub-line:vertical {
-    border: 2px solid grey;
-    background: rgba(80, 80, 80, 20);
-    height: 20px;
-    subcontrol-position: top;
-    subcontrol-origin: margin;
+        border: 2px solid grey;
+        background: rgba(80, 80, 80, 20);
+        height: 20px;
+        subcontrol-position: top;
+        subcontrol-origin: margin;
     }
 
     QTabWidget {
