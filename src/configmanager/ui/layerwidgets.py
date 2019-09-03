@@ -1,16 +1,17 @@
 __author__ = 'Nathan.Woodrow'
 
+import markdown
 import uuid
 import os
 import shutil
-from qgis.PyQt.QtWebKit import QWebView
+from qgis.PyQt.QtWebKitWidgets import QWebView
 from qgis.PyQt.QtCore import Qt, QUrl, QVariant, pyqtSignal
 from qgis.PyQt.QtWidgets import QWidget, QComboBox, QGridLayout, QMenu, QToolButton, QFileDialog
 from qgis.PyQt.QtGui import QPixmap, QStandardItem, QStandardItemModel, QIcon, QDesktopServices, QColor
 from qgis.PyQt.Qsci import QsciLexerSQL, QsciScintilla
 
-from qgis.core import QgsPalLabeling, QgsMapLayerRegistry, QgsStyleV2, QgsMapLayer, Qgis, QgsProject,  QgsExpression, QgsFeatureRequest
-from qgis.gui import QgsExpressionBuilderDialog, QgsMapCanvas, QgsRendererV2PropertiesDialog, QgsLayerTreeMapCanvasBridge
+from qgis.core import QgsPalLabeling, QgsStyle, QgsMapLayer, Qgis, QgsProject, QgsExpression, QgsFeatureRequest, QgsWkbTypes
+from qgis.gui import QgsExpressionBuilderDialog, QgsMapCanvas, QgsRendererPropertiesDialog, QgsLayerTreeMapCanvasBridge
 
 from configmanager.ui.nodewidgets import (ui_layersnode, ui_layernode, ui_infonode, ui_projectinfo, ui_formwidget,
                                           ui_searchsnode, ui_searchnode, ui_mapwidget, ui_publishwidget)
@@ -20,8 +21,7 @@ from configmanager.models import (CaptureLayersModel, LayerTypeFilter, QgsFieldM
 from configmanager.events import ConfigEvents
 import roam.editorwidgets
 import configmanager.editorwidgets
-import roam.projectparser
-from roam.api import FeatureForm, utils, RoamEvents
+from roam.api import FeatureForm, utils
 from roam.utils import log
 
 from configmanager.utils import openqgis, render_tample, openfolder
@@ -34,6 +34,8 @@ from configmanager.ui.widgets.publishwidget import PublishWidget
 # ========= Imports to not break .ui widget files
 
 from configmanager.ui.widgets.widgetbase import WidgetBase
+from configmanager.widgetconfig import WidgetConfig
+from configmanager.ui.nodewidgets import ui_eventwidget
 
 readonlyvalues = [('Never', 'never'),
                   ('Always', 'always'),
@@ -41,16 +43,11 @@ readonlyvalues = [('Never', 'never'),
                   ('When inserting', 'insert')]
 
 defaultevents = [('Capture Only', ['capture']),
-                  ('Save Only', ['save']),
-                  ('Capture and Save', ['capture', 'save'])]
+                 ('Save Only', ['save']),
+                 ('Capture and Save', ['capture', 'save'])]
 
 
-import nodewidgets.ui_eventwidget
-
-from configmanager import QGIS
-
-
-class EventWidget(nodewidgets.ui_eventwidget.Ui_Form, QWidget):
+class EventWidget(ui_eventwidget.Ui_Form, QWidget):
     removeItem = pyqtSignal(QWidget)
 
     def __init__(self, layer, model, parent=None):
@@ -127,8 +124,6 @@ class EventWidget(nodewidgets.ui_eventwidget.Ui_Form, QWidget):
         return data
 
 
-import markdown
-
 
 class PluginsWidget(WidgetBase):
     def __init__(self, parent=None):
@@ -152,7 +147,6 @@ class PluginWidget(WidgetBase):
                 data = f.read()
                 self.webpage.setHtml(markdown.markdown(data))
 
-from configmanager.widgetconfig import WidgetConfig
 
 class FormWidget(ui_formwidget.Ui_Form, WidgetBase):
     def __init__(self, parent=None):
@@ -203,7 +197,6 @@ class FormWidget(ui_formwidget.Ui_Form, WidgetBase):
         self.formLabelText.textChanged.connect(self.form_name_changed)
         self.newStyleCheck.stateChanged.connect(self.form_style_changed)
         self.layerCombo.currentIndexChanged.connect(self.layer_updated)
-
 
         # Gross but ok for now.
         self.blockWidgets = [
@@ -363,7 +356,7 @@ class FormWidget(ui_formwidget.Ui_Form, WidgetBase):
         layer = form.QGISLayer
         try:
             values = {}
-            feature = layer.getFeatures().next()
+            feature = next(layer.getFeatures())
             defaultvalues = defaults.default_values(defaultwidgets, feature, layer)
             values.update(defaultvalues)
             featureform.bindvalues(values)
@@ -497,7 +490,6 @@ class FormWidget(ui_formwidget.Ui_Form, WidgetBase):
         roam.utils.debug("FormWidget: Set Project")
 
         self.blockWidgetSignels(True)
-
 
         super(FormWidget, self).set_project(project, treenode)
         self.formlayers.setSelectLayers(self.project.selectlayers)
@@ -647,7 +639,6 @@ class FormWidget(ui_formwidget.Ui_Form, WidgetBase):
         else:
             self.propertiesStack.setCurrentIndex(0)
 
-
         widgetconfig = WidgetConfig.from_config(widget)
 
         field = widget['field']
@@ -793,7 +784,8 @@ class FormWidget(ui_formwidget.Ui_Form, WidgetBase):
 
         widget = {}
         widget['field'] = current_field()
-        widget['default-type'] = WidgetConfig.DEFAULT_SIMPLE if self.defaultTab.currentIndex() == 0 else WidgetConfig.DEFAULT_LAYER_VALUE
+        widget[
+            'default-type'] = WidgetConfig.DEFAULT_SIMPLE if self.defaultTab.currentIndex() == 0 else WidgetConfig.DEFAULT_LAYER_VALUE
         widget['default'] = self._get_default_config()
         widget['widget'] = widgettype
         widget['required'] = self.requiredCheck.isChecked()
@@ -988,13 +980,13 @@ class InfoNode(ui_infonode.Ui_Form, WidgetBase):
         db = Database.fromLayer(layer)
         try:
             if not self.mapKeyEdit.text():
-                feature = layer.getFeatures().next()
+                feature = next(layer.getFeatures())
                 self.mapKeyEdit.setText(str(feature.id()))
             else:
                 try:
                     mapkey = int(self.mapKeyEdit.text())
                     rq = QgsFeatureRequest().setFilterFid(mapkey)
-                    feature = layer.getFeatures(rq).next()
+                    feature = next(layer.getFeatures(rq))
                 except ValueError:
                     self.attributesLabel.setText("")
                     self.previewGrid.setModel(None)
@@ -1129,7 +1121,6 @@ class LayerWidget(ui_layernode.Ui_Form, WidgetBase):
             self.inspection_form_combo.setCurrentIndex(0)
             self.inspection_fieldmappings.setPlainText("")
 
-
     def inspection_mappings(self):
         """
         Return the inspection config mapping.
@@ -1171,7 +1162,7 @@ class LayerWidget(ui_layernode.Ui_Form, WidgetBase):
             inspectionitem = dict(inspection=dict(
                 mode="Copy",
                 form=self.inspection_form_combo.currentText(),
-                field_mapping= self.inspection_mappings()
+                field_mapping=self.inspection_mappings()
             ))
             tools.append(inspectionitem)
 
@@ -1185,6 +1176,7 @@ class LayersWidget(ui_layersnode.Ui_Form, WidgetBase):
     """
     Root widget for select layers config.
     """
+
     def __init__(self, parent=None):
         super(LayersWidget, self).__init__(parent)
         self.setupUi(self)
@@ -1215,6 +1207,7 @@ class LayerSearchWidget(ui_searchsnode.Ui_Form, WidgetBase):
     """
     Root widget for the search config UI. Nothing here at the moment.
     """
+
     def __init__(self, parent=None):
         super(LayerSearchWidget, self).__init__(parent)
         self.setupUi(self)
@@ -1232,6 +1225,7 @@ class LayerSearchConfigWidget(ui_searchnode.Ui_Form, WidgetBase):
 
     Auto adds the search plugin if not loaded as well as the columns for the current layer.
     """
+
     def __init__(self, parent=None):
         super(LayerSearchConfigWidget, self).__init__(parent)
         self.setupUi(self)
@@ -1270,7 +1264,7 @@ class MapWidget(ui_mapwidget.Ui_Form, WidgetBase):
         self.canvas.enableAntiAliasing(True)
         self.canvas.setWheelAction(QgsMapCanvas.WheelZoomToMouseCursor)
         self.canvas.mapRenderer().setLabelingEngine(QgsPalLabeling())
-        self.style = QgsStyleV2.defaultStyle()
+        self.style = QgsStyle.defaultStyle()
         self.styledlg = None
         self.bridge = QgsLayerTreeMapCanvasBridge(QgsProject.instance().layerTreeRoot(), self.canvas)
         self.bridge.setAutoSetupOnFirstLayer(False)
@@ -1292,7 +1286,7 @@ class MapWidget(ui_mapwidget.Ui_Form, WidgetBase):
         self.canvas.setCanvasColor(myColor)
         if hasattr(treenode, "layer"):
             layer = treenode.layer
-            if layer.type() == QgsMapLayer.VectorLayer and layer.geometryType() == Qgis.NoGeometry:
+            if layer.type() == QgsMapLayer.VectorLayer and layer.geometryType() == QgsWkbTypes.NoGeometry:
                 self.stackedWidget.setCurrentIndex(0)
             self.set_style_widget(treenode.layer)
             self.stackedWidget.setCurrentIndex(1)
@@ -1305,7 +1299,7 @@ class MapWidget(ui_mapwidget.Ui_Form, WidgetBase):
             widget = self.styleWidget.layout().removeWidget(self.styledlg)
 
         if layer.type() == QgsMapLayer.VectorLayer:
-            self.styledlg = QgsRendererV2PropertiesDialog(layer, self.style, True)
+            self.styledlg = QgsRendererPropertiesDialog(layer, self.style, True)
         else:
             # TODO Nothing else is supported yet.
             return
@@ -1315,7 +1309,6 @@ class MapWidget(ui_mapwidget.Ui_Form, WidgetBase):
         # TODO Only in 2.12
         # self.styledlg.setMapCanvas(self.canvas)
         self.styleWidget.layout().addWidget(self.styledlg)
-
 
     def loadmap(self, project):
         """
@@ -1328,7 +1321,7 @@ class MapWidget(ui_mapwidget.Ui_Form, WidgetBase):
         self.canvas.repaint()
 
         missing = project.missing_layers
-        layers = QgsMapLayerRegistry.instance().mapLayers().values()
+        layers = QgsProject.instance().mapLayers().values()
         proj = self.canvas.mapSettings().destinationCrs().authid()
         html = render_tample("projectinfo", projection=proj,
                              layers=layers,

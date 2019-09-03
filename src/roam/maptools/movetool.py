@@ -50,7 +50,7 @@ class MoveTool(MapTool):
 
             rq = QgsFeatureRequest().setFilterRect(rect)
             try:
-                f = layer.getFeatures(rq).next()
+                f = next(layer.getFeatures(rq))
             except StopIteration:
                 continue
 

@@ -1,24 +1,16 @@
 import os
 import shutil
-import random
-import traceback
-
 from datetime import datetime
 
-from qgis.core import QgsMapLayerRegistry, QgsMapLayer, Qgis
+from qgis.PyQt.QtCore import Qt
+from qgis.PyQt.QtGui import QIcon, QStandardItem
+from qgis.PyQt.QtWidgets import QInputDialog
+from qgis.core import QgsProject, QgsMapLayer, Qgis, QgsWkbTypes
 
-from qgis.PyQt.QtWidgets import QDialog, QMessageBox, QInputDialog
-from qgis.PyQt.QtGui import QFont, QColor, QIcon, QStandardItem, QStandardItemModel
-from qgis.PyQt.QtCore import QAbstractItemModel, QModelIndex, Qt
-
-from configmanager.ui import ui_configmanager
 import configmanager.logger as logger
-from roam import resources_rc
-
-import shutil
-import roam.project
-import roam.messagebaritems
 import roam.api.plugins
+import roam.messagebaritems
+import roam.project
 
 templatefolder = os.path.join(os.path.dirname(__file__), "..", "templates")
 
@@ -192,7 +184,7 @@ class SelectLayersNode(Treenode):
 
     def create_children(self):
         self.removeRows(0, self.rowCount())
-        layers = QgsMapLayerRegistry.instance().mapLayers().values()
+        layers = QgsProject.instance().mapLayers().values()
         for layer in layers:
             if not layer.type() == QgsMapLayer.VectorLayer:
                 continue
@@ -267,7 +259,7 @@ class LayerSearchNode(Treenode):
 
     def create_children(self):
         self.removeRows(0, self.rowCount())
-        layers = QgsMapLayerRegistry.instance().mapLayers().values()
+        layers = QgsProject.instance().mapLayers().values()
         for layer in layers:
             if not layer.type() == QgsMapLayer.VectorLayer:
                 continue
@@ -300,9 +292,9 @@ class MapNode(Treenode):
 
     def create_children(self):
         self.removeRows(0, self.rowCount())
-        layers = QgsMapLayerRegistry.instance().mapLayers().values()
+        layers = QgsProject.instance().mapLayers().values()
         for layer in layers:
-            if layer.type() == QgsMapLayer.VectorLayer and layer.geometryType() == Qgis.NoGeometry:
+            if layer.type() == QgsMapLayer.VectorLayer and layer.geometryType() == QgsWkbTypes.NoGeometry:
                 continue
 
             node = LayerNode(layer, self.project)

@@ -1,31 +1,17 @@
-import os
-import shutil
-import random
-import traceback
+from PyQt5.QtGui import QStandardItemModel
+from qgis.PyQt.QtWidgets import QDialog
+from qgis.PyQt.QtCore import QItemSelectionModel
 
-from datetime import datetime
-
-from qgis.PyQt.QtWidgets import QDialog, QMessageBox, QInputDialog
-from qgis.PyQt.QtGui import QFont, QColor, QIcon, QStandardItem, QStandardItemModel
-from qgis.PyQt.QtCore import QAbstractItemModel, QModelIndex, Qt, QItemSelectionModel
-
-
-from configmanager.events import ConfigEvents
-
-from configmanager.ui import ui_configmanager
-import configmanager.logger as logger
-from roam import resources_rc
-
-import shutil
-from qgis.core import QgsMapLayerRegistry, QgsProject
-import roam.project
 import roam.messagebaritems
+import roam.project
 import roam.utils
-
+from configmanager.events import ConfigEvents
 from configmanager.ui.treenodes import *
 
+from configmanager.ui.ui_configmanager import Ui_ProjectInstallerDialog
 
-class ConfigManagerDialog(ui_configmanager.Ui_ProjectInstallerDialog, QDialog):
+
+class ConfigManagerDialog(Ui_ProjectInstallerDialog, QDialog):
     def __init__(self, roamapp, parent=None):
         super(ConfigManagerDialog, self).__init__(parent)
         self.setupUi(self)
@@ -185,7 +171,7 @@ class ConfigManagerDialog(ui_configmanager.Ui_ProjectInstallerDialog, QDialog):
             # Only load the project if it's different the current one.
             if self.loadedProject:
                 lastnode = self.projectsnode.find_by_name(self.loadedProject.name)
-                self.projectList.setExpanded(lastnode.index(), False )
+                self.projectList.setExpanded(lastnode.index(), False)
             ## We are closing the open project at this point. Watch for null ref after this.
             self.projectwidget.setproject(project)
             self.projectwidget.setpage(node.page, node)

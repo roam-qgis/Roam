@@ -50,7 +50,7 @@ class LayerTypeFilter(QSortFilterProxyModel):
     Filter a model to hide the given types of layers
     """
 
-    def __init__(self, geomtypes=[Qgis.NoGeometry], parent=None):
+    def __init__(self, geomtypes=[QgsWkbTypes.NoGeometry], parent=None):
         super(LayerTypeFilter, self).__init__(parent)
         self.geomtypes = geomtypes
         self.setDynamicSortFilter(True)
@@ -115,10 +115,8 @@ class QgsLayerModel(QAbstractItemModel):
             self.addlayer(layer)
 
     def refresh(self):
-        # import traceback
-        #traceback.print_stack(limit=5)
         self.removeall()
-        for layer in QgsMapLayerRegistry.instance().mapLayers().values():
+        for layer in QgsProject.instance().mapLayers().values():
             self.addlayer(layer)
 
     def flags(self, index):

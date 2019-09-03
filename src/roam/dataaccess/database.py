@@ -147,7 +147,7 @@ class Database(object):
         sql = sql.replace(r"\r\n", " ")
         query = self._query(sql, **mappings)
         if query.exec_():
-            while query.next():
+            while next(query):
                 yield self._recordToDict(query.record())
 
         if query.lastError().isValid():

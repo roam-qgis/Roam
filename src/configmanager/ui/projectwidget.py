@@ -4,8 +4,7 @@ import copy
 from qgis.PyQt.QtCore import Qt, QDir, QFileInfo, pyqtSignal, QFileSystemWatcher
 from qgis.PyQt.QtWidgets import QWidget, QMessageBox, QMenu, QFileDialog
 
-from qgis.core import QgsProject, QgsMapLayerRegistry, Qgis, QgsProjectBadLayerHandler
-from qgis.gui import QgsMessageBar
+from qgis.core import QgsProject, Qgis, QgsProjectBadLayerHandler
 
 from configmanager.ui.ui_projectwidget import Ui_Form
 from configmanager.utils import openqgis, openfolder
@@ -13,12 +12,12 @@ from configmanager.utils import openqgis, openfolder
 from configmanager import bundle
 
 import roam.editorwidgets
-import roam.projectparser
 import roam
 import roam.project
 import roam.config
 import configmanager.QGIS as QGIS
 import roam.utils
+
 
 def layer(name):
     """
@@ -26,7 +25,7 @@ def layer(name):
     :param name: The name of the layer to return.
     :return: A QgsMapLayer object with the given name.
     """
-    return QgsMapLayerRegistry.instance.mapLayersByName(name)[0]
+    return QgsProject.instance.mapLayersByName(name)[0]
 
 
 class BadLayerHandler(QgsProjectBadLayerHandler):
@@ -90,7 +89,7 @@ class ProjectWidget(Ui_Form, QWidget):
             .get('qgislocation', "")
 
         self.qgispathEdit.setText(qgislocation)
-        self.qgispathEdit.textChanged.connect(self.save_qgis_path) 
+        self.qgispathEdit.textChanged.connect(self.save_qgis_path)
         self.filePickerButton.pressed.connect(self.set_qgis_path)
 
         self.connect_page_events()
@@ -275,9 +274,9 @@ class ProjectWidget(Ui_Form, QWidget):
 
         if self.project:
             savelast = QMessageBox.question(self,
-                                    "Save Current Project",
-                                    "Save {}?".format(self.project.name),
-                                    QMessageBox.Save | QMessageBox.No)
+                                            "Save Current Project",
+                                            "Save {}?".format(self.project.name),
+                                            QMessageBox.Save | QMessageBox.No)
             if savelast == QMessageBox.Accepted:
                 self._saveproject()
 
@@ -302,7 +301,7 @@ class ProjectWidget(Ui_Form, QWidget):
         # some reason.
         self.badLayerHandler = BadLayerHandler(callback=self.missing_layers)
         QgsProject.instance().setBadLayerHandler(self.badLayerHandler)
-        QgsProject.instance().read(fileinfo)
+        project.load_project()
 
     def missing_layers(self, missinglayers):
         """

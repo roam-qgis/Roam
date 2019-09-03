@@ -81,7 +81,7 @@ def feature_by_key(layer, key):
     :return: The feature found using the mapkey.  Will throw StopInteration if not found
     """
     rq = QgsFeatureRequest(key)
-    return layer.getFeatures(rq).next()
+    return next(layer.getFeatures(rq))
 
 
 class FeatureSaveException(Exception):

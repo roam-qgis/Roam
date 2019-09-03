@@ -1,3 +1,5 @@
+import contextlib
+import time
 import collections
 import copy
 import json
@@ -37,9 +39,6 @@ from roam.ui.ui_geomwidget import Ui_GeomWidget
 values_file = os.path.join(tempfile.gettempdir(), "Roam")
 
 nullcheck = qgisutils.nullcheck
-
-import contextlib
-import time
 
 totals = collections.defaultdict(int)
 

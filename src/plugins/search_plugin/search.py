@@ -254,7 +254,7 @@ class SearchPlugin(widget, base, Page):
             return
         layername, fid = data[0], data[1]
         layer = roam.api.utils.layer_by_name(layername)
-        feature = layer.getFeatures(QgsFeatureRequest(fid)).next()
+        feature = next(layer.getFeatures(QgsFeatureRequest(fid)))
         self.api.mainwindow.showmap()
         self.api.mainwindow.canvas.zoomToFeatureIds(layer, [fid])
         RoamEvents.selectionchanged.emit({layer: [feature]})

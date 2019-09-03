@@ -71,7 +71,7 @@ class InspectionTool(QgsMapTool):
         try:
             # Only supports the first feature
             # TODO build picker to select which feature to inspect
-            feature = self.layerfrom.getFeatures(rq).next()
+            feature = next(self.layerfrom.getFeatures(rq))
             self.band.setToGeometry(feature.geometry(), self.layerfrom)
 
             fields = self.layerto.fields()
