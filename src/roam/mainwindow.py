@@ -58,6 +58,7 @@ class MainWindow(ui_mainwindow.Ui_MainWindow, QMainWindow):
     def __init__(self, roamapp):
         super(MainWindow, self).__init__()
         self.setupUi(self)
+        self.setWindowFlags(Qt.WindowMinimizeButtonHint | Qt.WindowMaximizeButtonHint)
         import roam
         self.projectwidget.project_base = roamapp.projectsroot
 
