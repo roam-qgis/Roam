@@ -85,7 +85,7 @@ def appstyle():
         color: #4f4f4f;
     }
     
-    QCheckBox::indicator {
+    QCheckBox::indicator, QRadioButton::indicator {
         width: 40px;
         height: 40px;
     }
@@ -96,6 +96,14 @@ def appstyle():
     
     QCheckBox::indicator:unchecked {
         image: url(:/icons/resources/images/qcheckbox-unchecked.svg);
+    }
+    
+    QRadioButton::indicator:checked {
+        image: url(:/icons/resources/images/qradio-checked.svg);
+    }
+    
+    QRadioButton::indicator:unchecked {
+        image: url(:/icons/resources/images/qradio-unchecked.svg);
     }
 
     QLabel {
