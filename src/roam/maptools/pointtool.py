@@ -54,7 +54,7 @@ class PointTool(TouchMapTool):
         self.startcolour = QColor.fromRgb(0, 0, 255, 100)
         self.pointband.setColor(self.startcolour)
         self.pointband.setIconSize(20)
-        self.pointband.addPoint(QgsPoint(0, 0))
+        self.pointband.addPoint(QgsPointXY(0, 0))
         self.pointband.hide()
 
     @property
@@ -75,7 +75,7 @@ class PointTool(TouchMapTool):
                 return
 
         point = event.snapPoint()
-        self.geometryComplete.emit(QgsGeometry.fromPoint(point))
+        self.geometryComplete.emit(QgsGeometry.fromPointXY(point))
 
     def canvasMoveEvent(self, event):
         point = event.snapPoint()

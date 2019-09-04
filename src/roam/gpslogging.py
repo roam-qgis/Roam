@@ -1,7 +1,7 @@
 import getpass
 
 from qgis.PyQt.QtCore import Qt, pyqtSignal, QObject, QDateTime
-from qgis.core import QgsFeature, QgsGeometry
+from qgis.core import QgsFeature, QgsGeometry, QgsPointXY
 
 
 class GPSLogging(QObject):
@@ -43,7 +43,7 @@ class GPSLogging(QObject):
         self._tracking = value
         self.trackingchanged.emit(value)
 
-    def postionupdated(self, position, info):
+    def postionupdated(self, position: QgsPointXY, info):
         if not self.logging or not self.layer or not self.layerprovider:
             return
 
@@ -66,7 +66,7 @@ class GPSLogging(QObject):
 
             feature[name] = value
 
-        geom = QgsGeometry.fromPoint(position)
+        geom = QgsGeometry.fromPointXY(position)
         feature.setGeometry(geom)
         self.featurecache.append(feature)
         if len(self.featurecache) > 5:

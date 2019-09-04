@@ -1,4 +1,4 @@
-from form import Form
+from .form import Form
 
 
 def init_form(form):

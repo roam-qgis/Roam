@@ -145,7 +145,7 @@ class DateTimePickerWidget(datepicker_widget, QWidget):
             self.setAsNow()
             return
 
-        if isinstance(value, basestring):
+        if isinstance(value, str):
             value = QDateTime.fromString(value, Qt.ISODate)
 
         self.setDate(value.date())

@@ -197,7 +197,7 @@ class DrawingPad(Ui_DrawingWindow, QWidget):
 
                 map_pos = QgsPoint(GPS.gpsinfo("longitude"), GPS.gpsinfo("latitude"))
                 # map_pos = QgsPoint(115.72589,-32.29597)
-                geom = QgsGeometry.fromPoint(map_pos)
+                geom = QgsGeometry.fromPointXY(map_pos)
                 feature = QgsFeature()
                 feature.setGeometry(geom)
                 gpslayer.startEditing()

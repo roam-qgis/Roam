@@ -926,13 +926,13 @@ class FeatureForm(FeatureFormBase):
         if self.editingmode:
             roam.utils.info("Updating feature {}".format(self.feature.id()))
             layer.updateFeature(self.feature)
-            # qgisutils.update_feature(layer, self.feature)
         else:
             roam.utils.info("Adding feature {}".format(self.feature.id()))
             layer.addFeature(self.feature)
             savevalues(self.form, savedvalues)
 
         saved = layer.commitChanges()
+        print(saved)
 
         if not saved:
             errors = layer.commitErrors()
