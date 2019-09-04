@@ -91,7 +91,7 @@ class TextWidget(EditorWidget):
     def setvalue(self, value):
         # Not the best way but should cover most use cases
         # for now
-        value = value or ''
+        value = str(value) or ''
         try:
             self.widget.setPlainText(value)
         except AttributeError:
