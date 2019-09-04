@@ -63,6 +63,12 @@ def appstyle():
         margin-top: 5px;
         margin-bottom: 5px;
     }
+    
+    QListView::item {
+        margin-left: 0px;
+        margin-top: 10px;
+        margin-bottom: 10px;
+    }
 
     QTreeView::indicator {
         width: 30px;
@@ -85,9 +91,17 @@ def appstyle():
         color: #4f4f4f;
     }
     
-    QCheckBox::indicator, QRadioButton::indicator {
+    QCheckBox::indicator, QRadioButton::indicator, QListView::indicator {
         width: 40px;
         height: 40px;
+    }
+    
+    QListView::indicator:checked {
+        image: url(:/icons/resources/images/qcheckbox-checked.svg);
+    }
+    
+    QListView::indicator:unchecked {
+        image: url(:/icons/resources/images/qcheckbox-unchecked.svg);
     }
     
     QCheckBox::indicator:checked {
