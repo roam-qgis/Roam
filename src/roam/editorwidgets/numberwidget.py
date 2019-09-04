@@ -83,12 +83,12 @@ class NumberWidget(EditorWidget):
         try:
             max = int(max)
         except ValueError:
-            max = sys.maxint
+            max = sys.maxsize
 
         try:
             min = int(min)
         except ValueError:
-            min = -sys.maxint - 1
+            min = -sys.maxsize - 1
 
         return max, min
 
@@ -147,5 +147,8 @@ class DoubleNumberWidget(NumberWidget):
         if not value:
             value = 0.00
 
-        value = float(value)
-        self.widget.setValue(value)
+        try:
+            value = float(value)
+            self.widget.setValue(value)
+        except ValueError:
+            print(value, self.objectName())
