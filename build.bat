@@ -74,12 +74,12 @@ GOTO END
 :test
 @ECHO ON
 ECHO Running tests
-pytest --cov=src\roam src\roam.tests --cov-report html --cov-report term
+pytest --cov=src\roam src\roam_tests --cov-report html --cov-report term
 GOTO END
 
 :test-only
 ECHO Running tests
-pytest src\roam.tests
+pytest src\roam_tests
 GOTO END
 
 :design
