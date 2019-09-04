@@ -251,8 +251,8 @@ class FormWidget(ui_formwidget.Ui_Form, WidgetBase):
         """
         Change the icon for the form
         """
-        icon = QFileDialog.getOpenFileName(self, "Select form icon image", filter="Images (*.png *.svg)")
-        if not icon:
+        icon, selected = QFileDialog.getOpenFileName(self, "Select form icon image", filter="Images (*.png *.svg)")
+        if not selected:
             return
         ext = os.path.splitext(icon)[1]
         shutil.copy(icon, os.path.join(self.form.folder, "icon" + ext))
