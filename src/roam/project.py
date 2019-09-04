@@ -390,7 +390,6 @@ class Form(object):
         location = os.path.join(self.folder, "__init__.py")
         spec = importlib.util.spec_from_file_location(self.project.id + "." + self.name, location)
         module = importlib.util.module_from_spec(spec)
-        print(module)
         spec.loader.exec_module(module)
         self._module = module
 
@@ -845,7 +844,6 @@ class Project(QObject):
         self.settings['forms'] = forms
         self._forms = []
         form = [form for form in self.forms if form.name == name][0]
-        debug(config)
         return form
 
     def removeform(self, name):
