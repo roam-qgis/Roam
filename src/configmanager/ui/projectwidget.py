@@ -7,7 +7,7 @@ from qgis.PyQt.QtWidgets import QWidget, QMessageBox, QMenu, QFileDialog
 from qgis.core import QgsProject, Qgis, QgsProjectBadLayerHandler
 
 from configmanager.ui.ui_projectwidget import Ui_Form
-from configmanager.utils import openqgis, openfolder
+from configmanager.utils import openqgis, openfolder, QGISNotFound
 
 from configmanager import bundle
 
@@ -255,9 +255,8 @@ class ProjectWidget(Ui_Form, QWidget):
         """
         try:
             openqgis(self.project.projectfile)
-        except OSError:
-            self.bar.pushMessage("Looks like I couldn't find QGIS",
-                                 "Check qgislocation in roam.config", Qgis.Warning)
+        except QGISNotFound as ex:
+            self.bar.pushMessage(ex.message, Qgis.Warning)
 
     def openprojectfolder(self):
         """

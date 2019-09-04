@@ -24,7 +24,7 @@ import configmanager.editorwidgets
 from roam.api import FeatureForm, utils
 from roam.utils import log
 
-from configmanager.utils import openqgis, render_tample, openfolder
+from configmanager.utils import openqgis, render_tample, openfolder, QGISNotFound
 import roam.utils
 from roam.dataaccess.database import Database
 
@@ -848,9 +848,8 @@ class ProjectInfoWidget(ui_projectinfo.Ui_Form, WidgetBase):
         """
         try:
             openqgis(self.project.projectfile)
-        except OSError:
-            self.bar.pushMessage("Looks like I couldn't find QGIS",
-                                 "Check qgislocation in roam.config", Qgis.Warning)
+        except QGISNotFound as ex:
+            self.bar.pushMessage(ex.message, Qgis.Warning)
 
     def change_splash(self, event):
         """

@@ -14,23 +14,38 @@ path = os.path.join(os.path.dirname(__file__), "templates", "html")
 env = Environment(loader=FileSystemLoader(path))
 
 
+class QGISNotFound(Exception):
+    def __init__(self, locations):
+        self.message = "Can't find installed QGIS in: {}".format(locations)
+
+
+def qgis_path(base_path):
+    return os.path.join(base_path, "QGIS 3.4", "bin", "qgis-ltr-bin.exe")
+
+
+def find_qgis():
+    settingspath = roam.config.settings.get("qgislocation", None)
+    if settingspath and os.path.exists(settingspath):
+        return settingspath
+
+    triedpaths = ["settings: qgislocation"]
+
+    for installpath in [qgis_path(os.environ['ProgramFiles']), qgis_path(os.environ['ProgramFiles(x86)'])]:
+        if os.path.exists(installpath):
+            return installpath
+        else:
+            triedpaths.append(installpath)
+    else:
+        raise QGISNotFound(triedpaths)
+
+
 def openqgis(project):
     """
     Open a session of QGIS and load the project. No plugins are loaded with the session.
     :param project:
     :return:
     """
-    osgeo4w = os.environ["OSGEO4W_ROOT"]
-    name = os.environ["QGISNAME"]
-    qgislocation = os.path.join(osgeo4w, "bin", "{}.bat".format(name))
-    
-    if not roam.config.settings.get("qgislocation", qgislocation) and os.path.exists(qgislocation):
-        qgislocation = roam.config.settings.setdefault('configmanager', {}) \
-            .setdefault('qgislocation', qgislocation)
-
-    cmd = 'qgis'
-    if sys.platform == 'win32':
-        cmd = qgislocation
+    cmd = find_qgis()
     subprocess.Popen([cmd, "--noplugins", project])
 
 
