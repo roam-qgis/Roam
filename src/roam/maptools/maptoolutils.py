@@ -1,4 +1,19 @@
+from qgis.gui import QgsMapMouseEvent
 from qgis.core import QgsWkbTypes, QgsPointXY
+
+
+def point_from_event(event: QgsMapMouseEvent, snapping: bool) -> QgsPointXY:
+    """
+    Returns the point from the mouse canvas event. If snapping is enabled it will be
+    snapped using the settings.
+    :param event: The map mouse event.
+    :return: Point for the map canvas event.
+    """
+    if snapping:
+        point = event.snapPoint()
+    else:
+        point = event.originalMapPoint()
+    return point
 
 
 def setRubberBand(canvas, selectRect, rubberBand):

@@ -48,7 +48,7 @@ class GPSService(QObject):
         super(GPSService, self).__init__()
         self.isConnected = False
         self._currentport = None
-        self.postion = None
+        self._position = None
         self.latlong_position = None
         self.elevation = None
         self.info = QgsGpsInformation()
@@ -63,6 +63,10 @@ class GPSService(QObject):
         if not self.gpslogfile is None:
             self.gpslogfile.close()
 
+    @property
+    def position(self) -> QgsPointXY:
+        return self._position
+
     def log_gps(self, line):
         if not GPSLOGGING:
             # No logging for you.
@@ -75,14 +79,14 @@ class GPSService(QObject):
 
     def gpsinfo(self, attribute):
         """
-        Return information about the GPS postion.
+        Return information about the GPS position.
         :param attribute:
         :return:
         """
         if attribute.lower() == 'x':
-            return self.postion.x()
+            return self.position.x()
         if attribute.lower() == 'y':
-            return self.postion.y()
+            return self.position.y()
         if attribute.lower() == 'z':
             return self.elevation
         if attribute.lower() == 'portname':
@@ -120,7 +124,7 @@ class GPSService(QObject):
             # self.gpsConn.nmeaSentenceReceived.disconnect(self.parse_data)
             
         self.isConnected = False
-        self.postion = None
+        self._position = None
         self.gpsdisconnected.emit()
 
     def _gpsfound(self, gpsConnection):
@@ -221,7 +225,7 @@ class GPSService(QObject):
                 log("Transform exception")
                 return
 
-            if self.postion is None:
+            if self.position is None:
                 self.firstfix.emit(map_pos, gpsInfo)
 
             self.info = gpsInfo
@@ -230,7 +234,7 @@ class GPSService(QObject):
                 self.gpsposition.emit(map_pos, gpsInfo)
                 self._gpsupdate_last = datetime.now()
 
-            self.postion = map_pos
+            self._position = map_pos
             self.elevation = gpsInfo.elevation
 
 

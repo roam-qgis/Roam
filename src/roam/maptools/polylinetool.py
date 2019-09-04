@@ -1,181 +1,21 @@
-from qgis.PyQt.QtCore import *
-from qgis.PyQt.QtWidgets import *
-from qgis.PyQt.QtGui import *
-from qgis.core import *
-from qgis.gui import *
-
-from qgis.core import QgsWkbTypes
-from roam.maptools.touchtool import TouchMapTool
-from roam.api import GPS, RoamEvents
+from PyQt5.QtCore import pyqtSignal, QTimer, Qt
+from PyQt5.QtGui import QColor, QCursor, QPixmap, QIcon
+from qgis._core import QgsPoint, QgsGeometry, QgsWkbTypes, QgsPointXY
+from qgis._gui import QgsMapToolEdit, QgsRubberBand, QgsMapMouseEvent
 
 import roam.config
-
-import roam.resources_rc
 import roam.utils
-
-
-class RubberBand(QgsRubberBand):
-    def __init__(self, canvas, geometrytype, width=5, iconsize=10):
-        super(RubberBand, self).__init__(canvas, geometrytype)
-        self.canvas = canvas
-        self.setIconSize(iconsize)
-        self.setWidth(width)
-        self.iconsize = iconsize
-        self.font = QFont()
-        self.font.setStyleHint(QFont.Times, QFont.PreferAntialias)
-        self.font.setPointSize(20)
-        self.font.setBold(True)
-
-        self.blackpen = QPen(Qt.black)
-        self.blackpen.setWidth(0.5)
-        self.whitebrush = QBrush(Qt.white)
-        self.unit = self.canvas.mapUnits()
-
-        self.distancearea = self.createdistancearea()
-
-    def createdistancearea(self):
-        distancearea = QgsDistanceArea()
-        dest = self.canvas.mapSettings().destinationCrs()
-        distancearea.setSourceCrs(dest, QgsProject.instance().transformContext())
-        ellispoid = QgsProject.instance().readEntry("Measure", "/Ellipsoid", GEO_NONE)
-        distancearea.setEllipsoid(ellispoid[0])
-        return distancearea
-
-    def paint(self, p, *args):
-        super(RubberBand, self).paint(p)
-
-        # p.drawRect(self.boundingRect())
-        if not roam.config.settings.get("draw_distance", True):
-            return
-
-        offset = QPointF(5, 5)
-        nodescount = self.numberOfVertices()
-        for index in range(nodescount, -1, -1):
-            if index == 0:
-                return
-
-            qgspoint = self.getPoint(0, index)
-            qgspointbefore = self.getPoint(0, index - 1)
-            # No point before means we are the first index and there is nothing
-            # before us.
-            if not qgspointbefore:
-                return
-
-            if qgspoint and qgspointbefore:
-                distance = self.distancearea.measureLine(qgspoint, qgspointbefore)
-                if int(distance) == 0:
-                    continue
-                text = QgsDistanceArea.textUnit(distance, 3, self.unit, False)
-                linegeom = QgsGeometry.fromPolyline([qgspoint, qgspointbefore])
-                midpoint = linegeom.centroid().asPoint()
-                midpoint = self.toCanvasCoordinates(midpoint) - self.pos()
-                midpoint += offset
-                path = QPainterPath()
-                path.addText(midpoint, self.font, text)
-                p.setPen(self.blackpen)
-                p.setRenderHints(QPainter.Antialiasing)
-                p.setFont(self.font)
-                p.setBrush(self.whitebrush)
-                p.drawPath(path)
-
-    def boundingRect(self):
-        rect = super(RubberBand, self).boundingRect()
-        width = rect.size().width()
-        height = rect.size().height()
-        m2p = self.canvas.getCoordinateTransform()
-        res = m2p.mapUnitsPerPixel()
-        new = 50 / res
-        top = rect.topLeft() - QPoint(0, new)
-        bottom = rect.bottomRight() + QPoint(new, 0)
-        return QRectF(top, bottom)
-
-
-class BaseAction(QAction):
-    def __init__(self, icon, name, tool, parent=None):
-        super(BaseAction, self).__init__(icon, name, parent)
-        self.setCheckable(False)
-        self.tool = tool
-        self.isdefault = False
-        self.ismaptool = False
-
-
-class UndoAction(BaseAction):
-    def __init__(self, tool, parent=None):
-        super(UndoAction, self).__init__(QIcon(":/icons/back"),
-                                         "Undo",
-                                         tool,
-                                         parent)
-        self.setObjectName("UndoAction")
-        self.setText(self.tr("Undo"))
-
-
-class EndCaptureAction(BaseAction):
-    def __init__(self, tool, parent=None):
-        super(EndCaptureAction, self).__init__(QIcon(":/icons/stop-capture"),
-                                               "End Capture",
-                                               tool,
-                                               parent)
-        self.setObjectName("EndCaptureAction")
-        self.setText(self.tr("End Capture"))
-
-
-class CaptureAction(BaseAction):
-    def __init__(self, tool, geomtype, parent=None, text="Digitize"):
-        self._defaulticon = QIcon(":/icons/capture-{}".format(geomtype))
-        self._defaulttext = text
-        super(CaptureAction, self).__init__(self._defaulticon,
-                                            self._defaulttext,
-                                            tool,
-                                            parent)
-        self.setObjectName("CaptureAction")
-        self.setCheckable(True)
-        self.isdefault = True
-        self.ismaptool = True
-
-    def setEditMode(self, enabled):
-        if enabled:
-            self.setText(self.tr("Edit"))
-        else:
-            self.setText(self._defaulttext)
-
-
-class GPSTrackingAction(BaseAction):
-    def __init__(self, tool, parent=None):
-        super(GPSTrackingAction, self).__init__(QIcon(":/icons/record"),
-                                                "Track",
-                                                tool,
-                                                parent)
-        self.setObjectName("GPSTrackingAction")
-        self.setCheckable(True)
-
-    def set_text(self, tracking):
-        if tracking:
-            self.setText(self.tr("Tracking"))
-        else:
-            self.setText(self.tr("Track"))
-
-
-class GPSCaptureAction(BaseAction):
-    def __init__(self, tool, geomtype, parent=None):
-        super(GPSCaptureAction, self).__init__(QIcon(":/icons/gpsadd-{}".format(geomtype)),
-                                               "GPS Capture",
-                                               tool,
-                                               parent)
-        self.setObjectName("GPSCaptureAction")
-        self.setText(self.tr("GPS Point"))
-        self.setEnabled(False)
-
-        GPS.gpsfixed.connect(self.setstate)
-        GPS.gpsdisconnected.connect(lambda: self.setEnabled(False))
-
-    def setstate(self, fixed, *args):
-        self.setEnabled(fixed)
+from roam.api import GPS, RoamEvents
+from roam.maptools.actions import CaptureAction, GPSTrackingAction, EndCaptureAction, UndoAction, GPSCaptureAction
+from roam.maptools.maptoolutils import point_from_event
+from roam.maptools.rubberband import RubberBand
 
 
 class PolylineTool(QgsMapToolEdit):
     mouseClicked = pyqtSignal(QgsPoint)
     geometryComplete = pyqtSignal(QgsGeometry)
     error = pyqtSignal(str)
+    MODE = "POLYLINE"
 
     def __init__(self, canvas, config=None):
         super(PolylineTool, self).__init__(canvas)
@@ -210,7 +50,6 @@ class PolylineTool(QgsMapToolEdit):
         self.pointband = QgsRubberBand(self.canvas, QgsWkbTypes.PointGeometry)
         self.pointband.setColor(self.startcolour)
         self.pointband.setIconSize(20)
-        self.snapper = self.canvas.snappingUtils()
         self.capturing = False
         self.cursor = QCursor(QPixmap(["16 16 3 1",
                                        "      c None",
@@ -384,26 +223,22 @@ class PolylineTool(QgsMapToolEdit):
             self.editvertex = None
             self.editpart = 0
 
-    def getPointFromEvent(self, event):
-        point = self.canvas.getCoordinateTransform().toMapCoordinates(event.pos())
-        return point
-
-    def canvasMoveEvent(self, event):
+    def canvasMoveEvent(self, event: QgsMapMouseEvent):
         if self.is_tracking:
             return
 
         if self.capturing:
-            point = self.snappoint(event)
+            point = point_from_event(event, self.snapping)
             self.band.movePoint(point)
 
         if self.editmode and self.editvertex is not None:
             at = self.editvertex
-            point = self.snappoint(event)
+            point = point_from_event(event, self.snapping)
             lastvertex = self.band.numberOfVertices() - 1
-            if isinstance(self, PolygonTool) and at == lastvertex:
+            if self.is_polygon_mode and at == lastvertex:
                 self.band.movePoint(0, point, self.editpart)
                 self.pointband.movePoint(0, point)
-            elif isinstance(self, PolygonTool) and at == 0:
+            elif self.is_polygon_mode and at == 0:
                 self.band.movePoint(lastvertex, point, self.editpart)
                 self.pointband.movePoint(lastvertex, point)
 
@@ -411,6 +246,15 @@ class PolylineTool(QgsMapToolEdit):
             self.pointband.movePoint(at, point)
 
         self.update_valid_state()
+
+    @property
+    def is_polygon_mode(self):
+        """
+        Returns true if this tool is in polygon mode
+        :note: This is a gross hack to avoid a import issue until it's refactored
+        :return:
+        """
+        return self.MODE == "POLYGON"
 
     def update_valid_state(self):
         geom = self.band.asGeometry()
@@ -439,9 +283,8 @@ class PolylineTool(QgsMapToolEdit):
             return False
 
         # We need to remove errors that are "ok" and not really that bad
-
-        ## We are harder on what is considered valid for polygons.
-        if isinstance(self, PolygonTool):
+        # We are harder on what is considered valid for polygons.
+        if self.is_polygon_mode:
             for error in errors:
                 if not is_safe(error.what()):
                     othererrors.append(error)
@@ -459,15 +302,14 @@ class PolylineTool(QgsMapToolEdit):
         else:
             return self.band.numberOfVertices() - 1
 
-    def canvasReleaseEvent(self, event):
+    def canvasReleaseEvent(self, event: QgsMapMouseEvent):
         if event.button() == Qt.RightButton:
             self.endcapture()
             return
 
         if not self.editmode:
-            point = self.snappoint(event)
-            qgspoint = QgsPoint(point)
-            self.add_point(qgspoint)
+            point = event.snapPoint()
+            self.add_point(point)
         else:
             self.editvertex = None
 
@@ -559,13 +401,6 @@ class PolylineTool(QgsMapToolEdit):
     def isEditTool(self):
         return True
 
-    def snappoint(self, event):
-        if not self.snapping:
-            return event.originalMapPoint()
-
-        point = event.snapPoint(QgsMapMouseEvent.SnapProjectConfig)
-        return point
-
     def setEditMode(self, enabled, geom):
         self.reset()
         self.editmode = enabled
@@ -588,136 +423,4 @@ class PolylineTool(QgsMapToolEdit):
             self.pointband.setColor(self.startcolour)
 
         self.endcaptureaction.setEnabled(self.editmode)
-        self.captureaction.setEditMode(enabled)
-
-
-class PolygonTool(PolylineTool):
-    mouseClicked = pyqtSignal(QgsPoint)
-    geometryComplete = pyqtSignal(QgsGeometry)
-
-    def __init__(self, canvas, config=None):
-        super(PolygonTool, self).__init__(canvas, config)
-        self.minpoints = 3
-        self.captureaction = CaptureAction(self, "polygon", text="Digitize")
-        self.captureaction.toggled.connect(self.update_state)
-        self.reset()
-
-    def reset(self):
-        super(PolygonTool, self).reset()
-        self.band.reset(QgsWkbTypes.PolygonGeometry)
-
-
-class PointTool(TouchMapTool):
-    """
-    A basic point tool that can be connected to actions in order to handle
-    point based actions.
-    """
-    geometryComplete = pyqtSignal(QgsGeometry)
-    error = pyqtSignal(str)
-
-    def __init__(self, canvas, config=None):
-        super(PointTool, self).__init__(canvas)
-        if not config:
-            self.config = {}
-        else:
-            self.config = config
-        self.cursor = QCursor(QPixmap(["16 16 3 1",
-                                       "      c None",
-                                       ".     c #FF0000",
-                                       "+     c #FFFFFF",
-                                       "                ",
-                                       "       +.+      ",
-                                       "      ++.++     ",
-                                       "     +.....+    ",
-                                       "    +.     .+   ",
-                                       "   +.   .   .+  ",
-                                       "  +.    .    .+ ",
-                                       " ++.    .    .++",
-                                       " ... ...+... ...",
-                                       " ++.    .    .++",
-                                       "  +.    .    .+ ",
-                                       "   +.   .   .+  ",
-                                       "   ++.     .+   ",
-                                       "    ++.....+    ",
-                                       "      ++.++     ",
-                                       "       +.+      "]))
-
-        self.captureaction = CaptureAction(self, 'point')
-        self.gpscapture = GPSCaptureAction(self, 'point')
-        self.gpscapture.triggered.connect(self.addatgps)
-        self.snapper = QgsMapCanvasSnapper(self.canvas)
-        self.pointband = RubberBand(self.canvas, QgsWkbTypes.PointGeometry)
-        self.startcolour = QColor.fromRgb(0, 0, 255, 100)
-        self.pointband.setColor(self.startcolour)
-        self.pointband.setIconSize(20)
-        self.pointband.addPoint(QgsPoint(0, 0))
-        self.pointband.hide()
-
-    @property
-    def actions(self):
-        return [self.captureaction, self.gpscapture]
-
-    def canvasPressEvent(self, event):
-        self.startpoint = event.pos()
-
-    def snappoint(self, event):
-        if not self.snapping:
-            return False, event.originalMapPoint()
-
-        point = event.snapPoint(QgsMapMouseEvent.SnapProjectConfig)
-        return event.isSnapped(), point
-
-    def canvasReleaseEvent(self, event):
-        if self.pinching:
-            return
-
-        if self.dragging:
-            diff = self.startpoint - event.pos()
-            if not abs(diff.x()) < 10 and not abs(diff.y()) < 10:
-                super(PointTool, self).canvasReleaseEvent(event)
-                return
-
-        hassnap, point = self.snappoint(event)
-        self.geometryComplete.emit(QgsGeometry.fromPoint(point))
-
-    def canvasMoveEvent(self, event):
-        hassnap, point = self.snappoint(event)
-        if hassnap:
-            self.pointband.movePoint(point)
-            self.pointband.show()
-        else:
-            self.pointband.hide()
-
-    def addatgps(self):
-        location = GPS.postion
-        self.geometryComplete.emit(QgsGeometry.fromPoint(location))
-
-    def activate(self):
-        """
-        Set the tool as the active tool in the canvas.
-
-        @note: Should be moved out into qmap.py
-               and just expose a cursor to be used
-        """
-        self.canvas.setCursor(self.cursor)
-
-    def deactivate(self):
-        """
-        Deactive the tool.
-        """
-        pass
-
-    def clearBand(self):
-        self.band.reset()
-
-    def isZoomTool(self):
-        return False
-
-    def isTransient(self):
-        return False
-
-    def isEditTool(self):
-        return False
-
-    def setEditMode(self, enabled, geom):
         self.captureaction.setEditMode(enabled)

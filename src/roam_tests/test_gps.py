@@ -27,7 +27,7 @@ def gpsservice():
     info.direction = 90.0
     info.latitude = 90.0
     gps = GPSService()
-    gps.postion = positon
+    gps._position = positon
     gps.elevation = 20
     gps.currentport = 'testport'
     gps.info = info

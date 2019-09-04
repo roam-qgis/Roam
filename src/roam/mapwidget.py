@@ -10,11 +10,11 @@ from qgis.PyQt.QtGui import QPixmap, QCursor, QIcon, QColor, QPen, QPolygon, QFo
 from qgis.PyQt.QtSvg import QGraphicsSvgItem
 from qgis.PyQt.QtWidgets import QActionGroup, QFrame, QWidget, QSizePolicy, \
     QAction, QMainWindow, QGraphicsItem, QToolButton, QLabel, QToolBar
-from qgis.core import QgsPalLabeling, QgsMapLayer, Qgis, QgsRectangle, QgsProject, QgsApplication, \
-    QgsCoordinateReferenceSystem, QgsCoordinateTransform, QgsPoint, QgsCsException, QgsDistanceArea, QgsWkbTypes
+from qgis.core import QgsMapLayer, Qgis, QgsRectangle, QgsProject, QgsApplication, \
+    QgsCoordinateReferenceSystem, QgsCoordinateTransform, QgsPoint, QgsCsException, QgsDistanceArea, QgsWkbTypes, QgsGeometry
 from qgis.gui import QgsMapToolZoom, QgsRubberBand, QgsScaleComboBox, \
     QgsLayerTreeMapCanvasBridge, \
-    QgsMapCanvasSnappingUtils
+    QgsMapCanvasSnappingUtils, QgsMapToolPan
 
 from roam import roam_style
 from roam.biglist import BigList
@@ -27,15 +27,6 @@ from roam.api.events import RoamEvents
 from roam.gps_action import GPSAction, GPSMarker
 from roam.maptools import InfoTool, TouchMapTool
 from roam.popupdialogs import PickActionDialog
-
-try:
-    from qgis.gui import QgsMapToolTouch
-
-    PanTool = TouchMapTool
-except ImportError:
-    from qgis.gui import QgsMapToolPan
-
-    PanTool = QgsMapToolPan
 
 
 class SnappingUtils(QgsMapCanvasSnappingUtils):
@@ -879,7 +870,7 @@ class MapWidget(Ui_CanvasWidget, QMainWindow):
 
         self.zoomInTool = QgsMapToolZoom(self.canvas, False)
         self.zoomOutTool = QgsMapToolZoom(self.canvas, True)
-        self.panTool = PanTool(self.canvas)
+        self.panTool = QgsMapToolPan(self.canvas)
         self.infoTool = InfoTool(self.canvas)
 
         self.infoTool.setAction(self.actionInfo)
@@ -967,7 +958,7 @@ class MapWidget(Ui_CanvasWidget, QMainWindow):
         """
         RoamEvents.raisemessage("Invalid geometry capture", message, level=RoamEvents.CRITICAL)
 
-    def add_new_feature(self, form, geometry):
+    def add_new_feature(self, form, geometry: QgsGeometry):
         """
         Add a new new feature to the given layer
         :param form:  The form to use for the new feature.
@@ -975,8 +966,7 @@ class MapWidget(Ui_CanvasWidget, QMainWindow):
         """
         # TODO Extract into function.
         # NOTE This function is doing too much, acts as add and also edit.
-        layer = form.QGISLayer
-        if layer.isMultipart():
+        if geometry.isMultipart():
             geometry.convertToMultiType()
 
         try:

@@ -83,7 +83,7 @@ class TextWidget(EditorWidget):
         return False
 
     def validate(self, *args):
-        if not self.value():
+        if not self.value() or "":
             return False
         else:
             return True

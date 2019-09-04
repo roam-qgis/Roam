@@ -12,6 +12,9 @@ from qgis.PyQt.QtWidgets import QAction
 from qgis.PyQt.QtGui import QIcon
 
 from qgis.core import QgsWkbTypes, QgsMapLayer, QgsFeature, QgsProject
+from roam.maptools.pointtool import PointTool
+from roam.maptools.polygontool import PolygonTool
+from roam.maptools.polylinetool import PolylineTool
 
 from roam.utils import log, debug
 from roam.syncing import replication
@@ -32,6 +35,20 @@ import roam.defaults as defaults
 supportedgeometry = [QgsWkbTypes.PointGeometry,
                      QgsWkbTypes.PolygonGeometry,
                      QgsWkbTypes.LineGeometry]
+
+def tool_for_geometry_type(geomtype: QgsWkbTypes):
+    """
+    Get the geometry tool for the given geometry type
+    :param geomtype:
+    :return:
+    """
+
+    tools = {QgsWkbTypes.PointGeometry: PointTool,
+             QgsWkbTypes.PolygonGeometry: PolygonTool,
+             QgsWkbTypes.LineGeometry: PolylineTool}
+
+    return tools[geomtype]
+
 
 
 class ProjectExpection(Exception):
@@ -285,7 +302,7 @@ class Form(object):
         """
         geomtype = self.QGISLayer.geometryType()
         try:
-            return roam.maptools.tools[geomtype]
+            return tool_for_geometry_type(geomtype)
         except KeyError:
             raise NoMapToolConfigured
 
