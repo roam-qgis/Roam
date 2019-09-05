@@ -932,7 +932,6 @@ class FeatureForm(FeatureFormBase):
             savevalues(self.form, savedvalues)
 
         saved = layer.commitChanges()
-        print(saved)
 
         if not saved:
             errors = layer.commitErrors()
