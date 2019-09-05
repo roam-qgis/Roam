@@ -85,8 +85,6 @@ class InfoTool(QgsMapTool):
         else:
             rect = self.toSearchRect(event.pos())
 
-        print(rect.toString())
-
         self.dragging = False
         self.selectband.reset()
 
