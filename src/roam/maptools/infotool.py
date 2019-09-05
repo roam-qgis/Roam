@@ -18,9 +18,9 @@ class InfoTool(QgsMapTool):
         self.selectband = QgsRubberBand(self.canvas, QgsWkbTypes.PolygonGeometry)
         self.selectrect = QRect()
         self.dragging = False
-        self.selectionlayers = []
+        self.selectionlayers = {}
 
-    def getFeatures(self, rect, firstonly=False):
+    def getFeatures(self, rect):
         # The MS SQL driver seems to crash with a empty rectangle.
         # Need to check QGIS to patch issue
         if rect.isEmpty():
@@ -31,8 +31,8 @@ class InfoTool(QgsMapTool):
                     layer.geometryType() == QgsWkbTypes.NoGeometry):
                 continue
 
-            rect = self.toLayerCoordinates(layer, rect)
-            rq = QgsFeatureRequest().setFilterRect(rect) \
+            layerrect = self.toLayerCoordinates(layer, rect)
+            rq = QgsFeatureRequest().setFilterRect(layerrect)\
                 .setFlags(QgsFeatureRequest.ExactIntersect)
             features = []
             for feature in layer.getFeatures(rq):
@@ -82,10 +82,10 @@ class InfoTool(QgsMapTool):
                 return
 
             rect = geometry.boundingBox()
-            firstonly = False
         else:
-            firstonly = True
             rect = self.toSearchRect(event.pos())
+
+        print(rect.toString())
 
         self.dragging = False
         self.selectband.reset()
