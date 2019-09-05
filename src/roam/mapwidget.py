@@ -329,17 +329,15 @@ class MapWidget(Ui_CanvasWidget, QMainWindow):
 
         self.canvas.setCanvasColor(Qt.white)
         self.canvas.enableAntiAliasing(True)
-        # self.canvas.setWheelAction(QgsMapCanvas.WheelZoomToMouseCursor)
 
         self.snappingutils = SnappingUtils(self.canvas, self)
         self.canvas.setSnappingUtils(self.snappingutils)
-        # QgsProject.instance().readProject.connect(self.snappingutils.readConfigFromProject)
+        QgsProject.instance().snappingConfigChanged.connect(self.snappingutils.setConfig)
 
-        if hasattr(self.canvas, 'setParallelRenderingEnabled'):
-            threadcount = QThread.idealThreadCount()
-            threadcount = 2 if threadcount > 2 else 1
-            QgsApplication.setMaxThreads(threadcount)
-            self.canvas.setParallelRenderingEnabled(True)
+        threadcount = QThread.idealThreadCount()
+        threadcount = 2 if threadcount > 2 else 1
+        QgsApplication.setMaxThreads(threadcount)
+        self.canvas.setParallelRenderingEnabled(True)
 
         self.canvas.setFrameStyle(QFrame.NoFrame)
 
@@ -686,11 +684,8 @@ class MapWidget(Ui_CanvasWidget, QMainWindow):
             Clear the rubber band of the active tool if it has one
             """
             tool = self.canvas.mapTool()
-            try:
+            if hasattr(tool, "clearBand"):
                 tool.clearBand()
-            except AttributeError:
-                # No clearBand method found, but that's cool.
-                pass
 
         self.currentfeatureband.reset()
         clear_tool_band()
@@ -964,10 +959,15 @@ class MapWidget(Ui_CanvasWidget, QMainWindow):
         :param form:  The form to use for the new feature.
         :param geometry: The new geometry to create the feature for.
         """
-        # TODO Extract into function.
         # NOTE This function is doing too much, acts as add and also edit.
+        layer = form.QGISLayer
         if geometry.isMultipart():
             geometry.convertToMultiType()
+
+        # Transform the new geometry back into the map layers geometry if it's needed
+        transform = self.canvas.mapSettings().layerTransform(layer)
+        if transform.isValid():
+            geometry.transform(transform, QgsCoordinateTransform.ReverseTransform)
 
         try:
             form, feature = self.editfeaturestack.pop()

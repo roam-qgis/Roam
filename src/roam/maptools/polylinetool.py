@@ -227,8 +227,10 @@ class PolylineTool(QgsMapToolEdit):
         if self.is_tracking:
             return
 
+        point = point_from_event(event, self.snapping)
+        self.pointband.movePoint(point)
+
         if self.capturing:
-            point = point_from_event(event, self.snapping)
             self.band.movePoint(point)
 
         if self.editmode and self.editvertex is not None:
@@ -384,13 +386,15 @@ class PolylineTool(QgsMapToolEdit):
         self.endcaptureaction.setEnabled(False)
 
     def activate(self):
+        self.pointband.reset(QgsWkbTypes.PointGeometry)
+        self.pointband.addPoint(QgsPointXY(0, 0))
         self.canvas.setCursor(self.cursor)
 
     def deactivate(self):
         """
         Deactive the tool.
         """
-        pass
+        self.clearBand()
 
     def isZoomTool(self):
         return False

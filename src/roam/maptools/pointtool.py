@@ -21,6 +21,7 @@ class PointTool(TouchMapTool):
 
     def __init__(self, canvas, config=None):
         super(PointTool, self).__init__(canvas)
+        self.canvas = canvas
         if not config:
             self.config = {}
         else:
@@ -77,7 +78,7 @@ class PointTool(TouchMapTool):
         point = event.snapPoint()
         self.geometryComplete.emit(QgsGeometry.fromPointXY(point))
 
-    def canvasMoveEvent(self, event):
+    def canvasMoveEvent(self, event: QgsMapMouseEvent):
         point = event.snapPoint()
         self.pointband.movePoint(point)
         self.pointband.show()
@@ -93,16 +94,18 @@ class PointTool(TouchMapTool):
         @note: Should be moved out into qmap.py
                and just expose a cursor to be used
         """
+        self.pointband.reset(QgsWkbTypes.PointGeometry)
+        self.pointband.addPoint(QgsPointXY(0, 0))
         self.canvas.setCursor(self.cursor)
 
     def deactivate(self):
         """
         Deactive the tool.
         """
-        pass
+        self.clearBand()
 
     def clearBand(self):
-        self.band.reset()
+        self.pointband.reset(QgsWkbTypes.PointGeometry)
 
     def isZoomTool(self):
         return False
