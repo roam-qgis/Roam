@@ -158,7 +158,7 @@ class PolylineTool(QgsMapToolEdit):
             elif "distance" in config:
                 self.band.removeLastPoint()
                 value = config['distance']
-                self.add_point(GPS.postion)
+                self.add_point(GPS.position)
                 GPS.gpsposition.connect(self.track_gps_location_changed)
         else:
             self.captureaction.setIcon(self.captureaction._defaulticon)
@@ -199,7 +199,8 @@ class PolylineTool(QgsMapToolEdit):
         return [self.captureaction, self.trackingaction, self.gpscapture, self.endcaptureaction, self.undoaction]
 
     def add_vertex(self):
-        location = GPS.postion
+        location = GPS.position
+        self.remove_last_point()
         self.add_point(location)
         # Add an extra point for the move band
         self.band.addPoint(location)
