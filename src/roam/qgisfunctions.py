@@ -36,8 +36,6 @@ def qgsfunction(args, group, **kwargs):
       def add(values, *args):
         pass
     """
-    helptemplate = ''
-
     class RoamExpressionFunction(QgsExpressionFunction):
         def __init__(self, name, args, group, helptext=''):
             QgsExpressionFunction.__init__(self, name, args, group, helptext)
