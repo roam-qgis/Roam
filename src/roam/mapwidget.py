@@ -16,16 +16,15 @@ from qgis.gui import QgsMapToolZoom, QgsRubberBand, QgsScaleComboBox, \
     QgsLayerTreeMapCanvasBridge, \
     QgsMapCanvasSnappingUtils, QgsMapToolPan
 
-from roam import roam_style
-from roam.biglist import BigList
-
+import roam.api.utils
 import roam.config
 import roam.utils
-import roam.api.utils
+from roam import roam_style
 from roam.api import GPS, plugins
 from roam.api.events import RoamEvents
+from roam.biglist import BigList
 from roam.gps_action import GPSAction, GPSMarker
-from roam.maptools import InfoTool, TouchMapTool
+from roam.maptools import InfoTool
 from roam.popupdialogs import PickActionDialog
 
 
@@ -359,10 +358,6 @@ class MapWidget(Ui_CanvasWidget, QMainWindow):
         smallmode = roam.config.settings.get("smallmode", False)
         self.projecttoolbar.setSmallMode(smallmode)
 
-        self.scalebar_enabled = roam.config.settings.get('scale_bar', False)
-        if self.scalebar_enabled:
-            self.scalebar = ScaleBarItem(self.canvas)
-            self.canvas.scene().addItem(self.scalebar)
 
         self.projecttoolbar.setContextMenuPolicy(Qt.CustomContextMenu)
 
@@ -440,6 +435,14 @@ class MapWidget(Ui_CanvasWidget, QMainWindow):
         GPS.gpsdisconnected.connect(self.gps_disconnected)
 
         self.connectButtons()
+
+        scalebar_enabled = roam.config.settings.get('scale_bar', False)
+        if scalebar_enabled:
+            roam.utils.error("Unsupported feature: Scale bar support not ported to QGIS 3 API yet.")
+            RoamEvents.raisemessage("Unsupported feature", "Scale bar support not ported to QGIS 3 API yet", level=RoamEvents.CRITICAL)
+            self.scalebar_enabled = False
+            # self.scalebar = ScaleBarItem(self.canvas)
+            # self.canvas.scene().addItem(self.scalebar)
 
     def clear_plugins(self) -> None:
         """
