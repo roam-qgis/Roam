@@ -6,7 +6,7 @@ from qgis.PyQt.QtGui import QIcon, QMouseEvent, QKeySequence
 from qgis.PyQt.QtWebKitWidgets import QWebPage
 from qgis.PyQt.QtWidgets import QWidget, QListWidgetItem, QAction
 from qgis.core import (QgsExpression,
-                       QgsFeatureRequest, QgsGeometry, NULL, QgsWkbTypes)
+                       QgsFeatureRequest, QgsGeometry, NULL, QgsWkbTypes, QgsFeature)
 
 from roam import templates
 from roam import utils
@@ -24,6 +24,9 @@ countblocktemplate = templates.get_template("countblock")
 
 
 class NoFeature(Exception):
+    """
+    Exception raised  when no feature is found in the layer.
+    """
     pass
 
 
@@ -43,19 +46,31 @@ class FeatureCursor(object):
         self.form = form
 
     def next(self):
+        """
+        Move to the next feature in the cursor
+        :return: self
+        """
         self.index += 1
         if self.index > len(self.features) - 1:
             self.index = 0
         return self
 
     def back(self):
+        """
+        Move to the previous feature in the cursor
+        :return: self
+        """
         self.index -= 1
         if self.index < 0:
             self.index = len(self.features) - 1
         return self
 
     @property
-    def feature(self):
+    def feature(self) -> QgsFeature:
+        """
+        The current active feature in the cursor.
+        :return: The active QgsFeature
+        """
         try:
             feature = self.features[self.index]
             rq = QgsFeatureRequest(feature.id())
@@ -111,7 +126,7 @@ class InfoDock(infodock_widget, QWidget):
         self.deleteFeatureButton.setCheckable(False)
 
         self.quickInspectButton.hide()
-        self.quickInspectButton.pressed.connect(self.quick_inspect)
+        self.quickInspectButton.pressed.connect(self.quick_inspect_feature)
 
         self.nextButton.pressed.connect(self.pagenext)
         self.prevButton.pressed.connect(self.pageback)
@@ -119,7 +134,10 @@ class InfoDock(infodock_widget, QWidget):
         RoamEvents.selectioncleared.connect(self.clearResults)
         RoamEvents.editgeometry_complete.connect(self.refreshcurrent)
 
-    def _navigate_to_selection(self):
+    def _navigate_to_selection(self) -> None:
+        """
+        Set the GPS waypoint to the active feature
+        """
         feature = self.selection.feature
         geom = feature.geometry()
         point = geom.centroid().asPoint()
@@ -128,7 +146,10 @@ class InfoDock(infodock_widget, QWidget):
         else:
             GPS.waypoint = point
 
-    def _show_more_actions(self):
+    def _show_more_actions(self) -> None:
+        """
+        Show the more actions selector dialog.
+        """
         dlg = PickActionDialog()
         self.navigateAction.setEnabled(GPS.isConnected)
         if not GPS.isConnected:
@@ -139,11 +160,20 @@ class InfoDock(infodock_widget, QWidget):
         dlg.addactions([self.expandAction, self.navigateAction])
         dlg.exec_()
 
-    def delete_feature(self):
+    def delete_feature(self) -> None:
+        """
+        Trigger the feature delete logic.
+        Doesn't delete the feature here just fires the event to delete the feature.
+        """
         cursor = self.selection
         RoamEvents.delete_feature(cursor.form, cursor.feature)
 
-    def handle_link(self, url):
+    def handle_link(self, url) -> None:
+        """
+        Handle any links that are fired
+        :param url: The url that is clicked in the info dock
+        :return:
+        """
         if url.toString().endswith("/back"):
             self.pageback()
         elif url.toString().endswith("/next"):
@@ -151,10 +181,16 @@ class InfoDock(infodock_widget, QWidget):
         else:
             RoamEvents.openurl.emit(url)
 
-    def _sink(self, event):
+    def _sink(self, event) -> None:
+        """
+        Empty event sink to do nothing with the event.
+        """
         return
 
-    def change_expanded_state(self):
+    def change_expanded_state(self) -> None:
+        """
+        Expand or collapse the info panel view
+        """
         if self.expaned:
             self._collapse()
         else:
@@ -175,13 +211,20 @@ class InfoDock(infodock_widget, QWidget):
         newevent = QMouseEvent(event.type(), pos, event.button(), event.buttons(), event.modifiers())
         self.parent().mouseMoveEvent(newevent)
 
-    def _expand(self):
+    def _expand(self) -> None:
+        """
+        Expand the info panel.
+        """
         self.resize(self.parent().width() - 10, self.parent().height())
         self.move(10, 0)
         self.expaned = True
         self.expandAction.setText("Collapse Panel")
 
-    def _collapse(self):
+    def _collapse(self) -> None:
+        """
+        Collapse the info panel back to the samller state
+        :return:
+        """
         self.resize(self.startwidth, self.parent().height())
         self.move(self.parent().width() - self.startwidth, 0)
         self.expaned = False
@@ -194,6 +237,10 @@ class InfoDock(infodock_widget, QWidget):
         return super(InfoDock, self).eventFilter(object, event)
 
     def close(self):
+        """
+        Close the info panel dock.
+        :return:
+        """
         RoamEvents.selectioncleared.emit()
         super(InfoDock, self).close()
 
@@ -206,6 +253,10 @@ class InfoDock(infodock_widget, QWidget):
 
     @property
     def selection(self):
+        """
+        Return the active selection in the info panel.
+        :return:
+        """
         item = self.layerList.item(self.layerList.currentRow())
         if not item:
             return
@@ -214,6 +265,10 @@ class InfoDock(infodock_widget, QWidget):
         return cursor
 
     def openform(self):
+        """
+        Fire the open feature form event to open the form for the current feature.
+        :return:
+        """
         cursor = self.selection
         tools = self.project.layer_tools(cursor.layer)
         if 'inspection' in tools:
@@ -227,7 +282,10 @@ class InfoDock(infodock_widget, QWidget):
 
         RoamEvents.load_feature_form(form, feature, editmode)
 
-    def quick_inspect(self):
+    def quick_inspect_feature(self):
+        """
+        Quick inspect the current feature
+        """
         cursor = self.selection
         tools = self.project.layer_tools(cursor.layer)
         config = tools['inspection']
@@ -239,6 +297,12 @@ class InfoDock(infodock_widget, QWidget):
         form.suppressform = False
 
     def get_inspection_config(self, current_feature, config):
+        """
+        Returns the inspection form and a copy of the feature for the new form.
+        :param current_feature: The current feature to be copied
+        :param config: The tool config
+        :return:
+        """
         form = config['form']
         newform = self.project.form_by_name(form)
         if config.get('mode', "copy").lower() == 'copy':
@@ -255,23 +319,40 @@ class InfoDock(infodock_widget, QWidget):
         else:
             raise NotImplementedError("Only copy mode supported currently")
 
-    def editgeom(self):
+    def editgeom(self) -> None:
+        """
+        Trigger the event to edit the geometry of the active feature.
+        """
         cursor = self.selection
         RoamEvents.editgeometry.emit(cursor.form, cursor.feature)
         self.editGeomButton.setEnabled(False)
         self.deleteFeatureButton.setEnabled(False)
 
-    def pageback(self):
+    def pageback(self) -> None:
+        """
+        Go back a page
+        :return:
+        """
         cursor = self.selection
         cursor.back()
         self.update(cursor)
 
-    def pagenext(self):
+    def pagenext(self) -> None:
+        """
+        Go to the next page.
+        :return:
+        """
         cursor = self.selection
         cursor.next()
         self.update(cursor)
 
-    def layerIndexChanged(self, index):
+    def layerIndexChanged(self, index) -> None:
+        """
+        Called when the selected layer item changes.
+
+        Updates the panel with layer selection.
+        :param index: The new index of the selected
+        """
         item = self.layerList.item(index)
         if not item:
             return
@@ -279,7 +360,13 @@ class InfoDock(infodock_widget, QWidget):
         cursor = item.data(Qt.UserRole)
         self.update(cursor)
 
-    def setResults(self, results, forms, project):
+    def setResults(self, results, forms, project) -> None:
+        """
+        Set the results for the info panel.
+        :param results: Dict of layer and features for the selection.
+        :param forms: The forms from the project.
+        :param project: The active project.
+        """
         lastrow = self.layerList.currentRow()
         if lastrow == -1:
             lastrow = 0
@@ -301,7 +388,10 @@ class InfoDock(infodock_widget, QWidget):
         self.layerList.setMaximumHeight(size)
         self.navwidget.show()
 
-    def show(self):
+    def show(self) -> None:
+        """
+        Show or hide the layer panel based on the results count.
+        """
         if self.layerList.count() > 0:
             super(InfoDock, self).show()
         else:
@@ -325,10 +415,17 @@ class InfoDock(infodock_widget, QWidget):
             item = QListWidgetItem(icon, itemtext, self.layerList)
             item.setData(Qt.UserRole, FeatureCursor(layer, features, form))
 
-    def refreshcurrent(self):
+    def refreshcurrent(self) -> None:
+        """
+        Refresh the dock with the updated selection.
+        """
         self.update(self.selection)
 
-    def update(self, cursor):
+    def update(self, cursor) -> None:
+        """
+        Update the data in the dock with the given cursor data.
+        :param cursor: The cursor holding a pointer to the data and feature for the active feature.
+        """
         if cursor is None:
             return
 
@@ -377,6 +474,17 @@ class InfoDock(infodock_widget, QWidget):
         self.featureupdated.emit(layer, feature, cursor.features)
 
     def generate_info(self, infoblock, project, layer, mapkey, feature, countlabel=None, lastresults=None):
+        """
+        Generate a info block for the display.
+        :param infoblock: The info block name to generate.
+        :param project: The active Roam project.
+        :param layer: The active layer.
+        :param mapkey: The current map key of the selected feature.  Normally just the primary key column from QGIS.
+        :param feature: The selected feature.
+        :param countlabel: The label to use as the count header.
+        :param lastresults: The results from another info block. Normally info1 passed to info2.
+        :returns:
+        """
         infoblockdef = project.info_query(infoblock, layer.name())
         isinfo1 = infoblock == "info1"
 
@@ -400,7 +508,7 @@ class InfoDock(infodock_widget, QWidget):
                 queryresults = self.results_from_query(infoblockdef, layer, feature, mapkey, lastresults=lastresults)
                 if isinfo1 and not queryresults:
                     # If there is no results from the query and we are a info 1 block we grab from the feature.
-                    results.append(self.results_from_feature(feature))
+                    results.append(results_from_feature(feature))
                 else:
                     results = queryresults
             except database.DatabaseException as ex:
@@ -409,10 +517,10 @@ class InfoDock(infodock_widget, QWidget):
                 if not isinfo1:
                     error = "<b> Error: {} <b>".format(ex.msg)
                 else:
-                    results.append(self.results_from_feature(feature))
+                    results.append(results_from_feature(feature))
 
         elif infotype == 'feature':
-            featuredata = self.results_from_feature(feature)
+            featuredata = results_from_feature(feature)
             excludedfields = infoblockdef.get('hidden', [])
             for field in excludedfields:
                 try:
@@ -432,7 +540,7 @@ class InfoDock(infodock_widget, QWidget):
 
             fields = result.keys()
             attributes = result.values()
-            rows = generate_rows(fields, attributes, imagepath=self.project.image_folder)
+            rows = create_data_html(fields, attributes, imagepath=self.project.image_folder)
             try:
                 caption = caption.format(**dict(zip(fields, attributes)))
             except KeyError:
@@ -447,26 +555,31 @@ class InfoDock(infodock_widget, QWidget):
 
         return '<br>'.join(blocks), results
 
-    def results_from_feature(self, feature):
-        attributes = feature.attributes()
-        fields = [field.name().lower() for field in feature.fields()]
-        return OrderedDict(zip(fields, attributes))
-
-    def results_from_query(self, infoblockdef, layer, feature, mapkey, lastresults=None):
-        def get_key():
+    def results_from_query(self, infoblockdef, layer, feature, mapkey, lastresults=None) -> list:
+        """
+        Return the resutls from running a database query to get the feature results.
+        :param infoblockdef: The info block project config section.
+        :param layer: The QgsVectorLayer to get the connection from.
+        :param feature: The feature to pull the map key from.
+        :param mapkey: The mapkey to use if not set in the info block config or found in the last results.
+        :param lastresults: Results of another info results block. Normally info 1
+        :return: List of query results from running the query on the layer.
+        """
+        def get_key() -> str:
             try:
                 keycolumn = infoblockdef['mapping']['mapkey']
                 if keycolumn == 'from_info1':
                     if 'mapkey' in lastresults:
                         return lastresults['mapkey']
                     else:
+                        # TODO Umm wat? Why is this returning a list?
                         return []
                 else:
                     return feature[keycolumn]
             except KeyError:
                 return mapkey
 
-        def get_layer():
+        def get_layer() -> str:
             connection = infoblockdef.get('connection', "from_layer")
             if isinstance(connection, dict):
                 return layer_by_name(connection['layer'])
@@ -491,7 +604,10 @@ class InfoDock(infodock_widget, QWidget):
         results = list(results)
         return results
 
-    def clearResults(self):
+    def clearResults(self) -> None:
+        """
+        Clear the results in the info panel.
+        """
         self.layerList.clear()
         self.attributesView.setHtml('')
         self.editButton.setVisible(False)
@@ -501,7 +617,14 @@ class InfoDock(infodock_widget, QWidget):
         self.navwidget.hide()
 
 
-def generate_rows(fields, attributes, **kwargs):
+def create_data_html(fields, attributes, **kwargs) -> str:
+    """
+    Generate the html data for the info panel.
+    :param fields: The fields to use in the data table.
+    :param attributes: The attributes to use in the table.
+    :param kwargs:
+    :return: The generated html data that can be used in the info dock.
+    """
     data = OrderedDict()
     items = []
     count = 0
@@ -518,3 +641,15 @@ def generate_rows(fields, attributes, **kwargs):
     rowtemple = Template(''.join(items))
     rowshtml = updateTemplate(data, rowtemple, **kwargs)
     return rowshtml
+
+
+def results_from_feature(feature: QgsFeature) -> OrderedDict:
+    """
+    Create a dictionary based on the given feature.
+    :param feature: The feature to generate
+    :return: A dict with fields and attributes mapped
+    """
+    attributes = feature.attributes()
+    fields = [field.name().lower() for field in feature.fields()]
+    return OrderedDict(zip(fields, attributes))
+
