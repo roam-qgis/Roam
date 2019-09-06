@@ -404,9 +404,7 @@ class MainWindow(ui_mainwindow.Ui_MainWindow, QMainWindow):
         self.actionDataEntry.trigger()
 
     def raiseerror(self, *exinfo):
-        info = self.bar.pushError(*exinfo)
-        # import roam.errors
-        # errors.send_exception(exinfo)
+        self.bar.pushError(*exinfo)
 
     def showhelp(self, parent, url):
         """

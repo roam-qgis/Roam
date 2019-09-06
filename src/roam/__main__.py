@@ -32,8 +32,10 @@ utils.setup_logging(srcpath, config)
 
 with environ.setup(srcpath) as roamapp:
     import roam.config
-    import roam
     import roam.mainwindow
+    import roam.errors
+
+    roam.errors.init_error_handler()
 
     roam.utils.info("Runtime logging at: {}".format(roamapp.profileroot))
     roam.utils.setup_logging(roamapp.profileroot, roam.config.settings)

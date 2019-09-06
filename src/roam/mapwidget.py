@@ -438,7 +438,7 @@ class MapWidget(Ui_CanvasWidget, QMainWindow):
 
         scalebar_enabled = roam.config.settings.get('scale_bar', False)
         if scalebar_enabled:
-            roam.utils.error("Unsupported feature: Scale bar support not ported to QGIS 3 API yet.")
+            roam.utils.warning("Unsupported feature: Scale bar support not ported to QGIS 3 API yet.")
             RoamEvents.raisemessage("Unsupported feature", "Scale bar support not ported to QGIS 3 API yet", level=RoamEvents.CRITICAL)
             self.scalebar_enabled = False
             # self.scalebar = ScaleBarItem(self.canvas)

@@ -4,13 +4,13 @@ from qgis.PyQt.QtCore import Qt, QPoint
 
 class FloatingToolBar(QToolBar):
     """
-	A floating QToolBar with no border and is offset under its parent
-	"""
+    A floating QToolBar with no border and is offset under its parent
+    """
 
     def __init__(self, name, parent):
         """
-		parent: The parent of this toolbar.  Should be another toolbar
-		"""
+        parent: The parent of this toolbar.  Should be another toolbar
+        """
         QToolBar.__init__(self, name, parent)
         self.setMovable(False)
         self.setWindowFlags(Qt.Tool | Qt.FramelessWindowHint | Qt.X11BypassWindowManagerHint)

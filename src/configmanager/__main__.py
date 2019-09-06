@@ -28,12 +28,14 @@ utils.setup_logging(srcpath, config)
 import roam.environ
 
 with roam.environ.setup(logo=':/branding/config', title="IntraMaps Roam Config Manager") as roamapp:
-    import roam
     import roam.config
     import configmanager.logger
-    import roam.utils
+    import roam.errors
+
     from configmanager.config import Config
     from configmanager.ui.configmanagerdialog import ConfigManagerDialog
+
+    roam.errors.init_error_handler()
 
     managerconfig = Config.from_file(os.path.join(roamapp.profileroot,"configmanager.config"))
     roamapp.config = managerconfig

@@ -50,8 +50,6 @@ class ConfigManagerDialog(Ui_ProjectInstallerDialog, QDialog):
 
     def raiseerror(self, *exinfo):
         self.bar.pushError(*exinfo)
-        import roam.errors
-        roam.errors.send_exception(exinfo)
 
     def setuprootitems(self):
         rootitem = self.treemodel.invisibleRootItem()

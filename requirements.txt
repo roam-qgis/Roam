@@ -8,3 +8,4 @@ raven==6.10.0
 markdown==3.1.1
 pytest-cov==2.7.1
 pillow==6.1.0
+sentry-sdk==0.11.2

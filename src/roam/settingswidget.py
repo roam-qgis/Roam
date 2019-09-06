@@ -158,7 +158,7 @@ class SettingsWidget(Ui_settingsWidget, QWidget):
         keyboard = self.settings.get('keyboard', True)
         updateserver = self.settings.get('updateserver', None)
         distance = self.settings.get('draw_distance', True)
-        reporterror = self.settings.get('online_error_reporting', False)
+        reporterror = self.settings.get('online_error_reporting', True)
         smallmode = self.settings.get('smallmode', False)
 
         self.fullScreenCheck.setChecked(fullscreen)
