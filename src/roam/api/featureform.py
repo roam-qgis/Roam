@@ -1,5 +1,3 @@
-import contextlib
-import time
 import collections
 import copy
 import json
@@ -12,7 +10,6 @@ from qgis.PyQt.QtCore import pyqtSignal, QSize, Qt, QRegExp
 from qgis.PyQt.QtGui import QIcon
 from qgis.PyQt.QtWidgets import (QWidget,
                                  QAction,
-                                 QStackedWidget,
                                  QLabel,
                                  QToolButton,
                                  QBoxLayout,
@@ -21,7 +18,7 @@ from qgis.PyQt.QtWidgets import (QWidget,
                                  QVBoxLayout,
                                  QSizePolicy,
                                  QTabWidget)
-from qgis.core import QgsFeature, QgsGpsConnectionRegistry, QgsGeometry, QgsPoint, NULL, QgsWkbTypes, Qgis
+from qgis.core import QgsFeature, QgsGpsConnectionRegistry, QgsGeometry, NULL, Qgis
 
 import roam.config
 import roam.defaults as defaults
@@ -31,10 +28,9 @@ import roam.utils
 from roam import utils
 from roam.api import RoamEvents, GPS
 from roam.api import utils as qgisutils
+from roam.api.featureform_geomeditor import GeomWidget
 from roam.editorwidgets.core import EditorWidgetException
-from roam.flickwidget import FlickCharm
 from roam.structs import CaseInsensitiveDict
-from roam.ui.ui_geomwidget import Ui_GeomWidget
 
 values_file = os.path.join(tempfile.gettempdir(), "Roam")
 
@@ -43,50 +39,12 @@ nullcheck = qgisutils.nullcheck
 totals = collections.defaultdict(int)
 
 
-@contextlib.contextmanager
-def timed(title):
-    ts = time.time()
-    yield
-    th = time.time()
-    took = th - ts
-    totals[title] += took
-    message = "{} {}".format(title, took)
-    print(message)
-
-
-class GeomWidget(Ui_GeomWidget, QStackedWidget):
-    def __init__(self, parent=None):
-        super(GeomWidget, self).__init__(parent)
-        self.setupUi(self)
-        self.geom = None
-        self.edited = False
-
-    def set_geometry(self, geom):
-        if not geom:
-            return
-
-        self.geom = geom
-        if self.geom.type() == QgsWkbTypes.PointGeometry:
-            self.setCurrentIndex(0)
-            point = geom.asPoint()
-            self.xedit.setText(str(point.x()))
-            self.yedit.setText(str(point.y()))
-            self.xedit.textChanged.connect(self.mark_edited)
-            self.yedit.textChanged.connect(self.mark_edited)
-        else:
-            self.setCurrentIndex(1)
-
-    def geometry(self):
-        if self.geom.type() == QgsWkbTypes.PointGeometry:
-            x = float(self.xedit.text())
-            y = float(self.yedit.text())
-            return QgsGeometry.fromPointXY(QgsPoint(x, y))
-
-    def mark_edited(self):
-        self.edited = True
-
-
-def loadsavedvalues(form):
+def loadsavedvalues(form) -> dict:
+    """
+    Load the last values that have been saved for the form.
+    :param form: The form the find the saved values for.
+    :return: A dict with fieldname and value of the saved values.
+    """
     attr = {}
     savedvaluesfile = os.path.join(values_file, "{}.json".format(form.savekey))
     try:
@@ -100,7 +58,12 @@ def loadsavedvalues(form):
     return attr
 
 
-def savevalues(form, values):
+def savevalues(form, values: dict) -> None:
+    """
+    Save the given forms values into storage so they can be loaded qgain on next load if required.
+    :param form: The form to save the values for.
+    :param values: The values to save to the storage. Should be a dict of fieldname: value
+    """
     savedvaluesfile = os.path.join(values_file, "{}.json".format(form.savekey))
     folder = os.path.dirname(savedvaluesfile)
     if not os.path.exists(folder):
@@ -110,12 +73,24 @@ def savevalues(form, values):
         json.dump(values, f)
 
 
-def buildfromui(uifile, base):
+def buildfromui(uifile, base) -> QWidget:
+    """
+    Create a new UI widget given the UI file
+    :param uifile: The UI file to use.
+    :param base: The widget base to use for the new created widget.
+    :return: A instance of the widget type for the given UI file.
+    """
     widget = uic.loadUi(uifile, base)
-    return installflickcharm(widget)
+    return widget
 
 
-def buildfromauto(formconfig, base):
+def buildfromauto(formconfig, base) -> QWidget:
+    """
+    Build a auto form from the form config given.
+    :param formconfig: The form config containing the information about the widgets to create.
+    :param base: The base widget to create the new widgets in.
+    :return: The base widget with the added widgets created inside the layout.
+    """
     widgetsconfig = copy.deepcopy(formconfig['widgets'])
 
     try:
@@ -127,6 +102,11 @@ def buildfromauto(formconfig, base):
     hassections = any(config['widget'] == "Section" for config in widgetsconfig)
 
     def make_layout():
+        """
+        Create the inner layout for the widget. For new style forms this is a vbox layout so everything
+        is stacked on top of each other in a simple list.
+        :return:
+        """
         if newstyle:
             return QVBoxLayout()
         else:
@@ -135,6 +115,12 @@ def buildfromauto(formconfig, base):
             return layout
 
     def make_tab(tabwidget, name):
+        """
+        Create a table in the given tab widget.
+        :param tabwidget: The tab widget to create the tab in.
+        :param name: The name of the new tab to create.
+        :return: The new widget inside the tab and the widgets inner layout.
+        """
         widget = QWidget()
         widget.setLayout(make_layout())
         tabwidget.addTab(widget, name)
@@ -151,6 +137,8 @@ def buildfromauto(formconfig, base):
         outlayout = make_layout()
         outwidget.setLayout(outlayout)
 
+    # Add the geometry editor widget of that is set in the config.
+    # This is a hidden option so isn't exposed in config manager yet
     if roam.config.settings.get("form_geom_edit", False):
         geomwidget = GeomWidget()
         geomwidget.setObjectName("__geomwidget")
@@ -160,7 +148,7 @@ def buildfromauto(formconfig, base):
     for config in widgetsconfig:
         widgettype = config['widget']
 
-        ## Make the first tab if one isn't defined already and we have other sections in the config
+        # Make the first tab if one isn't defined already and we have other sections in the config
         if not insection and hassections and not widgettype == "Section":
             name = formconfig['label']
             tabwidget, outlayout = make_tab(outwidget, name)
@@ -176,7 +164,6 @@ def buildfromauto(formconfig, base):
 
             name = config['name']
             tabwidget, outlayout = make_tab(outwidget, name)
-            installflickcharm(tabwidget)
             insection = True
             continue
 
@@ -223,18 +210,8 @@ def buildfromauto(formconfig, base):
     outlayout.addWidget(spacer)
     if not hassections:
         outlayout.addItem(QSpacerItem(10, 500))
-        installflickcharm(outwidget)
     return base
 
-
-def installflickcharm(widget):
-    """
-    Installs the flick charm on every widget on the form.
-    """
-    widget.charm = FlickCharm()
-    for child in widget.findChildren(QWidget):
-        widget.charm.activateOn(child)
-    return widget
 
 
 RejectedException = roam.editorwidgets.core.RejectedException

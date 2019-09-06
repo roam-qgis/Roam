@@ -5,10 +5,10 @@ from qgis.PyQt.QtGui import QPixmap
 from qgis.PyQt.QtWidgets import QListWidgetItem, QWidget
 
 import roam.api
+import roam.api.utils
 import roam.project
 import roam.updater
 import roam.utils
-from roam.flickwidget import FlickCharm
 from roam.ui.ui_listmodules import Ui_ListModules
 from roam.ui.ui_projectwidget import Ui_Form
 
@@ -109,9 +109,9 @@ class ProjectsWidget(Ui_ListModules, QWidget):
     def __init__(self, parent=None):
         super(ProjectsWidget, self).__init__(parent)
         self.setupUi(self)
+        roam.api.utils.install_touch_scroll(self.moduleList)
+
         self.serverurl = None
-        self.flickcharm = FlickCharm()
-        self.flickcharm.activateOn(self.moduleList)
         self.moduleList.itemClicked.connect(self.openProject)
         self.projectitems = {}
         self.project_base = None

@@ -11,9 +11,8 @@ from qgis.core import (QgsExpression,
 from roam import templates
 from roam import utils
 from roam.api import RoamEvents, GPS
-from roam.api.utils import layer_by_name, values_from_feature
+from roam.api.utils import layer_by_name, values_from_feature, install_touch_scroll
 from roam.dataaccess import database
-from roam.flickwidget import FlickCharm
 from roam.htmlviewer import updateTemplate, clear_image_cache
 from roam.popupdialogs import PickActionDialog
 from roam.ui.uifiles import (infodock_widget)
@@ -91,9 +90,11 @@ class InfoDock(infodock_widget, QWidget):
     def __init__(self, parent):
         super(InfoDock, self).__init__(parent)
         self.setupUi(self)
+        # TODO Doesn't currently work with webview. Loop back and fix this.
+        install_touch_scroll(self.attributesView)
+
         self.forms = {}
-        self.charm = FlickCharm()
-        self.charm.activateOn(self.attributesView)
+
         self.layerList.currentRowChanged.connect(self.layerIndexChanged)
         self.attributesView.linkClicked.connect(self.handle_link)
         self.attributesView.page().setLinkDelegationPolicy(QWebPage.DelegateAllLinks)

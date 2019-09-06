@@ -4,6 +4,7 @@ import subprocess
 import sys
 from contextlib import contextmanager
 
+from PyQt5.QtWidgets import QScroller
 from qgis.core import QgsProject, QgsFeatureRequest, QgsGeometry, NULL, Qgis
 
 from roam.structs import CaseInsensitiveDict
@@ -197,3 +198,11 @@ def format_values(fieldnames, valuestore, with_char='\n'):
         except KeyError:
             continue
     return with_char.join(value)
+
+
+def install_touch_scroll(widget) -> None:
+    """
+    Install the touch events on a widget so it can scroll with touch events
+    :param widget: The widget to install the touch events on.
+    """
+    QScroller.grabGesture(widget, QScroller.TouchGesture)

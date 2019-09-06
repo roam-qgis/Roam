@@ -1,8 +1,9 @@
 from qgis.PyQt.QtCore import QModelIndex, pyqtSignal, QSize, Qt, QSortFilterProxyModel
 from qgis.PyQt.QtWidgets import QWidget
 
-from roam.flickwidget import FlickCharm
 from roam.ui.ui_list import Ui_BigList
+
+from roam.api import utils
 
 
 class BigList(Ui_BigList, QWidget):
@@ -24,10 +25,9 @@ class BigList(Ui_BigList, QWidget):
         self.listView.setModel(self.filtermodel)
         self.listView.setWordWrap(True)
 
-        self.charm = FlickCharm()
-        self.charm.activateOn(self.listView)
-
         self.saveButton.setVisible(showsave)
+
+        utils.install_touch_scroll(self.listView)
 
     def set_filter(self, text):
         self.filtermodel.setFilterRegExp(text + ".*")

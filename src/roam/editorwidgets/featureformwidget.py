@@ -7,8 +7,7 @@ from qgis.PyQt.QtGui import QIcon
 from roam.popupdialogs import PickActionDialog
 from roam.popupdialogs import DeleteFeatureDialog
 from roam.editorwidgets.core import LargeEditorWidget
-from roam.flickwidget import FlickCharm
-from roam.api import featureform, RoamEvents
+from roam.api import featureform, RoamEvents, utils
 from roam.ui.ui_featureformwidget import Ui_Form
 
 
@@ -21,6 +20,7 @@ class FeatureFormWidget(Ui_Form, QWidget):
     def __init__(self, parent=None):
         super(FeatureFormWidget, self).__init__(parent)
         self.setupUi(self)
+        utils.install_touch_scroll(self.scrollArea)
 
         toolbar = QToolBar()
         size = QSize(48, 48)
@@ -62,13 +62,11 @@ class FeatureFormWidget(Ui_Form, QWidget):
         self.actiontoolbar.addWidget(spacer)
         self.layout().insertWidget(1, self.actiontoolbar)
 
-        self.flickwidget = FlickCharm()
-        self.flickwidget.activateOn(self.scrollArea)
-
         self.featureform = None
         self.values = {}
         self.config = {}
         self.feature = None
+
 
     def set_featureform(self, featureform):
         """

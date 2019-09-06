@@ -5,8 +5,8 @@ from qgis.PyQt.QtWidgets import QWidget, QAction, QSpacerItem, QSizePolicy
 
 import roam.config
 import roam.syncing
+import roam.api.utils
 from roam.api.events import RoamEvents
-from roam.flickwidget import FlickCharm
 from roam.popupdialogs import ActionPickerWidget
 from roam.ui.ui_sync import Ui_Form
 
@@ -17,11 +17,10 @@ class SyncWidget(Ui_Form, QWidget):
     def __init__(self, parent=None):
         super(SyncWidget, self).__init__(parent)
         self.setupUi(self)
+        roam.api.utils.install_touch_scroll(self.scrollArea)
+        roam.api.utils.install_touch_scroll(self.syncstatus)
         self.syncrunning = False
         self.syncallButton.hide()
-        self.flickcharm = FlickCharm()
-        self.flickcharm.activateOn(self.scrollArea)
-        self.flickcharm.activateOn(self.syncstatus)
 
     def load_application_sync(self):
         print("Load application sync")

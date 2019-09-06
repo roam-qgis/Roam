@@ -2,7 +2,6 @@ from qgis.PyQt.QtWidgets import QDialog
 from qgis.PyQt.QtCore import QUrl, QEvent, Qt
 from qgis.PyQt.QtWebKitWidgets import QWebPage
 
-from roam.flickwidget import FlickCharm
 from roam.api.events import RoamEvents
 from roam.ui.uifiles import (helpviewer_widget, helpviewer_base,
                              helppage_widget, helppage_base)
@@ -25,8 +24,6 @@ class HelpPage(helppage_widget, helppage_base):
         if self.parent():
             self.parent().installEventFilter(self)
 
-        self.charm = FlickCharm()
-        self.charm.activateOn(self.webView)
         self.webView.linkClicked.connect(RoamEvents.openurl.emit)
         self.webView.page().setLinkDelegationPolicy(QWebPage.DelegateAllLinks)
 

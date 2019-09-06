@@ -1,19 +1,18 @@
-import sqlite3
-import time
 import os
+import sqlite3
 import struct
-from qgis.PyQt.QtCore import Qt, QObject, pyqtSignal, QThread, QEvent
-from qgis.PyQt.QtWidgets import QWidget, QGridLayout, QLabel, QListWidgetItem, QStyledItemDelegate
-from qgis.PyQt.QtGui import QFontMetricsF, QTextOption
-from qgis.PyQt.uic import loadUiType
+import time
 
-from qgis.core import QgsMapLayer, QgsProject, QgsFeatureRequest, QgsRectangle
+from qgis.PyQt.QtCore import Qt, QObject, pyqtSignal, QThread, QEvent
+from qgis.PyQt.QtWidgets import QListWidgetItem
+from qgis.PyQt.uic import loadUiType
+from qgis.core import QgsMapLayer, QgsProject, QgsFeatureRequest
 
 import roam.api.utils
 import roam.utils
-from roam.flickwidget import FlickCharm
 from roam.api.events import RoamEvents
 from roam.api.plugins import Page
+from roam.flickwidget import FlickCharm
 
 
 def resolve(name):
@@ -147,8 +146,6 @@ class SearchPlugin(widget, base, Page):
         self.api = api
         self.project = None
         self.dbpath = None
-        self.flickcharm = FlickCharm()
-        self.flickcharm.activateOn(self.resultsView)
         self.searchbox.textChanged.connect(self.search)
         self.searchbox.installEventFilter(self)
         self.clearButton.pressed.connect(self.searchbox.clear)
@@ -157,6 +154,9 @@ class SearchPlugin(widget, base, Page):
         self.fuzzyCheck.stateChanged.connect(self.fuzzy_changed)
         self.indexbuilder = None
         self.indexthread = None
+
+        roam.api.utils.install_touch_scroll(self.resultsView)
+
 
     def fuzzy_changed(self, state):
         self.search(self.searchbox.text())
