@@ -1,21 +1,24 @@
+"""
+Contains the style data to style the Qt app in our Roam style.
+NOTE: This module might need some tweaks in future to make it a bit easier to
+      understand and better
+"""
 from qgis.PyQt.QtWidgets import QDesktopWidget
 from string import Template
 
 
-def width():
+# TODO Look at better widget scaling for Qt5 for high DPI screen
+# https://doc.qt.io/qt-5/highdpi.html
+
+def screen_szie():
     widget = QDesktopWidget()
     rec = widget.availableGeometry(widget.primaryScreen())
-    return rec.width()
-
-
-def height():
-    widget = QDesktopWidget()
-    rec = widget.availableGeometry(widget.primaryScreen())
-    return rec.height()
+    return rec.width(), rec.height()
 
 
 def font():
-    if width() == 1024 and height() == 728:
+    width, height = screen_szie()
+    if width == 1024 and height == 728:
         return 'font: 9pt "Segoe UI" ;'
     else:
         return 'font: 14pt "Segoe UI" ;'
@@ -23,7 +26,8 @@ def font():
 
 def iconsize():
     iconsize = 48
-    if width() == 1024 and height() == 728:
+    width, height = screen_szie()
+    if width == 1024 and height == 728:
         iconsize = 24
     return iconsize
 
