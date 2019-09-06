@@ -13,15 +13,6 @@ from roam.api import GPS
 
 import roam.config
 
-if os.name == 'nt':
-    try:
-        from power import PowerState
-
-        powerenabled = True
-    except ImportError as ex:
-        utils.warning("Can't load Power management support {}".format(ex))
-        powerenabled = False
-
 
 class GPSAction(QAction):
     gpsfixed = pyqtSignal(bool)
