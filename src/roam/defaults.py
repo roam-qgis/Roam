@@ -1,10 +1,10 @@
 import os
 from qgis.core import QgsExpression, QgsProject, QgsFeatureRequest, QgsRectangle, \
     QgsExpressionContext, \
-    QgsExpressionContextScope
+    QgsExpressionContextScope, QgsWkbTypes
 
 import roam.utils
-from roam.api import RoamEvents
+from roam.api import RoamEvents, utils
 
 canvas = None
 
@@ -36,7 +36,7 @@ def default_value(defaultconfig, feature, layer):
         value = os.path.expandvars(defaultconfig)
         if '[%' in defaultconfig and '%]' in defaultconfig:
             # TODO Use regex
-            value = QgsExpression.replaceExpressionText(value, context_for_feature(feature))
+            value = utils.replace_expression_placeholders(value, feature)
 
     return value
 
@@ -108,7 +108,7 @@ def layer_value(feature, layer, defaultconfig):
 
             rect.scale(20)
 
-            rect = canvas.mapRenderer().mapToLayerCoordinates(layer, rect)
+            rect = canvas.mapSettings().mapToLayerCoordinates(layer, rect)
             rq = QgsFeatureRequest().setFilterRect(rect) \
                 .setFlags(QgsFeatureRequest.ExactIntersect)
             features = searchlayer.getFeatures(rq)
@@ -118,15 +118,17 @@ def layer_value(feature, layer, defaultconfig):
         expression = expression.replace("$roamgeometry", "@roamgeometry")
 
         exp = QgsExpression(expression)
-        exp.prepare(searchlayer.fields())
-        if exp.hasParserError():
-            error = exp.parserErrorString()
-            roam.utils.warning(error)
 
         context = QgsExpressionContext()
+        context.setFields(searchlayer.fields())
         scope = QgsExpressionContextScope()
         context.appendScope(scope)
         scope.setVariable("roamgeometry", feature.geometry())
+        exp.prepare(context)
+
+        if exp.hasParserError():
+            error = exp.parserErrorString()
+            roam.utils.warning(error)
 
         for f in features:
             context.setFeature(f)
