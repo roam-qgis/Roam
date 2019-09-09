@@ -18,6 +18,8 @@ from roam.popupdialogs import PickActionDialog
 from roam import utils
 from roam.api import RoamEvents, GPS
 
+
+import roam.api.utils
 import roam.config
 import roam.resources_rc
 
@@ -41,7 +43,7 @@ def stamp_from_config(image, config):
 
 def stamp_image(image, expression_str, position, feature):
     painter = QPainter(image)
-    data = QgsExpression.replaceExpressionText(expression_str, feature, None)
+    data = roam.api.utils.replace_expression_placeholders(expression_str, feature)
     if not data:
         return image
 

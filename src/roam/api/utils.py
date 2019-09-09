@@ -5,7 +5,8 @@ import sys
 from contextlib import contextmanager
 
 from PyQt5.QtWidgets import QScroller
-from qgis.core import QgsProject, QgsFeatureRequest, QgsGeometry, NULL, Qgis
+from qgis.core import QgsProject, QgsFeatureRequest, QgsGeometry, NULL, Qgis, QgsExpressionContext, \
+    QgsExpressionContextScope, QgsExpression, QgsFeature
 
 from roam.structs import CaseInsensitiveDict
 
@@ -206,3 +207,28 @@ def install_touch_scroll(widget) -> None:
     :param widget: The widget to install the touch events on.
     """
     QScroller.grabGesture(widget, QScroller.TouchGesture)
+
+
+def replace_expression_placeholders(text:str, feature: QgsFeature):
+    """
+    Replace any QGIS expression placeholders in the given string.
+    :param text: The text to replace the expression values in.
+    :param feature: The feature to pull any expression values from.
+    :return: A string with expression values replaced.
+    """
+    return QgsExpression.replaceExpressionText(text, expression_context_for_feature(feature))
+
+
+def expression_context_for_feature(feature):
+    """
+    Create a new expression context for the given feature.
+    :param feature:
+    :return:
+    """
+    context = QgsExpressionContext()
+    scope = QgsExpressionContextScope()
+    context.appendScope(scope)
+    if feature is not None:
+        scope.setVariable("roamgeometry", feature.geometry())
+        context.setFeature(feature)
+    return context

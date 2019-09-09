@@ -8,6 +8,8 @@ from qgis.PyQt.QtWidgets import QWidget, QListWidgetItem, QAction
 from qgis.core import (QgsExpression,
                        QgsFeatureRequest, QgsGeometry, NULL, QgsWkbTypes, QgsFeature)
 
+import roam.api.utils
+
 from roam import templates
 from roam import utils
 from roam.api import RoamEvents, GPS
@@ -600,7 +602,7 @@ class InfoDock(infodock_widget, QWidget):
         attributes = values_from_feature(feature, safe_names=True)
         attributes['mapkey'] = mapkey
         # Run the SQL text though the QGIS expression engine first.
-        sql = QgsExpression.replaceExpressionText(sql, feature, layer)
+        sql = roam.api.utils.replace_expression_placeholders(sql, feature)
         results = db.query(sql, **attributes)
         results = list(results)
         return results

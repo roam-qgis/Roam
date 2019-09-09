@@ -1006,7 +1006,7 @@ class InfoNode(ui_infonode.Ui_Form, WidgetBase):
         attributes['dbkey'] = dbkey
         # Run the SQL text though the QGIS expression engine first.
         sql = self.Editor.text()
-        sql = QgsExpression.replaceExpressionText(sql, feature, layer)
+        sql = roam.api.utils.replace_expression_placeholders(sql, feature)
         results = db.querymodel(sql, **attributes)
         self.previewGrid.setModel(results)
         labelText = ""
