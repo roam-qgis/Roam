@@ -1,8 +1,3 @@
-import os
-
-from qgis.PyQt.QtCore import pyqtSignal
-from qgis.PyQt.QtWidgets import QComboBox
-
 from configmanager.editorwidgets.core import ConfigWidget
 from configmanager.editorwidgets.uifiles.ui_checkwidget_config import Ui_Form
 

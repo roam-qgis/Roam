@@ -1,8 +1,9 @@
 from qgis.PyQt.QtWidgets import QFileDialog
 
 from configmanager.editorwidgets.core import ConfigWidget
-from configmanager.editorwidgets.uifiles.ui_photowidget_config import Ui_Form
 from configmanager.editorwidgets.uifiles import ui_multiphotowidget_config
+from configmanager.editorwidgets.uifiles.ui_photowidget_config import Ui_Form
+
 
 class MultiImageWidgetConfig(ui_multiphotowidget_config.Ui_Form, ConfigWidget):
     description = 'Allow the user to select an multi images.'
@@ -38,7 +39,6 @@ class MultiImageWidgetConfig(ui_multiphotowidget_config.Ui_Form, ConfigWidget):
         }
         return configdata
 
-
     def setconfig(self, config):
         self.defaultLocationText.setText(config.get('defaultlocation', ''))
         stamp = config.get('stamp', dict(value='', position='top-left'))
@@ -49,7 +49,7 @@ class MultiImageWidgetConfig(ui_multiphotowidget_config.Ui_Form, ConfigWidget):
         self.externalDBLayer.setText(dboptions.get('table', ''))
         self.externalDBText.setText(dboptions.get('dbpath', ''))
         self.maxPhotosSpin.setValue(dboptions.get('maximages', 1))
-        self.linkcodeText.setText(dboptions.get('linkcode','photo'))
+        self.linkcodeText.setText(dboptions.get('linkcode', 'photo'))
 
 
 class ImageWidgetConfig(Ui_Form, ConfigWidget):
@@ -74,11 +74,10 @@ class ImageWidgetConfig(Ui_Form, ConfigWidget):
         imagestamp = self.imageStampText.toPlainText()
         stamplocation = self.imageStampLocation.currentText()
         configdata = {"defaultlocation": location,
-                'savetofile': savetofile,
-                'stamp': dict(value=imagestamp,
-                              position=stamplocation)}
+                      'savetofile': savetofile,
+                      'stamp': dict(value=imagestamp,
+                                    position=stamplocation)}
         return configdata
-
 
     def setconfig(self, config):
         self.defaultLocationText.setText(config.get('defaultlocation', ''))

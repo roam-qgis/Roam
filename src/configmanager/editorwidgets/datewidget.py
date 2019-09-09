@@ -1,5 +1,3 @@
-from qgis.PyQt.QtWidgets import QDateTimeEdit
-
 from configmanager.editorwidgets.core import ConfigWidget
 from configmanager.editorwidgets.uifiles.ui_datewidget_config import Ui_Form
 

@@ -1,11 +1,3 @@
-import os
-
-from functools import partial
-
-from qgis.PyQt.QtWidgets import QWidget
-from qgis.PyQt.QtCore import Qt
-from qgis.core import QgsMapLayer
-
 from configmanager.editorwidgets.core import ConfigWidget
 from configmanager.editorwidgets.uifiles.ui_option_config import Ui_Form
 
@@ -42,4 +34,3 @@ class OptionWidgetConfig(Ui_Form, ConfigWidget):
         self.wrapEdit.setValue(wrap)
         self.alwaysColorCheck.setChecked(alwayscolor)
         self.blockSignals(False)
-

@@ -23,4 +23,3 @@ class ConfigWidget(QWidget):
 
     def setconfig(self, config):
         pass
-

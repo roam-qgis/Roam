@@ -1,17 +1,14 @@
-import os
-
 from functools import partial
 
-from qgis.PyQt.QtWidgets import QWidget
 from qgis.PyQt.QtCore import Qt
+from qgis.PyQt.QtWidgets import QWidget
 from qgis.core import QgsMapLayer
 from qgis.gui import QgsExpressionBuilderDialog
 
-from roam.api.utils import layer_by_name
-
-from configmanager.models import QgsLayerModel, QgsFieldModel
 from configmanager.editorwidgets.core import ConfigWidget
 from configmanager.editorwidgets.uifiles.ui_listwidget_config import Ui_Form
+from configmanager.models import QgsLayerModel, QgsFieldModel
+from roam.api.utils import layer_by_name
 
 
 class ListWidgetConfig(Ui_Form, ConfigWidget):
@@ -83,7 +80,7 @@ class ListWidgetConfig(Ui_Form, ConfigWidget):
     @orderby.setter
     def orderby(self, value):
         self.orderbyCheck.setChecked(value)
-        
+
     @property
     def list(self):
         return [item for item in self.listText.toPlainText().split('\n')]
@@ -106,7 +103,7 @@ class ListWidgetConfig(Ui_Form, ConfigWidget):
     def value(self):
         index_value = self.fieldmodel.index(self.valueCombo.currentIndex(), 0)
         return self.fieldmodel.data(index_value, QgsFieldModel.FieldNameRole)
-        
+
     def getconfig(self):
         config = {}
         config['allownull'] = self.allownull
@@ -135,7 +132,7 @@ class ListWidgetConfig(Ui_Form, ConfigWidget):
         self.allownull = config.get('allownull', True)
         self.orderby = config.get('orderbyvalue', False)
 
-        #Clear the widgets
+        # Clear the widgets
         self.listText.setPlainText('')
         self.keyCombo.clear()
         self.valueCombo.clear()
@@ -178,4 +175,3 @@ class ListWidgetConfig(Ui_Form, ConfigWidget):
         self.allownullCheck.setChecked(self.allownull)
         self.orderbyCheck.setChecked(self.orderby)
         self.blockSignals(False)
-

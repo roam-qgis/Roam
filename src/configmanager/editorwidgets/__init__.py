@@ -1,15 +1,11 @@
-from qgis.PyQt.QtCore import pyqtSignal
-from qgis.PyQt.QtWidgets import QWidget
-
+from configmanager.editorwidgets.attachmentwidget import AttachmentWidgetConfig
 from configmanager.editorwidgets.checkwidget import CheckboxWidgetConfig
 from configmanager.editorwidgets.datewidget import DateWidgetConfig
 from configmanager.editorwidgets.imagewidget import ImageWidgetConfig, MultiImageWidgetConfig
-from configmanager.editorwidgets.textwidget import TextBlockWidgetConfig, TextWidgetConfig
 from configmanager.editorwidgets.listwidget import ListWidgetConfig
 from configmanager.editorwidgets.numberwidget import NumberWidgetConfig, DoubleNumberWidgetConfig
 from configmanager.editorwidgets.optionwidget import OptionWidgetConfig
-from configmanager.editorwidgets.attachmentwidget import AttachmentWidgetConfig
-
+from configmanager.editorwidgets.textwidget import TextBlockWidgetConfig, TextWidgetConfig
 
 widgetconfigs = {"Checkbox" : CheckboxWidgetConfig,
                  "Date": DateWidgetConfig,
