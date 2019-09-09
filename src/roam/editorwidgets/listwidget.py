@@ -103,8 +103,8 @@ class ListWidget(EditorWidget):
             roam.utils.warning("Can't find layer {} in project".format(layername))
             return
 
-        keyfieldindex = layer.fieldNameIndex(keyfield)
-        valuefieldindex = layer.fieldNameIndex(valuefield)
+        keyfieldindex = layer.lookupField(keyfield)
+        valuefieldindex = layer.lookupField(valuefield)
         if keyfieldindex == -1 or valuefieldindex == -1:
             roam.utils.warning("Can't find key or value column")
             return
@@ -115,7 +115,7 @@ class ListWidget(EditorWidget):
             self.listmodel.appendRow(item)
 
         attributes = {keyfieldindex, valuefieldindex}
-        iconfieldindex = layer.fieldNameIndex('icon')
+        iconfieldindex = layer.lookupField('icon')
         if iconfieldindex > -1:
             attributes.add(iconfieldindex)
 
@@ -142,7 +142,7 @@ class ListWidget(EditorWidget):
                 flags = QgsFeatureRequest.NoFlags
 
             for field in expression.referencedColumns():
-                index = layer.fieldNameIndex(field)
+                index = layer.lookupField(field)
                 attributes.add(index)
 
         request = QgsFeatureRequest().setFlags(flags).setSubsetOfAttributes(list(attributes))

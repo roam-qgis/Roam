@@ -112,7 +112,7 @@ def max_value(values, feature, parent):
         return
 
     field = values[1]
-    index = layer.fieldNameIndex(field)
+    index = layer.lookupField(field)
     if index == -1:
         return None
     return layer.maximumValue(index)
