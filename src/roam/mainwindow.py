@@ -129,6 +129,7 @@ class MainWindow(ui_mainwindow.Ui_MainWindow, QMainWindow):
         RoamEvents.featuresaved.connect(self.featureSaved)
         RoamEvents.helprequest.connect(self.showhelp)
         RoamEvents.deletefeature.connect(self.delete_feature)
+        RoamEvents.layerLoaded.connect(self.update_layer_loaded_progress)
 
         def createSpacer(width=0, height=0):
             widget = QWidget()
@@ -170,6 +171,9 @@ class MainWindow(ui_mainwindow.Ui_MainWindow, QMainWindow):
 
         iface = RoamInterface(RoamEvents, GPS, self, self.canvas_page, self)
         plugins.api = iface
+
+    def update_layer_loaded_progress(self, layerno, outof):
+        print(layerno, outof)
 
     def delete_feature(self, form, feature) -> None:
         """

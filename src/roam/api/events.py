@@ -6,7 +6,7 @@ These can be raised and handled anywhere in the application.
 from qgis.PyQt.QtCore import pyqtSignal, QObject, QUrl
 from qgis.PyQt.QtWidgets import QWidget
 
-from qgis.core import QgsFeature
+from qgis.core import QgsFeature, QgsProject
 
 
 class _Events(QObject):
@@ -63,6 +63,12 @@ class _Events(QObject):
 
     refresh_map = pyqtSignal()
     show_widget = pyqtSignal(object, object, object, dict)
+    layerLoaded = pyqtSignal(int, int)
+
+    def __init__(self):
+        super().__init__()
+        # Connect up the project layer loaded signal and foward it our own event
+        QgsProject.instance().layerLoaded.connect(self.layerLoaded.emit)
 
     def delete_feature(self, form, feature):
         self.deletefeature.emit(form, feature)
