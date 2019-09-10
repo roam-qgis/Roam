@@ -247,6 +247,14 @@ def new_expression_context(fields=None):
 
 
 def search_layer(layer, filter, field_list=None, with_geometry=False):
+    """
+    Search the given layer using the given filter.  Only return the fields passed in the field_list.
+    :param layer: The layer to search
+    :param filter: The filter to apply to the layer to find matching features.
+    :param field_list: Only return data for the given fields.
+    :param with_geometry: If True will also return geometry data. Leave False for faster search.
+    :return: A iterator with the features found with the filter.
+    """
     flags = QgsFeatureRequest.NoFlags
     if not with_geometry:
         flags = QgsFeatureRequest.NoGeometry
