@@ -2,27 +2,22 @@ import os
 import sqlite3
 import uuid
 
-from PyQt5.QtMultimedia import QCamera, QCameraInfo, QCameraViewfinderSettings, QCameraImageCapture
+from PyQt5.QtMultimedia import QCamera, QCameraInfo, QCameraImageCapture
 from PyQt5.QtMultimediaWidgets import QCameraViewfinder
-from qgis.PyQt.QtWidgets import QWidget, QGridLayout, QLabel, QFileDialog, QAction, QToolBar, QVBoxLayout, QSizePolicy
+from qgis.PyQt.QtCore import QByteArray, pyqtSignal, QVariant, Qt, QSize, QDateTime, QPointF
 from qgis.PyQt.QtGui import QPixmap, QImage, QIcon, QTextDocument, QPainter
-from qgis.PyQt.QtCore import QByteArray, pyqtSignal, QVariant, QTimer, Qt, QSize, QDateTime, QPointF
-
-from qgis.core import QgsExpression
-from PIL.ImageQt import ImageQt
-
-from roam.editorwidgets.core import EditorWidget, createwidget, widgetwrapper
-from roam.editorwidgets.core.largeeditorwidgetbase import LargeEditorWidget
-from roam.editorwidgets.uifiles.imagewidget import QMapImageWidget
-from roam.editorwidgets.uifiles import drawingpad
-from roam.popupdialogs import PickActionDialog
-from roam import utils
-from roam.api import RoamEvents, GPS
-
+from qgis.PyQt.QtWidgets import QWidget, QGridLayout, QFileDialog, QAction, QToolBar, QVBoxLayout, QSizePolicy
 
 import roam.api.utils
 import roam.config
 import roam.resources_rc
+from roam import utils
+from roam.api import RoamEvents, GPS
+from roam.editorwidgets.core import EditorWidget, createwidget, widgetwrapper
+from roam.editorwidgets.core.largeeditorwidgetbase import LargeEditorWidget
+from roam.editorwidgets.uifiles import drawingpad
+from roam.editorwidgets.uifiles.imagewidget import QMapImageWidget
+from roam.popupdialogs import PickActionDialog
 
 
 class CameraError(Exception):
