@@ -236,7 +236,6 @@ class Form(object):
     @classmethod
     def from_folder(cls, name, folder):
         config = readfolderconfig(folder, "form")
-        print(config)
         return Form.from_config(name, config, folder)
 
     @property
@@ -441,7 +440,6 @@ class Form(object):
                 # Don't override fields we have already set.
                 if key is None:
                     continue
-                roam.utils.log("Default key {0}".format(key))
                 datakeys = [key.lower() for key in data.keys()]
                 if key.lower() in datakeys:
                     roam.utils.log("Skippping {0}".format(key))
