@@ -87,6 +87,14 @@ ECHO Opening desinger
 START designer.exe
 GOTO END
 
+:api-docs
+pdoc --html .\src\roam\
+GOTO END
+
+:cmd
+cmd
+GOTO END
+
 :help
 ECHO ===========================
 ECHO        OPTIONS
