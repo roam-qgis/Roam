@@ -855,6 +855,7 @@ class FeatureForm(FeatureFormBase):
             try:
                 feature[key] = field_or_null(value)
             except KeyError:
+                roam.utils.warning(f"Can't set field {key} to {value}")
                 continue
 
         return feature
