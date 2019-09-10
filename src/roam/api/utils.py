@@ -232,3 +232,29 @@ def expression_context_for_feature(feature):
         scope.setVariable("roamgeometry", feature.geometry())
         context.setFeature(feature)
     return context
+
+
+def new_expression_context(fields=None):
+    """
+    Create a new expression context with the given fields
+    :param fields: The fields to use on the expression
+    :return: The new expression context that can be used with QgsExpression
+    """
+    context = expression_context_for_feature(None)
+    if fields:
+        context.setFields(fields)
+    return context
+
+
+def search_layer(layer, filter, field_list=None, with_geometry=False):
+    flags = QgsFeatureRequest.NoFlags
+    if not with_geometry:
+        flags = QgsFeatureRequest.NoGeometry
+
+    request = QgsFeatureRequest()\
+        .setFilterExpression(filter)\
+        .setFlags(flags)\
+        .setSubsetOfAttributes(field_list, layer.fields())
+
+    return layer.getFeatures(request)
+

@@ -6,7 +6,7 @@ from qgis.PyQt.QtGui import QIcon
 
 from roam.popupdialogs import PickActionDialog
 from roam.popupdialogs import DeleteFeatureDialog
-from roam.editorwidgets.core import LargeEditorWidget
+from roam.editorwidgets.core.largeeditorwidgetbase import LargeEditorWidget
 from roam.api import featureform, RoamEvents, utils
 from roam.ui.ui_featureformwidget import Ui_Form
 

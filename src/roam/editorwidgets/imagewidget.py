@@ -11,7 +11,8 @@ from qgis.PyQt.QtCore import QByteArray, pyqtSignal, QVariant, QTimer, Qt, QSize
 from qgis.core import QgsExpression
 from PIL.ImageQt import ImageQt
 
-from roam.editorwidgets.core import EditorWidget, LargeEditorWidget, createwidget, widgetwrapper
+from roam.editorwidgets.core import EditorWidget, createwidget, widgetwrapper
+from roam.editorwidgets.core.largeeditorwidgetbase import LargeEditorWidget
 from roam.editorwidgets.uifiles.imagewidget import QMapImageWidget
 from roam.editorwidgets.uifiles import drawingpad
 from roam.popupdialogs import PickActionDialog

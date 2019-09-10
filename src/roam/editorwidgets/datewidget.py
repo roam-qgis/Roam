@@ -5,7 +5,8 @@ from qgis.core import NULL
 
 from roam.api import RoamEvents
 from roam.datatimerpickerwidget import DateTimePickerWidget
-from roam.editorwidgets.core import EditorWidget, LargeEditorWidget
+from roam.editorwidgets.core import EditorWidget
+from roam.editorwidgets.core.largeeditorwidgetbase import LargeEditorWidget
 from roam.editorwidgets.uifiles import ui_datewidget
 
 

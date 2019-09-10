@@ -6,6 +6,7 @@ from qgis.PyQt.QtGui import *
 from qgis.core import QgsProject
 
 import roam.editorwidgets.core
+import roam.editorwidgets.core.exceptions
 from roam.api import featureform, RoamEvents
 from roam.editorwidgets.featureformwidget import FeatureFormWidgetEditor
 from roam.structs import CaseInsensitiveDict
@@ -91,7 +92,7 @@ class DataEntryWidget(dataentry_widget, dataentry_base):
             self.stackedWidget.setCurrentIndex(position)
             self.widgetstack.append(largewidgetwrapper)
             largewidgetwrapper.after_load()
-        except roam.editorwidgets.core.RejectedException as rejected:
+        except roam.editorwidgets.core.exceptions.RejectedException as rejected:
             self.formrejected(rejected.message, rejected.level)
             if self.stackedWidget.count() == 0:
                 self.lastwidgetremoved.emit()

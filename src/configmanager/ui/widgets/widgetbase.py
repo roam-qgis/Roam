@@ -38,6 +38,5 @@ class WidgetBase(QWidget):
             return
 
     def set_data(self, data):
-        pprint.pprint(data)
         self.config = data['config']
         self.data = data

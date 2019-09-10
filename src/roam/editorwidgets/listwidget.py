@@ -5,9 +5,10 @@ from qgis.PyQt.QtWidgets import QComboBox
 from qgis.core import QgsProject, QgsExpression, QgsFeatureRequest
 
 import roam.utils
-from roam.api import RoamEvents
+from roam.api import RoamEvents, utils
 from roam.biglist import BigList
-from roam.editorwidgets.core import EditorWidget, LargeEditorWidget
+from roam.editorwidgets.core import EditorWidget
+from roam.editorwidgets.core.largeeditorwidgetbase import LargeEditorWidget
 
 
 def nullconvert(value):
@@ -62,7 +63,7 @@ class ListWidget(EditorWidget):
     widgettype = 'List'
 
     def __init__(self, *args, **kwargs):
-        super(ListWidget, self).__init__(*args)
+        super(ListWidget, self).__init__(*args, **kwargs)
         self.listmodel = QStandardItemModel()
         self._bindvalue = None
 
@@ -98,15 +99,18 @@ class ListWidget(EditorWidget):
         filterexp = layerconfig.get('filter', None)
 
         try:
-            layer = QgsProject.instance().mapLayersByName(layername)[0]
+            layer = utils.layer_by_name(layername)
         except IndexError:
             roam.utils.warning("Can't find layer {} in project".format(layername))
             return
 
-        keyfieldindex = layer.fields().indexOf(keyfield)
-        valuefieldindex = layer.fields().indexOf(valuefield)
+        keyfieldindex = layer.fields().lookupField(keyfield)
+        valuefieldindex = layer.fields().lookupField(valuefield)
         if keyfieldindex == -1 or valuefieldindex == -1:
-            roam.utils.warning("Can't find key or value column")
+            roam.utils.warning(f"Can't find key or value column for widget"
+                               f"Id: {self.id} "
+                               f"Key: {keyfield} - {keyfieldindex} "
+                               f"Value: {valuefield} - {valuefieldindex} ")
             return
 
         if self.allownulls:
@@ -115,7 +119,7 @@ class ListWidget(EditorWidget):
             self.listmodel.appendRow(item)
 
         attributes = {keyfieldindex, valuefieldindex}
-        iconfieldindex = layer.fields().indexOf('icon')
+        iconfieldindex = layer.fields().lookupField('icon')
         if iconfieldindex > -1:
             attributes.add(iconfieldindex)
 

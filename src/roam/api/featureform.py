@@ -23,6 +23,7 @@ from qgis.core import QgsFeature, QgsGpsConnectionRegistry, QgsGeometry, NULL, Q
 import roam.config
 import roam.defaults as defaults
 import roam.editorwidgets.core
+import roam.editorwidgets.core.exceptions
 import roam.roam_style
 import roam.utils
 from roam import utils
@@ -30,6 +31,7 @@ from roam.api import RoamEvents, GPS
 from roam.api import utils as qgisutils
 from roam.api.featureform_geomeditor import GeomWidget
 from roam.editorwidgets.core import EditorWidgetException
+from roam.editorwidgets.core.exceptions import RejectedException
 from roam.structs import CaseInsensitiveDict
 
 values_file = os.path.join(tempfile.gettempdir(), "Roam")
@@ -214,8 +216,6 @@ def buildfromauto(formconfig, base) -> QWidget:
 
 
 
-RejectedException = roam.editorwidgets.core.RejectedException
-
 FeatureSaveException = qgisutils.FeatureSaveException
 MissingValuesException = qgisutils.MissingValuesException
 
@@ -368,7 +368,8 @@ class FeatureFormBase(QWidget):
                                                                       widget=widget,
                                                                       label=label,
                                                                       config=widgetconfig,
-                                                                      context=context)
+                                                                      context=context,
+                                                                      main_config=config)
             except EditorWidgetException as ex:
                 utils.exception(ex)
                 continue
@@ -385,7 +386,6 @@ class FeatureFormBase(QWidget):
 
             widgetwrapper.newstyleform = self.formconfig.get("newstyle", False)
             widgetwrapper.required = config.get('required', False)
-            widgetwrapper.id = config.get('_id', '')
 
             # Only connect widgets that have events
             if widgetwrapper.id in self.events:
