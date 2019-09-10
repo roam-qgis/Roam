@@ -164,6 +164,6 @@ class ImageWidget(EditorWidget):
         image = self.widget.getImage()
         if self.tobase64 and image:
             image = image.toBase64()
-            return image.data()
+            return image.data().decode("utf-8")
 
         return image

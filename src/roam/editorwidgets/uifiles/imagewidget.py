@@ -77,8 +77,8 @@ class QMapImageWidget(ui_imagewidget.Ui_imagewidget, QWidget):
         else:
             pix = QPixmap()
             r = pix.loadFromData(data, 'JPG')
-            # if not r:
-            #     pix = QPixmap(data)
+            if not r:
+                pix = QPixmap(data)
 
         self._orignalimage = QPixmap(pix)
 

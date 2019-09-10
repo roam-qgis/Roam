@@ -1,4 +1,4 @@
-from qgis.PyQt.QtCore import pyqtSignal, QSize
+from qgis.PyQt.QtCore import pyqtSignal, QSize, Qt
 from qgis.PyQt.QtGui import QPixmap, QIcon
 from PyQt5.QtMultimedia import QCameraInfo, QCamera, QCameraImageCapture
 from PyQt5.QtMultimediaWidgets import QCameraViewfinder
@@ -15,7 +15,6 @@ class CameraError(Exception):
 
 class _CameraWidget(QWidget):
     imagecaptured = pyqtSignal(QPixmap)
-    done = pyqtSignal()
 
     def __init__(self, parent=None):
         super(_CameraWidget, self).__init__(parent)
@@ -41,7 +40,7 @@ class _CameraWidget(QWidget):
 
     def capture(self, *args):
         self.camera.searchAndLock()
-        self.imageCapture.capture(r"C:\temp\wat.jpg")
+        self.camera_capture.capture()
         self.camera.unlock()
 
     def swapcamera(self):
@@ -58,6 +57,11 @@ class _CameraWidget(QWidget):
         width, height = tuple(roam.config.settings['camera_res'].split(','))
         return width, height
 
+    def imageCaptured(self, frameid, image):
+        # TODO Doing a pixmap convert here is a waste but downstream needs a qpixmap for now
+        # refactor later
+        self.imagecaptured.emit(QPixmap.fromImage(image))
+
     def start(self, dev=1):
         if self.camera:
             self.camera.stop()
@@ -65,8 +69,11 @@ class _CameraWidget(QWidget):
         self.camera = QCamera(cameras[dev])
         self.camera.setViewfinder(self.viewfinder)
         self.camera.setCaptureMode(QCamera.CaptureStillImage)
-        self.imageCapture = QCameraImageCapture(self.camera)
         self.camera.start()
+
+        self.camera_capture = QCameraImageCapture(self.camera)
+        self.camera_capture.setCaptureDestination(QCameraImageCapture.CaptureToBuffer)
+        self.camera_capture.imageCaptured.connect(self.imageCaptured)
         # settings = QCameraViewfinderSettings()
         # settings.setResolution(QSize(1280, 720))
         # self.camera.setViewfinderSettings(settings)
@@ -83,12 +90,12 @@ class CameraWidget(LargeEditorWidget):
 
     def initWidget(self, widget, config):
         widget.imagecaptured.connect(self.image_captured)
-        widget.done.connect(self.emit_finished)
 
     def image_captured(self, pixmap):
         image = stamp_from_config(pixmap, self.config)
         self._value = image
         self.emitvaluechanged(self._value)
+        self.emit_finished()
 
     def after_load(self):
         camera = roam.config.settings.get('camera', 0)
@@ -101,6 +108,3 @@ class CameraWidget(LargeEditorWidget):
     def value(self):
         return self._value
 
-    def __del__(self):
-        if self.widget:
-            self.widget.stop()
