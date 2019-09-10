@@ -37,6 +37,15 @@ class _CameraWidget(QWidget):
         self.viewfinder.mousePressEvent = self.capture
         self.viewfinder.show()
         self.viewfinder.setAspectRatioMode(Qt.KeepAspectRatioByExpanding)
+        self.update_camera_buttons()
+
+    @property
+    def list_of_cameras(self):
+        return QCameraInfo.availableCameras()
+
+    def update_camera_buttons(self):
+        if len(self.list_of_cameras) <= 1:
+            self.swapaction.setVisible(False)
 
     def capture(self, *args):
         self.camera.searchAndLock()
