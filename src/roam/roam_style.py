@@ -184,24 +184,22 @@ def appstyle():
         background-color: #5b93c2;
     }
 
-    QListWidget#layerList {
-        font: 12pt "Segoe UI";
-        background-color: rgb(149,150,145, 220);
+    QListView#layerList {
     }
-
-    QListWidget#layerList::item {
+    
+    QListView#layerList::item:hover {
         color: white;
-        border-bottom: 1px solid black;
-        padding: 4px;
+        background-color: #5b93c2;
+    }
+    
+    QListView#layerList::item:selected {
+        color: white;
+        background-color: #5b93c2;
     }
 
     QListWidget[large="true"]::item {
         font: 12pt "Segoe UI";
         padding: 8px;
-    }
-
-    QListWidget#layerList::item::selected {
-        background-color: #5b93c2;
     }
 
     QPushButton {
