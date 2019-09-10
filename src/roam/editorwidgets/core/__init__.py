@@ -13,7 +13,8 @@ def registerwidgets(*widgetclasses):
 
 
 def registerallwidgets():
-    from roam.editorwidgets.imagewidget import ImageWidget, MultiImageWidget
+    from roam.editorwidgets.imagewidget import ImageWidget
+    from roam.editorwidgets.multiimagewidget import MultiImageWidget
     from roam.editorwidgets.listwidget import ListWidget, MultiList
     from roam.editorwidgets.checkboxwidget import CheckboxWidget
     from roam.editorwidgets.datewidget import DateWidget
