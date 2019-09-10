@@ -2,7 +2,7 @@ from qgis.PyQt.QtCore import pyqtSignal, QSize, Qt
 from qgis.PyQt.QtGui import QPixmap, QIcon
 from PyQt5.QtMultimedia import QCameraInfo, QCamera, QCameraImageCapture
 from PyQt5.QtMultimediaWidgets import QCameraViewfinder
-from qgis.PyQt.QtWidgets import QWidget, QGridLayout, QToolBar, QSizePolicy
+from qgis.PyQt.QtWidgets import QWidget, QGridLayout, QToolBar, QSizePolicy,  QPushButton
 
 import roam.config
 from roam.editorwidgets.core import LargeEditorWidget
@@ -21,23 +21,26 @@ class _CameraWidget(QWidget):
         self.setLayout(QGridLayout())
         self.toolbar = QToolBar()
         spacer = QWidget()
-        # spacer.setMinimumWidth(30)
         spacer.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
         self.toolbar.setIconSize(QSize(48, 48))
         self.toolbar.addWidget(spacer)
         self.swapaction = self.toolbar.addAction(QIcon(":/widgets/cameraswap"), "Swap Camera")
         self.swapaction.triggered.connect(self.swapcamera)
-        self.layout().setContentsMargins(0, 0, 0, 0)
-        self.layout().addWidget(self.toolbar)
 
         self.current_camera_index = 0
         self.camera = None
         self.viewfinder = QCameraViewfinder()
-        self.layout().addWidget(self.viewfinder)
         self.viewfinder.mousePressEvent = self.capture
         self.viewfinder.show()
         self.viewfinder.setAspectRatioMode(Qt.KeepAspectRatioByExpanding)
         self.update_camera_buttons()
+        self.capturebutton = QPushButton("Capture", self)
+        self.capturebutton.pressed.connect(self.capture)
+
+        self.layout().setContentsMargins(0, 0, 0, 0)
+        self.layout().addWidget(self.toolbar)
+        self.layout().addWidget(self.viewfinder)
+        self.layout().addWidget(self.capturebutton)
 
     @property
     def list_of_cameras(self):
