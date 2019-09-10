@@ -30,10 +30,10 @@ from roam.popupdialogs import PickActionDialog
 
 class SnappingUtils(QgsMapCanvasSnappingUtils):
     def prepareIndexStarting(self, count):
-        print(count)
+        pass
 
     def prepareIndexProgress(self, index):
-        print(index)
+        pass
 
 
 class NorthArrow(QGraphicsSvgItem):
