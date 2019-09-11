@@ -1,11 +1,16 @@
-from setuptools import find_packages
-from distutils.core import setup
+import os
 from distutils.command.build import build
 from distutils.command.clean import clean
-from scripts.fabricate import run
+from distutils.core import setup
+import glob
 
-import os
-from scripts import fabricate
+import shutil
+import sys
+
+from sys import platform
+from setuptools import find_packages
+
+from scripts.fabricate import run
 
 haspy2exe = False
 if os.name is 'nt':
@@ -17,12 +22,6 @@ if os.name is 'nt':
         print("Can't import py2exe. Do you have it installed.")
         haspy2exe = False
 
-import glob
-
-import sys
-import shutil
-import sys
-from sys import platform
 
 curpath = os.path.dirname(os.path.realpath(__file__))
 
