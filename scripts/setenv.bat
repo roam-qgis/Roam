@@ -37,12 +37,12 @@ SET GDAL_DATA=%OSGEO4W_ROOT%\share\gdal
 SET GDAL_DRIVER_PATH=%OSGEO4W_ROOT%\bin\gdalplugins
 SET PROJ_LIB=%OSGEO4W_ROOT%\share\proj
 
-set PATH=%OSGEO4W_ROOT%\bin;%QGIS%\bin;%BASE%\src\;%GIT%\bin;;%WINDIR%\system32;%WINDIR%;%WINDIR%\system32\WBem
+SET PATH=%OSGEO4W_ROOT%\bin;%QGIS%\bin;%BASE%\src\;%GIT%\bin;;%WINDIR%\system32;%WINDIR%;%WINDIR%\system32\WBem;
 
 : Python Setup
 CALL %OSGEO4W_ROOT%\bin\py3_env.bat
 CALL %OSGEO4W_ROOT%\bin\qt5_env.bat
-SET PYTHONPATH=%BASE%\src;%QGIS%\python;%BASE%\libs
+SET PYTHONPATH=%BASE%\src;%QGIS%\python
 
 ECHO OSGeo path is: %OSGEO4W_ROOT%
 ECHO Getting QGIS libs from: %QGIS%
