@@ -12,13 +12,21 @@ sys.path.append(srcpath)
 frozen = getattr(sys, "frozen", False)
 RUNNING_FROM_FILE = not frozen
 
-import gdal
 
 if frozen:
-    os.environ['PATH'] = "{0};{1}".format(os.path.join(srcpath, 'libs'), srcpath)
-    os.environ["GDAL_DRIVER_PATH"] = os.path.join(srcpath, 'libs')
-    os.environ["GDAL_DATA"] = os.path.join(srcpath, 'libs', 'gdal')
+    datadir = os.path.dirname(sys.executable)
+    libsfolder = os.path.join(datadir,"lib")
+    sys.path.append(srcpath)
+    os.environ['PATH'] = "{0};{1}".format(libsfolder, srcpath)
+    os.environ["GDAL_DRIVER_PATH"] = os.path.join(srcpath, 'lib')
+    os.environ["GDAL_DATA"] = os.path.join(srcpath, 'lib', 'gdal')
 
+with open("wat.log", "w") as f:
+    for key, value in os.environ.items():
+        f.write(f"{key}={value}\n\r")
+    f.writelines(os.environ['PATH'])
+
+import gdal
 os.environ['OGR_SQLITE_PRAGMA'] = "journal_mode=delete"
 gdal.SetConfigOption('OGR_SQLITE_PRAGMA', os.environ['OGR_SQLITE_PRAGMA'])
 gdal.SetConfigOption("GDAL_DRIVER_PATH", os.environ['GDAL_DRIVER_PATH'])

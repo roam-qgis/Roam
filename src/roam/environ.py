@@ -128,8 +128,8 @@ def _setup(apppath=None, logo='', title='', **kwargs):
         # Not sure why we have to set these here but GDAL doesn't like it if we
         # don't
         roam.utils.debug("Running from package")
-        prefixpath = os.path.join(apppath, "libs", "qgis")
-        libspath = os.path.join(apppath, "libs", "roam")
+        prefixpath = os.path.join(apppath, "lib", "qgis")
+        libspath = os.path.join(apppath, "lib", "roam")
         i18npath = os.path.join(libspath, "i18n")
 
     projectroot = os.path.join(apppath, "projects")

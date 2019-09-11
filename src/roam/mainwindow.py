@@ -45,7 +45,7 @@ class BadLayerHandler(QgsProjectBadLayerHandler):
         super(BadLayerHandler, self).__init__()
         self.callback = callback
 
-    def handleBadLayers(self, domNodes, domDocument):
+    def handleBadLayers(self, domNodes):
         layers = [node.namedItem("layername").toElement().text() for node in domNodes]
         self.callback(layers)
 

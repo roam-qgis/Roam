@@ -34,14 +34,14 @@ GOTO END
 :build
 ECHO Building..
 python setup.py clean
-python setup.py build
+python setup.py build_qt
 GOTO END
 
 :exe
 ECHO Making package..
 python setup.py clean
+python setup.py build_qt
 python setup.py build
-python setup.py py2exe
 GOTO END
 
 :clean
@@ -54,8 +54,8 @@ GOTO END
 :release
 ECHO Building release
 python setup.py clean
+python setup.py build_qt
 python setup.py build
-python setup.py py2exe
 IF NOT EXIST release MKDIR release
 del release\*.* /Q /F
 pushd dist
