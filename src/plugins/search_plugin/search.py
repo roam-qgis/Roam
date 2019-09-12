@@ -113,7 +113,7 @@ class IndexBuilder(QObject):
             placeholders = "?," * (len(data.values()))
             placeholders = placeholders.strip(',')
             query = "INSERT INTO search(docid, {0}) VALUES({1}, {2})".format(fields, row[0], placeholders)
-            c.execute(query, data.values())
+            c.execute(query, list(data.values()))
 
         self.conn.commit()
         self.conn.close()
@@ -237,7 +237,7 @@ class SearchPlugin(widget, base, Page):
             item = QListWidgetItem()
             text = "{}\n {}".format(layer, snippet.encode("utf-8").replace('\n', ' '))
             item.setText(text)
-            item.setData(Qt.UserRole, (layer, featureid, snippet))
+            item.setData(Qt.UserRole + 1, (layer, featureid, snippet))
             self.resultsView.addItem(item)
 
         self.resultsView.setEnabled(True)
@@ -248,7 +248,7 @@ class SearchPlugin(widget, base, Page):
         db.close()
 
     def jump_to(self, item):
-        data = item.data(32)
+        data = item.data(Qt.UserRole + 1)
         if not data:
             return
         layername, fid = data[0], data[1]
