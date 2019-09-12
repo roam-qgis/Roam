@@ -242,7 +242,16 @@ package_details = dict(
     options={
         "build_exe": {
             'packages': packages,
-            'includes': ["qgis", "PyQt5", "sip"],
+            'includes': ["qgis", "PyQt5", "sip",
+                         "sentry_sdk.integrations.logging",
+                         "sentry_sdk.integrations.stdlib",
+                         "sentry_sdk.integrations.excepthook",
+                         "sentry_sdk.integrations.dedupe",
+                         "sentry_sdk.integrations.atexit",
+                         "sentry_sdk.integrations.modules",
+                         "sentry_sdk.integrations.argv",
+                         "sentry_sdk.integrations.threading",
+                         ],
             'include_files': include_files,
             'excludes': excludes,
             'include_msvcr': True,
