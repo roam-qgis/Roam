@@ -218,11 +218,40 @@ def buildqtfiles():
         json.dump(hashes, f)
 
 
+class roam_build(build):
+    def get_sub_commands(self):
+        return [
+            "clean",
+            "build_qt",
+            "build",
+            "build_package_cleanup"
+        ]
+
+
 class qtbuild(build):
     def run(self):
         buildqtfiles()
         build.run(self)
 
+
+class package_final(build):
+    def run(self):
+        buildfolder = r".\build\exe.win-amd64-3.7"
+        libfolder = os.path.join(buildfolder, "lib")
+        print("Moving python37.dll")
+        shutil.move(os.path.join(libfolder, "python37.dll"), os.path.join(buildfolder, "python37.dll"))
+        print("Removing imageformats")
+        shutil.rmtree(os.path.join(buildfolder, "imageformats"))
+        print("Removing sqldrivers")
+        shutil.rmtree(os.path.join(buildfolder, "sqldrivers"))
+        print("Removing platforms")
+        shutil.rmtree(os.path.join(buildfolder, "platforms"))
+        print("Removing pyqt5.uic extras")
+        shutil.rmtree(os.path.join(buildfolder, "PyQt5.uic.widget-plugins"))
+        print("Removing mediaservice")
+        shutil.rmtree(os.path.join(buildfolder, "mediaservice"))
+        print("Create projects folder")
+        os.mkdir(os.path.join(buildfolder, "projects"))
 
 
 class roamclean(clean):
@@ -267,8 +296,12 @@ package_details = dict(
     author_email='',
     description='',
     # data_files=get_data_files(),
-    cmdclass={'build_qt': qtbuild,
-              'clean': roamclean},
+    cmdclass={
+        'build_qt': qtbuild,
+        'clean': roamclean,
+        'build_roam': roam_build,
+        'build_package_cleanup': package_final
+    },
     options={
         "build_exe": {
             'packages': packages,
