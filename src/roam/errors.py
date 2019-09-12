@@ -14,7 +14,7 @@ def can_send():
     :return: True if allowed
     """
     # TODO Do this better and check if we are in a package.
-    if os.environ.get("ROAM_LOCAL_DEV", "F"):
+    if os.environ.get("ROAM_LOCAL_DEV", None):
         roam.utils.log("Sending Error Reports: Disabled for local dev")
         return False
 
