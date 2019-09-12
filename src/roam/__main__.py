@@ -21,11 +21,6 @@ if frozen:
     os.environ["GDAL_DRIVER_PATH"] = os.path.join(srcpath, 'lib')
     os.environ["GDAL_DATA"] = os.path.join(srcpath, 'lib', 'gdal')
 
-with open("wat.log", "w") as f:
-    for key, value in os.environ.items():
-        f.write(f"{key}={value}\n\r")
-    f.writelines(os.environ['PATH'])
-
 import gdal
 os.environ['OGR_SQLITE_PRAGMA'] = "journal_mode=delete"
 gdal.SetConfigOption('OGR_SQLITE_PRAGMA', os.environ['OGR_SQLITE_PRAGMA'])
