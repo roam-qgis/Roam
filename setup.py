@@ -224,6 +224,7 @@ class qtbuild(build):
         build.run(self)
 
 
+
 class roamclean(clean):
     def run(self):
         if os.environ.get("CLEAN", "YES").lower() == "no":
@@ -250,7 +251,7 @@ configmanager_exe = Executable(script=r'src\configmanager\__main__.py',
                                targetName="Config Manager",
                                base="Win32GUI")
 
-excludes = ["matplotlib"]
+excludes = ["matplotlib", "scipy", "numpy", "disutils", "PIL"]
 packages = find_packages("./src")
 
 include_files = get_data_files()
@@ -271,7 +272,7 @@ package_details = dict(
     options={
         "build_exe": {
             'packages': packages,
-            'includes': ["qgis", "PyQt5", "sip", "PyQt5.QtMultimediaWidgets",
+            'includes': ["qgis", "PyQt5", "sip",
                          "sentry_sdk.integrations.logging",
                          "sentry_sdk.integrations.stdlib",
                          "sentry_sdk.integrations.excepthook",
