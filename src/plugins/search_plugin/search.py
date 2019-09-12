@@ -12,7 +12,6 @@ import roam.api.utils
 import roam.utils
 from roam.api.events import RoamEvents
 from roam.api.plugins import Page
-from roam.flickwidget import FlickCharm
 
 
 def resolve(name):
