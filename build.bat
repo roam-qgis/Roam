@@ -39,9 +39,7 @@ GOTO END
 
 :exe
 ECHO Making package..
-python setup.py clean
-python setup.py build_qt
-python setup.py build
+python setup.py build_roam
 GOTO END
 
 :clean
@@ -53,9 +51,7 @@ GOTO END
 
 :release
 ECHO Building release
-python setup.py clean
-python setup.py build_qt
-python setup.py build
+python setup.py build_roam
 IF NOT EXIST release MKDIR release
 del release\*.* /Q /F
 pushd dist
@@ -86,7 +82,6 @@ GOTO END
 ECHO Opening desinger
 START designer.exe
 GOTO END
-
 :api-docs
 pdoc --html .\src\roam\
 GOTO END
