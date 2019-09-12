@@ -14,7 +14,7 @@ def get_git_changeset():
     import subprocess
 
     full_path = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-    sha = subprocess.check_output(['git', 'rev-parse', '--short','HEAD'], cwd=full_path)
+    sha = subprocess.check_output(['git', 'rev-parse', '--short', 'HEAD'], cwd=full_path)
     return sha.split('\n')[0]
 
 
@@ -52,10 +52,13 @@ def part_string(part, i):
             s = '.' + s
     return s
 
+
 frozen = getattr(sys, "frozen", False)
 if frozen:
-    with open(os.path.join(curpath, "version.txt"), 'r') as f:
-        __version__ = f.read()
+    try:
+        with open(os.path.join(curpath, "version.txt"), 'r') as f:
+            __version__ = f.read()
+    except FileNotFoundError:
+        __version__ = "unset"
 else:
     __version__ = "".join(part_string(nv, i) for i, nv in enumerate(NUM_VERSION))
-
