@@ -85,13 +85,13 @@ class BatchFileSync(SyncProvider):
     def complete(self, error, status):
         if error > 0 or self.haserror:
             stderr = self.process.readAllStandardError().data()
-            self.syncError.emit(stderr)
+            self.syncError.emit(stderr.decode("utf-8"))
         else:
             self.syncComplete.emit()
         self.syncFinished.emit()
 
     def readOutput(self):
-        output = str(self.process.readAll())
+        output = self.process.readAll().data().decode("utf-8")
         ok = True
         if self.parsermodule:
             ok, output = self.parsermodule.sync_output(output)
