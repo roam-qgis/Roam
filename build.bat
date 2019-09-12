@@ -52,19 +52,23 @@ GOTO END
 :release
 ECHO Building release
 python setup.py build_roam
+GOTO zip
+
+:zip
 IF NOT EXIST release MKDIR release
-del release\*.* /Q /F
-pushd dist
+del %BASE%release\*.* /Q /F
+pushd build\exe.win-amd64-3.7
+ECHO %CD%
 ECHO Making zip file..
 SET NAME=%2
-python -m zipfile -c "..\release\IntraMaps Roam%NAME%.zip" .
+python -m zipfile -c "%BASE%\release\IntraMaps Roam%NAME%.zip" .
 GOTO END
 
 :installer
 ECHO Building installer
 SET NAME=%2
-CALL scripts\installer\makesfx.bat "%~dp0release\IntraMaps Roam%NAME% Installer " dist
-CALL scripts\installer\makesfx.bat "%~dp0release\IntraMaps Roam%NAME% Installer - Silent" dist -s
+CALL %BASE%scripts\installer\makesfx.bat "%BASE%release\IntraMaps Roam%NAME% Installer " dist
+CALL %BASE%scripts\installer\makesfx.bat "%BASE%release\IntraMaps Roam%NAME% Installer - Silent" dist -s
 GOTO END
 
 :test
