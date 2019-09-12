@@ -109,7 +109,6 @@ def get_data_files():
     files.append((r"src\configmanager\templates", r"lib\configmanager\templates"))
     files.append((svgs, r"lib\qgis\svg"))
     files.append((gdalsharepath, "lib\gdal"))
-    return files
 
     versiontext = os.path.join(appsrcopyFilesath, "version.txt")
 
