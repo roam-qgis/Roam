@@ -7,7 +7,7 @@ from distutils.command.clean import clean
 from sys import platform
 
 from setuptools import find_packages
-from cx_Freeze import setup, Executable
+from ext_libs.cx_Freeze import setup, Executable
 
 from scripts.fabricate import run
 
@@ -34,6 +34,7 @@ pythonroot = os.path.join(osgeopath, 'apps', "Python37")
 qgisroot = os.path.join(osgeopath, "apps", qgisname)
 qgisbin = os.path.join(qgisroot, "bin")
 qtbin = os.path.join(osgeopath, "apps", "qt5", "bin")
+qtplugins = os.path.join(osgeopath, "apps", "qt5", "plugins")
 
 qtimageforms = os.path.join(osgeopath, r'apps\qt5\plugins\imageformats\*')
 qtsqldrivers = os.path.join(osgeopath, r'apps\qt5\plugins\sqldrivers\*')
@@ -48,6 +49,34 @@ configmangerpath = os.path.join(curpath, "src", 'configmanager')
 sys.path.append(osgeobin)
 sys.path.append(qgisbin)
 sys.path.append(qtbin)
+
+qtplugin_list = [
+    # "bearer",
+    # "canbus",
+    "crypto",
+    # "gamepads",
+    "generic",
+    # "geometryloaders",
+    # "geoservices",
+    "iconengines",
+    "imageformats",
+    "mediaservice",
+    "platforminputcontexts",
+    "platforms",
+    # "platformthemes",
+    # "playlistformats",
+    "position",
+    # "printsupport",
+    # "qmltooling",
+    # "renderplugins",
+    # "scenegraph",
+    # "sceneparsers",
+    # "sensorgestures",
+    # "sensors",
+    "sqldrivers",
+    "styles",
+    # "texttospeech",
+]
 
 
 def getfiles(folder, outpath, includebase=True):
@@ -95,7 +124,6 @@ def get_data_files():
     files += format_paths(glob.glob(os.path.join(qgisroot, "plugins", "*.dll")), new_folder=r"lib\qgis\plugins")
     files += format_paths(glob.glob(os.path.join(qgisresources, "*.db")), new_folder=r"lib\qgis\resources")
     files += format_paths(glob.glob(os.path.join(qtbin, "*.dll")))
-    files += format_paths(glob.glob(os.path.join(qtbin, "*.dll")))
     files += format_paths(glob.glob(qtsqldrivers), new_folder="sqldrivers")
 
     utils = ['ogr2ogr.exe', 'ogrinfo.exe', 'gdalinfo.exe', 'NCSEcw.dll', "spatialite.dll",
@@ -108,14 +136,22 @@ def get_data_files():
     files.append((r"src\roam\templates", r"lib\roam\templates"))
     files.append((r"src\configmanager\templates", r"lib\configmanager\templates"))
     files.append((svgs, r"lib\qgis\svg"))
+
+    for qtplugin in qtplugin_list:
+        pluginpath = os.path.join(qtplugins, qtplugin)
+        files.append((pluginpath, r"lib\qtplugins\{}".format(qtplugin)))
+
     files.append((gdalsharepath, "lib\gdal"))
 
-    versiontext = os.path.join(appsrcopyFilesath, "version.txt")
+    versiontext = os.path.join(r"src\roam", "version.txt")
 
     with open(versiontext, 'w') as f:
         f.write(roam.__version__)
 
     files.append((versiontext, r"lib\roam\version.txt"))
+    print("Including extra files:")
+    for file, finalpath in sorted(files):
+        print(f"\t - {file} -> {finalpath}")
 
     return files
 
@@ -208,23 +244,16 @@ roam_exe = Executable(script=r'src\roam\__main__.py',
                       icon=icon,
                       targetName="Roam",
                       base="Win32GUI")
-# initScript=r"C:\Users\Nathan\dev\Roam\freeze_init.py")
 
 configmanager_exe = Executable(script=r'src\configmanager\__main__.py',
                                icon=configicon,
                                targetName="Config Manager",
                                base="Win32GUI")
 
-excludes = ["mpl-data", "PyQt5.uic.widget-plugins"]
+excludes = ["matplotlib"]
 packages = find_packages("./src")
-print(sys.path)
 
-# for file in get_data_files():
-#     print(file)
 include_files = get_data_files()
-# include_files = [file for path, file in get_data_files()]
-# for file in include_files:
-#     print(file)
 
 package_details = dict(
     name='roam',
@@ -242,7 +271,7 @@ package_details = dict(
     options={
         "build_exe": {
             'packages': packages,
-            'includes': ["qgis", "PyQt5", "sip",
+            'includes': ["qgis", "PyQt5", "sip", "PyQt5.QtMultimediaWidgets",
                          "sentry_sdk.integrations.logging",
                          "sentry_sdk.integrations.stdlib",
                          "sentry_sdk.integrations.excepthook",
@@ -258,43 +287,5 @@ package_details = dict(
         }},
     executables=[roam_exe, configmanager_exe]
 )
-
-dll_excludes = ["MSVFW32.dll",
-                "AVIFIL32.dll",
-                "AVICAP32.dll",
-                "ADVAPI32.dll",
-                "CRYPT32.dll",
-                "WLDAP32.dll",
-                "SECUR32.dll",
-                'msvcr80.dll', 'msvcp80.dll',
-                'msvcr80d.dll', 'msvcp80d.dll',
-                'powrprof.dll', 'mswsock.dll',
-                'w9xpopen.exe', 'MSVCP90.dll',
-                'libiomp5md.dll']
-
-# if os.name is 'nt':
-#     origIsSystemDLL = py2exe.build_exe.isSystemDLL
-#
-#     def isSystemDLL(pathname):
-#         if "api-ms-win-" in pathname:
-#             print(" -> Skip: {0}".format(pathname))
-#             return True
-#
-#         if os.path.basename(pathname).lower() in ("msvcp100.dll", "msvcr100.dll"):
-#             return False
-#
-#         return origIsSystemDLL(pathname)
-#
-#     py2exe.build_exe.isSystemDLL = isSystemDLL
-#     package_details.update(
-#         options={'py2exe': {
-#             'dll_excludes': dll_excludes,
-#             'excludes': ['qgis.PyQt.uic.port_v3'],
-#             'includes': ['qgis.PyQt.QtNetwork', 'sip', 'qgis.PyQt.QtSql', 'sqlite3', "Queue", 'qgis.PyQt.Qsci'],
-#             'skip_archive': True,
-#         }},
-#         windows=[roam_target, configmanager_target],
-#         zipfile="libs\\"
-#     )
 
 setup(**package_details)
