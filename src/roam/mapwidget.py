@@ -313,6 +313,7 @@ class MapWidget(Ui_CanvasWidget, QMainWindow):
         icon = roam_style.iconsize()
         self.projecttoolbar.setIconSize(QSize(icon, icon))
 
+        self.defaultextent = None
         self.current_form = None
         self.last_form = None
         self.layerbuttons = []
@@ -894,8 +895,9 @@ class MapWidget(Ui_CanvasWidget, QMainWindow):
         Zoom the mapview canvas to the extents the project was opened at i.e. the
         default extent.
         """
-        self.canvas.setExtent(self.defaultextent)
-        self.canvas.refresh()
+        if self.defaultextent:
+            self.canvas.setExtent(self.defaultextent)
+            self.canvas.refresh()
 
     def form_valid_for_capture(self, form):
         """
