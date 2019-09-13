@@ -1,5 +1,5 @@
 from PyQt5.QtGui import QStandardItemModel
-from qgis.PyQt.QtWidgets import QDialog
+from qgis.PyQt.QtWidgets import QDialog, QMessageBox
 from qgis.PyQt.QtCore import QItemSelectionModel
 
 import roam.messagebaritems
