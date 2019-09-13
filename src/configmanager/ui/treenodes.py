@@ -1,10 +1,11 @@
+import yaml
 import os
 import shutil
 from datetime import datetime
 
 from qgis.PyQt.QtCore import Qt
 from qgis.PyQt.QtGui import QIcon, QStandardItem
-from qgis.PyQt.QtWidgets import QInputDialog
+from qgis.PyQt.QtWidgets import QInputDialog, QMessageBox
 from qgis.core import QgsProject, QgsMapLayer, Qgis, QgsWkbTypes
 
 import configmanager.logger as logger
@@ -202,6 +203,7 @@ class SelectLayersNode(Treenode):
         self.create_children()
         super(SelectLayersNode, self).refresh()
 
+
 class InfoNode(Treenode):
     nodetype = Treenode.InfoNode
 
@@ -248,6 +250,7 @@ class RoamNode(Treenode):
 
 class LayerSearchNode(Treenode):
     nodetype = Treenode.LayerSearchNode
+
     def __init__(self, text="Searching", project=None):
         super(LayerSearchNode, self).__init__(text, QIcon(":/icons/search"), project)
         self._text = text
@@ -269,6 +272,7 @@ class LayerSearchNode(Treenode):
 
         super(LayerSearchNode, self).create_children()
 
+
 class LayerSearchConfigNode(Treenode):
     nodetype = Treenode.LayerSearchConfigNode
 
@@ -276,6 +280,7 @@ class LayerSearchConfigNode(Treenode):
         self.layer = layer
         text = layer.name()
         super(LayerSearchConfigNode, self).__init__(text, QIcon(":/icons/search"), project)
+
 
 class MapNode(Treenode):
     nodetype = Treenode.MapNode
@@ -313,6 +318,11 @@ class AddNewNode(Treenode):
         super(AddNewNode, self).__init__(text, QIcon(":/icons/add"))
 
     def additem(self):
+        """
+        Add a item under this node
+        :return:
+        """
+        # Calls the parent node to do the add item logic.
         return self.parent().additem()
 
 
@@ -347,6 +357,11 @@ class FormNode(Treenode):
 
 
 class FormsNode(Treenode):
+    """
+    Node that lists all the forms in the project.
+
+    Manages the create and delete of forms
+    """
     nodetype = Treenode.FormsNode
 
     def __init__(self, text, project):
@@ -400,6 +415,17 @@ class FormsNode(Treenode):
         self.project.save(save_forms=False)
 
     def additem(self):
+        """
+        Creates a new form in the project
+        :return:
+        """
+        if not self.project.selectlayers:
+            QMessageBox.question(None,
+                                 "Select layers required",
+                                 "Use the Select Layers item to select layers that can be used for forms",
+                                 QMessageBox.Ok)
+            return
+
         form = newform(self.project)
         self.project.save()
         item = FormNode(form, self.project)
