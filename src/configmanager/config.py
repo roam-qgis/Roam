@@ -40,8 +40,6 @@ class Config:
         return self.settings[item]
 
     def save(self):
-        import pprint
-        pprint.pprint(self.settings)
         self.logger.debug(self.settings)
         if self.settings is None:
             raise Exception("Settings are null. Not saving. Might have happened due to a error.")
