@@ -235,7 +235,7 @@ class SearchPlugin(widget, base, Page):
                             WHERE search match '{}' LIMIT 100""".format(search)).fetchall()
         for layer, featureid, snippet in query:
             item = QListWidgetItem()
-            text = "{}\n {}".format(layer, snippet.encode("utf-8").replace('\n', ' '))
+            text = "{}\n {}".format(layer, snippet.replace('\n', ' '))
             item.setText(text)
             item.setData(Qt.UserRole + 1, (layer, featureid, snippet))
             self.resultsView.addItem(item)
