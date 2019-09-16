@@ -16,7 +16,8 @@ from qgis.gui import QgsExpressionBuilderDialog, QgsMapCanvas, QgsRendererProper
 from configmanager.ui.nodewidgets import (ui_layersnode, ui_layernode, ui_infonode, ui_projectinfo, ui_formwidget,
                                           ui_searchsnode, ui_searchnode, ui_mapwidget, ui_publishwidget)
 from configmanager.models import (CaptureLayersModel, LayerTypeFilter, QgsFieldModel, WidgetsModel,
-                                  QgsLayerModel, CaptureLayerFilter, widgeticon, SearchFieldsModel)
+                                  QgsLayerModel, CaptureLayerFilter, SearchFieldsModel)
+from configmanager.icons import widgeticon
 
 from configmanager.events import ConfigEvents
 import roam.editorwidgets
