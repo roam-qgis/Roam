@@ -36,7 +36,7 @@ with roam.environ.setup(logo=':/branding/config', title="IntraMaps Roam Config M
     from configmanager.config import Config
     from configmanager.ui.configmanagerdialog import ConfigManagerDialog
 
-    roam.errors.init_error_handler()
+    roam.errors.init_error_handler(roam.__version__)
 
     managerconfig = Config.from_file(os.path.join(roamapp.profileroot,"configmanager.config"))
     roamapp.config = managerconfig

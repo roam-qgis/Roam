@@ -21,11 +21,11 @@ def can_send():
     return roam.config.settings.get("online_error_reporting", True)
 
 
-def init_error_handler():
-    print(roam.config.settings)
+def init_error_handler(version):
     if can_send():
         roam.utils.log("Sending Error Reports: Enabled")
-        sentry_sdk.init("https://58a98c15c942424ea274243fd37cf3b2@sentry.io/1553649")
+        sentry_sdk.init("https://58a98c15c942424ea274243fd37cf3b2@sentry.io/1553649",
+                        release=f"Roam@{version}")
     else:
         roam.utils.log("Sending Error Reports: Disabled")
 
