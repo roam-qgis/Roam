@@ -19,15 +19,6 @@ import configmanager.QGIS as QGIS
 import roam.utils
 
 
-def layer(name):
-    """
-    Return a layer with the given name in the QGIS session
-    :param name: The name of the layer to return.
-    :return: A QgsMapLayer object with the given name.
-    """
-    return QgsProject.instance.mapLayersByName(name)[0]
-
-
 class BadLayerHandler(QgsProjectBadLayerHandler):
     """
     Handler class for any layers that fail to load when
