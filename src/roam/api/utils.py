@@ -261,8 +261,10 @@ def search_layer(layer, filter, field_list=None, with_geometry=False):
 
     request = QgsFeatureRequest()\
         .setFilterExpression(filter)\
-        .setFlags(flags)\
-        .setSubsetOfAttributes(field_list, layer.fields())
+        .setFlags(flags)
+
+    if field_list:
+        request.setSubsetOfAttributes(field_list, layer.fields())
 
     return layer.getFeatures(request)
 
