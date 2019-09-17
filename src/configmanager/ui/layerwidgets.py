@@ -399,7 +399,7 @@ class FormWidget(ui_formwidget.Ui_Form, WidgetBase):
             item = QStandardItem(widgettype)
             item.setData(configwidget, Qt.UserRole)
             item.setData(widgettype, Qt.UserRole + 1)
-            item.setIcon(QIcon(widgeticon(widgettype)))
+            item.setIcon(widgeticon(widgettype))
             self.useablewidgets.model().appendRow(item)
             self.widgetstack.addWidget(configwidget)
         self.useablewidgets.blockSignals(False)
