@@ -68,13 +68,14 @@ class WidgetsModel(QStandardItemModel):
             widget = index.data(Qt.UserRole)
             widgets.append(widget)
 
-        widgettext = yaml.dump(widgets)
-        bytes = QByteArray(widgettext)
-        data.setData(self.mimeTypes()[0], bytes)
+        widgettext = yaml.dump(widgets).encode("utf-8")
+        _bytes = QByteArray(widgettext)
+        data.setData(self.mimeTypes()[0], _bytes)
         return data
 
     def dropMimeData(self, mimedata, action, row, column, parent):
         data = mimedata.data(self.mimeTypes()[0]).data()
+        data = data.decode("utf-8")
         widgets = yaml.load(data)
 
         droptarget = self.itemFromIndex(parent)
@@ -89,7 +90,10 @@ class WidgetsModel(QStandardItemModel):
             if getattr(droptarget, "iscontainor", False):
                 droptarget.appendRow(item)
             else:
+                # This isn't fully right but seems to work...
+                self.beginMoveRows(parent, 0, 0, parent, row)
                 droptarget.insertRow(row, item)
+                self.endMoveRows()
             item.loadchildren()
 
         return True

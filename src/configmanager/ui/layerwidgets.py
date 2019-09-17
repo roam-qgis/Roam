@@ -160,6 +160,7 @@ class FormWidget(ui_formwidget.Ui_Form, WidgetBase):
         self._currentwidgetid = ''
         self.fieldsmodel = QgsFieldModel()
         self.widgetmodel = WidgetsModel()
+        self.widgetmodel.rowsMoved.connect(self._widget_moved)
         self.possiblewidgetsmodel = QStandardItemModel()
         self.formlayersmodel = QgsLayerModel(watchregistry=True)
         self.formlayers = CaptureLayerFilter()
@@ -233,6 +234,10 @@ class FormWidget(ui_formwidget.Ui_Form, WidgetBase):
         self.defaultLayerCombo.layerChanged.connect(self.defaultFieldCombo.setLayer)
         self.addEvent.pressed.connect(self.addEventItem)
         self.btnDeleteForm.pressed.connect(ConfigEvents.deleteForm.emit)
+
+    def _widget_moved(self, sourceParent, start, end, destParent, destRow):
+        index = self.widgetmodel.index(destRow, 0, destParent)
+        self.userwidgets.setCurrentIndex(index)
 
     def on_closing(self):
         self.blockWidgetSignels(True)
@@ -614,6 +619,16 @@ class FormWidget(ui_formwidget.Ui_Form, WidgetBase):
         """
         Update the UI with the config for the current selected widget.
         """
+        def get_id(widget_config):
+            if widget_config:
+                return widget_config.get('_id', None)
+            return None
+
+        widget = index.data(Qt.UserRole)
+        lastdata = last.data(Qt.UserRole)
+        if get_id(widget) == get_id(lastdata):
+            return
+
         self.blockWidgetSignels(True)
 
         if last:
@@ -626,7 +641,7 @@ class FormWidget(ui_formwidget.Ui_Form, WidgetBase):
             return
 
         try:
-            roam.utils.debug("Loading widget: {0}".format(widget['_id']))
+            roam.utils.debug("Loading widget: {0}".format(get_id(widget)))
         except KeyError:
             pass
         widgettype = widget['widget']
@@ -723,6 +738,7 @@ class FormWidget(ui_formwidget.Ui_Form, WidgetBase):
         """
         Return the selected widget in the widget combo.
         """
+        print("Current widget config")
         index = self.useablewidgets.currentIndex()
         index = self.possiblewidgetsmodel.index(index, 0)
         return index.data(Qt.UserRole), index, index.data(Qt.UserRole + 1)
