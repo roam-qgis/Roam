@@ -24,12 +24,7 @@ def qgis_path(base_path):
 
 
 def find_qgis():
-    settingspath = roam.config.settings.get("qgislocation", None)
-    if settingspath and os.path.exists(settingspath):
-        return settingspath
-
-    triedpaths = ["settings: qgislocation"]
-
+    triedpaths = []
     for installpath in [qgis_path(os.environ['ProgramFiles']), qgis_path(os.environ['ProgramFiles(x86)'])]:
         if os.path.exists(installpath):
             return installpath

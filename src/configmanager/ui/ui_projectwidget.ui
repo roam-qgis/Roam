@@ -87,7 +87,16 @@ QLabel[warning=true]
 	</string>
   </property>
   <layout class="QGridLayout" name="gridLayout">
-   <property name="margin">
+   <property name="leftMargin">
+    <number>0</number>
+   </property>
+   <property name="topMargin">
+    <number>0</number>
+   </property>
+   <property name="rightMargin">
+    <number>0</number>
+   </property>
+   <property name="bottomMargin">
     <number>0</number>
    </property>
    <item row="0" column="0">
@@ -144,7 +153,16 @@ QLabel[warning=true]
         <enum>QFrame::Raised</enum>
        </property>
        <layout class="QHBoxLayout" name="horizontalLayout_5">
-        <property name="margin">
+        <property name="leftMargin">
+         <number>0</number>
+        </property>
+        <property name="topMargin">
+         <number>0</number>
+        </property>
+        <property name="rightMargin">
+         <number>0</number>
+        </property>
+        <property name="bottomMargin">
          <number>0</number>
         </property>
         <item>
@@ -185,7 +203,7 @@ QLabel[warning=true]
            </sizepolicy>
           </property>
           <property name="text">
-           <string>Open In QGIS</string>
+           <string>Open project in QGIS</string>
           </property>
           <property name="icon">
            <iconset resource="../../roam/resources.qrc">
@@ -208,7 +226,7 @@ QLabel[warning=true]
         <item>
          <widget class="QToolButton" name="savePageButton">
           <property name="text">
-           <string>Save</string>
+           <string>Save Project</string>
           </property>
           <property name="icon">
            <iconset resource="../../roam/resources.qrc">
@@ -242,7 +260,7 @@ QLabel[warning=true]
       </sizepolicy>
      </property>
      <property name="currentIndex">
-      <number>16</number>
+      <number>4</number>
      </property>
      <widget class="ProjectInfoWidget" name="project_info_page">
       <layout class="QGridLayout" name="gridLayout_11"/>
@@ -255,7 +273,16 @@ QLabel[warning=true]
        </sizepolicy>
       </property>
       <layout class="QGridLayout" name="gridLayout_3">
-       <property name="margin">
+       <property name="leftMargin">
+        <number>0</number>
+       </property>
+       <property name="topMargin">
+        <number>0</number>
+       </property>
+       <property name="rightMargin">
+        <number>0</number>
+       </property>
+       <property name="bottomMargin">
         <number>0</number>
        </property>
       </layout>
@@ -281,8 +308,14 @@ QLabel[warning=true]
      </widget>
      <widget class="QWidget" name="roam_page">
       <layout class="QGridLayout" name="gridLayout_2">
-       <item row="4" column="1">
+       <item row="3" column="1">
         <widget class="QGroupBox" name="groupBox_3">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
          <property name="title">
           <string>About</string>
          </property>
@@ -290,7 +323,7 @@ QLabel[warning=true]
           <bool>true</bool>
          </property>
          <layout class="QGridLayout" name="gridLayout_5">
-          <item row="0" column="0" colspan="2">
+          <item row="1" column="0" colspan="2">
            <layout class="QHBoxLayout" name="horizontalLayout_9">
             <item>
              <widget class="QLabel" name="versionLabel1">
@@ -317,25 +350,7 @@ QLabel[warning=true]
             </item>
            </layout>
           </item>
-          <item row="1" column="0" colspan="2">
-           <layout class="QHBoxLayout" name="horizontalLayout_8">
-            <item>
-             <widget class="QLabel" name="label_19">
-              <property name="text">
-               <string>that's running on QGIS API:</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QLabel" name="qgisapiLabel">
-              <property name="text">
-               <string>{API}</string>
-              </property>
-             </widget>
-            </item>
-           </layout>
-          </item>
-          <item row="3" column="0">
+          <item row="4" column="0">
            <widget class="QLabel" name="label_17">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
@@ -353,23 +368,44 @@ QLabel[warning=true]
              <string/>
             </property>
             <property name="pixmap">
-             <pixmap resource="../../roam/resources.qrc">:/branding/dms</pixmap>
+             <pixmap>:/branding/dms</pixmap>
             </property>
             <property name="scaledContents">
              <bool>true</bool>
             </property>
            </widget>
           </item>
-          <item row="5" column="0">
+          <item row="2" column="0" colspan="2">
+           <layout class="QHBoxLayout" name="horizontalLayout_8">
+            <item>
+             <widget class="QLabel" name="label_19">
+              <property name="text">
+               <string>that's running on QGIS API:</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QLabel" name="qgisapiLabel">
+              <property name="text">
+               <string>{API}</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+          <item row="6" column="0">
            <widget class="QLabel" name="label_41">
             <property name="text">
              <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Segoe UI'; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;a href=&quot;https://github.com/DMS-Aus/Roam&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;Project Home Page&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;a href=&quot;https://github.com/DMS-Aus/Roam/issues?state=open&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;Issue Tracker&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;a href=&quot;https://github.com/DMS-Aus/Roam/wiki&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;Project Wiki&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;a href=&quot;https://github.com/roam-qgis/Roam&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;Project Home Page&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;a href=&quot;https://github.com/roam-qgis/Roam/issues?state=open&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;Issue Tracker&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;a href=&quot;https://github.com/roam-qgis/Roam/wiki&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;Project Wiki&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignBottom|Qt::AlignLeading|Qt::AlignLeft</set>
             </property>
             <property name="openExternalLinks">
              <bool>true</bool>
@@ -379,24 +415,24 @@ p, li { white-space: pre-wrap; }
             </property>
            </widget>
           </item>
-          <item row="3" column="1">
+          <item row="6" column="1">
            <widget class="QLabel" name="label_20">
             <property name="sizePolicy">
-             <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+             <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
               <horstretch>0</horstretch>
               <verstretch>0</verstretch>
              </sizepolicy>
             </property>
             <property name="minimumSize">
              <size>
-              <width>0</width>
-              <height>0</height>
+              <width>100</width>
+              <height>108</height>
              </size>
             </property>
             <property name="maximumSize">
              <size>
-              <width>150</width>
-              <height>150</height>
+              <width>200</width>
+              <height>100</height>
              </size>
             </property>
             <property name="text">
@@ -410,26 +446,21 @@ p, li { white-space: pre-wrap; }
             </property>
            </widget>
           </item>
-          <item row="6" column="0">
-           <widget class="QLabel" name="label_18">
-            <property name="text">
-             <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Segoe UI'; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'MS Shell Dlg 2'; font-size:8pt;&quot;&gt;Created By &lt;/span&gt;&lt;a href=&quot;mapsolutions.com.au&quot;&gt;&lt;span style=&quot; font-family:'MS Shell Dlg 2'; font-size:8pt; text-decoration: underline; color:#0000ff;&quot;&gt;DMS Australia&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'MS Shell Dlg 2'; font-size:8pt;&quot;&gt;© 2013 Digital Mapping Solutions&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-            </property>
-            <property name="openExternalLinks">
-             <bool>true</bool>
-            </property>
-            <property name="textInteractionFlags">
-             <set>Qt::LinksAccessibleByKeyboard|Qt::LinksAccessibleByMouse</set>
-            </property>
-           </widget>
-          </item>
          </layout>
         </widget>
+       </item>
+       <item row="2" column="0">
+        <spacer name="verticalSpacer">
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>20</width>
+           <height>40</height>
+          </size>
+         </property>
+        </spacer>
        </item>
        <item row="0" column="0" colspan="2">
         <widget class="QLabel" name="label_42">
@@ -444,7 +475,7 @@ p, li { white-space: pre-wrap; }
          </property>
         </widget>
        </item>
-       <item row="4" column="0">
+       <item row="3" column="0">
         <spacer name="horizontalSpacer">
          <property name="orientation">
           <enum>Qt::Horizontal</enum>
@@ -453,19 +484,6 @@ p, li { white-space: pre-wrap; }
           <size>
            <width>350</width>
            <height>20</height>
-          </size>
-         </property>
-        </spacer>
-       </item>
-       <item row="3" column="0">
-        <spacer name="verticalSpacer">
-         <property name="orientation">
-          <enum>Qt::Vertical</enum>
-         </property>
-         <property name="sizeHint" stdset="0">
-          <size>
-           <width>20</width>
-           <height>40</height>
           </size>
          </property>
         </spacer>
@@ -482,40 +500,6 @@ p, li { white-space: pre-wrap; }
           <bool>true</bool>
          </property>
         </widget>
-       </item>
-       <item row="2" column="0">
-        <layout class="QHBoxLayout" name="horizontalLayout">
-         <item>
-          <widget class="QLabel" name="label">
-           <property name="text">
-            <string>QGIS Install path</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QLineEdit" name="qgispathEdit"/>
-         </item>
-         <item>
-          <widget class="QToolButton" name="filePickerButton">
-           <property name="text">
-            <string>...</string>
-           </property>
-           <property name="icon">
-            <iconset resource="../../roam/resources.qrc">
-             <normaloff>:/icons/folder</normaloff>:/icons/folder</iconset>
-           </property>
-           <property name="iconSize">
-            <size>
-             <width>24</width>
-             <height>24</height>
-            </size>
-           </property>
-           <property name="autoRaise">
-            <bool>true</bool>
-           </property>
-          </widget>
-         </item>
-        </layout>
        </item>
       </layout>
      </widget>

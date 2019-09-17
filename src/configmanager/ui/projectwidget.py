@@ -75,14 +75,6 @@ class ProjectWidget(Ui_Form, QWidget):
         self.currentnode = None
         self.form = None
 
-        qgislocation = r'C:\OSGeo4W\bin\qgis.bat'
-        qgislocation = roam.config.settings.setdefault('configmanager', {}) \
-            .get('qgislocation', "")
-
-        self.qgispathEdit.setText(qgislocation)
-        self.qgispathEdit.textChanged.connect(self.save_qgis_path)
-        self.filePickerButton.pressed.connect(self.set_qgis_path)
-
         self.connect_page_events()
 
         QgsProject.instance().readProject.connect(self.projectLoaded)
@@ -95,24 +87,6 @@ class ProjectWidget(Ui_Form, QWidget):
             widget = self.stackedWidget.widget(index)
             if hasattr(widget, "raiseMessage"):
                 widget.raiseMessage.connect(self.bar.pushMessage)
-
-    def set_qgis_path(self):
-        """
-        Set the location of the QGIS install.  We need the path to be able to create Roam
-        projects
-        """
-        path = QFileDialog.getOpenFileName(self, "Select QGIS install file", filter="(*.bat)")
-        if not path:
-            return
-        self.qgispathEdit.setText(path)
-        self.save_qgis_path(path)
-
-    def save_qgis_path(self, path):
-        """
-        Save the QGIS path back to the Roam config.
-        """
-        roam.config.settings['configmanager'] = {'qgislocation': path}
-        roam.config.save()
 
     def setpage(self, page, node, refreshingProject=False):
         """
