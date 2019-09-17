@@ -118,10 +118,10 @@ class ListWidget(EditorWidget):
             item.setData(None, Qt.UserRole)
             self.listmodel.appendRow(item)
 
-        attributes = {keyfieldindex, valuefieldindex}
+        fields = [keyfield, valuefield]
         iconfieldindex = layer.fields().lookupField('icon')
         if iconfieldindex > -1:
-            attributes.add(iconfieldindex)
+            fields.append("icon")
 
         if not filterexp and valuefieldindex == keyfieldindex and iconfieldindex == -1:
             values = layer.uniqueValues(keyfieldindex)
@@ -132,37 +132,17 @@ class ListWidget(EditorWidget):
                 self.listmodel.appendRow(item)
             return
 
-        flags = QgsFeatureRequest.NoGeometry
-
-        expression = None
-        if filterexp:
-            expression = QgsExpression(filterexp)
-            expression.prepare(layer.fields())
-            if expression.hasParserError():
-                roam.utils.warning("Expression has parser error: {}".format(expression.parserErrorString()))
-                return
-
-            if expression.needsGeometry():
-                flags = QgsFeatureRequest.NoFlags
-
-            for field in expression.referencedColumns():
-                index = layer.fields().indexOf(field)
-                attributes.add(index)
-
-        request = QgsFeatureRequest().setFlags(flags).setSubsetOfAttributes(list(attributes))
-        for feature in layer.getFeatures(request):
-            if expression and not expression.evaluate(feature):
-                continue
-
+        features = roam.api.utils.search_layer(layer, filterexp, fields, with_geometry=False)
+        for feature in features:
             keyvalue = nullconvert(feature[keyfieldindex])
             valuvalue = nullconvert(feature[valuefield])
             try:
-                path = feature[iconfieldindex]
+                path = feature["icon"]
                 icon = QIcon(path)
             except KeyError:
                 icon = QIcon()
 
-            item = QStandardItem((keyvalue))
+            item = QStandardItem(keyvalue)
             item.setData(str(valuvalue), Qt.UserRole)
             item.setIcon(icon)
             self.listmodel.appendRow(item)
@@ -301,6 +281,8 @@ class MultiList(ListWidget):
             item = self.listmodel.item(row)
             if item.checkState() == Qt.Checked:
                 value = item.data(Qt.UserRole)
+                if value is None:
+                    continue
                 items.append(value)
 
         return ';'.join(items)
