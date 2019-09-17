@@ -4,7 +4,7 @@ from qgis._core import QgsWkbTypes
 # noinspection PyUnresolvedReferences
 # This required to load the icons from the resource file or
 # else you get blanks
-from configmanager.ui import resources_rc
+from configmanager.resources import resources_rc
 
 icons = {
     QgsWkbTypes.PointGeometry: ":/icons/PointLayer",

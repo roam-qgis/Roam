@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!-- Based on 'image' icon by IcoMoon.io -->
-<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
-<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 64 64">
-  <path d="M56 12 8 12 8 52 56 52ZM64 4 64 4 64 60 0 60 0 4ZM52 48 12 48 12 40 24 20 40 40 52 32 52 36ZM40 22c0-3 3-6 6-6 3 0 6 3 6 6 0 3-3 6-6 6-3 0-6-3-6-6z" fill="#81add2"/>
-</svg>

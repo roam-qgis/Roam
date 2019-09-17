@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Based on 'page-break' icon by IcoMoon.io -->
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32">
+  <path d="m0 16 4 0 0 2-4 0zm6 0 6 0 0 2-6 0zm8 0 4 0 0 2-4 0zm6 0 6 0 0 2-6 0zm8 0 4 0 0 2-4 0zM28 0 28 14 4 14 5 0 6 0 6 12 26 12 27 0ZM5 32 4 20 28 20 28 32 27 32 26 22 6 22 6 32Z" fill="#81add2"/>
+</svg>

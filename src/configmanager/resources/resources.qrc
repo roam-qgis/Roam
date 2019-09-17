@@ -1,0 +1,30 @@
+<RCC>
+  <qresource prefix="icons">
+    <file alias="List">icons\list.svg</file>
+    <file alias="MultiList">icons\multilist.svg</file>
+    <file alias="Image">icons\picture.svg</file>
+    <file alias="Section">icons\section.svg</file>
+    <file alias="Checkbox">icons\check.svg</file>
+    <file alias="Text">icons\text.svg</file>
+    <file alias="TextBlock">icons\text.svg</file>
+    <file alias="Date">icons\date.svg</file>
+    <file alias="Number">icons\number.svg</file>
+    <file alias="Number(Double)">icons\number.svg</file>
+    <file alias="Attachment">icons\attachment.svg</file>
+    <file alias="Option Row">icons\row.svg</file>
+    <file alias="LineLayer">icons\mIconLineLayer.svg</file>
+    <file alias="PointLayer">icons\mIconPointLayer.svg</file>
+    <file alias="PolygonLayer">icons\mIconPolygonLayer.svg</file>
+    <file alias="TableLayer">icons\mIconTableLayer.svg</file>
+    <file alias="Expression">icons\expression.svg</file>
+  </qresource>
+  <qresource prefix="images/themes/default">
+    <file alias="locked.svg">icons\locked.svg</file>
+    <file alias="unlocked.svg">icons\unlocked.svg</file>
+    <file alias="symbologyAdd.svg">icons\symbologyAdd.svg</file>
+    <file alias="symbologyRemove.svg">icons\symbologyRemove.svg</file>
+    <file>icons\symbologyEdit.svg</file>
+    <file alias="symbologyUp.svg">icons\symbologyUp.svg</file>
+    <file alias="symbologyDown.svg">icons\symbologyDown.svg</file>
+  </qresource>
+</RCC>

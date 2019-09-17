@@ -1,7 +1,7 @@
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QStandardItem, QIcon, QFont
 
-from configmanager.icons import widgeticon
+from configmanager.resources import widgeticon
 
 
 class WidgetItem(QStandardItem):

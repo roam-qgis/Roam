@@ -17,7 +17,7 @@ from configmanager.ui.nodewidgets import (ui_layersnode, ui_layernode, ui_infono
                                           ui_searchsnode, ui_searchnode, ui_mapwidget, ui_publishwidget)
 from configmanager.models import (CaptureLayersModel, LayerTypeFilter, QgsFieldModel, WidgetsModel,
                                   QgsLayerModel, CaptureLayerFilter, SearchFieldsModel)
-from configmanager.icons import widgeticon
+from configmanager.resources import widgeticon
 
 from configmanager.events import ConfigEvents
 import roam.editorwidgets
