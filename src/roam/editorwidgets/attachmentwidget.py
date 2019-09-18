@@ -131,7 +131,7 @@ class AttachmentWidget(EditorWidget):
     def _select_attachment(self):
         # Show the file picker
         defaultlocation = os.path.expandvars(self.defaultlocation)
-        attachment = QFileDialog.getOpenFileName(self.widget, "Select Attachment", defaultlocation)
+        attachment, _ = QFileDialog.getOpenFileName(self.widget, "Select Attachment", defaultlocation)
         if not attachment:
             return
 
