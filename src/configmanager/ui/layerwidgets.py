@@ -629,7 +629,9 @@ class FormWidget(ui_formwidget.Ui_Form, WidgetBase):
 
         widget = index.data(Qt.UserRole)
         lastdata = last.data(Qt.UserRole)
-        if get_id(widget) == get_id(lastdata):
+        newid = get_id(widget)
+        lastid = get_id(lastdata)
+        if (newid is not None and lastid is not None) and get_id(widget) == get_id(lastdata):
             return
 
         self.blockWidgetSignels(True)
