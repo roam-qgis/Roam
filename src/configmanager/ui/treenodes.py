@@ -292,19 +292,10 @@ class MapNode(Treenode):
 
     def data(self, role):
         if role == Qt.DisplayRole:
-            return "{} ({})".format(self._text, self.rowCount())
+            return self._text
         return super(MapNode, self).data(role)
 
     def create_children(self):
-        self.removeRows(0, self.rowCount())
-        layers = QgsProject.instance().mapLayers().values()
-        for layer in layers:
-            if layer.type() == QgsMapLayer.VectorLayer and layer.geometryType() == QgsWkbTypes.NoGeometry:
-                continue
-
-            node = LayerNode(layer, self.project)
-            self.appendRow(node)
-
         super(MapNode, self).create_children()
 
     def refresh(self):
