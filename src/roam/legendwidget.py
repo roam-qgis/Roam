@@ -2,7 +2,7 @@ from qgis.PyQt.QtCore import QSize, pyqtSignal
 from qgis.PyQt.QtGui import QPixmap, QFont
 from qgis.PyQt.QtWidgets import QWidget
 from qgis.core import QgsLayerTreeModel, QgsLayerTreeNode
-from qgis.core import QgsMapRendererParallelJob
+from qgis.core import QgsMapRendererParallelJob, QgsWkbTypes, QgsMapLayer
 from roam.ui.ui_legend import Ui_legendsWidget
 
 ICON_SIZE = QSize(32, 32)
@@ -50,6 +50,13 @@ class LegendWidget(Ui_legendsWidget, QWidget):
         model.setLayerTreeNodeFont(QgsLayerTreeNode.NodeLayer, font)
         model.setLayerTreeNodeFont(QgsLayerTreeNode.NodeGroup, font)
         self.layerTree.setModel(model)
+
+        for layer_node in model.rootGroup().findLayers():
+            layer = layer_node.layer()
+            if layer.type() == QgsMapLayer.VectorLayer:
+                if layer.geometryType() == QgsWkbTypes.NullGeometry:
+                    parent = layer_node.parent()
+                    parent.removeLayer(layer)
 
     def _renderimage(self):
         image = self.renderjob.renderedImage()
