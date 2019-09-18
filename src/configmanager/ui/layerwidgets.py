@@ -470,6 +470,9 @@ class FormWidget(ui_formwidget.Ui_Form, WidgetBase):
         Auto add all fields to the form config. Any missing fields will be added.
         """
         used = list(self.usedfields())
+        if not self.selected_layer:
+            return
+
         for field in self.selected_layer.fields():
             if field.name().lower() in used:
                 continue
