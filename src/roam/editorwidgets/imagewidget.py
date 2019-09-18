@@ -76,8 +76,8 @@ class ImageWidget(EditorWidget):
     def _selectImage(self):
         # Show the file picker
         defaultlocation = os.path.expandvars(self.defaultlocation)
-        selected, image = QFileDialog.getOpenFileName(self.widget, "Select Image", defaultlocation)
-        if not selected:
+        image, _ = QFileDialog.getOpenFileName(self.widget, "Select Image", defaultlocation)
+        if not image:
             return
 
         image = QPixmap(image)
