@@ -7,7 +7,7 @@ class LayerTypeFilter(QSortFilterProxyModel):
     Filter a model to hide the given types of layers
     """
 
-    def __init__(self, geomtypes=[QgsWkbTypes.NoGeometry], parent=None):
+    def __init__(self, geomtypes=[QgsWkbTypes.NullGeometry], parent=None):
         super(LayerTypeFilter, self).__init__(parent)
         self.geomtypes = geomtypes
         self.setDynamicSortFilter(True)

@@ -1198,7 +1198,7 @@ class LayersWidget(ui_layersnode.Ui_Form, WidgetBase):
         self.setupUi(self)
 
         self.selectlayermodel = CaptureLayersModel(watchregistry=True)
-        self.selectlayerfilter = LayerTypeFilter(geomtypes=[])
+        self.selectlayerfilter = LayerTypeFilter(geomtypes=[QgsWkbTypes.NullGeometry])
         self.selectlayerfilter.setSourceModel(self.selectlayermodel)
         self.selectlayermodel.dataChanged.connect(self.selectlayerschanged)
 
