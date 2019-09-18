@@ -1278,21 +1278,8 @@ class MapWidget(ui_mapwidget.Ui_Form, WidgetBase):
 
         self.canvas.setCanvasColor(Qt.white)
         self.canvas.enableAntiAliasing(True)
-        self.canvas.setWheelAction(QgsMapCanvas.WheelZoomToMouseCursor)
-        self.canvas.mapRenderer().setLabelingEngine(QgsPalLabeling())
-        self.style = QgsStyle.defaultStyle()
-        self.styledlg = None
         self.bridge = QgsLayerTreeMapCanvasBridge(QgsProject.instance().layerTreeRoot(), self.canvas)
         self.bridge.setAutoSetupOnFirstLayer(False)
-        QgsProject.instance().writeProject.connect(self.bridge.writeProject)
-        QgsProject.instance().readProject.connect(self.bridge.readProject)
-
-        self.applyStyleButton.pressed.connect(self.apply_style)
-
-    def apply_style(self):
-        if self.styledlg:
-            self.styledlg.apply()
-            self.canvas.refresh()
 
     def set_project(self, project, treenode):
         red = QgsProject.instance().readNumEntry("Gui", "/CanvasColorRedPart", 255)[0]
@@ -1300,31 +1287,7 @@ class MapWidget(ui_mapwidget.Ui_Form, WidgetBase):
         blue = QgsProject.instance().readNumEntry("Gui", "/CanvasColorBluePart", 255)[0]
         myColor = QColor(red, green, blue)
         self.canvas.setCanvasColor(myColor)
-        if hasattr(treenode, "layer"):
-            layer = treenode.layer
-            if layer.type() == QgsMapLayer.VectorLayer and layer.geometryType() == QgsWkbTypes.NoGeometry:
-                self.stackedWidget.setCurrentIndex(0)
-            self.set_style_widget(treenode.layer)
-            self.stackedWidget.setCurrentIndex(1)
-        else:
-            self.loadmap(project)
-            self.stackedWidget.setCurrentIndex(0)
-
-    def set_style_widget(self, layer):
-        if self.styledlg:
-            widget = self.styleWidget.layout().removeWidget(self.styledlg)
-
-        if layer.type() == QgsMapLayer.VectorLayer:
-            self.styledlg = QgsRendererPropertiesDialog(layer, self.style, True)
-        else:
-            # TODO Nothing else is supported yet.
-            return
-
-        # self.styledlg.setStyleSheet(roam_style.appstyle())
-        self.styledlg.setParent(self)
-        # TODO Only in 2.12
-        # self.styledlg.setMapCanvas(self.canvas)
-        self.styleWidget.layout().addWidget(self.styledlg)
+        self.loadmap(project)
 
     def loadmap(self, project):
         """

@@ -260,7 +260,7 @@ QLabel[warning=true]
       </sizepolicy>
      </property>
      <property name="currentIndex">
-      <number>4</number>
+      <number>2</number>
      </property>
      <widget class="ProjectInfoWidget" name="project_info_page">
       <layout class="QGridLayout" name="gridLayout_11"/>
@@ -580,7 +580,7 @@ p, li { white-space: pre-wrap; }
   <customwidget>
    <class>MapWidget</class>
    <extends>QWidget</extends>
-   <header>roam.gui</header>
+   <header>configmanager.ui.layerwidgets</header>
    <container>1</container>
   </customwidget>
   <customwidget>
@@ -657,9 +657,9 @@ p, li { white-space: pre-wrap; }
   </customwidget>
  </customwidgets>
  <resources>
-  <include location="resources.qrc"/>
+  <include location="../resources/resources.qrc"/>
   <include location="../../roam/resources.qrc"/>
-  <include location="resources.qrc"/>
+  <include location="../resources/resources.qrc"/>
   <include location="../../roam/resources.qrc"/>
   <include location="../../roam/resources.qrc"/>
   <include location="../../roam/resources.qrc"/>
