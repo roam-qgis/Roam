@@ -959,7 +959,7 @@ class InfoNode(ui_infonode.Ui_Form, WidgetBase):
         name = layer.dataProvider().name()
 
         if ".sqlite" in source or name == "mssql" and layer.isValid():
-            keys = layer.pkAttributeList()
+            keys = layer.primaryKeyAttributes()
             fields = layer.fields()
             if keys:
                 fieldnames = " + ".join(fields[key].name() for key in keys)
