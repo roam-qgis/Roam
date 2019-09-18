@@ -12,6 +12,8 @@
     <file alias="blue">resources/widgets/blue.svg</file>
   </qresource>
   <qresource prefix="icons">
+    <file alias="down-arrow">resources/images/downarrow.svg</file>
+    <file alias="up-arrow">resources/images/uparrow.svg</file>
     <file>resources/images/qradio-checked.svg</file>
     <file>resources/images/qradio-unchecked.svg</file>
     <file>resources/images/qcheckbox-checked.svg</file>

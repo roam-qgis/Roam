@@ -86,6 +86,19 @@ def appstyle():
     QTreeView::indicator:unchecked {
         image: url(:/icons/resources/images/qcheckbox-unchecked.svg);
     }
+    
+    QTreeView::branch::open::has-children {
+        image: url(:/icons/up-arrow);
+        width: 30px;
+        height: 30px;
+    }
+    
+    QTreeView::branch::closed::has-children {
+        image: url(:/icons/down-arrow);
+        width: 30px;
+        height: 30px;
+    }
+
 
     QStatusBar::item {
         border: none;
