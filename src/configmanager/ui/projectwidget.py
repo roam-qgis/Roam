@@ -11,6 +11,8 @@ from configmanager.utils import openqgis, openfolder, QGISNotFound
 
 from configmanager import bundle
 
+from configmanager.events import ConfigEvents
+import configmanager.projects
 import roam.editorwidgets
 import roam
 import roam.project
@@ -78,6 +80,26 @@ class ProjectWidget(Ui_Form, QWidget):
         self.connect_page_events()
 
         QgsProject.instance().readProject.connect(self.projectLoaded)
+
+        self.btnNewForm.pressed.connect(self._new_form)
+        self.lblSelectLayersError.setVisible(False)
+
+    def _new_form(self):
+        """
+        Create a new form for the current project.
+        :return:
+        """
+
+        if not self.project.selectlayers:
+            QMessageBox.question(None,
+                                 "Select layers required",
+                                 "Use the Select Layers item to select layers that can be used for forms",
+                                 QMessageBox.Ok)
+            return
+        if not self.project:
+            return
+        form = configmanager.projects.newform(self.project)
+        ConfigEvents.emit_formCreated(form)
 
     def connect_page_events(self):
         """

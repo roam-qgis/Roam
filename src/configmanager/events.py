@@ -5,6 +5,14 @@ from qgis.PyQt.QtCore import QObject, pyqtSignal
 
 class _Events(QObject):
     deleteForm = pyqtSignal()
+    projectCreated = pyqtSignal(object)
+    formCreated = pyqtSignal(object)
+
+    def emit_projectCreated(self, project):
+        self.projectCreated.emit(project)
+
+    def emit_formCreated(self, form):
+        self.formCreated.emit(form)
 
 
 ConfigEvents = _Events()

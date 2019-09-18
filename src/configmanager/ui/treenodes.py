@@ -1,71 +1,18 @@
 import yaml
 import os
 import shutil
-from datetime import datetime
 
 from qgis.PyQt.QtCore import Qt
 from qgis.PyQt.QtGui import QIcon, QStandardItem
-from qgis.PyQt.QtWidgets import QInputDialog, QMessageBox
-from qgis.core import QgsProject, QgsMapLayer, Qgis, QgsWkbTypes
+from qgis.PyQt.QtWidgets import QMessageBox
+from qgis.core import QgsProject, QgsMapLayer
 
+from configmanager.events import ConfigEvents
 import configmanager.logger as logger
 import roam.api.plugins
 import roam.messagebaritems
 import roam.project
-
-templatefolder = os.path.join(os.path.dirname(__file__), "..", "templates")
-
-
-def newfoldername(basetext, basefolder, formtype, alreadyexists=False):
-    message = "Please enter a new folder name for the {}".format(formtype)
-    if alreadyexists:
-        logger.log("Folder {} already exists.")
-        message += "<br> {} folder already exists please select a new one.".format(formtype)
-
-    name, ok = QInputDialog.getText(None, "New {} folder name".format(formtype), message)
-    if not ok:
-        raise ValueError
-
-    if not name:
-        return "{}_{}".format(basetext, datetime.today().strftime('%d%m%y%f'))
-    else:
-        name = name.replace(" ", "_")
-
-    if os.path.exists(os.path.join(basefolder, name)):
-        return newfoldername(basetext, basefolder, formtype, alreadyexists=True)
-
-    return name
-
-
-def newproject(projectfolder):
-    """
-    Create a new folder in the projects folder.
-    :param projectfolder: The root project folder
-    :return: The new project that was created
-    """
-    foldername = newfoldername("project", projectfolder, "Project")
-    templateproject = os.path.join(templatefolder, "templateProject")
-    newfolder = os.path.join(projectfolder, foldername)
-    shutil.copytree(templateproject, newfolder)
-    project = roam.project.Project.from_folder(newfolder)
-    project.settings['title'] = foldername
-    return project
-
-
-def newform(project):
-    folder = project.folder
-    foldername = newfoldername("form", folder, "Form")
-
-    formfolder = os.path.join(folder, foldername)
-    templateform = os.path.join(templatefolder, "templateform")
-    shutil.copytree(templateform, formfolder)
-
-    config = dict(label=foldername, type='auto', widgets=[])
-    form = project.addformconfig(foldername, config)
-    logger.debug(form.settings)
-    logger.debug(form.settings == config)
-    return form
-
+from configmanager.projects import newform
 
 ProjectRole = Qt.UserRole + 20
 
@@ -362,12 +309,11 @@ class FormsNode(Treenode):
         self._text = text
         self.addtext = 'Add new form'
         self.hascount = True
+        ConfigEvents.formCreated.connect(self._add_form)
 
     def create_children(self):
         forms = self.project.forms
         self.removeRows(0, self.rowCount())
-        node = AddNewNode("New Form")
-        self.appendRow(node)
         for form in forms:
             item = FormNode(form, self.project)
             self.appendRow(item)
@@ -375,7 +321,7 @@ class FormsNode(Treenode):
 
     def data(self, role):
         if role == Qt.DisplayRole:
-            return "{} ({})".format(self._text, self.rowCount() - 1)
+            return "{} ({})".format(self._text, self.rowCount())
 
         return super(FormsNode, self).data(role)
 
@@ -405,24 +351,13 @@ class FormsNode(Treenode):
         self.project.removeform(form.name)
         self.project.save(save_forms=False)
 
-    def additem(self):
-        """
-        Creates a new form in the project
-        :return:
-        """
-        if not self.project.selectlayers:
-            QMessageBox.question(None,
-                                 "Select layers required",
-                                 "Use the Select Layers item to select layers that can be used for forms",
-                                 QMessageBox.Ok)
-            return
-
-        form = newform(self.project)
-        self.project.save()
+    def _add_form(self, form):
         item = FormNode(form, self.project)
         count = self.rowCount()
-        self.insertRow(count - 1, item)
-        return item
+        self.insertRow(count, item)
+
+    def additem(self):
+        pass
 
 
 class ProjectNode(Treenode):
@@ -510,6 +445,7 @@ class ProjectsNode(Treenode):
         self._text = text
         self.hascount = True
         self.projects = []
+        ConfigEvents.projectCreated.connect(self._add_project)
 
     def delete(self, index):
         nodes = self.takeRow(index)
@@ -533,19 +469,19 @@ class ProjectsNode(Treenode):
     def removeRow(self, index):
         return True
 
-    def additem(self):
-        project = newproject(self.projectfolder)
+    def _add_project(self, project):
         item = ProjectNode(project)
         count = self.rowCount()
         self.insertRow(count - 1, item)
         self.projects.append(item)
         return item
 
+    def additem(self):
+        pass
+
     def loadprojects(self, projects, projectsbase):
         self.removeRows(0, self.rowCount())
         self.projectfolder = projectsbase
-        node = AddNewNode("New Project")
-        self.appendRow(node)
         for project in projects:
             node = ProjectNode(project)
             self.appendRow(node)
