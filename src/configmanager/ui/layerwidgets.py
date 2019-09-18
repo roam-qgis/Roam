@@ -257,8 +257,8 @@ class FormWidget(ui_formwidget.Ui_Form, WidgetBase):
         """
         Change the icon for the form
         """
-        icon, selected = QFileDialog.getOpenFileName(self, "Select form icon image", filter="Images (*.png *.svg)")
-        if not selected:
+        icon, _ = QFileDialog.getOpenFileName(self, "Select form icon image", filter="Images (*.png *.svg)")
+        if not icon:
             return
         ext = os.path.splitext(icon)[1]
         shutil.copy(icon, os.path.join(self.form.folder, "icon" + ext))
@@ -872,7 +872,7 @@ class ProjectInfoWidget(ui_projectinfo.Ui_Form, WidgetBase):
         """
         Open a file browser to load a new splash icon.
         """
-        splash = QFileDialog.getOpenFileName(self, "Select splash image", filter="Images (*.png *.svg)")
+        splash, _ = QFileDialog.getOpenFileName(self, "Select splash image", filter="Images (*.png *.svg)")
         if not splash:
             return
         ext = os.path.splitext(splash)[1]
