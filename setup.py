@@ -186,7 +186,7 @@ def buildqtfiles():
     except Exception:
         hashes = {}
 
-    HASHFILES = [".ui", ".qrc", ".ts"]
+    HASHFILES = [".ui", ".ts"]
     for folder in [appsrcopyFilesath, configmangerpath]:
         for root, dirs, files in os.walk(folder):
             for file in files:
