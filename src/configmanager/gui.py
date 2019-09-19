@@ -18,9 +18,29 @@ class ProjectsNode(Ui_projectsnode, QWidget):
 
         self.projectlocations.currentIndexChanged[str].connect(self.projectlocationchanged.emit)
         self.btnNewProject.pressed.connect(self._create_project)
+        self.btnNewProject.setEnabled(False)
+        self.projectNameEdit.textChanged.connect(self._update_button)
+
+    def _update_button(self, value):
+        if not value:
+            self.btnNewProject.setEnabled(False)
+
+        folder = self.projectlocations.currentText()
+        if configmanager.projects.directory_exsits(value, folder):
+            self.btnNewProject.setEnabled(False)
+        else:
+            self.btnNewProject.setEnabled(True)
 
     def _create_project(self):
-        project = configmanager.projects.newproject(self.projectlocations.currentText())
+        name = configmanager.projects.new_directory_name(self.projectNameEdit.text(), "Project")
+
+        if configmanager.projects.directory_exsits(name, self.projectlocations.currentText()):
+            return
+
+        project = configmanager.projects.create_project(self.projectlocations.currentText(), name)
+
+        self.projectNameEdit.clear()
+
         ConfigEvents.emit_projectCreated(project)
 
     def setprojectfolders(self, folders):

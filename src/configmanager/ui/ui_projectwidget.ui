@@ -361,15 +361,29 @@ p, li { white-space: pre-wrap; }
         </widget>
        </item>
        <item>
-        <widget class="QPushButton" name="btnNewForm">
-         <property name="text">
-          <string>New Form</string>
-         </property>
-         <property name="icon">
-          <iconset resource="../../roam/resources.qrc">
-           <normaloff>:/icons/add</normaloff>:/icons/add</iconset>
-         </property>
-        </widget>
+        <layout class="QHBoxLayout" name="horizontalLayout">
+         <item>
+          <widget class="QLabel" name="label">
+           <property name="text">
+            <string>Form name</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLineEdit" name="formNameEdit"/>
+         </item>
+         <item>
+          <widget class="QPushButton" name="btnNewForm">
+           <property name="text">
+            <string>Create</string>
+           </property>
+           <property name="icon">
+            <iconset resource="../../roam/resources.qrc">
+             <normaloff>:/icons/add</normaloff>:/icons/add</iconset>
+           </property>
+          </widget>
+         </item>
+        </layout>
        </item>
        <item>
         <spacer name="verticalSpacer_2">

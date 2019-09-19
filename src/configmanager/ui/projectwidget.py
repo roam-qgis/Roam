@@ -83,6 +83,18 @@ class ProjectWidget(Ui_Form, QWidget):
 
         self.btnNewForm.pressed.connect(self._new_form)
         self.lblSelectLayersError.setVisible(False)
+        self.formNameEdit.textChanged.connect(self._update_form_button)
+
+        self.btnNewForm.setEnabled(False)
+
+    def _update_form_button(self, value):
+        if not value:
+            self.btnNewForm.setEnabled(False)
+
+        if configmanager.projects.directory_exsits(value, self.project.folder):
+            self.btnNewForm.setEnabled(False)
+        else:
+            self.btnNewForm.setEnabled(True)
 
     def _new_form(self):
         """
@@ -96,9 +108,19 @@ class ProjectWidget(Ui_Form, QWidget):
                                  "Use the Select Layers item to select layers that can be used for forms",
                                  QMessageBox.Ok)
             return
+
         if not self.project:
             return
-        form = configmanager.projects.newform(self.project)
+
+        name = configmanager.projects.new_directory_name(self.formNameEdit.text(), "Form")
+
+        if configmanager.projects.directory_exsits(name, self.project.folder):
+            return
+
+        form = configmanager.projects.create_form(self.project, name)
+
+        self.formNameEdit.clear()
+
         ConfigEvents.emit_formCreated(form)
 
     def connect_page_events(self):
@@ -128,6 +150,7 @@ class ProjectWidget(Ui_Form, QWidget):
         self.stackedWidget.setCurrentIndex(page)
 
         self.project = node.project
+
 
         widget = self.stackedWidget.currentWidget()
         widget.roamapp = self.roamapp
@@ -160,6 +183,7 @@ class ProjectWidget(Ui_Form, QWidget):
             self.openinQGISButton.hide()
 
         self.savePageButton.setVisible(node.saveable)
+        self.formNameEdit.clear()
 
     @property
     def widget(self):

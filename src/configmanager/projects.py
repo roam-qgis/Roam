@@ -10,52 +10,52 @@ from configmanager import logger as logger
 templatefolder = os.path.join(os.path.dirname(__file__), "templates")
 
 
-def newfoldername(basetext, basefolder, formtype, alreadyexists=False):
-    message = "Please enter a new folder name for the {}".format(formtype)
-    if alreadyexists:
-        logger.log("Folder {} already exists.")
-        message += "<br> {} folder already exists please select a new one.".format(formtype)
+def directory_exsits(name, basefolder):
+    """
+    Check if the
+    :param name:
+    :param basefolder:
+    :return:
+    """
+    return os.path.exists(os.path.join(basefolder, name))
 
-    name, ok = QInputDialog.getText(None, "New {} folder name".format(formtype), message)
-    if not ok:
-        raise ValueError
 
+def new_directory_name(name, basetext=None):
+    """
+    Create a new safe directory name
+    :param name: The name of the new folder. Replaces any unsafe folder names with a safe values.
+    :param basetext: The default
+    :return:
+    """
     if not name:
         return "{}_{}".format(basetext, datetime.today().strftime('%d%m%y%f'))
     else:
-        name = name.replace(" ", "_")
-
-    if os.path.exists(os.path.join(basefolder, name)):
-        return newfoldername(basetext, basefolder, formtype, alreadyexists=True)
-
-    return name
+        return name.replace(" ", "_")
 
 
-def newproject(projectfolder):
+def create_project(projectfolder, name):
     """
     Create a new folder in the projects folder.
     :param projectfolder: The root project folder
     :return: The new project that was created
     """
-    foldername = newfoldername("project", projectfolder, "Project")
     templateproject = os.path.join(templatefolder, "templateProject")
-    newfolder = os.path.join(projectfolder, foldername)
+    newfolder = os.path.join(projectfolder, name)
     shutil.copytree(templateproject, newfolder)
     project = roam.project.Project.from_folder(newfolder)
-    project.settings['title'] = foldername
+    project.settings['title'] = name
     return project
 
 
-def newform(project):
+def create_form(project, name):
     folder = project.folder
-    foldername = newfoldername("form", folder, "Form")
 
-    formfolder = os.path.join(folder, foldername)
+    formfolder = os.path.join(folder, name)
     templateform = os.path.join(templatefolder, "templateform")
     shutil.copytree(templateform, formfolder)
 
-    config = dict(label=foldername, type='auto', widgets=[])
-    form = project.addformconfig(foldername, config)
+    config = dict(label=name, type='auto', widgets=[])
+    form = project.addformconfig(name, config)
     logger.debug(form.settings)
     logger.debug(form.settings == config)
     return form

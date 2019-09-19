@@ -12,7 +12,7 @@ import configmanager.logger as logger
 import roam.api.plugins
 import roam.messagebaritems
 import roam.project
-from configmanager.projects import newform
+from configmanager.projects import create_form
 
 ProjectRole = Qt.UserRole + 20
 
