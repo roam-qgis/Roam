@@ -5,7 +5,7 @@ import shutil
 from qgis.PyQt.QtCore import Qt
 from qgis.PyQt.QtGui import QIcon, QStandardItem
 from qgis.PyQt.QtWidgets import QMessageBox
-from qgis.core import QgsProject, QgsMapLayer
+from qgis.core import QgsProject, QgsMapLayer, QgsWkbTypes
 
 from configmanager.events import ConfigEvents
 import configmanager.logger as logger
@@ -211,7 +211,9 @@ class LayerSearchNode(Treenode):
         self.removeRows(0, self.rowCount())
         layers = QgsProject.instance().mapLayers().values()
         for layer in layers:
-            if not layer.type() == QgsMapLayer.VectorLayer:
+            if not layer.type() == QgsMapLayer.VectorLayer \
+                    or layer.geometryType() == QgsWkbTypes.NullGeometry \
+                    or layer.geometryType() == QgsWkbTypes.UnknownGeometry:
                 continue
 
             node = LayerSearchConfigNode(layer, self.project)
