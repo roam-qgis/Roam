@@ -157,7 +157,7 @@ class InfoNode(Treenode):
     def __init__(self, text, key, layer, project):
         self.key = key
         self.layer = layer
-        super(InfoNode, self).__init__(text, QIcon(":/icons/map"), project)
+        super(InfoNode, self).__init__(text, QIcon(""), project)
 
 
 class LayerNode(Treenode):
@@ -175,7 +175,7 @@ class SelectLayerNode(Treenode):
     def __init__(self, layer, project):
         self.layer = layer
         text = layer.name()
-        super(SelectLayerNode, self).__init__(text, QIcon(":/icons/map"), project)
+        super(SelectLayerNode, self).__init__(text, QIcon(""), project)
 
     def create_children(self):
         self.removeRows(0, self.rowCount())
@@ -228,7 +228,7 @@ class LayerSearchConfigNode(Treenode):
     def __init__(self, layer, project):
         self.layer = layer
         text = layer.name()
-        super(LayerSearchConfigNode, self).__init__(text, QIcon(":/icons/search"), project)
+        super(LayerSearchConfigNode, self).__init__(text, QIcon(""), project)
 
 
 class MapNode(Treenode):
