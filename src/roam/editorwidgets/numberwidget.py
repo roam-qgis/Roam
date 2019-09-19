@@ -21,7 +21,6 @@ class Stepper(Ui_stepper, QWidget):
         self.layout().insertWidget(0, self.spinBox)
         self.stepUp.pressed.connect(self.spinBox.stepUp)
         self.stepDown.pressed.connect(self.spinBox.stepDown)
-        self.setRange = self.spinBox.setRange
         self.setPrefix = self.spinBox.setPrefix
         self.setSuffix = self.spinBox.setSuffix
         self.setSingleStep = self.spinBox.setSingleStep
@@ -44,6 +43,18 @@ class Stepper(Ui_stepper, QWidget):
 
     def setDecimals(self, places):
         self.spinBox.setDecimals(places)
+
+    def setRange(self, min, max):
+        """
+        Set the range min and max on the stepper widget.
+        :param min: The minimum value to set. Qt defaults if set as None
+        :param max: The maximum value to set. Qt defaults if set as None
+        :return:
+        """
+        if min:
+            self.spinBox.setMinimum(min)
+        if max:
+            self.spinBox.setMaximum(max)
 
 
 class NumberWidget(EditorWidget):
@@ -83,12 +94,12 @@ class NumberWidget(EditorWidget):
         try:
             max = int(max)
         except ValueError:
-            max = sys.maxsize
+            max = None
 
         try:
             min = int(min)
         except ValueError:
-            min = -sys.maxsize - 1
+            min = None
 
         return max, min
 
