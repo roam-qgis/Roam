@@ -5,7 +5,8 @@ from mock import patch
 import os
 import sys
 
-from roam.project import Form
+from roam.form import Form
+
 
 def test_should_return_label_from_config():
     form = Form('test', {"label":"TestLabel"}, None)

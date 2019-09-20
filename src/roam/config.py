@@ -1,13 +1,22 @@
 """
 Config file loading logic for Roam.
 """
+import os
+
 import yaml
 from qgis.PyQt.QtCore import QSize
 from yaml.reader import ReaderError
+from yaml.scanner import ScannerError
+
+import roam.utils
 
 settings = {}
 
 loaded_path = ''
+
+
+class ConfigLoadError(Exception):
+    pass
 
 
 def read_qsize(key):
@@ -52,3 +61,40 @@ def save(path=None):
 
     with open(path, 'w') as f:
         yaml.dump(data=settings, stream=f, default_flow_style=False)
+
+
+def writefolderconfig(settings, folder, configname):
+    """
+    Write the given settings out to the folder to a file named settings.config.
+    :param settings: The settings to write to disk.
+    :param folder: The folder to create the settings.config file
+    """
+    settingspath = os.path.join(folder, "settings.config")
+    if not os.path.exists(settingspath):
+        settingspath = os.path.join(folder, "{}.config".format(configname))
+
+    with open(settingspath, 'w') as f:
+        yaml.safe_dump(data=settings, stream=f, default_flow_style=False)
+
+
+def readfolderconfig(folder, configname):
+    """
+    Read the config file from the given folder. A file called settings.config is expected to be found in the folder.
+    :param folder: The folder to read the config from.
+    :return: Returns None if the settings file could not be read.
+    """
+    settingspath = os.path.join(folder, "{}.config".format(configname))
+    if not os.path.exists(settingspath):
+        settingspath = os.path.join(folder, "settings.config")
+
+    try:
+        with open(settingspath, 'r') as f:
+            try:
+                settings = yaml.load(f) or {}
+            except ScannerError as ex:
+                raise ConfigLoadError(str(ex))
+        return settings
+    except IOError as e:
+        roam.utils.warning(e)
+        roam.utils.warning("Returning empty settings for settings.config")
+        return {}
