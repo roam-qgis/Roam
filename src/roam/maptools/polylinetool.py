@@ -1,6 +1,6 @@
 from PyQt5.QtCore import pyqtSignal, QTimer, Qt
 from PyQt5.QtGui import QColor, QCursor, QPixmap, QIcon
-from qgis._core import QgsPoint, QgsGeometry, QgsWkbTypes, QgsPointXY
+from qgis._core import QgsPoint, QgsGeometry, QgsWkbTypes, QgsPointXY, QgsTolerance, QgsPointLocator, QgsMultiPoint
 from qgis._gui import QgsMapToolEdit, QgsRubberBand, QgsMapMouseEvent
 
 import roam.config
@@ -104,6 +104,8 @@ class PolylineTool(QgsMapToolEdit):
 
         self.snapping = True
 
+        self.active_color = self.startcolour
+
     def keyPressEvent(self, event):
         if event.key() == Qt.Key_Escape:
             self.reset()
@@ -120,7 +122,7 @@ class PolylineTool(QgsMapToolEdit):
     def selection_updated(self, *args):
         if self.editmode:
             self.reset()
-            self.setEditMode(False, None)
+            self.setEditMode(False, None, None)
 
     def update_end_capture_state(self, *args):
         if self.trackingaction.isChecked() and self.captureaction.isChecked():
@@ -210,43 +212,67 @@ class PolylineTool(QgsMapToolEdit):
         self.band.removeLastPoint(doUpdate=True)
 
     def canvasPressEvent(self, event):
-        point = self.canvas.getCoordinateTransform().toMapCoordinates(event.pos())
         geom = self.band.asGeometry()
         if not geom:
             return
 
-        close, at, before, after, dist = geom.closestVertex(point)
-        if dist < 30:
-            vinfo = geom.vertexIdFromVertexNr(at)
-            self.editpart = vinfo[1].part
-            self.editvertex = vinfo[1].vertex
+        point = point_from_event(event, self.snapping)
+        if self.editmode:
+            layer = self.currentVectorLayer()
+            event.snapToGrid(layer.geometryOptions().geometryPrecision(), layer.crs())
+            tol = QgsTolerance.vertexSearchRadius(self.canvas.mapSettings())
+            loc = self.canvas.snappingUtils().locatorForLayer(layer)
+            matches = loc.verticesInRect(point, tol)
+            if matches:
+                for match in matches:
+                    if match.featureId() != self.feature.id():
+                        continue
+
+                    self.editpart = 0
+                    self.editvertex = match.vertexIndex()
+                    break
+            else:
+                self.editvertex = None
+                self.editpart = 0
+
+    def vertex_at_point(self, point):
+        layer = self.currentVectorLayer()
+        tol = QgsTolerance.vertexSearchRadius(self.canvas.mapSettings())
+        loc = self.canvas.snappingUtils().locatorForLayer(layer)
+        matches = loc.verticesInRect(point, tol)
+        return matches
+
+    def canvasReleaseEvent(self, event: QgsMapMouseEvent):
+        if event.button() == Qt.RightButton:
+            self.endcapture()
+            return
+
+        if not self.editmode:
+            point = event.snapPoint()
+            self.add_point(point)
         else:
             self.editvertex = None
-            self.editpart = 0
 
     def canvasMoveEvent(self, event: QgsMapMouseEvent):
         if self.is_tracking:
             return
 
         point = point_from_event(event, self.snapping)
-        self.pointband.movePoint(point)
+        if not self.editmode:
+            self.pointband.movePoint(point)
 
         if self.capturing:
             self.band.movePoint(point)
 
         if self.editmode and self.editvertex is not None:
-            at = self.editvertex
-            point = point_from_event(event, self.snapping)
-            lastvertex = self.band.numberOfVertices() - 1
-            if self.is_polygon_mode and at == lastvertex:
-                self.band.movePoint(0, point, self.editpart)
-                self.pointband.movePoint(0, point)
-            elif self.is_polygon_mode and at == 0:
-                self.band.movePoint(lastvertex, point, self.editpart)
-                self.pointband.movePoint(lastvertex, point)
-
-            self.band.movePoint(at, point, self.editpart)
-            self.pointband.movePoint(at, point)
+            found, vertexid = self.geom.vertexIdFromVertexNr(self.editvertex)
+            print("Moving: {}".format(vertexid.vertex))
+            self.geom.get().moveVertex(vertexid, QgsPoint(point))
+            self.currentVectorLayer().triggerRepaint()
+            self.feature.setGeometry(self.geom)
+            self.currentVectorLayer().updateFeature(self.feature)
+            self.pointband.setToGeometry(self.toMultiPoint(self.geom), self.currentVectorLayer())
+            self.band.setToGeometry(self.geom, self.currentVectorLayer())
 
         self.update_valid_state()
 
@@ -263,11 +289,20 @@ class PolylineTool(QgsMapToolEdit):
         geom = self.band.asGeometry()
         if geom and self.band.numberOfVertices() > 0:
             if self.has_errors():
-                self.band.setColor(self.invalid_color)
-                self.pointband.setColor(self.invalid_color)
+                self.set_band_color(self.invalid_color)
             else:
-                self.band.setColor(self.valid_color)
-                self.pointband.setColor(self.valid_color)
+                if not self.editmode:
+                    self.set_band_color(self.startcolour)
+                else:
+                    self.set_band_color(self.editcolour)
+
+    @property
+    def active_color(self):
+        return self._active_color
+
+    @active_color.setter
+    def active_color(self, color):
+        self._active_color = color
 
     def has_errors(self):
         geom = self.band.asGeometry()
@@ -304,17 +339,6 @@ class PolylineTool(QgsMapToolEdit):
             return self.band.numberOfVertices()
         else:
             return self.band.numberOfVertices() - 1
-
-    def canvasReleaseEvent(self, event: QgsMapMouseEvent):
-        if event.button() == Qt.RightButton:
-            self.endcapture()
-            return
-
-        if not self.editmode:
-            point = event.snapPoint()
-            self.add_point(point)
-        else:
-            self.editvertex = None
 
     def add_point(self, point):
         self.points.append(point)
@@ -406,26 +430,31 @@ class PolylineTool(QgsMapToolEdit):
     def isEditTool(self):
         return True
 
-    def setEditMode(self, enabled, geom):
+    def set_band_color(self, color):
+        self.active_color = color
+        self.band.setColor(color)
+        self.pointband.setColor(color)
+
+    def setEditMode(self, enabled, geom, feature):
+        self.currentVectorLayer().startEditing()
         self.reset()
         self.editmode = enabled
+        self.geom = geom
+        self.feature = feature
         if self.editmode:
-            self.band.setColor(self.editcolour)
-            self.pointband.setColor(self.editcolour)
-            geomtype = geom.type()
-            if geomtype == QgsWkbTypes.PolygonGeometry:
-                nodes = geom.asPolygon()[0]
-            else:
-                if geom.isMultipart():
-                    nodes = [item for sublist in geom.asMultiPolyline() for item in sublist]
-                else:
-                    nodes = geom.asPolyline()
-            for node in nodes:
-                self.pointband.addPoint(node)
-            self.band.setToGeometry(geom, None)
+            self.set_band_color(self.editcolour)
+            self.pointband.setToGeometry(self.toMultiPoint(geom), self.currentVectorLayer())
+            self.pointband.setVisible(True)
+            self.band.setToGeometry(geom, self.currentVectorLayer())
         else:
-            self.band.setColor(self.startcolour)
-            self.pointband.setColor(self.startcolour)
+            self.set_band_color(self.startcolour)
 
         self.endcaptureaction.setEnabled(self.editmode)
         self.captureaction.setEditMode(enabled)
+
+    def toMultiPoint(self, geom):
+        points = QgsMultiPoint()
+        for count, v in enumerate(geom.vertices()):
+            points.addGeometry(v.clone())
+        newgeom = QgsGeometry(points)
+        return newgeom

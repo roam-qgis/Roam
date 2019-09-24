@@ -152,6 +152,7 @@ class MainWindow(ui_mainwindow.Ui_MainWindow, QMainWindow):
 
         self.infodock = InfoDock(self.canvas)
         self.infodock.featureupdated.connect(self.highlightfeature)
+        self.infodock.activeLayerChanged.connect(self.canvas.setCurrentLayer)
         self.infodock.hide()
         self.hidedataentry()
 

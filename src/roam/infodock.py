@@ -88,6 +88,7 @@ class FeatureCursor(object):
 class InfoDock(infodock_widget, QWidget):
     featureupdated = pyqtSignal(object, object, list)
     resultscleared = pyqtSignal()
+    activeLayerChanged = pyqtSignal(object)
 
     def __init__(self, parent):
         super(InfoDock, self).__init__(parent)
@@ -362,6 +363,7 @@ class InfoDock(infodock_widget, QWidget):
 
         cursor = item.data(Qt.UserRole)
         self.update(cursor)
+        self.activeLayerChanged.emit(cursor.layer)
 
     def setResults(self, results, forms, project) -> None:
         """
@@ -471,8 +473,8 @@ class InfoDock(infodock_widget, QWidget):
         feature = cursor.feature
         geom = feature.geometry()
         geomtype = geom.type()
-        if geomtype == QgsWkbTypes.PolygonGeometry and geom.isMultipart():
-            editgeom = False
+        # if geomtype == QgsWkbTypes.PolygonGeometry and geom.isMultipart():
+        #     editgeom = False
         self.editGeomButton.setVisible(editgeom)
         self.featureupdated.emit(layer, feature, cursor.features)
 
