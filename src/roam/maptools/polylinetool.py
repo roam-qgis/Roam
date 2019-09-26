@@ -303,7 +303,12 @@ class PolylineTool(QgsMapToolEdit):
         self._active_color = color
 
     def has_errors(self):
-        errors = self.geom.validateGeometry()
+        if self.geom is None:
+            geom = self.band.asGeometry()
+        else:
+            geom = self.geom
+
+        errors = geom.validateGeometry()
 
         skippable = ["duplicate node", "Geometry has"]
         othererrors = []
@@ -348,10 +353,14 @@ class PolylineTool(QgsMapToolEdit):
             self.band.removeLastPoint(doUpdate=True)
             self.pointband.removeLastPoint(doUpdate=True)
 
+    def get_geometry(self):
+        if self.geom is None:
+            return self.band.asGeometry()
+        else:
+            return self.geom
+
     def endinvalidcapture(self, errors):
-        geometry = self.band.asGeometry()
-        if geometry:
-            self.errorband.setToGeometry(geometry, None)
+        self.errorband.setToGeometry(self.get_geometry(), self.currentVectorLayer())
         for error in errors:
             if error.hasWhere():
                 self.errorlocations.addPoint(error.where())
@@ -369,6 +378,7 @@ class PolylineTool(QgsMapToolEdit):
     def endcapture(self):
         if not self.editmode:
             self.band.removeLastPoint()
+
         errors = self.has_errors()
         if errors and self.config.get("geometry_validation", True):
             self.error.emit("Invalid geometry. <br>"
@@ -383,7 +393,7 @@ class PolylineTool(QgsMapToolEdit):
         self.undoaction.setEnabled(False)
         self.endcaptureaction.setEnabled(False)
         self.clearErrors()
-        self.geometryComplete.emit(self.geom)
+        self.geometryComplete.emit(self.get_geometry())
 
     def clearErrors(self):
         self.errorband.reset(QgsWkbTypes.LineGeometry)
@@ -442,7 +452,9 @@ class PolylineTool(QgsMapToolEdit):
             self.set_band_color(self.startcolour)
 
         self.endcaptureaction.setEnabled(self.editmode)
+        self.endcaptureaction.setEditing(enabled)
         self.captureaction.setEditMode(enabled)
+
 
     def toMultiPoint(self, geom):
         points = QgsMultiPoint()

@@ -36,6 +36,12 @@ class EndCaptureAction(BaseAction):
         self.setObjectName("EndCaptureAction")
         self.setText(self.tr("End Capture"))
 
+    def setEditing(self, editing):
+        if editing:
+            self.setText(self.tr("End Edit"))
+        else:
+            self.setText(self.tr("End Capture"))
+
 
 class CaptureAction(BaseAction):
     def __init__(self, tool, geomtype, parent=None, text="Digitize"):
