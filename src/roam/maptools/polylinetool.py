@@ -1,6 +1,6 @@
 from PyQt5.QtCore import pyqtSignal, QTimer, Qt
 from PyQt5.QtGui import QColor, QCursor, QPixmap, QIcon
-from qgis._core import QgsPoint, QgsGeometry, QgsWkbTypes, QgsPointXY, QgsTolerance, QgsPointLocator, QgsMultiPoint
+from qgis._core import QgsPoint, QgsGeometry, QgsWkbTypes, QgsPointXY, QgsTolerance, QgsMultiPoint, QgsSnappingConfig
 from qgis._gui import QgsMapToolEdit, QgsRubberBand, QgsMapMouseEvent
 
 import roam.config
@@ -105,6 +105,22 @@ class PolylineTool(QgsMapToolEdit):
         self.snapping = True
 
         self.active_color = self.startcolour
+        self.snappointband = RubberBand(self.canvas, QgsWkbTypes.PointGeometry)
+        self.snappointband.setWidth(1)
+        self.snappointband.setColor(QColor.fromRgb(0, 155, 70, 50))
+        self.snappointband.addPoint(QgsPointXY(0, 0))
+        self.snappointband.setVisible(False)
+
+    def update_snapping_band_from_config(self, config: QgsSnappingConfig):
+        # We can't support the snapping point band with advanced config
+        if config.mode() == QgsSnappingConfig.AdvancedConfiguration:
+            print("can't support this mode")
+            return
+
+        units = config.units()
+        if units == QgsTolerance.Pixels:
+            print("set icon size to {}".format(config.tolerance()))
+            self.snappointband.setIconSize(config.tolerance())
 
     def keyPressEvent(self, event):
         if event.key() == Qt.Key_Escape:
@@ -217,9 +233,10 @@ class PolylineTool(QgsMapToolEdit):
             return
 
         point = point_from_event(event, self.snapping)
+        self.snappointband.movePoint(event.originalMapPoint())
+        self.snappointband.setVisible(True)
         if self.editmode:
             layer = self.currentVectorLayer()
-            event.snapToGrid(layer.geometryOptions().geometryPrecision(), layer.crs())
             tol = QgsTolerance.vertexSearchRadius(self.canvas.mapSettings())
             loc = self.canvas.snappingUtils().locatorForLayer(layer)
             matches = loc.verticesInRect(point, tol)
@@ -243,6 +260,7 @@ class PolylineTool(QgsMapToolEdit):
         return matches
 
     def canvasReleaseEvent(self, event: QgsMapMouseEvent):
+        self.snappointband.setVisible(False)
         if event.button() == Qt.RightButton:
             self.endcapture()
             return
@@ -257,6 +275,7 @@ class PolylineTool(QgsMapToolEdit):
         if self.is_tracking:
             return
 
+        self.snappointband.movePoint(event.originalMapPoint())
         point = point_from_event(event, self.snapping)
         if not self.editmode:
             self.pointband.movePoint(point)

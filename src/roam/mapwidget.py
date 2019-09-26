@@ -933,6 +933,9 @@ class MapWidget(Ui_CanvasWidget, QMainWindow):
         :param form: The active form.
         """
         tool = form.getMaptool()(self.canvas, form.settings)
+        if hasattr(tool, "update_snapping_band_from_config"):
+            tool.update_snapping_band_from_config(self.snappingutils.config())
+
         for action in tool.actions:
             # Create the action here.
             if action.ismaptool:
