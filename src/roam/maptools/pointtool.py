@@ -116,5 +116,5 @@ class PointTool(TouchMapTool):
     def isEditTool(self):
         return False
 
-    def setEditMode(self, enabled, geom):
+    def setEditMode(self, enabled, geom, feature):
         self.captureaction.setEditMode(enabled)
