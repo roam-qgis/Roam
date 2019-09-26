@@ -664,6 +664,7 @@ class MapWidget(Ui_CanvasWidget, QMainWindow):
             for action in self.projecttoolbar.actions():
                 if action.property('dataentry') and action.isdefault:
                     action.trigger()
+                    self.canvas.currentLayer().startEditing()
                     self.canvas.mapTool().setEditMode(True, feature.geometry(), feature)
                     break
 
@@ -958,6 +959,7 @@ class MapWidget(Ui_CanvasWidget, QMainWindow):
         :param message: The message to show the user.
         """
         RoamEvents.raisemessage("Invalid geometry capture", message, level=RoamEvents.CRITICAL)
+        self.canvas.currentLayer().rollBack()
 
     def add_new_feature(self, form, geometry: QgsGeometry):
         """
