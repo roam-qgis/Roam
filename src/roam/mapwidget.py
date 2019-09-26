@@ -377,8 +377,8 @@ class MapWidget(Ui_CanvasWidget, QMainWindow):
         self.currentfeatureband = CurrentSelection(self.canvas)
         self.currentfeatureband.setIconSize(30)
         self.currentfeatureband.setWidth(10)
-        self.currentfeatureband.setColor(QColor(186, 93, 212, 50))
-        self.currentfeatureband.setOutlineColour(QColor(186, 93, 212))
+        self.currentfeatureband.setColor(QColor(88, 64, 173, 50))
+        self.currentfeatureband.setOutlineColour(QColor(88, 64, 173))
 
         self.gpsband = QgsRubberBand(self.canvas)
         self.gpsband.setColor(QColor(165, 111, 212, 75))

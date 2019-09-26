@@ -31,18 +31,16 @@ class PolylineTool(QgsMapToolEdit):
         self.points = []
         self.is_tracking = False
         self.canvas = canvas
-        # TODO These are no good for colour blind
-        self.valid_color = QColor.fromRgb(0, 0, 255, 100)
-        # TODO These are no good for colour blind
-        self.invalid_color = QColor.fromRgb(255, 0, 0, 100)
+        self.valid_color = QColor.fromRgb(32, 218, 45, 100)
+        self.invalid_color = QColor.fromRgb(216, 26, 96, 100)
 
         self.startcolour = self.valid_color
-        self.editcolour = QColor.fromRgb(0, 255, 0, 150)
+        self.editcolour = self.valid_color
         self.band = RubberBand(self.canvas, QgsWkbTypes.LineGeometry, width=5, iconsize=20)
         self.band.setColor(self.startcolour)
 
         self.errorband = RubberBand(self.canvas, QgsWkbTypes.LineGeometry, width=5, iconsize=20)
-        self.errorband.setColor(QColor.fromRgb(153, 153, 153, 90))
+        self.errorband.setColor(QColor.fromRgb(64, 64, 64, 90))
         self.errorlocations = QgsRubberBand(self.canvas, QgsWkbTypes.PointGeometry)
         self.errorlocations.setColor(self.invalid_color)
         self.errorlocations.setIconSize(20)
