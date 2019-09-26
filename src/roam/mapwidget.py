@@ -332,7 +332,6 @@ class MapWidget(Ui_CanvasWidget, QMainWindow):
 
         self.snappingutils = SnappingUtils(self.canvas, self)
         self.canvas.setSnappingUtils(self.snappingutils)
-        QgsProject.instance().snappingConfigChanged.connect(self.snappingutils.setConfig)
 
         threadcount = QThread.idealThreadCount()
         threadcount = 2 if threadcount > 2 else 1
@@ -800,6 +799,7 @@ class MapWidget(Ui_CanvasWidget, QMainWindow):
         Called when the project is loaded. Main entry point for a loade project.
         :param project: The Roam project that has been loaded.
         """
+        self.snappingutils.setConfig(QgsProject.instance().snappingConfig())
         self.project = project
         self.actionPan.trigger()
         firstform = self.first_capture_form()
