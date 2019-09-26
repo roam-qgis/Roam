@@ -383,12 +383,8 @@ class PolylineTool(QgsMapToolEdit):
         self.captureaction.setChecked(True)
         self.undoaction.setEnabled(False)
         self.endcaptureaction.setEnabled(False)
-        geometry = self.band.asGeometry()
-        if not geometry:
-            return
-
         self.clearErrors()
-        self.geometryComplete.emit(geometry)
+        self.geometryComplete.emit(self.geom)
 
     def clearErrors(self):
         self.errorband.reset(QgsWkbTypes.LineGeometry)
