@@ -33,6 +33,7 @@ class _Events(QObject):
     editgeometry = pyqtSignal(object, QgsFeature)
 
     editgeometry_complete = pyqtSignal(object, QgsFeature)
+    editgeometry_invalid = pyqtSignal()
 
     # Emit when you need to open the on screen keyboard
     openkeyboard = pyqtSignal()

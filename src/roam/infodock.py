@@ -137,6 +137,7 @@ class InfoDock(infodock_widget, QWidget):
 
         RoamEvents.selectioncleared.connect(self.clearResults)
         RoamEvents.editgeometry_complete.connect(self.refreshcurrent)
+        RoamEvents.editgeometry_invalid.connect(self.refreshcurrent)
 
     def _navigate_to_selection(self) -> None:
         """
@@ -471,11 +472,8 @@ class InfoDock(infodock_widget, QWidget):
         self.quickInspectButton.setVisible('inspection' in tools)
         self.editButton.setVisible(editattributes)
         feature = cursor.feature
-        geom = feature.geometry()
-        geomtype = geom.type()
-        # if geomtype == QgsWkbTypes.PolygonGeometry and geom.isMultipart():
-        #     editgeom = False
         self.editGeomButton.setVisible(editgeom)
+        self.editGeomButton.setEnabled(True)
         self.featureupdated.emit(layer, feature, cursor.features)
 
     def generate_info(self, infoblock, project, layer, mapkey, feature, countlabel=None, lastresults=None):

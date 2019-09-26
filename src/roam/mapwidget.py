@@ -960,6 +960,7 @@ class MapWidget(Ui_CanvasWidget, QMainWindow):
         """
         RoamEvents.raisemessage("Invalid geometry capture", message, level=RoamEvents.CRITICAL)
         self.canvas.currentLayer().rollBack()
+        RoamEvents.editgeometry_invalid.emit()
 
     def add_new_feature(self, form, geometry: QgsGeometry):
         """
