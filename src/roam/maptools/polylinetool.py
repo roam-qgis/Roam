@@ -24,6 +24,7 @@ class PolylineTool(QgsMapToolEdit):
             self.config = {}
         else:
             self.config = config
+        self.geom = None
         self.minpoints = 2
         self.editmode = False
         self.editvertex = None
@@ -429,6 +430,9 @@ class PolylineTool(QgsMapToolEdit):
     def setEditMode(self, enabled, geom, feature):
         self.reset()
         self.editmode = enabled
+        if self.geom != geom:
+            self.clearErrors()
+
         self.geom = geom
         self.feature = feature
         if self.editmode:
