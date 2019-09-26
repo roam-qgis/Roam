@@ -266,7 +266,6 @@ class PolylineTool(QgsMapToolEdit):
 
         if self.editmode and self.editvertex is not None:
             found, vertexid = self.geom.vertexIdFromVertexNr(self.editvertex)
-            print("Moving: {}".format(vertexid.vertex))
             self.geom.get().moveVertex(vertexid, QgsPoint(point))
             self.currentVectorLayer().triggerRepaint()
             self.feature.setGeometry(self.geom)
@@ -305,11 +304,7 @@ class PolylineTool(QgsMapToolEdit):
         self._active_color = color
 
     def has_errors(self):
-        geom = self.band.asGeometry()
-        if not geom:
-            return False
-
-        errors = geom.validateGeometry()
+        errors = self.geom.validateGeometry()
 
         skippable = ["duplicate node", "Geometry has"]
         othererrors = []
@@ -436,7 +431,6 @@ class PolylineTool(QgsMapToolEdit):
         self.pointband.setColor(color)
 
     def setEditMode(self, enabled, geom, feature):
-        self.currentVectorLayer().startEditing()
         self.reset()
         self.editmode = enabled
         self.geom = geom
