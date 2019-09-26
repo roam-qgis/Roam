@@ -174,7 +174,8 @@ class MainWindow(ui_mainwindow.Ui_MainWindow, QMainWindow):
         plugins.api = iface
 
     def update_layer_loaded_progress(self, layerno, outof):
-        print(layerno, outof)
+        pass
+        # print(layerno, outof)
 
     def delete_feature(self, form, feature) -> None:
         """

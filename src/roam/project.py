@@ -394,7 +394,6 @@ class Project(QObject):
             elif isinstance(tool, dict):
                 _tools[tool.keys()[0]] = tool.values()[0]
 
-        print("TOOLS", _tools)
         return _tools
 
     @property
