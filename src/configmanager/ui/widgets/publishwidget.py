@@ -1,18 +1,16 @@
-import shutil
-import os
 import functools
+import os
+import shutil
 import tempfile
-
-from configmanager.ui.nodewidgets import ui_publishwidget
-from configmanager.ui.widgets.widgetbase import WidgetBase
-from configmanager.services.dataservice import DataService
 
 from qgis.PyQt.QtCore import Qt, QDateTime
 from qgis.PyQt.QtWidgets import QTableWidgetItem, QHeaderView, QApplication, QFileDialog
 
 import configmanager.bundle
 import roam.project
-
+from configmanager.services.dataservice import DataService
+from configmanager.ui.nodewidgets import ui_publishwidget
+from configmanager.ui.widgets.widgetbase import WidgetBase
 from configmanager.utils import openfolder
 
 
@@ -114,16 +112,15 @@ class PublishWidget(ui_publishwidget.Ui_widget, WidgetBase):
 
         self.data_depolyed_folders = []
         for projectconfig in self.get_project_depoly_settings(all_projects=all_projects).values():
-            ## Gross but quicker then threading at the moment.
+            # Gross but quicker then threading at the moment.
             QApplication.instance().processEvents()
-            ## Fix the path to use the global location, or the roam_srv if that isn't set.
+            # Fix the path to use the global location, or the roam_srv if that isn't set.
             projectconfig['path'] = self.resolve_path(projectconfig['path'])
             self.projects[projectconfig['id']].save(update_version=True, reset_save_point=True)
             if projectconfig['path'] not in self.data_depolyed_folders and self.includeDataCheck.isChecked():
                 if not datazipfile:
                     datazipfile = self.make_zip()
 
-                self.logger.info("DEPLOYYYY!!")
                 self.logger.info("Deploying data for location {}".format(projectconfig['path']))
                 self.deploy_data(projectconfig, datazipfile)
                 self.data_depolyed_folders.append(projectconfig['path'])
@@ -173,7 +170,6 @@ class PublishWidget(ui_publishwidget.Ui_widget, WidgetBase):
         configmanager.bundle.bundle_project(project, path, options, as_install=True)
 
     def make_zip(self):
-        self.logger.info("ZIP IT. ZIP IT GOOD!")
         self.logger.info("Zipping data folder to temp folder")
         datazip = os.path.join(tempfile.gettempdir(), "_data.zip")
         configmanager.bundle.zipper(self.data['data_root'], "_data", datazip, {})

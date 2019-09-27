@@ -1,18 +1,16 @@
-import yaml
 import os
 import shutil
 
+import yaml
 from qgis.PyQt.QtCore import Qt
 from qgis.PyQt.QtGui import QIcon, QStandardItem
-from qgis.PyQt.QtWidgets import QMessageBox
 from qgis.core import QgsProject, QgsMapLayer, QgsWkbTypes
 
-from configmanager.events import ConfigEvents
 import configmanager.logger as logger
 import roam.api.plugins
 import roam.messagebaritems
 import roam.project
-from configmanager.projects import create_form
+from configmanager.events import ConfigEvents
 
 ProjectRole = Qt.UserRole + 20
 
