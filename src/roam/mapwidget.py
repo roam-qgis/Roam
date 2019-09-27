@@ -51,7 +51,6 @@ class NorthArrow(QGraphicsSvgItem):
     def _calc_north(self):
         extent = self.canvas.extent()
         if self.canvas.layerCount() == 0 or extent.isEmpty():
-            print("No layers or extent")
             return 0
 
         outcrs = self.canvas.mapSettings().destinationCrs()
