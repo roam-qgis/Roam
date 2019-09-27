@@ -13,7 +13,7 @@ import roam.utils
 from roam.api import FeatureForm
 from roam.config import writefolderconfig, readfolderconfig, ConfigLoadError
 from roam.dataaccess.database import Database
-from roam.form import Form
+from roam.roam_form import Form
 from roam.syncing import replication
 from roam.utils import log
 
@@ -208,6 +208,12 @@ class Project(QObject):
 
     def increament_save_version(self):
         self.settings['project_save_version'] = increment_version(self.save_version)
+
+    def upgrade_roam_version(self):
+        """
+        Update the roam version this project was saved as
+        """
+        self.settings['version'] = roam.__version__
 
     def reset_save_version(self):
         """
@@ -516,6 +522,8 @@ class Project(QObject):
         Save the project config to disk.
         :param update_version Updates the version in the project file.
         """
+        self.upgrade_roam_version()
+
         if update_version:
             self.increament_version()
 

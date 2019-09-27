@@ -203,6 +203,7 @@ class Form(object):
         """
         if defaults is None:
             defaults = {}
+        print(dir(self.formclass))
         return self.formclass.from_form(self, self.settings, feature, defaults, *args, **kwargs)
 
     def widgetswithdefaults(self):
@@ -232,11 +233,14 @@ class Form(object):
         :return:
         """
 
-        ## imp is meant to not be used but I couldn't work out a Pyton 3 version that works
+        # imp is meant to not be used but I couldn't work out a Pyton 3 version that works
         import imp
         projectfolder = os.path.abspath(os.path.join(self.folder, '..'))
-        module = imp.find_module(self.name, [projectfolder])
+        module = imp.find_module(self.name, [projectfolder, self.folder])
+        import sys
+        sys.path.append(self.folder)
         self._module = imp.load_module(self.name, *module)
+        sys.path.remove(self.folder)
 
     @property
     def module(self):

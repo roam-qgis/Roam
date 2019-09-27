@@ -1,6 +1,6 @@
 from PyQt5.QtGui import QStandardItemModel
 from qgis.PyQt.QtCore import QItemSelectionModel
-from qgis.PyQt.QtWidgets import QMainWindow
+from qgis.PyQt.QtWidgets import QMainWindow, QMessageBox
 
 import roam.messagebaritems
 import roam.project
@@ -149,14 +149,15 @@ class ConfigManagerDialog(Ui_MainWindow, QMainWindow):
         project = node.project
 
         if project:
-            validateresults = list(project.validate())
-            if validateresults:
-                text = "Here are some reasons we found: \n\n"
-                for message in validateresults:
-                    text += "- {} \n".format(message)
+            if not project.requires_upgrade:
+                validateresults = list(project.validate())
+                if validateresults:
+                    text = "Here are some reasons we found: \n\n"
+                    for message in validateresults:
+                        text += "- {} \n".format(message)
 
-                self.projectwidget.reasons_label.setText(text)
-                return
+                    self.projectwidget.reasons_label.setText(text)
+                    return
 
         if node.nodetype == Treenode.ProjectNode and reloadProject:
             self.reloadingProject = True

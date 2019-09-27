@@ -375,13 +375,19 @@ class ProjectNode(Treenode):
         self.addtext = 'Add new project'
 
     def create_children(self):
+        print("Create")
         self.removeRows(0, self.rowCount())
-        if self.project.valid:
-            self.searchnode = LayerSearchNode("Searching", project=self.project)
-            self.formsnode = FormsNode("Forms", project=self.project)
-            self.mapnode = MapNode("Map", project=self.project)
-            self.layersnode = SelectLayersNode("Select Layers", project=self.project)
-            self.appendRows([self.mapnode, self.layersnode, self.formsnode, self.searchnode])
+
+        if not self.project.valid and not self.project.requires_upgrade:
+            super(ProjectNode, self).create_children()
+            return
+
+        print("Create children ")
+        self.searchnode = LayerSearchNode("Searching", project=self.project)
+        self.formsnode = FormsNode("Forms", project=self.project)
+        self.mapnode = MapNode("Map", project=self.project)
+        self.layersnode = SelectLayersNode("Select Layers", project=self.project)
+        self.appendRows([self.mapnode, self.layersnode, self.formsnode, self.searchnode])
 
         super(ProjectNode, self).create_children()
 
@@ -390,16 +396,16 @@ class ProjectNode(Treenode):
 
     @property
     def page(self):
-        if not self.project.valid:
-            return Treenode.ProjectsNode_Invalid - QStandardItem.UserType
-        else:
-            return self.type() - QStandardItem.UserType
+        # if not self.project.valid and not self.project.requires_upgrade:
+        #     return Treenode.ProjectsNode_Invalid - QStandardItem.UserType
+        # else:
+        return self.type() - QStandardItem.UserType
 
     def data(self, role=None):
         if role == Qt.DisplayRole:
             return self.project.name
         elif role == Qt.DecorationRole:
-            if not self.project.valid:
+            if not self.project.valid and not self.project.requires_upgrade:
                 return QIcon(":/icons/folder_broken")
         return super(ProjectNode, self).data(role)
 
@@ -462,7 +468,7 @@ class ProjectsNode(Treenode):
 
     def data(self, role=None):
         if role == Qt.DisplayRole:
-            return "{} ({})".format(self._text, self.rowCount() - 1)
+            return "{} ({})".format(self._text, self.rowCount())
 
         return super(ProjectsNode, self).data(role)
 

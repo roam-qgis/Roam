@@ -294,10 +294,9 @@ class ProjectWidget(Ui_Form, QWidget):
         self.projectupdatedlabel.hide()
         self._closeqgisproject()
 
-        if project.valid:
-            self.startsettings = copy.deepcopy(project.settings)
-            self.project = project
-            self.loadqgisproject(project, self.project.projectfile)
+        self.startsettings = copy.deepcopy(project.settings)
+        self.project = project
+        self.loadqgisproject(project, self.project.projectfile)
 
     def projectLoaded(self):
         self.filewatcher.addPath(self.project.projectfile)
