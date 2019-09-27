@@ -1,20 +1,19 @@
 from PyQt5.QtGui import QStandardItemModel
-from qgis.PyQt.QtWidgets import QDialog, QMessageBox
 from qgis.PyQt.QtCore import QItemSelectionModel
+from qgis.PyQt.QtWidgets import QMainWindow
 
 import roam.messagebaritems
 import roam.project
 import roam.utils
-from configmanager.events import ConfigEvents
 from configmanager.ui.treenodes import *
+from configmanager.ui.ui_configmanager import Ui_MainWindow
 
-from configmanager.ui.ui_configmanager import Ui_ProjectInstallerDialog
 
-
-class ConfigManagerDialog(Ui_ProjectInstallerDialog, QDialog):
+class ConfigManagerDialog(Ui_MainWindow, QMainWindow):
     def __init__(self, roamapp, parent=None):
         super(ConfigManagerDialog, self).__init__(parent)
         self.setupUi(self)
+        self.setWindowTitle("Roam Config Manager")
         self.bar = roam.messagebaritems.MessageBar(self)
 
         self.roamapp = roamapp
@@ -80,7 +79,6 @@ class ConfigManagerDialog(Ui_ProjectInstallerDialog, QDialog):
             button = QMessageBox.warning(self, title, removemessage, QMessageBox.Yes | QMessageBox.No)
             delete = button == QMessageBox.Yes
 
-        print("Delete")
         if delete:
             parentindex = index.parent()
             newindex = self.treemodel.index(index.row(), 0, parentindex)
@@ -170,7 +168,8 @@ class ConfigManagerDialog(Ui_ProjectInstallerDialog, QDialog):
             if self.loadedProject:
                 lastnode = self.projectsnode.find_by_name(self.loadedProject.name)
                 self.projectList.setExpanded(lastnode.index(), False)
-            ## We are closing the open project at this point. Watch for null ref after this.
+
+            # We are closing the open project at this point. Watch for null ref after this.
             self.projectwidget.setproject(project)
             self.projectwidget.setpage(node.page, node)
             return
@@ -193,7 +192,6 @@ class ConfigManagerDialog(Ui_ProjectInstallerDialog, QDialog):
         self.projectwidget.savePage(closing=True)
 
     def projectupdated(self, project):
-        print("PROJECT UPDATED")
         node = self.projectsnode.find_by_name(project.name)
         self.projectList.selectionModel().select(node.index(), QItemSelectionModel.ClearAndSelect)
         self.nodeselected(node.index(), None, reloadProject=True)
