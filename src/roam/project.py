@@ -1,27 +1,21 @@
-import os
 import glob
-import importlib
-import importlib.util
-
+import os
 from collections import OrderedDict
 
-from qgis.PyQt.QtCore import pyqtSignal, QObject, pyqtProperty
-
+from qgis.PyQt.QtCore import pyqtSignal, QObject
 from qgis.core import QgsWkbTypes, QgsMapLayer, QgsProject
 
-from roam.config import writefolderconfig, readfolderconfig, ConfigLoadError
-from roam.form import Form
-
-from roam.utils import log
-from roam.syncing import replication
-from roam.api import FeatureForm
-from roam.dataaccess.database import Database
-
+import roam
+import roam.api.utils
+import roam.maptools
 import roam.qgisfunctions
 import roam.utils
-import roam
-import roam.maptools
-import roam.api.utils
+from roam.api import FeatureForm
+from roam.config import writefolderconfig, readfolderconfig, ConfigLoadError
+from roam.dataaccess.database import Database
+from roam.form import Form
+from roam.syncing import replication
+from roam.utils import log
 
 # This of supported geometry types for the forms.
 supportedgeometry = [QgsWkbTypes.PointGeometry,
@@ -74,14 +68,15 @@ def layersfromlist(layerlist):
         return _qgislayers
 
 
-def checkversion(roamversion, projectversion):
-    def versiontuple(v):
-        v = v.split('.')[:3]
-        version = tuple(map(int, (v)))
-        if len(version) == 2:
-            version = (version[0], version[1], 0)
-        return version
+def versiontuple(v):
+    v = v.split('.')[:3]
+    version = tuple(map(int, (v)))
+    if len(version) == 2:
+        version = (version[0], version[1], 0)
+    return version
 
+
+def checkversion(roamversion, projectversion):
     if not projectversion:
         return True
 
@@ -90,6 +85,15 @@ def checkversion(roamversion, projectversion):
     # Only match major for now because API is only broken between major versions.
     majormatch = min[0] == project[0]
     return majormatch
+
+
+def version_major_part(version):
+    """
+    Return the major part of the version string
+    :param version: The input version in the format of x.y.z
+    :return: The major X part of the version string.
+    """
+    return versiontuple(version)[0]
 
 
 def initfound(folder):
@@ -271,12 +275,27 @@ class Project(QObject):
             yield error
 
         if not checkversion(roam.__version__, self.roamversion):
-            error = "Version mismatch"
+            error = "Roam project version incompatible. \n" \
+                    "Please contact Roam administrator. \n" \
+                    "Project Roam version {} but needed version at least {} or above".format(version_major_part(self.roamversion),
+                                                                                    version_major_part(roam.__version__))
             yield error
 
         if self.configError:
             error = "Project has config error: {0}".format(self.configError)
             yield error
+
+    @property
+    def requires_upgrade(self):
+        """
+        Return if this project requires a upgrade before it can be loaded
+        """
+        same_version = checkversion(roam.__version__, self.roamversion)
+        if not same_version:
+            if version_major_part(roam.__version__) > version_major_part(self.roamversion):
+                return True
+
+        return False
 
     @property
     def enabled_plugins(self):
