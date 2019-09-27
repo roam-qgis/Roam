@@ -743,7 +743,6 @@ class FormWidget(ui_formwidget.Ui_Form, WidgetBase):
         """
         Return the selected widget in the widget combo.
         """
-        print("Current widget config")
         index = self.useablewidgets.currentIndex()
         index = self.possiblewidgetsmodel.index(index, 0)
         return index.data(Qt.UserRole), index, index.data(Qt.UserRole + 1)
