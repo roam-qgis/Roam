@@ -354,7 +354,29 @@ p, li { white-space: pre-wrap; }
      <widget class="QWidget" name="forms_page">
       <layout class="QVBoxLayout" name="verticalLayout_2">
        <item>
+        <widget class="QLabel" name="lblFormInfo">
+         <property name="text">
+          <string>Create a new project by giving it a name below.  Forms must have a unquie name in order to be created and layers must be enabled in the Selection Layers tab before you can create a form for them.</string>
+         </property>
+         <property name="wordWrap">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item>
         <widget class="QLabel" name="lblSelectLayersError">
+         <property name="font">
+          <font>
+           <family>Segoe UI</family>
+           <pointsize>-1</pointsize>
+           <weight>50</weight>
+           <italic>false</italic>
+           <bold>false</bold>
+          </font>
+         </property>
+         <property name="styleSheet">
+          <string notr="true">color: rgb(255, 57, 39);</string>
+         </property>
          <property name="text">
           <string>Please enable some select layers first before creating new forms</string>
          </property>
