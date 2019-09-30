@@ -355,6 +355,7 @@ class FormsNode(Treenode):
         item = FormNode(form, self.project)
         count = self.rowCount()
         self.insertRow(count, item)
+        self.emitDataChanged()
 
     def additem(self):
         pass
@@ -478,8 +479,9 @@ class ProjectsNode(Treenode):
     def _add_project(self, project):
         item = ProjectNode(project)
         count = self.rowCount()
-        self.insertRow(count - 1, item)
+        self.insertRow(count, item)
         self.projects.append(item)
+        self.emitDataChanged()
         return item
 
     def additem(self):
