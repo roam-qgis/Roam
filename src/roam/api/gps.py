@@ -121,7 +121,7 @@ class GPSService(QObject):
             self.gpsConn.close()
             self.gpsConn.stateChanged.disconnect(self.gpsStateChanged)
             # TODO: This doesn't fire for some reason anymore.  Do we need it still?
-            # self.gpsConn.nmeaSentenceReceived.disconnect(self.parse_data)
+            self.gpsConn.nmeaSentenceReceived.disconnect(self.parse_data)
             
         self.isConnected = False
         self._position = None
@@ -136,7 +136,7 @@ class GPSService(QObject):
         self.isConnected = True
 
         # TODO: This doesn't fire for some reason anymore.  Do we need it still?
-        # self.gpsConn.nmeaSentenceReceived.connect(self.parse_data)
+        self.gpsConn.nmeaSentenceReceived.connect(self.parse_data)
 
     def parse_data(self, datastring):
         self.log_gps(datastring)
@@ -161,11 +161,14 @@ class GPSService(QObject):
                     "VTG": self.extract_vtg,
                     "GSA": self.extract_gsa}
         try:
+            print(data)
             mappings[data.sentence_type](data)
             self.gpsStateChanged(self.info)
-        except KeyError:
+        except KeyError as ex:
+            log(ex)
             return
-        except AttributeError:
+        except AttributeError as ex:
+            log(ex)
             return
 
     def extract_vtg(self, data):
@@ -177,6 +180,7 @@ class GPSService(QObject):
         self.info.pdop = safe_float(data.pdop)
         self.info.vdop = safe_float(data.vdop)
         self.info.fixMode = data.mode
+        print(data.mode_fix_type)
         self.info.fixType = safe_int(data.mode_fix_type)
         return self.info
 
