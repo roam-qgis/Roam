@@ -1,4 +1,4 @@
-from qgis.PyQt.QtCore import pyqtSignal, QThread
+from qgis.PyQt.QtCore import pyqtSignal, QThread, Qt
 from qgis.PyQt.QtWidgets import QWidget
 from qgis.core import QgsGpsDetector, Qgis, QgsProviderRegistry
 
@@ -91,9 +91,8 @@ class SettingsWidget(Ui_settingsWidget, QWidget):
 
     def gpsPortCombo_currentIndexChanged(self, index):
         #If os returns port name with colon and label, strip label (noted in Windows 7)
-        port = self.gpsPortCombo.itemText(index)
-        if ':' in port:
-            port = port.split(':')[0]
+        port = self.gpsPortCombo.itemData(index, Qt.UserRole)
+        print(port)
         self.settings["gpsport"] = port
         self.notifysettingsupdate()
 
@@ -128,7 +127,7 @@ class SettingsWidget(Ui_settingsWidget, QWidget):
 
         gpsport = self.settings.get("gpsport", 'scan')
         gpsport.replace(r"\\\.\\", "")
-        gpsindex = self.gpsPortCombo.findText(gpsport)
+        gpsindex = self.gpsPortCombo.findData(gpsport, Qt.UserRole)
 
         self.gpsPortCombo.blockSignals(True)
         if gpsindex == -1:
