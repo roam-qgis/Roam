@@ -23,7 +23,6 @@ exit
 :install-req
 ECHO Installing requirements
 python -m pip install -r requirements.txt
-python -m pip install libs\py2exe-0.9.3.1-cp37-none-win32.whl
 GOTO END
 
 :install-req-build-server
