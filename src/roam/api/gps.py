@@ -1,9 +1,11 @@
+import sip
 import os
 from datetime import datetime
 
 import pynmea2
-from qgis.PyQt.QtCore import QObject, pyqtSignal, QDate, QDateTime, QTime, Qt, QTimer
-from qgis.core import (QgsGpsDetector, QgsGpsConnection, QgsPointXY, \
+from PyQt5.QtSerialPort import QSerialPort
+from qgis.PyQt.QtCore import QObject, pyqtSignal, QDate, QDateTime, QTime, Qt, QTimer, QIODevice
+from qgis.core import (QgsGpsDetector, QgsPointXY, QgsNmeaConnection, QgsGpsConnection, \
                        QgsCoordinateTransform, QgsCoordinateReferenceSystem, \
                        QgsGpsInformation, QgsCsException, QgsProject)
 
@@ -58,8 +60,16 @@ class GPSService(QObject):
         self._gpsupdate_frequency = 1.0
         self._gpsupdate_last = datetime.min
         self.gpslogfile = None
-
+        self.gpsConn = None
+        self.device = None
+        
     def __del__(self):
+        if self.gpsConn:
+            self.deleteLater()
+
+        if self.device:
+            self.deleteLater()
+
         if not self.gpslogfile is None:
             self.gpslogfile.close()
 
@@ -106,15 +116,41 @@ class GPSService(QObject):
         if not self.isConnected:
             self._currentport = portname
             if portname == 'scan' or portname == '':
-                log("Auto scanning for GPS port")
                 portname = ''
+                self.detector = QgsGpsDetector(portname)
+                self.detector.detected.connect(self._gpsfound)
+                self.detector.detectionFailed.connect(self.gpsfailed)
+                self.isConnectFailed = False
+                self.detector.advance()
+            elif portname.startswith("COM"):
+                self.device = QSerialPort(portname)
+                baudrates = [QSerialPort.Baud4800 , QSerialPort.Baud9600 , QSerialPort.Baud38400 , QSerialPort.Baud57600 , QSerialPort.Baud115200]
+                flow = config.get("gps", {}).get("flow_control", None)
 
-            self.detector = QgsGpsDetector(portname)
-            log("Connecting to:{}".format(portname or 'scan'))
-            self.detector.detected.connect(self._gpsfound)
-            self.detector.detectionFailed.connect(self.gpsfailed)
-            self.isConnectFailed = False
-            self.detector.advance()
+                for rate in baudrates:
+                    self.device.setBaudRate(rate)
+                    if flow == "hardware":
+                        log("using hardware flow control for GPS")
+                        self.device.setFlowControl(QSerialPort.HardwareControl)
+                    if flow == "software":
+                        log("using software flow control for GPS")
+                        self.device.setFlowControl(QSerialPort.SoftwareControl)
+                    else:
+                        self.device.setFlowControl(QSerialPort.NoFlowControl)
+                    self.device.setParity(QSerialPort.NoParity)
+                    self.device.setDataBits(QSerialPort.Data8)
+                    self.device.setStopBits(QSerialPort.OneStop)
+                    if self.device.open(QIODevice.ReadWrite):
+                        log("Connection opened with {0}".format(self.device.baudRate()))
+                        self.gpsConn = QgsNmeaConnection(self.device)
+                        self._gpsfound(self.gpsConn)
+                        break
+                    else:
+                        del self.device
+                        continue
+                else:
+                    # If we can't connect to any GPS just error out
+                    self.gpsfailed.emit()
 
     def disconnectGPS(self):
         if self.isConnected:
@@ -122,21 +158,24 @@ class GPSService(QObject):
             self.gpsConn.stateChanged.disconnect(self.gpsStateChanged)
             # TODO: This doesn't fire for some reason anymore.  Do we need it still?
             self.gpsConn.nmeaSentenceReceived.disconnect(self.parse_data)
-            
+            self.gpsConn.deleteLater()
+
         self.isConnected = False
         self._position = None
         self.gpsdisconnected.emit()
 
     def _gpsfound(self, gpsConnection):
-        import sip
-        gpsConnection = sip.cast(gpsConnection, QgsGpsConnection)
-        self.gpsConn = gpsConnection
-        print(self.gpsConn.status())
+        if not isinstance(gpsConnection, QgsNmeaConnection):
+            # This can be hit if the scan is used as the bindings in QGIS aren't
+            # right and will not have the type set correctly
+            import sip
+            gpsConnection = sip.cast(gpsConnection, QgsGpsConnection)
+            self.gpsConn = gpsConnection
         self.gpsConn.stateChanged.connect(self.gpsStateChanged)
+        self.gpsConn.nmeaSentenceReceived.connect(self.parse_data)
         self.isConnected = True
 
         # TODO: This doesn't fire for some reason anymore.  Do we need it still?
-        self.gpsConn.nmeaSentenceReceived.connect(self.parse_data)
 
     def parse_data(self, datastring):
         self.log_gps(datastring)
@@ -161,7 +200,6 @@ class GPSService(QObject):
                     "VTG": self.extract_vtg,
                     "GSA": self.extract_gsa}
         try:
-            print(data)
             mappings[data.sentence_type](data)
             self.gpsStateChanged(self.info)
         except KeyError as ex:
