@@ -91,9 +91,9 @@ class SettingsWidget(Ui_settingsWidget, QWidget):
 
     def gpsPortCombo_currentIndexChanged(self, index):
         #If os returns port name with colon and label, strip label (noted in Windows 7)
+        port = self.gpsPortCombo.itemText(index)
         if ':' in port:
             port = port.split(':')[0]
-        port = self.gpsPortCombo.itemText(index)
         self.settings["gpsport"] = port
         self.notifysettingsupdate()
 
