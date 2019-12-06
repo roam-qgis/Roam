@@ -85,7 +85,8 @@ class GPSService(QObject):
         if self.gpslogfile is None:
             self.gpslogfile = open(GPSLOGFILENAME, "w")
 
-        self.gpslogfile.write(line)
+        self.gpslogfile.write(line + "\n")
+        self.gpslogfile.flush()
 
     def gpsinfo(self, attribute):
         """
@@ -126,13 +127,16 @@ class GPSService(QObject):
                 self.device = QSerialPort(portname)
                 baudrates = [QSerialPort.Baud4800 , QSerialPort.Baud9600 , QSerialPort.Baud38400 , QSerialPort.Baud57600 , QSerialPort.Baud115200]
                 flow = config.get("gps", {}).get("flow_control", None)
+                rate = config.get("gps", {}).get("rate", None)
+                if rate:
+                    baudrates = [rate]
 
                 for rate in baudrates:
                     self.device.setBaudRate(rate)
                     if flow == "hardware":
                         log("using hardware flow control for GPS")
                         self.device.setFlowControl(QSerialPort.HardwareControl)
-                    if flow == "software":
+                    elif flow == "software":
                         log("using software flow control for GPS")
                         self.device.setFlowControl(QSerialPort.SoftwareControl)
                     else:
@@ -203,7 +207,7 @@ class GPSService(QObject):
             mappings[data.sentence_type](data)
             self.gpsStateChanged(self.info)
         except KeyError as ex:
-            log(ex)
+            log("Unhandled message type: {}. Message: {}".format(data.sentence_type, datastring))
             return
         except AttributeError as ex:
             log(ex)
