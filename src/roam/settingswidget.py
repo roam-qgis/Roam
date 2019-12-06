@@ -177,7 +177,7 @@ class SettingsWidget(Ui_settingsWidget, QWidget):
         self.set_gps_settings()
 
     def update_tracking(self, value):
-        gpssettings = {}
+        gpssettings = roam.config.settings.get("gps", {})
         if self.gpstracking_timing_radio.isChecked():
             gpssettings['tracking'] = {"time": value}
             roam.config.settings['gps'] = gpssettings
