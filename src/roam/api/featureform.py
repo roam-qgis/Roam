@@ -499,7 +499,14 @@ class FeatureFormBase(QWidget):
                     if value and not os.path.exists(value):
                         value = os.path.join(self.form.project.image_folder, value)
 
-                self.boundwidgets[field].setvalue(value)
+                try:
+                    self.boundwidgets[field].setvalue(value)
+                except TypeError as ex:
+                    roam.utils.warning("Type Error on setting value on widget. Details:\n"
+                                       f"Field: {field}\n"
+                                       f"Value: {value}\n"
+                                       f"Value Type: {type(value)}\n")
+                    raise ex
             except KeyError:
                 utils.debug("Can't find control for field {}. Ignoring".format(field))
 
