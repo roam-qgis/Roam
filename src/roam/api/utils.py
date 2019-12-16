@@ -9,6 +9,7 @@ from qgis.core import QgsProject, QgsFeatureRequest, QgsGeometry, NULL, Qgis, Qg
     QgsExpressionContextScope, QgsExpression, QgsFeature
 
 from roam.structs import CaseInsensitiveDict
+from roam.utils import warning
 
 
 def update_feature(layer, *features):
@@ -63,7 +64,11 @@ def layer_by_name(name):
     :param name: The name of the layer
     :return: A single layer with the given layer name
     """
-    return layers_by_name(name)[0]
+    try:
+        return layers_by_name(name)[0]
+    except IndexError as ex:
+        warning(f"Can't find layer: {name}")
+        raise ex
 
 
 def layers_by_name(name):
