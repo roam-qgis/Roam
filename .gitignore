@@ -1,3 +1,4 @@
+profiles
 docs
 .roambuild
 version.txt
@@ -55,4 +56,4 @@ venv
 .cache
 htmlcov/
 release/
-
+/src/roam/log
