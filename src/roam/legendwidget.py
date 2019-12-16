@@ -51,12 +51,14 @@ class LegendWidget(Ui_legendsWidget, QWidget):
         model.setLayerTreeNodeFont(QgsLayerTreeNode.NodeGroup, font)
         self.layerTree.setModel(model)
 
-        for layer_node in model.rootGroup().findLayers():
-            layer = layer_node.layer()
-            if layer.type() == QgsMapLayer.VectorLayer:
-                if layer.geometryType() == QgsWkbTypes.NullGeometry:
-                    parent = layer_node.parent()
-                    parent.removeLayer(layer)
+        # TODO: This was to hide non spatial tables from the legend but
+        # if you remove from here it will remove from the map which we don't want
+        # for layer_node in model.rootGroup().findLayers():
+        #     layer = layer_node.layer()
+        #     if layer.type() == QgsMapLayer.VectorLayer:
+        #         if layer.geometryType() == QgsWkbTypes.NullGeometry:
+        #             parent = layer_node.parent()
+        #             parent.removeLayer(layer)
 
     def _renderimage(self):
         image = self.renderjob.renderedImage()
