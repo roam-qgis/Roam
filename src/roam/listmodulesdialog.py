@@ -47,7 +47,9 @@ class ProjectWidget(Ui_Form, QWidget):
             self.descriptionlabel.setText(desc)
             if not self.project.valid:
                 self.namelabel.setText(name + " (Invalid)")
+                self.namelabel.setStyleSheet("color: red;")
                 self.descriptionlabel.setText(self.project.error)
+                self.descriptionlabel.setStyleSheet("color: red;")
 
         pix = QPixmap(splash)
         self.imagelabel.setPixmap(pix)
