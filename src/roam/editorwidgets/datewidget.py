@@ -1,4 +1,4 @@
-from qgis.PyQt.QtCore import QDateTime, Qt, QSize, QDate, QEvent
+from qgis.PyQt.QtCore import QDateTime, Qt, QSize, QDate, QEvent, pyqtSignal
 from qgis.PyQt.QtGui import QIcon
 from qgis.PyQt.QtWidgets import QPushButton, QDateTimeEdit, QDateEdit, QWidget
 from qgis.core import NULL
@@ -37,9 +37,12 @@ class BigDateWidget(LargeEditorWidget):
 
 
 class DateUiWidget(ui_datewidget.Ui_Form, QWidget):
+    currentTimeClicked = pyqtSignal()
+
     def __init__(self, parent=None):
         super(DateUiWidget, self).__init__()
         self.setupUi(self)
+        self.currentTimeButton.pressed.connect(self.currentTimeClicked.emit)
 
 
 class DateWidget(EditorWidget):
@@ -53,7 +56,11 @@ class DateWidget(EditorWidget):
     def createWidget(self, parent):
         return DateUiWidget(parent)
 
+    def setCurrentTime(self):
+        self.setvalue(QDateTime.currentDateTime())
+
     def initWidget(self, widget, config):
+        self.widget.currentTimeClicked.connect(self.setCurrentTime)
         pickbutton = widget.findChild(QPushButton)
 
         if not pickbutton is None:
