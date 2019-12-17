@@ -560,7 +560,6 @@ class MainWindow(ui_mainwindow.Ui_MainWindow, QMainWindow):
         self.clear_plugins()
         self.add_plugins(self.project.enabled_plugins)
 
-        layers = self.project.legendlayersmapping().values()
         self.legendpage.setRoot(QgsProject.instance().layerTreeRoot())
 
         gps_loglayer = self.project.gpslog_layer()
