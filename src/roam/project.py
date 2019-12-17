@@ -344,7 +344,8 @@ class Project(QObject):
 
             cmd = config['cmd']
             cmd = os.path.join(self.folder, cmd)
-            if config['type'] == 'replication' or config['type'] == 'batch':
+            synctype = config.get('type', "replication")
+            if synctype in ['replication', 'batch']:
                 config['cmd'] = cmd
                 config.setdefault('variables', variables)
                 config.update(variables)

@@ -27,7 +27,8 @@ def syncprovders():
 
         cmd = config['cmd']
         cmd = os.path.join(path, cmd)
-        if config['type'] == 'replication' or config['type'] == 'batch':
+        synctype = config.get('type', "replication")
+        if synctype in ['replication', 'batch']:
             config['cmd'] = cmd
             config['rootfolder'] = path
             config.setdefault('variables', variables)
