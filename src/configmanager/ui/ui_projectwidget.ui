@@ -313,7 +313,7 @@ p, li { white-space: pre-wrap; }
        <item row="0" column="0" colspan="2">
         <widget class="QLabel" name="label_42">
          <property name="text">
-          <string>IntraMaps Roam Config Manager allows the creation and managment of Roam projects and forms.</string>
+          <string>Roam Config Manager allows the creation and management of Roam projects and forms.</string>
          </property>
          <property name="wordWrap">
           <bool>true</bool>
