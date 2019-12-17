@@ -23,7 +23,6 @@ class SyncWidget(Ui_Form, QWidget):
         self.syncallButton.hide()
 
     def load_application_sync(self):
-        print("Load application sync")
         providers = list(roam.syncing.syncprovders())
         if not providers:
             return
@@ -42,6 +41,9 @@ class SyncWidget(Ui_Form, QWidget):
         # root = self.synctree.invisibleRootItem()
         self.load_application_sync()
         for project in projects:
+            if not project.valid:
+                continue
+
             providers = list(project.syncprovders())
             if not providers:
                 continue
