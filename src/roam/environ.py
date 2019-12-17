@@ -22,6 +22,7 @@ class RoamApp(object):
         self._oldhook = sys.excepthook
         self.sourcerun = False
         self.config = None
+        self.args = argparse.Namespace()
 
     def init(self, logo, title, **kwargs):
         from qgis.core import QgsApplication
@@ -145,6 +146,7 @@ def _setup(apppath=None, logo='', title='', **kwargs):
 
     parser = argparse.ArgumentParser(description="IntraMaps Roam")
 
+    parser.add_argument('--load-first', action="store_true", help='Auto load the first project that was added')
     parser.add_argument('--config', metavar='c', type=str, default=settingspath, help='Path to Roam.config')
     parser.add_argument('--profile', metavar='p', type=str, default=profileroot,
                         help='Root folder for roam.config, and roam settings'
@@ -183,6 +185,8 @@ def _setup(apppath=None, logo='', title='', **kwargs):
         roam.config.load(settingspath)
 
     app = RoamApp(sys.argv, apppath, prefixpath, settingspath, libspath, i18npath, projectroot).init(logo, title, **kwargs)
+    # Pass the command line args down to the app
+    app.args = args
     app.sourcerun = RUNNING_FROM_FILE
     app.profileroot = profileroot
     roam.utils.info("Profile Root: {0}".format(app.profileroot))

@@ -61,10 +61,15 @@ with environ.setup(srcpath) as roamapp:
 
     projectpaths = roam.environ.projectpaths(roamapp.projectsroot,
                                              roam.config.settings)
-    projects = roam.project.getProjects(projectpaths)
+    projects = list(roam.project.getProjects(projectpaths))
     window.load_projects(projects)
-    window.actionProject.toggle()
-    window.show_project_list()
+
+    if roamapp.args.load_first:
+        window.load_roam_project(projects[0])
+    else:
+        window.actionProject.toggle()
+        window.show_project_list()
+
     pluginpath = os.path.join(os.path.dirname(roamapp.settingspath), "plugins")
     apppluginpath = os.path.join(roamapp.apppath, "plugins")
 
