@@ -38,6 +38,7 @@ with environ.setup(srcpath) as roamapp:
     import roam.config
     import roam.mainwindow
     import roam.errors
+    import roam.api.plugins
 
     roam.errors.init_error_handler(roam.__version__)
 
@@ -62,6 +63,12 @@ with environ.setup(srcpath) as roamapp:
     projectpaths = roam.environ.projectpaths(roamapp.projectsroot,
                                              roam.config.settings)
     projects = list(roam.project.getProjects(projectpaths))
+
+    pluginpath = os.path.join(os.path.dirname(roamapp.settingspath), "plugins")
+    apppluginpath = os.path.join(roamapp.apppath, "plugins")
+
+    roam.api.plugins.load_plugins_from([pluginpath, apppluginpath])
+
     window.load_projects(projects)
 
     if roamapp.args.load_first:
@@ -70,10 +77,5 @@ with environ.setup(srcpath) as roamapp:
         window.actionProject.toggle()
         window.show_project_list()
 
-    pluginpath = os.path.join(os.path.dirname(roamapp.settingspath), "plugins")
-    apppluginpath = os.path.join(roamapp.apppath, "plugins")
 
-    import roam.api.plugins
-
-    roam.api.plugins.load_plugins_from([pluginpath, apppluginpath])
     window.show()
