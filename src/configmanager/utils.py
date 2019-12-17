@@ -19,13 +19,17 @@ class QGISNotFound(Exception):
         self.message = "Can't find installed QGIS in: {}".format(locations)
 
 
-def qgis_path(base_path):
-    return os.path.join(base_path, "QGIS 3.4", "bin", "qgis-ltr-bin.exe")
+def qgis_path(base_path, name):
+    return os.path.join(base_path, "QGIS 3.10", "bin", name)
 
 
 def find_qgis():
     triedpaths = []
-    for installpath in [qgis_path(os.environ['ProgramFiles']), qgis_path(os.environ['ProgramFiles(x86)'])]:
+    for installpath in [qgis_path(os.environ['ProgramFiles'],"qgis-bin.exe"),
+                        qgis_path(os.environ['ProgramFiles(x86)'], "qgis-bin.exe"),
+                        qgis_path(os.environ['ProgramFiles'], "qgis-ltr-bin.exe"),
+                        qgis_path(os.environ['ProgramFiles(x86)'], "qgis-ltr-bin.exe"),
+                        ]:
         if os.path.exists(installpath):
             return installpath
         else:
