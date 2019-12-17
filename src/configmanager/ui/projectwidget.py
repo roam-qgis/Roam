@@ -55,16 +55,10 @@ class ProjectWidget(Ui_Form, QWidget):
         self.roamapp = None
         self.logger = roam.utils.logger
 
-        menu = QMenu()
-
-        # self.roamVersionLabel.setText("You are running IntraMaps Roam version {}".format(roam.__version__))
-
         self.openProjectFolderButton.pressed.connect(self.openprojectfolder)
         self.openinQGISButton.pressed.connect(self.openinqgis)
         # TODO Move these to the publish page
 
-        # self.depolyProjectButton.pressed.connect(self.deploy_project)
-        # self.depolyInstallProjectButton.pressed.connect(functools.partial(self.deploy_project, True))
         self.savePageButton.pressed.connect(self.savePage)
 
         self.filewatcher = QFileSystemWatcher()

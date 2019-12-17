@@ -1,7 +1,7 @@
 @echo OFF
 
 REM MakeSFX
-REM Makes the Self-extracting archive for patching IntraMaps
+REM Makes the Self-extracting archive for patching Roam
 REM
 setlocal enabledelayedexpansion
 

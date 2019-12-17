@@ -9,14 +9,14 @@ About Roam
 
 [![Build Status](https://travis-ci.org/DMS-Aus/Roam.svg?branch=master)](https://travis-ci.org/DMS-Aus/Roam)
 
-IntraMaps Roam is a field data collection application built using the QGIS libraries and Python. It was built to be easy to use on (windows) based tablet devices, with Android planned for the future.
+Roam is a field data collection application built using the QGIS libraries and Python. It was built to be easy to use on (windows) based tablet devices, with Android planned for the future.
 
-IntraMaps Roam is built as a standalone fully packaged Python application with everything included. QGIS is **not** required to be installed on the client machine and only on the machine that builds Roam from source.  Pre-built binary packages will be available after the first release. 
+Roam is built as a standalone fully packaged Python application with everything included. QGIS is **not** required to be installed on the client machine and only on the machine that builds Roam from source.  Pre-built binary packages will be available after the first release. 
 
 
-![a](https://github.com/DMS-Aus/Roam-docs/blob/master/docs/images/2.3-Release.png)
+![a](https://github.com/roam-qgis/Roam-docs/blob/master/docs/images/2.3-Release.png)
 
-See the [wiki](https://github.com/DMS-Aus/Roam/wiki) for information on how to create a project and user guides.
+See the [wiki](https://github.com/roam-qgis/Roam/wiki) for information on how to create a project and user guides.
 
 See BUILDING on notes on getting starting for development.
 

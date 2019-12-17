@@ -144,7 +144,7 @@ def _setup(apppath=None, logo='', title='', **kwargs):
         if not os.path.exists(settingspath):
             settingspath = os.path.join(apppath, "settings.config")
 
-    parser = argparse.ArgumentParser(description="IntraMaps Roam")
+    parser = argparse.ArgumentParser(description="Roam")
 
     parser.add_argument('--load-first', action="store_true", help='Auto load the first project that was added')
     parser.add_argument('--config', metavar='c', type=str, default=settingspath, help='Path to Roam.config')

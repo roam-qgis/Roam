@@ -60,14 +60,14 @@ pushd build\exe.win-amd64-3.7
 ECHO %CD%
 ECHO Making zip file..
 SET NAME=%2
-python -m zipfile -c "%BASE%\release\IntraMaps Roam%NAME%.zip" .
+python -m zipfile -c "%BASE%\release\Roam%NAME%.zip" .
 GOTO END
 
 :installer
 ECHO Building installer
 SET NAME=%2
-CALL %BASE%scripts\installer\makesfx.bat "%BASE%release\IntraMaps Roam%NAME% Installer " dist
-CALL %BASE%scripts\installer\makesfx.bat "%BASE%release\IntraMaps Roam%NAME% Installer - Silent" dist -s
+CALL %BASE%scripts\installer\makesfx.bat "%BASE%release\Roam%NAME% Installer " dist
+CALL %BASE%scripts\installer\makesfx.bat "%BASE%release\Roam%NAME% Installer - Silent" dist -s
 GOTO END
 
 :test
