@@ -430,8 +430,6 @@ class MapWidget(Ui_CanvasWidget, QMainWindow):
         self.canvas.extentsChanged.connect(self.update_status_label)
         self.canvas.scaleChanged.connect(self.update_status_label)
 
-        GPS.gpsposition.connect(self.update_gps_label)
-        GPS.gpsdisconnected.connect(self.gps_disconnected)
 
         self.connectButtons()
 
@@ -526,12 +524,20 @@ class MapWidget(Ui_CanvasWidget, QMainWindow):
         scale, _ = self.scalewidget.toDouble(index.data(Qt.DisplayRole))
         self.canvas.zoomScale(1.0 / scale)
 
+    def update_gps_fixed_label(self, fixed, gpsinfo):
+        if not fixed:
+            self.gpslabel.setText("GPS: Acquiring fix")
+            self.gpslabelposition.setText("")
+
     def update_gps_label(self, position, gpsinfo):
         """
         Update the GPS label in the status bar with the GPS status.
         :param position: The current GPS position.
         :param gpsinfo: The current extra GPS information.
         """
+        if not self.gps.connected:
+            return
+
         self.gpslabel.setText("GPS: PDOP <b>{0:.2f}</b> HDOP <b>{1:.2f}</b>    VDOP <b>{2:.2f}</b>".format(gpsinfo.pdop,
                                                                                                            gpsinfo.hdop,
                                                                                                            gpsinfo.vdop))
@@ -542,12 +548,9 @@ class MapWidget(Ui_CanvasWidget, QMainWindow):
                                                                                                places=places))
 
     def gps_disconnected(self):
-        """
-        Called when the GPS is disconnected. Updates the label in the status bar with the message.
-        :return:
-        """
-        self.gpslabel.setText("GPS Not Active")
+        self.gpslabel.setText("GPS: Not Active")
         self.gpslabelposition.setText("")
+        self.marker.hide()
 
     def zoom_to_feature(self, feature):
         """
@@ -712,9 +715,13 @@ class MapWidget(Ui_CanvasWidget, QMainWindow):
         """
         self.gps = gps
         self.gpslogging = logging
+        self.gps.gpsfixed.connect(self.update_gps_fixed_label)
+        self.gps.gpsposition.connect(self.update_gps_label)
         self.gps.gpsposition.connect(self.gps_update_canvas)
         self.gps.firstfix.connect(self.gps_first_fix)
         self.gps.gpsdisconnected.connect(self.gps_disconnected)
+
+        self.actionGPS.setgps(gps)
 
     def gps_update_canvas(self, position, gpsinfo):
         """
@@ -759,12 +766,6 @@ class MapWidget(Ui_CanvasWidget, QMainWindow):
         rect = QgsRectangle(position, position)
         self.canvas.setExtent(rect)
         self.canvas.refresh()
-
-    def gps_disconnected(self):
-        """
-        Called when the GPS is disconnected
-        """
-        self.marker.hide()
 
     def select_data_entry(self):
         """

@@ -19,41 +19,43 @@ class GPSAction(QAction):
 
     def __init__(self, canvas, parent):
         icon = ":/icons/gps"
+        self.gps = None
         super(GPSAction, self).__init__(QIcon(icon),
                                         QApplication.translate("GPSAction", "Enable GPS"),
                                         parent)
         self.canvas = canvas
         self.triggered.connect(self.connectGPS)
 
-        GPS.gpsfixed.connect(self.fixed)
-        GPS.gpsfailed.connect(self.failed)
-        GPS.gpsdisconnected.connect(self.disconnected)
+    def setgps(self, gps):
+        self.gps = gps
+        self.gps.gpsfixed.connect(self.fixed)
+        self.gps.gpsfailed.connect(self.failed)
+        self.gps.gpsdisconnected.connect(self.disconnected)
 
     def updateGPSPort(self):
-        if GPS.isConnected and not roam.config.settings.get('gpsport', '') == GPS.currentport:
-            GPS.disconnectGPS()
+        if self.gps.connected and not roam.config.settings.get('gpsport', '') == self.gps.currentport:
+            self.gps.disconnectGPS()
             self.connectGPS()
 
     def connectGPS(self):
-        if not GPS.isConnected:
-            # Enable GPS
+        if not self.gps.connected:
             self.setIcon(QIcon(":/icons/gps"))
             self.setIconText(self.tr("Connecting.."))
             self.setEnabled(False)
             portname = roam.config.settings.get('gpsport', '')
-            GPS.connectGPS(portname)
+            self.gps.connectGPS(portname)
         else:
-            GPS.disconnectGPS()
+            self.gps.disconnectGPS()
 
     def disconnected(self):
+        self.setEnabled(True)
         self.setIcon(QIcon(":/icons/gps"))
         self.setIconText("Enable GPS")
-        self.setEnabled(True)
 
     def connected(self, gpsConnection):
+        self.setEnabled(True)
         self.setIcon(QIcon(':/icons/gps_looking'))
         self.setIconText("Searching")
-        self.setEnabled(True)
 
     def failed(self):
         self.setEnabled(True)
@@ -62,13 +64,13 @@ class GPSAction(QAction):
         self.setIconText("GPS Failed. Click to retry")
 
     def fixed(self, fixed, gpsInfo):
+        self.setEnabled(True)
         if fixed:
             self.setIcon(QIcon(':/icons/gps_on'))
             self.setIconText("GPS Fixed")
-            self.setEnabled(True)
         else:
             self.setIcon(QIcon(':/icons/gps_failed'))
-            self.setIconText("No fix yet")
+            self.setIconText("Acquiring fix")
 
 
 class GPSMarker(QgsMapCanvasItem):
