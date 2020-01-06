@@ -11,7 +11,8 @@ from qgis.PyQt.QtSvg import QGraphicsSvgItem
 from qgis.PyQt.QtWidgets import QActionGroup, QFrame, QWidget, QSizePolicy, \
     QAction, QMainWindow, QGraphicsItem, QToolButton, QLabel, QToolBar
 from qgis.core import QgsMapLayer, Qgis, QgsRectangle, QgsProject, QgsApplication, \
-    QgsCoordinateReferenceSystem, QgsCoordinateTransform, QgsPoint, QgsCsException, QgsDistanceArea, QgsWkbTypes, QgsGeometry
+    QgsCoordinateReferenceSystem, QgsCoordinateTransform, QgsPoint, QgsCsException, QgsDistanceArea, QgsWkbTypes, \
+    QgsGeometry
 from qgis.gui import QgsMapToolZoom, QgsRubberBand, QgsScaleComboBox, \
     QgsLayerTreeMapCanvasBridge, \
     QgsMapCanvasSnappingUtils, QgsMapToolPan
@@ -20,7 +21,7 @@ import roam.api.utils
 import roam.config
 import roam.utils
 from roam import roam_style
-from roam.api import GPS, plugins
+from roam.api import plugins
 from roam.api.events import RoamEvents
 from roam.biglist import BigList
 from roam.gps_action import GPSAction, GPSMarker
@@ -357,7 +358,6 @@ class MapWidget(Ui_CanvasWidget, QMainWindow):
         smallmode = roam.config.settings.get("smallmode", False)
         self.projecttoolbar.setSmallMode(smallmode)
 
-
         self.projecttoolbar.setContextMenuPolicy(Qt.CustomContextMenu)
 
         gpsspacewidget = QWidget()
@@ -430,14 +430,14 @@ class MapWidget(Ui_CanvasWidget, QMainWindow):
         self.canvas.extentsChanged.connect(self.update_status_label)
         self.canvas.scaleChanged.connect(self.update_status_label)
 
-
         self.connectButtons()
 
         scalebar_enabled = roam.config.settings.get('scale_bar', False)
         self.scalebar_enabled = False
         if scalebar_enabled:
             roam.utils.warning("Unsupported feature: Scale bar support not ported to QGIS 3 API yet.")
-            RoamEvents.raisemessage("Unsupported feature", "Scale bar support not ported to QGIS 3 API yet", level=RoamEvents.CRITICAL)
+            RoamEvents.raisemessage("Unsupported feature", "Scale bar support not ported to QGIS 3 API yet",
+                                    level=RoamEvents.CRITICAL)
             self.scalebar_enabled = False
             # self.scalebar = ScaleBarItem(self.canvas)
             # self.canvas.scene().addItem(self.scalebar)
@@ -529,6 +529,18 @@ class MapWidget(Ui_CanvasWidget, QMainWindow):
             self.gpslabel.setText("GPS: Acquiring fix")
             self.gpslabelposition.setText("")
 
+    quality_mappings = {
+        0: "invalid",
+        1: "GPS",
+        2: "DGPS",
+        3: "PPS",
+        4: "Real Time Kinematic",
+        5: "Float RTK",
+        6: "Estimated",
+        7: "Manual input mode",
+        8: "Simulation mode"
+    }
+
     def update_gps_label(self, position, gpsinfo):
         """
         Update the GPS label in the status bar with the GPS status.
@@ -538,9 +550,15 @@ class MapWidget(Ui_CanvasWidget, QMainWindow):
         if not self.gps.connected:
             return
 
-        self.gpslabel.setText("GPS: PDOP <b>{0:.2f}</b> HDOP <b>{1:.2f}</b>    VDOP <b>{2:.2f}</b>".format(gpsinfo.pdop,
-                                                                                                           gpsinfo.hdop,
-                                                                                                           gpsinfo.vdop))
+        print(gpsinfo.quality)
+        fixtype = self.quality_mappings.get(gpsinfo.quality, "")
+        self.gpslabel.setText("GPS: PDOP <b>{0:.2f}</b> "
+                              "HDOP <b>{1:.2f}</b>   "
+                              "VDOP <b>{2:.2f}</b>   "
+                              "Fix <b>{3}</b>".format(gpsinfo.pdop,
+                                                   gpsinfo.hdop,
+                                                   gpsinfo.vdop,
+                                                   fixtype))
 
         places = roam.config.settings.get("gpsplaces", 8)
         self.gpslabelposition.setText("X <b>{x:.{places}f}</b> Y <b>{y:.{places}f}</b>".format(x=position.x(),
