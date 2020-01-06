@@ -105,14 +105,14 @@ class GPSMarker(QgsMapCanvasItem):
         if self.quality == 0:
             color = self.red
         elif self.quality == 1:
-            color = self.blue
-        elif self.quality >= 2:
             color = self.green
+        elif self.quality >= 2:
+            color = self.blue
         else:
             color = self.red
 
-        self.pointpen.setColor(Qt.black)
-        self.pointpen.setWidth(2)
+        self.pointpen.setColor(Qt.gray)
+        self.pointpen.setWidth(1)
         self.pointbrush.setColor(color)
 
         painter.setBrush(self.pointbrush)
