@@ -9,7 +9,6 @@ from qgis.gui import QgsMapCanvasItem
 
 from roam import resources_rc, utils
 from roam.utils import log
-from roam.api import GPS
 
 import roam.config
 
@@ -89,6 +88,10 @@ class GPSMarker(QgsMapCanvasItem):
         self.pointpen = QPen(Qt.black)
         self.pointpen.setWidth(1)
         self.map_pos = QgsPoint(0.0, 0.0)
+        self.gps = None
+
+    def setgps(self, gps):
+        self.gps = gps
 
     def setSize(self, size):
         self.size = size
@@ -136,7 +139,7 @@ class GPSMarker(QgsMapCanvasItem):
         offsetp.append(QPoint(x, 0))
         offsetp.append(QPoint(0, 0))
 
-        waypoint = GPS.waypoint
+        waypoint = self.gps.waypoint
         if waypoint:
             az = self.map_pos.azimuth(waypoint)
 

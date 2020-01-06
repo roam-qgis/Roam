@@ -370,8 +370,8 @@ class MapWidget(Ui_CanvasWidget, QMainWindow):
         self.dataentryaction = self.projecttoolbar.insertAction(self.topspaceraction, self.dataentryselection)
         self.dataentryselection.triggered.connect(self.select_data_entry)
 
-        self.marker = GPSMarker(self.canvas)
-        self.marker.hide()
+        self.gpsMarker = GPSMarker(self.canvas)
+        self.gpsMarker.hide()
 
         self.currentfeatureband = CurrentSelection(self.canvas)
         self.currentfeatureband.setIconSize(30)
@@ -550,7 +550,7 @@ class MapWidget(Ui_CanvasWidget, QMainWindow):
     def gps_disconnected(self):
         self.gpslabel.setText("GPS: Not Active")
         self.gpslabelposition.setText("")
-        self.marker.hide()
+        self.gpsMarker.hide()
 
     def zoom_to_feature(self, feature):
         """
@@ -721,6 +721,7 @@ class MapWidget(Ui_CanvasWidget, QMainWindow):
         self.gps.firstfix.connect(self.gps_first_fix)
         self.gps.gpsdisconnected.connect(self.gps_disconnected)
 
+        self.gpsMarker.setgps(self.gps)
         self.actionGPS.setgps(gps)
 
     def gps_update_canvas(self, position, gpsinfo):
@@ -745,8 +746,8 @@ class MapWidget(Ui_CanvasWidget, QMainWindow):
                 if not extentlimt.contains(position):
                     self.zoom_to_location(position)
 
-        self.marker.show()
-        self.marker.setCenter(position, gpsinfo)
+        self.gpsMarker.show()
+        self.gpsMarker.setCenter(position, gpsinfo)
 
     def gps_first_fix(self, postion, gpsinfo):
         """
