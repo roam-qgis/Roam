@@ -550,7 +550,6 @@ class MapWidget(Ui_CanvasWidget, QMainWindow):
         if not self.gps.connected:
             return
 
-        print(gpsinfo.quality)
         fixtype = self.quality_mappings.get(gpsinfo.quality, "")
         self.gpslabel.setText("GPS: PDOP <b>{0:.2f}</b> "
                               "HDOP <b>{1:.2f}</b>   "

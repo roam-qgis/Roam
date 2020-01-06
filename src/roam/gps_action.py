@@ -112,7 +112,7 @@ class GPSMarker(QgsMapCanvasItem):
             color = self.red
 
         self.pointpen.setColor(Qt.gray)
-        self.pointpen.setWidth(1)
+        self.pointpen.setWidth(2)
         self.pointbrush.setColor(color)
 
         painter.setBrush(self.pointbrush)
