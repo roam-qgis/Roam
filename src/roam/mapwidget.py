@@ -551,18 +551,21 @@ class MapWidget(Ui_CanvasWidget, QMainWindow):
             return
 
         fixtype = self.quality_mappings.get(gpsinfo.quality, "")
-        self.gpslabel.setText("GPS: PDOP <b>{0:.2f}</b> "
-                              "HDOP <b>{1:.2f}</b>   "
-                              "VDOP <b>{2:.2f}</b>   "
-                              "Fix <b>{3}</b>".format(gpsinfo.pdop,
-                                                   gpsinfo.hdop,
-                                                   gpsinfo.vdop,
-                                                   fixtype))
+        self.gpslabel.setText("DOP P:<b>{0:.2f}</b> H:<b>{1:.2f}</b> V:<b>{2:.2f}</b> "
+                              "Fix: <b>{3}</b> "
+                              "Sats: <b>{4}</b> ".format(gpsinfo.pdop,
+                                                        gpsinfo.hdop,
+                                                        gpsinfo.vdop,
+                                                        fixtype,
+                                                        gpsinfo.satellitesUsed))
 
         places = roam.config.settings.get("gpsplaces", 8)
-        self.gpslabelposition.setText("X <b>{x:.{places}f}</b> Y <b>{y:.{places}f}</b>".format(x=position.x(),
-                                                                                               y=position.y(),
-                                                                                               places=places))
+        self.gpslabelposition.setText("X: <b>{x:.{places}f}</b> "
+                                      "Y: <b>{y:.{places}f}</b> "
+                                      "Z: <b>{z}m</b> ".format(x=position.x(),
+                                                     y=position.y(),
+                                                     z=gpsinfo.elevation,
+                                                     places=places))
 
     def gps_disconnected(self):
         self.gpslabel.setText("GPS: Not Active")
