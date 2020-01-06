@@ -1,3 +1,7 @@
+"""
+HTML viewer used in the info panel mainly to display selection results
+"""
+
 import os
 
 from qgis.PyQt.QtCore import (QByteArray, QDate, QDateTime, QTime, QPropertyAnimation,
@@ -31,6 +35,16 @@ def image_handler(key, value, **kwargs):
 
 
 def default_handler(key, value, **kwargs):
+    """
+    The default value handler that is called if there is no match
+    made
+    :param key:
+    :param value:
+    :param kwargs:
+    :return: Returns emptry string on None or the raw value itself
+    """
+    if value is None:
+        return ""
     return value
 
 
@@ -73,10 +87,21 @@ def string_handler(key, value, **kwargs):
 
 
 def date_handler(key, value, **kwargs):
+    """
+    Handler for date values.  Formats the date value as a string
+    :param key:
+    :param value:
+    :param kwargs:
+    :return:
+    """
     return value.toString()
 
 
-def none_handler(key, value, **kwargs):
+def none_handler(*args, **kwargs):
+    """
+    Handler for the None value
+    :return: Empty string
+    """
     return ''
 
 
@@ -85,20 +110,30 @@ def clear_image_cache():
 
 
 def updateTemplate(data, template, **kwargs):
+    """
+    Update the given template with the data
+    :param data:
+    :param template:
+    :param kwargs:
+    :return:
+    """
     data = dict(data)
     for key, value in data.items():
-        handler = blocks.get(type(value), default_handler)
+        handler = handler_mappings.get(type(value), default_handler)
         block = handler(key, value, **kwargs)
         data[key] = block
     return template.safe_substitute(**data)
 
 
-blocks = {QByteArray: image_handler,
-          QDate: date_handler,
-          QDateTime: date_handler,
-          QTime: date_handler,
-          str: string_handler,
-          lambda: None: none_handler}
+# Mapping of data type to display handler
+handler_mappings = {
+    QByteArray: image_handler,
+    QDate: date_handler,
+    QDateTime: date_handler,
+    QTime: date_handler,
+    str: string_handler,
+    None: none_handler,
+    lambda: None: none_handler}
 
 
 def showHTMLReport(template, data={}, parent=None, level=0):
