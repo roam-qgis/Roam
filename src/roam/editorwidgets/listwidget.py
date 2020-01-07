@@ -22,6 +22,8 @@ class BigListWidget(LargeEditorWidget):
         super(BigListWidget, self).__init__(*args, **kwargs)
         self.setObjectName("biglist")
         self.multi = False
+        self.startState = []
+        self.model = None
 
     def eventFilter(self, object, event):
         if event.type() in [QEvent.FocusIn, QEvent.MouseButtonPress]:
@@ -33,9 +35,18 @@ class BigListWidget(LargeEditorWidget):
 
     def initWidget(self, widget, config, **kwargs):
         widget.itemselected.connect(self.selectitems)
-        widget.closewidget.connect(self.emit_cancel)
+        widget.closewidget.connect(self.canceled)
         widget.savewidget.connect(self.emit_finished)
         widget.search.installEventFilter(self)
+
+    def canceled(self):
+        if self.model:
+            # Clear the model and reset the state
+            for state in self.startState:
+                item = self.model.item(state[0])
+                item.setCheckState(state[1])
+
+        self.emit_cancel()
 
     def selectitems(self):
         if not self.multi:
@@ -44,12 +55,20 @@ class BigListWidget(LargeEditorWidget):
     def updatefromconfig(self):
         super(BigListWidget, self).updatefromconfig()
         model = self.config['model']
+        self.model = model
         label = self.config['label']
         self.multi = self.config.get('multi', False)
         if not self.multi:
             self.widget.saveButton.hide()
         self.widget.setlabel(label)
         self.widget.setmodel(model)
+        # HACK: This is a gross hack because we are sharing state between this model and the
+        #       and the caller.
+        self.startItems = []
+        for row in range(self.model.rowCount()):
+            item = self.model.item(row)
+            self.startState.append((row, item.checkState()))
+
         self.endupdatefromconfig()
 
     def setvalue(self, value):
