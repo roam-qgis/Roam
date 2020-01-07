@@ -42,6 +42,7 @@ qgisresources = os.path.join(osgeopath, "apps", qgisname, "resources")
 svgs = os.path.join(osgeopath, "apps", qgisname, "svg")
 qgispluginpath = os.path.join(osgeopath, "apps", qgisname, "plugins", "*provider.dll")
 gdalsharepath = os.path.join(osgeopath, 'share', 'gdal')
+projsharepath = os.path.join(osgeopath, 'share', 'proj')
 
 appsrcopyFilesath = os.path.join(curpath, "src", 'roam')
 configmangerpath = os.path.join(curpath, "src", 'configmanager')
@@ -119,6 +120,9 @@ def get_data_files():
     files = [
         (r"src\roam.config", "roam.config")
     ]
+
+    # only copy the proj.db because that is all we need at the moment
+    files += format_paths(glob.glob(os.path.join(projsharepath, "proj.db")), new_folder=r"lib\proj")
 
     files += format_paths(glob.glob(os.path.join(qgisbin, "*.dll")))
     files += format_paths(glob.glob(os.path.join(qgisroot, "plugins", "*.dll")), new_folder=r"lib\qgis\plugins")

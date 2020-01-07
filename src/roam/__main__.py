@@ -20,6 +20,7 @@ if frozen:
     os.environ['PATH'] = "{0};{1}".format(libsfolder, srcpath)
     os.environ["GDAL_DRIVER_PATH"] = os.path.join(srcpath, 'lib')
     os.environ["GDAL_DATA"] = os.path.join(srcpath, 'lib', 'gdal')
+    os.environ["PROJ_LIB"] = os.path.join(srcpath, 'lib', 'proj')
     os.environ["QT_PLUGIN_PATH"] = os.path.join(srcpath, 'lib', 'qtplugins')
 
 import gdal
