@@ -255,7 +255,7 @@ class FeatureFormBase(QWidget):
 
     def form_actions(self):
         builtin = []
-        if self._has_save_buttons:
+        if self._has_save_buttons and not self.editingmode:
             builtin.append(self.star_all_button)
         useractions = self.user_form_actions()
         if not useractions:
@@ -279,7 +279,7 @@ class FeatureFormBase(QWidget):
 
     @property
     def is_capturing(self):
-        return self.editingmode == False
+        return self.editingmode is False
 
     @is_capturing.setter
     def is_capturing(self, value):
