@@ -411,6 +411,8 @@ class ProjectNode(Treenode):
 
     def data(self, role=None):
         if role == Qt.DisplayRole:
+            if self.project.requires_upgrade:
+                return self.project.name + "\n(Requires upgrade)"
             return self.project.name
         elif role == Qt.DecorationRole:
             if not self.project.valid and not self.project.requires_upgrade:

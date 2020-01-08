@@ -1,6 +1,7 @@
 import os
 import copy
 
+from PyQt5.QtWidgets import QMessageBox
 from qgis.PyQt.QtCore import Qt, QDir, QFileInfo, pyqtSignal, QFileSystemWatcher
 from qgis.PyQt.QtWidgets import QWidget, QMessageBox, QMenu, QFileDialog
 
@@ -177,7 +178,10 @@ class ProjectWidget(Ui_Form, QWidget):
             self.openinQGISButton.hide()
 
         self.savePageButton.setVisible(node.saveable)
-        self.savePageButton.setText(node.saveButtonText)
+        if self.project and self.project.requires_upgrade:
+            self.savePageButton.setText("Upgrade project")
+        else:
+            self.savePageButton.setText(node.save_text)
         self.formNameEdit.clear()
 
     @property
@@ -277,12 +281,16 @@ class ProjectWidget(Ui_Form, QWidget):
         """
         self.unload_current_widget()
 
-        if self.project:
-            savelast = QMessageBox.question(self,
-                                            "Save Current Project",
-                                            "Save {}?".format(self.project.name),
-                                            QMessageBox.Save | QMessageBox.No)
-            if savelast == QMessageBox.Accepted:
+        # only show this if the the project doesn't require a upgrade
+        if self.project and not self.project.requires_upgrade:
+            box = QMessageBox(self)
+            box.setWindowTitle("Save Current Project")
+            box.setText("Save {}?".format(self.project.name))
+            saveButton = box.addButton("Save project", QMessageBox.AcceptRole)
+            box.addButton("Discard", QMessageBox.RejectRole)
+            box.exec_()
+
+            if box.clickedButton() == saveButton:
                 self._saveproject()
 
         self.filewatcher.removePaths(self.filewatcher.files())
@@ -332,7 +340,23 @@ class ProjectWidget(Ui_Form, QWidget):
             self.logger.debug("Missing write_config for {}".format(self.widget.__class__.__name__))
 
         if self.project:
-            self._saveproject()
+            if self.project.requires_upgrade:
+                box = QMessageBox(self)
+                box.setWindowTitle("Upgrade project")
+                box.setText("Upgrade project?")
+                box.setInformativeText("Upgrade {} to latest Roam version. New Roam projects will not work with"
+                                       "older version of Roam.".format(self.project.name))
+                upgradeButton = box.addButton("Upgrade project", QMessageBox.AcceptRole)
+                box.addButton("Cancel", QMessageBox.RejectRole)
+                box.exec_()
+
+                if box.clickedButton() == upgradeButton:
+                    self._saveproject()
+                else:
+                    return
+
+            else:
+                self._saveproject()
             return
 
     def _saveproject(self, update_version=False, reset_save_point=False):
