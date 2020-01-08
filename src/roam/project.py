@@ -228,7 +228,7 @@ class Project(QObject):
         Returns the Roam version this roam project was built with.
         :return:
         """
-        return str(self.settings.setdefault("version", roam.__version__))
+        return str(self.settings.get("version", "0.0.0"))
 
     @property
     def projectfile(self):
