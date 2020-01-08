@@ -49,6 +49,11 @@ class Treenode(QStandardItem):
         self.addtext = ''
         self.removetext = ''
         self.hascount = False
+        self.saveButtonText = "Save project"
+
+    @property
+    def save_text(self):
+        return self.saveButtonText
 
     def data(self, role=None):
         if role == Qt.UserRole:
@@ -97,6 +102,7 @@ class PublishNode(Treenode):
         self.nodes = {}
         self.hascount = False
         self._projects = []
+        self.saveButtonText = "Save publish config"
 
     @property
     def projects(self):
@@ -116,6 +122,7 @@ class DataNode(Treenode):
         super(DataNode, self).__init__(text, QIcon(":/icons/map"), project)
         self._text = text
         self.nodes = {}
+        self.saveButtonText = "Save data config"
         self.hascount = False
 
 

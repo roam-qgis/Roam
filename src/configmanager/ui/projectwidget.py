@@ -177,6 +177,7 @@ class ProjectWidget(Ui_Form, QWidget):
             self.openinQGISButton.hide()
 
         self.savePageButton.setVisible(node.saveable)
+        self.savePageButton.setText(node.saveButtonText)
         self.formNameEdit.clear()
 
     @property
