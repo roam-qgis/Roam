@@ -1,13 +1,11 @@
-import sip
 import os
 from datetime import datetime
 
-import pynmea2
 from PyQt5.QtSerialPort import QSerialPort
 from qgis.PyQt.QtCore import QObject, pyqtSignal, QDate, QDateTime, QTime, Qt, QTimer, QIODevice
 from qgis.core import (QgsGpsDetector, QgsPointXY, QgsNmeaConnection, QgsGpsConnection, \
                        QgsCoordinateTransform, QgsCoordinateReferenceSystem, \
-                       QgsGpsInformation, QgsCsException, QgsProject)
+                       QgsGpsInformation, QgsCsException, QgsProject, QgsSettings)
 
 from roam.config import settings as config
 from roam.utils import log
@@ -56,7 +54,6 @@ class GPSService(QObject):
         self._position = None
         self.latlong_position = None
         self.elevation = None
-        self.info = QgsGpsInformation()
         self.wgs84CRS = QgsCoordinateReferenceSystem(4326)
         self.crs = None
         self.waypoint = None
@@ -64,13 +61,9 @@ class GPSService(QObject):
         self._gpsupdate_last = datetime.min
         self.gpslogfile = None
         self.gpsConn = None
-        self.device = None
-        
+
     def __del__(self):
         if self.gpsConn:
-            self.deleteLater()
-
-        if self.device:
             self.deleteLater()
 
         if not self.gpslogfile is None:
@@ -118,7 +111,7 @@ class GPSService(QObject):
         if attribute.lower() == 'portname':
             return self.currentport
         else:
-            return getattr(self.info, attribute)
+            return getattr(self.gpsConn.currentGPSInformation(), attribute)
 
     @property
     def currentport(self):
@@ -131,49 +124,73 @@ class GPSService(QObject):
     def connectGPS(self, portname):
         if not self.connected:
             self._currentport = portname
-            if portname == 'scan' or portname == '':
-                portname = ''
+            if config.get("flags", {}).get("gps-settings", False):
+                log("Using QgsSettings override for flow control")
+                if portname == 'scan' or portname == '':
+                    portname = ''
+
+                flow = config.get("gps", {}).get("flow_control", None)
+                print(f"GPS flow control is: {flow}")
+                if flow:
+                    settings = QgsSettings()
+                    if flow == "hardware":
+                        settings.setValue("gps/flow_control", QSerialPort.HardwareControl, QgsSettings.Core)
+                    elif flow == "software":
+                        settings.setValue("gps/flow_control", QSerialPort.SoftwareControl, QgsSettings.Core)
+
                 self.detector = QgsGpsDetector(portname)
                 self.detector.detected.connect(self.gpsfound_handler)
                 self.detector.detectionFailed.connect(self.gpsfailed)
                 self.detector.advance()
-            elif portname.startswith("COM"):
-                baudrates = [QSerialPort.Baud4800 , QSerialPort.Baud9600 , QSerialPort.Baud38400 , QSerialPort.Baud57600 , QSerialPort.Baud115200]
-                flow = config.get("gps", {}).get("flow_control", None)
-                rate = config.get("gps", {}).get("rate", None)
-                if rate:
-                    baudrates = [rate]
+            else:
+                log("Using default code for GPS connection")
+                if portname == 'scan' or portname == '':
+                    portname = ''
+                    self.detector = QgsGpsDetector(portname)
+                    self.detector.detected.connect(self.gpsfound_handler)
+                    self.detector.detectionFailed.connect(self.gpsfailed)
+                    self.detector.advance()
+                elif portname.startswith("COM"):
+                    flow = config.get("gps", {}).get("flow_control", None)
+                    rate = config.get("gps", {}).get("rate", None)
+                    if rate:
+                        baudrates = [rate]
+                    else:
+                        baudrates = [QSerialPort.Baud4800,
+                                     QSerialPort.Baud9600,
+                                     QSerialPort.Baud38400,
+                                     QSerialPort.Baud57600,
+                                     QSerialPort.Baud115200]
 
-                for rate in baudrates:
-                    self.device = QSerialPort(portname)
-                    self.device.setBaudRate(rate)
-                    if flow == "hardware":
-                        self.device.setFlowControl(QSerialPort.HardwareControl)
-                    elif flow == "software":
-                        self.device.setFlowControl(QSerialPort.SoftwareControl)
+                    for rate in baudrates:
+                        device = QSerialPort(portname)
+                        device.setBaudRate(rate)
+                        if flow == "hardware":
+                            device.setFlowControl(QSerialPort.HardwareControl)
+                        elif flow == "software":
+                            device.setFlowControl(QSerialPort.SoftwareControl)
+                        else:
+                            device.setFlowControl(QSerialPort.NoFlowControl)
+                        device.setParity(QSerialPort.NoParity)
+                        device.setDataBits(QSerialPort.Data8)
+                        device.setStopBits(QSerialPort.OneStop)
+                        if device.open(QIODevice.ReadWrite):
+                            self.gpsConn = QgsNmeaConnection(device)
+                            self.gpsfound_handler(self.gpsConn)
+                            break
+                        else:
+                            continue
                     else:
-                        self.device.setFlowControl(QSerialPort.NoFlowControl)
-                    self.device.setParity(QSerialPort.NoParity)
-                    self.device.setDataBits(QSerialPort.Data8)
-                    self.device.setStopBits(QSerialPort.OneStop)
-                    if self.device.open(QIODevice.ReadWrite):
-                        self.gpsConn = QgsNmeaConnection(self.device)
-                        self.gpsfound_handler(self.gpsConn)
-                        break
-                    else:
-                        del self.device
-                        continue
-                else:
-                    # If we can't connect to any GPS just error out
-                    self.gpsfailed.emit()
+                        # If we can't connect to any GPS just error out
+                        self.gpsfailed.emit()
 
     def disconnectGPS(self):
         if self.connected:
             self.gpsConn.close()
             self.gpsConn.stateChanged.disconnect(self.gpsStateChanged)
-            # TODO: This doesn't fire for some reason anymore.  Do we need it still?
             self.gpsConn.nmeaSentenceReceived.disconnect(self.parse_data)
-            self.gpsConn.deleteLater()
+            del self.gpsConn
+            self.gpsConn = None
 
         self.isConnected = False
         self._position = None
@@ -198,75 +215,9 @@ class GPSService(QObject):
 
     def parse_data(self, datastring):
         self.log_gps(datastring)
-        try:
-            data = pynmea2.parse(datastring)
-        except AttributeError as er:
-            log(er.message)
-            return
-        except pynmea2.SentenceTypeError as er:
-            log(er.message)
-            return
-        except pynmea2.ParseError as er:
-            log(er.message)
-            return
-        except pynmea2.ChecksumError as er:
-            log(er.message)
-            return
-
-        mappings = {"RMC": self.extract_rmc,
-                    "GGA": self.extract_gga,
-                    "GSV": self.extract_gsv,
-                    "VTG": self.extract_vtg,
-                    "GSA": self.extract_gsa}
-        try:
-            mappings[data.sentence_type](data)
-            self.gpsStateChanged(self.info)
-        except KeyError as ex:
-            log("Unhandled message type: {}. Message: {}".format(data.sentence_type, datastring))
-            return
-        except AttributeError as ex:
-            log(ex)
-            return
-
-    def extract_vtg(self, data):
-        self.info.speed = safe_float(data.spd_over_grnd_kmph)
-        return self.info
-
-    def extract_gsa(self, data):
-        self.info.hdop = safe_float(data.hdop)
-        self.info.pdop = safe_float(data.pdop)
-        self.info.vdop = safe_float(data.vdop)
-        self.info.fixMode = data.mode
-        self.info.fixType = safe_int(data.mode_fix_type)
-        return self.info
-
-    def extract_gsv(self, data):
-        pass
-
-    def extract_gga(self, data):
-        self.info.latitude = data.latitude
-        self.info.longitude = data.longitude
-        self.info.elevation = safe_float(data.altitude)
-        self.info.quality = safe_int(data.gps_qual)
-        self.info.satellitesUsed = safe_int(data.num_sats)
-        return self.info
-
-    def extract_rmc(self, data):
-        self.info.latitude = data.latitude
-        self.info.longitude = data.longitude
-        self.info.speed = KNOTS_TO_KM * safe_float(data.spd_over_grnd)
-        self.info.status = data.status
-        self.info.direction = safe_float(data.true_course)
-        if data.datestamp and data.timestamp:
-            date = QDate(data.datestamp.year, data.datestamp.month, data.datestamp.day)
-            time = QTime(data.timestamp.hour, data.timestamp.minute, data.timestamp.second)
-            dt = QDateTime()
-            self.info.utcDateTime.setTimeSpec(Qt.UTC)
-            self.info.utcDateTime.setDate(date)
-            self.info.utcDateTime.setTime(time)
-        return self.info
 
     def gpsStateChanged(self, gpsInfo: QgsGpsInformation):
+        # TODO This can also be removed after checking the new QGIS 3 API
         if gpsInfo.fixType == NMEA_FIX_BAD or gpsInfo.status == 0 or gpsInfo.quality == 0:
             self.gpsfixed.emit(False, gpsInfo)
             return
@@ -287,8 +238,6 @@ class GPSService(QObject):
 
             if self.position is None:
                 self.firstfix.emit(map_pos, gpsInfo)
-
-            self.info = gpsInfo
 
             if (datetime.now() - self._gpsupdate_last).total_seconds() > self._gpsupdate_frequency:
                 self.gpsposition.emit(map_pos, gpsInfo)
