@@ -251,9 +251,12 @@ class PolylineTool(QgsMapToolEdit):
             self.add_point(point)
         else:
             self.editvertex = None
+            self.currentVectorLayer().triggerRepaint()
+
+        self.update_valid_state()
 
     def canvasMoveEvent(self, event: QgsMapMouseEvent):
-        if self.is_tracking:
+        if self.is_tracking and not self.capturing or self.editvertex is None:
             return
 
         point = point_from_event(event, self.snapping)
@@ -266,13 +269,10 @@ class PolylineTool(QgsMapToolEdit):
         if self.editmode and self.editvertex is not None:
             found, vertexid = self.geom.vertexIdFromVertexNr(self.editvertex)
             self.geom.get().moveVertex(vertexid, QgsPoint(point))
-            self.currentVectorLayer().triggerRepaint()
             self.feature.setGeometry(self.geom)
             self.currentVectorLayer().updateFeature(self.feature)
             self.pointband.setToGeometry(self.toMultiPoint(self.geom), self.currentVectorLayer())
             self.band.setToGeometry(self.geom, self.currentVectorLayer())
-
-        self.update_valid_state()
 
     @property
     def is_polygon_mode(self):
@@ -454,7 +454,6 @@ class PolylineTool(QgsMapToolEdit):
         self.endcaptureaction.setEnabled(self.editmode)
         self.endcaptureaction.setEditing(enabled)
         self.captureaction.setEditMode(enabled)
-
 
     def toMultiPoint(self, geom):
         points = QgsMultiPoint()
