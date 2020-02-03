@@ -144,6 +144,7 @@ class ListWidget(EditorWidget):
 
         if not filterexp and valuefieldindex == keyfieldindex and iconfieldindex == -1:
             values = layer.uniqueValues(keyfieldindex)
+            values = sorted(values)
             for value in values:
                 value = nullconvert(value)
                 item = QStandardItem(value)
@@ -152,6 +153,8 @@ class ListWidget(EditorWidget):
             return
 
         features = roam.api.utils.search_layer(layer, filterexp, fields, with_geometry=False)
+        # Sort the fields based on value field
+        features = sorted(features, key=lambda f: f[valuefield])
         for feature in features:
             keyvalue = nullconvert(feature[keyfieldindex])
             valuvalue = nullconvert(feature[valuefield])
