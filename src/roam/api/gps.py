@@ -124,15 +124,16 @@ class GPSService(QObject):
     def connectGPS(self, portname):
         if not self.connected:
             self._currentport = portname
-            if config.get("flags", {}).get("gps-settings", False):
+            if config.get("gps", {}).get("exp1", False):
                 log("Using QgsSettings override for flow control")
                 if portname == 'scan' or portname == '':
                     portname = ''
 
                 flow = config.get("gps", {}).get("flow_control", None)
-                print(f"GPS flow control is: {flow}")
+                log(f"GPS flow control is: {flow}")
+                settings = QgsSettings()
+
                 if flow:
-                    settings = QgsSettings()
                     if flow == "hardware":
                         settings.setValue("gps/flow_control", QSerialPort.HardwareControl, QgsSettings.Core)
                     elif flow == "software":
@@ -166,8 +167,10 @@ class GPSService(QObject):
                         device = QSerialPort(portname)
                         device.setBaudRate(rate)
                         if flow == "hardware":
+                            log("Using hardware flow control")
                             device.setFlowControl(QSerialPort.HardwareControl)
                         elif flow == "software":
+                            log("Using software flow control")
                             device.setFlowControl(QSerialPort.SoftwareControl)
                         else:
                             device.setFlowControl(QSerialPort.NoFlowControl)
@@ -175,8 +178,8 @@ class GPSService(QObject):
                         device.setDataBits(QSerialPort.Data8)
                         device.setStopBits(QSerialPort.OneStop)
                         if device.open(QIODevice.ReadWrite):
-                            self.gpsConn = QgsNmeaConnection(device)
-                            self.gpsfound_handler(self.gpsConn)
+                            gpsConn = QgsNmeaConnection(device)
+                            self.gpsfound_handler(gpsConn)
                             break
                         else:
                             continue
@@ -207,8 +210,8 @@ class GPSService(QObject):
             # right and will not have the type set correctly
             import sip
             gpsConnection = sip.cast(gpsConnection, QgsGpsConnection)
-            self.gpsConn = gpsConnection
 
+        self.gpsConn = gpsConnection
         self.gpsConn.stateChanged.connect(self.gpsStateChanged)
         self.gpsConn.nmeaSentenceReceived.connect(self.parse_data)
         self.connected = True
