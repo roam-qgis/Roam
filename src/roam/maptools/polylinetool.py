@@ -251,7 +251,6 @@ class PolylineTool(QgsMapToolEdit):
             self.add_point(point)
         else:
             self.editvertex = None
-            self.currentVectorLayer().triggerRepaint()
 
         self.update_valid_state()
 
@@ -334,10 +333,10 @@ class PolylineTool(QgsMapToolEdit):
 
     @property
     def node_count(self):
-        if self.editmode:
-            return self.band.numberOfVertices()
-        else:
-            return self.band.numberOfVertices() - 1
+        return self.band.numberOfVertices()
+        # if self.editmode:
+        #     return self.band.numberOfVertices()
+        # else:
 
     def add_point(self, point):
         self.points.append(point)
@@ -376,9 +375,10 @@ class PolylineTool(QgsMapToolEdit):
         self.remove_last_point()
 
     def endcapture(self):
-        if not self.editmode:
-            self.band.removeLastPoint()
+        # if not self.editmode:
+        #     self.band.removeLastPoint()
 
+        self.update_valid_state()
         errors = self.has_errors()
         if errors and self.config.get("geometry_validation", True):
             self.error.emit("Invalid geometry. <br>"
