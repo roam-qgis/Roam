@@ -30,6 +30,7 @@ class SettingsWidget(Ui_settingsWidget, QWidget):
         self.populated = False
         self.fullScreenCheck.toggled.connect(self.fullScreenCheck_stateChanged)
         self.gpsPortCombo.currentIndexChanged.connect(self.gpsPortCombo_currentIndexChanged)
+        self.gpsFlowControl.currentIndexChanged.connect(self.gpsFlowControl_currentIndexChanged)
         self.refreshPortsButton.pressed.connect(self.refreshPortsButton_pressed)
         self.gpslocationCheck.toggled.connect(self.gpslocationCheck_toggled)
         self.gpsloggingCheck.toggled.connect(self.gpsloggingCheck_toggled)
@@ -89,6 +90,14 @@ class SettingsWidget(Ui_settingsWidget, QWidget):
         self.settings["keyboard"] = checked
         self.notifysettingsupdate()
 
+    def gpsFlowControl_currentIndexChanged(self, index):
+        control = self.gpsFlowControl.currentText()
+        control = control.lower()
+        gpssettings = roam.config.settings.get("gps", {})
+        gpssettings['flow_control'] = control
+        self.notifysettingsupdate()
+
+        roam.config.settings['gps'] = gpssettings
     def gpsPortCombo_currentIndexChanged(self, index):
         #If os returns port name with colon and label, strip label (noted in Windows 7)
         port = self.gpsPortCombo.itemData(index, Qt.UserRole)
@@ -175,6 +184,16 @@ class SettingsWidget(Ui_settingsWidget, QWidget):
 
         self._setgpsport()
         self.set_gps_settings()
+        self.set_gps_flow_control()
+
+    def set_gps_flow_control(self):
+        flowControl = self.settings.get('gps', {}).get("flow_control", "auto")
+        if flowControl == "hardware":
+            self.gpsFlowControl.setCurrentText("Hardware")
+        elif flowControl == "software":
+            self.gpsFlowControl.setCurrentText("Software")
+        else:
+            self.gpsFlowControl.setCurrentText("Auto")
 
     def update_tracking(self, value):
         gpssettings = roam.config.settings.get("gps", {})

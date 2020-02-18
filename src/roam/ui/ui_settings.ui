@@ -54,6 +54,26 @@
       <bool>true</bool>
      </property>
      <layout class="QGridLayout" name="gridLayout_3">
+      <item row="3" column="1">
+       <widget class="QCheckBox" name="gpscentermapCheck">
+        <property name="text">
+         <string>Force map to follow GPS location</string>
+        </property>
+        <property name="checked">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="1">
+       <widget class="QCheckBox" name="gpslocationCheck">
+        <property name="text">
+         <string>Zoom to my location when GPS enabled</string>
+        </property>
+        <property name="checked">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
       <item row="0" column="1">
        <layout class="QHBoxLayout" name="horizontalLayout_2">
         <item>
@@ -75,17 +95,7 @@
         </item>
        </layout>
       </item>
-      <item row="1" column="1">
-       <widget class="QCheckBox" name="gpslocationCheck">
-        <property name="text">
-         <string>Zoom to my location when GPS enabled</string>
-        </property>
-        <property name="checked">
-         <bool>true</bool>
-        </property>
-       </widget>
-      </item>
-      <item row="3" column="1">
+      <item row="4" column="1">
        <widget class="QCheckBox" name="gpsloggingCheck">
         <property name="text">
          <string>Enable GPS Logging</string>
@@ -95,15 +105,35 @@
         </property>
        </widget>
       </item>
-      <item row="2" column="1">
-       <widget class="QCheckBox" name="gpscentermapCheck">
-        <property name="text">
-         <string>Force map to follow GPS location</string>
-        </property>
-        <property name="checked">
-         <bool>true</bool>
-        </property>
-       </widget>
+      <item row="1" column="1">
+       <layout class="QHBoxLayout" name="horizontalLayout_5">
+        <item>
+         <widget class="QLabel" name="label_3">
+          <property name="text">
+           <string> Flow Control</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QComboBox" name="gpsFlowControl">
+          <item>
+           <property name="text">
+            <string>Auto</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Hardware</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Software</string>
+           </property>
+          </item>
+         </widget>
+        </item>
+       </layout>
       </item>
      </layout>
     </widget>
