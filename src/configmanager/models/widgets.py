@@ -91,9 +91,9 @@ class WidgetsModel(QStandardItemModel):
                 droptarget.appendRow(item)
             else:
                 # This isn't fully right but seems to work...
-                self.beginMoveRows(parent, 0, 0, parent, row)
+                # self.beginMoveRows(parent, 0, 0, parent, row)
                 droptarget.insertRow(row, item)
-                self.endMoveRows()
-            item.loadchildren()
+                # self.endMoveRows()
+            # item.loadchildren()
 
         return True
