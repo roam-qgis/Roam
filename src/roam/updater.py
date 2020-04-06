@@ -6,8 +6,7 @@ import urllib.parse
 import zipfile
 from collections import defaultdict
 from queue import Queue
-from urllib.parse import urlparse
-from urllib.request import urlopen
+from urllib.request import urlopen, urljoin
 
 import yaml
 from qgis.PyQt.QtCore import QObject, pyqtSignal, QUrl, QThread
@@ -43,7 +42,7 @@ def parse_serverprojects(configdata):
     if not configdata:
         return {}
 
-    if isinstance(configdata, str):
+    if isinstance(configdata, bytes):
         configdata = yaml.load(configdata)
 
     versions = defaultdict(dict)
@@ -78,7 +77,7 @@ def install_project(info, basefolder, serverurl, updateMode=False):
         filename = "{}-Install.zip".format(info['name'])
 
     serverurl = add_slash(serverurl)
-    url = urlparse.urljoin(serverurl, "projects/{}".format(filename))
+    url = urljoin(serverurl, "projects/{}".format(filename))
 
     tempfolder = os.path.join(basefolder, "_updates")
     if not os.path.exists(tempfolder):
@@ -218,7 +217,7 @@ class UpdateWorker(QObject):
             os.mkdir(tempfolder)
 
         filename = "{}.zip".format(filename)
-        url = urlparse.urljoin(serverurl, "projects/{}".format(filename))
+        url = urljoin(serverurl, "projects/{}".format(filename))
         zippath = os.path.join(tempfolder, filename)
         if not self.check_url_found(url):
             yield "Skipping data download"
@@ -306,9 +305,8 @@ class ProjectUpdater(QObject):
         self.worker.projectInstalled.connect(self.projectInstalled)
         self.updatethread.started.connect(self.worker.run)
 
-    @property
     def configurl(self):
-        url = urlparse.urljoin(add_slash(self.server), "projects/roam.txt")
+        url = urljoin(add_slash(self.server), "projects/roam.txt")
         print("URL", url)
         return url
 
@@ -317,7 +315,7 @@ class ProjectUpdater(QObject):
             return
 
         self.server = server
-        req = QNetworkRequest(QUrl(self.configurl))
+        req = QNetworkRequest(QUrl(self.configurl()))
         reply = self.net.get(req)
         reply.finished.connect(functools.partial(self.list_versions, reply, installedprojects))
 
