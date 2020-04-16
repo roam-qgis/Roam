@@ -66,8 +66,8 @@ GOTO END
 :installer
 ECHO Building installer
 SET NAME=%2
-CALL %BASE%scripts\installer\makesfx.bat "%BASE%release\Roam%NAME% Installer " dist
-CALL %BASE%scripts\installer\makesfx.bat "%BASE%release\Roam%NAME% Installer - Silent" dist -s
+CALL %BASE%scripts\installer\makesfx.bat "%BASE%release\Roam%NAME% Installer " build\exe.win-amd64-3.7
+CALL %BASE%scripts\installer\makesfx.bat "%BASE%release\Roam%NAME% Installer - Silent" build\exe.win-amd64-3.7 -s
 GOTO END
 
 :test
