@@ -11,8 +11,6 @@
 import os
 import sys
 
-import BUILD_CONSTANTS
-
 FILE_NAME = sys.executable
 DIR_NAME = os.path.dirname(sys.executable)
 
@@ -26,21 +24,9 @@ if DIR_NAME not in paths:
 sys.frozen = True
 sys.path = sys.path[:4]
 
-if hasattr(BUILD_CONSTANTS, "TCL_LIBRARY"):
-    os.environ["TCL_LIBRARY"] = os.path.join(DIR_NAME,
-                                             BUILD_CONSTANTS.TCL_LIBRARY)
-
-if hasattr(BUILD_CONSTANTS, "TK_LIBRARY"):
-    os.environ["TK_LIBRARY"] = os.path.join(DIR_NAME,
-                                             BUILD_CONSTANTS.TK_LIBRARY)
-
-if hasattr(BUILD_CONSTANTS, "MATPLOTLIBDATA"):
-    os.environ["MATPLOTLIBDATA"] = os.path.join(DIR_NAME,
-                                             BUILD_CONSTANTS.MATPLOTLIBDATA)
-
-if hasattr(BUILD_CONSTANTS, "PYTZ_TZDATADIR"):
-    os.environ["PYTZ_TZDATADIR"] = os.path.join(DIR_NAME,
-                                                BUILD_CONSTANTS.PYTZ_TZDATADIR)
+os.environ["TCL_LIBRARY"] = os.path.join(DIR_NAME, "tcl")
+os.environ["TK_LIBRARY"] = os.path.join(DIR_NAME, "tk")
+os.environ["MATPLOTLIBDATA"] = os.path.join(DIR_NAME, "mpl-data")
 
 def run():
     name, ext = os.path.splitext(os.path.basename(os.path.normcase(FILE_NAME)))

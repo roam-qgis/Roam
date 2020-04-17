@@ -1,3 +1,10 @@
+import os
+import sys
+
+srcfolder = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
+if srcfolder not in sys.path:
+    sys.path.insert(0, srcfolder)
+
 import distutils.command.bdist_rpm
 import distutils.command.build
 import distutils.command.install
@@ -12,7 +19,7 @@ import os
 import sys
 
 import cx_Freeze
-from cx_Freeze.common import normalize_to_list
+from ext_libs.cx_Freeze.common import normalize_to_list
 
 __all__ = [ "bdist_rpm", "build", "build_exe", "install", "install_exe",
             "setup" ]
@@ -190,10 +197,18 @@ class build_exe(distutils.core.Command):
 
     def run(self):
         metadata = self.distribution.metadata
-        constants_module = cx_Freeze.ConstantsModule(metadata.version,
-                constants=self.constants)
+        constantsModule = cx_Freeze.ConstantsModule(metadata.version)
+        for constant in self.constants:
+            parts = constant.split("=")
+            if len(parts) == 1:
+                name = constant
+                value = None
+            else:
+                name, stringValue = parts
+                value = eval(stringValue)
+            constantsModule.values[name] = value
         freezer = cx_Freeze.Freezer(self.distribution.executables,
-                constants_module, self.includes, self.excludes, self.packages,
+                [constantsModule], self.includes, self.excludes, self.packages,
                 self.replace_paths, (not self.no_compress), self.optimize,
                 self.path, self.build_exe,
                 includeMSVCR = self.include_msvcr,
