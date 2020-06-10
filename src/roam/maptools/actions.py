@@ -88,10 +88,10 @@ class GPSCaptureAction(BaseAction):
         self.setObjectName("GPSCaptureAction")
         self.setText(self.tr("GPS Point"))
         self.setEnabled(False)
+        self.geomtype = geomtype
 
         GPS.gpsfixed.connect(self.setstate)
         GPS.gpsdisconnected.connect(lambda: self.setEnabled(False))
 
     def setstate(self, fixed, *args):
         self.setEnabled(fixed)
-
