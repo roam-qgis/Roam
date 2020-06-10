@@ -10,6 +10,8 @@ from roam.maptools.actions import CaptureAction, GPSTrackingAction, EndCaptureAc
 from roam.maptools.maptoolutils import point_from_event
 from roam.maptools.rubberband import RubberBand
 
+from datetime import datetime
+
 
 class PolylineTool(QgsMapToolEdit):
     mouseClicked = pyqtSignal(QgsPoint)
@@ -92,7 +94,7 @@ class PolylineTool(QgsMapToolEdit):
 
         self.gpscapture = GPSCaptureAction(self, "line")
         self.gpscapture.setText("Add Vertex")
-        self.gpscapture.triggered.connect(self.add_vertex)
+        self.gpscapture.triggered.connect(self.add_vertex_avg)
 
         self.timer = QTimer()
 
@@ -133,7 +135,15 @@ class PolylineTool(QgsMapToolEdit):
         self.captureaction.toggle()
 
     def update_tracking_button(self, gps_fixed, info):
-        self.trackingaction.setEnabled(gps_fixed)
+        # if averaging is turned on
+        averaging = roam.config.settings.get('gps_averaging', True)
+        # averaging is in action
+        in_action = roam.config.settings.get('gps_averaging_in_action', True)
+        # set tracking button unavailable if averaging is in action
+        if averaging and in_action:
+            self.trackingaction.setEnabled(False)
+        else:
+            self.trackingaction.setEnabled(gps_fixed)
 
     def update_state(self, toggled):
         if self.is_tracking:
@@ -198,6 +208,51 @@ class PolylineTool(QgsMapToolEdit):
     @property
     def actions(self):
         return [self.captureaction, self.trackingaction, self.gpscapture, self.endcaptureaction, self.undoaction]
+
+    # --- averaging -----------------------------------------------------------
+    def set_buttons_avg(self, isEnabled):
+        self.captureaction.setEnabled(isEnabled)
+        self.endcaptureaction.setEnabled(isEnabled)
+        self.undoaction.setEnabled(isEnabled)
+
+        if isEnabled==True:
+            geomtype = self.gpscapture.geomtype
+            self.gpscapture.setIcon(QIcon(":/icons/gpsadd-{}".format(geomtype)))
+        else:
+            self.gpscapture.setIcon(QIcon(":/icons/pause"))
+
+    def add_vertex_avg(self):
+        # if turned on
+        if roam.config.settings.get('gps_averaging', True):
+            # if currently happening
+            if roam.config.settings.get('gps_averaging_in_action', True):
+                # start -> stop
+                # averaging
+                average_point = GPS.average_func(GPS.gpspoints)
+                point = QgsPointXY(average_point[0], average_point[1])
+                self.remove_last_point()
+                self.add_point(point)
+                self.band.addPoint(point)
+                # default settings
+                vertex_or_point = ''
+                in_action = False
+                start_time = '0:00:00'
+                roam.config.settings['gps_averaging_measurements'] = 0
+                self.set_buttons_avg(True)
+            else:
+                # stop -> start
+                # avg settings
+                vertex_or_point = 'vertex'
+                in_action = True
+                start_time = datetime.now()
+                self.set_buttons_avg(False)
+            roam.config.settings['gps_vertex_or_point'] = vertex_or_point
+            roam.config.settings['gps_averaging_in_action'] = in_action
+            roam.config.settings['gps_averaging_start_time'] = start_time
+            roam.config.save()
+        else:
+            self.add_vertex()
+    # -------------------------------------------------------------------------
 
     def add_vertex(self):
         location = GPS.position

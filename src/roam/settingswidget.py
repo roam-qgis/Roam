@@ -49,6 +49,18 @@ class SettingsWidget(Ui_settingsWidget, QWidget):
         self.gpstiming_edit.setEnabled(False)
         self.gpsdistance_edit.setEnabled(False)
 
+    # --- gps averaging -------------------------------------------------------
+        self.gpsAveragingCheck.toggled.connect(self.gpsAveragingCheck_toggled)
+
+    def gpsAveragingCheck_toggled(self, checked):
+        self.settings['gps_averaging'] = checked
+        if not checked:
+            self.settings['gps_averaging_in_action'] = False
+            self.settings['gps_averaging_start_time'] = '0:00:00'
+            self.settings['gps_averaging_measurements'] = 0
+        self.notifysettingsupdate()
+    #--------------------------------------------------------------------------
+
     @property
     def settings(self):
         return roam.config.settings
@@ -171,7 +183,11 @@ class SettingsWidget(Ui_settingsWidget, QWidget):
         distance = self.settings.get('draw_distance', True)
         reporterror = self.settings.get('online_error_reporting', True)
         smallmode = self.settings.get('smallmode', False)
-
+        # --- gps averaging ---------------------------------------------------
+        gpsaveraging = self.settings.get('gps_averaging', False)
+        
+        self.gpsAveragingCheck.setChecked(gpsaveraging)
+        # ---------------------------------------------------------------------
         self.fullScreenCheck.setChecked(fullscreen)
         self.gpslocationCheck.setChecked(gpszoom)
         self.gpscentermapCheck.setChecked(gpscenter)

@@ -76,7 +76,7 @@ def roam_geomvertex(values, feature, parent):
 
 
 @qgsfunction(0, 'Roam')
-def roamgeometry(values, feature, parent, *args):
+def roamgeometry(values, feature, parent):
     return capturegeometry
 
 
