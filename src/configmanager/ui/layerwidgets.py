@@ -1,6 +1,5 @@
 __author__ = 'Nathan.Woodrow'
 
-import markdown
 import uuid
 import os
 import shutil
@@ -146,7 +145,7 @@ class PluginWidget(WidgetBase):
         if os.path.exists(readme):
             with open(readme) as f:
                 data = f.read()
-                self.webpage.setHtml(markdown.markdown(data))
+                self.webpage.setHtml(data)
 
 
 class FormWidget(ui_formwidget.Ui_Form, WidgetBase):
