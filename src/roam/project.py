@@ -10,7 +10,6 @@ import roam.api.utils
 import roam.maptools
 import roam.qgisfunctions
 import roam.utils
-from roam.api import FeatureForm
 from roam.config import writefolderconfig, readfolderconfig, ConfigLoadError
 from roam.dataaccess.database import Database
 from roam.roam_form import Form
@@ -116,12 +115,8 @@ def getProjects(paths):
                                for item in next(os.walk(projectpath))[1]]))
 
             for folder in folders:
-                if os.path.basename(folder).startswith("_"):
-                    # Ignore hidden folders.
-                    continue
-
-            for folder in folders:
-                if os.path.basename(folder).startswith("."):
+                basename = os.path.basename(folder)
+                if basename.startswith("_") or basename.startswith("."):
                     # Ignore hidden folders.
                     continue
 
@@ -288,8 +283,9 @@ class Project(QObject):
         if not checkversion(roam.__version__, self.roamversion):
             error = "Roam project version incompatible. \n" \
                     "Please contact Roam administrator. \n" \
-                    "Project Roam version {} but needed version at least {} or above".format(version_major_part(self.roamversion),
-                                                                                    version_major_part(roam.__version__))
+                    "Project Roam version {} but needed version at least {} or above".format(
+                version_major_part(self.roamversion),
+                version_major_part(roam.__version__))
             yield error
 
         if self.configError:
