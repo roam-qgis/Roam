@@ -638,7 +638,10 @@ def create_data_html(fields, attributes, **kwargs) -> str:
         if value == NULL:
             value = ""
         data[name] = value
-        item = u"<tr><th>{0}</th> <td>${{{1}}}</td></tr>".format(field, name)
+        if isinstance(value, str) and (value.lower().endswith('.jpg') or value.lower().endswith('.jpeg') or value.lower().endswith('.png')):
+            item = u"<tr><td><a href=""${{{1}}}""><img width=""100%"" src=""${{{1}}}"" /></a></td></tr>".format(field, name)
+        else:
+            item = u"<tr><th>{0}</th> <td>${{{1}}}</td></tr>".format(field, name)
         items.append(item)
         count += 1
     rowtemple = Template(''.join(items))
