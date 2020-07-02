@@ -85,7 +85,7 @@ class GPSMarker(QgsMapCanvasItem):
         self.magenta = Qt.magenta
         self.lightGreen = Qt.green
         self.cyan = Qt.cyan
-        self._gpsinfo = QgsGPSInformation()
+        self._gpsinfo = QgsGpsInformation()
 
         self.pointbrush = QBrush(self.red)
         self.pointpen = QPen(Qt.black)
