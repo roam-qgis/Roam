@@ -40,7 +40,7 @@ def qgsfunction(args, group, **kwargs):
         def __init__(self, name, args, group, helptext=''):
             QgsExpressionFunction.__init__(self, name, args, group, helptext)
 
-        def func(self, values, feature, parent):
+        def func(self, values, context, parent, node):
             pass
 
     def wrapper(func):
@@ -61,7 +61,7 @@ def qgsfunction(args, group, **kwargs):
 
 
 @qgsfunction(1, "Roam")
-def roam_geomvertex(values, feature, parent):
+def roam_geomvertex(values, *args):
     """
     <h3>function roam_geomvertex</h3>
     <div class="description">Returns a specific vertex from the current object being edited in Roam.</div>
@@ -102,7 +102,7 @@ def roam_geomvertex(values, feature, parent):
 
 
 @qgsfunction(0, 'Roam')
-def roamgeometry(values, feature, parent, *args):
+def roamgeometry(values, *args):
     """
     <h3>function roamgeometry</h3>
     <div class="description">Returns the geometry of the current object being edited in Roam.</div>
@@ -120,7 +120,7 @@ def roamgeometry(values, feature, parent, *args):
 
 
 @qgsfunction(0, "Roam")
-def gps_z(values, feature, parent):
+def gps_z(values, *args):
     """
     <h3>function gps_z</h3>
     <div class="description">Returns the altitude reading from the GPS for the current point.</div>
@@ -141,7 +141,7 @@ def gps_z(values, feature, parent):
 
 
 @qgsfunction(1, "Roam")
-def gps(values, feature, parent):
+def gps(values, *args):
     """
     <h3>function gps</h3>
     <div class="description">Returns various attributes from the attached GPS.</div>
@@ -178,7 +178,7 @@ def gps(values, feature, parent):
 
 
 @qgsfunction(2, "Roam")
-def max_value(values, feature, parent):
+def max_value(values, context, parent, node):
     """
     <h3>function max_value</h3>
     <div class="description">Returns the maximum value from a layer for a given column.</div>
