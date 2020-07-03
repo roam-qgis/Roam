@@ -758,7 +758,7 @@ class MapWidget(Ui_CanvasWidget, QMainWindow):
 
         if roam.config.settings.get('gpscenter', True):
             if not self.lastgpsposition == position:
-                self.lastposition = position
+                self.lastgpsposition = position
                 rect = QgsRectangle(position, position)
                 extentlimt = QgsRectangle(self.canvas.extent())
                 extentlimt.scale(0.95)
