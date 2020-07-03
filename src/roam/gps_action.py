@@ -82,6 +82,9 @@ class GPSMarker(QgsMapCanvasItem):
         self.red = Qt.darkRed
         self.blue = QColor(129, 173, 210)
         self.green = Qt.darkGreen
+        self.magenta = Qt.magenta
+        self.lightGreen = Qt.green
+        self.cyan = Qt.cyan
         self._gpsinfo = QgsGpsInformation()
 
         self.pointbrush = QBrush(self.red)
@@ -102,12 +105,16 @@ class GPSMarker(QgsMapCanvasItem):
         halfSize = self.size / 2.0
         rect = QRectF(0 - halfSize, 0 - halfSize, self.size, self.size)
         painter.setRenderHint(QPainter.Antialiasing)
-        if self.quality == 0:
-            color = self.red
-        elif self.quality == 1:
+        if self.quality == 1:
             color = self.green
-        elif self.quality >= 2:
+        elif self.quality == 2:
             color = self.blue
+        elif self.quality == 3:
+            color = self.magenta
+        elif self.quality == 4:
+            color = self.cyan
+        elif self.quality == 5:
+            color = self.lightGreen
         else:
             color = self.red
 
