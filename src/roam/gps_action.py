@@ -106,9 +106,9 @@ class GPSMarker(QgsMapCanvasItem):
         rect = QRectF(0 - halfSize, 0 - halfSize, self.size, self.size)
         painter.setRenderHint(QPainter.Antialiasing)
         if self.quality == 1:
-            color = self.blue
-        elif self.quality == 2:
             color = self.green
+        elif self.quality == 2:
+            color = self.blue
         elif self.quality == 3:
             color = self.magenta
         elif self.quality == 4:
