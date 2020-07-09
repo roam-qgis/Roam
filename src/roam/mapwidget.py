@@ -13,7 +13,7 @@ from qgis.PyQt.QtWidgets import QActionGroup, QFrame, QWidget, QSizePolicy, \
     QAction, QMainWindow, QGraphicsItem, QToolButton, QLabel, QToolBar
 from qgis.core import QgsMapLayer, Qgis, QgsRectangle, QgsProject, QgsApplication, \
     QgsCoordinateReferenceSystem, QgsCoordinateTransform, QgsPoint, QgsCsException, QgsDistanceArea, QgsWkbTypes, \
-    QgsGeometry
+    QgsGeometry, QgsPointXY
 from qgis.gui import QgsMapToolZoom, QgsRubberBand, QgsScaleComboBox, \
     QgsLayerTreeMapCanvasBridge, \
     QgsMapCanvasSnappingUtils, QgsMapToolPan
@@ -781,11 +781,11 @@ class MapWidget(Ui_CanvasWidget, QMainWindow):
         if roam.config.settings.get('gpscenter', True):
             if not self.lastgpsposition == position:
                 self.lastgpsposition = position
-                rect = QgsRectangle(position, position)
+                rect = QgsRectangle(QgsPointXY(position), QgsPointXY(position))
                 extentlimt = QgsRectangle(self.canvas.extent())
                 extentlimt.scale(0.95)
 
-                if not extentlimt.contains(position):
+                if not extentlimt.contains(QgsPointXY(position)):
                     self.zoom_to_location(position)
 
         self.gpsMarker.show()
@@ -806,7 +806,7 @@ class MapWidget(Ui_CanvasWidget, QMainWindow):
         """
         Zoom to ta given position on the map..
         """
-        rect = QgsRectangle(position, position)
+        rect = QgsRectangle(QgsPointXY(position), QgsPointXY(position))
         self.canvas.setExtent(rect)
         self.canvas.refresh()
 
