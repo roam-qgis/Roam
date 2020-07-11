@@ -786,8 +786,8 @@ class MapWidget(Ui_CanvasWidget, QMainWindow):
                 extentlimt = QgsRectangle(self.canvas.extent())
                 extentlimt.scale(0.95)
 
-            if not extentlimt.contains(QgsPointXY(position)):
-                self.zoom_to_location(position)
+                if not extentlimt.contains(QgsPointXY(position)):
+                    self.zoom_to_location(position)
 
         self.gpsMarker.show()
         self.gpsMarker.setCenter(position, gpsinfo)
