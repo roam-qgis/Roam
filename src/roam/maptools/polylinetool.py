@@ -1,6 +1,6 @@
 from PyQt5.QtCore import pyqtSignal, QTimer, Qt
 from PyQt5.QtGui import QColor, QCursor, QPixmap, QIcon
-from qgis._core import QgsPoint, QgsGeometry, QgsWkbTypes, QgsPointXY, QgsTolerance, QgsPointLocator, QgsMultiPoint
+from qgis._core import QgsPoint, QgsGeometry, QgsWkbTypes, QgsPointXY, QgsTolerance, QgsPointLocator, QgsMultiPoint, QgsLineString
 from qgis._gui import QgsMapToolEdit, QgsRubberBand, QgsMapMouseEvent
 
 import roam.config
@@ -229,10 +229,9 @@ class PolylineTool(QgsMapToolEdit):
                 # start -> stop
                 # averaging
                 average_point = GPS.average_func(GPS.gpspoints)
-                point = QgsPointXY(average_point[0], average_point[1])
-                self.remove_last_point()
+                point = QgsPoint(average_point[0], average_point[1], average_point[2])
                 self.add_point(point)
-                self.band.addPoint(point)
+                self.band.addPoint(QgsPointXY(point))
                 # default settings
                 vertex_or_point = ''
                 in_action = False
@@ -256,10 +255,9 @@ class PolylineTool(QgsMapToolEdit):
 
     def add_vertex(self):
         location = GPS.position
-        self.remove_last_point()
         self.add_point(location)
         # Add an extra point for the move band
-        self.band.addPoint(location)
+        self.band.addPoint(QgsPointXY(location))
 
     def remove_last_vertex(self):
         self.remove_last_point()
@@ -293,7 +291,7 @@ class PolylineTool(QgsMapToolEdit):
         layer = self.currentVectorLayer()
         tol = QgsTolerance.vertexSearchRadius(self.canvas.mapSettings())
         loc = self.canvas.snappingUtils().locatorForLayer(layer)
-        matches = loc.verticesInRect(point, tol)
+        matches = loc.verticesInRect(QgsPoint(point), tol)
         return matches
 
     def canvasReleaseEvent(self, event: QgsMapMouseEvent):
@@ -302,7 +300,8 @@ class PolylineTool(QgsMapToolEdit):
             return
 
         if not self.editmode:
-            point = event.snapPoint()
+            point = QgsPoint(event.snapPoint())
+            point.addZValue(0)
             self.add_point(point)
         else:
             self.editvertex = None
@@ -395,8 +394,8 @@ class PolylineTool(QgsMapToolEdit):
 
     def add_point(self, point):
         self.points.append(point)
-        self.band.addPoint(point)
-        self.pointband.addPoint(point)
+        self.band.addPoint(QgsPointXY(point))
+        self.pointband.addPoint(QgsPointXY(point))
         self.capturing = True
         self.endcaptureaction.setEnabled(True)
         self.undoaction.setEnabled(True)
@@ -409,12 +408,14 @@ class PolylineTool(QgsMapToolEdit):
 
     def get_geometry(self):
         if self.geom is None:
-            return self.band.asGeometry()
+            newline = QgsLineString()
+            newline.setPoints(self.points)
+            return newline
         else:
             return self.geom
 
     def endinvalidcapture(self, errors):
-        self.errorband.setToGeometry(self.get_geometry(), self.currentVectorLayer())
+        self.errorband.setToGeometry(self.band.asGeometry(), self.currentVectorLayer())
         for error in errors:
             if error.hasWhere():
                 self.errorlocations.addPoint(error.where())
@@ -448,7 +449,7 @@ class PolylineTool(QgsMapToolEdit):
         self.undoaction.setEnabled(False)
         self.endcaptureaction.setEnabled(False)
         self.clearErrors()
-        self.geometryComplete.emit(self.get_geometry())
+        self.geometryComplete.emit(QgsGeometry(self.get_geometry()))
 
     def clearErrors(self):
         self.errorband.reset(QgsWkbTypes.LineGeometry)
@@ -460,6 +461,7 @@ class PolylineTool(QgsMapToolEdit):
     def reset(self, *args):
         self.band.reset(QgsWkbTypes.LineGeometry)
         self.pointband.reset(QgsWkbTypes.PointGeometry)
+        self.points = []
         self.capturing = False
         self.set_tracking(False)
         self.undoaction.setEnabled(False)

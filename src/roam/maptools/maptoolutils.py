@@ -1,8 +1,8 @@
 from qgis.gui import QgsMapMouseEvent
-from qgis.core import QgsWkbTypes, QgsPointXY
+from qgis.core import QgsWkbTypes, QgsPointXY, QgsPoint
 
 
-def point_from_event(event: QgsMapMouseEvent, snapping: bool) -> QgsPointXY:
+def point_from_event(event: QgsMapMouseEvent, snapping: bool) -> QgsPoint:
     """
     Returns the point from the mouse canvas event. If snapping is enabled it will be
     snapped using the settings.
@@ -10,9 +10,11 @@ def point_from_event(event: QgsMapMouseEvent, snapping: bool) -> QgsPointXY:
     :return: Point for the map canvas event.
     """
     if snapping:
-        point = event.snapPoint()
+        point = QgsPoint(event.snapPoint())
+        point.addZValue(0)
     else:
-        point = event.originalMapPoint()
+        point = QgsPoint(event.originalMapPoint())
+        point.addZValue(0)
     return point
 
 
