@@ -185,7 +185,7 @@ class SettingsWidget(Ui_settingsWidget, QWidget):
         gpszoom = self.settings.get('gpszoomonfix', True)
         gpscenter = self.settings.get('gpscenter', True)
         gpslogging = self.settings.get('gpslogging', False)
-        gpsantennaheight = self.settings.get('gps_antenna_height', None)
+        gpsantennaheight = self.settings.get('gps_antenna_height', 0.0)
         keyboard = self.settings.get('keyboard', True)
         updateserver = self.settings.get('updateserver', None)
         distance = self.settings.get('draw_distance', True)
