@@ -572,7 +572,7 @@ class MapWidget(Ui_CanvasWidget, QMainWindow):
                                           "Y: <b>{y:.{places}f}</b> "
                                           "Z: <b>{z}m</b> ".format(x=position.x(),
                                                          y=position.y(),
-                                                         z=gpsinfo.elevation,
+                                                         z=position.z(),
                                                          places=places))
         else: self.gpslabelposition.setText('')
         # --- averaging -------------------------------------------------------

@@ -56,6 +56,9 @@ class Stepper(Ui_stepper, QWidget):
         if max:
             self.spinBox.setMaximum(max)
 
+class DoubleStepper(Stepper):
+    def __init__(self, parent=None, Type=QDoubleSpinBox):
+        super().__init__(parent, Type)
 
 class NumberWidget(EditorWidget):
     widgettype = 'Number'

@@ -42,6 +42,8 @@ class SettingsWidget(Ui_settingsWidget, QWidget):
         self.smallModeCheck.toggled.connect(self.smallMode_toggled)
         self.portfinder = PortFinder()
         self.portfinder.portsfound.connect(self._addports)
+        self.gpsAntennaHeight.valueChanged.connect(self.gpsAntennaHeight_edited)
+        self.gpsAntennaHeight.setSuffix(" meters")
         self.gpstiming_edit.valueChanged.connect(self.update_tracking)
         self.gpsdistance_edit.valueChanged.connect(self.update_tracking)
         self.gpstiming_edit.setSuffix(" seconds")
@@ -91,6 +93,11 @@ class SettingsWidget(Ui_settingsWidget, QWidget):
 
     def gpscentermapCheck_toggled(self, checked):
         self.settings["gpscenter"] = checked
+        self.notifysettingsupdate()
+
+    def gpsAntennaHeight_edited(self):
+        antennaHeight = self.gpsAntennaHeight.value()
+        self.settings["gps_antenna_height"] = antennaHeight
         self.notifysettingsupdate()
 
     def fullScreenCheck_stateChanged(self, checked):
@@ -178,6 +185,7 @@ class SettingsWidget(Ui_settingsWidget, QWidget):
         gpszoom = self.settings.get('gpszoomonfix', True)
         gpscenter = self.settings.get('gpscenter', True)
         gpslogging = self.settings.get('gpslogging', False)
+        gpsantennaheight = self.settings.get('gps_antenna_height', None)
         keyboard = self.settings.get('keyboard', True)
         updateserver = self.settings.get('updateserver', None)
         distance = self.settings.get('draw_distance', True)
@@ -191,6 +199,7 @@ class SettingsWidget(Ui_settingsWidget, QWidget):
         self.fullScreenCheck.setChecked(fullscreen)
         self.gpslocationCheck.setChecked(gpszoom)
         self.gpscentermapCheck.setChecked(gpscenter)
+        self.gpsAntennaHeight.setValue(gpsantennaheight)
         self.keyboardCheck.setChecked(keyboard)
         self.gpsloggingCheck.setChecked(gpslogging)
         self.updateServerEdit.setText(updateserver)

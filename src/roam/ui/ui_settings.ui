@@ -231,6 +231,20 @@
         </widget>
        </item>
        <item>
+        <layout class="QHBoxLayout" name="layoutGPSAntennaHeight">
+         <item>
+          <widget class="QLabel" name="lblGPSAntennaHeight">
+           <property name="text">
+            <string> GPS Antenna Height</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="DoubleStepper" name="gpsAntennaHeight" native="true" />
+         </item>
+        </layout>
+       </item>
+       <item>
         <spacer name="verticalSpacer_4">
          <property name="orientation">
           <enum>Qt::Vertical</enum>
@@ -499,6 +513,12 @@ p, li { white-space: pre-wrap; }
  <customwidgets>
   <customwidget>
    <class>Stepper</class>
+   <extends>QWidget</extends>
+   <header>roam.editorwidgets.numberwidget</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>DoubleStepper</class>
    <extends>QWidget</extends>
    <header>roam.editorwidgets.numberwidget</header>
    <container>1</container>
