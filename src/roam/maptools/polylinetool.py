@@ -268,7 +268,7 @@ class PolylineTool(QgsMapToolEdit):
         if not geom:
             return
 
-        point = point_from_event(event, self.snapping)
+        point = QgsGeometry(point_from_event(event, self.snapping)).asPoint()
         if self.editmode:
             layer = self.currentVectorLayer()
             event.snapToGrid(layer.geometryOptions().geometryPrecision(), layer.crs())
@@ -312,7 +312,7 @@ class PolylineTool(QgsMapToolEdit):
         if self.is_tracking and not self.capturing or self.editvertex is None:
             return
 
-        point = point_from_event(event, self.snapping)
+        point = QgsGeometry(point_from_event(event, self.snapping)).asPoint()
         if not self.editmode:
             self.pointband.movePoint(point)
 
