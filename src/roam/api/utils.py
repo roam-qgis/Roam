@@ -264,9 +264,10 @@ def search_layer(layer, filter, field_list=None, with_geometry=False):
     if not with_geometry:
         flags = QgsFeatureRequest.NoGeometry
 
-    request = QgsFeatureRequest()\
-        .setFilterExpression(filter)\
-        .setFlags(flags)
+    request = QgsFeatureRequest()
+    request.setFlags(flags)
+    if not filter == '':
+        request.setFilterExpression(filter)
 
     if field_list:
         request.setSubsetOfAttributes(field_list, layer.fields())
