@@ -60,7 +60,8 @@ class DateWidget(EditorWidget):
         self.setvalue(QDateTime.currentDateTime())
 
     def initWidget(self, widget, config):
-        self.widget.currentTimeClicked.connect(self.setCurrentTime)
+        if hasattr(self.widget, "currentTimeClicked"):
+            self.widget.currentTimeClicked.connect(self.setCurrentTime)
         pickbutton = widget.findChild(QPushButton)
 
         if not pickbutton is None:
