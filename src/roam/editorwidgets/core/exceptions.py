@@ -1,4 +1,3 @@
-
 class EditorWidgetException(Exception):
     pass
 
@@ -9,4 +8,5 @@ class RejectedException(Exception):
 
     def __init__(self, message, level=WARNING):
         super(RejectedException, self).__init__(message)
+        self.message = message
         self.level = level
