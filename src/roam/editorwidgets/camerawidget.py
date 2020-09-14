@@ -38,7 +38,7 @@ class _CameraWidget(QWidget):
         self.capturebutton.pressed.connect(self.capture)
 
         self.actionCancel = self.toolbar.addAction(QIcon(":/icons/cancel"), "Cancel")
-        self.actionCancel.triggered.connect(self.cancel.emit)
+        self.actionCancel.triggered.connect(self._cancel)
 
         self.layout().setContentsMargins(0, 0, 0, 0)
         self.layout().addWidget(self.toolbar)
@@ -46,6 +46,16 @@ class _CameraWidget(QWidget):
         self.layout().addWidget(self.capturebutton)
 
         self.viewfinder.show()
+
+    def __del__(self):
+        if self.camera:
+            self.camera.unload()
+
+    def _cancel(self):
+        if self.camera:
+            self.camera.unload()
+
+        self.cancel.emit()
 
     @property
     def list_of_cameras(self):
@@ -77,11 +87,14 @@ class _CameraWidget(QWidget):
     def imageCaptured(self, frameid, image):
         # TODO Doing a pixmap convert here is a waste but downstream needs a qpixmap for now
         # refactor later
+        if self.camera:
+            self.camera.unload()
         self.imagecaptured.emit(QPixmap.fromImage(image))
 
     def start(self, dev=1):
         if self.camera:
-            self.camera.stop()
+            self.camera.unload()
+
         cameras = QCameraInfo.availableCameras()
         self.camera = QCamera(cameras[dev])
         self.camera.setViewfinder(self.viewfinder)
