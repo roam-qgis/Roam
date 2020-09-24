@@ -134,6 +134,7 @@ def get_data_files():
              os.path.join('gdalplugins', 'gdal_ECW_JP2ECW.dll')]
     extrafiles = [os.path.join(osgeobin, path) for path in utils]
     files += format_paths(extrafiles)
+    files += format_paths(glob.glob(os.path.join("lib", "*.dll")), new_folder="lib\qgis")
 
     files.append((os.path.join(pythonroot, "python3.dll"), "python3.dll"))
     files.append((r"src\plugins", "plugins"))
