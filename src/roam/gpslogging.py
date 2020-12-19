@@ -2,9 +2,10 @@ import getpass
 import uuid
 from datetime import datetime
 
-import roam.config
 from qgis.PyQt.QtCore import Qt, pyqtSignal, QObject, QDateTime
 from qgis.core import QgsFeature, QgsGeometry, QgsPointXY
+
+import roam.config
 
 
 class GPSLogging(QObject):
@@ -20,22 +21,22 @@ class GPSLogging(QObject):
         self.featurecache = []
         self._tracking = False
         self.gps.gpsposition.connect(self.postionupdated)
-        #Get tracklog interval settings
-        self.tracking_settings = roam.config.settings['gps']['tracking']
-        #Add unique track id
+        # Get tracklog interval settings
+        self.tracking_settings = roam.config.settings.get('gps', {}).get('tracking', {})
+        # Add unique track id
         self.tracking_settings['trackid'] = str(uuid.uuid4())
-        #Setup initial tracking value
+        # Setup initial tracking value
         if hasattr(self.tracking_settings, 'distance'):
-            #Default to 0,0 for distance based tracking
-            self.tracking_settings['last'] = QgsPointXY(0,0)
+            # Default to 0,0 for distance based tracking
+            self.tracking_settings['last'] = QgsPointXY(0, 0)
         else:
-            #Default to epoch for time based tracking
+            # Default to epoch for time based tracking
             self.tracking_settings['last'] = 0
 
     def enable_logging_on(self, layer):
-        #Enable logging
+        # Enable logging
         self.logging = True
-        #Setup layer and provider
+        # Setup layer and provider
         self.layer = layer
         self.layerprovider = self.layer.dataProvider()
         self.fields = self.layerprovider.fields()
@@ -61,32 +62,32 @@ class GPSLogging(QObject):
         self.trackingchanged.emit(value)
 
     def postionupdated(self, position: QgsPointXY, info):
-        #Check layer for logging capability and if in logging mode
-        if not self.logging or not self.layer or not self.layerprovider or not self.tracking_settings:  
+        # Check layer for logging capability and if in logging mode
+        if not self.logging or not self.layer or not self.layerprovider or not self.tracking_settings:
             return
-        #Check tracking setting type
+        # Check tracking setting type
         if hasattr(self.tracking_settings, 'distance'):
-            #Get tracking interval
+            # Get tracking interval
             tracking_interval = self.tracking_settings['distance']
-            #Compare distance
+            # Compare distance
             if position.distance(self.tracking_settings['last']) >= tracking_interval:
-                #Log track element
+                # Log track element
                 self.log_track(position, info)
-                #Update last position
+                # Update last position
                 self.tracking_settings['last'] = position
-        else:      
-            #Get tracking interval (default to time 1 sec)
+        else:
+            # Get tracking interval (default to time 1 sec)
             tracking_interval = self.tracking_settings['time']
-            #Get current timestamp
+            # Get current timestamp
             now = datetime.timestamp(datetime.now())
-            #Compare timestamp
+            # Compare timestamp
             if (now - self.tracking_settings['last']) >= tracking_interval:
-                #Log track element
+                # Log track element
                 self.log_track(position, info)
-                #Update last position
+                # Update last position
                 self.tracking_settings['last'] = now
 
-    #Seprate log_track function to allow for multiple types of log intervals
+    # Seprate log_track function to allow for multiple types of log intervals
     def log_track(self, position: QgsPointXY, info):
 
         feature = QgsFeature()

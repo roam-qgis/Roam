@@ -1,8 +1,8 @@
-from qgis.PyQt.QtCore import pyqtSignal, QSize, Qt
-from qgis.PyQt.QtGui import QPixmap, QIcon
 from PyQt5.QtMultimedia import QCameraInfo, QCamera, QCameraImageCapture
 from PyQt5.QtMultimediaWidgets import QCameraViewfinder
-from qgis.PyQt.QtWidgets import QWidget, QGridLayout, QToolBar, QSizePolicy,  QPushButton
+from qgis.PyQt.QtCore import pyqtSignal, QSize, Qt
+from qgis.PyQt.QtGui import QPixmap, QIcon
+from qgis.PyQt.QtWidgets import QWidget, QGridLayout, QToolBar, QSizePolicy, QPushButton
 
 import roam.config
 from roam.editorwidgets.core import LargeEditorWidget
@@ -15,6 +15,7 @@ class CameraError(Exception):
 
 class _CameraWidget(QWidget):
     imagecaptured = pyqtSignal(QPixmap)
+    cancel = pyqtSignal()
 
     def __init__(self, parent=None):
         super(_CameraWidget, self).__init__(parent)
@@ -31,16 +32,30 @@ class _CameraWidget(QWidget):
         self.camera = None
         self.viewfinder = QCameraViewfinder()
         self.viewfinder.mousePressEvent = self.capture
-        self.viewfinder.show()
         self.viewfinder.setAspectRatioMode(Qt.KeepAspectRatioByExpanding)
         self.update_camera_buttons()
         self.capturebutton = QPushButton("Capture", self)
         self.capturebutton.pressed.connect(self.capture)
 
+        self.actionCancel = self.toolbar.addAction(QIcon(":/icons/cancel"), "Cancel")
+        self.actionCancel.triggered.connect(self._cancel)
+
         self.layout().setContentsMargins(0, 0, 0, 0)
         self.layout().addWidget(self.toolbar)
         self.layout().addWidget(self.viewfinder)
         self.layout().addWidget(self.capturebutton)
+
+        self.viewfinder.show()
+
+    def __del__(self):
+        if self.camera:
+            self.camera.unload()
+
+    def _cancel(self):
+        if self.camera:
+            self.camera.unload()
+
+        self.cancel.emit()
 
     @property
     def list_of_cameras(self):
@@ -72,11 +87,14 @@ class _CameraWidget(QWidget):
     def imageCaptured(self, frameid, image):
         # TODO Doing a pixmap convert here is a waste but downstream needs a qpixmap for now
         # refactor later
+        if self.camera:
+            self.camera.unload()
         self.imagecaptured.emit(QPixmap.fromImage(image))
 
     def start(self, dev=1):
         if self.camera:
-            self.camera.stop()
+            self.camera.unload()
+
         cameras = QCameraInfo.availableCameras()
         self.camera = QCamera(cameras[dev])
         self.camera.setViewfinder(self.viewfinder)
@@ -102,6 +120,10 @@ class CameraWidget(LargeEditorWidget):
 
     def initWidget(self, widget, config):
         widget.imagecaptured.connect(self.image_captured)
+        widget.cancel.connect(self.cancel_camera)
+
+    def cancel_camera(self):
+        self.emit_cancel()
 
     def image_captured(self, pixmap):
         image = stamp_from_config(pixmap, self.config)
@@ -119,4 +141,3 @@ class CameraWidget(LargeEditorWidget):
 
     def value(self):
         return self._value
-

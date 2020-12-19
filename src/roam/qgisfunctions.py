@@ -96,6 +96,13 @@ def roam_geomvertex(values, *args):
             except IndexError:
                 return None
             return node
+        elif capturegeometry.type() == QgsWkbTypes.PolygonGeometry:
+            try:
+                node = capturegeometry.vertexAt(nodeindex)
+            except IndexError:
+                return None
+            node = QgsGeometry.fromPointXY(node)
+            return node
     return None
 
 
@@ -186,8 +193,8 @@ def max_value(values, context, parent, node):
     <h4>Arguments</h4>
     <div class="arguments">
     <table>
-    <tr><td class="argument">string</td><td>A string representing a layer in the current workspace.</td></tr>
-    <tr><td class="argument">string</td><td>A string representing a field within this layer.</td></tr>
+    <tr><td class="argument">string</td><td>A string (case sensitive) representing a layer in the current workspace.</td></tr>
+    <tr><td class="argument">string</td><td>A string (case sensitive) representing a field within this layer.</td></tr>
     </table>
     </div>
     <h4>Examples</h4>

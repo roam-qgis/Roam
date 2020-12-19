@@ -307,7 +307,6 @@ class ProjectUpdater(QObject):
 
     def configurl(self):
         url = urljoin(add_slash(self.server), "projects/roam.txt")
-        print("URL", url)
         return url
 
     def check_updates(self, server, installedprojects):
