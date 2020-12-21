@@ -70,6 +70,13 @@ CALL %BASE%scripts\installer\makesfx.bat "%BASE%release\Roam%NAME% Installer " b
 CALL %BASE%scripts\installer\makesfx.bat "%BASE%release\Roam%NAME% Installer - Silent" build\exe.win-amd64-3.7 -s
 GOTO END
 
+:inno_installer
+ECHO Building installer
+SET NAME=%2
+set path="C:\Program Files (x86)\Inno Setup 6";%path%
+iscc /F"Roam%NAME% Installer" %BASE%scripts\installer\roam-installer.iss 
+GOTO END
+
 :test
 @ECHO ON
 ECHO Running tests
