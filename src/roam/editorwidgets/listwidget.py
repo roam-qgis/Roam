@@ -126,8 +126,9 @@ class ListWidget(EditorWidget):
         keyfieldindex = layer.fields().lookupField(keyfield)
         valuefieldindex = layer.fields().lookupField(valuefield)
         if keyfieldindex == -1 or valuefieldindex == -1:
-            roam.utils.warning(f"Can't find key or value column for widget"
+            roam.utils.warning(f"Can't find key or value column for widget "
                                f"Id: {self.id} "
+                               f"Layer: {layername} "
                                f"Key: {keyfield} - {keyfieldindex} "
                                f"Value: {valuefield} - {valuefieldindex} ")
             return
@@ -137,7 +138,7 @@ class ListWidget(EditorWidget):
             item.setData(None, Qt.UserRole)
             self.listmodel.appendRow(item)
 
-        fields = [keyfield, valuefield]
+        fields = [keyfieldindex, valuefieldindex]
         iconfieldindex = layer.fields().lookupField('icon')
         if iconfieldindex > -1:
             fields.append("icon")
