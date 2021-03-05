@@ -265,11 +265,13 @@ def search_layer(layer, filter, field_list=None, with_geometry=False):
         flags = QgsFeatureRequest.NoGeometry
 
     request = QgsFeatureRequest()\
-        .setFilterExpression(filter)\
         .setFlags(flags)
+    
+    if filter:
+        request.setFilterExpression(filter)
 
     if field_list:
-        request.setSubsetOfAttributes(field_list, layer.fields())
+        request.setSubsetOfAttributes(field_list)
 
     return layer.getFeatures(request)
 
