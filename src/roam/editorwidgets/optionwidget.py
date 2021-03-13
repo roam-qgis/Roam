@@ -170,3 +170,18 @@ class OptionWidget(EditorWidget):
             returnvalue = None
 
         return returnvalue
+
+    def reset(self):
+        for button in self.group.buttons():
+            if button.isChecked():
+                button.setChecked(False)
+                self.emitvaluechanged()
+        return
+
+    def togglebutton(self, value):
+        for button in self.group.buttons():
+            if button.property("value") == value:
+                button.setChecked(not button.isChecked())
+                self.emitvaluechanged()
+                return
+        return
