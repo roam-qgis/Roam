@@ -1,6 +1,7 @@
 from roam.api import RoamEvents
 from qgis.PyQt.QtWidgets import QLineEdit, QPlainTextEdit
 from qgis.PyQt.QtCore import QEvent
+from qgis.core import QgsDataSourceUri
 
 from roam.dataaccess.database import Database, DatabaseException
 from roam.editorwidgets.core import EditorWidget
@@ -22,16 +23,8 @@ def _get_sqlite_col_length(layer, fieldname):
         return False, 0
 
     database = Database.fromLayer(layer)
-    try:
-        index = source.index("|") + 1
-        args = source[index:].split("=")
-        args = dict(zip(args[0::2], args[1::2]))
-        try:
-            layer = args['layername']
-        except KeyError:
-            return False, 0
-    except ValueError:
-        layer = layer.name()
+    uri = QgsDataSourceUri(layer.dataProvider().dataSourceUri())
+    layer = uri.quotedTablename()
 
     try:
         tabledata = list(database.query("pragma table_info({})".format(layer)))

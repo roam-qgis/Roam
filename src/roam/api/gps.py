@@ -231,7 +231,8 @@ class GPSService(QObject):
         elif gpsInfo.fixType == NMEA_FIX_3D or NMEA_FIX_2D:
             self.gpsfixed.emit(True, gpsInfo)
 
-        map_pos = QgsPoint(gpsInfo.longitude, gpsInfo.latitude, gpsInfo.elevation)
+        self.elevation = gpsInfo.elevation - roam.config.settings.get('gps_antenna_height', 0.0)
+        map_pos = QgsPoint(gpsInfo.longitude, gpsInfo.latitude, self.elevation)
         self.latlong_position = map_pos
 
         if self.crs:
@@ -259,8 +260,7 @@ class GPSService(QObject):
                     else:
                         if self.gpspoints: self.gpspoints = []
                 # -------------------------------------------------------------
-            self._position = map_pos
-            self.elevation = gpsInfo.elevation
+            self._position = map_pos.clone()
 
     # --- averaging func ------------------------------------------------------
     def _average(self, data, function=statistics.median):

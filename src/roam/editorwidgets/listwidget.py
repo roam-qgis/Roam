@@ -155,7 +155,7 @@ class ListWidget(EditorWidget):
 
         features = roam.api.utils.search_layer(layer, filterexp, fields, with_geometry=False)
         # Sort the fields based on value field
-        features = sorted(features, key=lambda f: f[valuefield])
+        features = sorted(features, key=lambda f: f[keyfield])
         for feature in features:
             keyvalue = nullconvert(feature[keyfieldindex])
             valuvalue = nullconvert(feature[valuefield])

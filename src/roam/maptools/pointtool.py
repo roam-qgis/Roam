@@ -78,8 +78,9 @@ class PointTool(TouchMapTool):
                 super(PointTool, self).canvasReleaseEvent(event)
                 return
 
-        point = event.snapPoint()
-        self.geometryComplete.emit(QgsGeometry.fromPointXY(point))
+        point = QgsPoint(event.snapPoint())
+        point.addZValue(0)
+        self.geometryComplete.emit(QgsGeometry(point))
 
     def canvasMoveEvent(self, event: QgsMapMouseEvent):
         point = event.snapPoint()
@@ -107,7 +108,7 @@ class PointTool(TouchMapTool):
                 # time to do some averaging
                 average_point = GPS.average_func(GPS.gpspoints)
                 point = QgsPoint(average_point[0], average_point[1], average_point[2])
-                self.geometryComplete.emit(point)
+                self.geometryComplete.emit(QgsGeometry(point))
                 # default settings
                 vertex_or_point = ''
                 in_action = False
@@ -127,7 +128,7 @@ class PointTool(TouchMapTool):
     # -------------------------------------------------------------------------
 
     def addatgps(self):
-        self.geometryComplete.emit(GPS.position)
+        self.geometryComplete.emit(QgsGeometry(GPS.position))
 
     def activate(self):
         """

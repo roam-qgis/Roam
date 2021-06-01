@@ -29,6 +29,7 @@ from roam.gps_action import GPSAction, GPSMarker
 from roam.maptools import InfoTool
 from roam.popupdialogs import PickActionDialog
 
+from roam.utils import log
 
 class SnappingUtils(QgsMapCanvasSnappingUtils):
     def prepareIndexStarting(self, count):
@@ -571,7 +572,7 @@ class MapWidget(Ui_CanvasWidget, QMainWindow):
                                           "Y: <b>{y:.{places}f}</b> "
                                           "Z: <b>{z}m</b> ".format(x=position.x(),
                                                          y=position.y(),
-                                                         z=gpsinfo.elevation,
+                                                         z=position.z(),
                                                          places=places))
         else: self.gpslabelposition.setText('')
         # --- averaging -------------------------------------------------------
@@ -780,8 +781,8 @@ class MapWidget(Ui_CanvasWidget, QMainWindow):
 
         if roam.config.settings.get('gpscenter', True):
             if not self.lastgpsposition == position:
-                self.lastgpsposition = position
-                rect = QgsRectangle(position, position)
+                self.lastgpsposition = position.clone()
+                rect = QgsRectangle(QgsPointXY(position), QgsPointXY(position))
                 extentlimt = QgsRectangle(self.canvas.extent())
                 extentlimt.scale(0.95)
 

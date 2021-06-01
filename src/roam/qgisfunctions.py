@@ -96,13 +96,6 @@ def roam_geomvertex(values, *args):
             except IndexError:
                 return None
             return node
-        elif capturegeometry.type() == QgsWkbTypes.PolygonGeometry:
-            try:
-                node = capturegeometry.vertexAt(nodeindex)
-            except IndexError:
-                return None
-            node = QgsGeometry.fromPointXY(node)
-            return node
     return None
 
 
