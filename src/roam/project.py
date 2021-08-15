@@ -419,7 +419,7 @@ class Project(QObject):
             if isinstance(tool, str):
                 _tools[tool] = {}
             elif isinstance(tool, dict):
-                _tools[tool.keys()[0]] = tool.values()[0]
+                _tools[list(tool.keys())[0]] = list(tool.values())[0]
 
         return _tools
 
