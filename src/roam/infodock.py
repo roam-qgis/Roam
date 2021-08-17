@@ -1,15 +1,13 @@
 from collections import OrderedDict
-from string import Template
 
 from qgis.PyQt.QtCore import Qt, QEvent, pyqtSignal
 from qgis.PyQt.QtGui import QIcon, QMouseEvent, QKeySequence
 from qgis.PyQt.QtWebKitWidgets import QWebPage
 from qgis.PyQt.QtWidgets import QWidget, QListWidgetItem, QAction
-from qgis.core import (QgsExpression,
-                       QgsFeatureRequest, QgsGeometry, NULL, QgsWkbTypes, QgsFeature)
+from qgis.core import (QgsFeatureRequest, QgsGeometry, NULL, QgsFeature)
+from string import Template
 
 import roam.api.utils
-
 from roam import templates
 from roam import utils
 from roam.api import RoamEvents, GPS
@@ -465,7 +463,7 @@ class InfoDock(infodock_widget, QWidget):
         self.attributesView.setHtml(html, templates.baseurl)
         tools = self.project.layer_tools(layer)
         hasform = form is not None
-        editattributes = ('edit_attributes' in tools or 'inspection' in tools) and hasform
+        editattributes = ('edit_attributes' in tools and hasform) or 'inspection' in tools
         editgeom = 'edit_geom' in tools and hasform
         deletefeature = 'delete' in tools and hasform
         self.deleteFeatureButton.setVisible(deletefeature)
@@ -568,6 +566,7 @@ class InfoDock(infodock_widget, QWidget):
         :param lastresults: Results of another info results block. Normally info 1
         :return: List of query results from running the query on the layer.
         """
+
         def get_key() -> str:
             try:
                 keycolumn = infoblockdef['mapping']['mapkey']
@@ -638,7 +637,8 @@ def create_data_html(fields, attributes, **kwargs) -> str:
         if value == NULL:
             value = ""
         data[name] = value
-        if isinstance(value, str) and (value.lower().endswith('.jpg') or value.lower().endswith('.jpeg') or value.lower().endswith('.png')):
+        if isinstance(value, str) and (
+                value.lower().endswith('.jpg') or value.lower().endswith('.jpeg') or value.lower().endswith('.png')):
             item = u"<tr><td><a href=""${{{0}}}""><img width=""100%"" src=""${{{0}}}"" /></a></td></tr>".format(name)
         else:
             item = u"<tr><th>{0}</th> <td>${{{1}}}</td></tr>".format(field, name)
@@ -658,4 +658,3 @@ def results_from_feature(feature: QgsFeature) -> OrderedDict:
     attributes = feature.attributes()
     fields = [field.name().lower() for field in feature.fields()]
     return OrderedDict(zip(fields, attributes))
-
