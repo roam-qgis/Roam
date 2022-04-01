@@ -1,4 +1,3 @@
-import imp
 import os
 
 from qgis.PyQt.QtCore import pyqtSignal, QProcess, QObject, QProcessEnvironment
@@ -43,10 +42,11 @@ class BatchFileSync(SyncProvider):
         self.parser = kwargs.get("parser", None)
         self.parsermodule = None
         variables = kwargs.get("variables", {})
-        variables["ROAM_PROJECT_ROOT"] = project.folder
-        variables["ROAM_PROJECT_DATA"] = project.datafolder()
-        variables['ROAM_PROJECTS_HOME'] = os.path.abspath(os.path.join(project.folder, ".."))
-        variables['ROAM_MASTER_DATA_FOLDER'] = os.path.abspath(os.path.join(project.folder, "..", "_data"))
+        if project:
+            variables["ROAM_PROJECT_ROOT"] = project.folder
+            variables["ROAM_PROJECT_DATA"] = project.datafolder()
+            variables['ROAM_PROJECTS_HOME'] = os.path.abspath(os.path.join(project.folder, ".."))
+            variables['ROAM_MASTER_DATA_FOLDER'] = os.path.abspath(os.path.join(project.folder, "..", "_data"))
         env = QProcessEnvironment.systemEnvironment()
         for varname, value in variables.items():
             env.insert(varname, str(value))
