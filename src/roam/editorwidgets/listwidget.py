@@ -142,22 +142,24 @@ class ListWidget(EditorWidget):
         if iconfieldindex > -1:
             fields.append("icon")
 
-        if not filterexp and valuefieldindex == keyfieldindex and iconfieldindex == -1:
-            values = layer.uniqueValues(keyfieldindex)
-            values = sorted(values)
-            for value in values:
-                value = nullconvert(value)
-                item = QStandardItem(value)
-                item.setData(value, Qt.UserRole)
-                self.listmodel.appendRow(item)
-            return
+        # if not filterexp and valuefieldindex == keyfieldindex and iconfieldindex == -1:
+        #     values = layer.uniqueValues(keyfieldindex)
+        #     values = sorted(values)
+        #     for value in values:
+        #         value = nullconvert(value)
+        #         item = QStandardItem(value)
+        #         item.setData(value, Qt.UserRole)
+        #         self.listmodel.appendRow(item)
+        #     return
 
-        features = roam.api.utils.search_layer(layer, filterexp, fields, with_geometry=False)
+        features = roam.api.utils.search_layer(layer, filterexp, field_list=None, with_geometry=False)
         # Sort the fields based on config
         sortBy = layerconfig.get('sort_by', 'default')
         sortAsNumber = layerconfig.get('sort_by_as_number', False)
         if sortBy == "default":
             sortBy = valuefield
+
+        roam.utils.log("SORT BY" + sortBy)
 
         def custom_sort(feature):
             value = feature[sortBy]
@@ -166,8 +168,8 @@ class ListWidget(EditorWidget):
                     value = float(str(value))
                     return False, value
                 except ValueError:
-                    return True,
-            return False, value
+                    return True, value
+            return (nullconvert(value) is None), value
 
         features = sorted(features, key=custom_sort)
 
