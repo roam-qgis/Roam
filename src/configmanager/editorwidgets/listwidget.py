@@ -1,5 +1,4 @@
 from functools import partial
-
 from qgis.PyQt.QtCore import Qt
 from qgis.PyQt.QtWidgets import QWidget
 from qgis.core import QgsMapLayer
@@ -35,6 +34,7 @@ class ListWidgetConfig(Ui_Form, ConfigWidget):
         self.layerCombo.setModel(self.layermodel)
         self.keyCombo.setModel(self.fieldmodel)
         self.valueCombo.setModel(self.fieldmodel)
+        self.sortCombo.setModel(self.fieldmodel)
         self.filterButton.pressed.connect(self.define_filter)
 
         self.fieldmodel.setLayerFilter(self.layerCombo.view().selectionModel())
@@ -61,6 +61,7 @@ class ListWidgetConfig(Ui_Form, ConfigWidget):
         self.layerCombo.setCurrentIndex(-1)
         self.keyCombo.setCurrentIndex(-1)
         self.valueCombo.setCurrentIndex(-1)
+        self.sortCombo.setCurrentIndex(-1)
 
     def widgetchanged(self):
         self.widgetdirty.emit(self.getconfig())
@@ -90,6 +91,18 @@ class ListWidgetConfig(Ui_Form, ConfigWidget):
         return self.filterText.toPlainText()
 
     @property
+    def sortAsNumber(self):
+        return self.sortByAsNumberCheck.isChecked()
+
+    @property
+    def sort_by(self):
+        if self.sortByValue.isChecked():
+            index_key = self.fieldmodel.index(self.sortCombo.currentIndex(), 0)
+            fieldname_key = self.fieldmodel.data(index_key, QgsFieldModel.FieldNameRole)
+            return fieldname_key
+        return "default"
+
+    @property
     def layer(self):
         return self.layerCombo.currentText()
 
@@ -115,6 +128,8 @@ class ListWidgetConfig(Ui_Form, ConfigWidget):
             subconfig['key'] = self.key
             subconfig['value'] = self.value
             subconfig['filter'] = self.filter
+            subconfig['sort_by'] = self.sort_by
+            subconfig['sort_by_as_number'] = self.sortAsNumber
             config['layer'] = subconfig
         else:
             config['list'] = {}
@@ -136,6 +151,7 @@ class ListWidgetConfig(Ui_Form, ConfigWidget):
         self.listText.setPlainText('')
         self.keyCombo.clear()
         self.valueCombo.clear()
+        self.sortCombo.clear()
         self.filterText.clear()
         self.layermodel.refresh()
 
@@ -153,6 +169,8 @@ class ListWidgetConfig(Ui_Form, ConfigWidget):
             subconfig = config.get('layer', {})
             layer = subconfig.get('layer', '') or ''
             key = subconfig.get('key', '') or ''
+            sortBy = subconfig.get('sort_by', 'default') or 'default'
+            sortByAsNumber = subconfig.get('sort_by_as_number', False) or False
             value = subconfig.get('value', '') or ''
             filter = subconfig.get('filter', None)
             index = self.layerCombo.findData(layer, Qt.DisplayRole)
@@ -169,6 +187,16 @@ class ListWidgetConfig(Ui_Form, ConfigWidget):
             valueindex = self.valueCombo.findData(value.lower(), QgsFieldModel.FieldNameRole)
             if valueindex > -1:
                 self.valueCombo.setCurrentIndex(valueindex)
+
+            self.sortByAsNumberCheck.setChecked(sortByAsNumber)
+
+            if sortBy == "default":
+                self.sortDefault.setChecked(True)
+            else:
+                self.sortByValue.setChecked(True)
+                sortIndex = self.sortCombo.findData(sortBy.lower(), QgsFieldModel.FieldNameRole)
+                if sortIndex > -1:
+                    self.sortCombo.setCurrentIndex(sortIndex)
 
             self.filterText.setPlainText(filter)
 

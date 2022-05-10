@@ -2,7 +2,6 @@ import qgis.core
 from qgis.PyQt.QtCore import QSize, Qt, QEvent
 from qgis.PyQt.QtGui import QStandardItem, QStandardItemModel, QIcon
 from qgis.PyQt.QtWidgets import QComboBox
-from qgis.core import QgsProject, QgsExpression, QgsFeatureRequest
 
 import roam.utils
 from roam.api import RoamEvents, utils
@@ -154,8 +153,24 @@ class ListWidget(EditorWidget):
             return
 
         features = roam.api.utils.search_layer(layer, filterexp, fields, with_geometry=False)
-        # Sort the fields based on value field
-        features = sorted(features, key=lambda f: f[valuefield])
+        # Sort the fields based on config
+        sortBy = layerconfig.get('sort_by', 'default')
+        sortAsNumber = layerconfig.get('sort_by_as_number', False)
+        if sortBy == "default":
+            sortBy = valuefield
+
+        def custom_sort(feature):
+            value = feature[sortBy]
+            if sortAsNumber:
+                try:
+                    value = float(str(value))
+                    return False, value
+                except ValueError:
+                    return True,
+            return False, value
+
+        features = sorted(features, key=custom_sort)
+
         for feature in features:
             keyvalue = nullconvert(feature[keyfieldindex])
             valuvalue = nullconvert(feature[valuefield])
