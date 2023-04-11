@@ -2,6 +2,7 @@
 HTML viewer used in the info panel mainly to display selection results
 """
 
+from roam import utils
 import os
 
 from qgis.PyQt.QtCore import (QByteArray, QDate, QDateTime, QTime, QPropertyAnimation,
@@ -30,8 +31,9 @@ def image_handler(key, value, **kwargs):
     if imagetype == 'base64':
         src = f'data:image/png;base64,{value.toBase64().data().decode("utf-8")}'
     else:
-        src = value
-    return imageblock.format(keyid, src)
+        src = "file:///" + value
+    formatted = imageblock.format(keyid, src)
+    return formatted
 
 
 def default_handler(key, value, **kwargs):
@@ -66,11 +68,14 @@ def string_handler(key, value, **kwargs):
             return ','.join(handlers)
 
     def try_image(value):
-        _, extension = os.path.splitext(value)
+        maybefile = value.strip('"')
+
+        # Check if the file extension is supported by Qt to view
+        _, extension = os.path.splitext(maybefile)
         if extension[1:].lower() in supportedformats:
-            if not os.path.exists(value):
-                value = os.path.join(kwargs.get('imagepath', ''), value)
-            return image_handler(key, value, imagetype='file')
+            if not os.path.exists(maybefile):
+                maybefile = os.path.join(kwargs.get('imagepath', ''), maybefile)
+            return image_handler(key, maybefile, imagetype='file')
 
         newvalue = value.encode("utf-8")
         base64 = QByteArray.fromBase64(newvalue)
@@ -81,7 +86,7 @@ def string_handler(key, value, **kwargs):
 
     global supportedformats
     if not supportedformats:
-        supportedformats = [f.data() for f in QImageReader.supportedImageFormats()]
+        supportedformats = [f.data().decode("utf-8") for f in QImageReader.supportedImageFormats()]
 
     return parse_links() or try_image(value) or value
 
@@ -122,7 +127,8 @@ def updateTemplate(data, template, **kwargs):
         handler = handler_mappings.get(type(value), default_handler)
         block = handler(key, value, **kwargs)
         data[key] = block
-    return template.safe_substitute(**data)
+    result = template.safe_substitute(**data)
+    return result
 
 
 # Mapping of data type to display handler
