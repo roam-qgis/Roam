@@ -10,7 +10,7 @@ REM ----------------------------------------------------------------------------
 for %%x in (%cmdcmdline%) do if /i "%%~x"=="/c" set DOUBLECLICKED=1
 
 REM Change OSGeo4W_ROOT here to point to your install of QGIS if it is not in the standard directories.
-IF NOT DEFINED OSGEO4W_ROOT SET OSGEO4W_ROOT="C:\PROGRA~1\QGIS3~1.10"
+IF NOT DEFINED OSGEO4W_ROOT SET OSGEO4W_ROOT="C:\OSGeo4W64"
 SET OSGEO4W_ROOT=%OSGEO4W_ROOT:"=%
 
 IF EXIST "%OSGEO4W_ROOT%\bin\qgis-ltr.bat" (

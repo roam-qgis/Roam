@@ -1,6 +1,6 @@
 from PyQt5.QtCore import pyqtSignal, QTimer, Qt
 from PyQt5.QtGui import QColor, QCursor, QPixmap, QIcon
-from qgis._core import QgsPoint, QgsGeometry, QgsWkbTypes, QgsPointXY, QgsTolerance, QgsPointLocator, QgsMultiPoint
+from qgis._core import QgsPoint, QgsGeometry, QgsWkbTypes, QgsPointXY, QgsTolerance, QgsPointLocator, QgsMultiPoint, QgsLineString
 from qgis._gui import QgsMapToolEdit, QgsRubberBand, QgsMapMouseEvent
 
 import roam.config
@@ -9,6 +9,8 @@ from roam.api import GPS, RoamEvents
 from roam.maptools.actions import CaptureAction, GPSTrackingAction, EndCaptureAction, UndoAction, GPSCaptureAction
 from roam.maptools.maptoolutils import point_from_event
 from roam.maptools.rubberband import RubberBand
+
+from datetime import datetime
 
 
 class PolylineTool(QgsMapToolEdit):
@@ -92,7 +94,7 @@ class PolylineTool(QgsMapToolEdit):
 
         self.gpscapture = GPSCaptureAction(self, "line")
         self.gpscapture.setText("Add Vertex")
-        self.gpscapture.triggered.connect(self.add_vertex)
+        self.gpscapture.triggered.connect(self.add_vertex_avg)
 
         self.timer = QTimer()
 
@@ -133,7 +135,15 @@ class PolylineTool(QgsMapToolEdit):
         self.captureaction.toggle()
 
     def update_tracking_button(self, gps_fixed, info):
-        self.trackingaction.setEnabled(gps_fixed)
+        # if averaging is turned on
+        averaging = roam.config.settings.get('gps_averaging', True)
+        # averaging is in action
+        in_action = roam.config.settings.get('gps_averaging_in_action', True)
+        # set tracking button unavailable if averaging is in action
+        if averaging and in_action:
+            self.trackingaction.setEnabled(False)
+        else:
+            self.trackingaction.setEnabled(gps_fixed)
 
     def update_state(self, toggled):
         if self.is_tracking:
@@ -199,12 +209,55 @@ class PolylineTool(QgsMapToolEdit):
     def actions(self):
         return [self.captureaction, self.trackingaction, self.gpscapture, self.endcaptureaction, self.undoaction]
 
+    # --- averaging -----------------------------------------------------------
+    def set_buttons_avg(self, isEnabled):
+        self.captureaction.setEnabled(isEnabled)
+        self.endcaptureaction.setEnabled(isEnabled)
+        self.undoaction.setEnabled(isEnabled)
+
+        if isEnabled==True:
+            geomtype = self.gpscapture.geomtype
+            self.gpscapture.setIcon(QIcon(":/icons/gpsadd-{}".format(geomtype)))
+        else:
+            self.gpscapture.setIcon(QIcon(":/icons/pause"))
+
+    def add_vertex_avg(self):
+        # if turned on
+        if roam.config.settings.get('gps_averaging', True):
+            # if currently happening
+            if roam.config.settings.get('gps_averaging_in_action', True):
+                # start -> stop
+                # averaging
+                average_point = GPS.average_func(GPS.gpspoints)
+                point = QgsPoint(average_point[0], average_point[1], average_point[2])
+                self.add_point(point)
+                self.band.addPoint(QgsPointXY(point))
+                # default settings
+                vertex_or_point = ''
+                in_action = False
+                start_time = '0:00:00'
+                roam.config.settings['gps_averaging_measurements'] = 0
+                self.set_buttons_avg(True)
+            else:
+                # stop -> start
+                # avg settings
+                vertex_or_point = 'vertex'
+                in_action = True
+                start_time = datetime.now()
+                self.set_buttons_avg(False)
+            roam.config.settings['gps_vertex_or_point'] = vertex_or_point
+            roam.config.settings['gps_averaging_in_action'] = in_action
+            roam.config.settings['gps_averaging_start_time'] = start_time
+            roam.config.save()
+        else:
+            self.add_vertex()
+    # -------------------------------------------------------------------------
+
     def add_vertex(self):
         location = GPS.position
-        self.remove_last_point()
         self.add_point(location)
         # Add an extra point for the move band
-        self.band.addPoint(location)
+        self.band.addPoint(QgsPointXY(location))
 
     def remove_last_vertex(self):
         self.remove_last_point()
@@ -215,7 +268,7 @@ class PolylineTool(QgsMapToolEdit):
         if not geom:
             return
 
-        point = point_from_event(event, self.snapping)
+        point = QgsGeometry(point_from_event(event, self.snapping)).asPoint()
         if self.editmode:
             layer = self.currentVectorLayer()
             event.snapToGrid(layer.geometryOptions().geometryPrecision(), layer.crs())
@@ -238,7 +291,7 @@ class PolylineTool(QgsMapToolEdit):
         layer = self.currentVectorLayer()
         tol = QgsTolerance.vertexSearchRadius(self.canvas.mapSettings())
         loc = self.canvas.snappingUtils().locatorForLayer(layer)
-        matches = loc.verticesInRect(point, tol)
+        matches = loc.verticesInRect(QgsPoint(point), tol)
         return matches
 
     def canvasReleaseEvent(self, event: QgsMapMouseEvent):
@@ -247,7 +300,8 @@ class PolylineTool(QgsMapToolEdit):
             return
 
         if not self.editmode:
-            point = event.snapPoint()
+            point = QgsPoint(event.snapPoint())
+            point.addZValue(0)
             self.add_point(point)
         else:
             self.editvertex = None
@@ -258,7 +312,7 @@ class PolylineTool(QgsMapToolEdit):
         if self.is_tracking and not self.capturing or self.editvertex is None:
             return
 
-        point = point_from_event(event, self.snapping)
+        point = QgsGeometry(point_from_event(event, self.snapping)).asPoint()
         if not self.editmode:
             self.pointband.movePoint(point)
 
@@ -340,8 +394,8 @@ class PolylineTool(QgsMapToolEdit):
 
     def add_point(self, point):
         self.points.append(point)
-        self.band.addPoint(point)
-        self.pointband.addPoint(point)
+        self.band.addPoint(QgsPointXY(point))
+        self.pointband.addPoint(QgsPointXY(point))
         self.capturing = True
         self.endcaptureaction.setEnabled(True)
         self.undoaction.setEnabled(True)
@@ -354,12 +408,14 @@ class PolylineTool(QgsMapToolEdit):
 
     def get_geometry(self):
         if self.geom is None:
-            return self.band.asGeometry()
+            newline = QgsLineString()
+            newline.setPoints(self.points)
+            return newline
         else:
             return self.geom
 
     def endinvalidcapture(self, errors):
-        self.errorband.setToGeometry(self.get_geometry(), self.currentVectorLayer())
+        self.errorband.setToGeometry(self.band.asGeometry(), self.currentVectorLayer())
         for error in errors:
             if error.hasWhere():
                 self.errorlocations.addPoint(error.where())
@@ -393,7 +449,7 @@ class PolylineTool(QgsMapToolEdit):
         self.undoaction.setEnabled(False)
         self.endcaptureaction.setEnabled(False)
         self.clearErrors()
-        self.geometryComplete.emit(self.get_geometry())
+        self.geometryComplete.emit(QgsGeometry(self.get_geometry()))
 
     def clearErrors(self):
         self.errorband.reset(QgsWkbTypes.LineGeometry)
@@ -405,6 +461,7 @@ class PolylineTool(QgsMapToolEdit):
     def reset(self, *args):
         self.band.reset(QgsWkbTypes.LineGeometry)
         self.pointband.reset(QgsWkbTypes.PointGeometry)
+        self.points = []
         self.capturing = False
         self.set_tracking(False)
         self.undoaction.setEnabled(False)

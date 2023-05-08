@@ -1,4 +1,5 @@
 import math
+from datetime import datetime
 from collections import defaultdict
 from functools import partial
 
@@ -12,7 +13,7 @@ from qgis.PyQt.QtWidgets import QActionGroup, QFrame, QWidget, QSizePolicy, \
     QAction, QMainWindow, QGraphicsItem, QToolButton, QLabel, QToolBar
 from qgis.core import QgsMapLayer, Qgis, QgsRectangle, QgsProject, QgsApplication, \
     QgsCoordinateReferenceSystem, QgsCoordinateTransform, QgsPoint, QgsCsException, QgsDistanceArea, QgsWkbTypes, \
-    QgsGeometry
+    QgsGeometry, QgsPointXY
 from qgis.gui import QgsMapToolZoom, QgsRubberBand, QgsScaleComboBox, \
     QgsLayerTreeMapCanvasBridge, \
     QgsMapCanvasSnappingUtils, QgsMapToolPan
@@ -28,6 +29,7 @@ from roam.gps_action import GPSAction, GPSMarker
 from roam.maptools import InfoTool
 from roam.popupdialogs import PickActionDialog
 
+from roam.utils import log
 
 class SnappingUtils(QgsMapCanvasSnappingUtils):
     def prepareIndexStarting(self, count):
@@ -420,11 +422,13 @@ class MapWidget(Ui_CanvasWidget, QMainWindow):
         self.positionlabel = QLabel('')
         self.gpslabel = QLabel("GPS: Not active")
         self.gpslabelposition = QLabel("")
+        self.gpslabelaveraging = QLabel('')                                     # averaging
 
         self.statusbar.addWidget(self.snappingbutton)
         self.statusbar.addWidget(spacer2)
         self.statusbar.addWidget(self.gpslabel)
         self.statusbar.addWidget(self.gpslabelposition)
+        self.statusbar.addWidget(self.gpslabelaveraging)                        # averaging
         self.statusbar.addPermanentWidget(self.scalebutton)
 
         self.canvas.extentsChanged.connect(self.update_status_label)
@@ -528,6 +532,7 @@ class MapWidget(Ui_CanvasWidget, QMainWindow):
         if not fixed:
             self.gpslabel.setText("GPS: Acquiring fix")
             self.gpslabelposition.setText("")
+            self.gpslabelaveraging.setText('')                                  # averaging
 
     quality_mappings = {
         0: "invalid",
@@ -560,16 +565,34 @@ class MapWidget(Ui_CanvasWidget, QMainWindow):
                                                         gpsinfo.satellitesUsed))
 
         places = roam.config.settings.get("gpsplaces", 8)
-        self.gpslabelposition.setText("X: <b>{x:.{places}f}</b> "
-                                      "Y: <b>{y:.{places}f}</b> "
-                                      "Z: <b>{z}m</b> ".format(x=position.x(),
-                                                     y=position.y(),
-                                                     z=gpsinfo.elevation,
-                                                     places=places))
+
+        # if averaging, don't show this
+        if not roam.config.settings.get('gps_averaging', True):
+            self.gpslabelposition.setText("X: <b>{x:.{places}f}</b> "
+                                          "Y: <b>{y:.{places}f}</b> "
+                                          "Z: <b>{z}m</b> ".format(x=position.x(),
+                                                         y=position.y(),
+                                                         z=position.z(),
+                                                         places=places))
+        else: self.gpslabelposition.setText('')
+        # --- averaging -------------------------------------------------------
+        # if turned on
+        if roam.config.settings.get('gps_averaging', True):
+            time = roam.config.settings.get('gps_averaging_start_time', '')
+            # if currently happening
+            if roam.config.settings.get('gps_averaging_in_action', True):
+                time = datetime.now().replace(microsecond=0) - time.replace(microsecond=0)
+            count = roam.config.settings.get('gps_averaging_measurements', int)
+            avglabel = 'AVG: <b>%s / %s</b>' % (time, count)
+        else:
+            avglabel = ''
+        self.gpslabelaveraging.setText(avglabel)
+        # ---------------------------------------------------------------------
 
     def gps_disconnected(self):
         self.gpslabel.setText("GPS: Not Active")
         self.gpslabelposition.setText("")
+        self.gpslabelaveraging.setText("")
         self.gpsMarker.hide()
 
     def zoom_to_feature(self, feature):
@@ -758,12 +781,12 @@ class MapWidget(Ui_CanvasWidget, QMainWindow):
 
         if roam.config.settings.get('gpscenter', True):
             if not self.lastgpsposition == position:
-                self.lastgpsposition = position
-                rect = QgsRectangle(position, position)
+                self.lastgpsposition = position.clone()
+                rect = QgsRectangle(QgsPointXY(position), QgsPointXY(position))
                 extentlimt = QgsRectangle(self.canvas.extent())
                 extentlimt.scale(0.95)
 
-                if not extentlimt.contains(position):
+                if not extentlimt.contains(QgsPointXY(position)):
                     self.zoom_to_location(position)
 
         self.gpsMarker.show()
@@ -784,7 +807,7 @@ class MapWidget(Ui_CanvasWidget, QMainWindow):
         """
         Zoom to ta given position on the map..
         """
-        rect = QgsRectangle(position, position)
+        rect = QgsRectangle(QgsPointXY(position), QgsPointXY(position))
         self.canvas.setExtent(rect)
         self.canvas.refresh()
 

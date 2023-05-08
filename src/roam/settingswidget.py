@@ -42,12 +42,26 @@ class SettingsWidget(Ui_settingsWidget, QWidget):
         self.smallModeCheck.toggled.connect(self.smallMode_toggled)
         self.portfinder = PortFinder()
         self.portfinder.portsfound.connect(self._addports)
+        self.gpsAntennaHeight.valueChanged.connect(self.gpsAntennaHeight_edited)
+        self.gpsAntennaHeight.setSuffix(" meters")
         self.gpstiming_edit.valueChanged.connect(self.update_tracking)
         self.gpsdistance_edit.valueChanged.connect(self.update_tracking)
         self.gpstiming_edit.setSuffix(" seconds")
         self.gpsdistance_edit.setSuffix(" map units")
         self.gpstiming_edit.setEnabled(False)
         self.gpsdistance_edit.setEnabled(False)
+
+    # --- gps averaging -------------------------------------------------------
+        self.gpsAveragingCheck.toggled.connect(self.gpsAveragingCheck_toggled)
+
+    def gpsAveragingCheck_toggled(self, checked):
+        self.settings['gps_averaging'] = checked
+        if not checked:
+            self.settings['gps_averaging_in_action'] = False
+            self.settings['gps_averaging_start_time'] = '0:00:00'
+            self.settings['gps_averaging_measurements'] = 0
+        self.notifysettingsupdate()
+    #--------------------------------------------------------------------------
 
     @property
     def settings(self):
@@ -79,6 +93,11 @@ class SettingsWidget(Ui_settingsWidget, QWidget):
 
     def gpscentermapCheck_toggled(self, checked):
         self.settings["gpscenter"] = checked
+        self.notifysettingsupdate()
+
+    def gpsAntennaHeight_edited(self):
+        antennaHeight = self.gpsAntennaHeight.value()
+        self.settings["gps_antenna_height"] = antennaHeight
         self.notifysettingsupdate()
 
     def fullScreenCheck_stateChanged(self, checked):
@@ -166,15 +185,21 @@ class SettingsWidget(Ui_settingsWidget, QWidget):
         gpszoom = self.settings.get('gpszoomonfix', True)
         gpscenter = self.settings.get('gpscenter', True)
         gpslogging = self.settings.get('gpslogging', False)
+        gpsantennaheight = self.settings.get('gps_antenna_height', 0.0)
         keyboard = self.settings.get('keyboard', True)
         updateserver = self.settings.get('updateserver', None)
         distance = self.settings.get('draw_distance', True)
         reporterror = self.settings.get('online_error_reporting', True)
         smallmode = self.settings.get('smallmode', False)
-
+        # --- gps averaging ---------------------------------------------------
+        gpsaveraging = self.settings.get('gps_averaging', False)
+        
+        self.gpsAveragingCheck.setChecked(gpsaveraging)
+        # ---------------------------------------------------------------------
         self.fullScreenCheck.setChecked(fullscreen)
         self.gpslocationCheck.setChecked(gpszoom)
         self.gpscentermapCheck.setChecked(gpscenter)
+        self.gpsAntennaHeight.setValue(gpsantennaheight)
         self.keyboardCheck.setChecked(keyboard)
         self.gpsloggingCheck.setChecked(gpslogging)
         self.updateServerEdit.setText(updateserver)
