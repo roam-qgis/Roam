@@ -33,6 +33,11 @@ class Database(object):
         source = layer.source()
         uri = QgsDataSourceUri(layer.dataProvider().dataSourceUri())
         if ".sqlite" in source:
+            try:
+                index = source.index("|")
+                source = source[:index]
+            except ValueError:
+                pass
             if uri.database():
                 source = uri.database()
 

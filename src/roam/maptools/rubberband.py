@@ -1,6 +1,6 @@
 from PyQt5.QtCore import Qt, QPointF, QPoint, QRectF
 from PyQt5.QtGui import QFont, QPen, QBrush, QPainterPath, QPainter
-from qgis._core import QgsDistanceArea, QgsProject, geoNone, QgsGeometry, QgsPoint
+from qgis._core import QgsDistanceArea, QgsProject, GEO_NONE, QgsGeometry, QgsPoint
 from qgis._gui import QgsRubberBand
 
 import roam.config
@@ -29,7 +29,7 @@ class RubberBand(QgsRubberBand):
         distancearea = QgsDistanceArea()
         dest = self.canvas.mapSettings().destinationCrs()
         distancearea.setSourceCrs(dest, QgsProject.instance().transformContext())
-        ellispoid = QgsProject.instance().readEntry("Measure", "/Ellipsoid", geoNone())
+        ellispoid = QgsProject.instance().readEntry("Measure", "/Ellipsoid", GEO_NONE)
         distancearea.setEllipsoid(ellispoid[0])
         return distancearea
 

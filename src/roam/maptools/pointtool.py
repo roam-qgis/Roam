@@ -10,8 +10,6 @@ from roam.maptools.actions import CaptureAction, GPSCaptureAction
 from roam.maptools.rubberband import RubberBand
 from roam.maptools.touchtool import TouchMapTool
 
-from datetime import datetime
-import roam.config
 
 class PointTool(TouchMapTool):
     """
@@ -51,8 +49,7 @@ class PointTool(TouchMapTool):
 
         self.captureaction = CaptureAction(self, 'point')
         self.gpscapture = GPSCaptureAction(self, 'point')
-        self.gpscapture.triggered.connect(self.add_point_avg)
-        GPS.gpsposition.connect(self.update_button_action)
+        self.gpscapture.triggered.connect(self.addatgps)
         self.snapper = self.canvas.snappingUtils()
         self.pointband = RubberBand(self.canvas, QgsWkbTypes.PointGeometry)
         self.startcolour = QColor.fromRgb(0, 0, 255, 100)
@@ -78,57 +75,17 @@ class PointTool(TouchMapTool):
                 super(PointTool, self).canvasReleaseEvent(event)
                 return
 
-        point = QgsPoint(event.snapPoint())
-        point.addZValue(0)
-        self.geometryComplete.emit(QgsGeometry(point))
+        point = event.snapPoint()
+        self.geometryComplete.emit(QgsGeometry.fromPointXY(point))
 
     def canvasMoveEvent(self, event: QgsMapMouseEvent):
         point = event.snapPoint()
         self.pointband.movePoint(point)
         self.pointband.show()
 
-    # --- averaging -----------------------------------------------------------
-    def update_button_action(self):
-        averaging = roam.config.settings.get('gps_averaging', True)
-        in_action = roam.config.settings.get('gps_averaging_in_action', True)
-        if averaging and in_action:
-            self.captureaction.setEnabled(False)
-            self.gpscapture.setIcon(QIcon(":/icons/pause"))
-        else:
-            self.captureaction.setEnabled(True)
-            geomtype = self.gpscapture.geomtype
-            self.gpscapture.setIcon(QIcon(":/icons/gpsadd-{}".format(geomtype)))
-
-    def add_point_avg(self):
-        # if turned on
-        if roam.config.settings.get('gps_averaging', True):
-            # if currently happening
-            if roam.config.settings.get('gps_averaging_in_action', True):
-                # start -> stop
-                # time to do some averaging
-                average_point = GPS.average_func(GPS.gpspoints)
-                point = QgsPoint(average_point[0], average_point[1], average_point[2])
-                self.geometryComplete.emit(QgsGeometry(point))
-                # default settings
-                vertex_or_point = ''
-                in_action = False
-                start_time = '0:00:00'
-                roam.config.settings['gps_averaging_measurements'] = 0
-            else:
-                # stop -> start
-                vertex_or_point = 'point'
-                in_action = True
-                start_time = datetime.now()
-            roam.config.settings['gps_vertex_or_point'] = vertex_or_point
-            roam.config.settings['gps_averaging_in_action'] = in_action
-            roam.config.settings['gps_averaging_start_time'] = start_time
-            roam.config.save()
-        else:
-            self.addatgps()
-    # -------------------------------------------------------------------------
-
     def addatgps(self):
-        self.geometryComplete.emit(QgsGeometry(GPS.position))
+        location = GPS.position
+        self.geometryComplete.emit(QgsGeometry.fromPointXY(location))
 
     def activate(self):
         """

@@ -1,5 +1,3 @@
-import roam.config
-from datetime import datetime
 from qgis.PyQt.QtWidgets import QWidget
 from roam.ui.ui_gps import Ui_gpsWidget
 
@@ -42,14 +40,6 @@ class GPSWidget(Ui_gpsWidget, QWidget):
         self.hdopLabel.setText(str(info.hdop))
         self.vdopLabel.setText(str(info.vdop))
         self.pdopLabel.setText(str(info.pdop))
-        # --- averaging -------------------------------------------------------
-        numOfMeas = roam.config.settings.get('gps_averaging_measurements', {})
-        self.numOfMeasurementsLabel.setText(str(numOfMeas))
-        time = roam.config.settings.get('gps_averaging_start_time', '')
-        if roam.config.settings.get('gps_averaging_in_action', True):
-            time = datetime.now().replace(microsecond=0) - time.replace(microsecond=0)
-        self.sessionDurationLabel.setText(str(time))
-        # ---------------------------------------------------------------------
 
     def disconnected(self):
         self.activeLabel.setText("GPS Not Active")

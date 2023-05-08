@@ -933,11 +933,6 @@ class FeatureForm(FeatureFormBase):
         if self.geomwidget and self.geomwidget.edited:
             geometry = self.geomwidget.geometry()
             feature.setGeometry(geometry)
-        layer = self.form.QGISLayer
-        if layer.wkbType() == (feature.geometry().wkbType() - 1000):
-            geomWithoutZ = feature.geometry().constGet().clone()
-            geomWithoutZ.dropZValue()
-            feature.setGeometry(geomWithoutZ)
         return feature
 
     def delete(self):

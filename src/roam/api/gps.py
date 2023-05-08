@@ -1,10 +1,9 @@
 import os
-import statistics
 from datetime import datetime
 
 from PyQt5.QtSerialPort import QSerialPort
 from qgis.PyQt.QtCore import QObject, pyqtSignal, QDate, QDateTime, QTime, Qt, QTimer, QIODevice
-from qgis.core import (QgsGpsDetector, QgsPoint, QgsNmeaConnection, QgsGpsConnection, \
+from qgis.core import (QgsGpsDetector, QgsPointXY, QgsNmeaConnection, QgsGpsConnection, \
                        QgsCoordinateTransform, QgsCoordinateReferenceSystem, \
                        QgsGpsInformation, QgsCsException, QgsProject, QgsSettings)
 
@@ -45,8 +44,8 @@ class GPSService(QObject):
     connectionStatusChanaged = pyqtSignal(bool)
 
     # Connect to listen to GPS status updates.
-    gpsposition = pyqtSignal(QgsPoint, object)
-    firstfix = pyqtSignal(QgsPoint, object)
+    gpsposition = pyqtSignal(QgsPointXY, object)
+    firstfix = pyqtSignal(QgsPointXY, object)
 
     def __init__(self):
         super(GPSService, self).__init__()
@@ -62,8 +61,6 @@ class GPSService(QObject):
         self._gpsupdate_last = datetime.min
         self.gpslogfile = None
         self.gpsConn = None
-        # for averaging
-        self.gpspoints = []
 
     def __del__(self):
         if self.gpsConn:
@@ -85,7 +82,7 @@ class GPSService(QObject):
         self.isConnected = value
 
     @property
-    def position(self) -> QgsPoint:
+    def position(self) -> QgsPointXY:
         return self._position
 
     def log_gps(self, line):
@@ -231,14 +228,13 @@ class GPSService(QObject):
         elif gpsInfo.fixType == NMEA_FIX_3D or NMEA_FIX_2D:
             self.gpsfixed.emit(True, gpsInfo)
 
-        self.elevation = gpsInfo.elevation - roam.config.settings.get('gps_antenna_height', 0.0)
-        map_pos = QgsPoint(gpsInfo.longitude, gpsInfo.latitude, self.elevation)
+        map_pos = QgsPointXY(gpsInfo.longitude, gpsInfo.latitude)
         self.latlong_position = map_pos
 
         if self.crs:
-            coordTransform = QgsCoordinateTransform(self.wgs84CRS, self.crs, QgsProject.instance())
+            transform = QgsCoordinateTransform(self.wgs84CRS, self.crs, QgsProject.instance())
             try:
-                map_pos.transform(coordTransform)
+                map_pos = transform.transform(map_pos)
             except QgsCsException:
                 log("Transform exception")
                 return
@@ -249,32 +245,10 @@ class GPSService(QObject):
             if (datetime.now() - self._gpsupdate_last).total_seconds() > self._gpsupdate_frequency:
                 self.gpsposition.emit(map_pos, gpsInfo)
                 self._gpsupdate_last = datetime.now()
-                # --- averaging -----------------------------------------------
-                # if turned on
-                if roam.config.settings.get('gps_averaging', True):
-                    # if currently happening
-                    if roam.config.settings.get('gps_averaging_in_action', True):
-                        self.gpspoints.append(map_pos)
-                        roam.config.settings['gps_averaging_measurements'] = len(self.gpspoints)
-                        roam.config.save()
-                    else:
-                        if self.gpspoints: self.gpspoints = []
-                # -------------------------------------------------------------
-            self._position = map_pos.clone()
 
-    # --- averaging func ------------------------------------------------------
-    def _average(self, data, function=statistics.median):
-        if not data:
-            return 0, 0, 0
-        x, y, z = zip(*data)
-        return function(x), function(y), function(z)
+            self._position = map_pos
+            self.elevation = gpsInfo.elevation
 
-    def average_func(self, gps_points, average_kwargs={}):
-        return self._average(
-            tuple((point.x(), point.y(), point.z()) for point in gps_points),
-            **average_kwargs
-        )
-    # -------------------------------------------------------------------------
 
 class FileGPSService(GPSService):
     def __init__(self, filename):
@@ -287,7 +261,7 @@ class FileGPSService(GPSService):
 
     def connectGPS(self, portname):
         # Normally the portname is passed but we will take a filename
-        # because it's a fake GPS service
+        # because it's a fake GPS service  
         if not self.isConnected:
             self.file = open(self.filename, "r")
             self.timer.start()

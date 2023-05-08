@@ -2,15 +2,12 @@
 <ui version="4.0">
  <class>settingsWidget</class>
  <widget class="QWidget" name="settingsWidget">
-  <property name="enabled">
-   <bool>true</bool>
-  </property>
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>806</width>
-    <height>622</height>
+    <width>862</width>
+    <height>678</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -42,6 +39,155 @@
    <property name="bottomMargin">
     <number>0</number>
    </property>
+   <item row="2" column="0" rowspan="2">
+    <widget class="QGroupBox" name="groupBox_2">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="title">
+      <string>GPS</string>
+     </property>
+     <property name="flat">
+      <bool>true</bool>
+     </property>
+     <layout class="QGridLayout" name="gridLayout_3">
+      <item row="3" column="1">
+       <widget class="QCheckBox" name="gpscentermapCheck">
+        <property name="text">
+         <string>Force map to follow GPS location</string>
+        </property>
+        <property name="checked">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="1">
+       <widget class="QCheckBox" name="gpslocationCheck">
+        <property name="text">
+         <string>Zoom to my location when GPS enabled</string>
+        </property>
+        <property name="checked">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1">
+       <layout class="QHBoxLayout" name="horizontalLayout_2">
+        <item>
+         <widget class="QLabel" name="label_2">
+          <property name="text">
+           <string>Connect via</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QComboBox" name="gpsPortCombo"/>
+        </item>
+        <item>
+         <widget class="QPushButton" name="refreshPortsButton">
+          <property name="text">
+           <string>Refresh List</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item row="4" column="1">
+       <widget class="QCheckBox" name="gpsloggingCheck">
+        <property name="text">
+         <string>Enable GPS Logging</string>
+        </property>
+        <property name="checked">
+         <bool>false</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="1">
+       <layout class="QHBoxLayout" name="horizontalLayout_5">
+        <item>
+         <widget class="QLabel" name="label_3">
+          <property name="text">
+           <string> Flow Control</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QComboBox" name="gpsFlowControl">
+          <item>
+           <property name="text">
+            <string>Auto</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Hardware</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Software</string>
+           </property>
+          </item>
+         </widget>
+        </item>
+       </layout>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item row="4" column="0">
+    <widget class="QGroupBox" name="groupBox_5">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="title">
+      <string>GPS Feature Tracking</string>
+     </property>
+     <property name="flat">
+      <bool>true</bool>
+     </property>
+     <property name="checkable">
+      <bool>false</bool>
+     </property>
+     <layout class="QFormLayout" name="formLayout_2">
+      <property name="fieldGrowthPolicy">
+       <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
+      </property>
+      <item row="0" column="0">
+       <widget class="QRadioButton" name="gpstracking_timing_radio">
+        <property name="text">
+         <string>Every</string>
+        </property>
+        <property name="checked">
+         <bool>false</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1">
+       <widget class="Stepper" name="gpstiming_edit" native="true"/>
+      </item>
+      <item row="2" column="0">
+       <widget class="QRadioButton" name="gpstracking_distance_radio">
+        <property name="text">
+         <string>Every</string>
+        </property>
+        <property name="checked">
+         <bool>false</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="1">
+       <widget class="Stepper" name="gpsdistance_edit" native="true"/>
+      </item>
+     </layout>
+    </widget>
+   </item>
    <item row="0" column="0" colspan="7">
     <widget class="QGroupBox" name="groupBox">
      <property name="sizePolicy">
@@ -123,244 +269,7 @@
      </layout>
     </widget>
    </item>
-   <item row="3" column="0">
-    <spacer name="verticalSpacer_3">
-     <property name="orientation">
-      <enum>Qt::Vertical</enum>
-     </property>
-     <property name="sizeType">
-      <enum>QSizePolicy::MinimumExpanding</enum>
-     </property>
-     <property name="sizeHint" stdset="0">
-      <size>
-       <width>20</width>
-       <height>40</height>
-      </size>
-     </property>
-    </spacer>
-   </item>
-   <item row="1" column="0" rowspan="2">
-    <widget class="QTabWidget" name="tabsForGPS">
-     <property name="currentIndex">
-      <number>0</number>
-     </property>
-     <widget class="QWidget" name="tabGPS">
-      <attribute name="title">
-       <string>GPS</string>
-      </attribute>
-      <layout class="QVBoxLayout" name="verticalLayout_3">
-       <item>
-        <layout class="QHBoxLayout" name="layoutConnectVia">
-         <item>
-          <widget class="QLabel" name="lblConnectVia">
-           <property name="text">
-            <string>Connect via</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QComboBox" name="gpsPortCombo"/>
-         </item>
-         <item>
-          <widget class="QPushButton" name="refreshPortsButton">
-           <property name="text">
-            <string>Refresh List</string>
-           </property>
-          </widget>
-         </item>
-        </layout>
-       </item>
-       <item>
-        <layout class="QHBoxLayout" name="layoutFlowControl">
-         <item>
-          <widget class="QLabel" name="lblFlowControl">
-           <property name="text">
-            <string> Flow Control</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QComboBox" name="gpsFlowControl">
-           <item>
-            <property name="text">
-             <string>Auto</string>
-            </property>
-           </item>
-           <item>
-            <property name="text">
-             <string>Hardware</string>
-            </property>
-           </item>
-           <item>
-            <property name="text">
-             <string>Software</string>
-            </property>
-           </item>
-          </widget>
-         </item>
-        </layout>
-       </item>
-       <item>
-        <widget class="QCheckBox" name="gpslocationCheck">
-         <property name="text">
-          <string>Zoom to my location when GPS enabled</string>
-         </property>
-         <property name="checked">
-          <bool>true</bool>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QCheckBox" name="gpscentermapCheck">
-         <property name="text">
-          <string>Force map to follow GPS location</string>
-         </property>
-         <property name="checked">
-          <bool>true</bool>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QCheckBox" name="gpsloggingCheck">
-         <property name="text">
-          <string>Enable GPS Logging</string>
-         </property>
-         <property name="checked">
-          <bool>false</bool>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <layout class="QHBoxLayout" name="layoutGPSAntennaHeight">
-         <item>
-          <widget class="QLabel" name="lblGPSAntennaHeight">
-           <property name="text">
-            <string> GPS Antenna Height</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="DoubleStepper" name="gpsAntennaHeight" native="true" />
-         </item>
-        </layout>
-       </item>
-       <item>
-        <spacer name="verticalSpacer_4">
-         <property name="orientation">
-          <enum>Qt::Vertical</enum>
-         </property>
-         <property name="sizeType">
-          <enum>QSizePolicy::MinimumExpanding</enum>
-         </property>
-         <property name="sizeHint" stdset="0">
-          <size>
-           <width>20</width>
-           <height>40</height>
-          </size>
-         </property>
-        </spacer>
-       </item>
-      </layout>
-     </widget>
-     <widget class="QWidget" name="tabGPSTracking">
-      <attribute name="title">
-       <string>GPS Tracking</string>
-      </attribute>
-      <layout class="QFormLayout" name="formLayout_2">
-       <item row="0" column="0">
-        <widget class="QRadioButton" name="gpstracking_timing_radio">
-         <property name="text">
-          <string>Every</string>
-         </property>
-         <property name="checked">
-          <bool>false</bool>
-         </property>
-        </widget>
-       </item>
-       <item row="0" column="1">
-        <widget class="Stepper" name="gpstiming_edit" native="true"/>
-       </item>
-       <item row="1" column="0">
-        <widget class="QRadioButton" name="gpstracking_distance_radio">
-         <property name="text">
-          <string>Every</string>
-         </property>
-         <property name="checked">
-          <bool>false</bool>
-         </property>
-        </widget>
-       </item>
-       <item row="1" column="1">
-        <widget class="Stepper" name="gpsdistance_edit" native="true"/>
-       </item>
-      </layout>
-     </widget>
-     <widget class="QWidget" name="tabGPSAveraging">
-      <attribute name="title">
-       <string>GPS Averaging</string>
-      </attribute>
-      <layout class="QVBoxLayout" name="verticalLayout_2">
-       <item>
-        <widget class="QCheckBox" name="gpsAveragingCheck">
-         <property name="text">
-          <string>Enable averaging</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QTextEdit" name="txtAveragingInfo">
-         <property name="enabled">
-          <bool>true</bool>
-         </property>
-         <property name="mouseTracking">
-          <bool>false</bool>
-         </property>
-         <property name="frameShape">
-          <enum>QFrame::NoFrame</enum>
-         </property>
-         <property name="frameShadow">
-          <enum>QFrame::Plain</enum>
-         </property>
-         <property name="lineWidth">
-          <number>0</number>
-         </property>
-         <property name="undoRedoEnabled">
-          <bool>true</bool>
-         </property>
-         <property name="readOnly">
-          <bool>true</bool>
-         </property>
-         <property name="html">
-          <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Segoe UI'; font-size:20px; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:14pt; text-decoration: underline;&quot;&gt;How it works&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;'GPS Point' or 'Add Vertex' buttons get the &lt;/span&gt;&lt;span style=&quot; font-size:12pt; font-style:italic;&quot;&gt;on&lt;/span&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt; and &lt;/span&gt;&lt;span style=&quot; font-size:12pt; font-style:italic;&quot;&gt;off&lt;/span&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt; functionality of the averaging process. One click starts collecting GPS points, the other stops, calculates the average of points accumulated and adds it to the map.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <spacer name="verticalSpacer_5">
-         <property name="orientation">
-          <enum>Qt::Vertical</enum>
-         </property>
-         <property name="sizeType">
-          <enum>QSizePolicy::MinimumExpanding</enum>
-         </property>
-         <property name="sizeHint" stdset="0">
-          <size>
-           <width>20</width>
-           <height>40</height>
-          </size>
-         </property>
-        </spacer>
-       </item>
-      </layout>
-     </widget>
-    </widget>
-   </item>
-   <item row="1" column="2" rowspan="3">
+   <item row="2" column="2" rowspan="4">
     <layout class="QVBoxLayout" name="verticalLayout">
      <property name="rightMargin">
       <number>0</number>
@@ -495,7 +404,20 @@ p, li { white-space: pre-wrap; }
      </item>
     </layout>
    </item>
-   <item row="1" column="1">
+   <item row="5" column="0">
+    <spacer name="verticalSpacer_3">
+     <property name="orientation">
+      <enum>Qt::Vertical</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>20</width>
+       <height>40</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+   <item row="2" column="1">
     <spacer name="horizontalSpacer">
      <property name="orientation">
       <enum>Qt::Horizontal</enum>
@@ -513,12 +435,6 @@ p, li { white-space: pre-wrap; }
  <customwidgets>
   <customwidget>
    <class>Stepper</class>
-   <extends>QWidget</extends>
-   <header>roam.editorwidgets.numberwidget</header>
-   <container>1</container>
-  </customwidget>
-  <customwidget>
-   <class>DoubleStepper</class>
    <extends>QWidget</extends>
    <header>roam.editorwidgets.numberwidget</header>
    <container>1</container>
