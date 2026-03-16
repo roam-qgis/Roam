@@ -1,6 +1,6 @@
 import os
 
-from qgis.PyQt.QtCore import pyqtSignal, Qt, QRectF, QLine, QPoint
+from qgis.PyQt.QtCore import pyqtSignal, Qt, QRectF, QLineF, QPointF
 from qgis.PyQt.QtWidgets import QAction, QApplication
 from qgis.PyQt.QtGui import QIcon, QColor, QBrush, QPen, QPainter, QPainterPath, QPolygonF
 
@@ -126,25 +126,25 @@ class GPSMarker(QgsMapCanvasItem):
         painter.setPen(self.pointpen)
         y = 0 - halfSize
         x = rect.width() / 2 - halfSize
-        line = QLine(x, y, x, rect.height() - halfSize)
+        line = QLineF(x, y, x, rect.height() - halfSize)
         y = rect.height() / 2 - halfSize
         x = 0 - halfSize
-        line2 = QLine(x, y, rect.width() - halfSize, y)
+        line2 = QLineF(x, y, rect.width() - halfSize, y)
 
         # Arrow
         p = QPolygonF()
-        p.append(QPoint(0 - halfSize, 0))
-        p.append(QPoint(0, -self.size))
+        p.append(QPointF(0 - halfSize, 0))
+        p.append(QPointF(0, -self.size))
         x = rect.width() - halfSize
-        p.append(QPoint(x, 0))
-        p.append(QPoint(0, 0))
+        p.append(QPointF(x, 0))
+        p.append(QPointF(0, 0))
 
         offsetp = QPolygonF()
-        offsetp.append(QPoint(0 - halfSize, 0))
-        offsetp.append(QPoint(0, -self.size))
+        offsetp.append(QPointF(0 - halfSize, 0))
+        offsetp.append(QPointF(0, -self.size))
         x = rect.width() - halfSize
-        offsetp.append(QPoint(x, 0))
-        offsetp.append(QPoint(0, 0))
+        offsetp.append(QPointF(x, 0))
+        offsetp.append(QPointF(0, 0))
 
         waypoint = self.gps.waypoint
         if waypoint:
