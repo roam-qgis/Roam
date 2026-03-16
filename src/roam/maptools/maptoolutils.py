@@ -1,5 +1,6 @@
 from qgis.gui import QgsMapMouseEvent
 from qgis.core import QgsWkbTypes, QgsPointXY
+from qgis.PyQt.QtCore import QPoint
 
 
 def point_from_event(event: QgsMapMouseEvent, snapping: bool) -> QgsPointXY:
@@ -18,8 +19,8 @@ def point_from_event(event: QgsMapMouseEvent, snapping: bool) -> QgsPointXY:
 
 def setRubberBand(canvas, selectRect, rubberBand):
     transform = canvas.getCoordinateTransform()
-    lowerleft = transform.toMapCoordinates(selectRect.left(), selectRect.bottom())
-    upperright = transform.toMapCoordinates(selectRect.right(), selectRect.top())
+    lowerleft = transform.toMapCoordinates(QPoint(int(selectRect.left()), int(selectRect.bottom())))
+    upperright = transform.toMapCoordinates(QPoint(int(selectRect.right()), int(selectRect.top())))
 
     if rubberBand:
         rubberBand.reset(QgsWkbTypes.PolygonGeometry);

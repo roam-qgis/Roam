@@ -1,5 +1,5 @@
 from PyQt5.QtGui import QIcon
-from qgis._core import QgsWkbTypes
+from qgis.core import QgsWkbTypes
 
 # noinspection PyUnresolvedReferences
 # This required to load the icons from the resource file or

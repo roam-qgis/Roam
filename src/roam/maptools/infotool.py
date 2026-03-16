@@ -1,6 +1,6 @@
 from collections import OrderedDict
 
-from qgis.PyQt.QtCore import QRect, Qt, QRectF
+from qgis.PyQt.QtCore import QRect, Qt, QRectF, QPoint
 from qgis.PyQt.QtGui import QColor
 from qgis.core import (QgsRectangle, QgsFeatureRequest, QgsWkbTypes, QgsMapLayer)
 from qgis.gui import QgsMapTool, QgsRubberBand
@@ -50,11 +50,10 @@ class InfoTool(QgsMapTool):
         rect.setBottom(point.y() + size)
 
         transform = self.canvas.getCoordinateTransform()
-        ll = transform.toMapCoordinates(rect.left(), rect.bottom())
-        ur = transform.toMapCoordinates(rect.right(), rect.top())
+        ll = transform.toMapCoordinates(QPoint(int(rect.left()), int(rect.bottom())))
+        ur = transform.toMapCoordinates(QPoint(int(rect.right()), int(rect.top())))
 
-        rect = QgsRectangle(ur, ll)
-        return rect
+        return QgsRectangle(ll.x(), ll.y(), ur.x(), ur.y())
 
     def canvasPressEvent(self, event):
         self.dragging = False

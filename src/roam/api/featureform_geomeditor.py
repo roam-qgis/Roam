@@ -1,5 +1,5 @@
 from PyQt5.QtWidgets import QStackedWidget
-from qgis._core import QgsWkbTypes, QgsGeometry, QgsPoint
+from qgis.core import QgsWkbTypes, QgsGeometry, QgsPoint
 
 from roam.ui.ui_geomwidget import Ui_GeomWidget
 

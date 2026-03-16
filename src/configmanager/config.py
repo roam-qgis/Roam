@@ -21,7 +21,7 @@ class Config:
         _settings = defaults
         if os.path.exists(file):
             with open(file) as f:
-                _settings = yaml.load(f)
+                _settings = yaml.safe_load(f)
                 if _settings is None:
                     roam.utils.warning("Setting settings to default")
                     _settings = defaults

@@ -1,5 +1,5 @@
 from PyQt5.QtCore import pyqtSignal
-from qgis._core import QgsPoint, QgsGeometry, QgsWkbTypes
+from qgis.core import QgsPoint, QgsGeometry, QgsWkbTypes
 
 from roam.maptools.polylinetool import PolylineTool
 from roam.maptools.actions import CaptureAction

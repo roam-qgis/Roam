@@ -1,6 +1,6 @@
 from PyQt5.QtCore import QAbstractItemModel, pyqtSignal, Qt, QModelIndex
 from PyQt5.QtGui import QIcon
-from qgis._core import QgsMapLayer, QgsProject
+from qgis.core import QgsMapLayer, QgsProject
 
 from configmanager.resources import icons
 

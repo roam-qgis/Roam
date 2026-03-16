@@ -1,7 +1,7 @@
 from PyQt5.QtCore import pyqtSignal, QTimer, Qt
 from PyQt5.QtGui import QColor, QCursor, QPixmap, QIcon
-from qgis._core import QgsPoint, QgsGeometry, QgsWkbTypes, QgsPointXY, QgsTolerance, QgsPointLocator, QgsMultiPoint
-from qgis._gui import QgsMapToolEdit, QgsRubberBand, QgsMapMouseEvent
+from qgis.core import QgsPoint, QgsGeometry, QgsWkbTypes, QgsPointXY, QgsTolerance, QgsPointLocator, QgsMultiPoint
+from qgis.gui import QgsMapToolEdit, QgsRubberBand, QgsMapMouseEvent
 
 import roam.config
 import roam.utils

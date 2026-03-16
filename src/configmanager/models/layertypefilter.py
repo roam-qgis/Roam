@@ -1,5 +1,5 @@
 from PyQt5.QtCore import QSortFilterProxyModel, Qt
-from qgis._core import QgsWkbTypes, QgsMapLayer
+from qgis.core import QgsWkbTypes, QgsMapLayer
 
 
 class LayerTypeFilter(QSortFilterProxyModel):

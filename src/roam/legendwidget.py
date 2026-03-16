@@ -26,10 +26,20 @@ class LegendWidget(Ui_legendsWidget, QWidget):
         self.canvas.extentsChanged.connect(self.update_legend_map_data)
 
     def update_legend_map_data(self):
-        if not self.layerTree.layerTreeModel():
+        model = self.layerTree.layerTreeModel()
+        if not model or not self.canvas:
             return
-        self.layerTree.layerTreeModel().setLegendMapViewData(
-            self.canvas.mapUnitsPerPixel(), self.canvas.mapSettings().outputDpi(), self.canvas.scale())
+
+        try:
+            model.setLegendMapViewData(
+                self.canvas.mapUnitsPerPixel(),
+                int(self.canvas.mapSettings().outputDpi()),
+                self.canvas.scale()
+            )
+        except TypeError:
+            # Newer QGIS versions changed this API. The legend can still work
+            # without this extra map-view metadata, so just skip it.
+            return
 
     def previewImagePressEvent(self, event):
         self.showmap.emit()
