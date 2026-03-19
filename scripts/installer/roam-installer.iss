@@ -13,7 +13,7 @@ OutputBaseFilename=Roam Installer
 LicenseFile=License.rtf
 
 [Files]
-Source: "..\..\build\exe.win-amd64-3.7\*"; DestDir: "{app}"; Flags: recursesubdirs
+Source: "..\..\build\exe.win-amd64-3.12\*"; DestDir: "{app}"; Flags: recursesubdirs
 
 [Icons]
 Name: "{group}\Roam"; Filename: "{app}\Roam.exe"

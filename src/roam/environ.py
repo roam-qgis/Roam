@@ -5,6 +5,26 @@ import argparse
 import contextlib
 import functools
 
+def _install_pyqt_webkit_shims():
+    import sys
+    # Provide PyQt5.* names that some generated UI files import,
+    # mapping them to the QGIS-wrapped qgis.PyQt.* modules.
+    try:
+        import PyQt5.QtWebKitWidgets  # already available
+    except Exception:
+        try:
+            from qgis.PyQt import QtWebKitWidgets as _QtWebKitWidgets
+            sys.modules['PyQt5.QtWebKitWidgets'] = _QtWebKitWidgets
+        except Exception:
+            pass
+    try:
+        import PyQt5.QtWebKit
+    except Exception:
+        try:
+            from qgis.PyQt import QtWebKit as _QtWebKit
+            sys.modules['PyQt5.QtWebKit'] = _QtWebKit
+        except Exception:
+            pass
 
 class RoamApp(object):
     def __init__(self, sysargv, apppath, prefixpath, settingspath, libspath, i18npath, projectsroot):
@@ -25,6 +45,7 @@ class RoamApp(object):
         self.args = argparse.Namespace()
 
     def init(self, logo, title, **kwargs):
+        _install_pyqt_webkit_shims()
         from qgis.core import QgsApplication
         from qgis.PyQt.QtWidgets import QApplication
         from qgis.PyQt.QtGui import QFont, QIcon
