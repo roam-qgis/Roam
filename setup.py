@@ -2,12 +2,23 @@ import glob
 import os
 import shutil
 import sys
+import site
 from distutils.command.build import build
 from distutils.command.clean import clean
 from sys import platform
 
 from setuptools import find_packages
-from ext_libs.cx_Freeze import setup, Executable
+
+# Ensure pip-installed cx_Freeze wins over vendored ext_libs\cx_Freeze
+# 1) Prepend site-packages
+for sp in site.getsitepackages():
+    if sp not in sys.path:
+        sys.path.insert(0, sp)
+
+# 2) Remove any ext_libs path entries to avoid shadowing
+sys.path = [p for p in sys.path if not p.lower().endswith(os.path.sep + 'ext_libs')]
+
+from cx_Freeze import setup, Executable
 
 from scripts.fabricate import run
 
@@ -30,7 +41,7 @@ except KeyError:
     qgisname = 'qgis'
 
 osgeobin = os.path.join(osgeopath, 'bin')
-pythonroot = os.path.join(osgeopath, 'apps', "Python37")
+pythonroot = os.path.join(osgeopath, 'apps', "Python312")
 qgisroot = os.path.join(osgeopath, "apps", qgisname)
 qgisbin = os.path.join(qgisroot, "bin")
 qtbin = os.path.join(osgeopath, "apps", "qt5", "bin")
@@ -130,11 +141,25 @@ def get_data_files():
     files += format_paths(glob.glob(os.path.join(qtbin, "*.dll")))
     files += format_paths(glob.glob(qtsqldrivers), new_folder="sqldrivers")
 
-    utils = ['ogr2ogr.exe', 'ogrinfo.exe', 'gdalinfo.exe', 'NCSEcw.dll', "spatialite.dll",
-             os.path.join('gdalplugins', 'gdal_ECW_JP2ECW.dll')]
-    extrafiles = [os.path.join(osgeobin, path) for path in utils]
-    files += format_paths(extrafiles)
-    files += format_paths(glob.glob(os.path.join("lib", "*.dll")), new_folder="lib\qgis")
+    # Utilities and selected DLLs from OSGeo4W bin (skip if missing)
+    utils = ['ogr2ogr.exe', 'ogrinfo.exe', 'gdalinfo.exe', 'spatialite.dll', 'NCSEcw.dll']
+    extrafiles = [os.path.join(osgeobin, u) for u in utils]
+    existing_extrafiles = [p for p in extrafiles if os.path.exists(p)]
+    missing = sorted(set(extrafiles) - set(existing_extrafiles))
+    if missing:
+        print("Skipping missing utils/DLLs:")
+        for m in missing:
+            print(f"   - {m}")
+    files += format_paths(existing_extrafiles)
+
+    # Include the whole gdalplugins folder if it exists (covers any present plugins)
+    gdalplugins_dir = os.path.join(osgeobin, 'gdalplugins')
+    if os.path.isdir(gdalplugins_dir):
+        files.append((gdalplugins_dir, r"lib\gdalplugins"))
+    else:
+        print(f"GDAL plugins folder not found at: {gdalplugins_dir}")
+        
+    files += format_paths(glob.glob(os.path.join("lib", "*.dll")), new_folder=r"lib\qgis")
 
     files.append((os.path.join(pythonroot, "python3.dll"), "python3.dll"))
     files.append((r"src\plugins", "plugins"))
@@ -146,7 +171,16 @@ def get_data_files():
         pluginpath = os.path.join(qtplugins, qtplugin)
         files.append((pluginpath, r"lib\qtplugins\{}".format(qtplugin)))
 
-    files.append((gdalsharepath, "lib\gdal"))
+    # GDAL data directory: include first existing candidate, or skip with a message
+    candidate_gdal_dirs = [
+        os.path.join(osgeopath, "share", "gdal"),
+        os.path.join(osgeopath, "apps", "gdal", "share", "gdal"),
+    ]
+    gdal_dir = next((p for p in candidate_gdal_dirs if os.path.isdir(p)), None)
+    if gdal_dir:
+        files.append((gdal_dir, r"lib\gdal"))
+    else:
+        print(f"GDAL data folder not found. Checked: {candidate_gdal_dirs}")
 
     versiontext = os.path.join(r"src\roam", "version.txt")
 
@@ -177,12 +211,6 @@ def buildqtfiles():
         else:
             return True
 
-    pyuic5 = 'pyuic5'
-    pyrcc5 = 'pyrcc5'
-    if platform == 'win32':
-        pyuic5 += '.bat'
-        pyrcc5 += '.bat'
-
     import json
     hashes = {}
     try:
@@ -194,24 +222,28 @@ def buildqtfiles():
     HASHFILES = [".ui", ".ts"]
     for folder in [appsrcopyFilesath, configmangerpath]:
         for root, dirs, files in os.walk(folder):
-            for file in files:
-                filepath = os.path.join(root, file)
-                file, ext = os.path.splitext(filepath)
+            for fname in files:
+                filepath = os.path.join(root, fname)
+                base, ext = os.path.splitext(filepath)
 
                 if ext in HASHFILES and _hashcheck(filepath):
-                    print(f"Skipping {file} - Hash match")
+                    print(f"Skipping {base} - Hash match")
                     continue
 
                 if ext == '.ui':
-                    newfile = file + ".py"
-                    run(pyuic5, '-o', newfile, filepath, shell=True)
+                    newfile = base + ".py"
+                    # python -m PyQt5.uic.pyuic -o newfile filepath
+                    run(sys.executable, "-m", "PyQt5.uic.pyuic", "-o", newfile, filepath)
+
                 elif ext == '.qrc':
-                    newfile = file + "_rc.py"
-                    run(pyrcc5, '-o', newfile, filepath)
+                    newfile = base + "_rc.py"
+                    # python -m PyQt5.pyrcc_main -o newfile filepath
+                    run(sys.executable, "-m", "PyQt5.pyrcc_main", "-o", newfile, filepath)
+
                 elif ext == '.ts':
-                    newfile = file + '.qm'
+                    newfile = base + '.qm'
                     try:
-                        if os.name is 'nt':
+                        if os.name == 'nt':
                             run('lrelease', filepath, '-qm', newfile)
                         else:
                             run('lrelease-qt5', filepath, '-qm', newfile)
@@ -241,23 +273,28 @@ class qtbuild(build):
 
 class package_final(build):
     def run(self):
-        buildfolder = r".\build\exe.win-amd64-3.7"
+        buildfolder = r".\build\exe.win-amd64-3.12"  # adjust if your output differs
         libfolder = os.path.join(buildfolder, "lib")
-        print("Moving python37.dll")
-        shutil.move(os.path.join(libfolder, "python37.dll"), os.path.join(buildfolder, "python37.dll"))
-        print("Removing imageformats")
-        shutil.rmtree(os.path.join(buildfolder, "imageformats"))
-        print("Removing sqldrivers")
-        shutil.rmtree(os.path.join(buildfolder, "sqldrivers"))
-        print("Removing platforms")
-        shutil.rmtree(os.path.join(buildfolder, "platforms"))
-        print("Removing pyqt5.uic extras")
-        shutil.rmtree(os.path.join(buildfolder, "PyQt5.uic.widget-plugins"))
-        print("Removing mediaservice")
-        shutil.rmtree(os.path.join(buildfolder, "mediaservice"))
-        print("Create projects folder")
-        os.mkdir(os.path.join(buildfolder, "projects"))
 
+        # Move a Python DLL if cx_Freeze placed one in lib
+        for dll in ("python312.dll", "python3.dll"):
+            src = os.path.join(libfolder, dll)
+            if os.path.exists(src):
+                print(f"Moving {dll}")
+                shutil.move(src, os.path.join(buildfolder, dll))
+                break
+        else:
+            print("No python DLL found in lib; skipping move")
+
+        # Remove optional directories if they exist
+        for d in ("imageformats", "sqldrivers", "platforms", "PyQt5.uic.widget-plugins", "mediaservice"):
+            path = os.path.join(buildfolder, d)
+            if os.path.isdir(path):
+                print(f"Removing {d}")
+                shutil.rmtree(path, ignore_errors=True)
+
+        # Ensure projects folder exists
+        os.makedirs(os.path.join(buildfolder, "projects"), exist_ok=True)
 
 class roamclean(clean):
     def run(self):
@@ -277,15 +314,15 @@ configicon = r'src\roam\resources\branding\config.ico'
 
 roam_exe = Executable(script=r'src\roam\__main__.py',
                       icon=icon,
-                      targetName="Roam",
+                      target_name="Roam.exe",
                       base="Win32GUI")
 
 configmanager_exe = Executable(script=r'src\configmanager\__main__.py',
                                icon=configicon,
-                               targetName="Config Manager",
+                               target_name="Config Manager.exe",
                                base="Win32GUI")
 
-excludes = ["matplotlib", "scipy", "numpy", "disutils", "PIL"]
+excludes = ["matplotlib", "scipy", "PIL", "numpy", "shapely"]
 packages = find_packages("./src")
 
 include_files = get_data_files()
@@ -310,15 +347,19 @@ package_details = dict(
     options={
         "build_exe": {
             'packages': packages,
-            'includes': ["qgis", "PyQt5", "sip",
-                         "sentry_sdk.integrations.logging",
-                         "sentry_sdk.integrations.stdlib",
-                         "sentry_sdk.integrations.excepthook",
-                         "sentry_sdk.integrations.dedupe",
-                         "sentry_sdk.integrations.atexit",
-                         "sentry_sdk.integrations.modules",
-                         "sentry_sdk.integrations.argv",
-                         "sentry_sdk.integrations.threading",
+            'includes': ["qgis", 
+                        "PyQt5", 
+                        "PyQt5.sip",
+                        "qgis.PyQt.QtWebKitWidgets",
+                        "qgis.PyQt.QtWebKit",
+                        "sentry_sdk.integrations.logging",
+                        "sentry_sdk.integrations.stdlib",
+                        "sentry_sdk.integrations.excepthook",
+                        "sentry_sdk.integrations.dedupe",
+                        "sentry_sdk.integrations.atexit",
+                        "sentry_sdk.integrations.modules",
+                        "sentry_sdk.integrations.argv",
+                        "sentry_sdk.integrations.threading",
                          ],
             'include_files': include_files,
             'excludes': excludes,
