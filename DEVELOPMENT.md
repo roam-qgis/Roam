@@ -21,10 +21,19 @@
     `python .\src\configmanager`
 
 ## Building
-- from the project root run:
+
+- from OSGeo4W Shell cd into the project then run the below from the project root:
     ```
     scripts\setenv.bat
     .\build.bat clean
     .\build.bat build
     .\build.bat exe
     ```
+
+## Running Tests
+- from OSGeo4W Shell cd into the project then run
+    `scripts\setenv.bat`
+- then again from the project root run
+    `python -m pip install -r requirements.txt`
+- now run the tests
+    `python -m pytest -q src\roam_tests`
