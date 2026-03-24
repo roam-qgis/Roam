@@ -24,9 +24,14 @@ def can_send():
 def init_error_handler(version):
     if can_send():
         roam.utils.log("Sending Error Reports: Enabled")
-        sentry_sdk.init("https://58a98c15c942424ea274243fd37cf3b2@sentry.io/1553649",
-                        release=f"Roam@{version}")
+        sentry_sdk.init(
+            "https://58a98c15c942424ea274243fd37cf3b2@sentry.io/1553649",
+            release=f"Roam@{version}",
+            auto_enabling_integrations=False,
+        )
     else:
         roam.utils.log("Sending Error Reports: Disabled")
+
+
 
 
