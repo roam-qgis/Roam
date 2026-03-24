@@ -9,7 +9,9 @@ config = {}
 TYPE = "Date"
 
 
-def setup():
+@pytest.fixture(scope="module", autouse=True)
+def setup_widgets():
+    """Auto-register widgets for all tests in this module"""
     registerallwidgets()
 
 

@@ -1,6 +1,7 @@
 import os
 import pynmea2
 import pytest
+from unittest.mock import MagicMock
 
 import roam.api.gps as gps
 
@@ -21,16 +22,20 @@ def data(name):
 
 @pytest.fixture
 def gpsservice():
-    positon = QgsPoint(100, 200)
+    postion = QgsPoint(100, 200)
     info = QgsGpsInformation()
     info.speed = 300
     info.direction = 90.0
     info.latitude = 90.0
     gps = GPSService()
-    gps._position = positon
+    gps._position = postion
     gps.elevation = 20
     gps.currentport = 'testport'
-    gps.info = info
+    
+    # Mock gpsConn
+    gps.gpsConn = MagicMock()
+    gps.gpsConn.currentGPSInformation.return_value = info
+    
     return gps
 
 
@@ -75,7 +80,7 @@ def test_extact_rmc_returns_correct_info():
     msg = "$GNRMC,033615.00,A,3157.10477,S,11549.42965,E,0.120,,270115,,,A*73"
     data = pynmea2.parse(msg)
     info = gps.extract_rmc(data)
-    assert info.longitude == 115.8238275
+    assert info.longitude == pytest.approx(115.8238275)
     assert info.latitude == -31.951746166666666
     assert info.speed == 0.22224
     assert info.status == "A"
@@ -110,8 +115,8 @@ def test_extact_gga_returns_correct_info():
     msg = "$GNGGA,033534.00,3157.10551,S,11549.43027,E,1,05,1.69,43.4,M,-30.8,M,,*49"
     data = pynmea2.parse(msg)
     info = gps.extract_gga(data)
-    assert info.longitude == 115.82383783333333
-    assert info.latitude == -31.9517585
+    assert info.longitude == pytest.approx(115.82383783333333)
+    assert info.latitude == pytest.approx(-31.9517585)
     assert info.elevation == 43.4
     assert info.quality == 1
     assert info.satellitesUsed == 5
@@ -190,7 +195,7 @@ def test_glonass_parse_from_file():
 
     gps = GPSService()
     gps.gpsposition.connect(update)
-    wgs84CRS = QgsCoordinateReferenceSystem(4326)
+    wgs84CRS = QgsCoordinateReferenceSystem.fromEpsgId(4326)
     gps.crs = wgs84CRS
     with open(data("glonass_gps_log.nmea"), "r") as f:
         for line in f:

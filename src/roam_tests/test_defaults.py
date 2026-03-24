@@ -4,7 +4,7 @@ from qgis.core import QgsFeature, QgsFields, QgsField
 
 def test_variables_are_expanded():
     os.environ['TESTVAR'] = 'MYVAR'
-    if os.name is 'nt':
+    if os.name == 'nt':
         default = "1 %TESTVAR% 2"
     else:
         default = "1 $TESTVAR 2"
@@ -29,7 +29,7 @@ def test_replaced_with_qgsexpression_feature_attribute_lookup():
 
 def test_value_with_expression_and_variable_are_expanded():
     os.environ['TESTVAR'] = 'MYVAR'
-    if os.name is 'nt':
+    if os.name == 'nt':
         default = "%TESTVAR% [% 'testvalue' %]"
     else:
         default = "$TESTVAR [% 'testvalue' %]"

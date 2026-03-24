@@ -32,6 +32,18 @@ def safe_int(value):
     except (TypeError, ValueError):
         return 0
 
+def _nmea_to_decimal(nmea_val, direction):
+    """Convert NMEA DDMM.MMMM format to decimal degrees."""
+    if not nmea_val:
+        return 0.0
+    val = float(nmea_val)
+    degrees = int(val / 100)
+    minutes = val - degrees * 100
+    decimal = degrees + minutes / 60.0
+    if direction in ('S', 'W'):
+        decimal = -decimal
+    return decimal
+
 
 GPSLOGFILENAME = config.get("gpslogfile", None)
 GPSLOGGING = not GPSLOGFILENAME is None
@@ -49,12 +61,13 @@ class GPSService(QObject):
 
     def __init__(self):
         super(GPSService, self).__init__()
+        self._last_rmc_datetime = QDateTime()
         self.isConnected = False
         self._currentport = None
         self._position = None
         self.latlong_position = None
         self.elevation = None
-        self.wgs84CRS = QgsCoordinateReferenceSystem(4326)
+        self.wgs84CRS = QgsCoordinateReferenceSystem.fromEpsgId(4326)
         self.crs = None
         self.waypoint = None
         self._gpsupdate_frequency = 1.0
@@ -248,6 +261,46 @@ class GPSService(QObject):
 
             self._position = map_pos
             self.elevation = gpsInfo.elevation
+    
+    def extract_rmc(self, data):
+        info = QgsGpsInformation()
+        info.latitude = _nmea_to_decimal(data.lat, data.lat_dir)
+        info.longitude = _nmea_to_decimal(data.lon, data.lon_dir)
+        info.speed = safe_float(data.spd_over_grnd or 0) * KNOTS_TO_KM
+        info.direction = safe_float(data.true_course or 0)
+        info.status = str(data.status or "V")
+        if data.timestamp and data.datestamp:
+            ds = data.datestamp
+            ts = data.timestamp
+            self._last_rmc_datetime = QDateTime(
+                ds.year, ds.month, ds.day,
+                ts.hour, ts.minute, ts.second, 0, Qt.UTC
+            )
+        info.utcDateTime = self._last_rmc_datetime
+        return info
+
+    def extract_gga(self, data):
+        info = QgsGpsInformation()
+        info.latitude = _nmea_to_decimal(data.lat, data.lat_dir)
+        info.longitude = _nmea_to_decimal(data.lon, data.lon_dir)
+        info.elevation = safe_float(data.altitude or 0)
+        info.quality = safe_int(data.gps_qual or 0)
+        info.satellitesUsed = safe_int(data.num_sats or 0)
+        return info
+
+    def extract_vtg(self, data):
+        info = QgsGpsInformation()
+        info.speed = safe_float(data.spd_over_grnd_kmph or 0)
+        return info
+
+    def extract_gsa(self, data):
+        info = QgsGpsInformation()
+        info.pdop = safe_float(data.pdop or 0)
+        info.hdop = safe_float(data.hdop or 0)
+        info.vdop = safe_float(data.vdop or 0)
+        info.fixMode = str(data.mode or "A")
+        info.fixType = safe_int(data.mode_fix_type or 0)
+        return info
 
 
 class FileGPSService(GPSService):
