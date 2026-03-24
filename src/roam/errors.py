@@ -23,9 +23,13 @@ def can_send():
 
 def init_error_handler(version):
     if can_send():
+        dsn = roam.config.settings.get("sentry_dsn", None)
+        if not dsn:
+            roam.utils.log("Sending Error Reports: No sentry_dsn configured, skipping")
+            return
         roam.utils.log("Sending Error Reports: Enabled")
         sentry_sdk.init(
-            "https://58a98c15c942424ea274243fd37cf3b2@sentry.io/1553649",
+            dsn,
             release=f"Roam@{version}",
             auto_enabling_integrations=False,
         )
