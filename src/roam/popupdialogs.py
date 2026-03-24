@@ -28,12 +28,15 @@ class Dialogbase(QDialog):
         self.resizetoparent()
 
     def resizetoparent(self):
-        width = self.parent().width()
+        parent = self.parent()
+
+        width = parent.width()
         self.resize(width, self.sizeHint().height())
-        y = self.parent().y()
-        y += self.parent().height() / 2
-        half = self.height() / 2
-        self.move(self.parent().geometry().x(), y - half)
+
+        center_y = parent.y() + parent.height() // 2
+        top = center_y - self.height() // 2
+
+        self.move(parent.geometry().x(), top)
 
     def mousePressEvent(self, *args, **kwargs):
         self.close()

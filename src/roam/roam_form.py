@@ -5,7 +5,7 @@ import os
 
 from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QAction
-from qgis._core import QgsMapLayer, QgsFeature, QgsWkbTypes
+from qgis.core import QgsMapLayer, QgsFeature, QgsWkbTypes
 
 import roam.api
 import roam.qgisfunctions

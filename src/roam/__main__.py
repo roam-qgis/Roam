@@ -23,7 +23,7 @@ if frozen:
     os.environ["PROJ_LIB"] = os.path.join(srcpath, 'lib', 'proj')
     os.environ["QT_PLUGIN_PATH"] = os.path.join(srcpath, 'lib', 'qtplugins')
 
-import gdal
+from osgeo import gdal
 os.environ['OGR_SQLITE_PRAGMA'] = "journal_mode=delete"
 gdal.SetConfigOption('OGR_SQLITE_PRAGMA', os.environ['OGR_SQLITE_PRAGMA'])
 gdal.SetConfigOption("GDAL_DRIVER_PATH", os.environ['GDAL_DRIVER_PATH'])

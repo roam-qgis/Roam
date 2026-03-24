@@ -23,7 +23,7 @@
     <file alias="unlocked.svg">icons\unlocked.svg</file>
     <file alias="symbologyAdd.svg">icons\symbologyAdd.svg</file>
     <file alias="symbologyRemove.svg">icons\symbologyRemove.svg</file>
-    <file>icons\symbologyEdit.svg</file>
+    <file>icons\symbologyEdit.png</file>
     <file alias="symbologyUp.svg">icons\symbologyUp.svg</file>
     <file alias="symbologyDown.svg">icons\symbologyDown.svg</file>
   </qresource>

@@ -56,7 +56,7 @@ GOTO zip
 :zip
 IF NOT EXIST release MKDIR release
 del %BASE%release\*.* /Q /F
-pushd build\exe.win-amd64-3.7
+pushd build\exe.win-amd64-3.12
 ECHO %CD%
 ECHO Making zip file..
 SET NAME=%2
@@ -66,8 +66,8 @@ GOTO END
 :installer
 ECHO Building installer
 SET NAME=%2
-CALL %BASE%scripts\installer\makesfx.bat "%BASE%release\Roam%NAME% Installer " build\exe.win-amd64-3.7
-CALL %BASE%scripts\installer\makesfx.bat "%BASE%release\Roam%NAME% Installer - Silent" build\exe.win-amd64-3.7 -s
+CALL %BASE%scripts\installer\makesfx.bat "%BASE%release\Roam%NAME% Installer " build\exe.win-amd64-3.12
+CALL %BASE%scripts\installer\makesfx.bat "%BASE%release\Roam%NAME% Installer - Silent" build\exe.win-amd64-3.12 -s
 GOTO END
 
 :inno_installer

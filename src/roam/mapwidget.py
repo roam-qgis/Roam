@@ -263,7 +263,7 @@ class CurrentSelection(QgsRubberBand):
 
         @alpha.setter
         def alpha(self, value):
-            self.color.setAlpha(value)
+            self.color.setAlpha(int(value))
 
     def __init__(self, canvas):
         super(CurrentSelection, self).__init__(canvas)

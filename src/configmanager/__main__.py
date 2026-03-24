@@ -16,7 +16,7 @@ if frozen:
 
 os.environ['OGR_SQLITE_PRAGMA'] = "journal_mode=delete"
 
-import gdal
+from osgeo import gdal
 gdal.SetConfigOption("GDAL_DRIVER_PATH", os.environ['GDAL_DRIVER_PATH'])
 gdal.SetConfigOption("GDAL_DATA", os.environ['GDAL_DATA'])
 gdal.SetConfigOption('OGR_SQLITE_PRAGMA', os.environ['OGR_SQLITE_PRAGMA'])

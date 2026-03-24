@@ -1,7 +1,7 @@
 import yaml
 import yaml.constructor
-from collections import OrderedDict, MutableMapping
-
+from collections import OrderedDict
+from collections.abc import MutableMapping
 
 class OrderedDictYAMLLoader(yaml.Loader):
     """
