@@ -1,4 +1,5 @@
 from qgis.core import QgsVectorLayer, QgsFeature, QgsField, QgsFields, QgsGeometry
+from qgis.PyQt.QtCore import QMetaType
 
 def newmemorylayer():
     uri = "point?crs=epsg:4326&field=id:integer"
@@ -14,7 +15,7 @@ def addfeaturestolayer(layer, featurecount):
 
 
 def makefield(name, type, length):
-    field = QgsField(name, type)
+    field = QgsField(name=name, type=QMetaType.Type(type))
     field.setLength(length)
     return field
 
@@ -37,5 +38,3 @@ def make_feature(fields, wkt=None, with_values=True):
             feature[field["name"]] = field["value"]
 
     return feature
-
-
